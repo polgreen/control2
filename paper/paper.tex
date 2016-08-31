@@ -51,7 +51,7 @@
 \usepackage{listings}          % format code
 \lstset{
   mathescape, 
-  language={Java},
+  language={C},
   basicstyle=\small
 }
 \usepackage{enumitem}      % adjust spacing in enums
@@ -93,10 +93,10 @@
 
 
 % DOI
-%\doi{10.475/123_4}
+\doi{}
 
 % ISBN
-%\isbn{123-4567-24-567/08/06}
+\isbn{}
 
 %Conference
 %\conferenceinfo{PLDI '13}{June 16--19, 2013, Seattle, WA, USA}
@@ -230,6 +230,47 @@
 \keywords{}
 
 \section{Introduction}
+
+\begin{figure*}
+\centering
+\resizebox{.5\textwidth}{!}{
+ \begin{tikzpicture}[scale=0.3,-,>=stealth',shorten >=.2pt,auto,
+     semithick, initial text=, ampersand replacement=\&,]
+
+  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center}, row sep=1cm, column sep=1cm] {
+   \coordinate (aux0);
+   \& \node[circle] (circle) {}; 
+   \& \node[fill=yellow!20] (da) {{\sc D/A}}; 
+   \& \node[fill=yellow!20] (p) {{\sc P}};
+   \& \node[fill=yellow!20] (ad) {{\sc A/D}}; 
+   \& \coordinate (aux1);\\
+   \& \coordinate (aux3); 
+   \&
+   \&
+   \node[fill=yellow!20] (c) {C};
+   \& 
+   \& \coordinate (aux2);\\
+  };
+
+
+  \path[->] (aux0) edge (circle.west);
+  \path  
+   (circle.east) edge (da.west)
+   (da.east) edge (p.west)
+   (p.east) edge (ad.west)
+   (ad.east) edge (aux1.west)
+   (aux1.south) edge (aux2.north)
+   (aux2.west) edge (c.east)
+   (c.west) edge (aux3.east); 
+  \path[->]  (aux3.north) edge (circle.south);
+ \end{tikzpicture}
+}
+ \caption{Closed Loop System. \label{fig:control}}
+\end{figure*}
+
+
+
+
 \section{Overview}
 \section{Running Example}
 \section{Program Synthesis}
@@ -238,10 +279,8 @@ We use CounterExample-Guided Inductive Synthesis (CEGIS), as illustrated in Fig~
 
 \begin{figure*}
 \centering
-\resizebox{.6\textwidth}{!}{
- \begin{tikzpicture}[scale=0.3,->,>=stealth',shorten >=.2pt,auto,
- semithick, initial text=, ampersand replacement=\&,]
-
+\resizebox{.7\textwidth}{!}{
+ \begin{tikzpicture}[scale=0.3,->,>=stealth',shorten >=.2pt,auto, semithick, initial text=, ampersand replacement=\&,]
   \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center
 },
           row sep=1cm, column sep=1cm] {
@@ -249,7 +288,6 @@ We use CounterExample-Guided Inductive Synthesis (CEGIS), as illustrated in Fig~
    \node[fill=yellow!20] (synth) {{\sc Synthesise}};
    \&
    \node[fill=yellow!20] (verif) {{\sc Verify}}; \\
-   %% \&
 
    \& \\
    \& \\
