@@ -47,6 +47,38 @@
 
 \documentclass{sig-alternate-05-2015}
 
+\usepackage{url}                  % format URLs
+\usepackage{listings}          % format code
+\lstset{
+  mathescape, 
+  language={Java},
+  basicstyle=\small
+}
+\usepackage{enumitem}      % adjust spacing in enums
+\usepackage[colorlinks=true,allcolors=blue,breaklinks,draft=false]{hyperref}   
+\usepackage{graphicx}
+\usepackage{float,subfig}
+\usepackage{xspace,framed}
+\usepackage{colortbl}
+\usepackage{calc}
+
+\usepackage{algorithm}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{multicol}
+\usepackage{multirow}
+\usepackage{tikz}
+\usetikzlibrary{positioning, automata, shapes.arrows, calc, shapes, arrows}
+\usepackage[justification=centering]{caption}
+\usepackage{stmaryrd}
+\usepackage{hhline}
+\usepackage{pifont}
+%\usepackage{cite}
+\usepackage{pdflscape} % Experiments table is landscape
+\usepackage{longtable}
+\usepackage{afterpage}
+\usepackage{wasysym}
+
 
 \begin{document}
 
@@ -201,6 +233,46 @@
 \section{Overview}
 \section{Running Example}
 \section{Program Synthesis}
+
+We use CounterExample-Guided Inductive Synthesis (CEGIS), as illustrated in Fig~\ref{fig:CEGIS}.
+
+\begin{figure*}
+\centering
+\resizebox{.6\textwidth}{!}{
+ \begin{tikzpicture}[scale=0.3,->,>=stealth',shorten >=.2pt,auto,
+ semithick, initial text=, ampersand replacement=\&,]
+
+  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center
+},
+          row sep=1cm, column sep=1cm] {
+   \& \node[ellipse, fill=yellow!20] (done) {{\sc Done}}; \\
+   \node[fill=yellow!20] (synth) {{\sc Synthesise}};
+   \&
+   \node[fill=yellow!20] (verif) {{\sc Verify}}; \\
+   %% \&
+
+   \& \\
+   \& \\
+   \node (gp) {~~~~~~~~~~~~~~Program Search~~~~~~~~~~~~~~~};
+   \&
+   \node (bmc) {~~~~~~~~~~~~~~~BMC-based Verifier~~~~~~~~~~~~~~~};
+   
+    \\
+  };
+
+   \path
+    ([yshift=2em]synth.east) edge node {Candidate solution} ([yshift=2em]verif.west)
+    ([yshift=-2em]verif.west) edge node {Counter-ex} ([yshift=-2em]synth.east)
+    ([xshift=5em]verif.south) edge node {Candidate $P$} ([xshift=5em]bmc.north)
+    ([xshift=-5em]bmc.north) edge node[align=center]  {UNSAT/\\model} ([xshift=-5em]verif.south)
+    (verif) edge node {} (done)
+    ([xshift=5em]synth.south) edge node[align=center] {Inputs} ([xshift=5em]gp.north)
+    ([xshift=-5em]gp.north) edge node[align=center] {UNSAT/\\candidate} ([xshift=-5em]synth.south);
+ \end{tikzpicture}
+}
+ \caption{Counterexample-Guided Inductive Synthesis. \label{fig:CEGIS}}
+\end{figure*}
+
 \section{Experiments}
 \section{Related Works}
 \section{Conclusions}
