@@ -250,23 +250,30 @@ illustrated in Fig~\ref{fig:CEGIS}.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Related Works}
 
-\paragraph{Robustness analyses of closed-loop systems} 
+\paragraph{Robust synthesis of Linear Systems} 
 
-The analysis in \cite{DBLP:conf/hybrid/WangGRJF16} relies on an
-invariant computation on the discrete system dynamics.
+The problem of parametric control synthesis based on stability measures for continous Linear Time Invariant (LTI) Single Input-Single Output (SISO) systems has been researched for several decades. On a theoretical level it is a solved problem\cite{wonham1967pole} for which researches continuously seek better results based on a number of properties in addition to stability. A vast range of pole placement techniques such as Moore's algorithm for eigenstructure assignment \cite{klein1977eigenvalue} or the more recent Linear Quadratic Regulator (LQR) \cite{bemporad2002explicit} have been used in several papers with increasing degrees of succes to ensure stability. The latter approach highlights the importance of conserving energy during the control process, which results amongst other things in lower running costs. Since real systems are subject to tolerance and noise as well as the need for economy, more recent works focus on the problems of achieving robust stability with minimum gain \cite{schmid2014unified,konigorski2012pole}. 
+However, when extending the problem to digital controller synthesis, many of these techniques lack the ability to produce sound or stable results because they disregard the effects of quantization and rounding. Modern papers on implementations/synthesis of LTI digital controllers \cite{das2013lqr,ghosh2013fpga} focus on time discretization, failing to account for these error-inducing effects and can therefore result in digitally unstable systems that have been proven to be robustly stable in a continuous space. This situation demands the inclusion of formal methods to verify the effects of space discretization on the implementation of the controller.
 
-\paragraph{Stability analyses of closed-loop systems}
+\paragraph{Formal Verification of Linear Digital Controllers} 
+
+Researchers in formal verification methods of control systems have studied various effects of discretising the dynamics, including delayed response \cite{Duggirala2015}, and Finite Word Length (FWL) constraints with the objective to either verify (eg. \cite{daes20161}) or optimise (eg. \cite{oudjida2014design}) implementations. There are in fact two different problems arising from FWL effects. The first corresponds to the error in the dynamics caused by the inability of the hardware to represent the exact dynamics of the system whilst the second relates to rounding errors during computation. 
+In \cite{fialho1994stability} a stability measure based on the error of the digital dynamics ensures that the FWL errors do not make the digital system unstable. A more recent approach \cite{DBLP:journals/automatica/WuLCC09} uses $\mu$ calculus to directly model the digital controller so that the selected parameters are stable by design. Most papers following this line of verification focus on finding a correct implementation of a known desired controller, looking for optimal parameter representations using FWL but ignoring the effects of rounding errors due to issues of mathematical tractability.
+The analyses in \cite{DBLP:conf/hybrid/WangGRJF16,DBLP:conf/hybrid/RouxJG15} rely on an invariant computation on the discrete system dynamics using Semi-Definite Pogramming (SDP). Whilst the former uses BIBO properties to determine stability, the latter uses Lyapunov-based quadratic invariants. In both cases the SDP solver uses floating point arithmetic and soundness is checked by upper bounding the error.
+
+\paragraph{Robust Synthesis of FWL Digital Controllers}
+
+To the authors' knowledge, there is no existing work on the automatic synthesis of digital controllers considering FWL effects. Parameter synthesis tools such as \cite{cimatti2013parameter} use bounded model checking and fixed point computations to find parameters based on user defined specifications, but they often operate in the continuous domain and are ill-suited for robust analysis since they have no direct means of evaluating robustness. Other tools such as \cite{economakos2016automated} are directly aimed at robust stability problems but fail to explore the effects of FWL in their implementation.
+In order to provide a correct by design controller, \cite{alur2016compositional} requires a user-defined finite state abstraction to synthesise a digital controller based on high level specifications. Whilst this approach directly overcomes the challenges presented by the FWL problem, it still requires error-prone user intervention. A different solution that looks at the other end of the scale is an approach that synthesises word lengths for know problems as developed in \cite{jha2013swati}, however this provides neither an optimal word synthesis nor a comprehensive solution for the problem.
+It is from this vacuum that we seek to explore a CEGIS approach to FWL controller synthesis.
+
+\paragraph{CEGIS}
+
+In recent years the development of program synthesis has found many ways to obtain correct by design programs from high level specifiactions. One such approach \cite{itzhaky2010simple} looks to inductively synthesise invariants to generate the desired programs. Since these digital programs are already constrained by designed to factors such as FWL, these approaches are ideal for the synthesis of parametric controllers.
+In \cite{DBLP:conf/cdc/RavanbakhshS15}, the authors use CEGIS for the synthesis of switching controllers for stabilizing continuous-time plants with polynomial dynamics. The work extends to its application on affine systems, finding its major challenge in the hardness of solving linear arithmetic on present SMT solvers. Since this approach uses switching states instead of linear dynamics in the digital controller, it entirely circumvents the FWL problem. It is also not suitable for the kind of control we seek to synthesise.
+What is needed in this regard is the combination of a synthesis engine with a control verification tool that addresses the challenges presented here in the form of FWL effects and stability measures for LTI SISO controllers. We take the former from \cite{} and the latter from \cite{daes20161} whilst enhancing the procedure by evaluating the quantaization effects of the Hardware interfaces (ADC/DAC) to obtain an accurate discrete time FWL representation of the continuous dynamics.
  
-In \cite{DBLP:conf/hybrid/RouxJG15}, the authors perform the analysis
-in the state space domain using Lyapunov-based quadratic invariants.
-In \cite{DBLP:journals/corr/PakmehrWJVF13}, Pakmehr et al.  design a
-control software verification framework for gas turbine engines.
-
-\paragraph{Uses of CEGIS for control sysnthesis} 
-
-In \cite{DBLP:conf/cdc/RavanbakhshS15}, Ravanbakhsh and
-Sankaranarayanan use CEGIS for the synthesis of switching controllers
-for stabilizing continuous-time plants.
+%In \cite{DBLP:journals/corr/PakmehrWJVF13}, Pakmehr et al.  design a control software verification framework for gas turbine engines.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusions}
