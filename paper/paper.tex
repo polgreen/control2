@@ -47,7 +47,6 @@
 
 \usepackage{algorithm}
 \usepackage{amsfonts}
-\usepackage{amsmath}
 \usepackage{multicol}
 \usepackage{multirow}
 \usepackage{tikz}
@@ -59,7 +58,6 @@
 \usepackage{longtable}
 \usepackage{afterpage}
 \usepackage{wasysym}
-
 
 \begin{document}
 
@@ -206,6 +204,33 @@ plant, as shown in Fig.~\ref{fig:closed-system}.
 \section{Overview}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Running Example}
+
+
+A classical cruise control example is extracted from the literature~\cite{Astrom08}, where the discrete plant model (with time step of $0.2$s) is represented by the following z-expression:
+
+\begin{equation}
+\label{Eq:running-example-plant}
+P\left(z\right) := \frac{0.0264}{z-0.9998}.
+\end{equation}
+
+Using an optimization tool, Wang {\it et al.}~\cite{DBLP:conf/hybrid/WangGRJF16} design a high-performance controller, which is characterized by the following z-expression:
+
+\begin{equation}
+\label{Eq:running-example-controller}
+C\left(z\right) := \frac{2.72z^2 - 4.153z + 1.896}{z^2 - 1.844z + 0.8496}.
+\end{equation}
+
+The authors claim that this controller $C(z)$ is extremely stable for the discrete plant model $P(z)$. However, if implementation aspects are considered during verification, this controller becomes unstable. To properly implement $C(z)$, there is a function $FWL[\cdot]:\mathbb{R}^{k+l+2}\rightarrow Q[\mathbb{R}^{k+l+2}]$, which applies FWL effects to the controller $C(z)$, where $Q[\mathbb{R}]$ represents the quantized set of representable real numbers in the chosen implementation format $<k,l>$ ($k$ is the number of bits of the integer part and $l$ is the number of bits of the fractional part). 
+
+For this particular example, the actual implementation of $C(z)$ using $<3,16>$ implementation format can be represented by the following z-expression:
+
+\begin{equation}
+\label{Eq:running-example-controller-quantized}
+C_{q}\left(z\right) := \frac{2.7199859619140625z^2 - 4.1529998779296875z + 1.89599609375}{z^2 - 1.843994140625z + 0.8495941162109375},
+\end{equation} 
+
+\noindent which makes the system unstable in closed-loop using series loop configuration.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Program Synthesis}
 
