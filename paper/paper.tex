@@ -262,7 +262,7 @@ Finally in the Step D, the translation of ANSI-C code into SAT/SMT formulae is d
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Running Example}
+\section{Running Example} \label{sec:running-ex}
 
 A classical cruise control example is extracted from the literature~\cite{Astrom08}, where the discrete plant model (with time step of $0.2$s) is represented by the following z-expression:
 
@@ -294,8 +294,35 @@ $C_{q}\left(z\right) {:=} \frac{2.7199859619140625z^2 - 4.1529998779296875z + 1.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Program Synthesis}
 
-We use CounterExample-Guided Inductive Synthesis (CEGIS), as
-illustrated in Fig~\ref{fig:CEGIS}.
+% We use CounterExample-Guided Inductive Synthesis (CEGIS), as
+% illustrated in Fig~\ref{fig:CEGIS}.
+
+In order to synthesise closed-loop digital control systems, we use a
+program synthesis engine.  Nowadays, such engines are used
+increasingly often in program verification
+\cite{DBLP:conf/cav/0001A14,DBLP:conf/lpar/DavidKL15}.  Our program
+synthesiser makes use of Counter-Example Guided Inductive Synthesis
+(CEGIS) \cite{sketch}.  We start by presenting its general
+architecture followed by describing the parts specific to control
+systems.
+
+%specialised it for stream refactoring.  
+% adding JST for stream refactoring
+
+\paragraph{General architecture of the program synthesiser}
+%
+The design of our synthesiser is given in
+Fig.~\ref{fig:CEGIS} and consists of two phases, {\sc
+Synthesise} and {\sc Verify}.  
+
+\paragraph{Elements specific to control systems}
+
+
+\paragraph{Running example synthesis}
+We will illustrate our synthesis approach on the running example 
+in Sec.~\ref{sec:running-ex}.
+Our goal is to synthesise ...
+\cdsay{Finish this once the example is working.}
 
 \begin{figure*}
 \centering
