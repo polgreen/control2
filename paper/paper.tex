@@ -313,10 +313,32 @@ systems.
 %
 The design of our synthesiser is given in
 Fig.~\ref{fig:CEGIS} and consists of two phases, {\sc
-Synthesise} and {\sc Verify}.  
+Synthesise} and {\sc Verify}, which interact via a finite set of test vectors {\sc inputs}.
+The {\sc synth} procedure tries to find an existential witness $P$
+that satisfies the specification $\sigma(x, P)$ for all $x$:
+%
+$\exists P . \forall x \in \text{\sc inputs} . \sigma(x, P)$
+
+If {\sc synthesise} succeeds in finding a witness $P$, this witness is a
+candidate solution to the full synthesis formula.  We pass this candidate
+solution to {\sc verify} which determines whether it does satisfy
+the specification on all inputs by checking satisfiability of the
+verification formula:
+%
+$\exists x . \lnot \sigma(x, P)$
+
+If this formula is unsatisfiable, the candidate solution is in fact a
+solution to the synthesis formula and so the algorithm terminates. 
+Otherwise, the witness $x$ is an input on which the candidate solution fails
+to meet the specification.  This witness $x$ is added to the {\sc inputs}
+set and the loop iterates again.  It is worth noting that each iteration of the
+loop adds a new input to the set of inputs being used for synthesis.  If
+the full set of inputs is finite, this means that the refinement loop
+can only iterate a finite number of times.
+
 
 \paragraph{Elements specific to control systems}
-
+\cdsay{discussion on the noise introduced by the plant modelling?}
 
 \paragraph{Running example synthesis}
 We will illustrate our synthesis approach on the running example 
