@@ -292,6 +292,40 @@ $C_{q}\left(z\right) {:=} \frac{2.7199859619140625z^2 - 4.1529998779296875z + 1.
 \noindent which makes the system unstable in closed-loop using the typical series loop configuration.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\section{Error Bound Verification}
+
+%As described in the literature, computation using FWL leads to rounding and truncation errors~\cite{Oppenheim1999}. In the present work, impairments present on a closed-loop  system output, due to coefficient rounding and arithmetic-operation results, are considered. Let $x$ be a real number and $x^*$ be a floating-point representation of $x$. The absolute error $\epsilon$, due to the rounding of $x$ represented in floating-point as $x^*$, is 
+%
+%\begin{equation} \label{absolute-error}
+%x^* = x + \epsilon,
+%\end{equation}
+
+%\noindent and the relative error $\delta$ by
+%
+%\begin{equation} \label{relative-error}
+%x^* = x\left(1+\delta\right).
+%\end{equation}
+
+%The verification of output error bound is proposed, where the output of a closed-loop system, implemented with reduced-word-length floating-point representation, is compared with a reference output of the same structures, implemented using real variables. 
+
+%Thus, considering that the number of precision bits $l_{d}$ in reference models is higher than in designed models, the quantization error $E_{r}$ is given by
+%\begin{equation} \label{errorfixlimits}
+%-2^{-l-1} + 2^{-l_{d}-1} \leq E_{r} \leq 2^{-l-1} - 2^{-l_{d}-1}.
+%\end{equation}
+
+%The expression above shows that the error, computed with the proposed method, is affected by the precision of the reference model.
+
+%For the reduced floating-point models, the computed values are saturated to the maximum representable number on overflow, or to the minimum on underflow; the same input is applied to both models. The input vector uses non-deterministic values from $\{ 2^{k-1}-2^{-l}, 2^{-l}, 0, -2^{-l}, 2^{k-1} \}$, that is, values for maximum and minimum amplitudes of the input signal. So, errors due to quantization and saturation are explored.
+
+%During closed-loop operation unrolling, the cumulative error can increase beyond the quantization-error interval. The following literal is then generated, in order to check whether the output error is in accordance with an acceptable margin:
+%\begin{equation} \label{errorcheck}
+%	l_{no\_error} \Leftrightarrow \arrowvert y - y_{d} \arrowvert \leq M \cdot 2^{-l-1},
+%\end{equation}
+
+%\noindent where $y$ is the output of the designed system, $y_{d}$ is the output of the double precision system, and $M~2^{-l-1}$ is the tolerance margin. The verification process searches for the negation of this literal. When such a counterexample is found, it indicates that the output error is higher than expected for that controller realization.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Program Synthesis}
 
 % We use CounterExample-Guided Inductive Synthesis (CEGIS), as
