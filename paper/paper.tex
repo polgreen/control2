@@ -184,7 +184,13 @@ plant, as shown in Fig.~\ref{fig:closed-system}.
 \label{verifying-closed-loop-control-systems}
 %------------------------------------
 
-In this study, the methodology used for verifying closed-loop digital control system is based on the Digital-System Verifier (DSVerifier)~\cite{IsmailBCFF15}, which checks the stability of control systems considering finite-word length (FWL) effects in the digital controller and uncertainty parameters in the plant model (plant intervals)~\cite{Bessa16}. Let $C(z)$ be a digital controller and $G(z)$ be a plant model given as
+In this study, the methodology used for verifying closed-loop digital
+control system is based on the Digital-System Verifier
+(DSVerifier)~\cite{IsmailBCFF15}, which checks the stability of control
+systems considering finite-word length (FWL) effects in the digital
+controller and uncertainty parameters in the plant model (plant
+intervals)~\cite{Bessa16}.  Let $C(z)$ be a digital controller and $G(z)$ be
+a plant model given as
 
 \begin{align}
 \small
@@ -216,7 +222,12 @@ g = g_0 + \Delta{g} = \left [
 \label{verification-flow}
 %------------------------------------
 
-DSVerifier verification flow is shown in Fig.~\ref{DSVerifier_process}. Steps from $1$ to $5$ are performed by users and Steps A to D are automatically performed by DSVerifier, which accepts the digital controller transfer functions together with the plant model. For any digital controller, implementation details should be provided ({\it e.g.}, number of bits, realization, and sample time).
+DSVerifier verification flow is shown in Fig.~\ref{DSVerifier_process}. 
+Steps from $1$ to $5$ are performed by users and Steps A to D are
+automatically performed by DSVerifier, which accepts the digital controller
+transfer functions together with the plant model.  For any digital
+controller, implementation details should be provided ({\it e.g.}, number of
+bits, realization, and sample time).
 
 \begin{figure*}[t]
 \centering
@@ -225,13 +236,50 @@ DSVerifier verification flow is shown in Fig.~\ref{DSVerifier_process}. Steps fr
 \label{DSVerifier_process}
 \end{figure*}
 
-In Step $1$, the user provides inputs $g_0$ and $\Delta{g}\%$ ({\it i.e.}, percentage form of $\Delta{g}$), which contain the plant model and the interval, respectively. In Step $2$, a digital controller must be designed with any preferred method, where $c_0$ is obtained. The controller numerical representation and realization form are chosen in Steps $3$ and $4$, respectively. In Step $5$, the user finally configures the verification parameters ({\it e.g.}, verification time, properties, and BMC tool). After that, DSVerifier verification engine performs an (automatic) verification of the desired property $\phi$ ({\it i.e.}, stability). The user steps described in Steps $1$-$5$ results in an ANSI-C code that should be used as an input for DSVerifier.
+In Step $1$, the user provides inputs $g_0$ and $\Delta{g}\%$ ({\it i.e.},
+percentage form of $\Delta{g}$), which contain the plant model and the
+interval, respectively.  In Step $2$, a digital controller must be designed
+with any preferred method, where $c_0$ is obtained.  The controller
+numerical representation and realization form are chosen in Steps $3$ and
+$4$, respectively.  In Step $5$, the user finally configures the
+verification parameters ({\it e.g.}, verification time, properties, and BMC
+tool).  After that, DSVerifier verification engine performs an (automatic)
+verification of the desired property $\phi$ ({\it i.e.}, stability).  The
+user steps described in Steps $1$-$5$ results in an ANSI-C code that should
+be used as an input for DSVerifier.
 
-In Step A, DSVerifier constructs a non-deterministic model to represent the plant family $\mathfrak{G}$ using $g_0$ and $\Delta{g}\%$, which are provided in Step $1$. DSVerifier then formulates $FWL[\cdot]$ in Step B using implementation details provided from Steps $2$ and $3$, and then computes $FWL[c_0]$ in Step C. Thus, DSVerifier builds an intermediate ANSI-C code for the digital system implementation, which is used as input for the model-checker, as pointed in Step D.
+In Step A, DSVerifier constructs a non-deterministic model to represent the
+plant family $\mathfrak{G}$ using $g_0$ and $\Delta{g}\%$, which are
+provided in Step $1$.  DSVerifier then formulates $FWL[\cdot]$ in Step B
+using implementation details provided from Steps $2$ and $3$, and then
+computes $FWL[c_0]$ in Step C.  Thus, DSVerifier builds an intermediate
+ANSI-C code for the digital system implementation, which is used as input
+for the model-checker, as pointed in Step D.
 
-This intermediate ANSI-C code model has three main modules: digital controller code to be embedded into the microprocessor; plant model code, which simulates the plant model dynamics considering uncertainties; and ``assert'' and ``assume'' statements, which control the verification flow. For the digital controller code, transfer functions coefficients are quantized and deterministic, and all operations use fixed-point arithmetic. \textcolor{red}{In the plant model code, transfer function coefficients are not quantized, but represented with maximum precision based on float data-type variables}; they are treated as non-deterministic variables to support model uncertainties. The directive ``assume'' bounds non-deterministic variables, {\it i.e.}, inputs and plant uncertain coefficients.
+This intermediate ANSI-C code model has three main modules: digital
+controller code to be embedded into the microprocessor; plant model code,
+which simulates the plant model dynamics considering uncertainties; and
+``assert'' and ``assume'' statements, which control the verification flow. 
+For the digital controller code, transfer functions coefficients are
+quantized and deterministic, and all operations use fixed-point arithmetic. 
+\textcolor{red}{In the plant model code, transfer function coefficients are
+not quantized, but represented with maximum precision based on float
+data-type variables}; they are treated as non-deterministic variables to
+support model uncertainties.  The directive ``assume'' bounds
+non-deterministic variables, {\it i.e.}, inputs and plant uncertain
+coefficients.
 
-Finally in the Step D, the translation of ANSI-C code into SAT/SMT formulae is done by a back-end model-checking tool ({\it e.g.}, CBMC~\cite{ClarkeKL04} or ESBMC~\cite{CordeiroFM12}). Here, DSVerifier symbolically checks a given property $\phi$ with respect to closed-loop systems, which are composed by $FWL[c_0]$ and every $g$ in $\mathfrak{G}$. If any property violation is found, then DSVerifier reports a counterexample, which contains system inputs or parametric deviations $\Delta{g}\%$ that lead the system to a failure. A successful verification result is reported if the system is safe with respect to $\phi$. In particular, the stability verification is complete and sound, since it does not depend on system outputs and inputs.
+Finally in the Step D, the translation of ANSI-C code into SAT/SMT formulae
+is done by a back-end model-checking tool ({\it e.g.},
+CBMC~\cite{ClarkeKL04} or ESBMC~\cite{CordeiroFM12}).  Here, DSVerifier
+symbolically checks a given property $\phi$ with respect to closed-loop
+systems, which are composed by $FWL[c_0]$ and every $g$ in $\mathfrak{G}$. 
+If any property violation is found, then DSVerifier reports a
+counterexample, which contains system inputs or parametric deviations
+$\Delta{g}\%$ that lead the system to a failure.  A successful verification
+result is reported if the system is safe with respect to $\phi$.  In
+particular, the stability verification is complete and sound, since it does
+not depend on system outputs and inputs.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{A Uncertainty Model for Quantization Error} 
@@ -244,16 +292,32 @@ In this study, an uncertain plant model $\hat{G}(z)$ is split into two terms:
 \hat{G}(z)=G(z)+\Delta{G(z)},
 \end{equation}
 
-\noindent where $G(z)$ is the discretized nominal plant model and $\Delta{G(z)}$ is the additive uncertainty, which is related to parametric uncertainties~\cite{Bessa16}. Here, an uncertainty model to accommodate the quantization noise effects on $\hat{G}(z)$ is proposed. As a result, Eq.~\eqref{eq:uncertainplant} is rewritten as
+\noindent where $G(z)$ is the discretized nominal plant model and
+$\Delta{G(z)}$ is the additive uncertainty, which is related to parametric
+uncertainties~\cite{Bessa16}.  Here, an uncertainty model to accommodate the
+quantization noise effects on $\hat{G}(z)$ is proposed.  As a result,
+Eq.~\eqref{eq:uncertainplant} is rewritten as
 %
 \begin{equation}
 \label{eq:uncertainFWLplant}
 \hat{G}(z)=G(z)+\Delta{G_{Q}(z)}+\Delta{G_{P}(z)},
 \end{equation}
 
-\noindent where $\Delta{G_{Q}(z)}$ represents the quantization uncertainty model and $\Delta{G_{P}(z)}$ describes the parametric uncertainty model. Thus, a model for $\Delta{G_{Q}(z)}$ that can represent the quantization noise effect in the plant output, and consequently the closed-loop system output, is proposed. For convenience, the parametric uncertainties will be despised here.
+\noindent where $\Delta{G_{Q}(z)}$ represents the quantization uncertainty
+model and $\Delta{G_{P}(z)}$ describes the parametric uncertainty model. 
+Thus, a model for $\Delta{G_{Q}(z)}$ that can represent the quantization
+noise effect in the plant output, and consequently the closed-loop system
+output, is proposed.  For convenience, the parametric uncertainties will be
+despised here.
 
-Consider the closed-loop sampled system in Figure~\ref{fig:sampledsystem}, where $C(z)$ is the digital controller model, whose control output signal is quantized ($Q2$) and interpolated via a ZOH using digital-to-analog converter (DAC). $G(s)$ is the continuous-time model of the plant, from which output samples are taken and quantized ($Q1$) by means of an analog-to-digital converter (ADC) synchronized with the DAC. Each quantizer ($Q1$ and $Q2$) will present some contribution for the total quantization noise.
+Consider the closed-loop sampled system in Figure~\ref{fig:sampledsystem},
+where $C(z)$ is the digital controller model, whose control output signal is
+quantized ($Q2$) and interpolated via a ZOH using digital-to-analog
+converter (DAC).  $G(s)$ is the continuous-time model of the plant, from
+which output samples are taken and quantized ($Q1$) by means of an
+analog-to-digital converter (ADC) synchronized with the DAC.  Each quantizer
+($Q1$ and $Q2$) will present some contribution for the total quantization
+noise.
 %
 \begin{figure}[ht]
 \centering
@@ -262,11 +326,15 @@ Consider the closed-loop sampled system in Figure~\ref{fig:sampledsystem}, where
 \label{fig:sampledsystem}
 \end{figure}
 
-First, some assumptions have to be established to obtain a model for $\Delta{G_{Q}(z)}$.
+First, some assumptions have to be established to obtain a model for
+$\Delta{G_{Q}(z)}$.
 %
 \begin{myassumption}
 \label{whitenoise}
-The quantization noises $\nu_{1}$ (from the $Q1$) and $\nu_{2}$ (from the $Q2$) are white noises with zero mean.
+%
+The quantization noises $\nu_{1}$ (from the $Q1$) and $\nu_{2}$ (from the
+$Q2$) are white noises with zero mean.
+%
 \end{myassumption}
 
 \begin{myassumption}
@@ -274,21 +342,35 @@ The quantization noises $\nu_{1}$ and $\nu_{2}$ are uncorrelated with each other
 \end{myassumption}
 
 \begin{myassumption}
-The DAC and ADC are synchronized, {\it i.e.}, there is no delay between sampling the plant output at ADC and updating the DAC accordingly.
+%
+The DAC and ADC are synchronized, {\it i.e.}, there is no delay between
+sampling the plant output at ADC and updating the DAC accordingly.
+%
 \end{myassumption}
 
 \begin{myassumption}
-The controller and plant are linear. In particular, the digital controller does not contain nonlinearities such as overflows, saturation, and limit-cycle oscillations.
+%
+The controller and plant are linear.  In particular, the digital controller
+does not contain nonlinearities such as overflows, saturation, and
+limit-cycle oscillations.
+%
 \end{myassumption}
 
 \begin{myassumption}
-The DAC interpolator is an ideal ZOH; it takes the discrete value of control signal $u(k)$ at instant $k$ and produces a rectangular pulse of height $u(k)$ and width equal to the sample time $T$.
+%
+The DAC interpolator is an ideal ZOH; it takes the discrete value of control
+signal $u(k)$ at instant $k$ and produces a rectangular pulse of height
+$u(k)$ and width equal to the sample time $T$.
+%
 \end{myassumption}
 
 Given those assumptions, the present approach is further based on the following lemmas.
 %
 \begin{mylemma}
-\cite{widrow1956} The second moment (variance) of the PDF of quantization noise is given by \textcolor{red}{expand the acronym PDF}
+%
+\cite{widrow1956} The second moment (variance) of the PDF of quantization
+noise is given by \textcolor{red}{expand the acronym PDF}
+%
 \begin{equation}
 \label{eq:variancelemma}
 \sigma_{Q}^{2}=\frac{q^{2}}{12},
@@ -298,45 +380,68 @@ Given those assumptions, the present approach is further based on the following 
 \noindent where $q$ is the step size of quantizer.
 
 \begin{mylemma} \cite{astrom1997computer}
-The pulse transfer function $G(z)$ is equivalent at the sample times to the continuous transfer function $G(s)$ driven by ZOH. This pulse transfer function can be computed as
+%
+The pulse transfer function $G(z)$ is equivalent at the sample times to the
+continuous transfer function $G(s)$ driven by ZOH.  This pulse transfer
+function can be computed as
+%
 \begin{equation}
 \label{eq:pulsetf}
 G(z)=(1-z^{-1})\mathcal{Z}\left\lbrace{\mathcal{L}^{-1}\left\lbrace{\frac{G(s)}{s}}\right\rbrace_{t=kT}}\right\rbrace.
 \end{equation}
 \end{mylemma}
 
-
-Considering the quantization noise $\nu(k)$ as an output error in the discrete plant model, {\it i.e.}, it does not affect the plant dynamics, but its output samples, it is easy to prove that $\Delta{G_{Q}(z)}$ can be obtained from
+Considering the quantization noise $\nu(k)$ as an output error in the
+discrete plant model, {\it i.e.}, it does not affect the plant dynamics, but
+its output samples, it is easy to prove that $\Delta{G_{Q}(z)}$ can be
+obtained from
 %
 \begin{equation}
 \label{eq:quantization_tf}
 \Delta{G_{Q}(z)}=\frac{\nu(z)}{U(z)},
 \end{equation}
 
-\noindent where $\nu(z)$ is the z-transform of the random process $\nu(k)$, which can be calculated through the power spectral density of $\nu(k)$~\cite{poularikas2000transforms}. Thus, the $\Delta{G_{Q}(z)}$ can expressed as
+\noindent where $\nu(z)$ is the z-transform of the random process $\nu(k)$,
+which can be calculated through the power spectral density of
+$\nu(k)$~\cite{poularikas2000transforms}.  Thus, the $\Delta{G_{Q}(z)}$ can
+expressed as
 %
 \begin{equation}
 \label{eq:deltag_var}
 \Delta{G_{Q}(z)}=\frac{\sigma_{Q}^{2}}{U(z)},
 \end{equation}
 
-\noindent where $\sigma_{Q}^{2}$ is the variance of quantization noise and $U(z)$ is the z-transform of control signal ({\it i.e.}, the z-transform of the signal from the digital controller), which is provided to the plant by means of ZOH.
+\noindent where $\sigma_{Q}^{2}$ is the variance of quantization noise and
+$U(z)$ is the z-transform of control signal ({\it i.e.}, the z-transform of
+the signal from the digital controller), which is provided to the plant by
+means of ZOH.
 %
 \begin{proof}
-Suppose that the plant discrete model in Figure~\ref{fig:sampledsystem} can be represented by the following pulse transfer function (without quantization noise effect): 
+%
+Suppose that the plant discrete model in Figure~\ref{fig:sampledsystem} can
+be represented by the following pulse transfer function (without
+quantization noise effect):
+%
 \begin{equation}
 \label{eq:tfwithout}
 G(z)=\frac{Y(z)}{U(z)}=\frac{B(z)}{A(z)}=\frac{b_{0}+b_{1}z^{-1}+b_{2}z^{-2}+\cdots+b_{M}z^{-M}}{1+a_{1}z^{-1}+a_{2}z^{-2}+\cdots+a_{N}z^{-N}},
 \end{equation}
-\noindent where $Y(z)$ is the z-transform of the plant output signal without noise $y(k)$, $U(z)$ is the z-transform of the control signal, which is provided to the plant, $A(z)$ and $B(z)$ are the plant pulse transfer function numerator and denominator, respectively.
+%
+\noindent where $Y(z)$ is the z-transform of the plant output signal without
+noise $y(k)$, $U(z)$ is the z-transform of the control signal, which is
+provided to the plant, $A(z)$ and $B(z)$ are the plant pulse transfer
+function numerator and denominator, respectively.
 
-Considering the quantization noise $\nu(k)$ as an output error in the discrete plant model, an additive noise in the plant output $y(k)$ resulting in the noisy output $\hat{y}(k)$ can be represented as
+Considering the quantization noise $\nu(k)$ as an output error in the
+discrete plant model, an additive noise in the plant output $y(k)$ resulting
+in the noisy output $\hat{y}(k)$ can be represented as
 %
 \begin{equation}
 \hat{y}(k)=y(k)+\nu(k).
 \end{equation}
 
-Note that the model in Eq.~\eqref{eq:tfwithout} is equivalent to the following difference equation:
+Note that the model in Eq.~\eqref{eq:tfwithout} is equivalent to the
+following difference equation:
 %
 \begin{equation}
 \begin{split}
@@ -345,7 +450,8 @@ y(k)=-a_{1}y(k-1)-a_{2}y(k-2)-\cdots - a_{N}y(k-N)\\
 \end{split}
 \end{equation}
 
-\noindent and consequently $\hat{y}(k)$ can be represented by the following difference equation:
+\noindent and consequently $\hat{y}(k)$ can be represented by the following
+difference equation:
 %
 \begin{equation}
 \label{eq:differencewithnoise}
@@ -368,22 +474,40 @@ dividing both sides by $U(z)$, it is equivalent to:
 \frac{\hat{Y}(z)}{U(z)}=\hat{G}(z)=[1-A(z)]G(z)+U(z)B(z)+\frac{\nu(z)}{U(z)}.
 \end{equation}
 
-Considering $\hat{G}(z)=G(z)+\Delta{G_{Q}(z)}$ and Eq.~\eqref{eq:tfwithout}, the intended expression can be obtained as
+Considering $\hat{G}(z)=G(z)+\Delta{G_{Q}(z)}$ and Eq.~\eqref{eq:tfwithout},
+the intended expression can be obtained as
 %
 \begin{equation}
 \Delta{G_{Q}(z)}=\frac{\nu(z)}{U(z)} 
 \end{equation}
 \end{proof}
 
-Eq.~\eqref{eq:deltag_var} indicates that the modeling of quantization noise effect on the plant transfer function demands an estimation of the variance of quantization noise $\sigma_{Q}^{2}$. To obtain such estimation, the methodology presented by Widrow and Koll\'ar~\cite{widrow2008quantization} is used. The authors provide an algorithm for computing the mean square of the output noise due to $Q1$ and $Q2$. Considering that each quantizer contribution can be represented by a white noise with zero mean (Assumption~\ref{whitenoise}), the mean square can be considered as the variance of noise ($\sigma_{Q}^{2}$), which can be calculated as
+Eq.~\eqref{eq:deltag_var} indicates that the modeling of quantization noise
+effect on the plant transfer function demands an estimation of the variance
+of quantization noise $\sigma_{Q}^{2}$.  To obtain such estimation, the
+methodology presented by Widrow and Koll\'ar~\cite{widrow2008quantization}
+is used.  The authors provide an algorithm for computing the mean square of
+the output noise due to $Q1$ and $Q2$.  Considering that each quantizer
+contribution can be represented by a white noise with zero mean
+(Assumption~\ref{whitenoise}), the mean square can be considered as the
+variance of noise ($\sigma_{Q}^{2}$), which can be calculated as
 %
 \begin{equation}
 \sigma_{Q}^{2}=\frac{\lambda_{1}^{2}\cdot \sum {h_{Q1}^{2}}+\lambda_{2}^{2}\cdot \sum {h_{Q2}^{2}}}{12},
 \end{equation}
+%
+\noindent where $\lambda_{1}$ and $\lambda_{2}$ are the scale factor for the
+quantization $Q1$ and $Q2$, respectively; and $\sum {h_{Q1}^{2}}$ and $\sum
+{h_{Q2}^{2}}$ are the squares sums of the impulse response obtained by means
+of a transfer function from $Q1$ and $Q2$ to the plant output, respectively.
 
-\noindent where $\lambda_{1}$ and $\lambda_{2}$ are the scale factor for the quantization $Q1$ and $Q2$, respectively; and $\sum {h_{Q1}^{2}}$ and $\sum {h_{Q2}^{2}}$ are the squares sums of the impulse response obtained by means of a transfer function from $Q1$ and $Q2$ to the plant output, respectively.
-
-The transfer functions $H_{Q1}(z)$ and $H_{Q2}(z)$, from which the squares sums of the impulse response are needed, can be obtained through the analysis of the system in Figure~\ref{fig:sampledsystem}. Considering that the quantizer $Q1$ is the source of a white noise with zero mean $\nu_{1}$ and $Q2$ is the source of a white noise with zero mean $\nu_{2}$, the following equation can be written for the system in Figure~\ref{fig:sampledsystem}
+The transfer functions $H_{Q1}(z)$ and $H_{Q2}(z)$, from which the squares
+sums of the impulse response are needed, can be obtained through the
+analysis of the system in Figure~\ref{fig:sampledsystem}.  Considering that
+the quantizer $Q1$ is the source of a white noise with zero mean $\nu_{1}$
+and $Q2$ is the source of a white noise with zero mean $\nu_{2}$, the
+following equation can be written for the system in
+Figure~\ref{fig:sampledsystem}
 %
 \begin{equation}
 \resizebox{0.48\textwidth}{!}{
@@ -410,15 +534,26 @@ and
 H_{Q2}(z)=\frac{G(z)}{1+C(z)G(z)}.
 \end{equation}
 
-These equations are sufficient for computing $\sigma_{Q}^{2}$. However, there is still a gap for a complete model for $\Delta{G_{Q}(z)}$ in Eq.~\eqref{eq:deltag_var}, {\it i.e.}, the z-transform of control action $U(z)$. This indicates that the quantization noise effect on a discrete plant model mainly depends on three main factors:
+These equations are sufficient for computing $\sigma_{Q}^{2}$.  However,
+there is still a gap for a complete model for $\Delta{G_{Q}(z)}$ in
+Eq.~\eqref{eq:deltag_var}, {\it i.e.}, the z-transform of control action
+$U(z)$.  This indicates that the quantization noise effect on a discrete
+plant model mainly depends on three main factors:
 %
 \begin{itemize}
+%
 \item \textbf{Sample time:} the sample time effect is reflected over pulse transfer function that covers the effects of DAC ant its interpolator (ZOH);
+%
 \item \textbf{ADC and DAC step: } these are the main component of quantization noise power, but an $8$-bits converter already reduces the effect of quantization noises in the output for negligible values.
+%
 \item \textbf{Signal-to-noise ratio (SNR): } the dependence on the value of $U(z)$ shows the importance of the SNR for handling quantization noise; for a high SNR of the digital controller, the quantization effect is negligible. This happens during the transient of the system, when high control actions are employed. However, it can be relevant during the steady state. A digital controller with integral action might be sufficient for eliminating such influence on the steady state.
+%
 \end{itemize}
 
-An alternative expression for $\Delta{G_{Q}(z)}$ can be obtained from Eq.~\eqref{eq:deltag_var}, transforming it into a function of the reference $R(z)$. Once $U(z)$ is the control signal obtained via digital controller $C(z)$ and error signal, {\it i.e.},
+An alternative expression for $\Delta{G_{Q}(z)}$ can be obtained from
+Eq.~\eqref{eq:deltag_var}, transforming it into a function of the reference
+$R(z)$.  Once $U(z)$ is the control signal obtained via digital controller
+$C(z)$ and error signal, {\it i.e.},
 %
 \begin{equation}
 U(z)=C(z)\cdot[R(z)-Y(z)],
@@ -432,47 +567,65 @@ $U(z)=C(z)\cdot \left[R(z)-\frac{C(z)G(z)}{1+C(z)G(z)}R(z)\right]=\frac{C(z)}{1+
 }
 \end{equation} 
 
-Substituting Eq.~\eqref{eq:controlsignal} in Eq.~\eqref{eq:deltag_var}, a model for $\Delta{G_{Q}(z)}$ depending on $R(z)$ can be obtained:
+Substituting Eq.~\eqref{eq:controlsignal} in Eq.~\eqref{eq:deltag_var}, a
+model for $\Delta{G_{Q}(z)}$ depending on $R(z)$ can be obtained:
 %
 \begin{equation}
 \Delta{G_{Q}(z)}=\sigma^{2}_{Q}\cdot \frac{1+C(z)G(z)}{C(z)} \cdot \frac{1}{R(z)},
 \end{equation}
 
-\noindent where $R(z)$ can be considered as a step signal (for stabilization purpose) with height equal to $r$, which can be rewritten as
+\noindent where $R(z)$ can be considered as a step signal (for stabilization
+purpose) with height equal to $r$, which can be rewritten as
+%
 \begin{equation}
 \Delta{G_{Q}(z)}=\frac{\sigma^{2}_{Q}}{r}\cdot \frac{1+C(z)G(z)}{C(z)} \cdot \frac{z-1}{z}.
 \end{equation}
 
-A more confident description of $\Delta{G_{Q}(z)}$ can be obtained considering FWL effects on digital controller coefficients, as described in Bessa {\it et al.}~\cite{Bessa16}, {\it i.e.}, using $FWL[C(z)]$ instead of the nominal $C(z)$:
+A more confident description of $\Delta{G_{Q}(z)}$ can be obtained
+considering FWL effects on digital controller coefficients, as described in
+Bessa {\it et al.}~\cite{Bessa16}, {\it i.e.}, using $FWL[C(z)]$ instead of
+the nominal $C(z)$:
 %
 \begin{equation}
 \label{eq:deltaG_final}
 \Delta{G_{Q}(z)}=\frac{\sigma^{2}_{Q}}{r}\cdot \frac{1+FWL[C(z)]G(z)}{FWL[C(z)]} \cdot \frac{z-1}{z}.
 \end{equation}
 
-Finally, Eq.~\eqref{eq:deltaG_final} is a suitable frequency domain model for quantization noise effects on closed-loop systems. This model depends on the plant pulse transfer function ($G(z)$), which is described by Eq.~\eqref{eq:pulsetf}, the height of step reference signal $r$, and the digital controller model.
+Finally, Eq.~\eqref{eq:deltaG_final} is a suitable frequency domain model
+for quantization noise effects on closed-loop systems.  This model depends
+on the plant pulse transfer function ($G(z)$), which is described by
+Eq.~\eqref{eq:pulsetf}, the height of step reference signal $r$, and the
+digital controller model.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Running Example} \label{sec:running-ex}
 
-A classical cruise control example is extracted from the literature~\cite{Astrom08}, where the discrete plant model (with time step of $0.2$s) is represented by the following z-expression:
+A classical cruise control example is extracted from the
+literature~\cite{Astrom08}, where the discrete plant model (with time step
+of $0.2$s) is represented by the following z-expression:
 
 \begin{equation}
 \label{Eq:running-example-plant}
 P\left(z\right) := \frac{0.0264}{z-0.9998}.
 \end{equation}
 
-Using an optimization tool, Wang {\it et al.}~\cite{DBLP:conf/hybrid/WangGRJF16} design a high-performance controller, which is characterized by the following z-expression:
+Using an optimization tool, Wang {\it et
+al.}~\cite{DBLP:conf/hybrid/WangGRJF16} design a high-performance
+controller, which is characterized by the following z-expression:
 
 \begin{equation}
 \label{Eq:running-example-controller}
 C\left(z\right) := \frac{2.72z^2 - 4.153z + 1.896}{z^2 - 1.844z + 0.8496}.
 \end{equation}
 
-The authors claim that this controller $C(z)$ is extremely stable for the discrete plant model $P(z)$. However, if implementation aspects are considered during verification, this controller becomes unstable. 
+The authors claim that this controller $C(z)$ is extremely stable for the
+discrete plant model $P(z)$.  However, if implementation aspects are
+considered during verification, this controller becomes unstable.
 
-For this particular example, the actual implementation of $C(z)$ using \param{3}{16} implementation format can be represented by the following z-expression:
+For this particular example, the actual implementation of $C(z)$ using
+\param{3}{16} implementation format can be represented by the following
+z-expression:
 
 \begin{equation}
 \label{Eq:running-example-controller-quantized}
@@ -630,26 +783,102 @@ This section is split into three parts. Section~\ref{experimental-objectives} de
 
 \paragraph{Robust synthesis of Linear Systems} 
 
-The problem of parametric control synthesis based on stability measures for continous Linear Time Invariant (LTI) Single Input-Single Output (SISO) systems has been researched for several decades. On a theoretical level it is a solved problem\cite{wonham1967pole} for which researches continuously seek better results based on a number of properties in addition to stability. A vast range of pole placement techniques such as Moore's algorithm for eigenstructure assignment \cite{klein1977eigenvalue} or the more recent Linear Quadratic Regulator (LQR) \cite{bemporad2002explicit} have been used in several papers with increasing degrees of succes to ensure stability. The latter approach highlights the importance of conserving energy during the control process, which results amongst other things in lower running costs. Since real systems are subject to tolerance and noise as well as the need for economy, more recent works focus on the problems of achieving robust stability with minimum gain \cite{schmid2014unified,konigorski2012pole}. 
-However, when extending the problem to digital controller synthesis, many of these techniques lack the ability to produce sound or stable results because they disregard the effects of quantization and rounding. Modern papers on implementations/synthesis of LTI digital controllers \cite{das2013lqr,ghosh2013fpga} focus on time discretization, failing to account for these error-inducing effects and can therefore result in digitally unstable systems that have been proven to be robustly stable in a continuous space. This situation demands the inclusion of formal methods to verify the effects of space discretization on the implementation of the controller.
+The problem of parametric control synthesis based on stability measures for
+continous Linear Time Invariant (LTI) Single Input-Single Output (SISO)
+systems has been researched for several decades.  On a theoretical level it
+is a solved problem~\cite{wonham1967pole} for which researches continuously
+seek better results based on a number of properties in addition to
+stability.  A vast range of pole placement techniques such as Moore's
+algorithm for eigenstructure assignment~\cite{klein1977eigenvalue} or the
+more recent Linear Quadratic Regulator (LQR)~\cite{bemporad2002explicit}
+have been used in several papers with increasing degrees of succes to ensure
+stability.  The latter approach highlights the importance of conserving
+energy during the control process, which results amongst other things in
+lower running costs.  Since real systems are subject to tolerance and noise
+as well as the need for economy, more recent works focus on the problems of
+achieving robust stability with minimum
+gain~\cite{schmid2014unified,konigorski2012pole}.  However, when extending
+the problem to digital controller synthesis, many of these techniques lack
+the ability to produce sound or stable results because they disregard the
+effects of quantization and rounding.  Modern papers on
+implementations/synthesis of LTI digital
+controllers~\cite{das2013lqr,ghosh2013fpga} focus on time discretization,
+failing to account for these error-inducing effects and can therefore result
+in digitally unstable systems that have been proven to be robustly stable in
+a continuous space.  This situation demands the inclusion of formal methods
+to verify the effects of space discretization on the implementation of the
+controller.
 
 \paragraph{Formal Verification of Linear Digital Controllers} 
 
-Researchers in formal verification methods of control systems have studied various effects of discretising the dynamics, including delayed response \cite{Duggirala2015}, and Finite Word Length (FWL) constraints with the objective to either verify (eg. \cite{daes20161}) or optimise (eg. \cite{oudjida2014design}) implementations. There are in fact two different problems arising from FWL effects. The first corresponds to the error in the dynamics caused by the inability of the hardware to represent the exact dynamics of the system whilst the second relates to rounding errors during computation. 
-In \cite{fialho1994stability} a stability measure based on the error of the digital dynamics ensures that the FWL errors do not make the digital system unstable. A more recent approach \cite{DBLP:journals/automatica/WuLCC09} uses $\mu$ calculus to directly model the digital controller so that the selected parameters are stable by design. Most papers following this line of verification focus on finding a correct implementation of a known desired controller, looking for optimal parameter representations using FWL but ignoring the effects of rounding errors due to issues of mathematical tractability.
-The analyses in \cite{DBLP:conf/hybrid/WangGRJF16,DBLP:conf/hybrid/RouxJG15} rely on an invariant computation on the discrete system dynamics using Semi-Definite Pogramming (SDP). Whilst the former uses BIBO properties to determine stability, the latter uses Lyapunov-based quadratic invariants. In both cases the SDP solver uses floating point arithmetic and soundness is checked by upper bounding the error.
+Researchers in formal verification methods of control systems have studied
+various effects of discretising the dynamics, including delayed
+response~\cite{Duggirala2015}, and Finite Word Length (FWL) constraints with
+the objective to either verify (eg.  \cite{daes20161}) or optimise
+(eg.~\cite{oudjida2014design}) implementations.  There are in fact two
+different problems arising from FWL effects.  The first corresponds to the
+error in the dynamics caused by the inability of the hardware to represent
+the exact dynamics of the system whilst the second relates to rounding
+errors during computation.  In \cite{fialho1994stability} a stability
+measure based on the error of the digital dynamics ensures that the FWL
+errors do not make the digital system unstable.  A more recent
+approach~\cite{DBLP:journals/automatica/WuLCC09} uses $\mu$ calculus to
+directly model the digital controller so that the selected parameters are
+stable by design.  Most papers following this line of verification focus on
+finding a correct implementation of a known desired controller, looking for
+optimal parameter representations using FWL but ignoring the effects of
+rounding errors due to issues of mathematical tractability.  The analyses
+in~\cite{DBLP:conf/hybrid/WangGRJF16,DBLP:conf/hybrid/RouxJG15} rely on an
+invariant computation on the discrete system dynamics using Semi-Definite
+Pogramming (SDP).  Whilst the former uses BIBO properties to determine
+stability, the latter uses Lyapunov-based quadratic invariants.  In both
+cases the SDP solver uses floating point arithmetic and soundness is checked
+by upper bounding the error.
 
 \paragraph{Robust Synthesis of FWL Digital Controllers}
 
-To the authors' knowledge, there is no existing work on the automatic synthesis of digital controllers considering FWL effects. Parameter synthesis tools such as \cite{cimatti2013parameter} use bounded model checking and fixed point computations to find parameters based on user defined specifications, but they often operate in the continuous domain and are ill-suited for robust analysis since they have no direct means of evaluating robustness. Other tools such as \cite{economakos2016automated} are directly aimed at robust stability problems but fail to explore the effects of FWL in their implementation.
-In order to provide a correct by design controller, \cite{alur2016compositional} requires a user-defined finite state abstraction to synthesise a digital controller based on high level specifications. Whilst this approach directly overcomes the challenges presented by the FWL problem, it still requires error-prone user intervention. A different solution that looks at the other end of the scale is an approach that synthesises word lengths for know problems as developed in \cite{jha2013swati}, however this provides neither an optimal word synthesis nor a comprehensive solution for the problem.
-It is from this vacuum that we seek to explore a CEGIS approach to FWL controller synthesis.
+To the authors' knowledge, there is no existing work on the automatic
+synthesis of digital controllers considering FWL effects.  Parameter
+synthesis tools such as~\cite{cimatti2013parameter} use bounded model
+checking and fixed point computations to find parameters based on user
+defined specifications, but they often operate in the continuous domain and
+are ill-suited for robust analysis since they have no direct means of
+evaluating robustness.  Other tools such as~\cite{economakos2016automated}
+are directly aimed at robust stability problems but fail to explore the
+effects of FWL in their implementation.  In order to provide a correct by
+design controller, \cite{alur2016compositional} requires a user-defined
+finite state abstraction to synthesise a digital controller based on high
+level specifications.  Whilst this approach directly overcomes the
+challenges presented by the FWL problem, it still requires error-prone user
+intervention.  A different solution that looks at the other end of the scale
+is an approach that synthesises word lengths for know problems as developed
+in \cite{jha2013swati}, however this provides neither an optimal word
+synthesis nor a comprehensive solution for the problem.  It is from this
+vacuum that we seek to explore a CEGIS approach to FWL controller synthesis.
 
 \paragraph{CEGIS}
 
-In recent years the development of program synthesis has found many ways to obtain correct by design programs from high level specifiactions. One such approach \cite{itzhaky2010simple} looks to inductively synthesise invariants to generate the desired programs. Since these digital programs are already constrained by designed to factors such as FWL, these approaches are ideal for the synthesis of parametric controllers.
-In \cite{DBLP:conf/cdc/RavanbakhshS15}, the authors use CEGIS for the synthesis of switching controllers for stabilizing continuous-time plants with polynomial dynamics. The work extends to its application on affine systems, finding its major challenge in the hardness of solving linear arithmetic on present SMT solvers. Since this approach uses switching states instead of linear dynamics in the digital controller, it entirely circumvents the FWL problem. It is also not suitable for the kind of control we seek to synthesise.
-What is needed in this regard is the combination of a synthesis engine with a control verification tool that addresses the challenges presented here in the form of FWL effects and stability measures for LTI SISO controllers. We take the former from \cite{} and the latter from \cite{daes20161} whilst enhancing the procedure by evaluating the quantaization effects of the Hardware interfaces (ADC/DAC) to obtain an accurate discrete time FWL representation of the continuous dynamics.
+In recent years the development of program synthesis has found many ways to
+obtain correct by design programs from high level specifiactions.  One such
+approach~\cite{itzhaky2010simple} looks to inductively synthesise invariants
+to generate the desired programs.  Since these digital programs are already
+constrained by designed to factors such as FWL, these approaches are ideal
+for the synthesis of parametric controllers. 
+In~\cite{DBLP:conf/cdc/RavanbakhshS15}, the authors use CEGIS for the
+synthesis of switching controllers for stabilizing continuous-time plants
+with polynomial dynamics.  The work extends to its application on affine
+systems, finding its major challenge in the hardness of solving linear
+arithmetic on present SMT solvers.  Since this approach uses switching
+states instead of linear dynamics in the digital controller, it entirely
+circumvents the FWL problem.  It is also not suitable for the kind of
+control we seek to synthesise.  What is needed in this regard is the
+combination of a synthesis engine with a control verification tool that
+addresses the challenges presented here in the form of FWL effects and
+stability measures for LTI SISO controllers.  We take the former
+from~\cite{} and the latter from \cite{daes20161} whilst enhancing the
+procedure by evaluating the quantaization effects of the Hardware interfaces
+(ADC/DAC) to obtain an accurate discrete time FWL representation of the
+continuous dynamics.
  
 %In \cite{DBLP:journals/corr/PakmehrWJVF13}, Pakmehr et al.  design a control software verification framework for gas turbine engines.
 
