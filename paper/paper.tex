@@ -214,23 +214,23 @@ plant, as shown in Fig.~\ref{fig:closed-system}.
 \label{verifying-closed-loop-control-systems}
 %------------------------------------
 
-In this study, the methodology used for verifying closed-loop digital control system is based on the Digital-System Verifier (DSVerifier)~\cite{IsmailBCFF15}, which checks the stability of control systems considering finite-word length (FWL) effects in the digital controller and uncertainty parameters in the plant model (plant intervals)~\cite{Bessa16}. Let $C(z)$ be a digital controller and $P(z)$ be a plant model given as
+In this study, the methodology used for verifying closed-loop digital control system is based on the Digital-System Verifier (DSVerifier)~\cite{IsmailBCFF15}, which checks the stability of control systems considering finite-word length (FWL) effects in the digital controller and uncertainty parameters in the plant model (plant intervals)~\cite{Bessa16}. Let $C(z)$ be a digital controller and $G(z)$ be a plant model given as
 
 \begin{align}
 \small
 \label{controller_plant_tf}
 C(z)&=\frac{\beta_{0}+\beta_{1}z^{-1}+...+\beta_{M_C}z^{-M_C}}{\alpha_{0}+\alpha_{1}z^{-1}+...+\alpha_{N_C}z^{-N_C}}, \\
 %\label{plant_tf}
-P(z)&=\frac{b_{0}+b_{1}z^{-1}+...+b_{M_G}z^{-M_G}}{a_{0}+a_{1}z^{-1}+...+a_{N_G}z^{-N_G}}.
+G(z)&=\frac{b_{0}+b_{1}z^{-1}+...+b_{M_G}z^{-M_G}}{a_{0}+a_{1}z^{-1}+...+a_{N_G}z^{-N_G}}.
 \end{align}
 
-\noindent where $\beta$ and $\alpha$ are the controller's coefficients, $b$ and $a$ are the plant's coefficients, and $N$ and $M$ are the number of bits of the integer and fractional part, respectively. Note that $P(z)$ is a discrete model of a real (and continuous) plant, {\it i.e.}, a continuous model of the plant must be discretized to obtain the discrete equivalent coefficients $b$ and $a$~\cite{Astrom08}. Although there are several discretization methods available in the literature~\cite{Franklin15}, the zero-order hold (ZOH) discretization is more suitable for representing the sampling processes that are typically employed by hybrid systems~\cite{istepanian2012digital}.
+\noindent where $\beta$ and $\alpha$ are the controller's coefficients, $b$ and $a$ are the plant's coefficients, and $N$ and $M$ are the number of bits of the integer and fractional part, respectively. Note that $G(z)$ is a discrete model of a real (and continuous) plant, {\it i.e.}, a continuous model of the plant must be discretized to obtain the discrete equivalent coefficients $b$ and $a$~\cite{Astrom08}. Although there are several discretization methods available in the literature~\cite{Franklin15}, the zero-order hold (ZOH) discretization is more suitable for representing the sampling processes that are typically employed by hybrid systems~\cite{istepanian2012digital}.
 
-Let $C(z)$ and $P(z)$ transfer functions be arranged in vectors $c_0$ and $p_0$, respectively.
-For each $C(z)$ implementation, there is a function $FWL[\cdot]:\mathbb{R}^{N_C+M_C}\rightarrow Q[\mathbb{R}^{N_C+M_C}]$, which applies FWL effects to the controller $C(z)$, where $Q[\mathbb{R}]$ represents the quantized set of representable real numbers in the chosen implementation format \param{N_C}{_C}. The quantized controller parameters vector ($c$) is generated via $FWL[c_0]$. The uncertain plant parameters ($p$) can be expressed as
+Let $C(z)$ and $G(z)$ transfer functions be arranged in vectors $c_0$ and $g_0$, respectively.
+For each $C(z)$ implementation, there is a function $FWL[\cdot]:\mathbb{R}^{N_C+M_C}\rightarrow Q[\mathbb{R}^{N_C+M_C}]$, which applies FWL effects to the controller $C(z)$, where $Q[\mathbb{R}]$ represents the quantized set of representable real numbers in the chosen implementation format \param{N_C}{M_C}. The quantized controller parameters vector ($c$) is generated via $FWL[c_0]$. The uncertain plant parameters ($g$) can be expressed as
 
 \begin{equation}
-p = p_0 + \Delta{p} = \left [
+g = g_0 + \Delta{g} = \left [
 				\begin{tabular}{c}
 				$b_{0}+\Delta{b_{0}} ~ b_{1}+\Delta{b_{1}} ~ ... ~ b_{M_G}+\Delta{b_{M_G}}$ \\%~ 
 				$a_{0}+\Delta{a_{0}} ~ a_{1}+\Delta{a_{1}} ~ ... ~ a_{N_G}+\Delta{a_{N_G}}$
@@ -239,7 +239,7 @@ p = p_0 + \Delta{p} = \left [
 \end{equation}
  
 \vspace{1 mm} 
-\noindent where $\Delta{p}$ represents the plant uncertainties coefficients. The polynomial set of possible values of $p$ is denoted by $\mathfrak{P}$.
+\noindent where $\Delta{g}$ represents the plant uncertainties coefficients. The polynomial set of possible values of $g$ is denoted by $\mathfrak{G}$.
 
 %------------------------------------
 \subsection{DSVerifier Verification Flow}
@@ -255,13 +255,13 @@ DSVerifier verification flow is shown in Fig.~\ref{DSVerifier_process}. Steps fr
 \label{DSVerifier_process}
 \end{figure*}
 
-In Step $1$, the user provides inputs $p_0$ and $\Delta{p}\%$ ({\it i.e.}, percentage form of $\Delta{p}$), which contain the plant model and the interval, respectively. In Step $2$, a digital controller must be designed with any preferred method, where $c_0$ is obtained. The controller numerical representation and realization form are chosen in Steps $3$ and $4$, respectively. In Step $5$, the user finally configures the verification parameters ({\it e.g.}, verification time, properties, and BMC tool). After that, DSVerifier verification engine performs an (automatic) verification of the desired property $\phi$ ({\it i.e.}, stability). The user steps described in Steps $1$-$5$ results in an ANSI-C code that should be used as an input for DSVerifier.
+In Step $1$, the user provides inputs $g_0$ and $\Delta{g}\%$ ({\it i.e.}, percentage form of $\Delta{g}$), which contain the plant model and the interval, respectively. In Step $2$, a digital controller must be designed with any preferred method, where $c_0$ is obtained. The controller numerical representation and realization form are chosen in Steps $3$ and $4$, respectively. In Step $5$, the user finally configures the verification parameters ({\it e.g.}, verification time, properties, and BMC tool). After that, DSVerifier verification engine performs an (automatic) verification of the desired property $\phi$ ({\it i.e.}, stability). The user steps described in Steps $1$-$5$ results in an ANSI-C code that should be used as an input for DSVerifier.
 
-In Step A, DSVerifier constructs a non-deterministic model to represent the plant family $\mathfrak{P}$ using $p_0$ and $\Delta{p}\%$, which are provided in Step $1$. DSVerifier then formulates $FWL[\cdot]$ in Step B using implementation details provided from Steps $2$ and $3$, and then computes $FWL[c_0]$ in Step C. Thus, DSVerifier builds an intermediate ANSI-C code for the digital system implementation, which is used as input for the model-checker, as pointed in Step D.
+In Step A, DSVerifier constructs a non-deterministic model to represent the plant family $\mathfrak{G}$ using $g_0$ and $\Delta{g}\%$, which are provided in Step $1$. DSVerifier then formulates $FWL[\cdot]$ in Step B using implementation details provided from Steps $2$ and $3$, and then computes $FWL[c_0]$ in Step C. Thus, DSVerifier builds an intermediate ANSI-C code for the digital system implementation, which is used as input for the model-checker, as pointed in Step D.
 
-This intermediate ANSI-C code model has three main modules: digital controller code to be embedded into the microprocessor; plant model code, which simulates the plant model dynamics considering uncertainties; and ``assert'' and ``assume'' statements, which control the verification flow. For the digital controller code, transfer functions coefficients are quantized and deterministic, and all operations use fixed-point arithmetic. In the plant model code, transfer function coefficients are not quantized, but represented with maximum precision based on double data-type variables; they are treated as non-deterministic variables to support model uncertainties. The directive ``assume'' bounds non-deterministic variables, {\it i.e.}, inputs and plant uncertain coefficients.
+This intermediate ANSI-C code model has three main modules: digital controller code to be embedded into the microprocessor; plant model code, which simulates the plant model dynamics considering uncertainties; and ``assert'' and ``assume'' statements, which control the verification flow. For the digital controller code, transfer functions coefficients are quantized and deterministic, and all operations use fixed-point arithmetic. \textcolor{red}{In the plant model code, transfer function coefficients are not quantized, but represented with maximum precision based on float data-type variables}; they are treated as non-deterministic variables to support model uncertainties. The directive ``assume'' bounds non-deterministic variables, {\it i.e.}, inputs and plant uncertain coefficients.
 
-Finally in the Step D, the translation of ANSI-C code into SAT/SMT formulae is done by a back-end model-checking tool ({\it e.g.}, CBMC~\cite{ClarkeKL04} or ESBMC~\cite{CordeiroFM12}). Here, DSVerifier symbolically checks a given property $\phi$ with respect to closed-loop systems, which are composed by $FWL[c_0]$ and every $p$ in $\mathfrak{P}$. If any property violation is found, then DSVerifier reports a counterexample, which contains system inputs or parametric deviations $\Delta{p}\%$ that lead the system to a failure. A successful verification result is reported if the system is safe with respect to $\phi$. In particular, the stability verification is complete and sound, since it does not depend on system outputs and inputs.
+Finally in the Step D, the translation of ANSI-C code into SAT/SMT formulae is done by a back-end model-checking tool ({\it e.g.}, CBMC~\cite{ClarkeKL04} or ESBMC~\cite{CordeiroFM12}). Here, DSVerifier symbolically checks a given property $\phi$ with respect to closed-loop systems, which are composed by $FWL[c_0]$ and every $g$ in $\mathfrak{G}$. If any property violation is found, then DSVerifier reports a counterexample, which contains system inputs or parametric deviations $\Delta{g}\%$ that lead the system to a failure. A successful verification result is reported if the system is safe with respect to $\phi$. In particular, the stability verification is complete and sound, since it does not depend on system outputs and inputs.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{A Uncertainty Model for Quantization Error} 
