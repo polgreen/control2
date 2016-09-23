@@ -194,7 +194,7 @@ systems considering finite-word length (FWL) effects in the digital
 controller and uncertainty parameters in the plant model (plant
 intervals)~\cite{Bessa16}.  Let $C(z)$ be a digital controller and $G(z)$ be
 a plant model given as
-
+%
 \begin{align}
 \small
 \label{controller_plant_tf}
@@ -202,12 +202,28 @@ C(z)&=\frac{\beta_{0}+\beta_{1}z^{-1}+...+\beta_{M_C}z^{-M_C}}{\alpha_{0}+\alpha
 %\label{plant_tf}
 G(z)&=\frac{b_{0}+b_{1}z^{-1}+...+b_{M_G}z^{-M_G}}{a_{0}+a_{1}z^{-1}+...+a_{N_G}z^{-N_G}}.
 \end{align}
+%
+\noindent where $\beta$ and $\alpha$ are the controller's coefficients, $b$
+and $a$ are the plant's coefficients, and $N$ and $M$ are the number of bits
+of the integer and fractional part, respectively.  Note that $G(z)$ is a
+discrete model of a real (and continuous) plant, {\it i.e.}, a continuous
+model of the plant must be discretized to obtain the discrete equivalent
+coefficients $b$ and $a$~\cite{Astrom08}.  Although there are several
+discretization methods available in the literature~\cite{Franklin15}, the
+zero-order hold (ZOH) discretization is more suitable for representing the
+sampling processes that are typically employed by hybrid
+systems~\cite{istepanian2012digital}.
 
-\noindent where $\beta$ and $\alpha$ are the controller's coefficients, $b$ and $a$ are the plant's coefficients, and $N$ and $M$ are the number of bits of the integer and fractional part, respectively. Note that $G(z)$ is a discrete model of a real (and continuous) plant, {\it i.e.}, a continuous model of the plant must be discretized to obtain the discrete equivalent coefficients $b$ and $a$~\cite{Astrom08}. Although there are several discretization methods available in the literature~\cite{Franklin15}, the zero-order hold (ZOH) discretization is more suitable for representing the sampling processes that are typically employed by hybrid systems~\cite{istepanian2012digital}.
-
-Let $C(z)$ and $G(z)$ transfer functions be arranged in vectors $c_0$ and $g_0$, respectively.
-For each $C(z)$ implementation, there is a function $FWL[\cdot]:\mathbb{R}^{N_C+M_C}\rightarrow Q[\mathbb{R}^{N_C+M_C}]$, which applies FWL effects to the controller $C(z)$, where $Q[\mathbb{R}]$ represents the quantized set of representable real numbers in the chosen implementation format \param{N_C}{M_C}. The quantized controller parameters vector ($c$) is generated via $FWL[c_0]$. The uncertain plant parameters ($g$) can be expressed as
-
+Let $C(z)$ and $G(z)$ transfer functions be arranged in vectors $c_0$ and
+$g_0$, respectively.  For each $C(z)$ implementation, there is a function
+$\mathit{FWL}[\cdot]:\mathbb{R}^{N_C+M_C}\rightarrow
+Q[\mathbb{R}^{N_C+M_C}]$, which applies FWL effects to the controller
+$C(z)$, where $Q[\mathbb{R}]$ represents the quantized set of representable
+real numbers in the chosen implementation format \param{N_C}{M_C}.  The
+quantized controller parameters vector ($c$) is generated via
+$\mathit{FWL}[c_0]$.  The uncertain plant parameters ($g$) can be expressed
+as
+%
 \begin{equation}
 g = g_0 + \Delta{g} = \left [
 				\begin{tabular}{c}
@@ -225,12 +241,12 @@ g = g_0 + \Delta{g} = \left [
 \label{verification-flow}
 %------------------------------------
 
-DSVerifier verification flow is shown in Fig.~\ref{DSVerifier_process}. 
-Steps from $1$ to $5$ are performed by users and Steps A to D are
-automatically performed by DSVerifier, which accepts the digital controller
-transfer functions together with the plant model.  For any digital
-controller, implementation details should be provided ({\it e.g.}, number of
-bits, realization, and sample time).
+The DSVerifier verification flow is illustrated in
+Fig.~\ref{DSVerifier_process}.  Steps $1$ to $5$ are performed by users and
+Steps A to D are automatically performed by DSVerifier, which accepts the
+digital controller transfer functions together with the plant model.  For
+any digital controller, implementation details should be provided ({\it
+e.g.}, number of bits, realization, and sample time).
 
 \begin{figure*}[t]
 \centering
@@ -248,16 +264,16 @@ $4$, respectively.  In Step $5$, the user finally configures the
 verification parameters ({\it e.g.}, verification time, properties, and BMC
 tool).  After that, DSVerifier verification engine performs an (automatic)
 verification of the desired property $\phi$ ({\it i.e.}, stability).  The
-user steps described in Steps $1$-$5$ results in an ANSI-C code that should
+user steps described in Steps $1$--$5$ result in an ANSI-C code that should
 be used as an input for DSVerifier.
 
 In Step A, DSVerifier constructs a non-deterministic model to represent the
 plant family $\mathfrak{G}$ using $g_0$ and $\Delta{g}\%$, which are
-provided in Step $1$.  DSVerifier then formulates $FWL[\cdot]$ in Step B
-using implementation details provided from Steps $2$ and $3$, and then
-computes $FWL[c_0]$ in Step C.  Thus, DSVerifier builds an intermediate
-ANSI-C code for the digital system implementation, which is used as input
-for the model-checker, as pointed in Step D.
+provided in Step $1$.  DSVerifier then formulates $\mathit{FWL}[\cdot]$ in
+Step B using implementation details provided from Steps $2$ and $3$, and
+then computes $\mathit{FWL}[c_0]$ in Step C.  Thus, DSVerifier builds an
+intermediate ANSI-C code for the digital system implementation, which is
+used as input for the model-checker, as pointed in Step D.
 
 This intermediate ANSI-C code model has three main modules: digital
 controller code to be embedded into the microprocessor; plant model code,
