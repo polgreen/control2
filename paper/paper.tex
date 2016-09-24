@@ -792,18 +792,17 @@ This section is split into three parts. Section~\ref{experimental-objectives} de
 \label{experimental-setup}
 %---------------------------------
 
-The discrete plant of a cruise control model with time step
-of 0.2s for the car accounting for rolling friction, aerodynamic drag, 
-and gravitational disturbance force is considered~\cite{Astrom08} 
-as follows
+The first set of benchmarks considers the discrete plant of a cruise 
+control model for the car accounting for rolling friction, aerodynamic drag, 
+and gravitational disturbance force~\cite{Astrom08} as follows
 %
 \begin{equation}
 \label{cruise-control-c1}
-G(z)=\frac{0.0264}{z-0.998}. \nonumber
+G_1(z)=\frac{0.0264}{z-0.998}. \nonumber
 \end{equation} 
 
 Two proportional-integral (PI) controllers are designed by Wang {\it et al.} 
-for the cruise control plant $G(z)$ \cite{DBLP:conf/hybrid/WangGRJF16}, 
+for the cruise control plant $G(z)$~\cite{DBLP:conf/hybrid/WangGRJF16}, 
 which has the following mathematical model
 %
 \begin{equation}
@@ -815,6 +814,22 @@ C_{1}(z)=\frac{1.51z-1.3586}{z-1}, \nonumber
 \label{cruise-control-g2}
 C_{2}(z)=\frac{2.72z^2 - 4.153z + 1.896}{1.0z^2 - 1.844z + 0.8496}. \nonumber
 \end{equation} 
+
+The second set of benchmarks considers a simple spring-mass 
+damper~\cite{DBLP:conf/hybrid/WangGRJF16}, where both discrete 
+plant dynamics and controller are represented by the following 
+z-expression, resp.
+%
+\begin{equation}
+\label{spring-mass-damper-g}
+G_2(z)=\frac{5\times{10^{-5}}z + 5\times{10^{-5}}}{z^2 - 2z + 1.0001}, \nonumber
+\end{equation} 
+%
+\begin{equation}
+\label{spring-mass-damper-c}
+C_3(z)=\frac{1.28\times{10^{3}}z^2 - 1.354240\times{10^{3}}z + 0.074879\times{10^{3}}}{z^2 - 1.4990z + 0.4995}. \nonumber
+\end{equation} 
+
 
 All experiments were conducted on an otherwise idle Intel Core i$7$-$4790$ 
 CPU $3$.$60$ GHz, $16$ GB of RAM, and Linux OS.  All times given are wall 
