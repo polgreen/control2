@@ -626,7 +626,7 @@ of $0.2$s) is represented by the following z-expression:
 
 \begin{equation}
 \label{Eq:running-example-plant}
-P\left(z\right) := \frac{0.0264}{z-0.9998}.
+G\left(z\right) := \frac{0.0264}{z-0.9998}.
 \end{equation}
 
 Using an optimization tool, Wang {\it et
@@ -639,7 +639,7 @@ C\left(z\right) := \frac{2.72z^2 - 4.153z + 1.896}{z^2 - 1.844z + 0.8496}.
 \end{equation}
 
 The authors claim that this controller $C(z)$ is extremely stable for the
-discrete plant model $P(z)$.  However, if implementation aspects are
+discrete plant model $G(z)$.  However, if implementation aspects are
 considered during verification, this controller becomes unstable.
 
 For this particular example, the actual implementation of $C(z)$ using
@@ -788,9 +788,24 @@ This section is split into three parts. Section~\ref{experimental-objectives} de
 %---------------------------------
 
 %---------------------------------
-\subsection{Setup}
+\subsection{Description of Benchmarks}
 \label{experimental-setup}
 %---------------------------------
+
+%
+\begin{equation}
+\label{cruise-control-g1}
+G_{1}(z)=\frac{1.51z-1.3586}{z-1}.
+\end{equation} 
+%
+\begin{equation}
+\label{cruise-control-c1}
+C_{1}(z)=\frac{0.0264}{z-0.998}.
+\end{equation} 
+
+All experiments were conducted on an otherwise idle Intel Core i$7$-$4790$ 
+CPU $3$.$60$ GHz, $16$ GB of RAM, and Linux OS.  All times given are wall 
+clock time in seconds as measured by the UNIX time command.
 
 %---------------------------------
 \subsection{Results}
