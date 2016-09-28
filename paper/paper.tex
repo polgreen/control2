@@ -141,7 +141,7 @@ The results show...
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
 
-Modern implementations of embedded control have proliferated with the availability of low cost devices that can perform simple tasks for linear control, spanning many areas such as environmental control and robotic manipulations. The downside to this approach is that in order to achieve low prices, devices are often limited in their capabilities, be it a low number of gates in an FPGA or short word lengths for microcontrollers. The ubiquity of these devices requires that they have a robust design that ensures the correct behaviour in a number of environments.
+Modern implementations of embedded control have proliferated with the availability of low cost devices that can perform simple tasks for linear control, spanning many areas such as environmental control and robotic manipulations. The downside to this approach is that in order to achieve low prices, devices are often limited in their capabilities, be it a low number of gates in an FPGA or short word lengths for microcontrollers. In most cases a floating point implementation is not feasible and the system can benefit from the added resolution of a fixed point representation. The ubiquity of these devices requires that they have a robust design that ensures the correct behaviour in a number of environments.
 For this reason it is necessary to provide design tools that formally verify the correctness of the digital controller and in particular we explore the automatic synthesis of these controllers which reduces the deveopment cost and design time for a number of models.
 
 We are interested in the stability of hybrid closed-loop systems, i.e.,
@@ -909,7 +909,7 @@ by upper bounding the error.
 \paragraph{Robust Synthesis of FWL Digital Controllers}
 
 To the authors' knowledge, there is no existing work on the automatic
-synthesis of digital controllers considering FWL effects.  Parameter
+synthesis of fixed point digital controllers considering FWL effects.  Parameter
 synthesis tools such as~\cite{cimatti2013parameter} use bounded model
 checking and fixed point computations to find parameters based on user
 defined specifications, but they often operate in the continuous domain and
@@ -946,7 +946,7 @@ control we seek to synthesise.  What is needed in this regard is the
 combination of a synthesis engine with a control verification tool that
 addresses the challenges presented here in the form of FWL effects and
 stability measures for LTI SISO controllers.  We take the former
-from~\cite{} and the latter from \cite{daes20161} whilst enhancing the
+from~\cite{DBLP:conf/lpar/DavidKL15} and the latter from \cite{daes20161} whilst enhancing the
 procedure by evaluating the quantaization effects of the Hardware interfaces
 (ADC/DAC) to obtain an accurate discrete time FWL representation of the
 continuous dynamics.
