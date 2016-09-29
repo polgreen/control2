@@ -29,6 +29,9 @@
 \usepackage{longtable}
 \usepackage{afterpage}
 \usepackage{wasysym}
+%\usetikzlibrary{decorations}
+%\usetikzlibrary{decorations.pathmorphing}
+
 
 \newtheorem{myassumption}{Assumption}
 \newtheorem{mylemma}{Lemma}
@@ -149,30 +152,56 @@ plant, as shown in Fig.~\ref{fig:closed-system}.
      semithick, initial text=, ampersand replacement=\&,]
 
   \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center}, row sep=1cm, column sep=1cm] {
-   \coordinate (aux0);
-   \& \node[circle] (circle) {}; 
-   \& \node[fill=yellow!20] (da) {{\sc D/A}}; 
-   \& \node[fill=yellow!20] (p) {{\sc P}};
-   \& \node[fill=yellow!20] (ad) {{\sc A/D}}; 
-   \& \coordinate (aux1);\\
+    \node[draw=none] (r) {r};
+%   \& \coordinate (aux0);
+   \& \node[circle] (circle) {};
+   \& complexnode/.pic={ 
+     \node[rectangle,draw,
+	minimum width=4cm,
+	minimum height=1cm,
+	label=\textbf{ADC},] (adc) {};
+   \draw[] ([xshift=-1cm]adc.center) -- ++(0.5,0.2cm);
+   \coordinate (switch1) at ([xshift=-1cm]adc.center);
+   \coordinate (switch2) at ([xshift=-0.4cm]adc.center);
+   \node[fill=yellow!20] (q1) at ([xshift=1cm]adc.center) {{\sc Q1}};} 
+   \& \node[rectangle,draw,
+	minimum width=1cm,
+	minimum height=1cm,
+        label=\textbf{Controller}] (cz) {{\sc C(z)}};
+   \& complexnode/.pic={ 
+      \node[rectangle,draw,
+	minimum width=3cm,
+	minimum height=1cm,
+	label=\textbf{DAC},] (dac) {};
+     \node[fill=yellow!20] (q2) at ([xshift=-.65cm]dac.center) {{\sc Q2}};
+     \node[fill=yellow!20] (zoh) at ([xshift=.65cm]dac.center) {{\sc ZOH}};}
+   \& \node[rectangle,draw,
+	minimum width=1cm,
+	minimum height=1cm,
+        label=\textbf{Plant}] (gs) {{\sc G(s)}};
+   \& \coordinate (aux1);
+   \& \node[draw=none] (y) {y};\\
    \& \coordinate (aux3); 
    \&
    \&
-   \node[fill=yellow!20] (c) {C};
+   \& 
    \& 
    \& \coordinate (aux2);\\
   };
 
 
-  \path[->] (aux0) edge (circle.west);
+  \path[->] (r) edge (circle.west);
+  \path[->] (aux1) edge (y);
   \path  
-   (circle.east) edge (da.west)
-   (da.east) edge (p.west)
-   (p.east) edge (ad.west)
-   (ad.east) edge (aux1.west)
+   (circle.east) edge (switch1)
+   (switch2) edge (q1.west)
+   (q1.east) edge (cz.west)
+   (cz.east) edge (q2.west)
+   (q2.east) edge (zoh.west)
+   (zoh.east) edge (gs.west)
+   (gs.east) edge (aux1.west)
    (aux1.south) edge (aux2.north)
-   (aux2.west) edge (c.east)
-   (c.west) edge (aux3.east); 
+   (aux2.west) edge (aux3.east); 
   \path[->]  (aux3.north) edge (circle.south);
  \end{tikzpicture}
 }
@@ -340,10 +369,74 @@ noise.
 %
 \begin{figure}[ht]
 \centering
-\includegraphics[width=\columnwidth]{figures/hsystembd.pdf}
-\caption{Sampled system.}
-\label{fig:sampledsystem}
+\resizebox{.5\textwidth}{!}{
+ \begin{tikzpicture}[scale=0.3,-,>=stealth',shorten >=.2pt,auto,
+     semithick, initial text=, ampersand replacement=\&,]
+
+  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center}, row sep=.5cm, column sep=.5cm] {
+    \node[draw=none] (r) {r};
+%   \& \coordinate (aux0);
+   \& \node[circle] (circle) {};
+   \& complexnode/.pic={ 
+     \node[rectangle,draw,
+	minimum width=4cm,
+	minimum height=1cm,
+	label=\textbf{ADC},] (adc) {};
+   \draw[] ([xshift=-1cm]adc.center) -- ++(0.5,0.2cm);
+   \coordinate (switch1) at ([xshift=-1cm]adc.center);
+   \coordinate (switch2) at ([xshift=-0.4cm]adc.center);
+   \node[fill=yellow!20] (q1) at ([xshift=1cm]adc.center) {{\sc Q1}};} 
+   \& \node[rectangle,draw,
+	minimum width=1cm,
+	minimum height=1cm,
+        label=\textbf{Controller}] (cz) {{\sc C(z)}};
+   \& complexnode/.pic={ 
+      \node[rectangle,draw,
+	minimum width=3cm,
+	minimum height=1cm,
+	label=\textbf{DAC},] (dac) {};
+     \node[fill=yellow!20] (q2) at ([xshift=-.65cm]dac.center) {{\sc Q2}};
+     \node[fill=yellow!20] (zoh) at ([xshift=.65cm]dac.center) {{\sc ZOH}};}
+   \& \node[rectangle,draw,
+	minimum width=1cm,
+	minimum height=1cm,
+        label=\textbf{Plant}] (gs) {{\sc G(s)}};
+   \& \coordinate (aux1);
+   \& \node[draw=none] (y) {y};\\
+   \& \coordinate (aux3); 
+   \&
+   \&
+   \& 
+   \& 
+   \& \coordinate (aux2);\\
+  };
+
+
+  \path[->] (r) edge (circle.west);
+  \path[->] (aux1) edge (y);
+  \path  
+   (circle.east) edge (switch1)
+   (switch2) edge (q1.west)
+   (q1.east) edge (cz.west)
+   (cz.east) edge (q2.west)
+   (q2.east) edge (zoh.west)
+   (zoh.east) edge (gs.west)
+   (gs.east) edge (aux1.west)
+   (aux1.south) edge (aux2.north)
+   (aux2.west) edge (aux3.east); 
+  \path[->]  (aux3.north) edge (circle.south);
+ \end{tikzpicture}
+}
+ \caption{Sampled System. \label{fig:sampledsystem}}
 \end{figure}
+
+
+%% \begin{figure}[ht]
+%% \centering
+%% \includegraphics[width=\columnwidth]{figures/hsystembd.pdf}
+%% \caption{Sampled system.}
+%% \label{fig:sampledsystem}
+%% \end{figure}
 
 First, some assumptions have to be established to obtain a model for
 $\Delta{G_{Q}(z)}$.
