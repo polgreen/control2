@@ -124,7 +124,10 @@ of Closed-loop Digital Control Systems}
 
 \maketitle
 \begin{abstract}
-
+Modern control systems are by and large implemented in digital microcontrollers. This poses a new dimension to the problem of correct by design controllers which do not only need to look at the dynamics involved, but also at the effects of digitalization. This is particularly true in small size implementations where the effects of word length are significant with respect to the dynamics.
+This work focuses on the synthesis of digital controllers for Linear Time Invariant SISO systems. We explore the effects of digitalization of the continuous signals and Fixed Word Length (FWL) in the controller dynamics.
+To this end we propose a CEGIS solution that uses inductive invariant synthesis in conjunction with a digital stability verification algorithm from a well known tool to find a parametric solution for a digital controller given a model specification. The algorithm factors in quantization errors, sample and hold behaviour, and parameter representation round-offs.
+The results show...
 \end{abstract}
 
 
@@ -136,14 +139,20 @@ of Closed-loop Digital Control Systems}
 % We no longer use \terms command
 %\terms{Theory}
 
-\keywords{}
+\keywords{Control Synthesis, CEGIS, FWL}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
 
-We are interested in the stability of closed-loop systems, i.e.,
-controllers along with a model of their physical environment, the
-plant, as shown in Fig.~\ref{fig:closed-system}.
+Modern implementations of embedded control have proliferated with the availability of low cost devices that can perform simple tasks for linear control, spanning many areas such as environmental control and robotic manipulations. The downside to this approach is that in order to achieve low prices, devices are often limited in their capabilities, be it a low number of gates in an FPGA or short word lengths for microcontrollers. In most cases a floating point implementation is not feasible and the system can benefit from the added resolution of a fixed point representation. The ubiquity of these devices requires that they have a robust design that ensures the correct behaviour in a number of environments.
+For this reason it is necessary to provide design tools that formally verify the correctness of the digital controller and in particular we explore the automatic synthesis of these controllers which reduces the deveopment cost and design time for a number of models.
+
+We are interested in the stability of hybrid closed-loop systems, i.e.,
+embedded controllers along with a model of their physical environment, the
+plant, as shown in Fig.~\ref{fig:closed-system}. Due to the complexity of such systems, we focus on linear models with known configurations to perform parametric synthesis of the controller dynamics. 
+
+Since the digital control synthesis is performed over a hybrid model, where the plant display a continuous behaviour and the controller operates in both discrete time and state-space, we initially translate the problem into a single domain which represents a bi-simulation of the original dynamics. Given or primary interest in evaluating digital effects in addition to stability, we have modeled a digital equivalent of the plant by evaluating the effects of the quantisers (A/D and D/A converters) as time discretisation elements with quantisation noise.
+The resulting closed loop system is a program loop working over bit-vectors of fixed point arithmetic with fixed word length. The effect of the FWL is included in the model as a parametric uncertainty which must be taken into account for the correct synthesis of the controller. 
 
 \begin{figure*}
 \centering
@@ -963,11 +972,16 @@ Pogramming (SDP).  Whilst the former uses BIBO properties to determine
 stability, the latter uses Lyapunov-based quadratic invariants.  In both
 cases the SDP solver uses floating point arithmetic and soundness is checked
 by upper bounding the error.
+An alternative approach is taken by \cite{park2016scalable}, where the verification of existing
+code is performed against a known model by extracting an LTI model of the
+code through symbolic execution. In order to account for rounding errors, an
+upper bound is introduced in the verification phase. If the error of the implementation
+is lower than this tolerance level, then the verification is successful. 
 
 \paragraph{Robust Synthesis of FWL Digital Controllers}
 
 To the authors' knowledge, there is no existing work on the automatic
-synthesis of digital controllers considering FWL effects.  Parameter
+synthesis of fixed point digital controllers considering FWL effects.  Parameter
 synthesis tools such as~\cite{cimatti2013parameter} use bounded model
 checking and fixed point computations to find parameters based on user
 defined specifications, but they often operate in the continuous domain and
@@ -1004,7 +1018,7 @@ control we seek to synthesise.  What is needed in this regard is the
 combination of a synthesis engine with a control verification tool that
 addresses the challenges presented here in the form of FWL effects and
 stability measures for LTI SISO controllers.  We take the former
-from~\cite{} and the latter from \cite{daes20161} whilst enhancing the
+from~\cite{DBLP:conf/lpar/DavidKL15} and the latter from \cite{daes20161} whilst enhancing the
 procedure by evaluating the quantaization effects of the Hardware interfaces
 (ADC/DAC) to obtain an accurate discrete time FWL representation of the
 continuous dynamics.
