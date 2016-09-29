@@ -154,13 +154,13 @@ plant, as shown in Fig.~\ref{fig:closed-system}. Due to the complexity of such s
 Since the digital control synthesis is performed over a hybrid model, where the plant display a continuous behaviour and the controller operates in both discrete time and state-space, we initially translate the problem into a single domain which represents a bi-simulation of the original dynamics. Given or primary interest in evaluating digital effects in addition to stability, we have modeled a digital equivalent of the plant by evaluating the effects of the quantisers (A/D and D/A converters) as time discretisation elements with quantisation noise.
 The resulting closed loop system is a program loop working over bit-vectors of fixed point arithmetic with fixed word length. The effect of the FWL is included in the model as a parametric uncertainty which must be taken into account for the correct synthesis of the controller. 
 
-\begin{figure*}
+\begin{figure}
 \centering
-\resizebox{.5\textwidth}{!}{
+\resizebox{.35\textwidth}{!}{
  \begin{tikzpicture}[scale=0.3,-,>=stealth',shorten >=.2pt,auto,
      semithick, initial text=, ampersand replacement=\&,]
 
-  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center}, row sep=1cm, column sep=1cm] {
+  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center}, row sep=.5cm, column sep=.5cm] {
    \coordinate (aux0);
    \& \node[circle] (circle) {}; 
    \& \node[fill=yellow!20] (da) {{\sc D/A}}; 
@@ -189,7 +189,7 @@ The resulting closed loop system is a program loop working over bit-vectors of f
  \end{tikzpicture}
 }
  \caption{Closed-Loop System. \label{fig:closed-system}}
-\end{figure*}
+\end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Preliminaries}
