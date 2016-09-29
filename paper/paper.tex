@@ -905,6 +905,11 @@ Pogramming (SDP).  Whilst the former uses BIBO properties to determine
 stability, the latter uses Lyapunov-based quadratic invariants.  In both
 cases the SDP solver uses floating point arithmetic and soundness is checked
 by upper bounding the error.
+An alternative approach is taken by \cite{park2016scalable}, where the verification of existing
+code is performed against a known model by extracting an LTI model of the
+code through symbolic execution. In order to account for rounding errors, an
+upper bound is introduced in the verification phase. If the error of the implementation
+is lower than this tolerance level, then the verification is successful. 
 
 \paragraph{Robust Synthesis of FWL Digital Controllers}
 
