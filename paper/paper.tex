@@ -234,7 +234,7 @@ controller.
 We should have 
 \begin{itemize}
 \item 
-$G(s) = \frac{b_{0}+b_{1}z^{-1}+...+b_{M_G}z^{-M_G}}{a_{0}+a_{1}z^{-1}+...+a_{N_G}z^{-N_G}}$ -- this is the physical plant, which is focus of interest and to which we refer our specifications/properties 
+$G(s) = \frac{s^{M_G}b_{0}+s^{M_G-1}b_{1}+...+b_{M_G}}{s^{N_G}a_{0}+s^{N_G-1}a_{1}+...+a_{N_G}}$ -- this is the physical plant, which is focus of interest and to which we refer our specifications/properties 
 \item 
 $G(z, T) = \frac{\bar b_{0}+\bar b_{1}z^{-1}+...+\bar b_{M_G}z^{-M_G}}{\bar a_{0}+\bar a_{1}z^{-1}+...+\bar a_{N_G}z^{-N_G}}$ -- this is the time-discretised plant (notice the notation encompasses explicitly the sample time $T$; please write out explicitly the relationship between the $a_i$ and the $\bar a_i$ and likewise for the numerator's coefficients 
 (in particular, are the orders $M_G, N_G$ the same? 
@@ -259,6 +259,20 @@ $$
 \tilde G(z) = \frac{\tilde b_{0}+\tilde b_{1}z^{-1}+...+\tilde b_{M_G}z^{-M_G}}{\tilde a_{0}+\tilde a_{1}z^{-1}+...+\tilde a_{N_G}z^{-N_G}}?
 $$
 (Notice that the orders $M_G, N_G$ need to be properly taken care of.)
+\item 
+Now, it's over the transfer function $\tilde G(z)$ that we want to synthesise the parameters of a template $C(z)$. 
+This controller's transfer function will be subject to the same quantisation and precision limits as the plant's: 
+we need to argue that the way we do synthesis affects manipulation of quantities that relate to specific errors and be explicit about these. 
+\item[]
+\item 
+An additional source of error can be related to the fact that a plant transfer function, 
+per se a physical entity, is actually represented in a program imprecisely: 
+this would mean that $G(s)$ is actually 
+$$
+G^\ast (s) \doteq \frac{s^{M_G^\ast}b_{0}+s^{M_G^\ast-1}b_{1}+...+b_{M_G}}{s^{N_G^\ast}a_{0}+s^{N_G^\ast-1}a_{1}+...+a_{N_G}}, 
+$$ 
+which perhaps can indeed be re-written as $G^\ast (s) = G(s) + \Delta G_P(s)$? (This proof should come from that above.) 
+We should argue that this error is encompassed by the one derived above (or isn't it?). 
 \end{itemize}
 }
 
