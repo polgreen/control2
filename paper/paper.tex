@@ -237,8 +237,28 @@ We should have
 $G(s) = \frac{b_{0}+b_{1}z^{-1}+...+b_{M_G}z^{-M_G}}{a_{0}+a_{1}z^{-1}+...+a_{N_G}z^{-N_G}}$ -- this is the physical plant, which is focus of interest and to which we refer our specifications/properties 
 \item 
 $G(z, T) = \frac{\bar b_{0}+\bar b_{1}z^{-1}+...+\bar b_{M_G}z^{-M_G}}{\bar a_{0}+\bar a_{1}z^{-1}+...+\bar a_{N_G}z^{-N_G}}$ -- this is the time-discretised plant (notice the notation encompasses explicitly the sample time $T$; please write out explicitly the relationship between the $a_i$ and the $\bar a_i$ and likewise for the numerator's coefficients 
+(in particular, are the orders $M_G, N_G$ the same? 
 \item 
-
+we have $Y(z) = G(z,T) U(z)$; then, we introduce $\hat Y(z) \doteq Y(z) + \nu (z)$, so that 
+$$
+\frac{\hat Y(z)}{U(z)} = G(z,T) + \frac{\nu (z)}{U(z)} = G(z,T) + \Delta G_Q(z) \doteq \hat G(z) ,  
+$$ 
+where $\Delta G_Q(z)$ is an error term accounting for the quantisation effects 
+\item 
+finally, we encompass the errors resulting from employing finite parameters representation, 
+which we encompass in a term $\Delta G_P(z)$: is this error additive, so that we would get to a 
+$$
+\tilde G(z) \doteq \hat G(z) + \Delta G_P(z) = G(z,T) + \Delta G_Q(z) + \Delta G_P(z)?  
+$$ 
+Dario, can you write it out explicitly? In other words, if 
+$$
+\hat G(z) = G(z,T) + \Delta G_Q(z) = \frac{\hat b_{0}+\hat b_{1}z^{-1}+...+\hat b_{M_G}z^{-M_G}}{\hat a_{0}+\hat a_{1}z^{-1}+...+\hat a_{N_G}z^{-N_G}},  
+$$ 
+then what is the explicit expression of 
+$$
+\tilde G(z) = \frac{\tilde b_{0}+\tilde b_{1}z^{-1}+...+\tilde b_{M_G}z^{-M_G}}{\tilde a_{0}+\tilde a_{1}z^{-1}+...+\tilde a_{N_G}z^{-N_G}}?
+$$
+(Notice that the orders $M_G, N_G$ need to be properly taken care of.)
 \end{itemize}
 }
 
