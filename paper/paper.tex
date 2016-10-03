@@ -144,15 +144,47 @@ The results show...
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
 
-Modern implementations of embedded control have proliferated with the availability of low cost devices that can perform simple tasks for linear control, spanning many areas such as environmental control and robotic manipulations. The downside to this approach is that in order to achieve low prices, devices are often limited in their capabilities, be it a low number of gates in an FPGA or short word lengths for microcontrollers. In most cases a floating point implementation is not feasible and the system can benefit from the added resolution of a fixed point representation. The ubiquity of these devices requires that they have a robust design that ensures the correct behaviour in a number of environments.
-For this reason it is necessary to provide design tools that formally verify the correctness of the digital controller and in particular we explore the automatic synthesis of these controllers which reduces the deveopment cost and design time for a number of models.
+Modern implementations of embedded control have proliferated with the
+availability of low cost devices that can perform simple tasks for
+linear control, spanning many areas such as environmental control and
+robotic manipulations. The downside to this approach is that in order
+to achieve low prices, devices are often limited in their
+capabilities, be it a low number of gates in an FPGA or short word
+lengths for microcontrollers. In most cases a floating point
+implementation is not feasible and the system can benefit from the
+added resolution of a fixed point representation. The ubiquity of
+these devices requires that they have a robust design that ensures the
+correct behaviour in a number of environments.  For this reason it is
+necessary to provide design tools that formally verify the correctness
+of the digital controller and in particular we explore the automatic
+synthesis of these controllers which reduces the deveopment cost and
+design time for a number of models.  \cdsay{the last sentence
+  is misleading given that synthesis is not a special case of
+  verification, but taking it one step forward.}
 
-We are interested in the stability of hybrid closed-loop systems, i.e.,
-embedded controllers along with a model of their physical environment, the
-plant, as shown in Fig.~\ref{fig:closed-system}. Due to the complexity of such systems, we focus on linear models with known configurations to perform parametric synthesis of the controller dynamics. 
+We are interested in the stability of hybrid closed-loop systems,
+i.e., embedded controllers along with a model of their physical
+environment, the plant, as shown in Fig.~\ref{fig:closed-system}.
+\cdsay{in the next paragraph we say that our primary interest is
+  evaluating digital effects in addition to stability, which
+  contradicts the previous sentence, where we only mention stability.}
+Due to the complexity of such systems, we focus on linear models with
+known configurations to perform parametric synthesis of the controller
+dynamics.
 
-Since the digital control synthesis is performed over a hybrid model, where the plant display a continuous behaviour and the controller operates in both discrete time and state-space, we initially translate the problem into a single domain which represents a bi-simulation of the original dynamics. Given or primary interest in evaluating digital effects in addition to stability, we have modeled a digital equivalent of the plant by evaluating the effects of the quantisers (A/D and D/A converters) as time discretisation elements with quantisation noise.
-The resulting closed loop system is a program loop working over bit-vectors of fixed point arithmetic with fixed word length. The effect of the FWL is included in the model as a parametric uncertainty which must be taken into account for the correct synthesis of the controller. 
+Since the digital control synthesis is performed over a hybrid model,
+where the plant displays a continuous behaviour and the controller
+operates in both discrete time and state-space, we initially translate
+the problem into a single domain which represents a bi-simulation of
+the original dynamics. Given our primary interest in evaluating digital
+effects in addition to stability, we have modeled a digital equivalent
+of the plant by evaluating the effects of the quantisers (A/D and D/A
+converters) as time discretisation elements with quantisation noise.
+The resulting closed loop system is a program loop working over
+bit-vectors of fixed point arithmetic with fixed word length. The
+effect of the FWL is included in the model as a parametric uncertainty
+which must be taken into account for the correct synthesis of the
+controller.
 
 \begin{figure}
 \centering
@@ -813,6 +845,9 @@ can only iterate a finite number of times.
 
 \paragraph{Elements specific to control systems}
 \cdsay{discussion on the noise introduced by the plant modelling?}
+For stability, there are only two counterexamples, which are known. 
+Thus, we can just enumerate them..
+%\cdsay{Then, do we actually need program synthesis?}
 
 \paragraph{Running example synthesis}
 We will illustrate our synthesis approach on the running example 
