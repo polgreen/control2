@@ -32,6 +32,8 @@
 %\usetikzlibrary{decorations}
 %\usetikzlibrary{decorations.pathmorphing}
 
+\newcommand{\blue}[1]{{\color{blue}#1}}
+\newcommand{\red}[1]{{\color{red}#1}}
 
 \newtheorem{myassumption}{Assumption}
 \newtheorem{mylemma}{Lemma}
@@ -56,8 +58,10 @@
 %\crdata{0-12345-67-8/90/01}  % Allows default copyright data (0-89791-88-6/97/05) to be over-ridden - IF NEED BE.
 % --- End of Author Metadata ---
 
-\title{[Alex] Counterexample-guided Synthesis \\
-of Closed-loop Digital Control Systems}
+\title{
+Sound and Automated Synthesis of Digital Controllers for Physical Plants 
+%Counterexample-guided Synthesis of Closed-loop Digital Control Systems
+}
 %\subtitle{[Extended Abstract]
 %\titlenote{A full version of this paper is available as
 %\textit{Author's Guide to Preparing ACM SIG Proceedings Using
@@ -225,6 +229,18 @@ controller.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Preliminaries}
+
+\blue{Please insert a figure clearly distinguishing between continuous and discretised/quantised plant - a template is in a picture sent out by Lucas late last week. 
+We should have 
+\begin{itemize}
+\item 
+$G(s) = \frac{b_{0}+b_{1}z^{-1}+...+b_{M_G}z^{-M_G}}{a_{0}+a_{1}z^{-1}+...+a_{N_G}z^{-N_G}}$ -- this is the physical plant, which is focus of interest and to which we refer our specifications/properties 
+\item 
+$G(z, T) = \frac{\bar b_{0}+\bar b_{1}z^{-1}+...+\bar b_{M_G}z^{-M_G}}{\bar a_{0}+\bar a_{1}z^{-1}+...+\bar a_{N_G}z^{-N_G}}$ -- this is the time-discretised plant (notice the notation encompasses explicitly the sample time $T$; please write out explicitly the relationship between the $a_i$ and the $\bar a_i$ and likewise for the numerator's coefficients 
+\item 
+
+\end{itemize}
+}
 
 %------------------------------------
 \subsection{Verifying Closed-loop Control Systems}
@@ -542,6 +558,8 @@ expressed as
 $U(z)$ is the z-transform of control signal ({\it i.e.}, the z-transform of
 the signal from the digital controller), which is provided to the plant by
 means of ZOH.
+
+\red{[Please write out a formal statement for the proof below:]}
 %
 \begin{proof}
 %
