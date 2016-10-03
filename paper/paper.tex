@@ -230,7 +230,9 @@ controller.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Preliminaries}
 
-\blue{Please insert a figure clearly distinguishing between continuous and discretised/quantised plant - a template is in a picture sent out by Lucas late last week. 
+\blue{Please insert a figure clearly distinguishing between continuous and discretised/quantised plant - a template is in a picture sent out by Lucas late last week. Please introduced signals on the plot. 
+
+Let us straighten the notations next. 
 We should have 
 \begin{itemize}
 \item 
@@ -281,6 +283,9 @@ We should argue that this error is encompassed by the one derived above (or isn'
 \label{verifying-closed-loop-control-systems}
 %------------------------------------
 
+\red{[This section and the next should be merged into a crisp section with the background on DSVerifier, if not included in previous work? 
+Please stick to the introduced notations. Please clarify what the function FWL does, compared to the general approximations introduced above.]}
+
 In this study, the methodology used for verifying closed-loop digital
 control system is based on the Digital-System Verifier
 (DSVerifier)~\cite{IsmailBCFF15}, which checks the stability of control
@@ -302,18 +307,20 @@ and $a$ are the plant's coefficients, and $N$ and $M$ are the number of bits
 of the integer and fractional part, respectively.  Note that $G(z)$ is a
 discrete model of a real (and continuous) plant, {\it i.e.}, a continuous
 model of the plant must be discretized to obtain the discrete equivalent
-coefficients $b$ and $a$~\cite{Astrom08}.  Although there are several
+coefficients $b$ and $a$~\cite{Astrom08} \red{[pls say how]}.  
+Although there are several
 discretization methods available in the literature~\cite{Franklin15}, the
 zero-order hold (ZOH) discretization is more suitable for representing the
 sampling processes that are typically employed by hybrid
-systems~\cite{istepanian2012digital}.
+systems~\cite{istepanian2012digital} 
+\red{[but the ZOH is for the DAC, not for the ADC?]}.
 
 Let $C(z)$ and $G(z)$ transfer functions be arranged in vectors $c_0$ and
 $g_0$, respectively.  For each $C(z)$ implementation, there is a function
 $\mathit{FWL}[\cdot]:\mathbb{R}^{N_C+M_C}\rightarrow
 Q[\mathbb{R}^{N_C+M_C}]$, which applies FWL effects to the controller
 $C(z)$, where $Q[\mathbb{R}]$ represents the quantized set of representable
-real numbers in the chosen implementation format \param{N_C}{M_C}.  The
+real numbers in the chosen implementation format \param{N_C}{M_C} \red{[clarify this notation]}.  The
 quantized controller parameters vector ($c$) is generated via
 $\mathit{FWL}[c_0]$.  The uncertain plant parameters ($g$) can be expressed
 as
@@ -334,6 +341,8 @@ g = g_0 + \Delta{g} = \left [
 \subsection{DSVerifier Verification Flow}
 \label{verification-flow}
 %------------------------------------
+
+\red{[The following description can be made shorter, crisper?]}
 
 The DSVerifier verification flow is illustrated in
 Fig.~\ref{DSVerifier_process}.  Steps $1$ to $5$ are performed by users and
@@ -421,7 +430,7 @@ model and $\Delta{G_{P}(z)}$ describes the parametric uncertainty model.
 Thus, a model for $\Delta{G_{Q}(z)}$ that can represent the quantization
 noise effect in the plant output, and consequently the closed-loop system
 output, is proposed.  For convenience, the parametric uncertainties will be
-despised here.
+described here.
 
 Consider the closed-loop sampled system in Figure~\ref{fig:sampledsystem},
 where $C(z)$ is the digital controller model, whose control output signal is
@@ -503,14 +512,14 @@ noise.
 %% \label{fig:sampledsystem}
 %% \end{figure}
 
-First, some assumptions have to be established to obtain a model for
-$\Delta{G_{Q}(z)}$.
+First, some assumptions have to be established to obtain a model for $\Delta{G_{Q}(z)}$. 
+\blue{[Here we need to be careful: we first argue that quantisation (spelled with an s, so that ER II is happy) effects can be represented as an additive noise (great), which however is a stochastic signal. But we handle the noise deterministically. How so? Where is the catch? ]}
 %
 \begin{myassumption}
 \label{whitenoise}
 %
 The quantization noises $\nu_{1}$ (from the $Q1$) and $\nu_{2}$ (from the
-$Q2$) are white noises with zero mean.
+$Q2$) \red{[do we need the second? See my further comments below.]} are white noises with zero mean.
 %
 \end{myassumption}
 
@@ -529,7 +538,7 @@ sampling the plant output at ADC and updating the DAC accordingly.
 %
 The controller and plant are linear.  In particular, the digital controller
 does not contain nonlinearities such as overflows, saturation, and
-limit-cycle oscillations.
+limit-cycle oscillations. \red{[explain difference btw overflows and saturations. Also, do we care about limit cycles? I'd quite happily disregard them.]}
 %
 \end{myassumption}
 
@@ -537,11 +546,12 @@ limit-cycle oscillations.
 %
 The DAC interpolator is an ideal ZOH; it takes the discrete value of control
 signal $u(k)$ at instant $k$ and produces a rectangular pulse of height
-$u(k)$ and width equal to the sample time $T$.
+$u(k)$ and width equal to the sample time $T$. \red{[Right: so under this assumption, we really only focus on the quantisation effects introduced by the ADC, correct? Let us not mix up the role and the influence of the two blocks.]}
 %
 \end{myassumption}
 
-Given those assumptions, the present approach is further based on the following lemmas.
+Given those assumptions, the present approach is further based on the following lemmas. 
+\red{[So we have introduced two quantisation errors, properly indexed. Next we discuss a non-indexed entity - pls clarify or comment.]}
 %
 \begin{mylemma}
 %
@@ -558,7 +568,7 @@ noise is given by \textcolor{red}{expand the acronym PDF}
 
 \begin{mylemma} \cite{astrom1997computer}
 %
-The pulse transfer function $G(z)$ is equivalent at the sample times to the
+The pulse transfer function \red{[define PTF]} $G(z)$ is equivalent at the sample times to the
 continuous transfer function $G(s)$ driven by ZOH.  This pulse transfer
 function can be computed as
 %
@@ -567,6 +577,7 @@ function can be computed as
 G(z)=(1-z^{-1})\mathcal{Z}\left\lbrace{\mathcal{L}^{-1}\left\lbrace{\frac{G(s)}{s}}\right\rbrace_{t=kT}}\right\rbrace.
 \end{equation}
 \end{mylemma}
+\red{[Here the dependence on the sampling time T needs to appear somewhere.]}
 
 Considering the quantization noise $\nu(k)$ as an output error in the
 discrete plant model, {\it i.e.}, it does not affect the plant dynamics, but
@@ -588,7 +599,7 @@ expressed as
 \Delta{G_{Q}(z)}=\frac{\sigma_{Q}^{2}}{U(z)},
 \end{equation}
 
-\noindent where $\sigma_{Q}^{2}$ is the variance of quantization noise and
+\noindent where $\sigma_{Q}^{2}$ is the variance of the quantization noise and
 $U(z)$ is the z-transform of control signal ({\it i.e.}, the z-transform of
 the signal from the digital controller), which is provided to the plant by
 means of ZOH.
@@ -661,10 +672,10 @@ the intended expression can be obtained as
 \end{equation}
 \end{proof}
 
-Eq.~\eqref{eq:deltag_var} indicates that the modeling of quantization noise
+Eq.~\eqref{eq:deltag_var} indicates that the modelling of the quantization noise
 effect on the plant transfer function demands an estimation of the variance
 of quantization noise $\sigma_{Q}^{2}$.  To obtain such estimation, the
-methodology presented by Widrow and Koll\'ar~\cite{widrow2008quantization}
+methodology presented by~\cite{widrow2008quantization}
 is used.  The authors provide an algorithm for computing the mean square of
 the output noise due to $Q1$ and $Q2$.  Considering that each quantizer
 contribution can be represented by a white noise with zero mean
@@ -675,7 +686,7 @@ variance of noise ($\sigma_{Q}^{2}$), which can be calculated as
 \sigma_{Q}^{2}=\frac{\lambda_{1}^{2}\cdot \sum {h_{Q1}^{2}}+\lambda_{2}^{2}\cdot \sum {h_{Q2}^{2}}}{12},
 \end{equation}
 %
-\noindent where $\lambda_{1}$ and $\lambda_{2}$ are the scale factor for the
+\noindent where $\lambda_{1}$ and $\lambda_{2}$ are the scale factors \red{[define scale factors]} for the
 quantization $Q1$ and $Q2$, respectively; and $\sum {h_{Q1}^{2}}$ and $\sum
 {h_{Q2}^{2}}$ are the squares sums of the impulse response obtained by means
 of a transfer function from $Q1$ and $Q2$ to the plant output, respectively.
@@ -721,11 +732,11 @@ plant model mainly depends on three main factors:
 %
 \begin{itemize}
 %
-\item \textbf{Sample time:} the sample time effect is reflected over pulse transfer function that covers the effects of DAC ant its interpolator (ZOH);
+\item \textbf{Sample time:} the sample time effect is reflected over pulse transfer function that covers the effects of DAC ant its interpolator (ZOH) \red{[clarify/revise based on the comments made above.]};
 %
-\item \textbf{ADC and DAC step: } these are the main component of quantization noise power, but an $8$-bits converter already reduces the effect of quantization noises in the output for negligible values.
+\item \textbf{ADC and DAC step:} \red{[again, do we need both?]} these are the main component of quantization noise power, but an $8$-bits converter already reduces the effect of quantization noises in the output for negligible values.
 %
-\item \textbf{Signal-to-noise ratio (SNR): } the dependence on the value of $U(z)$ shows the importance of the SNR for handling quantization noise; for a high SNR of the digital controller, the quantization effect is negligible. This happens during the transient of the system, when high control actions are employed. However, it can be relevant during the steady state. A digital controller with integral action might be sufficient for eliminating such influence on the steady state.
+\item \textbf{Signal-to-noise ratio (SNR): } the dependence on the value of $U(z)$ \red{[notice that now we have reduced the problem to depend on the effect of the reference signal transform R(z) - pls revise.]} shows the importance of the SNR for handling quantization noise; for a high SNR of the digital controller, the quantization effect is negligible. This happens during the transient of the system, when high control actions are employed. However, it can be relevant during the steady state. A digital controller with integral action might be sufficient for eliminating such influence at steady state.
 %
 \end{itemize}
 
@@ -760,8 +771,8 @@ purpose) with height equal to $r$, which can be rewritten as
 \Delta{G_{Q}(z)}=\frac{\sigma^{2}_{Q}}{r}\cdot \frac{1+C(z)G(z)}{C(z)} \cdot \frac{z-1}{z}.
 \end{equation}
 
-A more confident description of $\Delta{G_{Q}(z)}$ can be obtained
-considering FWL effects on digital controller coefficients, as described in
+A more precise description of $\Delta{G_{Q}(z)}$ can be obtained
+considering FWL \red{[clarify what you mean with FWL, introduce FWL function explicitly and precisely]} effects on digital controller coefficients, as described in
 Bessa {\it et al.}~\cite{Bessa16}, {\it i.e.}, using $FWL[C(z)]$ instead of
 the nominal $C(z)$:
 %
