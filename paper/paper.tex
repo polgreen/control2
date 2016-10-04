@@ -903,15 +903,7 @@ loop adds a new input to the set of inputs being used for synthesis.  If
 the full set of inputs is finite, this means that the refinement loop
 can only iterate a finite number of times.
 
-
 \paragraph{Elements specific to control systems}
-\cdsay{discussion on the noise introduced by the plant modelling?}
-For stability, there are only two counterexamples, which are known. 
-Thus, we can just enumerate them..
-%\cdsay{Then, do we actually need program synthesis?}
-
-\paragraph{Running example synthesis}
-
 There are two different algorithms in DSVerifier that can be used for
 stability verification, one based on Schur's decomposition and another
 one based on Jury's criteria \cite{DBLP:journals/dafes/BessaICF16};
@@ -975,9 +967,10 @@ constraint of the form:
 $$\phi_{stability} \equiv (R_1 \wedge R_2 \wedge R_3 \wedge R_4)$$
 \cdsay{figure out what is existentially quantified for the final $\sigma$.}
 
+\paragraph{Running example synthesis}
 We will illustrate our synthesis approach on the running example 
 in Sec.~\ref{sec:running-ex}.
-Our goal is to synthesise ...
+\cdsay{Pascal, I also need the candidate solutions here}
 % Counterexample from first cruisecontrol02.c benchmark with uncertainty and
 % nondeterminism:
 % 1) { (0.02634525299072265625, 0.9979267120361328125, -0.99768829345703125) }
