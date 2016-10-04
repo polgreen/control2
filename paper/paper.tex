@@ -911,6 +911,70 @@ Thus, we can just enumerate them..
 %\cdsay{Then, do we actually need program synthesis?}
 
 \paragraph{Running example synthesis}
+
+There are two different algorithms in DSVerifier that can be used for
+stability verification, one based on Schur's decomposition and another
+one based on Jury's criteria \cite{DBLP:journals/dafes/BessaICF16};
+here, the Jury's method is chosen due to its efficiency.
+
+Jury's algorithm is used to check the stability in the $z$-domain
+for a given characteristic polynomial of the form:
+%
+$$
+S(z) = a_0Z^N+a_1z^{N-1}+\cdots+a_{N-1}z+a_N=0, a_0\neq0
+$$
+%
+For the stability test procedure, the following Jury matrix
+$M = [m_{ij}]_{(2N−2)\times N}$ is built from $S(z)$ coefficients:
+%
+$$
+M=\left( 
+\begin{array}{c}
+V^{(0)}\\
+V^{(1)}\\
+\vdots\\
+V^{(N-2)}
+\end{array}
+\right)
+$$
+%
+where $V^{(k)} = [v^{(k)}_{ij} ]_{2\times N}$ such that:
+%
+$$
+v_{ij}^{(0)}=\left\{
+\begin{array}{ll}
+a_{j-1}, & \texttt{if}~i=1\\
+v_{(1)(N-j+1)}^{0},&\texttt{if}~i=2
+\end{array}
+\right.
+$$
+%
+$$
+v_{ij}^{(k)}=\left\{
+\begin{array}{ll}
+0,&\texttt{if}~j>n-k\\
+v_{1j}^{(k-1)}-v_{2j}^{(k-1)} . \frac{v_{11}^{(k-1)}}{v_{21}^{(k-1)}}, & \texttt{if}~j\leq n-k ~\texttt{and}~i=1\\
+v_{(1)(N-j+1)}^{k},& \texttt{if}~j\leq n-k ~\texttt{and}~i=2\\
+\end{array}
+\right.
+$$
+%
+where $k \in \mathbb{Z}$, such that $0 < k < N − 2$. 
+$S(z)$ is the
+characteristic polynomial of a stable system if and only if
+the following four propositions hold:
+\begin{itemize}
+\item $R_1: S(1) > 0$;
+\item $R_2: (−1)^N S(−1) > 0$;
+\item $R_3: |a_0| < a_N$;
+\item $R_4: m_{11} > 0 \equiv m_{31} \wedge m_{51} \wedge \cdots \wedge m_{(2N−3)(1)}$.
+\end{itemize}
+
+The stability property is then encoded by creating a
+constraint of the form:
+$$\phi_{stability} \equiv (R_1 \wedge R_2 \wedge R_3 \wedge R_4)$$
+\cdsay{figure out what is existentially quantified for the final $\sigma$.}
+
 We will illustrate our synthesis approach on the running example 
 in Sec.~\ref{sec:running-ex}.
 Our goal is to synthesise ...
