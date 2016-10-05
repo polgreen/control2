@@ -963,13 +963,18 @@ the following four propositions hold:
 \item $R_1: S(1) > 0$;
 \item $R_2: (−1)^N S(−1) > 0$;
 \item $R_3: |a_0| < a_N$;
-\item $R_4: m_{11} > 0 \equiv m_{31} \wedge m_{51} \wedge \cdots \wedge m_{(2N−3)(1)}$.
+\item $R_4: m_{11} > 0 \wedge m_{31}>0 \wedge m_{51}>0 \wedge \cdots \wedge m_{(2N{-}3)(1)}>0$.
 \end{itemize}
 
 The stability property is then encoded by creating a
 constraint of the form:
 $$\phi_{stability} \equiv (R_1 \wedge R_2 \wedge R_3 \wedge R_4)$$
-\cdsay{figure out what is existentially quantified for the final $\sigma$.}
+%\cdsay{figure out what is existentially quantified for the final $\sigma$.}
+If the system is unstable,
+i.e. if $\neg \phi_{stability}$ is satisfiable for $S(z)$, then the {\sc verify}
+phase will provide values for each coefficients of $\hat{N_{G}(z)}$ and $\hat{D_{G}(z)}$,
+which make the closed-loop system unstable.
+
 
 \paragraph{Running example synthesis}
 We will illustrate our synthesis approach on the running example 
