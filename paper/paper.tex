@@ -909,16 +909,18 @@ stability verification, one based on Schur's decomposition and another
 one based on Jury's criteria \cite{DBLP:journals/dafes/BessaICF16};
 here, the Jury's method is chosen due to its efficiency.
 
-Jury's algorithm is used to check the stability in the $z$-domain
-for a given characteristic polynomial of the form:
+Essentially, we use this method to check the stability in the $z$-domain
+for the characteristic polynomial $S(z)$ of 
+the matrix $\left( \begin{array}{c} Y \\ U \end{array}\right)$.
+We consider the following form for $S(z)$:
 %
 $$
 S(z) = a_0Z^N+a_1z^{N-1}+\cdots+a_{N-1}z+a_N=0, a_0\neq0
 $$
 %
-\cdsay{is this for the matrix $\left( \begin{array}{c} Y \\ U \end{array}\right)$?}
+%\cdsay{is this for the matrix $\left( \begin{array}{c} Y \\ U \end{array}\right)$?}
 
-For the stability test procedure, the following Jury matrix
+Next, the following Jury matrix
 $M = [m_{ij}]_{(2N−2)\times N}$ is built from $S(z)$ coefficients:
 %
 $$
@@ -976,6 +978,9 @@ in Sec.~\ref{sec:running-ex}.
 % Counterexample from first cruisecontrol02.c benchmark with uncertainty and
 % nondeterminism:
 % 1) { (0.02634525299072265625, 0.9979267120361328125, -0.99768829345703125) }
+
+
+
 % 2) { (0.02644824981689453125, 1.00053310394287109375, -1.0014629364013671875) }
 
 \begin{figure*}
