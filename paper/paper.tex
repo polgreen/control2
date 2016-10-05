@@ -904,10 +904,12 @@ the full set of inputs is finite, this means that the refinement loop
 can only iterate a finite number of times.
 
 \paragraph{Elements specific to control systems}
+Next, we describe the specific property that we pass to the 
+program synthesiser as the specification $\sigma$.
 There are two different algorithms in DSVerifier that can be used for
 stability verification, one based on Schur's decomposition and another
-one based on Jury's criteria \cite{DBLP:journals/dafes/BessaICF16};
-here, the Jury's method is chosen due to its efficiency.
+one based on Jury's criteria \cite{DBLP:journals/dafes/BessaICF16}.
+Here, we choose Jury's method due to its efficiency.
 
 Essentially, we use this method to check the stability in the $z$-domain
 for the characteristic polynomial $S(z)$ of 
@@ -970,11 +972,16 @@ The stability property is then encoded by creating a
 constraint of the form:
 $$\phi_{stability} \equiv (R_1 \wedge R_2 \wedge R_3 \wedge R_4)$$
 %\cdsay{figure out what is existentially quantified for the final $\sigma$.}
-If the system is unstable,
-i.e. if $\neg \phi_{stability}$ is satisfiable for $S(z)$, then the {\sc verify}
-phase will provide values for each coefficients of $\hat{N_{G}(z)}$ and $\hat{D_{G}(z)}$,
-which make the closed-loop system unstable.
 
+In the {\sc verify} phase, if the system is unstable for the current candidate solution,
+i.e. if $\neg \phi_{stability}$ is satisfiable for $S(z)$, 
+then we obtain a counterexample denoted by 
+values for each coefficients of $\Delta N_{G}(z)$ and $\Delta D_{G}(z)$,
+which make the closed-loop system unstable. This uncertainty is added to 
+the set {\sc inputs} such that, in the subsequent {\sc synthesise} phase, 
+we obtain a candidate solution consisting 
+of a controller $D_C$ and $N_C$, which makes the closed-loop 
+system stable for all the uncertainties accumulated in {\sc inputs}.
 
 \paragraph{Running example synthesis}
 We will illustrate our synthesis approach on the running example 
