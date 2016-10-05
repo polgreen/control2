@@ -129,10 +129,20 @@ Sound and Automated Synthesis of Digital Controllers for Physical Plants
 
 \maketitle
 \begin{abstract}
-Modern control systems are by and large implemented in digital microcontrollers. This poses a new dimension to the problem of correct by design controllers which do not only need to look at the dynamics involved, but also at the effects of digitalization. This is particularly true in small size implementations where the effects of word length are significant with respect to the dynamics.
-This work focuses on the synthesis of digital controllers for Linear Time Invariant SISO systems. We explore the effects of digitalization of the continuous signals and Fixed Word Length (FWL) in the controller dynamics.
-To this end we propose a CEGIS solution that uses inductive invariant synthesis in conjunction with a digital stability verification algorithm from a well known tool to find a parametric solution for a digital controller given a model specification. The algorithm factors in quantization errors, sample and hold behaviour, and parameter representation round-offs.
-The results show...
+Modern control systems are by and large implemented via digital microcontrollers, 
+which are designed to work in an embedded environment, 
+within a dynamical plant that can present physical components. 
+%
+This poses a new dimension to the problem of controllers synthesis,   
+which is classically studied in digital control literature. 
+%
+In this study, we plan to provide a principled approach to extend this literature in a number of directions: 
+we are interested in quantitative tasks;  
+we focus on automated correct-by-design synthesis algorithms, as opposed to verification objectives; 
+and we encompass the compete range of approximations, related to time discretisation, quantisation effects, 
+and finite-precision representations (with related rounding errors). To this end, 
+we propose a CEGIS-based solution that uses inductive invariant synthesis in conjunction with a digital verification algorithm 
+to find a parametric solution for a digital controller given a continuous plant specification. 
 \end{abstract}
 
 
@@ -144,7 +154,8 @@ The results show...
 % We no longer use \terms command
 %\terms{Theory}
 
-\keywords{Control Synthesis, CEGIS, FWL}
+\keywords{Control synthesis, CEGIS, finite word length, time sampling, quantisation, interval analysis}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
