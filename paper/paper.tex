@@ -159,23 +159,22 @@ lengths for microcontrollers. In most cases a floating point
 implementation is not feasible and the system can benefit from the
 added resolution of a fixed point representation. The ubiquity of
 these devices requires that they have a robust design that ensures the
-correct behaviour in a number of environments.  For this reason it is
-necessary to provide design tools that formally verify the correctness
-of the digital controller and in particular we explore the automatic
-synthesis of these controllers which reduces the deveopment cost and
-design time for a number of models.  \cdsay{the last sentence
-  is misleading given that synthesis is not a special case of
-  verification, but taking it one step forward.}
+correct behaviour in a number of environments.  % For this reason it is
+% necessary to provide design tools that formally verify the correctness
+% of the digital controller.
 
-We are interested in the stability of hybrid closed-loop systems,
-i.e., embedded controllers along with a model of their physical
-environment, the plant, as shown in Fig.~\ref{fig:closed-system}.
-\cdsay{in the next paragraph we say that our primary interest is
-  evaluating digital effects in addition to stability, which
-  contradicts the previous sentence, where we only mention stability.}
-Due to the complexity of such systems, we focus on linear models with
-known configurations to perform parametric synthesis of the controller
-dynamics.
+\cdsay{Mention that the resulting systems are also expected to have certain properties, 
+e.g. stability, which makes it even more difficult to synthesise them?}
+
+In this paper, we explore the automatic synthesis of 
+{\em correct-by-construction} controllers, which 
+reduces the deveopment cost and design time for a number of models.  
+In particular, we are interested in synthesising controllers 
+for {\em hybrid closed-loop systems}, i.e., embedded controllers along with a model of their
+physical environment, the plant, as shown in
+Fig.~\ref{fig:closed-system}, that are {\em stable}.  Due to the complexity
+of such systems, we focus on linear models with known configurations
+to perform parametric synthesis of the controller dynamics.
 
 Since the digital control synthesis is performed over a hybrid model,
 where the plant displays a continuous behaviour and the controller
