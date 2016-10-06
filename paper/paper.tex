@@ -334,9 +334,8 @@ model of the plant must be discretized to obtain the discrete equivalent
 coefficients $b$ and $a$~\cite{Astrom08} via ZOH discretization %\red{[pls say how]}
 . Although there are several discretization methods available in the literature~\cite{Franklin15}, the
 zero-order hold (ZOH) discretization is more suitable for representing the
-sampling processes that are typically employed by hybrid
-systems~\cite{istepanian2012digital} 
-\red{[but the ZOH is for the DAC, not for the ADC?]}.
+sampling and holding processes that are typically employed by hybrid
+systems~\cite{istepanian2012digital}, i.e. the ZOH discretization models the exact effect of sampling and DAC interpolation over the plant.% {\item \red{[but the ZOH is for the DAC, not for the ADC?]}.
 
 Let $C(z)$ and $G(z)$ transfer functions be arranged in vectors $c_0$ and
 $g_0$, respectively.  For each $C(z)$ implementation, there is a function
@@ -460,8 +459,8 @@ and $\Delta{G_{P}(z)}$ describes the parametric uncertainty model.
 A model for $\Delta{G_{Q}(z)}$ that can represent the quantization
 noise effect in the plant output, and consequently the closed-loop system
 output, is proposed.  
-\red{[eliminate next:] 
-For convenience, the parametric uncertainties will be described here.}
+%\red{[eliminate next:] 
+%For convenience, the parametric uncertainties will be described here.}
 
 Consider the closed-loop sampled system in Figure~\ref{fig:sampledsystem} \red{[requires updating]},
 where $C(z)$ is the digital controller model, whose control output signal is
@@ -604,12 +603,14 @@ function can be computed as
 %
 \begin{equation}
 \label{eq:pulsetf}
-G(z) = (1-z^{-1})\mathcal{Z}\left\lbrace{\mathcal{L}^{-1}\left\lbrace{\frac{G(s)}{s}}\right\rbrace_{t=kT}}\right\rbrace.
+G(z,T) = (1-z^{-1})\mathcal{Z}\left\lbrace{\mathcal{L}^{-1}\left\lbrace{\frac{G(s)}{s}}\right\rbrace_{t=kT}}\right\rbrace.
 \end{equation}
+
+For convenience, we will use only the notation $G(z)$ for represent the pulse transfer function.
 \end{mylemma}
-\red{[Here the dependence on the sampling time T needs to appear somewhere.]} 
-\green{It appears,  $kT$ is the time $t$ used after the inverse Laplace transform}
-\red{[ok, then let's call it $G(z,T)$ as I suggested earlier.]}
+%\red{[Here the dependence on the sampling time T needs to appear somewhere.]} 
+%\green{It appears,  $kT$ is the time $t$ used after the inverse Laplace transform}
+%\red{[ok, then let's call it $G(z,T)$ as I suggested earlier.]}
 
 \begin{myprop}
 Considering the quantisation noise $\nu(k)$ as an output error in the
@@ -717,8 +718,8 @@ variance of noise ($\sigma_{Q}^{2}$), which can be calculated as
 \sigma_{Q}^{2}=\frac{\lambda_{1}^{2}\cdot \sum {h_{Q1}^{2}} \cdot q_{1}+\lambda_{2}^{2}\cdot \sum {h_{Q2}^{2}} \cdot q_{2}}{12},
 \end{equation}
 %
-\noindent where $\lambda_{1}$ and $\lambda_{2}$ are the scale factors \red{[define scale factors]} for the
-quantization $Q1$ and $Q2$, respectively; $q_{1}$ and $q_{2}$ are the quantization step for $Q1$ and $Q2$, respectively, and $\sum {h_{Q1}^{2}}$ and $\sum
+\noindent where $\lambda_{1}$ and $\lambda_{2}$ are the scale factors, {\it i.e.} constant gains usually employed before the ADC and after the DAC in order to avoid the overload of converters  %\red{[define scale factors]} 
+for the quantization $Q1$ and $Q2$, respectively; $q_{1}$ and $q_{2}$ are the quantization step for $Q1$ and $Q2$, respectively, and $\sum {h_{Q1}^{2}}$ and $\sum
 {h_{Q2}^{2}}$ are the squares sums of the impulse response obtained by means
 of a transfer function from $Q1$ and $Q2$ to the plant output, respectively.
 
