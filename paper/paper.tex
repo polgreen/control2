@@ -826,6 +826,9 @@ digital controller model.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Running Example} \label{sec:running-ex}
 
+\blue{[Perhaps we should anticipate this example, partly showing potential repercussions of our formal approach. 
+Indeed, this example does not show the full potential, since it does not start with the physical plant $G(s)$. ]}
+
 A classical cruise control example is extracted from the
 literature~\cite{Astrom08}, where the discrete plant model (with time step
 of $0.2$s) is represented by the following z-expression:
@@ -835,23 +838,18 @@ of $0.2$s) is represented by the following z-expression:
 G\left(z\right) := \frac{0.0264}{z-0.9998}.
 \end{equation}
 
-Using an optimization tool, Wang {\it et
-al.}~\cite{DBLP:conf/hybrid/WangGRJF16} design a high-performance
-controller, which is characterized by the following z-expression:
-
+Using an optimisation tool, 
+the work in~\cite{DBLP:conf/hybrid/WangGRJF16} has designed a high-performance controller that is characterised by the following z-domain transfer function:
 \begin{equation}
 \label{Eq:running-example-controller}
 C\left(z\right) := \frac{2.72z^2 - 4.153z + 1.896}{z^2 - 1.844z + 0.8496}.
 \end{equation}
-
-The authors claim that this controller $C(z)$ is extremely stable for the
-discrete plant model $G(z)$.  However, if implementation aspects are
-considered during verification, this controller becomes unstable.
-
-For this particular example, the actual implementation of $C(z)$ using
-\param{4}{16} implementation format can be represented by the following
-z-expression:
-
+The authors claim that this controller $C(z)$ is extremely stable for the discrete plant model $G(z)$.  
+However, if \red{[which ones? quantisation?] implementation aspects} are considered during verification, 
+this controller becomes unstable.
+%
+Indeed, the actual implementation of $C(z)$ using \param{4}{16} \red{[clarify this notation]} 
+implementation format can be represented by the following expression: 
 \begin{equation}
 \label{Eq:running-example-controller-quantized}
 \resizebox{0.5\textwidth}{!}{
@@ -859,9 +857,7 @@ $C_{q}\left(z\right) {:=} \frac{2.7199859619140625z^2{-}4.1529998779296875z
 {+}1.89599609375}{z^2{-}1.843994140625z+0.8495941162109375},$
 }
 \end{equation} 
-
-
-\noindent which makes the system unstable in closed-loop using the typical series loop configuration.
+which makes the system unstable in closed-loop \red{using the typical series loop configuration [meaning?]}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %\section{Error Bound Verification}
