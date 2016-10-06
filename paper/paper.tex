@@ -15,6 +15,8 @@
 \usepackage{colortbl}
 \usepackage{calc}
 \usepackage[dvipsnames]{xcolor}
+\usepackage{amssymb,amsmath,amsfonts} 
+\usepackage{mathtools}
 
 \usepackage{algorithm}
 \usepackage{amsfonts}
@@ -38,6 +40,7 @@
 
 \newtheorem{myassumption}{Assumption}
 \newtheorem{mylemma}{Lemma}
+\newtheorem{myprop}{Proposition}
 
 \include{macros}
 
@@ -460,10 +463,12 @@ output, is proposed.
 \red{[eliminate next:] 
 For convenience, the parametric uncertainties will be described here.}
 
-Consider the closed-loop sampled system in Figure~\ref{fig:sampledsystem},
+Consider the closed-loop sampled system in Figure~\ref{fig:sampledsystem} \red{[requires updating]},
 where $C(z)$ is the digital controller model, whose control output signal is
 quantized ($Q2$) and interpolated via a ZOH using digital-to-analog
-converter (DAC).  $G(s)$ is the continuous-time model of the plant, from
+converter (DAC).  
+\red{[do we really need to regard the quantisation effects of the ZOH in the DAC? Elaborate next:]}
+$G(s)$ is the continuous-time model of the plant, from
 which output samples are taken and quantized ($Q1$) by means of an
 analog-to-digital converter (ADC) synchronized with the DAC.  Each quantizer
 ($Q1$ and $Q2$) will present some contribution for the total quantization
@@ -547,7 +552,7 @@ First, some assumptions have to be established to obtain a model for $\Delta{G_{
 \label{whitenoise}
 %
 The quantization noises $\nu_{1}$ (from the $Q1$) and $\nu_{2}$ (from the
-$Q2$) \red{[do we need the second? See my further comments below.]} \green{There was a typo in \eqref{eq:deltaG_final}. It was missing $q_{1}$ and $q_{1}$, both effects are considered here. }
+$Q2$) \red{[do we need the second? See my further comments below.]} \green{There was a typo in \eqref{eq:deltaG_final}. It was missing $q_{1}$ and $q_{1}$, both effects are considered here. } \red{[why are both needed? I'm still unconvinced.]}
 are white noises.
 %
 \end{myassumption}
@@ -565,7 +570,7 @@ sampling the plant output at ADC and updating the DAC accordingly.
 
 \begin{myassumption}
 %
-The controller and plant are linear, {\it i.e.} any source of nonlinearity ({\it e.g.} overflows) may be disregard. %\red{[explain difference btw overflows and saturations. Also, do we care about limit cycles? I'd quite happily disregard them.]}
+The controller and the plant are linear, {\it i.e.} any source of nonlinearity ({\it e.g.} overflows) may be disregard. %\red{[explain difference btw overflows and saturations. Also, do we care about limit cycles? I'd quite happily disregard them.]}
 %
 \end{myassumption}
 
@@ -590,8 +595,7 @@ noise is given by %\textcolor{red}{expand the acronym PDF}
 \sigma_{Q}^{2}=\frac{q^{2}}{12},
 \end{equation}
 \end{mylemma}
-
-\noindent where $q$ is the step size of quantizer.
+where $q$ is the step size of quantizer. \blue{[can you add a comment on this assumption? Why the factor 12?]}
 
 \begin{mylemma} \cite{astrom1997computer}
 %
@@ -600,37 +604,38 @@ function can be computed as
 %
 \begin{equation}
 \label{eq:pulsetf}
-G(z)=(1-z^{-1})\mathcal{Z}\left\lbrace{\mathcal{L}^{-1}\left\lbrace{\frac{G(s)}{s}}\right\rbrace_{t=kT}}\right\rbrace.
+G(z) = (1-z^{-1})\mathcal{Z}\left\lbrace{\mathcal{L}^{-1}\left\lbrace{\frac{G(s)}{s}}\right\rbrace_{t=kT}}\right\rbrace.
 \end{equation}
 \end{mylemma}
-\red{[Here the dependence on the sampling time T needs to appear somewhere.]} \green{It appears,  $kT$ is the time $t$ used after the inverse Laplace transform}
+\red{[Here the dependence on the sampling time T needs to appear somewhere.]} 
+\green{It appears,  $kT$ is the time $t$ used after the inverse Laplace transform}
+\red{[ok, then let's call it $G(z,T)$ as I suggested earlier.]}
 
-Considering the quantization noise $\nu(k)$ as an output error in the
-discrete plant model, {\it i.e.}, it does not affect the plant dynamics, but
-its output samples, it is easy to prove that $\Delta{G_{Q}(z)}$ can be
-obtained from
+\begin{myprop}
+Considering the quantisation noise $\nu(k)$ as an output error in the
+discrete plant model, 
+%{\it i.e.}, it does not affect the plant dynamics, but its output samples, 
+$\Delta{G_{Q}(z)}$ can be obtained from
 %
 \begin{equation}
 \label{eq:quantization_tf}
 \Delta{G_{Q}(z)}=\frac{\nu(z)}{U(z)},
 \end{equation}
-
-\noindent where $\nu(z)$ is the z-transform of the random process $\nu(k)$,
+where $\nu(z)$ is the z-transform of the random process $\nu(k)$,
 which can be calculated through the power spectral density of
-$\nu(k)$~\cite{poularikas2000transforms}.  Thus, the $\Delta{G_{Q}(z)}$ can
-expressed as
+$\nu(k)$~\cite{poularikas2000transforms}.  
+Thus, the $\Delta{G_{Q}(z)}$ can expressed as
 %
 \begin{equation}
 \label{eq:deltag_var}
 \Delta{G_{Q}(z)}=\frac{\sigma_{Q}^{2}}{U(z)},
 \end{equation}
-
-\noindent where $\sigma_{Q}^{2}$ is the variance of the quantization noise and
+where $\sigma_{Q}^{2}$ is the variance of the quantization noise and
 $U(z)$ is the z-transform of control signal ({\it i.e.}, the z-transform of
 the signal from the digital controller), which is provided to the plant by
 means of ZOH.
+\end{myprop}
 
-\red{[Please write out a formal statement for the proof below:]}
 %
 \begin{proof}
 %
