@@ -179,11 +179,13 @@ There has been previous work to formally verify uncertain linear systems stabili
 in digital controllers with considerations to the implementation aspects~\cite{Bessa16}.
 In particular, Bessa {\it et al.} considers finite-word length
 (FWL) effects over controllers and also parameter uncertainties
-in the context of verifying the (so-called) robust non-fragile stability.
+in the context of verifying the (so-called) robust non-fragile stability~\cite{bhattacharyya97}.
 However, the authors do not consider the compete range of approximations, 
-related to time discretisation, and quantisation effects. Additionally, they do not find 
-a parametric solution for a digital controller given a continuous plant specification, 
-in order to synthesize the controller implementation.
+related to time discretisation, and quantisation effects. As a result,
+the stability verification method proposed by Bessa {\it et al.} is incomplete, 
+given that false alarms can be produced due to the quantisation effects. 
+Additionally, the authors do not find a parametric solution for a digital controller 
+given a continuous plant specification, in order to synthesize the controller implementation.
 
 In this paper, however, we explore the automatic synthesis of 
 {\em correct-by-construction} controllers, which 
@@ -204,7 +206,7 @@ effects in addition to stability, we have modeled a digital equivalent
 of the plant by evaluating the effects of the quantisers (A/D and D/A
 converters) as time discretisation elements with quantisation noise.
 The resulting closed loop system is a program loop working over
-bit-vectors of fixed point arithmetic with fixed word length. The
+bit-vectors of fixed-point arithmetic with fixed word length. The
 effect of the FWL is included in the model as a parametric uncertainty
 which must be taken into account for the correct synthesis of the
 controller.
