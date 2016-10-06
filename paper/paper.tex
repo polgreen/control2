@@ -170,23 +170,22 @@ lengths for microcontrollers. In most cases a floating point
 implementation is not feasible and the system can benefit from the
 added resolution of a fixed point representation. The ubiquity of
 these devices requires that they have a robust design that ensures the
-correct behaviour in a number of environments.  For this reason it is
-necessary to provide design tools that formally verify the correctness
-of the digital controller and in particular we explore the automatic
-synthesis of these controllers which reduces the deveopment cost and
-design time for a number of models.  \cdsay{the last sentence
-  is misleading given that synthesis is not a special case of
-  verification, but taking it one step forward.}
+correct behaviour in a number of environments.  % For this reason it is
+% necessary to provide design tools that formally verify the correctness
+% of the digital controller.
 
-We are interested in the stability of hybrid closed-loop systems,
-i.e., embedded controllers along with a model of their physical
-environment, the plant, as shown in Fig.~\ref{fig:closed-system}.
-\cdsay{in the next paragraph we say that our primary interest is
-  evaluating digital effects in addition to stability, which
-  contradicts the previous sentence, where we only mention stability.}
-Due to the complexity of such systems, we focus on linear models with
-known configurations to perform parametric synthesis of the controller
-dynamics.
+\cdsay{Mention that the resulting systems are also expected to have certain properties, 
+e.g. stability, which makes it even more difficult to synthesise the controllers?}
+
+In this paper, we explore the automatic synthesis of 
+{\em correct-by-construction} controllers, which 
+reduces the deveopment cost and design time for a number of models.  
+In particular, we are interested in synthesising controllers 
+for {\em hybrid closed-loop systems}, i.e., embedded controllers along with a model of their
+physical environment, the plant, as shown in
+Fig.~\ref{fig:closed-system}, that are {\em stable}.  Due to the complexity
+of such systems, we focus on linear models with known configurations
+to perform parametric synthesis of the controller dynamics.
 
 Since the digital control synthesis is performed over a hybrid model,
 where the plant displays a continuous behaviour and the controller
@@ -823,15 +822,17 @@ discrete plant model $G(z)$.  However, if implementation aspects are
 considered during verification, this controller becomes unstable.
 
 For this particular example, the actual implementation of $C(z)$ using
-\param{3}{16} implementation format can be represented by the following
+\param{20}{20} implementation format can be represented by the following
 z-expression:
 
 \begin{equation}
 \label{Eq:running-example-controller-quantized}
 \resizebox{0.5\textwidth}{!}{
-$C_{q}\left(z\right) {:=} \frac{2.7199859619140625z^2 - 4.1529998779296875z + 1.89599609375}{z^2 - 1.843994140625z + 0.8495941162109375},$
+$C_{q}\left(z\right) {:=} \frac{4.00888156890869140625z^2{-}0.00041961669921875z
+-0.000213623046875}{-0.003753662109375z^2{+}7.37355804443359375z-7.2847900390625},$
 }
 \end{equation} 
+
 
 \noindent which makes the system unstable in closed-loop using the typical series loop configuration.
 
@@ -968,7 +969,7 @@ v_{(1)(N-j+1)}^{k},& \texttt{if}~j\leq n-k ~\texttt{and}~i=2\\
 \right.
 $$
 %
-where $k \in \mathbb{Z}$, such that $0 < k < N − 2$. 
+where $k \in \mathbb{Z}$, such that $0 < k < N - 2$. 
 $S(z)$ is the
 characteristic polynomial of a stable system if and only if
 the following four propositions hold:
@@ -994,15 +995,58 @@ we obtain a candidate solution consisting
 of a controller $D_C$ and $N_C$, which makes the closed-loop 
 system stable for all the uncertainties accumulated in {\sc inputs}.
 
-\paragraph{Running example synthesis}
+\paragraph{Using the program synthesiser for the running example}
 We will illustrate our synthesis approach on the running example 
 in Sec.~\ref{sec:running-ex}.
-\cdsay{Pascal, I also need the candidate solutions here}
+We start with a candidate solution that has all coefficients 0.
+In the first {\sc verify} phase we obtain the following counterexample:
+$$
+\begin{array}{ll}
+\Delta N_G(z) = 0.02634525299072265625\\
+\Delta D_G(z) = 0.9979267120361328125z-0.99768829345703125
+\end{array}
+$$
+
+We add this counterexample to {\sc inputs} and initiate the {\sc
+  synthesise} phase, where we get the following candidate solution:
+
+$$
+\begin{array}{ll}
+N_C(z) {=} 4.00888156890869140625z^2{-}0.00041961669921875z\\
+\qquad\qquad -0.000213623046875\\
+D_C(z) {=} -0.003753662109375z^2{+}7.37355804443359375z \\
+\qquad\qquad -7.2847900390625\\
+\end{array}
+$$
+
+In the second {\sc verify} phase, we check whether the current candidate
+solution above is the final solution. It is not and we get a new counterexample:
+$$
+\begin{array}{ll}
+\Delta N_G(z) = 0.02644824981689453125\\
+\Delta D_G(z) {=} 1.00053310394287109375z{-}1.0014629364013671875
+\end{array}
+$$
+
+After adding this new counterexample to the set of {\sc inputs}, in the 
+next {\sc synthesise} phase, we get a new candidate solution that holds
+for both uncertainties in {\sc Inputs}:
+
+$$
+\begin{array}{ll}
+N_C(z) {=} 7.515781402587890625z^2{-}4.385616302490234375z\\
+\qquad\qquad +4.142093658447265625\\
+D_C(z) {=} -3.52398681640625z^2{-}1.530254364013671875z \\
+\qquad\qquad +7.58094024658203125\\
+\end{array}
+$$
+
+This candidate solution is validated as the final solution by the next 
+{\sc verify} phase, which fails to find a new counterexample (i.e. returns UNSAT).
+
 % Counterexample from first cruisecontrol02.c benchmark with uncertainty and
 % nondeterminism:
 % 1) { (0.02634525299072265625, 0.9979267120361328125, -0.99768829345703125) }
-
-
 
 % 2) { (0.02644824981689453125, 1.00053310394287109375, -1.0014629364013671875) }
 
