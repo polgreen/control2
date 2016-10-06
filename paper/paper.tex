@@ -424,19 +424,28 @@ particular, the stability verification is complete and sound, since it does
 not depend on system outputs and inputs.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{A Uncertainty Model for Quantization Error} 
-\label{sec:uncertainty-model-quantization-error}
+\section{Modelling Errors} 
 
-In this study, an uncertain plant model $\hat{G}(z)$ is split into two terms:
+In this section, we show how to embed discretisation errors on the plant model, as follows: 
+%$\hat{G}(z)$ is split into two terms:
 %
 \begin{equation}
 \label{eq:uncertainplant}
-\hat{G}(z)=G(z)+\Delta{G(z)},
+%\hat{G}(z)=G(z)+\Delta{G(z)},
+\tilde G(z) = \hat G(z) + \Delta G_P(z) = G(z,T) + \Delta G_Q(z) + \Delta G_P(z),   
 \end{equation}
+where $G(z,T)$ is the time discretisation of the nominal physical plant $G(s)$, 
 
 \noindent where $G(z)$ is the discretized nominal plant model and
 $\Delta{G(z)}$ is the additive uncertainty, which is related to parametric
-uncertainties~\cite{Bessa16}.  Here, an uncertainty model to accommodate the
+uncertainties~\cite{Bessa16}.  
+
+\subsection{A Uncertainty Model for Quantization Error} 
+\label{sec:uncertainty-model-quantization-error}
+
+
+
+Here, an uncertainty model to accommodate the
 quantization noise effects on $\hat{G}(z)$ is proposed.  As a result,
 Eq.~\eqref{eq:uncertainplant} is rewritten as
 %
@@ -521,7 +530,7 @@ noise.
   \path[->]  (aux3.north) edge (circle.south);
  \end{tikzpicture}
 }
- \caption{Sampled System. \label{fig:sampledsystem}}
+ \caption{Sampled System. \label{fig:sampledsystem} \red{[Please update this figure: reference enters downstream of control block. Clarify signals over lines in plot.]}}
 \end{figure}
 
 
