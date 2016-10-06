@@ -894,7 +894,7 @@ which makes the system unstable in closed-loop \red{using the typical series loo
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Program Synthesis}
+\section{\red{Automated} Program Synthesis for \red{for Controllers}}
 
 % We use CounterExample-Guided Inductive Synthesis (CEGIS), as
 % illustrated in Fig~\ref{fig:CEGIS}.
@@ -913,18 +913,21 @@ systems.
 
 \paragraph{General architecture of the program synthesiser}
 %
+\red{[I would recommend to clarify the domain of definition of $\sigma$, particularly over the set where $x$ ranges over. 
+(Be cognisant that control audience might be unfamiliar with the cegis architecture.) ]}
+% 
 The design of our synthesiser is given in
 Fig.~\ref{fig:CEGIS} and consists of two phases, {\sc
-Synthesise} and {\sc Verify}, which interact via a finite set of test vectors {\sc inputs}.
+Synthesise} and {\sc Verify}, which interact via a finite set of test vectors {\sc inputs} \blue{that is updated incrementally}.
 The {\sc synth} procedure tries to find an existential witness $P$
-that satisfies the specification $\sigma(x, P)$ for all $x$:
+that satisfies the specification $\sigma(x, P)$ for all $x$, namely:
 %
 $\exists P . \forall x \in \text{\sc inputs} . \sigma(x, P)$
 
 If {\sc synthesise} succeeds in finding a witness $P$, this witness is a
 candidate solution to the full synthesis formula.  We pass this candidate
-solution to {\sc verify} which determines whether it does satisfy
-the specification on all inputs by checking satisfiability of the
+solution to {\sc verify}, which determines whether it does satisfy
+the specification on all inputs by checking satisfiability of the following 
 verification formula:
 %
 $\exists x . \lnot \sigma(x, P)$
@@ -933,22 +936,21 @@ If this formula is unsatisfiable, the candidate solution is in fact a
 solution to the synthesis formula and so the algorithm terminates. 
 Otherwise, the witness $x$ is an input on which the candidate solution fails
 to meet the specification.  This witness $x$ is added to the {\sc inputs}
-set and the loop iterates again.  It is worth noting that each iteration of the
-loop adds a new input to the set of inputs being used for synthesis.  If
-the full set of inputs is finite, this means that the refinement loop
+set, and the loop iterates again.  It is worth noting that each iteration of the
+loop adds a new input to the \red{finite} set $\text{\sc inputs}$  being used for synthesis.  If
+the full set of inputs \blue{[which by now should have a name, as suggested to be introduced above]} is finite, this means that the refinement loop
 can only iterate a finite number of times.
 
-\paragraph{Elements specific to control systems}
+\paragraph{Synthesis elements specific to control systems}
 Next, we describe the specific property that we pass to the 
 program synthesiser as the specification $\sigma$.
 There are two different algorithms in DSVerifier that can be used for
 stability verification, one based on Schur's decomposition and another
-one based on Jury's criteria \cite{DBLP:journals/dafes/BessaICF16}.
-Here, we choose Jury's method due to its efficiency.
+one based on Jury's criteria \cite{DBLP:journals/dafes/BessaICF16} \red{[Jury here is our friend, I wouldn't use his first name ... ]}.
+Here, we choose Jury's method, due to its efficiency.
 
-Essentially, we use this method to check the stability in the $z$-domain
-for the characteristic polynomial $S(z)$ of 
-the matrix $\left( \begin{array}{c} Y \\ U \end{array}\right)$.
+We use this method to check the stability in the $z$-domain for the characteristic polynomial $S(z)$ of 
+the matrix $\left( \begin{array}{c} Y \\ U \end{array}\right)$ \red{[unclear: what matrix? We need to clarify the relationship between the char. poly. $S(z)$ and the later quantities $\Delta N_{G}(z), \Delta D_{G}(z)$ and corresponding controller's structure.]}. 
 We consider the following form for $S(z)$:
 %
 $$
@@ -968,7 +970,7 @@ V^{(1)}\\
 \vdots\\
 V^{(N-2)}
 \end{array}
-\right)
+\right), 
 $$
 %
 where $V^{(k)} = [v^{(k)}_{ij} ]_{2\times N}$ such that:
@@ -994,8 +996,7 @@ $$
 %
 where $k \in \mathbb{Z}$, such that $0 < k < N - 2$. 
 $S(z)$ is the
-characteristic polynomial of a stable system if and only if
-the following four propositions hold:
+characteristic polynomial of a stable system if and only if the following four conditions hold:
 \begin{itemize}
 \item $R_1: S(1) > 0$;
 \item $R_2: (−1)^N S(−1) > 0$;
@@ -1005,23 +1006,27 @@ the following four propositions hold:
 
 The stability property is then encoded by creating a
 constraint of the form:
-$$\phi_{stability} \equiv (R_1 \wedge R_2 \wedge R_3 \wedge R_4)$$
-%\cdsay{figure out what is existentially quantified for the final $\sigma$.}
+$$
+\phi_{stability} \equiv (R_1 \wedge R_2 \wedge R_3 \wedge R_4).
+$$
+%\cdsay{figure out what is existentially quantified for the final $\sigma$.} 
+\red{[Yes, intuitively all clear, however for the sake of clarity I would like to see the explicit mapping between the above formula and the previously used specification 
+$\sigma(x, P)$, with clear elucidation of the relationship between the domain of $z$ and that of $x$.]}
 
 In the {\sc verify} phase, if the system is unstable for the current candidate solution,
 i.e. if $\neg \phi_{stability}$ is satisfiable for $S(z)$, 
 then we obtain a counterexample denoted by 
-values for each coefficients of $\Delta N_{G}(z)$ and $\Delta D_{G}(z)$,
+values for each coefficients of $\Delta N_{G}(z)$ and $\Delta D_{G}(z)$ \red{[see my comment above - these quantities pop up too abruptly.]},
 which make the closed-loop system unstable. This uncertainty is added to 
 the set {\sc inputs} such that, in the subsequent {\sc synthesise} phase, 
 we obtain a candidate solution consisting 
 of a controller $D_C$ and $N_C$, which makes the closed-loop 
 system stable for all the uncertainties accumulated in {\sc inputs}.
 
-\paragraph{Using the program synthesiser for the running example}
+\paragraph{Program synthesis for the running example}
 We will illustrate our synthesis approach on the running example 
 in Sec.~\ref{sec:running-ex}.
-We start with a candidate solution that has all coefficients 0.
+We start with a candidate solution that has all coefficients 0 \red{[Be more explicit, write out spurious candidate solution with zero coefficients. KISS - you don't want to lose the control audience here.]}.
 In the first {\sc verify} phase we obtain the following counterexample:
 $$
 \begin{array}{ll}
@@ -1030,9 +1035,8 @@ $$
 \end{array}
 $$
 
-We add this counterexample to {\sc inputs} and initiate the {\sc
-  synthesise} phase, where we get the following candidate solution:
-
+We add this counterexample to {\sc inputs} and initiate the {\sc synthesise} phase, where we get the following candidate solution: 
+\red{[ How is the order of the candidate solution chosen here?]}
 $$
 \begin{array}{ll}
 N_C(z) {=} 4.00888156890869140625z^2{-}0.00041961669921875z\\
@@ -1050,7 +1054,7 @@ $$
 \Delta D_G(z) {=} 1.00053310394287109375z{-}1.0014629364013671875
 \end{array}
 $$
-
+\blue{[Nice, now I'm in the groove. Next unfolds well.] }
 After adding this new counterexample to the set of {\sc inputs}, in the 
 next {\sc synthesise} phase, we get a new candidate solution that holds
 for both uncertainties in {\sc Inputs}:
@@ -1109,7 +1113,7 @@ This candidate solution is validated as the final solution by the next
 
    \path
     ([yshift=2em]synth.east) edge node {Candidate solution} ([yshift=2em]verif.west)
-    ([yshift=-2em]verif.west) edge node {Counter-ex} ([yshift=-2em]synth.east)
+    ([yshift=-2em]verif.west) edge node {Counterexample} ([yshift=-2em]synth.east)
     ([xshift=5em]verif.south) edge node {Candidate $P$} ([xshift=5em]bmc.north)
     ([xshift=-5em]bmc.north) edge node[align=center]  {UNSAT/\\model} ([xshift=-5em]verif.south)
     (verif) edge node {} (done)
@@ -1117,7 +1121,7 @@ This candidate solution is validated as the final solution by the next
     ([xshift=-5em]gp.north) edge node[align=center] {UNSAT/\\candidate} ([xshift=-5em]synth.south);
  \end{tikzpicture}
 }
- \caption{Counterexample-Guided Inductive Synthesis. \label{fig:CEGIS}}
+ \caption{Counterexample-Guided Inductive Synthesis of Programs (CEGIS paradigm). \label{fig:CEGIS}}
 \end{figure*}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Experimental Evaluation}
@@ -1133,6 +1137,8 @@ This section is split into three parts. Section~\ref{experimental-objectives} de
 \subsection{Description of Benchmarks}
 \label{experimental-setup}
 %---------------------------------
+
+\red{[All very interesting, however we never start from a $G(s)$ plant, we never really display the whole capabilities of the technique! Or am I missing something?]}
 
 The first set of benchmarks considers the discrete plant of a cruise 
 control model for the car accounting for rolling friction, aerodynamic drag, 
