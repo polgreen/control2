@@ -435,31 +435,30 @@ In this section, we show how to embed discretisation errors on the plant model, 
 \tilde G(z) = \hat G(z) + \Delta G_P(z) = G(z,T) + \Delta G_Q(z) + \Delta G_P(z),   
 \end{equation}
 where $G(z,T)$ is the time discretisation of the nominal physical plant $G(s)$, 
+$\Delta{G_{Q}(z)}$ represents the quantisation uncertainty model, 
+and $\Delta{G_{P}(z)}$ describes the parametric uncertainty model. 
 
-\noindent where $G(z)$ is the discretized nominal plant model and
-$\Delta{G(z)}$ is the additive uncertainty, which is related to parametric
-uncertainties~\cite{Bessa16}.  
+%\noindent where $G(z)$ is the discretized nominal plant model and
+%$\Delta{G(z)}$ is the additive uncertainty, which is related to parametric
+%uncertainties~\cite{Bessa16}.  
 
-\subsection{A Uncertainty Model for Quantization Error} 
+\subsection{An Uncertainty Model for the Quantization Error} 
 \label{sec:uncertainty-model-quantization-error}
 
-
-
-Here, an uncertainty model to accommodate the
-quantization noise effects on $\hat{G}(z)$ is proposed.  As a result,
-Eq.~\eqref{eq:uncertainplant} is rewritten as
+%Here, an uncertainty model to accommodate the
+%quantization noise effects on $\hat{G}(z)$ is proposed.  
+%As a result, Eq.~\eqref{eq:uncertainplant} is rewritten as
 %
-\begin{equation}
-\label{eq:uncertainFWLplant}
-\hat{G}(z)=G(z)+\Delta{G_{Q}(z)}+\Delta{G_{P}(z)},
-\end{equation}
+%\begin{equation}
+%\label{eq:uncertainFWLplant}
+%\hat{G}(z)=G(z)+\Delta{G_{Q}(z)}+\Delta{G_{P}(z)},
+%\end{equation}
 
-\noindent where $\Delta{G_{Q}(z)}$ represents the quantization uncertainty
-model and $\Delta{G_{P}(z)}$ describes the parametric uncertainty model. 
-Thus, a model for $\Delta{G_{Q}(z)}$ that can represent the quantization
+A model for $\Delta{G_{Q}(z)}$ that can represent the quantization
 noise effect in the plant output, and consequently the closed-loop system
-output, is proposed.  For convenience, the parametric uncertainties will be
-described here.
+output, is proposed.  
+\red{[eliminate next:] 
+For convenience, the parametric uncertainties will be described here.}
 
 Consider the closed-loop sampled system in Figure~\ref{fig:sampledsystem},
 where $C(z)$ is the digital controller model, whose control output signal is
@@ -814,6 +813,10 @@ on the plant pulse transfer function ($G(z)$), which is described by
 Eq.~\eqref{eq:pulsetf}, the height of step reference signal $r$, and the
 digital controller model.
 
+\subsection{Modelling Error on Parameters Representation} 
+%\label{sec:}
+
+\red{[TO BE COMPLETED.]}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Running Example} \label{sec:running-ex}
