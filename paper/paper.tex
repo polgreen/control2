@@ -142,7 +142,7 @@ which is classically studied in digital control literature.
 In this study, we plan to provide a principled approach to extend this literature in a number of directions: 
 we are interested in quantitative tasks;  
 we focus on automated correct-by-design synthesis algorithms, as opposed to verification objectives; 
-and we encompass the compete range of approximations, related to time discretisation, quantisation effects, 
+and we encompass the complete range of approximations, related to time discretisation, quantisation effects, 
 and finite-precision representations (with related rounding errors). To this end, 
 we propose a CEGIS-based solution that uses inductive invariant synthesis in conjunction with a digital verification algorithm 
 to find a parametric solution for a digital controller given a continuous plant specification. 
@@ -465,16 +465,30 @@ output, is proposed.
 Consider the closed-loop sampled system in Figure~\ref{fig:sampledsystem} \red{[requires updating]},
 where $C(z)$ is the digital controller model, whose control output signal is
 quantized ($Q2$) and interpolated via a ZOH using digital-to-analog
-converter (DAC).  
-\red{[do we really need to regard the quantisation effects of the ZOH in the DAC? Elaborate next:]}
+converter (DAC). The quantization occurs because the DAC resolution may be different from the fixed point representation of the controller.  
 $G(s)$ is the continuous-time model of the plant, from
 which output samples are taken and quantized ($Q1$) by means of an
 analog-to-digital converter (ADC) synchronized with the DAC.  Each quantizer
 ($Q1$ and $Q2$) will present some contribution for the total quantization
 noise.
-%
+%    
 \begin{figure}[ht]
 \centering
+
+\tikzset{add/.style n args={4}{
+    minimum width=6mm,
+    path picture={
+        \draw[circle] 
+            (path picture bounding box.south east) -- (path picture bounding box.north west)
+            (path picture bounding box.south west) -- (path picture bounding box.north east);
+        \node[draw=none] at ($(path picture bounding box.south)+(0,0.13)$)     {\small #1};
+        \node[draw=none] at ($(path picture bounding box.west)+(0.13,0)$)      {\small #2};
+        \node[draw=none] at ($(path picture bounding box.north)+(0,-0.13)$)    {\small #3};
+        \node[draw=none] at ($(path picture bounding box.east)+(-0.13,0)$)     {\small #4};
+        }
+    }
+ }
+
 \resizebox{.5\textwidth}{!}{
  \begin{tikzpicture}[scale=0.3,-,>=stealth',shorten >=.2pt,auto,
      semithick, initial text=, ampersand replacement=\&,]
@@ -482,26 +496,32 @@ noise.
   \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center}, row sep=.5cm, column sep=.5cm] {
     \node[draw=none] (r) {r};
 %   \& \coordinate (aux0);
-   \& \node[circle] (circle) {};
+   \& \node[circle,add={-}{+}{}{}] (circle) {};
    \& complexnode/.pic={ 
      \node[rectangle,draw,
 	minimum width=4cm,
-	minimum height=1cm,
+	minimum height=1.6cm,
 	label=\textbf{ADC},] (adc) {};
    \draw[] ([xshift=-1cm]adc.center) -- ++(0.5,0.2cm);
    \coordinate (switch1) at ([xshift=-1cm]adc.center);
    \coordinate (switch2) at ([xshift=-0.4cm]adc.center);
-   \node[fill=yellow!20] (q1) at ([xshift=1cm]adc.center) {{\sc Q1}};} 
+   \node[circle,add={}{+}{+}{},fill=yellow!20] (q1) at ([xshift=1cm]adc.center) {};} 
+     \node[draw=none] (q2t)  at ([xshift=1cm,yshift=-.65cm]adc.center) {{\sc Q1}};
+   \node[draw=none] (v1)  at ([xshift=1cm,yshift=1.5cm]adc.center) {$\nu1$};
    \& \node[rectangle,draw,
 	minimum width=1cm,
 	minimum height=1cm,
         label=\textbf{Controller}] (cz) {{\sc C(z)}};
+   \node[draw=none] (u) at ([xshift=1cm,yshift=.1cm]cz)  {u};
+     
    \& complexnode/.pic={ 
       \node[rectangle,draw,
 	minimum width=3cm,
-	minimum height=1cm,
+	minimum height=1.6cm,
 	label=\textbf{DAC},] (dac) {};
-     \node[fill=yellow!20] (q2) at ([xshift=-.65cm]dac.center) {{\sc Q2}};
+     \node[circle,add={}{+}{+}{},fill=yellow!20] (q2) at ([xshift=-.65cm]dac.center) {};
+     \node[draw=none] (q2t)  at ([xshift=-.65cm,yshift=-.65cm]dac.center) {{\sc Q2}};
+     \node[draw=none] (v2)  at ([xshift=-.65cm,yshift=1.5cm]dac.center) {$\nu2$};
      \node[fill=yellow!20] (zoh) at ([xshift=.65cm]dac.center) {{\sc ZOH}};}
    \& \node[rectangle,draw,
 	minimum width=1cm,
@@ -518,6 +538,8 @@ noise.
   };
 
 
+  \path[->] (v1) edge (q1.north);
+  \path[->] (v2) edge (q2.north);
   \path[->] (r) edge (circle.west);
   \path[->] (aux1) edge (y);
   \path  
@@ -536,7 +558,6 @@ noise.
  \caption{Sampled System. \label{fig:sampledsystem} \red{[Please update this figure: reference enters downstream of control block. Clarify signals over lines in plot.]}}
 \end{figure}
 
-
 %% \begin{figure}[ht]
 %% \centering
 %% \includegraphics[width=\columnwidth]{figures/hsystembd.pdf}
@@ -551,8 +572,7 @@ First, some assumptions have to be established to obtain a model for $\Delta{G_{
 \label{whitenoise}
 %
 The quantization noises $\nu_{1}$ (from the $Q1$) and $\nu_{2}$ (from the
-$Q2$) \red{[do we need the second? See my further comments below.]} \green{There was a typo in \eqref{eq:deltaG_final}. It was missing $q_{1}$ and $q_{1}$, both effects are considered here. } \red{[why are both needed? I'm still unconvinced.]}
-are white noises.
+$Q2$) are white noises.
 %
 \end{myassumption}
 
@@ -569,7 +589,8 @@ sampling the plant output at ADC and updating the DAC accordingly.
 
 \begin{myassumption}
 %
-The controller and the plant are linear, {\it i.e.} any source of nonlinearity ({\it e.g.} overflows) may be disregard. %\red{[explain difference btw overflows and saturations. Also, do we care about limit cycles? I'd quite happily disregard them.]}
+The controller and the plant are linear, {\it i.e.} any source of nonlinearity ({\it e.g.} overflows, ADC/DAC nonlinearities) will be disregarded.
+\red{should we explicitly state we want a controller that does not saturate?}
 %
 \end{myassumption}
 
