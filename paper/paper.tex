@@ -327,37 +327,48 @@ G(z)&=\frac{b_{0}+b_{1}z^{-1}+...+b_{M_G}z^{-M_G}}{a_{0}+a_{1}z^{-1}+...+a_{N_G}
 \end{align}
 %
 \noindent where $\beta$ and $\alpha$ are the controller's coefficients, $b$
-and $a$ are the plant's coefficients, and $N$ and $M$ are the number of bits
-of the integer and fractional part, respectively.  Note that $G(z)$ is a
+and $a$ are the plant's coefficients, and $N$ and $M$ are the number of poles and zeros for the corresponding block.  
+
+Note that $G(z)$ is a
 discrete model of a real (and continuous) plant, {\it i.e.}, a continuous
 model of the plant must be discretized to obtain the discrete equivalent
 coefficients $b$ and $a$~\cite{Astrom08} via ZOH discretization %\red{[pls say how]}
 . Although there are several discretization methods available in the literature~\cite{Franklin15}, the
 zero-order hold (ZOH) discretization is more suitable for representing the
 sampling and holding processes that are typically employed by hybrid
-systems~\cite{istepanian2012digital}, i.e. the ZOH discretization models the exact effect of sampling and DAC interpolation over the plant.% {\item \red{[but the ZOH is for the DAC, not for the ADC?]}.
+systems~\cite{istepanian2012digital}, i.e. the ZOH discretization models the exact effect of sampling and DAC interpolation over the plant.
 
-Let $C(z)$ and $G(z)$ transfer functions be arranged in vectors $c_0$ and
-$g_0$, respectively.  For each $C(z)$ implementation, there is a function
-$\mathit{FWL}[\cdot]:\mathbb{R}^{N_C+M_C}\rightarrow
-Q[\mathbb{R}^{N_C+M_C}]$, which applies FWL effects to the controller
-$C(z)$, where $Q[\mathbb{R}]$ represents the quantized set of representable
-real numbers in the chosen implementation format \param{N_C}{M_C} \red{[clarify this notation]}.  The
-quantized controller parameters vector ($c$) is generated via
-$\mathit{FWL}[c_0]$.  The uncertain plant parameters ($g$) can be expressed
-as
-%
-\begin{equation}
-g = g_0 + \Delta{g} = \left [
-				\begin{tabular}{c}
-				$b_{0}+\Delta{b_{0}} ~ b_{1}+\Delta{b_{1}} ~ ... ~ b_{M_G}+\Delta{b_{M_G}}$ \\%~ 
-				$a_{0}+\Delta{a_{0}} ~ a_{1}+\Delta{a_{1}} ~ ... ~ a_{N_G}+\Delta{a_{N_G}}$
-				\end{tabular}
-				\right ],
-\end{equation}
+Since $G(z)$ is an approximation of $G(s)$ calculated via a discrete z transform using a selected sampling time, we denote the error in the approximation as $\Delta{G}_P$
+\begin{align}
+\small
+\label{parametric_plant_tf}
+\hat{G}(z)&=\frac{(b_{0}+\Delta_p b_{0}) +...+(b_{M_G}+\Delta_p b_{M_G})z^{-M_G}}{(a_{0}+\Delta_p a_{0})+...+(a_{N_G}+\Delta_p a_{N_G})z^{-N_G}} \nonumber \\
+&=G(z,T)+\Delta{G}_P(z,T).
+\end{align}
+Note that $\Delta{G}_P$ is undefined and upperbound by a user defined percentage which relates to the nature of the z transform and the sampling time. For simplicity we will use $G(z)$ to represent $G(z,T)$.
+
+Let $\tilde C(z)$ and $\tilde G(z)$ be the same transfer functions represented using a Fixed Point Finite Word Length with integer size $I$ and fractional size $F$. We shall denote this domain as $\mathbb{R}\langle I,F \rangle$
+\begin{align}
+\small
+\label{digital_controller_plant_tf}
+\tilde C(z)&=\frac{\tilde \beta_{0}+\tilde \beta_{1}z^{-1}+...+\tilde \beta_{M_C}z^{-M_C}}{\tilde \alpha_{0}+\tilde \alpha_{1}z^{-1}+...+\tilde \alpha_{N_C}z^{-N_C}}, \\
+%\label{plant_tf}
+\tilde G(z)&=\frac{\tilde b_{0}+\tilde b_{1}z^{-1}+...+\tilde b_{M_G}z^{-M_G}}{\tilde a_{0}+\tilde a_{1}z^{-1}+...+\tilde a_{N_G}z^{-N_G}}.
+\end{align}
+ 
+Since the controller is implemented in the $\mathbb{R}\langle I,F \rangle$ domain, 
+ $$\forall i \leq N_C, j \leq M_C\ \  \tilde \beta_{i} \equiv \beta_{i} \wedge \tilde \alpha_{j} \equiv \alpha_{j} \Leftrightarrow \tilde C(z) \equiv C(z)$$
+However, since the plant was originally in the real domain,
+\begin{align}
+\small
+\label{digital_plant_tf}
+&\exists f (x \in \mathbb{R}) \rightarrow \tilde x \in \mathbb{R}\langle I,F \rangle : \nonumber \\
+\tilde G(z)&=\frac{(\hat{b}_{0}+\Delta_q \hat{b}_{0}) +...+(\hat{b}_{M_G}+\Delta_q \hat{b}_{M_G})z^{-M_G}}{(\hat{a}_{0}+\Delta_q \hat{a}_{0})+...+(\hat{a}_{N_G}+\Delta_q \hat{a}_{N_G})z^{-N_G}} \nonumber \\
+&=G(z)+\Delta{G}_P(z)+\Delta{G}_Q(z).
+\end{align}
  
 \vspace{1 mm} 
-\noindent where $\Delta{g}$ represents the plant uncertainties coefficients. The polynomial set of possible values of $g$ is denoted by $\mathfrak{G}$.
+\noindent where $\Delta{G}_Q(z)$ represents the plant uncertainty caused by the rounding off effect. We may encompass all the uncertainty as $\Delta{G}(z)=\Delta{G}_P(z)+\Delta{G}_Q(z)$. Since this value is nondeterministic, the polynomial set of possible values of $\tilde G(z)$ is denoted by $\mathfrak{G}$.
 
 %------------------------------------
 \subsection{DSVerifier Verification Flow}
@@ -597,7 +608,7 @@ The controller and the plant are linear, {\it i.e.} any source of nonlinearity (
 \begin{myassumption}
 %
 The DAC interpolator is an ideal ZOH; it takes the discrete value of control
-signal $u(k)$ at instant $k$ and produces a rectangular pulse of height
+signal $u_d(k)$ at instant $k$ and produces a rectangular pulse of height
 $u(k)$ and width equal to the sample time $T$. \red{[Right: so under this assumption, we really only focus on the quantisation effects introduced by the ADC, correct? Let us not mix up the role and the influence of the two blocks.]}
 %
 \end{myassumption}
