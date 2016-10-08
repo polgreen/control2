@@ -364,7 +364,7 @@ we will use only the notation $G(z)$ to represent the pulse transfer function.
 %
 \end{mylemma}
 
-Since $G(z)$ is an approximation of $G(s)$ we denote the error in the
+Since $G(z)$ is an approximation of $G(s)$ \red{we denote [AA: why `denote'? Shouldn't we prove that we go from the $G(s)$ TF to the $G(z,T)$ form above?]} the error in the
 approximation for time $t \neq kT$ as $\Delta{G}_P$
 %
 \begin{align}
@@ -376,11 +376,12 @@ approximation for time $t \neq kT$ as $\Delta{G}_P$
 %
 Note that $\Delta{G}_P$ is undefined and upperbound by a user defined
 percentage such that $\hat{G}(z)$ corresponds to the polynomial set of
-possible values of $G(z, T): \forall T \in \mathbb{R}$
+possible values of $G(z, T): \forall T \in \mathbb{R}$. 
+\red{[The previous statement is confusing and I must disagree here: I want hard error bounds on a specific value of T.]}
 
 Let $\tilde C(z)$ and $\tilde G(z)$ be the transfer functions represented
-using a Fixed Point Finite Word Length with integer size $I$ and fractional
-size $F$.  We shall denote this domain as $\mathbb{R}\langle I,F \rangle$
+using a Fixed-Point Finite Word Length with integer size $I$ and fractional
+size $F$.  We shall denote this domain as $\mathbb{R}\langle I,F \rangle$ and obtain 
 %
 \begin{align}
 \small
@@ -395,7 +396,8 @@ domain,
 %
  $$\forall i \leq N_C, j \leq M_C\ \  \tilde \beta_{i} \equiv \beta_{i} \wedge \tilde \alpha_{j} \equiv \alpha_{j} \Leftrightarrow \tilde C(z) \equiv C(z)$$
 %
-However, given a real plant and real controller $\hat{G}(z), \hat{C}(z)$,
+However, given a real plant and real controller $\hat{G}(z), \hat{C}(z)$, 
+\red{[the first line is not clear, there is in particular a function that is left undefined.]}
 %
 \begin{align}
 \small
@@ -408,12 +410,11 @@ However, given a real plant and real controller $\hat{G}(z), \hat{C}(z)$,
 \tilde G(z)&=\frac{(\hat{b}_{0}+\Delta_q \hat{b}_{0}) +...+(\hat{b}_{M_G}+\Delta_q \hat{b}_{M_G})z^{-M_G}}{(\hat{a}_{0}+\Delta_q \hat{a}_{0})+...+(\hat{a}_{N_G}+\Delta_q \hat{a}_{N_G})z^{-N_G}} \nonumber \\
 &=G(z)+\Delta{G}_P(z)+\Delta{G}_Q(z).
 \end{align}
- 
-\vspace{1 mm} 
-\noindent where $\Delta{G}_Q(z)$ represents the plant uncertainty caused by
+\red{[please, how can you claim that the error enters as written? Can you show the derivation? Can you show a reference that has derived this form?]}
+where $\Delta{G}_Q(z)$ represents the plant uncertainty caused by
 the rounding off effect.  We may encompass all the uncertainty as
 $\Delta{G}(z)=\Delta{G}_P(z)+\Delta{G}_Q(z)$.  Since this value is
-nondeterministic, the polynomial set of possible values of $\tilde G(z)$ is
+nondeterministic, the polynomial \red{[why polynomial?]} set of possible values of $\tilde G(z)$ is
 denoted by $\mathfrak{G}(z)$.
 
 %------------------------------------
@@ -859,8 +860,8 @@ quantization effects (seen as noise) on the closed loop system.
 %
 The quantization noises $\nu_{1}$ (from the $Q1$) and $\nu_{2}$ (from the
 $Q2$) are energy bounded uncorrelated white noises.
-
-In~\cite{widrow1956}, Widrow models the quantization noise as a gaussian
+% 
+In particular, \cite{widrow1956} models the quantization noise as a gaussian
 model in which the second moment (variance) of the probability density
 function (pdf) of the quantization noise is given by
 %
@@ -868,7 +869,8 @@ function (pdf) of the quantization noise is given by
 \label{eq:variancelemma}
 \sigma_{Q}^{2}=\frac{q^{2}}{12},
 \end{equation}
-where $q$ is the step size of quantizer, thus supporting this assumption.
+where $q$ is the step size of quantizer. 
+%, thus supporting this assumption.
 \end{myassumption}
 
 \begin{myassumption}
@@ -1008,6 +1010,9 @@ $u(k)$ and width equal to the sample time $T$.
 %The transfer functions $H_{Q1}(z)$ and $H_{Q2}(z)$, from which the squares
 %sums of the impulse response are needed, can be obtained through the
 %analysis of the system in Figure~\ref{fig:sampledsystem}. 
+
+\red{[The following text needs to be completed. (Notice typos, reference to wrong signal $R$, and to wrong TF $C,G$.]}
+
 Considering that
 the quantizer $Q1$ is the source of a white noise with zero mean $\nu_{1}$
 and $Q2$ is the source of a white noise with zero mean $\nu_{2}$, the
@@ -1126,7 +1131,7 @@ The input specification provided to the program synthesiser is of the
 form $\exists \vec{P} . \forall \vec{x} \in \text{\sc inputs}
 . \sigma(\vec{x}, \vec{P})$ where $\vec{P}$ ranges over functions,
 $\vec{x}$ ranges over ground terms and $\sigma$ is a quantifier-free
-formula.  We interpret the gound terms over some finite domain
+formula.  We interpret the ground terms over some finite domain
 $\mathcal{D}$.
 
 The design of our synthesiser is given in Fig.~\ref{fig:CEGIS} and
