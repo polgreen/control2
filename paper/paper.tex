@@ -935,8 +935,10 @@ systems.
 % 
 The design of our synthesiser is given in
 Fig.~\ref{fig:CEGIS} and consists of two phases, {\sc
-Synthesise} and {\sc Verify}, which interact via a finite set of test vectors {\sc inputs} \blue{that is updated incrementally}.
-The {\sc synth} procedure tries to find an existential witness $P$
+Synthesise} and {\sc Verify}, which interact via a finite set of test vectors {\sc inputs} 
+that is updated incrementally.
+Given a specification $\sigma$ over variables $x$
+and $P$, the {\sc synth} procedure tries to find an existential witness $P$
 that satisfies the specification $\sigma(x, P)$ for all $x$, namely:
 %
 $\exists P . \forall x \in \text{\sc inputs} . \sigma(x, P)$
@@ -954,7 +956,7 @@ solution to the synthesis formula and so the algorithm terminates.
 Otherwise, the witness $x$ is an input on which the candidate solution fails
 to meet the specification.  This witness $x$ is added to the {\sc inputs}
 set, and the loop iterates again.  It is worth noting that each iteration of the
-loop adds a new input to the \red{finite} set $\text{\sc inputs}$  being used for synthesis.  If
+loop adds a new input to the finite set $\text{\sc inputs}$  being used for synthesis.  If
 the full set of inputs \blue{[which by now should have a name, as suggested to be introduced above]} is finite, this means that the refinement loop
 can only iterate a finite number of times.
 
@@ -968,7 +970,10 @@ Jury's criteria~\cite{astrom1997computer}.
 Here, we choose Jury's method~\cite{astrom1997computer}, due to its efficiency.
 
 We use this method to check the stability in the $z$-domain for the characteristic polynomial $S(z)$ of 
-the matrix $\left( \begin{array}{c} Y \\ U \end{array}\right)$ \red{[unclear: what matrix? We need to clarify the relationship between the char. poly. $S(z)$ and the later quantities $\Delta N_{G}(z), \Delta D_{G}(z)$ and corresponding controller's structure.]}. 
+the matrix $\left( \begin{array}{c} Y \\ U \end{array}\right)$, where $Y(z)$ is the 
+closed-loop system output and U(z) is the controller output. 
+%% \red{[unclear: what matrix? We need to clarify the relationship between the char. poly. $S(z)$ and the later quantities $\Delta N_{G}(z), \Delta D_{G}(z)$ and corresponding controller's structure.]}.
+%
 We consider the following form for $S(z)$:
 %
 $$
@@ -976,6 +981,10 @@ S(z) = a_0Z^N+a_1z^{N-1}+\cdots+a_{N-1}z+a_N=0, a_0\neq0
 $$
 %
 %\cdsay{is this for the matrix $\left( \begin{array}{c} Y \\ U \end{array}\right)$?}
+
+Assuming that $\hat{G}(z) = \frac{\hat{N_G}(z)}{\hat{D_G}(z)}$
+and $\hat{C}(z) = \frac{\hat{N_C}(z)}{\hat{D_C}(z)}$, then:
+$$S(z) = FWL[N_C(z)] \times \hat{N_G}(z) + FWL[D_C(z)] \times \hat{D_G}(z)$$
 
 Next, the following Jury matrix
 $M = [m_{ij}]_{(2N−2)\times N}$ is built from $S(z)$ coefficients:
@@ -1034,8 +1043,13 @@ $\sigma(x, P)$, with clear elucidation of the relationship between the domain of
 In the {\sc verify} phase, if the system is unstable for the current candidate solution,
 {\it i.e.}, if $\neg \phi_{stability}$ is satisfiable for $S(z)$, 
 then we obtain a counterexample denoted by 
-values for each coefficients of $\Delta N_{G}(z)$ and $\Delta D_{G}(z)$ \red{[see my comment above - these quantities pop up too abruptly.]},
-which make the closed-loop system unstable. This uncertainty is added to 
+values for each coefficients of $\Delta N_{G}(z)$ and $\Delta D_{G}(z)$, 
+%\red{[see my comment above - these quantities pop up too abruptly.]},
+which make the closed-loop system unstable. 
+Note that, similar to the rest of the paper, we use the notation 
+$\hat{N_G}(z) = N_G(z) + \Delta N_G(z)$ and 
+$\hat{N_C}(z) = N_C(z) + \Delta N_C(z)$.
+This uncertainty is added to 
 the set {\sc inputs} such that, in the subsequent {\sc synthesise} phase, 
 we obtain a candidate solution consisting 
 of a controller $D_C$ and $N_C$, which makes the closed-loop 
@@ -1044,7 +1058,17 @@ system stable for all the uncertainties accumulated in {\sc inputs}.
 \paragraph{Program synthesis for the running example}
 We will illustrate our synthesis approach on the running example 
 in Sec.~\ref{sec:running-ex}.
-We start with a candidate solution that has all coefficients 0 \red{[Be more explicit, write out spurious candidate solution with zero coefficients. KISS - you don't want to lose the control audience here.]}.
+We start with a candidate solution that has all coefficients 0:
+%\red{[Be more explicit, write out spurious candidate solution with zero coefficients. KISS - you don't want to lose the control audience here.]}.
+
+$$
+\begin{array}{ll}
+N_C(z) {=} 0z^2{+}0z{+}0\\
+D_C(z) {=} 0z^2{+}0z{+}0\\
+\end{array}
+$$
+
+
 In the first {\sc verify} phase we obtain the following counterexample:
 $$
 \begin{array}{ll}
