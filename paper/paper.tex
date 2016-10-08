@@ -1203,10 +1203,20 @@ taking Laplace transform, the following $s$-domain transfer function $G(s)$ is o
 G_{3}(s)=\frac{\theta(s)}{u(s)}=\frac{1}{s^2},
 \end{equation}
 
-\noindent using the ZOH discretisation defined in Eq.~\eqref{eq:pulsetf}, the following $z$-domain model is obtained:
+\noindent using the ZOH discretisation defined in Eq.~\eqref{eq:pulsetf}, 
+the following $z$-domain model is obtained:
 \begin{equation}
 G_{3}(z)= \frac{T^{2}}{2} \frac{z+1}{(z+1)^{2}}.
 \end{equation}
+
+The discrete controllers for the satellite discrete plant dynamics $G_{3}$ 
+are represented by the following z-expression:
+%
+\begin{equation}
+\label{satellite-b2}
+C_{4}(z)=\frac{2.88z^2 - 4.896z + 2.074}{1.0z^2 - 0.42z - 0.3465 - 0.03915}. \nonumber
+\end{equation} 
+
 
 All experiments were conducted on an otherwise idle Intel Core i$7$-$4790$ 
 CPU $3$.$60$ GHz, $16$ GB of RAM, and Linux OS.  All times given are wall 
