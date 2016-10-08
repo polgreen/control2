@@ -439,30 +439,31 @@ not depend on system outputs and inputs.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Running Example} \label{sec:running-ex}
 
-\blue{[Perhaps we should anticipate this example, partly showing potential repercussions of our formal approach. 
-Indeed, this example does not show the full potential, since it does not start with the physical plant $G(s)$. ]}
-
-A classical cruise control example is extracted from the
-literature~\cite{Astrom08}, where the discrete plant model (with time step
+To exploit the present approach full potential, a dynamical plant that can present 
+physical components must be considered. However, a discrete plant model can also demonstrate 
+some benefits of the present approach, which considers FWL effects in the digital 
+controller implementation. In particular, a classical cruise control example 
+is extracted from the literature~\cite{Astrom08}, where the discrete plant model (with time step
 of $0.2$s) is represented by the following z-expression:
-
+%
 \begin{equation}
 \label{Eq:running-example-plant}
 G\left(z\right) := \frac{0.0264}{z-0.9998}.
 \end{equation}
 
-Using an optimisation tool, 
-the work in~\cite{DBLP:conf/hybrid/WangGRJF16} has designed a high-performance controller that is characterised by the following z-domain transfer function:
+Using an optimisation tool, the work in~\cite{DBLP:conf/hybrid/WangGRJF16} has designed 
+a high-performance controller, which is characterised by the following z-domain transfer function:
 \begin{equation}
 \label{Eq:running-example-controller}
 C\left(z\right) := \frac{2.72z^2 - 4.153z + 1.896}{z^2 - 1.844z + 0.8496}.
 \end{equation}
 The authors claim that this controller $C(z)$ is extremely stable for the discrete plant model $G(z)$.  
-However, if \red{[which ones? quantisation?] implementation aspects} are considered during verification, 
-this controller becomes unstable.
+However, if implementation aspects are considered during verification ({\it e.g.}, fixed-point arithmetic 
+and word-length), then this controller becomes unstable.
 %
-Indeed, the actual implementation of $C(z)$ using \param{4}{16} \red{[clarify this notation]} 
-implementation format can be represented by the following expression: 
+Indeed, the actual implementation of $C(z)$ using \param{4}{16} implementation format 
+({\it i.e.}, $4$ bits for the integer part and $16$ bits for the fractional part)
+can be represented by the following expression: 
 \begin{equation}
 \label{Eq:running-example-controller-quantized}
 \resizebox{0.5\textwidth}{!}{
@@ -470,7 +471,9 @@ $C_{q}\left(z\right) {:=} \frac{2.7199859619140625z^2{-}4.1529998779296875z
 {+}1.89599609375}{z^2{-}1.843994140625z+0.8495941162109375},$
 }
 \end{equation} 
-which makes the system unstable in closed-loop \red{using the typical series loop configuration [meaning?]}.
+which makes the system unstable in closed-loop using fixed-point arithmetic and 
+the typical series loop configuration, where $C_{q}\left(z\right)$ and $G\left(z\right)$ 
+are in the forward path.
 
 
 
