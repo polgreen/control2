@@ -1143,8 +1143,6 @@ This section is split into three parts. Section~\ref{experimental-objectives} de
 \label{experimental-setup}
 %---------------------------------
 
-\red{[All very interesting, however we never start from a $G(s)$ plant, we never really display the whole capabilities of the technique! Or am I missing something?]}
-
 The first set of benchmarks considers the discrete plant of a cruise 
 control model for the car accounting for rolling friction, aerodynamic drag, 
 and gravitational disturbance force~\cite{Astrom08} as follows
@@ -1183,6 +1181,32 @@ G_2(z)=\frac{5\times{10^{-5}}z + 5\times{10^{-5}}}{z^2 - 2z + 1.0001}, \nonumber
 C_3(z)=\frac{1.28\times{10^{3}}z^2 - 1.354240\times{10^{3}}z + 0.074879\times{10^{3}}}{z^2 - 1.4990z + 0.4995}. \nonumber
 \end{equation} 
 
+A third set of benchmarks that consists of digital controllers for satellite applications
+is considered~\cite{Franklin15}, in order to evaluate the present approach full capabilities.
+In particular, satellites often require attitude (pose) control for proper orientation 
+of antennas and sensors w.r.t. earth. The satellite attitude control is typically used 
+for three-axis attitude tracking, but here only one axis at a time is considered. 
+The motion equation for the one-axis system, despising disturbance torques, is given by:
+%
+\begin{equation}
+\label{eq:satelliteode}
+I\cdot \ddot{\theta} = \tau_{C},
+\end{equation}
+
+\noindent where $I$ is the inertia moment of satellite about its mass center, $\tau_{C}$ is the control 
+torque applied by thusters, and $\theta$ is the controlled attitude angle. 
+Normalizing Eq.~\eqref{eq:satelliteode} by defining the control signal $u=\frac{\tau_{C}}{I}$ and 
+taking Laplace transform, the following $s$-domain transfer function $G(s)$ is obtained:
+%
+\begin{equation}
+\label{eq:satellitetf}
+G_{3}(s)=\frac{\theta(s)}{u(s)}=\frac{1}{s^2},
+\end{equation}
+
+\noindent using the ZOH discretisation defined in Eq.~\eqref{eq:pulsetf}, the following $z$-domain model is obtained:
+\begin{equation}
+G_{3}(z)= \frac{T^{2}}{2} \frac{z+1}{(z+1)^{2}}.
+\end{equation}
 
 All experiments were conducted on an otherwise idle Intel Core i$7$-$4790$ 
 CPU $3$.$60$ GHz, $16$ GB of RAM, and Linux OS.  All times given are wall 
