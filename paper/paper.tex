@@ -1162,12 +1162,11 @@ This candidate solution is validated as the final solution by the next
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Experimental Evaluation}
 
-This section is split into three parts. Section~\ref{experimental-objectives} describes the experimental objectives, while Section~\ref{experimental-setup} discusses the experimental setup and the employed benchmarks. Section~\ref{experimental-results} describes the experimental results related to the application of CEGIS to standard control system benchmarks extracted from the literature.
-
-%---------------------------------
-\subsection{Objectives}
-\label{experimental-objectives}
-%---------------------------------
+This section is split into three parts. Section~\ref{experimental-setup} discusses 
+the experimental setup and the employed benchmarks, while Section~\ref{experimental-objectives} 
+describes the experimental objectives. Section~\ref{experimental-results} describes the experimental 
+results related to the application of CEGIS to the standard closed-loop control system benchmarks 
+described in Section~\ref{experimental-setup}.
 
 %---------------------------------
 \subsection{Description of Benchmarks}
@@ -1253,10 +1252,24 @@ C_{4}(z)=\frac{2.88z^2 - 4.896z + 2.074}{1.0z^2 - 0.42z - 0.3465 - 0.03915}. \no
 C_{5}(z)=\frac{0.43z^2 - 0.2408z - 0.1316}{1.0z^2 + 1.5z + 0.97 + 0.183}. \nonumber
 \end{equation} 
 
-
 All experiments were conducted on an otherwise idle Intel Core i$7$-$4790$ 
 CPU $3$.$60$ GHz, $16$ GB of RAM, and Linux OS.  All times given are wall 
 clock time in seconds as measured by the UNIX time command.
+
+%---------------------------------
+\subsection{Objectives}
+\label{experimental-objectives}
+%---------------------------------
+
+Using the closed-loop control system benchmarks described in Section~\ref{experimental-setup}, 
+the experimental evaluation of the present approach aims to answer two research questions:
+%
+\begin{enumerate}
+	\item RQ1 \textbf{(sanity check)} which results does our CEGIS approach to FWL controller synthesis 
+	obtain upon synthesizing/verifying benchmarks that compose the specified suite?
+  \item RQ2 \textbf{(performance)} does the CEGIS approach provide a feasible solution in reasonable time
+	considering robust stability of FWL digital controllers?	
+\end{enumerate}
 
 %---------------------------------
 \subsection{Results}
