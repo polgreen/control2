@@ -257,50 +257,50 @@ controller.
 
 \blue{Please insert a figure clearly distinguishing between continuous and discretised/quantised plant - a template is in a picture sent out by Lucas late last week. Please introduced signals on the plot. 
 
-Let us straighten the notations next. 
-We should have 
-\begin{itemize}
-\item 
-$G(s) = \frac{s^{M_G}b_{0}+s^{M_G-1}b_{1}+...+b_{M_G}}{s^{N_G}a_{0}+s^{N_G-1}a_{1}+...+a_{N_G}}$ -- this is the physical plant, which is focus of interest and to which we refer our specifications/properties 
-\item 
-$G(z, T) = \frac{\bar b_{0}+\bar b_{1}z^{-1}+...+\bar b_{M_G}z^{-M_G}}{\bar a_{0}+\bar a_{1}z^{-1}+...+\bar a_{N_G}z^{-N_G}}$ -- this is the time-discretised plant (notice the notation encompasses explicitly the sample time $T$; please write out explicitly the relationship between the $a_i$ and the $\bar a_i$ and likewise for the numerator's coefficients 
-(in particular, are the orders $M_G, N_G$ the same? 
-\item 
-we have $Y(z) = G(z,T) U(z)$; then, we introduce $\hat Y(z) \doteq Y(z) + \nu (z)$, so that 
-$$
-\frac{\hat Y(z)}{U(z)} = G(z,T) + \frac{\nu (z)}{U(z)} = G(z,T) + \Delta G_Q(z) \doteq \hat G(z) ,  
-$$ 
-where $\Delta G_Q(z)$ is an error term accounting for the quantisation effects 
-\item 
-finally, we encompass the errors resulting from employing finite parameters representation, 
-which we encompass in a term $\Delta G_P(z)$: is this error additive, so that we would get to a 
-$$
-\tilde G(z) \doteq \hat G(z) + \Delta G_P(z) = G(z,T) + \Delta G_Q(z) + \Delta G_P(z)?  
-$$ 
-Dario, can you write it out explicitly? In other words, if 
-$$
-\hat G(z) = G(z,T) + \Delta G_Q(z) = \frac{\hat b_{0}+\hat b_{1}z^{-1}+...+\hat b_{M_G}z^{-M_G}}{\hat a_{0}+\hat a_{1}z^{-1}+...+\hat a_{N_G}z^{-N_G}},  
-$$ 
-then what is the explicit expression of 
-$$
-\tilde G(z) = \frac{\tilde b_{0}+\tilde b_{1}z^{-1}+...+\tilde b_{M_G}z^{-M_G}}{\tilde a_{0}+\tilde a_{1}z^{-1}+...+\tilde a_{N_G}z^{-N_G}}?
-$$
-(Notice that the orders $M_G, N_G$ need to be properly taken care of.)
-\item 
-Now, it's over the transfer function $\tilde G(z)$ that we want to synthesise the parameters of a template $C(z)$. 
-This controller's transfer function will be subject to the same quantisation and precision limits as the plant's: 
-we need to argue that the way we do synthesis affects manipulation of quantities that relate to specific errors and be explicit about these. 
-\item[]
-\item 
-An additional source of error can be related to the fact that a plant transfer function, 
-per se a physical entity, is actually represented in a program imprecisely: 
-this would mean that $G(s)$ is actually 
-$$
-G^\ast (s) \doteq \frac{s^{M_G^\ast}b_{0}+s^{M_G^\ast-1}b_{1}+...+b_{M_G}}{s^{N_G^\ast}a_{0}+s^{N_G^\ast-1}a_{1}+...+a_{N_G}}, 
-$$ 
-which perhaps can indeed be re-written as $G^\ast (s) = G(s) + \Delta G_P(s)$? (This proof should come from that above.) 
-We should argue that this error is encompassed by the one derived above (or isn't it?). 
-\end{itemize}
+%Let us straighten the notations next. 
+%We should have 
+%\begin{itemize}
+%\item 
+%$G(s) = \frac{s^{M_G}b_{0}+s^{M_G-1}b_{1}+...+b_{M_G}}{s^{N_G}a_{0}+s^{N_G-1}a_{1}+...+a_{N_G}}$ -- this is the physical plant, which is focus of interest and to which we refer our specifications/properties 
+%\item 
+%$G(z, T) = \frac{\bar b_{0}+\bar b_{1}z^{-1}+...+\bar b_{M_G}z^{-M_G}}{\bar a_{0}+\bar a_{1}z^{-1}+...+\bar a_{N_G}z^{-N_G}}$ -- this is the time-discretised plant (notice the notation encompasses explicitly the sample time $T$; please write out explicitly the relationship between the $a_i$ and the $\bar a_i$ and likewise for the numerator's coefficients 
+%(in particular, are the orders $M_G, N_G$ the same? 
+%\item 
+%we have $Y(z) = G(z,T) U(z)$; then, we introduce $\hat Y(z) \doteq Y(z) + \nu (z)$, so that 
+%$$
+%\frac{\hat Y(z)}{U(z)} = G(z,T) + \frac{\nu (z)}{U(z)} = G(z,T) + \Delta G_Q(z) \doteq \hat G(z) ,  
+%$$ 
+%where $\Delta G_Q(z)$ is an error term accounting for the quantisation effects 
+%\item 
+%finally, we encompass the errors resulting from employing finite parameters representation, 
+%which we encompass in a term $\Delta G_P(z)$: is this error additive, so that we would get to a 
+%$$
+%\tilde G(z) \doteq \hat G(z) + \Delta G_P(z) = G(z,T) + \Delta G_Q(z) + \Delta G_P(z)?  
+%$$ 
+%Dario, can you write it out explicitly? In other words, if 
+%$$
+%\hat G(z) = G(z,T) + \Delta G_Q(z) = \frac{\hat b_{0}+\hat b_{1}z^{-1}+...+\hat b_{M_G}z^{-M_G}}{\hat a_{0}+\hat a_{1}z^{-1}+...+\hat a_{N_G}z^{-N_G}},  
+%$$ 
+%then what is the explicit expression of 
+%$$
+%\tilde G(z) = \frac{\tilde b_{0}+\tilde b_{1}z^{-1}+...+\tilde b_{M_G}z^{-M_G}}{\tilde a_{0}+\tilde a_{1}z^{-1}+...+\tilde a_{N_G}z^{-N_G}}?
+%$$
+%(Notice that the orders $M_G, N_G$ need to be properly taken care of.)
+%\item 
+%Now, it's over the transfer function $\tilde G(z)$ that we want to synthesise the parameters of a template $C(z)$. 
+%This controller's transfer function will be subject to the same quantisation and precision limits as the plant's: 
+%we need to argue that the way we do synthesis affects manipulation of quantities that relate to specific errors and be explicit about these. 
+%\item[]
+%\item 
+%An additional source of error can be related to the fact that a plant transfer function, 
+%per se a physical entity, is actually represented in a program imprecisely: 
+%this would mean that $G(s)$ is actually 
+%$$
+%G^\ast (s) \doteq \frac{s^{M_G^\ast}b_{0}+s^{M_G^\ast-1}b_{1}+...+b_{M_G}}{s^{N_G^\ast}a_{0}+s^{N_G^\ast-1}a_{1}+...+a_{N_G}}, 
+%$$ 
+%which perhaps can indeed be re-written as $G^\ast (s) = G(s) + \Delta G_P(s)$? (This proof should come from that above.) 
+%We should argue that this error is encompassed by the one derived above (or isn't it?). 
+%\end{itemize}
 }
 
 %------------------------------------
@@ -308,8 +308,9 @@ We should argue that this error is encompassed by the one derived above (or isn'
 \label{verifying-closed-loop-control-systems}
 %------------------------------------
 
-\red{[This section and the next should be merged into a crisp section with the background on DSVerifier, if not included in previous work? 
-Please stick to the introduced notations. Please clarify what the function FWL does, compared to the general approximations introduced above.]}
+%\red{[This section and the next should be merged into a crisp section with the background on DSVerifier, if not included in previous work? 
+%Please stick to the introduced notations. Please clarify what the function FWL does, compared to the general approximations introduced above.]}
+\red{Alessandro, I've made the changes as requested. Please let me know if this is good enough or if I made it too short}
 
 In this study, the methodology used for verifying closed-loop digital
 control system is based on the Digital-System Verifier
@@ -339,16 +340,29 @@ zero-order hold (ZOH) discretization is more suitable for representing the
 sampling and holding processes that are typically employed by hybrid
 systems~\cite{istepanian2012digital}, i.e. the ZOH discretization models the exact effect of sampling and DAC interpolation over the plant.
 
-Since $G(z)$ is an approximation of $G(s)$ calculated via a discrete z transform using a selected sampling time, we denote the error in the approximation as $\Delta{G}_P$
+\begin{mylemma} \cite{astrom1997computer}
+%
+The pulse transfer function $G(z)$ is a z-domain model that relates the output sampled by a ADC and the digital input provided by ZOH. It is equivalent at the sample times ({\it i.e.} $kT$ to the continuous transfer function $G(s)$ driven by ZOH.  This pulse transfer
+function can be computed as
+%
+\begin{equation}
+\label{eq:pulsetf}
+G(z,T) = (1-z^{-1})\mathcal{Z}\left\lbrace{\mathcal{L}^{-1}\left\lbrace{\frac{G(s)}{s}}\right\rbrace_{t=kT}}\right\rbrace.
+\end{equation}
+
+For convenience, we will use only the notation $G(z)$ to represent the pulse transfer function.
+\end{mylemma}
+
+Since $G(z)$ is an approximation of $G(s)$ we denote the error in the approximation for time $t \neq kT$ as $\Delta{G}_P$
 \begin{align}
 \small
 \label{parametric_plant_tf}
 \hat{G}(z)&=\frac{(b_{0}+\Delta_p b_{0}) +...+(b_{M_G}+\Delta_p b_{M_G})z^{-M_G}}{(a_{0}+\Delta_p a_{0})+...+(a_{N_G}+\Delta_p a_{N_G})z^{-N_G}} \nonumber \\
-&=G(z,T)+\Delta{G}_P(z,T).
+&=G(z)+\Delta{G}_P(z).
 \end{align}
-Note that $\Delta{G}_P$ is undefined and upperbound by a user defined percentage which relates to the nature of the z transform and the sampling time. For simplicity we will use $G(z)$ to represent $G(z,T)$.
+Note that $\Delta{G}_P$ is undefined and upperbound by a user defined percentage such that $\hat{G}(z)$ corresponds to the polynomial set of possible values of $G(z, T): \forall T \in \mathbb{R}$
 
-Let $\tilde C(z)$ and $\tilde G(z)$ be the same transfer functions represented using a Fixed Point Finite Word Length with integer size $I$ and fractional size $F$. We shall denote this domain as $\mathbb{R}\langle I,F \rangle$
+Let $\tilde C(z)$ and $\tilde G(z)$ be the transfer functions represented using a Fixed Point Finite Word Length with integer size $I$ and fractional size $F$. We shall denote this domain as $\mathbb{R}\langle I,F \rangle$
 \begin{align}
 \small
 \label{digital_controller_plant_tf}
@@ -359,31 +373,36 @@ Let $\tilde C(z)$ and $\tilde G(z)$ be the same transfer functions represented u
  
 Since the controller is implemented in the $\mathbb{R}\langle I,F \rangle$ domain, 
  $$\forall i \leq N_C, j \leq M_C\ \  \tilde \beta_{i} \equiv \beta_{i} \wedge \tilde \alpha_{j} \equiv \alpha_{j} \Leftrightarrow \tilde C(z) \equiv C(z)$$
-However, since the plant was originally in the real domain,
+However, given a real plant and real controller $\hat{G}(z), \hat{C}(z)$,
 \begin{align}
 \small
+\label{FWL_tf}
+&\exists f (x \in \mathbb{R}) \rightarrow \tilde x \in \mathbb{R}\langle I,F \rangle : \\
+\label{digital_controller_tf}
+\tilde C(z)&=\frac{(\hat{\beta}_{0}+\Delta_q \hat{\beta}_{0}) +...+(\hat{\beta}_{M_C}+\Delta_q \hat{\beta}_{M_C})z^{-M_C}}{(\hat{\alpha}_{0}+\Delta_q \hat{\alpha}_{0})+...+(\hat{\alpha}_{N_C}+\Delta_q \hat{\alpha}_{N_C})z^{-N_G}} \nonumber \\
+&= C(z) =\hat{C}(z) + \Delta{C}(z)\\
 \label{digital_plant_tf}
-&\exists f (x \in \mathbb{R}) \rightarrow \tilde x \in \mathbb{R}\langle I,F \rangle : \nonumber \\
 \tilde G(z)&=\frac{(\hat{b}_{0}+\Delta_q \hat{b}_{0}) +...+(\hat{b}_{M_G}+\Delta_q \hat{b}_{M_G})z^{-M_G}}{(\hat{a}_{0}+\Delta_q \hat{a}_{0})+...+(\hat{a}_{N_G}+\Delta_q \hat{a}_{N_G})z^{-N_G}} \nonumber \\
 &=G(z)+\Delta{G}_P(z)+\Delta{G}_Q(z).
 \end{align}
  
 \vspace{1 mm} 
-\noindent where $\Delta{G}_Q(z)$ represents the plant uncertainty caused by the rounding off effect. We may encompass all the uncertainty as $\Delta{G}(z)=\Delta{G}_P(z)+\Delta{G}_Q(z)$. Since this value is nondeterministic, the polynomial set of possible values of $\tilde G(z)$ is denoted by $\mathfrak{G}$.
+\noindent where $\Delta{G}_Q(z)$ represents the plant uncertainty caused by the rounding off effect. We may encompass all the uncertainty as $\Delta{G}(z)=\Delta{G}_P(z)+\Delta{G}_Q(z)$. Since this value is nondeterministic, the polynomial set of possible values of $\tilde G(z)$ is denoted by $\mathfrak{G}(z)$.
 
 %------------------------------------
 \subsection{DSVerifier Verification Flow}
 \label{verification-flow}
 %------------------------------------
 
-\red{[The following description can be made shorter, crisper?]}
+%\red{[The following description can be made shorter, crisper?]}
 
-The DSVerifier verification flow is illustrated in
-Fig.~\ref{DSVerifier_process}.  Steps $1$ to $5$ are performed by users and
-Steps A to D are automatically performed by DSVerifier, which accepts the
-digital controller transfer functions together with the plant model.  For
-any digital controller, implementation details should be provided ({\it
-e.g.}, number of bits, realization, and sample time).
+The DSVerifier verification flow is illustrated in Fig.~\ref{DSVerifier_process}.
+Steps $1$ to $5$ are performed by the user/synthesiser and
+Steps A to D are automatically performed by DSVerifier
+%, which accepts the
+%digital controller transfer functions together with the plant model.  For
+%any digital controller, implementation details should be provided ({\it
+%e.g.}, number of bits, realization, and sample time).
 
 \begin{figure*}[t]
 \centering
@@ -392,50 +411,74 @@ e.g.}, number of bits, realization, and sample time).
 \label{DSVerifier_process}
 \end{figure*}
 
-In Step $1$, the user provides inputs $g_0$ and $\Delta{g}\%$ ({\it i.e.},
-percentage form of $\Delta{g}$), which contain the plant model and the
-interval, respectively.  In Step $2$, a digital controller must be designed
-with any preferred method, where $c_0$ is obtained.  The controller
-numerical representation and realization form are chosen in Steps $3$ and
-$4$, respectively.  In Step $5$, the user finally configures the
-verification parameters ({\it e.g.}, verification time, properties, and BMC
-tool).  After that, DSVerifier verification engine performs an (automatic)
-verification of the desired property $\phi$ ({\it i.e.}, stability).  The
-user steps described in Steps $1$--$5$ result in an ANSI-C code that should
-be used as an input for DSVerifier.
+%In Step $1$, the user provides inputs $G(z)$ and $\Delta{G}(z)$
+%%$\%$ ({\it i.e.}, $\Delta{G}(z)$ as a percentage of $G(z)$)
+%, which contain the plant model and the
+%interval, respectively.  In Step $2$, a digital controller must be designed
+%with any preferred method, where $C(z)$ is obtained.  The controller
+%numerical representation and realization form are chosen in Steps $3$ and
+%$4$, respectively.  In Step $5$, the user finally configures the
+%verification parameters ({\it e.g.}, verification time, properties, and BMC
+%tool).  After that, DSVerifier verification engine performs an (automatic)
+%verification of the desired property $\phi$ ({\it i.e.}, stability).  The
+%user steps described in Steps $1$--$5$ result in an ANSI-C code that should
+%be used as an input for DSVerifier.
 
-In Step A, DSVerifier constructs a non-deterministic model to represent the
-plant family $\mathfrak{G}$ using $g_0$ and $\Delta{g}\%$, which are
-provided in Step $1$.  DSVerifier then formulates $\mathit{FWL}[\cdot]$ in
-Step B using implementation details provided from Steps $2$ and $3$, and
-then computes $\mathit{FWL}[c_0]$ in Step C.  Thus, DSVerifier builds an
-intermediate ANSI-C code for the digital system implementation, which is
-used as input for the model-checker, as pointed in Step D.
+Given a model $(\hat{C}(z),\hat{G}(z), \mathbb{R}\langle I,F \rangle)$, provided
+in an ANSI-C code input file (Steps 1-5),
+DSVerifier constructs a non-deterministic model to represent the plant family
+$\mathfrak{G}(z)$ (Step A), and a transfer function $f$ [eq. \ref{FWL_tf}]
+(step B) to calulate the implementation $f(\hat{C}(z)) \rightarrow \tilde C(z)$
+of the controller (step C).
+Finally DSVerifier builds an intermediate ANSI-C code for the digital system
+implementation, which is used as input for the model-checker (Step D).
 
-This intermediate ANSI-C code model has three main modules: digital
-controller code to be embedded into the microprocessor; plant model code,
-which simulates the plant model dynamics considering uncertainties; and
-``assert'' and ``assume'' statements, which control the verification flow. 
-For the digital controller code, transfer functions coefficients are
-quantized and deterministic, and all operations use fixed-point arithmetic. 
-\textcolor{red}{In the plant model code, transfer function coefficients are
-not quantized, but represented with maximum precision based on float
-data-type variables}; they are treated as non-deterministic variables to
-support model uncertainties.  The directive ``assume'' bounds
-non-deterministic variables, {\it i.e.}, inputs and plant uncertain
-coefficients.
-
-Finally in the Step D, the translation of ANSI-C code into SAT/SMT formulae
-is done by a back-end model-checking tool ({\it e.g.},
-CBMC~\cite{ClarkeKL04} or ESBMC~\cite{CordeiroFM12}).  Here, DSVerifier
-symbolically checks a given property $\phi$ with respect to closed-loop
-systems, which are composed by $FWL[c_0]$ and every $g$ in $\mathfrak{G}$. 
-If any property violation is found, then DSVerifier reports a
+This intermediate ANSI-C code model $(\tilde C(z),\mathfrak{G}(z),\phi)$
+containing a specification $\phi$ for the verification properties ({\it i.e.} stability)
+is translated into SAT/SMT formulae by a back-end model-checking tool ({\it e.g.},
+CBMC~\cite{ClarkeKL04} or ESBMC~\cite{CordeiroFM12}).
+If any property violation is found, DSVerifier reports a
 counterexample, which contains system inputs or parametric deviations
-$\Delta{g}\%$ that lead the system to a failure.  A successful verification
+$\Delta{G}$ that lead the system to a failure.  A successful verification
 result is reported if the system is safe with respect to $\phi$.  In
 particular, the stability verification is complete and sound, since it does
-not depend on system outputs and inputs.
+not depend on system inputs and outputs.
+In the case of stability, the specification $\phi$ consists in a number of assumptions
+on the polynomial coefficients following Jury's Criteria, as well as the restrictions
+set in the representation of these coefficients by the function $f$ [eq. \ref{FWL_tf}].
+
+%In Step A, DSVerifier constructs a non-deterministic model to represent the
+%plant family $\mathfrak{G}$ using $g_0$ and $\Delta{g}\%$, which are
+%provided in Step $1$.  DSVerifier then formulates $\mathit{FWL}[\cdot]$ in
+%Step B using implementation details provided from Steps $2$ and $3$, and
+%then computes $\mathit{FWL}[c_0]$ in Step C.  Thus, DSVerifier builds an
+%intermediate ANSI-C code for the digital system implementation, which is
+%used as input for the model-checker, as pointed in Step D.
+
+%This intermediate ANSI-C code model has three main modules: digital
+%controller code to be embedded into the microprocessor; plant model code,
+%which simulates the plant model dynamics considering uncertainties; and
+%``assert'' and ``assume'' statements, which control the verification flow. 
+%For the digital controller code, transfer functions coefficients are
+%quantized and deterministic, and all operations use fixed-point arithmetic. 
+%\textcolor{red}{In the plant model code, transfer function coefficients are
+%not quantized, but represented with maximum precision based on float
+%data-type variables}; they are treated as non-deterministic variables to
+%support model uncertainties.  The directive ``assume'' bounds
+%non-deterministic variables, {\it i.e.}, inputs and plant uncertain
+%coefficients.
+%
+%The translation of ANSI-C code into SAT/SMT formulae
+%is done by a back-end model-checking tool ({\it e.g.},
+%CBMC~\cite{ClarkeKL04} or ESBMC~\cite{CordeiroFM12}).  Here, DSVerifier
+%symbolically checks a given property $\phi$ with respect to closed-loop
+%systems, which are composed by $f(c_i)$ and every $G$ in $\mathfrak{G}$. 
+%If any property violation is found, then DSVerifier reports a
+%counterexample, which contains system inputs or parametric deviations
+%$\Delta{G}$ that lead the system to a failure.  A successful verification
+%result is reported if the system is safe with respect to $\phi$.  In
+%particular, the stability verification is complete and sound, since it does
+%not depend on system outputs and inputs.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Running Example} \label{sec:running-ex}
@@ -565,7 +608,7 @@ noise.
 	minimum width=1cm,
 	minimum height=1cm,
         label=\textbf{Controller}] (cz) {{\sc C(z)}};
-   \node[draw=none] (u) at ([xshift=1cm,yshift=.1cm]cz)  {u};
+   \node[draw=none] (ud) at ([xshift=1cm,yshift=.15cm]cz)  {$\tilde u(z)$};
      
    \& complexnode/.pic={ 
       \node[rectangle,draw,
@@ -580,6 +623,7 @@ noise.
 	minimum width=1cm,
 	minimum height=1cm,
         label=\textbf{Plant}] (gs) {{\sc G(s)}};
+   \node[draw=none] (ud) at ([xshift=-1cm,yshift=.15cm]gs)  {$u(s)$};
    \& \coordinate (aux1);
    \& \node[draw=none] (y) {y};\\
    \& \coordinate (aux3); 
@@ -649,7 +693,7 @@ The controller and the plant are linear, {\it i.e.}, any source of nonlinearity 
 \begin{myassumption}
 %
 The DAC interpolator is an ideal ZOH; it takes the discrete value of control
-signal $u_d(k)$ at instant $k$ and produces a rectangular pulse of height
+signal $\tilde u(k)$ at instant $k$ and produces a rectangular pulse of height
 $u(k)$ and width equal to the sample time $T$. \red{[Right: so under this assumption, we really only focus on the quantisation effects introduced by the ADC, correct? Let us not mix up the role and the influence of the two blocks.]}
 %
 \end{myassumption}
@@ -668,22 +712,6 @@ noise is given by %\textcolor{red}{expand the acronym PDF}
 \end{equation}
 \end{mylemma}
 where $q$ is the step size of quantizer. \blue{[can you add a comment on this assumption? Why the factor 12?]}
-
-\begin{mylemma} \cite{astrom1997computer}
-%
-The pulse transfer function $G(z)$ is a z-domain model that relates the output sampled by a ADC and the digital input provided by ZOH. It is equivalent at the sample times ({\it i.e.} $kT$ to the continuous transfer function $G(s)$ driven by ZOH.  This pulse transfer
-function can be computed as
-%
-\begin{equation}
-\label{eq:pulsetf}
-G(z,T) = (1-z^{-1})\mathcal{Z}\left\lbrace{\mathcal{L}^{-1}\left\lbrace{\frac{G(s)}{s}}\right\rbrace_{t=kT}}\right\rbrace.
-\end{equation}
-
-For convenience, we will use only the notation $G(z)$ for represent the pulse transfer function.
-\end{mylemma}
-%\red{[Here the dependence on the sampling time T needs to appear somewhere.]} 
-%\green{It appears,  $kT$ is the time $t$ used after the inverse Laplace transform}
-%\red{[ok, then let's call it $G(z,T)$ as I suggested earlier.]}
 
 \begin{myprop}
 Considering the quantisation noise $\nu(k)$ as an output error in the
