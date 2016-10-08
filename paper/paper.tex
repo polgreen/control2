@@ -166,7 +166,7 @@ to find a parametric solution for a digital controller given a continuous plant 
 Modern implementations of embedded control have proliferated with the
 availability of low cost devices that can perform simple tasks for
 linear control, spanning many areas such as environmental control and
-robotic manipulations \textcolor{red}{Dario: could you please insert a citation here?}. 
+robotic manipulations~\cite{astrom1997computer,Franklin15}. 
 The downside to this approach is that in order
 to achieve low prices, devices are often limited in their
 capabilities, be it a low number of gates in an FPGA or short word
@@ -179,22 +179,23 @@ correct behaviour in a number of different environments.  % For this reason it i
 % of the digital controller.
 
 There has been previous work to formally verify uncertain linear systems stability 
-in digital controllers with considerations to the implementation aspects~\cite{Bessa16}.
+in digital controllers with considerations to the implementation aspects 
+({\it i.e.}, fixed-point arithmetic and word-length)~\cite{Bessa16}.
 In particular, Bessa {\it et al.} considers finite-word length
-(FWL) effects over controllers and also parameter uncertainties
+(FWL) effects over digital controllers and also parameter uncertainties
 in the context of verifying the (so-called) robust non-fragile stability~\cite{bhattacharyya97}.
 However, the authors do not consider the compete range of approximations, 
 related to time discretisation, and quantisation effects. As a result,
 the stability verification method proposed by Bessa {\it et al.} is incomplete, 
 given that false alarms can be produced due to the quantisation effects. 
 Additionally, the authors do not find a parametric solution for a digital controller 
-given a continuous plant specification, in order to synthesize the controller implementation.
+given as a continuous plant specification, in order to synthesize the controller implementation.
 
 In this paper, however, we explore the automatic synthesis of 
-{\em correct-by-construction} controllers, which 
+{\em correct-by-construction} dgital controllers, which 
 reduces the deveopment cost and design time for a number of models.  
 In particular, we are interested in synthesising controllers 
-for {\em hybrid closed-loop systems}, i.e., embedded controllers along with a model of their
+for {\em hybrid closed-loop systems}, {\it i.e.}, embedded controllers along with a model of their
 physical environment, the plant, as shown in
 Fig.~\ref{fig:closed-system}, that are {\em stable}.  Due to the complexity
 of such systems, we focus on linear models with known configurations
