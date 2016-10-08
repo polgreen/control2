@@ -131,23 +131,28 @@ Sound Automated Synthesis of Digital Controllers
 \author{Author names omitted for review}
 
 \maketitle
-\begin{abstract}
-Modern control systems are by and large implemented via digital microcontrollers, 
-which are designed to work in an embedded environment, 
-within a dynamical plant that can present physical components. 
-%
-This poses a new dimension to the problem of controllers synthesis,   
-which is classically studied in digital control literature. 
-%
-In this study, we plan to provide a principled approach to extend this literature in a number of directions: 
-we are interested in quantitative tasks;  
-we focus on automated correct-by-design synthesis algorithms, as opposed to verification objectives; 
-and we encompass the complete range of approximations, related to time discretisation, quantisation effects, 
-and finite-precision representations (with related rounding errors). To this end, 
-we propose a CEGIS-based solution that uses inductive invariant synthesis in conjunction with a digital verification algorithm 
-to find a parametric solution for a digital controller given a continuous plant specification. 
-\end{abstract}
 
+\begin{abstract}
+%
+Modern control systems are by and large implemented via digital
+microcontrollers, which are designed to work in an embedded environment,
+within a dynamical plant that can present physical components.
+%
+This poses a new dimension to the problem of controllers synthesis, which is
+classically studied in digital control literature.
+%
+In this study, we plan to provide a principled approach to extend this
+literature in a number of directions: we are interested in quantitative
+tasks; we focus on automated correct-by-design synthesis algorithms, as
+opposed to verification objectives; and we encompass the complete range of
+approximations, related to time discretisation, quantisation effects, and
+finite-precision representations (with related rounding errors).  To this
+end, we propose a CEGIS-based solution that uses inductive invariant
+synthesis in conjunction with a digital verification algorithm to find a
+parametric solution for a digital controller given a continuous plant
+specification.
+%
+\end{abstract}
 
 %
 %  Use this command to print the description
@@ -159,60 +164,60 @@ to find a parametric solution for a digital controller given a continuous plant 
 
 \keywords{Control synthesis, CEGIS, finite word length, time sampling, quantisation, interval analysis}
 
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
 
 Modern implementations of embedded control have proliferated with the
-availability of low cost devices that can perform simple tasks for
-linear control, spanning many areas such as environmental control and
-robotic manipulations~\cite{astrom1997computer,Franklin15}. 
-The downside to this approach is that in order
-to achieve low prices, devices are often limited in their
-capabilities, be it a low number of gates in an FPGA or short word
-lengths for microcontrollers. In most cases a floating-point
-implementation is not feasible and the system can benefit from the
-added resolution of a fixed-point representation. The ubiquity of
-these devices requires that they have a robust design that ensures the
-correct behaviour in a number of different environments.  % For this reason it is
+availability of low cost devices that can perform simple tasks for linear
+control, spanning many areas such as environmental control and robotic
+manipulations~\cite{astrom1997computer,Franklin15}.  The downside to this
+approach is that in order to achieve low prices, devices are often limited
+in their capabilities, be it a low number of gates in an FPGA or short word
+lengths for microcontrollers.  In most cases a floating-point implementation
+is not feasible and the system can benefit from the added resolution of a
+fixed-point representation.  The ubiquity of these devices requires that
+they have a robust design that ensures the correct behaviour in a number of
+different environments.
+%
+% For this reason it is
 % necessary to provide design tools that formally verify the correctness
 % of the digital controller.
 
-There has been previous work to formally verify uncertain linear systems stability 
-in digital controllers with considerations to the implementation aspects 
-({\it i.e.}, fixed-point arithmetic and word-length)~\cite{Bessa16}.
-In particular, Bessa {\it et al.} considers finite-word length
-(FWL) effects over digital controllers and also parameter uncertainties
-in the context of verifying the (so-called) robust non-fragile stability~\cite{bhattacharyya97}.
-However, the authors do not consider the compete range of approximations, 
-related to time discretisation, and quantisation effects. As a result,
-the stability verification method proposed by Bessa {\it et al.} is incomplete, 
-given that false alarms can be produced due to the quantisation effects. 
-Additionally, the authors do not find a parametric solution for a digital controller 
-given as a continuous plant specification, in order to synthesize the controller implementation.
+There has been previous work to formally verify uncertain linear systems
+stability in digital controllers with considerations to the implementation
+aspects ({\it i.e.}, fixed-point arithmetic and word-length)~\cite{Bessa16}. 
+In particular, Bessa {\it et al.} considers finite-word length (FWL) effects
+over digital controllers and also parameter uncertainties in the context of
+verifying the (so-called) robust non-fragile
+stability~\cite{bhattacharyya97}.  However, the authors do not consider the
+compete range of approximations, related to time discretisation, and
+quantisation effects.  As a result, the stability verification method
+proposed by Bessa {\it et al.} is incomplete, given that false alarms can be
+produced due to the quantisation effects.  Additionally, the authors do not
+find a parametric solution for a digital controller given as a continuous
+plant specification, in order to synthesize the controller implementation.
 
-In this paper, however, we explore the automatic synthesis of 
-{\em correct-by-construction} dgital controllers, which 
-reduces the deveopment cost and design time for a number of models.  
-In particular, we are interested in synthesising controllers 
-for {\em hybrid closed-loop systems}, {\it i.e.}, embedded controllers along with a model of their
-physical environment (the plant), which are {\em stable}.  Due to the complexity
-of such systems, we focus on linear models with known configurations
-to perform parametric synthesis of the controller dynamics.
+In this paper, however, we explore the automatic synthesis of {\em
+correct-by-construction} dgital controllers, which reduces the deveopment
+cost and design time for a number of models.  In particular, we are
+interested in synthesising controllers for {\em hybrid closed-loop systems},
+{\it i.e.}, embedded controllers along with a model of their physical
+environment (the plant), which are {\em stable}.  Due to the complexity of
+such systems, we focus on linear models with known configurations to perform
+parametric synthesis of the controller dynamics.
 
-Since the digital control synthesis is performed over a hybrid model,
-where the plant displays a continuous behaviour and the controller
-operates in both discrete time and state-space, we initially translate
-the problem into a single domain which represents a bi-simulation of
-the original dynamics. Given our primary interest in evaluating digital
-effects in addition to stability, we have modeled a digital equivalent
-of the plant by evaluating the effects of the quantisers (A/D and D/A
-converters) as time discretisation elements with quantisation noise.
-The resulting closed loop system is a program loop working over
-bit-vectors of fixed-point arithmetic with fixed word length. The
-effect of the FWL is included in the model as a parametric uncertainty
-which must be taken into account for the correct synthesis of the
-controller.
+Since the digital control synthesis is performed over a hybrid model, where
+the plant displays a continuous behaviour and the controller operates in
+both discrete time and state-space, we initially translate the problem into
+a single domain which represents a bi-simulation of the original dynamics. 
+Given our primary interest in evaluating digital effects in addition to
+stability, we have modeled a digital equivalent of the plant by evaluating
+the effects of the quantisers (A/D and D/A converters) as time
+discretisation elements with quantisation noise.  The resulting closed loop
+system is a program loop working over bit-vectors of fixed-point arithmetic
+with fixed word length.  The effect of the FWL is included in the model as a
+parametric uncertainty which must be taken into account for the correct
+synthesis of the controller.
 
 %\begin{figure}
 %\centering
@@ -309,6 +314,7 @@ controller.
 
 %\red{[This section and the next should be merged into a crisp section with the background on DSVerifier, if not included in previous work? 
 %Please stick to the introduced notations. Please clarify what the function FWL does, compared to the general approximations introduced above.]}
+
 \red{Alessandro, I've made the changes as requested. Please let me know if this is good enough or if I made it too short}
 
 In this study, the methodology used for verifying closed-loop digital
@@ -328,41 +334,55 @@ G(z)&=\frac{b_{0}+b_{1}z^{-1}+...+b_{M_G}z^{-M_G}}{a_{0}+a_{1}z^{-1}+...+a_{N_G}
 \end{align}
 %
 \noindent where $\beta$ and $\alpha$ are the controller's coefficients, $b$
-and $a$ are the plant's coefficients, and $N$ and $M$ are the number of poles and zeros for the corresponding block.  
+and $a$ are the plant's coefficients, and $N$ and $M$ are the number of
+poles and zeros for the corresponding block.
 
-Note that $G(z)$ is a
-discrete model of a real (and continuous) plant, {\it i.e.}, a continuous
-model of the plant must be discretized to obtain the discrete equivalent
-coefficients $b$ and $a$~\cite{Astrom08} via ZOH discretization.
-Although there are several discretization methods available in the literature~\cite{Franklin15}, the
-zero-order hold (ZOH) discretization is more suitable for representing the
-sampling and holding processes that are typically employed by hybrid
-systems~\cite{istepanian2012digital}, {\it i.e.}, the ZOH discretization models 
-the exact effect of sampling and DAC interpolation over the plant.
+Note that $G(z)$ is a discrete model of a real (and continuous) plant, {\it
+i.e.}, a continuous model of the plant must be discretized to obtain the
+discrete equivalent coefficients $b$ and $a$~\cite{Astrom08} via ZOH
+discretization.  Although there are several discretization methods available
+in the literature~\cite{Franklin15}, the zero-order hold (ZOH)
+discretization is more suitable for representing the sampling and holding
+processes that are typically employed by hybrid
+systems~\cite{istepanian2012digital}, {\it i.e.}, the ZOH discretization
+models the exact effect of sampling and DAC interpolation over the plant.
 
-\begin{mylemma} \cite{astrom1997computer}
+\begin{mylemma}\cite{astrom1997computer}
 %
-The pulse transfer function $G(z)$ is a z-domain model that relates the output sampled by a ADC and the digital input provided by ZOH. It is equivalent at the sample times ({\it i.e.}, $kT$ to the continuous transfer function $G(s)$ driven by ZOH).  This pulse transfer
-function can be computed as
+The pulse transfer function $G(z)$ is a z-domain model that relates the
+output sampled by a ADC and the digital input provided by ZOH.  It is
+equivalent at the sample times ({\it i.e.}, $kT$ to the continuous transfer
+function $G(s)$ driven by ZOH).  This pulse transfer function can be
+computed as
 %
 \begin{equation}
 \label{eq:pulsetf}
 G(z,T) = (1-z^{-1})\mathcal{Z}\left\lbrace{\mathcal{L}^{-1}\left\lbrace{\frac{G(s)}{s}}\right\rbrace_{t=kT}}\right\rbrace.
 \end{equation}
-
-For convenience, we will use only the notation $G(z)$ to represent the pulse transfer function.
+%
+For convenience, we will use only the notation $G(z)$ to represent the pulse
+transfer function.
+%
 \end{mylemma}
 
-Since $G(z)$ is an approximation of $G(s)$ we denote the error in the approximation for time $t \neq kT$ as $\Delta{G}_P$
+Since $G(z)$ is an approximation of $G(s)$ we denote the error in the
+approximation for time $t \neq kT$ as $\Delta{G}_P$
+%
 \begin{align}
 \small
 \label{parametric_plant_tf}
 \hat{G}(z)&=\frac{(b_{0}+\Delta_p b_{0}) +...+(b_{M_G}+\Delta_p b_{M_G})z^{-M_G}}{(a_{0}+\Delta_p a_{0})+...+(a_{N_G}+\Delta_p a_{N_G})z^{-N_G}} \nonumber \\
 &=G(z)+\Delta{G}_P(z).
 \end{align}
-Note that $\Delta{G}_P$ is undefined and upperbound by a user defined percentage such that $\hat{G}(z)$ corresponds to the polynomial set of possible values of $G(z, T): \forall T \in \mathbb{R}$
+%
+Note that $\Delta{G}_P$ is undefined and upperbound by a user defined
+percentage such that $\hat{G}(z)$ corresponds to the polynomial set of
+possible values of $G(z, T): \forall T \in \mathbb{R}$
 
-Let $\tilde C(z)$ and $\tilde G(z)$ be the transfer functions represented using a Fixed Point Finite Word Length with integer size $I$ and fractional size $F$. We shall denote this domain as $\mathbb{R}\langle I,F \rangle$
+Let $\tilde C(z)$ and $\tilde G(z)$ be the transfer functions represented
+using a Fixed Point Finite Word Length with integer size $I$ and fractional
+size $F$.  We shall denote this domain as $\mathbb{R}\langle I,F \rangle$
+%
 \begin{align}
 \small
 \label{digital_controller_plant_tf}
@@ -371,9 +391,13 @@ Let $\tilde C(z)$ and $\tilde G(z)$ be the transfer functions represented using 
 \tilde G(z)&=\frac{\tilde b_{0}+\tilde b_{1}z^{-1}+...+\tilde b_{M_G}z^{-M_G}}{\tilde a_{0}+\tilde a_{1}z^{-1}+...+\tilde a_{N_G}z^{-N_G}}.
 \end{align}
  
-Since the controller is implemented in the $\mathbb{R}\langle I,F \rangle$ domain, 
+Since the controller is implemented in the $\mathbb{R}\langle I,F \rangle$
+domain,
+%
  $$\forall i \leq N_C, j \leq M_C\ \  \tilde \beta_{i} \equiv \beta_{i} \wedge \tilde \alpha_{j} \equiv \alpha_{j} \Leftrightarrow \tilde C(z) \equiv C(z)$$
+%
 However, given a real plant and real controller $\hat{G}(z), \hat{C}(z)$,
+%
 \begin{align}
 \small
 \label{FWL_tf}
@@ -387,7 +411,11 @@ However, given a real plant and real controller $\hat{G}(z), \hat{C}(z)$,
 \end{align}
  
 \vspace{1 mm} 
-\noindent where $\Delta{G}_Q(z)$ represents the plant uncertainty caused by the rounding off effect. We may encompass all the uncertainty as $\Delta{G}(z)=\Delta{G}_P(z)+\Delta{G}_Q(z)$. Since this value is nondeterministic, the polynomial set of possible values of $\tilde G(z)$ is denoted by $\mathfrak{G}(z)$.
+\noindent where $\Delta{G}_Q(z)$ represents the plant uncertainty caused by
+the rounding off effect.  We may encompass all the uncertainty as
+$\Delta{G}(z)=\Delta{G}_P(z)+\Delta{G}_Q(z)$.  Since this value is
+nondeterministic, the polynomial set of possible values of $\tilde G(z)$ is
+denoted by $\mathfrak{G}(z)$.
 
 %------------------------------------
 \subsection{DSVerifier Verification Flow}
@@ -425,28 +453,29 @@ Steps A to D are automatically performed by DSVerifier.
 %user steps described in Steps $1$--$5$ result in an ANSI-C code that should
 %be used as an input for DSVerifier.
 
-Given a model $(\hat{C}(z),\hat{G}(z), \mathbb{R}\langle I,F \rangle)$, provided
-in an ANSI-C code input file (Steps 1-5),
-DSVerifier constructs a non-deterministic model to represent the plant family
-$\mathfrak{G}(z)$ (Step A), and a transfer function $f$ [eq. \ref{FWL_tf}]
-(step B) to calulate the implementation $f(\hat{C}(z)) \rightarrow \tilde C(z)$
-of the controller (step C).
-Finally DSVerifier builds an intermediate ANSI-C code for the digital system
-implementation, which is used as input for the model-checker (Step D).
+Given a model $(\hat{C}(z),\hat{G}(z), \mathbb{R}\langle I,F \rangle)$,
+provided in an ANSI-C code input file (Steps 1-5), DSVerifier constructs a
+non-deterministic model to represent the plant family $\mathfrak{G}(z)$
+(Step A), and a transfer function $f$ [eq.  \ref{FWL_tf}] (step B) to
+calulate the implementation $f(\hat{C}(z)) \rightarrow \tilde C(z)$ of the
+controller (step C).  Finally DSVerifier builds an intermediate ANSI-C code
+for the digital system implementation, which is used as input for the
+model-checker (Step D).
 
 This intermediate ANSI-C code model $(\tilde C(z),\mathfrak{G}(z),\phi)$
-containing a specification $\phi$ for the verification properties ({\it i.e.}, robust stability)
-is translated into SAT/SMT formulae by a back-end model-checking tool ({\it e.g.},
-CBMC~\cite{ClarkeKL04} or ESBMC~\cite{CordeiroFM12}).
-If any property violation is found, then DSVerifier reports a
-counterexample, which contains system inputs or parametric deviations
-$\Delta{G}$ that lead the system to a failure.  A successful verification
-result is reported if the system is safe with respect to $\phi$.  In
-particular, the stability verification is complete and sound, since it does
-not depend on system inputs and outputs.
-In the case of stability, the specification $\phi$ consists in a number of assumptions
-on the polynomial coefficients, following Jury's Criteria, as well as the restrictions
-set in the representation of these coefficients by the function $f$ (cf. Eq. \eqref{FWL_tf}).
+containing a specification $\phi$ for the verification properties ({\it
+i.e.}, robust stability) is translated into SAT/SMT formulae by a back-end
+model-checking tool ({\it e.g.}, CBMC~\cite{ClarkeKL04} or
+ESBMC~\cite{CordeiroFM12}).  If any property violation is found, then
+DSVerifier reports a counterexample, which contains system inputs or
+parametric deviations $\Delta{G}$ that lead the system to a failure.  A
+successful verification result is reported if the system is safe with
+respect to $\phi$.  In particular, the stability verification is complete
+and sound, since it does not depend on system inputs and outputs.  In the
+case of stability, the specification $\phi$ consists in a number of
+assumptions on the polynomial coefficients, following Jury's Criteria, as
+well as the restrictions set in the representation of these coefficients by
+the function $f$ (cf.~Eq.~\eqref{FWL_tf}).
 
 %In Step A, DSVerifier constructs a non-deterministic model to represent the
 %plant family $\mathfrak{G}$ using $g_0$ and $\Delta{g}\%$, which are
@@ -484,11 +513,12 @@ set in the representation of these coefficients by the function $f$ (cf. Eq. \eq
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Running Example} \label{sec:running-ex}
 
-To exploit the present approach full potential, a dynamical plant that can present 
-physical components must be considered. However, a discrete plant model can also demonstrate 
-some benefits of the present approach, which considers FWL effects in the digital 
-controller implementation. In particular, a classical cruise control example 
-is extracted from the literature~\cite{Astrom08}, where the discrete plant model (with time step
+To exploit the present approach full potential, a dynamical plant that can
+present physical components must be considered.  However, a discrete plant
+model can also demonstrate some benefits of the present approach, which
+considers FWL effects in the digital controller implementation.  In
+particular, a classical cruise control example is extracted from the
+literature~\cite{Astrom08}, where the discrete plant model (with time step
 of $0.2$s) is represented by the following z-expression:
 %
 \begin{equation}
@@ -496,19 +526,25 @@ of $0.2$s) is represented by the following z-expression:
 G\left(z\right) := \frac{0.0264}{z-0.9998}.
 \end{equation}
 
-Using an optimisation tool, the work in~\cite{DBLP:conf/hybrid/WangGRJF16} has designed 
-a high-performance controller, which is characterised by the following z-domain transfer function:
+Using an optimisation tool, the work in~\cite{DBLP:conf/hybrid/WangGRJF16}
+has designed a high-performance controller, which is characterised by the
+following z-domain transfer function:
+%
 \begin{equation}
 \label{Eq:running-example-controller}
 C\left(z\right) := \frac{2.72z^2 - 4.153z + 1.896}{z^2 - 1.844z + 0.8496}.
 \end{equation}
-The authors claim that this controller $C(z)$ stabilizes the closed-loop system for the discrete plant model $G(z)$.  
-However, if implementation aspects are considered during verification ({\it e.g.}, fixed-point arithmetic 
-and word-length), then this closed-loop system becomes unstable.
 %
-Indeed, the actual implementation of $C(z)$ using \param{4}{16} implementation format 
-({\it i.e.}, $4$ bits for the integer part and $16$ bits for the fractional part)
-can be represented by the following expression: 
+The authors claim that this controller $C(z)$ stabilizes the closed-loop
+system for the discrete plant model $G(z)$.  However, if implementation
+aspects are considered during verification ({\it e.g.}, fixed-point
+arithmetic and word-length), then this closed-loop system becomes unstable.
+%
+Indeed, the actual implementation of $C(z)$ using \param{4}{16}
+implementation format ({\it i.e.}, $4$ bits for the integer part and $16$
+bits for the fractional part) can be represented by the following
+expression:
+%
 \begin{equation}
 \label{Eq:running-example-controller-quantized}
 \resizebox{0.5\textwidth}{!}{
@@ -516,11 +552,10 @@ $C_{q}\left(z\right) {:=} \frac{2.7199859619140625z^2{-}4.1529998779296875z
 {+}1.89599609375}{z^2{-}1.843994140625z+0.8495941162109375},$
 }
 \end{equation} 
-which makes the system unstable in closed-loop using fixed-point arithmetic and 
-the typical series loop configuration, where $C_{q}\left(z\right)$ and $G\left(z\right)$ 
-are in the forward path.
-
-
+%
+which makes the system unstable in closed-loop using fixed-point arithmetic
+and the typical series loop configuration, where $C_{q}\left(z\right)$ and
+$G\left(z\right)$ are in the forward path.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %\section{Modelling Errors} 
@@ -562,12 +597,12 @@ output, is proposed.
 Consider the closed-loop sampled system in Figure~\ref{fig:sampledsystem},
 where $C(z)$ is the digital controller model, whose control output signal is
 quantized ($Q2$) and interpolated via a ZOH using digital-to-analog
-converter (DAC). The quantization occurs because the DAC resolution may be different from the fixed point representation of the controller.  
-$G(s)$ is the continuous-time model of the plant, from
-which output samples are taken and quantized ($Q1$) by means of an
-analog-to-digital converter (ADC) synchronized with the DAC.  Each quantizer
-($Q1$ and $Q2$) will present some contribution for the total quantization
-noise.
+converter (DAC).  The quantization occurs because the DAC resolution may be
+different from the fixed point representation of the controller.  $G(s)$ is
+the continuous-time model of the plant, from which output samples are taken
+and quantized ($Q1$) by means of an analog-to-digital converter (ADC)
+synchronized with the DAC.  Each quantizer ($Q1$ and $Q2$) will present some
+contribution for the total quantization noise.
 %    
 \begin{figure}[ht]
 \centering
@@ -665,7 +700,8 @@ noise.
 %% \label{fig:sampledsystem}
 %% \end{figure}
 
-First, some assumptions have to be established to obtain a model for the quantization effects (seen as noise) on the closed loop system. 
+First, some assumptions have to be established to obtain a model for the
+quantization effects (seen as noise) on the closed loop system.
 %
 \begin{myassumption}
 \label{whitenoise}
@@ -673,9 +709,9 @@ First, some assumptions have to be established to obtain a model for the quantiz
 The quantization noises $\nu_{1}$ (from the $Q1$) and $\nu_{2}$ (from the
 $Q2$) are energy bounded uncorrelated white noises.
 
-In \cite{widrow1956}, Widrow models the quantization noise as a gaussian model in which
-the second moment (variance) of the probability density function (pdf) of the quantization
-noise is given by
+In~\cite{widrow1956}, Widrow models the quantization noise as a gaussian
+model in which the second moment (variance) of the probability density
+function (pdf) of the quantization noise is given by
 %
 \begin{equation}
 \label{eq:variancelemma}
@@ -693,7 +729,9 @@ sampling the plant output at ADC and updating the DAC accordingly.
 
 \begin{myassumption}
 %
-The controller and the plant are linear, {\it i.e.}, any source of nonlinearity ({\it e.g.}, saturation, overflow, ADC/DAC nonlinearities) will be disregarded.
+The controller and the plant are linear, {\it i.e.}, any source of
+nonlinearity ({\it e.g.}, saturation, overflow, ADC/DAC nonlinearities) will
+be disregarded.
 %
 \end{myassumption}
 
@@ -916,14 +954,13 @@ In the case of stability properties we need to verify the stability of both $H_{
 % We use CounterExample-Guided Inductive Synthesis (CEGIS), as
 % illustrated in Fig~\ref{fig:CEGIS}.
 
-In order to synthesise closed-loop digital control systems, we use a
-program synthesis engine.  Nowadays, such engines are used
-increasingly often in program verification
-\cite{DBLP:conf/lpar/DavidKL15,DBLP:conf/cav/0001A14}.  Our program
-synthesiser makes use of Counter-Example Guided Inductive Synthesis
-(CEGIS) \cite{sketch}.  We start by presenting its general
-architecture followed by describing the parts specific to closed-loop control
-systems.
+In order to synthesise closed-loop digital control systems, we use a program
+synthesis engine.  Nowadays, such engines are used increasingly often in
+program verification~\cite{DBLP:conf/lpar/DavidKL15,DBLP:conf/cav/0001A14}. 
+Our program synthesiser makes use of Counter-Example Guided Inductive
+Synthesis (CEGIS) \cite{sketch}.  We start by presenting its general
+architecture followed by describing the parts specific to closed-loop
+control systems.
 
 %specialised it for stream refactoring.  
 % adding JST for stream refactoring
@@ -933,13 +970,12 @@ systems.
 \red{[I would recommend to clarify the domain of definition of $\sigma$, particularly over the set where $x$ ranges over. 
 (Be cognisant that control audience might be unfamiliar with the cegis architecture.) ]}
 % 
-The design of our synthesiser is given in
-Fig.~\ref{fig:CEGIS} and consists of two phases, {\sc
-Synthesise} and {\sc Verify}, which interact via a finite set of test vectors {\sc inputs} 
-that is updated incrementally.
-Given a specification $\sigma$ over variables $x$
-and $P$, the {\sc synth} procedure tries to find an existential witness $P$
-that satisfies the specification $\sigma(x, P)$ for all $x$, namely:
+The design of our synthesiser is given in Fig.~\ref{fig:CEGIS} and consists
+of two phases, {\sc Synthesise} and {\sc Verify}, which interact via a
+finite set of test vectors {\sc inputs} that is updated incrementally. 
+Given a specification $\sigma$ over variables $x$ and $P$, the {\sc synth}
+procedure tries to find an existential witness $P$ that satisfies the
+specification $\sigma(x, P)$ for all $x$, namely:
 %
 $\exists P . \forall x \in \text{\sc inputs} . \sigma(x, P)$
 
@@ -955,19 +991,21 @@ If this formula is unsatisfiable, the candidate solution is in fact a
 solution to the synthesis formula and so the algorithm terminates. 
 Otherwise, the witness $x$ is an input on which the candidate solution fails
 to meet the specification.  This witness $x$ is added to the {\sc inputs}
-set, and the loop iterates again.  It is worth noting that each iteration of the
-loop adds a new input to the finite set $\text{\sc inputs}$  being used for synthesis.  If
-the full set of inputs \blue{[which by now should have a name, as suggested to be introduced above]} is finite, this means that the refinement loop
-can only iterate a finite number of times.
+set, and the loop iterates again.  It is worth noting that each iteration of
+the loop adds a new input to the finite set $\text{\sc inputs}$ being used
+for synthesis.  If the full set of inputs \blue{[which by now should have a
+name, as suggested to be introduced above]} is finite, this means that the
+refinement loop can only iterate a finite number of times.
 
 \paragraph{Synthesis elements specific to control systems}
-Next, we describe the specific property that we pass to the 
-program synthesiser as the specification $\sigma$.
-There are two different algorithms in DSVerifier that can be used for
-stability verification~\cite{DBLP:journals/dafes/BessaICF16}, 
-one based on Schur's decomposition and another one based on 
-Jury's criteria~\cite{astrom1997computer}.
-Here, we choose Jury's method~\cite{astrom1997computer}, due to its efficiency.
+
+Next, we describe the specific property that we pass to the program
+synthesiser as the specification $\sigma$.  There are two different
+algorithms in DSVerifier that can be used for stability
+verification~\cite{DBLP:journals/dafes/BessaICF16}, one based on Schur's
+decomposition and another one based on Jury's
+criteria~\cite{astrom1997computer}.  Here, we choose Jury's
+method~\cite{astrom1997computer}, due to its efficiency.
 
 We use this method to check the stability in the $z$-domain for the characteristic polynomial $S(z)$ of 
 the matrix $\left( \begin{array}{c} Y \\ U \end{array}\right)$, where $Y(z)$ is the 
@@ -1168,11 +1206,12 @@ This candidate solution is validated as the final solution by the next
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Experimental Evaluation}
 
-This section is split into three parts. Section~\ref{experimental-setup} discusses 
-the experimental setup and the employed benchmarks, while Section~\ref{experimental-objectives} 
-describes the experimental objectives. Section~\ref{experimental-results} describes the experimental 
-results related to the application of CEGIS to the standard closed-loop control system benchmarks 
-described in Section~\ref{experimental-setup}.
+This section is split into three parts. Section~\ref{experimental-setup}
+discusses the experimental setup and the employed benchmarks, while
+Section~\ref{experimental-objectives} describes the experimental objectives. 
+Section~\ref{experimental-results} describes the experimental results
+related to the application of CEGIS to the standard closed-loop control
+system benchmarks described in Section~\ref{experimental-setup}.
 
 %---------------------------------
 \subsection{Description of Benchmarks}
@@ -1217,12 +1256,14 @@ G_2(z)=\frac{5\times{10^{-5}}z + 5\times{10^{-5}}}{z^2 - 2z + 1.0001}, \nonumber
 C_3(z)=\frac{1.28\times{10^{3}}z^2 - 1.354240\times{10^{3}}z + 0.074879\times{10^{3}}}{z^2 - 1.4990z + 0.4995}. \nonumber
 \end{equation} 
 
-A third set of benchmarks that consists of digital controllers for satellite applications
-is considered~\cite{Franklin15}, in order to evaluate the present approach full capabilities.
-In particular, satellites often require attitude (pose) control for proper orientation 
-of antennas and sensors w.r.t. earth. The satellite attitude control is typically used 
-for three-axis attitude tracking, but here only one axis at a time is considered. 
-The motion equation for the one-axis system, despising disturbance torques, is given by:
+A third set of benchmarks that consists of digital controllers for satellite
+applications is considered~\cite{Franklin15}, in order to evaluate the
+present approach full capabilities.  In particular, satellites often require
+attitude (pose) control for proper orientation of antennas and sensors
+w.r.t.  earth.  The satellite attitude control is typically used for
+three-axis attitude tracking, but here only one axis at a time is
+considered.  The motion equation for the one-axis system, despising
+disturbance torques, is given by:
 %
 \begin{equation}
 \label{eq:satelliteode}
@@ -1295,16 +1336,16 @@ seek better results based on a number of properties in addition to
 stability.  A vast range of pole placement techniques such as Moore's
 algorithm for eigenstructure assignment~\cite{klein1977eigenvalue} or the
 more recent Linear Quadratic Regulator (LQR)~\cite{bemporad2002explicit}
-have been used in several studies with increasing degrees of succes to ensure
-stability.  The latter approach highlights the importance of conserving
-energy during the control process, which results in lower running costs.  
-Since real systems are subject to tolerance and noise
-as well as the need for economy, more recent studies focus on the problems of
-achieving robust stability with minimum
+have been used in several studies with increasing degrees of succes to
+ensure stability.  The latter approach highlights the importance of
+conserving energy during the control process, which results in lower running
+costs.  Since real systems are subject to tolerance and noise as well as the
+need for economy, more recent studies focus on the problems of achieving
+robust stability with minimum
 gain~\cite{schmid2014unified,konigorski2012pole}.  However, when extending
 the problem to digital controller synthesis, many of these techniques lack
 the ability to produce sound or stable results because they disregard the
-effects of quantization and rounding. Recent papers on
+effects of quantization and rounding.  Recent papers on
 implementations/synthesis of LTI digital
 controllers~\cite{das2013lqr,ghosh2013fpga} focus on time discretization,
 failing to account for these error-inducing effects and can therefore result
@@ -1315,11 +1356,11 @@ controller.
 
 \paragraph{Formal Verification of Linear Digital Controllers} 
 
-Researchers in formal verification of control systems have studied
-various effects of discretising the dynamics, including delayed
+Researchers in formal verification of control systems have studied various
+effects of discretising the dynamics, including delayed
 response~\cite{Duggirala2015}, and Finite Word Length (FWL) constraints with
-the goal to either verify ({\it e.g.},  \cite{daes20161}) or optimise
-({\it e.g.},~\cite{oudjida2014design}) implementations.  There are in fact two
+the goal to either verify ({\it e.g.}, \cite{daes20161}) or optimise ({\it
+e.g.},~\cite{oudjida2014design}) implementations.  There are in fact two
 different problems arising from FWL effects.  The first corresponds to the
 error in the dynamics caused by the inability of the hardware to represent
 the exact dynamics of the system whilst the second relates to rounding
@@ -1328,37 +1369,39 @@ measure based on the error of the digital dynamics ensures that the FWL
 errors do not make the digital system unstable.  A more recent
 approach~\cite{DBLP:journals/automatica/WuLCC09} uses $\mu$ calculus to
 directly model the digital controller so that the selected parameters are
-stable by design.  Most studies following this verification research field focus on
-finding a correct implementation of a known desired controller, looking for
-optimal parameter representations using FWL, but ignoring the effects of
-rounding errors due to issues of mathematical tractability.  The analyses
-in~\cite{DBLP:conf/hybrid/WangGRJF16,DBLP:conf/hybrid/RouxJG15} rely on an
-invariant computation on the discrete system dynamics using Semi-Definite
-Pogramming (SDP).  Whilst the former uses BIBO properties to determine
-stability, the latter uses Lyapunov-based quadratic invariants.  In both
-cases, the SDP solver uses floating-point arithmetic and soundness is checked
-by upper bounding the error.
-An alternative approach is taken by \cite{park2016scalable}, where the verification of existing
-code is performed against a known model by extracting an LTI model of the
-code through symbolic execution. In order to account for rounding errors, an
-upper bound is introduced in the verification phase. If the error of the implementation
-is lower than this tolerance level, then the verification is successful. 
+stable by design.  Most studies following this verification research field
+focus on finding a correct implementation of a known desired controller,
+looking for optimal parameter representations using FWL, but ignoring the
+effects of rounding errors due to issues of mathematical tractability.  The
+analyses in~\cite{DBLP:conf/hybrid/WangGRJF16,DBLP:conf/hybrid/RouxJG15}
+rely on an invariant computation on the discrete system dynamics using
+Semi-Definite Pogramming (SDP).  Whilst the former uses BIBO properties to
+determine stability, the latter uses Lyapunov-based quadratic invariants. 
+In both cases, the SDP solver uses floating-point arithmetic and soundness
+is checked by upper bounding the error.  An alternative approach is taken by
+\cite{park2016scalable}, where the verification of existing code is
+performed against a known model by extracting an LTI model of the code
+through symbolic execution.  In order to account for rounding errors, an
+upper bound is introduced in the verification phase.  If the error of the
+implementation is lower than this tolerance level, then the verification is
+successful.
 
 \paragraph{Robust Synthesis of FWL Digital Controllers}
 
-Given the current knowledge in control system's synthesis, there is no other 
-existing study on the automatic synthesis of fixed-point digital controllers 
-considering FWL effects.  Parameter synthesis tools such as~\cite{cimatti2013parameter} 
-use bounded model checking and fixed-point computations to find parameters based on user
-defined specifications, but they often operate in the continuous domain and
-are ill-suited for robust analysis since they have no direct means of
-evaluating robustness.  Other tools such as~\cite{economakos2016automated}
-are directly aimed at robust stability problems, but they fail to explore the
-effects of FWL in their implementation.  In order to provide a correct by
-design digital controller, \cite{alur2016compositional} requires a user-defined
-finite state abstraction to synthesise a digital controller based on high
-level specifications.  Whilst this approach directly overcomes the
-challenges presented by the FWL problem, it still requires error-prone user
+Given the current knowledge in control system's synthesis, there is no other
+existing study on the automatic synthesis of fixed-point digital controllers
+considering FWL effects.  Parameter synthesis tools such
+as~\cite{cimatti2013parameter} use bounded model checking and fixed-point
+computations to find parameters based on user defined specifications, but
+they often operate in the continuous domain and are ill-suited for robust
+analysis since they have no direct means of evaluating robustness.  Other
+tools such as~\cite{economakos2016automated} are directly aimed at robust
+stability problems, but they fail to explore the effects of FWL in their
+implementation.  In order to provide a correct by design digital controller,
+\cite{alur2016compositional} requires a user-defined finite state
+abstraction to synthesise a digital controller based on high level
+specifications.  Whilst this approach directly overcomes the challenges
+presented by the FWL problem, it still requires error-prone user
 intervention.  A different solution that looks at the other end of the scale
 is an approach that synthesises word lengths for known problems as developed
 in \cite{jha2013swati}; however, this provides neither an optimal word
@@ -1384,10 +1427,10 @@ control we seek to synthesise.  What is needed in this regard is the
 combination of a synthesis engine with a control verification tool that
 addresses the challenges presented here in the form of FWL effects and
 stability measures for LTI SISO controllers.  We take the former
-from~\cite{DBLP:conf/lpar/DavidKL15} and the latter from \cite{daes20161} whilst enhancing the
-procedure by evaluating the quantaization effects of the Hardware interfaces
-(ADC/DAC) to obtain an accurate discrete time FWL representation of the
-continuous dynamics.
+from~\cite{DBLP:conf/lpar/DavidKL15} and the latter from~\cite{daes20161}
+whilst enhancing the procedure by evaluating the quantaization effects of
+the Hardware interfaces (ADC/DAC) to obtain an accurate discrete time FWL
+representation of the continuous dynamics.
  
 %In \cite{DBLP:journals/corr/PakmehrWJVF13}, Pakmehr et al.  design a control software verification framework for gas turbine engines.
 
