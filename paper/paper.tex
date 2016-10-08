@@ -1294,11 +1294,11 @@ controller.
 
 \paragraph{Formal Verification of Linear Digital Controllers} 
 
-Researchers in formal verification methods of control systems have studied
+Researchers in formal verification of control systems have studied
 various effects of discretising the dynamics, including delayed
 response~\cite{Duggirala2015}, and Finite Word Length (FWL) constraints with
-the objective to either verify (eg.  \cite{daes20161}) or optimise
-(eg.~\cite{oudjida2014design}) implementations.  There are in fact two
+the goal to either verify ({\it e.g.},  \cite{daes20161}) or optimise
+({\it e.g.},~\cite{oudjida2014design}) implementations.  There are in fact two
 different problems arising from FWL effects.  The first corresponds to the
 error in the dynamics caused by the inability of the hardware to represent
 the exact dynamics of the system whilst the second relates to rounding
@@ -1307,15 +1307,15 @@ measure based on the error of the digital dynamics ensures that the FWL
 errors do not make the digital system unstable.  A more recent
 approach~\cite{DBLP:journals/automatica/WuLCC09} uses $\mu$ calculus to
 directly model the digital controller so that the selected parameters are
-stable by design.  Most papers following this line of verification focus on
+stable by design.  Most studies following this verification research field focus on
 finding a correct implementation of a known desired controller, looking for
-optimal parameter representations using FWL but ignoring the effects of
+optimal parameter representations using FWL, but ignoring the effects of
 rounding errors due to issues of mathematical tractability.  The analyses
 in~\cite{DBLP:conf/hybrid/WangGRJF16,DBLP:conf/hybrid/RouxJG15} rely on an
 invariant computation on the discrete system dynamics using Semi-Definite
 Pogramming (SDP).  Whilst the former uses BIBO properties to determine
 stability, the latter uses Lyapunov-based quadratic invariants.  In both
-cases the SDP solver uses floating point arithmetic and soundness is checked
+cases, the SDP solver uses floating-point arithmetic and soundness is checked
 by upper bounding the error.
 An alternative approach is taken by \cite{park2016scalable}, where the verification of existing
 code is performed against a known model by extracting an LTI model of the
