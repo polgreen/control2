@@ -899,7 +899,7 @@ digital controller model.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{\red{Automated} Program Synthesis for \red{for Controllers}}
+\section{Automated Program Synthesis \\ for Digital Controllers}
 
 % We use CounterExample-Guided Inductive Synthesis (CEGIS), as
 % illustrated in Fig~\ref{fig:CEGIS}.
@@ -950,9 +950,10 @@ can only iterate a finite number of times.
 Next, we describe the specific property that we pass to the 
 program synthesiser as the specification $\sigma$.
 There are two different algorithms in DSVerifier that can be used for
-stability verification, one based on Schur's decomposition and another
-one based on Jury's criteria \cite{DBLP:journals/dafes/BessaICF16} \red{[Jury here is our friend, I wouldn't use his first name ... ]}.
-Here, we choose Jury's method, due to its efficiency.
+stability verification~\cite{DBLP:journals/dafes/BessaICF16}, 
+one based on Schur's decomposition and another one based on 
+Jury's criteria~\cite{astrom1997computer}.
+Here, we choose Jury's method~\cite{astrom1997computer}, due to its efficiency.
 
 We use this method to check the stability in the $z$-domain for the characteristic polynomial $S(z)$ of 
 the matrix $\left( \begin{array}{c} Y \\ U \end{array}\right)$ \red{[unclear: what matrix? We need to clarify the relationship between the char. poly. $S(z)$ and the later quantities $\Delta N_{G}(z), \Delta D_{G}(z)$ and corresponding controller's structure.]}. 
