@@ -397,9 +397,10 @@ However, given a real plant and real controller $\hat{G}(z), \hat{C}(z)$,
 
 %\red{[The following description can be made shorter, crisper?]}
 
-The DSVerifier verification flow is illustrated in Fig.~\ref{DSVerifier_process}.
+The DSVerifier verification flow is illustrated in Fig.~\ref{DSVerifier_process};
+a detailed description of DSVerifier tool can be found in~\cite{IsmailBCFF15}.
 Steps $1$ to $5$ are performed by the user/synthesiser and
-Steps A to D are automatically performed by DSVerifier
+Steps A to D are automatically performed by DSVerifier.
 %, which accepts the
 %digital controller transfer functions together with the plant model.  For
 %any digital controller, implementation details should be provided ({\it
@@ -435,18 +436,18 @@ Finally DSVerifier builds an intermediate ANSI-C code for the digital system
 implementation, which is used as input for the model-checker (Step D).
 
 This intermediate ANSI-C code model $(\tilde C(z),\mathfrak{G}(z),\phi)$
-containing a specification $\phi$ for the verification properties ({\it i.e.} stability)
+containing a specification $\phi$ for the verification properties ({\it i.e.}, robust stability)
 is translated into SAT/SMT formulae by a back-end model-checking tool ({\it e.g.},
 CBMC~\cite{ClarkeKL04} or ESBMC~\cite{CordeiroFM12}).
-If any property violation is found, DSVerifier reports a
+If any property violation is found, then DSVerifier reports a
 counterexample, which contains system inputs or parametric deviations
 $\Delta{G}$ that lead the system to a failure.  A successful verification
 result is reported if the system is safe with respect to $\phi$.  In
 particular, the stability verification is complete and sound, since it does
 not depend on system inputs and outputs.
 In the case of stability, the specification $\phi$ consists in a number of assumptions
-on the polynomial coefficients following Jury's Criteria, as well as the restrictions
-set in the representation of these coefficients by the function $f$ [eq. \ref{FWL_tf}].
+on the polynomial coefficients, following Jury's Criteria, as well as the restrictions
+set in the representation of these coefficients by the function $f$ (Eq. \ref{FWL_tf}).
 
 %In Step A, DSVerifier constructs a non-deterministic model to represent the
 %plant family $\mathfrak{G}$ using $g_0$ and $\Delta{g}\%$, which are
