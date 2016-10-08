@@ -1246,6 +1246,9 @@ Essentially, the synthesis problem we are trying to solve is the following:
 find a digital controller denoted by  $N_c$ and $D_c$ that
 makes the closed-loop system stable 
 for all possible uncertainties $(\Delta N_G, \Delta D_G)$. 
+Note that, similar to the rest of the paper, we use the notation 
+$\hat{N_G}(z) = N_G(z) + \Delta N_G(z)$ and 
+$\hat{N_C}(z) = N_C(z) + \Delta N_C(z)$.
 When mapping back to the notation used for describing the general architecture 
 of the program synthesiser, the controller $(N_c,D_c)$ denotes $P$ and 
 the uncertainty $(\Delta N_G, \Delta D_G)$ represents $x$. 
@@ -1258,9 +1261,6 @@ then we obtain a counterexample denoted by
 values for each coefficients of $\Delta N_{G}(z)$ and $\Delta D_{G}(z)$, 
 %\red{[see my comment above - these quantities pop up too abruptly.]},
 which make the closed-loop system unstable. 
-Note that, similar to the rest of the paper, we use the notation 
-$\hat{N_G}(z) = N_G(z) + \Delta N_G(z)$ and 
-$\hat{N_C}(z) = N_C(z) + \Delta N_C(z)$.
 This uncertainty is added to 
 the set {\sc inputs} such that, in the subsequent {\sc synthesise} phase, 
 we obtain a candidate solution consisting 
