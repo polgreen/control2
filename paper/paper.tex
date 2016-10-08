@@ -1325,22 +1325,22 @@ is lower than this tolerance level, then the verification is successful.
 
 \paragraph{Robust Synthesis of FWL Digital Controllers}
 
-To the authors' knowledge, there is no existing work on the automatic
-synthesis of fixed point digital controllers considering FWL effects.  Parameter
-synthesis tools such as~\cite{cimatti2013parameter} use bounded model
-checking and fixed point computations to find parameters based on user
+Given the current knowledge in control system's synthesis, there is no other 
+existing study on the automatic synthesis of fixed-point digital controllers 
+considering FWL effects.  Parameter synthesis tools such as~\cite{cimatti2013parameter} 
+use bounded model checking and fixed-point computations to find parameters based on user
 defined specifications, but they often operate in the continuous domain and
 are ill-suited for robust analysis since they have no direct means of
 evaluating robustness.  Other tools such as~\cite{economakos2016automated}
-are directly aimed at robust stability problems but fail to explore the
+are directly aimed at robust stability problems, but they fail to explore the
 effects of FWL in their implementation.  In order to provide a correct by
-design controller, \cite{alur2016compositional} requires a user-defined
+design digital controller, \cite{alur2016compositional} requires a user-defined
 finite state abstraction to synthesise a digital controller based on high
 level specifications.  Whilst this approach directly overcomes the
 challenges presented by the FWL problem, it still requires error-prone user
 intervention.  A different solution that looks at the other end of the scale
-is an approach that synthesises word lengths for know problems as developed
-in \cite{jha2013swati}, however this provides neither an optimal word
+is an approach that synthesises word lengths for known problems as developed
+in \cite{jha2013swati}; however, this provides neither an optimal word
 synthesis nor a comprehensive solution for the problem.  It is from this
 vacuum that we seek to explore a CEGIS approach to FWL controller synthesis.
 
