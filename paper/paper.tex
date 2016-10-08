@@ -700,6 +700,160 @@ contribution for the total quantization noise.
 %% \label{fig:sampledsystem}
 %% \end{figure}
 
+<<<<<<< HEAD
+
+
+\begin{figure}[ht]
+\centering
+
+\tikzset{add/.style n args={4}{
+    minimum width=6mm,
+    path picture={
+        \draw[circle] 
+            (path picture bounding box.south east) -- (path picture bounding box.north west)
+            (path picture bounding box.south west) -- (path picture bounding box.north east);
+        \node[draw=none] at ($(path picture bounding box.south)+(0,0.13)$)     {\small #1};
+        \node[draw=none] at ($(path picture bounding box.west)+(0.13,0)$)      {\small #2};
+        \node[draw=none] at ($(path picture bounding box.north)+(0,-0.13)$)    {\small #3};
+        \node[draw=none] at ($(path picture bounding box.east)+(-0.13,0)$)     {\small #4};
+        }
+    }
+ }
+
+\resizebox{.5\textwidth}{!}{
+ \begin{tikzpicture}[scale=0.3,-,>=stealth',shorten >=.2pt,auto,
+     semithick, initial text=, ampersand replacement=\&,]
+
+  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center}, row sep=.6cm, column sep=.3cm] {
+    \node[draw=none] (r) {$R(z)$};
+%   \& \coordinate (aux0);
+   \& \node[circle,add={-}{+}{}{}] (circle) {};
+   \node[draw=none] (ez) at ([xshift=1cm,yshift=.15cm]circle)  {$e(z)$};
+   \& \node[rectangle,draw,
+	minimum width=1cm,
+	minimum height=1cm,
+        label=\textbf{Controller}] (cz) {{\sc C(z)}};
+   \node[draw=none] (ud) at ([xshift=1cm,yshift=.15cm]cz)  {$U(z)$};
+   \& \node[rectangle,draw,
+	minimum width=1cm,
+	minimum height=1cm,
+        label=\textbf{Plant}] (gs) {{\sc G(z)}};
+   \node[draw=none] (y) at ([xshift=1cm,yshift=.15cm]gs)  {$Y(z)$};
+
+   \& \node[circle,add={}{+}{+}{}] (circle2) {};
+%   \node[draw=none] (tyz) at ([xshift=-1cm,yshift=.15cm]circle2)  {$Y(z)$};
+   \node[draw=none] (nu) at ([yshift=1cm]circle2)  {$\nu(z)$};
+   \& \coordinate (aux1);
+   \& \node[draw=none] (yz) {$\tilde Y(z)$};\\
+   \& \coordinate (aux3); 
+   \&
+   \& 
+   \& 
+   \& \coordinate (aux2);\\
+  };
+
+
+%  \path[->] (v1) edge (q1.north);
+%  \path[->] (v2) edge (q2.north);
+  \path[->] (r) edge (circle.west);
+  \path[->] (nu) edge (circle2.north);
+  \path[->] (aux1) edge (yz);
+  \path  
+   (circle.east) edge (cz)
+   (cz.east) edge (gs.west)
+   (gs.east) edge (circle2.west)
+   (circle2.east) edge (aux1.west)
+   (aux1.south) edge (aux2.north)
+   (aux2.west) edge (aux3.east); 
+  \path[->]  (aux3.north) edge (circle.south);
+ \end{tikzpicture}
+}
+ \caption{Sampled System. \label{fig:sampledsystem}}
+\end{figure}
+
+%
+%
+
+\begin{figure}[ht]
+\centering
+
+\tikzset{add/.style n args={4}{
+    minimum width=6mm,
+    path picture={
+        \draw[circle] 
+            (path picture bounding box.south east) -- (path picture bounding box.north west)
+            (path picture bounding box.south west) -- (path picture bounding box.north east);
+        \node[draw=none] at ($(path picture bounding box.south)+(0,0.13)$)     {\small #1};
+        \node[draw=none] at ($(path picture bounding box.west)+(0.13,0)$)      {\small #2};
+        \node[draw=none] at ($(path picture bounding box.north)+(0,-0.13)$)    {\small #3};
+        \node[draw=none] at ($(path picture bounding box.east)+(-0.13,0)$)     {\small #4};
+        }
+    }
+ }
+
+\resizebox{.5\textwidth}{!}{
+ \begin{tikzpicture}[scale=0.3,-,>=stealth',shorten >=.2pt,auto,
+     semithick, initial text=, ampersand replacement=\&,]
+
+  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center}, row sep=.6cm, column sep=.3cm] {
+    \node[draw=none] (r) {$R(z)$};
+%   \& \coordinate (aux0);
+   \& \node[circle,add={-}{+}{}{}] (circle) {};
+   \node[draw=none] (ez) at ([xshift=1cm,yshift=.15cm]circle)  {$e(z)$};
+   \& \coordinate (aux4);
+   \& \node[rectangle,draw,
+	minimum width=1cm,
+	minimum height=1cm,
+        label=\textbf{Controller}] (cz) {{\sc C(z)}};
+   \node[draw=none] (ud) at ([xshift=1cm,yshift=.15cm]cz)  {$U(z)$};
+   \& \node[rectangle,draw,
+	minimum width=1cm,
+	minimum height=1cm,
+        label=\textbf{Plant}] (gs) {{\sc G(z)}};
+   \node[draw=none] (y) at ([xshift=1cm,yshift=.15cm]gs)  {$Y(z)$};
+   \& \node[circle,add={+}{+}{}{}] (circle2) {};
+%   \node[draw=none] (tyz) at ([xshift=-1cm,yshift=.15cm]circle2)  {$Y(z)$};
+%   \node[draw=none] (nu) at ([yshift=1cm]circle2)  {$\nu(z)$};
+   \& \coordinate (aux1);
+   \& \node[draw=none] (yz) {$\tilde Y(z)$};\\
+   \& 
+   \& \coordinate (aux5); 
+   \& \node[rectangle,draw,
+	minimum width=1cm,
+	minimum height=1cm] (deltag) {{\sc $\Delta G(z)$}};
+   \&
+   \& \coordinate (aux6);\\
+   \& \coordinate (aux3); 
+   \&
+   \& 
+   \& 
+   \&
+   \& \coordinate (aux2);\\
+  };
+
+
+%  \path[->] (v1) edge (q1.north);
+%  \path[->] (v2) edge (q2.north);
+  \path[->] (r) edge (circle.west);
+%  \path[->] (nu) edge (circle2.north);
+  \path[->] (aux1) edge (yz);
+  \path  
+   (aux4.north) edge (aux5.south)
+   (aux5.east) edge (deltag.west)
+   (deltag.east) edge (aux6.west)
+   (aux6.south) edge (circle2.south)
+   (circle.east) edge (cz)
+   (cz.east) edge (gs.west)
+   (gs.east) edge (circle2.west)
+   (circle2.east) edge (aux1.west)
+   (aux1.south) edge (aux2.north)
+   (aux2.west) edge (aux3.east); 
+  \path[->]  (aux3.north) edge (circle.south);
+ \end{tikzpicture}
+}
+ \caption{Sampled System. \label{fig:sampledsystem}}
+\end{figure}
+
 First, some assumptions have to be established to obtain a model for the
 quantization effects (seen as noise) on the closed loop system.
 %
