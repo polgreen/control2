@@ -196,8 +196,7 @@ In this paper, however, we explore the automatic synthesis of
 reduces the deveopment cost and design time for a number of models.  
 In particular, we are interested in synthesising controllers 
 for {\em hybrid closed-loop systems}, {\it i.e.}, embedded controllers along with a model of their
-physical environment, the plant, as shown in
-Fig.~\ref{fig:closed-system}, that are {\em stable}.  Due to the complexity
+physical environment (the plant), which are {\em stable}.  Due to the complexity
 of such systems, we focus on linear models with known configurations
 to perform parametric synthesis of the controller dynamics.
 
@@ -215,42 +214,42 @@ effect of the FWL is included in the model as a parametric uncertainty
 which must be taken into account for the correct synthesis of the
 controller.
 
-\begin{figure}
-\centering
-\resizebox{.35\textwidth}{!}{
- \begin{tikzpicture}[scale=0.3,-,>=stealth',shorten >=.2pt,auto,
-     semithick, initial text=, ampersand replacement=\&,]
+%\begin{figure}
+%\centering
+%\resizebox{.35\textwidth}{!}{
+% \begin{tikzpicture}[scale=0.3,-,>=stealth',shorten >=.2pt,auto,
+%     semithick, initial text=, ampersand replacement=\&,]
 
-  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center}, row sep=.5cm, column sep=.5cm] {
-   \coordinate (aux0);
-   \& \node[circle] (circle) {}; 
-   \& \node[fill=yellow!20] (da) {{\sc D/A}}; 
-   \& \node[fill=yellow!20] (p) {{\sc P}};
-   \& \node[fill=yellow!20] (ad) {{\sc A/D}}; 
-   \& \coordinate (aux1);\\
-   \& \coordinate (aux3); 
-   \&
-   \&
-   \node[fill=yellow!20] (c) {C};
-   \& 
-   \& \coordinate (aux2);\\
-  };
+%  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center}, row sep=.5cm, column sep=.5cm] {
+%   \coordinate (aux0);
+%   \& \node[circle] (circle) {}; 
+%   \& \node[fill=yellow!20] (da) {{\sc D/A}}; 
+%   \& \node[fill=yellow!20] (p) {{\sc P}};
+%   \& \node[fill=yellow!20] (ad) {{\sc A/D}}; 
+%   \& \coordinate (aux1);\\
+%   \& \coordinate (aux3); 
+%   \&
+%   \&
+%   \node[fill=yellow!20] (c) {C};
+%   \& 
+%   \& \coordinate (aux2);\\
+%  };
 
 
-  \path[->] (aux0) edge (circle.west);
-  \path  
-   (circle.east) edge (da.west)
-   (da.east) edge (p.west)
-   (p.east) edge (ad.west)
-   (ad.east) edge (aux1.west)
-   (aux1.south) edge (aux2.north)
-   (aux2.west) edge (c.east)
-   (c.west) edge (aux3.east); 
-  \path[->]  (aux3.north) edge (circle.south);
- \end{tikzpicture}
-}
- \caption{Closed-Loop System. \label{fig:closed-system}}
-\end{figure}
+%  \path[->] (aux0) edge (circle.west);
+%  \path  
+%   (circle.east) edge (da.west)
+%   (da.east) edge (p.west)
+%   (p.east) edge (ad.west)
+%   (ad.east) edge (aux1.west)
+%   (aux1.south) edge (aux2.north)
+%   (aux2.west) edge (c.east)
+%   (c.west) edge (aux3.east); 
+%  \path[->]  (aux3.north) edge (circle.south);
+% \end{tikzpicture}
+%}
+% \caption{Closed-Loop System. \label{fig:closed-system}}
+%\end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Preliminaries}
@@ -447,7 +446,7 @@ particular, the stability verification is complete and sound, since it does
 not depend on system inputs and outputs.
 In the case of stability, the specification $\phi$ consists in a number of assumptions
 on the polynomial coefficients, following Jury's Criteria, as well as the restrictions
-set in the representation of these coefficients by the function $f$ (Eq. \ref{FWL_tf}).
+set in the representation of these coefficients by the function $f$ (cf. Eq. \eqref{FWL_tf}).
 
 %In Step A, DSVerifier constructs a non-deterministic model to represent the
 %plant family $\mathfrak{G}$ using $g_0$ and $\Delta{g}\%$, which are
