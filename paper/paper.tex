@@ -592,7 +592,7 @@ noise.
      semithick, initial text=, ampersand replacement=\&,]
 
   \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center}, row sep=.6cm, column sep=.3cm] {
-    \node[draw=none] (r) {r(z)};
+    \node[draw=none] (r) {$\tilde R(z)$};
 %   \& \coordinate (aux0);
    \& \node[circle,add={-}{+}{}{}] (circle) {};
    \node[draw=none] (ez) at ([xshift=1cm,yshift=.15cm]circle)  {$\tilde e(z)$};
@@ -600,7 +600,7 @@ noise.
 	minimum width=1cm,
 	minimum height=1cm,
         label=\textbf{Controller}] (cz) {{\sc C(z)}};
-   \node[draw=none] (ud) at ([xshift=1cm,yshift=.15cm]cz)  {$\tilde u(z)$};
+   \node[draw=none] (ud) at ([xshift=1cm,yshift=.15cm]cz)  {$\tilde U(z)$};
      
    \& complexnode/.pic={ 
       \node[rectangle,draw,
@@ -609,14 +609,14 @@ noise.
 	label=\textbf{DAC},] (dac) {};
      \node[circle,add={}{+}{+}{},fill=yellow!20] (q2) at ([xshift=-.65cm]dac.center) {};
      \node[draw=none] (q2t)  at ([xshift=-.65cm,yshift=-.65cm]dac.center) {{\sc Q2}};
-     \node[draw=none] (v2)  at ([xshift=-.65cm,yshift=1.5cm]dac.center) {$\nu2$};
+     \node[draw=none] (v2)  at ([xshift=-.65cm,yshift=1.5cm]dac.center) {$\nu_2(z)$};
      \node[fill=yellow!20] (zoh) at ([xshift=.65cm]dac.center) {{\sc ZOH}};}
    \& \node[rectangle,draw,
 	minimum width=1cm,
 	minimum height=1cm,
         label=\textbf{Plant}] (gs) {{\sc G(s)}};
-   \node[draw=none] (ud) at ([xshift=-1cm,yshift=.15cm]gs)  {$u(s)$};
-   \node[draw=none] (y) at ([xshift=1cm,yshift=.15cm]gs)  {$y(s)$};
+   \node[draw=none] (ud) at ([xshift=-1cm,yshift=.15cm]gs)  {$U(s)$};
+   \node[draw=none] (y) at ([xshift=1cm,yshift=.15cm]gs)  {$Y(s)$};
    \& complexnode/.pic={ 
      \node[rectangle,draw,
 	minimum width=4cm,
@@ -627,9 +627,9 @@ noise.
    \coordinate (switch2) at ([xshift=-0.4cm]adc.center);
    \node[circle,add={}{+}{+}{},fill=yellow!20] (q1) at ([xshift=1cm]adc.center) {};} 
      \node[draw=none] (q2t)  at ([xshift=1cm,yshift=-.65cm]adc.center) {{\sc Q1}};
-   \node[draw=none] (v1)  at ([xshift=1cm,yshift=1.5cm]adc.center) {$\nu1$};
+   \node[draw=none] (v1)  at ([xshift=1cm,yshift=1.5cm]adc.center) {$\nu_1(z)$};
    \& \coordinate (aux1);
-   \& \node[draw=none] (yz) {$\tilde y(z)$};\\
+   \& \node[draw=none] (yz) {$\tilde Y(z)$};\\
    \& \coordinate (aux3); 
    \&
    \&
@@ -905,10 +905,10 @@ In the case of stability properties we need to verify the stability of both $H_{
 %Eq.~\eqref{eq:pulsetf}, the height of step reference signal $r$, and the
 %digital controller model.
 
-\subsection{Modelling Error on Parameters Representation} 
+%\subsection{Modelling Error on Parameters Representation} 
 %\label{sec:}
 
-\red{[TO BE COMPLETED.]}
+%\red{[TO BE COMPLETED.]}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
