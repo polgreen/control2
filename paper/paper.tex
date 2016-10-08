@@ -457,9 +457,9 @@ a high-performance controller, which is characterised by the following z-domain 
 \label{Eq:running-example-controller}
 C\left(z\right) := \frac{2.72z^2 - 4.153z + 1.896}{z^2 - 1.844z + 0.8496}.
 \end{equation}
-The authors claim that this controller $C(z)$ is extremely stable for the discrete plant model $G(z)$.  
+The authors claim that this controller $C(z)$ stabilizes the closed-loop system for the discrete plant model $G(z)$.  
 However, if implementation aspects are considered during verification ({\it e.g.}, fixed-point arithmetic 
-and word-length), then this controller becomes unstable.
+and word-length), then this closed-loop system becomes unstable.
 %
 Indeed, the actual implementation of $C(z)$ using \param{4}{16} implementation format 
 ({\it i.e.}, $4$ bits for the integer part and $16$ bits for the fractional part)
