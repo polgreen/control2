@@ -334,15 +334,16 @@ and $a$ are the plant's coefficients, and $N$ and $M$ are the number of poles an
 Note that $G(z)$ is a
 discrete model of a real (and continuous) plant, {\it i.e.}, a continuous
 model of the plant must be discretized to obtain the discrete equivalent
-coefficients $b$ and $a$~\cite{Astrom08} via ZOH discretization %\red{[pls say how]}
-. Although there are several discretization methods available in the literature~\cite{Franklin15}, the
+coefficients $b$ and $a$~\cite{Astrom08} via ZOH discretization.
+Although there are several discretization methods available in the literature~\cite{Franklin15}, the
 zero-order hold (ZOH) discretization is more suitable for representing the
 sampling and holding processes that are typically employed by hybrid
-systems~\cite{istepanian2012digital}, i.e. the ZOH discretization models the exact effect of sampling and DAC interpolation over the plant.
+systems~\cite{istepanian2012digital}, {\it i.e.}, the ZOH discretization models 
+the exact effect of sampling and DAC interpolation over the plant.
 
 \begin{mylemma} \cite{astrom1997computer}
 %
-The pulse transfer function $G(z)$ is a z-domain model that relates the output sampled by a ADC and the digital input provided by ZOH. It is equivalent at the sample times ({\it i.e.} $kT$ to the continuous transfer function $G(s)$ driven by ZOH.  This pulse transfer
+The pulse transfer function $G(z)$ is a z-domain model that relates the output sampled by a ADC and the digital input provided by ZOH. It is equivalent at the sample times ({\it i.e.}, $kT$ to the continuous transfer function $G(s)$ driven by ZOH).  This pulse transfer
 function can be computed as
 %
 \begin{equation}
