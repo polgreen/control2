@@ -1239,8 +1239,18 @@ $$
 \phi_{stability} \equiv (R_1 \wedge R_2 \wedge R_3 \wedge R_4).
 $$
 %\cdsay{figure out what is existentially quantified for the final $\sigma$.} 
-\red{[Yes, intuitively all clear, however for the sake of clarity I would like to see the explicit mapping between the above formula and the previously used specification 
-$\sigma(x, P)$, with clear elucidation of the relationship between the domain of $z$ and that of $x$.]}
+%% \red{[Yes, intuitively all clear, however for the sake of clarity I would like to see the explicit mapping between the above formula and the previously used specification 
+%% $\sigma(x, P)$, with clear elucidation of the relationship between the domain of $z$ and that of $x$.]}
+
+Essentially, the synthesis problem we are trying to solve is the following:
+find a digital controller denoted by  $N_c$ and $D_c$ that
+makes the closed-loop system stable 
+for all possible uncertainties $(\Delta N_G, \Delta D_G)$. 
+When mapping back to the notation used for describing the general architecture 
+of the program synthesiser, the controller $(N_c,D_c)$ denotes $P$ and 
+the uncertainty $(\Delta N_G, \Delta D_G)$ represents $x$. 
+
+\red{[clear elucidation of the domain]}
 
 In the {\sc verify} phase, if the system is unstable for the current candidate solution,
 {\it i.e.}, if $\neg \phi_{stability}$ is satisfiable for $S(z)$, 
