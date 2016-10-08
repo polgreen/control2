@@ -315,7 +315,7 @@ synthesis of the controller.
 %\red{[This section and the next should be merged into a crisp section with the background on DSVerifier, if not included in previous work? 
 %Please stick to the introduced notations. Please clarify what the function FWL does, compared to the general approximations introduced above.]}
 
-\red{Alessandro, I've made the changes as requested. Please let me know if this is good enough or if I made it too short}
+%\red{Alessandro, I've made the changes as requested. Please let me know if this is good enough or if I made it too short}
 
 In this study, the methodology used for verifying closed-loop digital
 control system is based on the Digital-System Verifier
@@ -333,9 +333,9 @@ C(z)&=\frac{\beta_{0}+\beta_{1}z^{-1}+...+\beta_{M_C}z^{-M_C}}{\alpha_{0}+\alpha
 G(z)&=\frac{b_{0}+b_{1}z^{-1}+...+b_{M_G}z^{-M_G}}{a_{0}+a_{1}z^{-1}+...+a_{N_G}z^{-N_G}}.
 \end{align}
 %
-\noindent where $\beta$ and $\alpha$ are the controller's coefficients, $b$
-and $a$ are the plant's coefficients, and $N$ and $M$ are the number of
-poles and zeros for the corresponding block.
+\noindent where $\beta$ and $\alpha$ are vectors containing the controller's coefficients;  
+similarly $b$ and $a$ encompas the plant's coefficients;  
+and $N_{(\cdot)}$ and $M_{(\cdot)}$ denote the number of poles and zeros for the corresponding block.
 
 Note that $G(z)$ is a discrete model of a real (and continuous) plant, {\it
 i.e.}, a continuous model of the plant must be discretized to obtain the
@@ -343,8 +343,7 @@ discrete equivalent coefficients $b$ and $a$~\cite{Astrom08} via ZOH
 discretization.  Although there are several discretization methods available
 in the literature~\cite{Franklin15}, the zero-order hold (ZOH)
 discretization is more suitable for representing the sampling and holding
-processes that are typically employed by hybrid
-systems~\cite{istepanian2012digital}, {\it i.e.}, the ZOH discretization
+processes that are typically employed in complex systems~\cite{istepanian2012digital}, {\it i.e.}, the ZOH discretization
 models the exact effect of sampling and DAC interpolation over the plant.
 
 \begin{mylemma}\cite{astrom1997computer}
@@ -360,8 +359,8 @@ computed as
 G(z,T) = (1-z^{-1})\mathcal{Z}\left\lbrace{\mathcal{L}^{-1}\left\lbrace{\frac{G(s)}{s}}\right\rbrace_{t=kT}}\right\rbrace.
 \end{equation}
 %
-For convenience, we will use only the notation $G(z)$ to represent the pulse
-transfer function.
+For the sake of brevity, 
+we will use only the notation $G(z)$ to represent the pulse transfer function.
 %
 \end{mylemma}
 
