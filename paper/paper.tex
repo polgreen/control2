@@ -930,19 +930,23 @@ systems.
 
 \paragraph{General architecture of the program synthesiser}
 %
-\red{[I would recommend to clarify the domain of definition of $\sigma$, particularly over the set where $x$ ranges over. 
-(Be cognisant that control audience might be unfamiliar with the cegis architecture.) ]}
+%% \red{[I would recommend to clarify the domain of definition of $\sigma$, particularly over the set where $x$ ranges over. 
+%% (Be cognisant that control audience might be unfamiliar with the cegis architecture.) ]}
 % 
+The input specification provided to the program synthesiser is of the form
+$\exists \vec{P} . \forall \vec{x} \in \text{\sc inputs} . \sigma(\vec{x}, \vec{P})$
+where $\vec{P}$ ranges over functions, $\vec{x}$ ranges over
+ground terms and $\sigma$ is a quantifier-free formula.
+We interpret the gound terms over some finite domain $\mathcal{D}$.
+
 The design of our synthesiser is given in
 Fig.~\ref{fig:CEGIS} and consists of two phases, {\sc
 Synthesise} and {\sc Verify}, which interact via a finite set of test vectors {\sc inputs} 
 that is updated incrementally.
-Given a specification $\sigma$ over variables $x$
-and $P$, the {\sc synth} procedure tries to find an existential witness $P$
-that satisfies the specification $\sigma(x, P)$ for all $x$, namely:
+Given the aforementioned specification $\sigma$, the {\sc synth} procedure 
+tries to find an existential witness $P$
+that satisfies the specification $\sigma(x, P)$ for all $x$.
 %
-$\exists P . \forall x \in \text{\sc inputs} . \sigma(x, P)$
-
 If {\sc synthesise} succeeds in finding a witness $P$, this witness is a
 candidate solution to the full synthesis formula.  We pass this candidate
 solution to {\sc verify}, which determines whether it does satisfy
@@ -956,8 +960,10 @@ solution to the synthesis formula and so the algorithm terminates.
 Otherwise, the witness $x$ is an input on which the candidate solution fails
 to meet the specification.  This witness $x$ is added to the {\sc inputs}
 set, and the loop iterates again.  It is worth noting that each iteration of the
-loop adds a new input to the finite set $\text{\sc inputs}$  being used for synthesis.  If
-the full set of inputs \blue{[which by now should have a name, as suggested to be introduced above]} is finite, this means that the refinement loop
+loop adds a new input to the finite set $\text{\sc inputs}$  being used for synthesis.  
+Given that the full set of inputs $\mathcal{D}$ 
+%\blue{[which by now should have a name, as suggested to be introduced above]} 
+is finite, this means that the refinement loop
 can only iterate a finite number of times.
 
 \paragraph{Synthesis elements specific to control systems}
@@ -1096,7 +1102,7 @@ $$
 \Delta D_G(z) {=} 1.00053310394287109375z{-}1.0014629364013671875
 \end{array}
 $$
-\blue{[Nice, now I'm in the groove. Next unfolds well.] }
+%\blue{[Nice, now I'm in the groove. Next unfolds well.] }
 After adding this new counterexample to the set of {\sc inputs}, in the 
 next {\sc synthesise} phase, we get a new candidate solution that holds
 for both uncertainties in {\sc Inputs}:
