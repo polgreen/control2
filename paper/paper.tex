@@ -659,6 +659,8 @@ where $\Delta G_{P}(z)$ is the term that corresponds to the parametric uncertain
 
 \textcolor{blue}{[IB: I propose to exchange the following paragraphs by the previous blue]}
 
+\textcolor{green}{DC: I believe Alessandro wanted to be more specific about the nature of the modelling error which is why I was trying to explain it. In this case I believe there are also two separate sources for $\Delta{G}_p(z)$. The first is $\Delta{G}_p(s)$ (which is basically a known tolerance that may come from G(t)), whilst the second is the error introduced by the calculations in the $\mathcal{Z}$ transform. Alessandro, do you want to address this second term (possibly as explained below) or just leave the blue section as is?}
+
 
 Since $G(z)$ is an approximation of $G(s)$ we introduce an error term caused during its calculation as $\Delta{G}_P$
 
@@ -677,9 +679,32 @@ This calculation is performed outside of the scope of this work since it depends
 \red{[The previous statement is confusing and I must disagree here: I want hard error bounds on a specific value of T.]}
 \green{[You are correct. It was absolutely wrong. Hopefully this explanation is clear. We use MATLAB, but still don't know the details of their implementation, so I don't have hard data on how this error is calculated.}
 
+\textcolor{blue}{Since the controller is implemented using a FWL, $C(z)$ also suffers disturbances from the FWL effects, with roundoffs in coefficients that may change the closed-loop poles and zeros position, and consequently affect its stability, as shown in~\cite{Bessa16}.}
+
+
+\textcolor{blue}{
+Let $\hat{C}(z)$ be the transfer function of the digital controller represented using this FWL with integer size $I$ and fractional
+size $F$.  We shall denote this domain as $\mathbb{R}\langle I,F \rangle$
+%Since the controller is implemented in the $\mathbb{R}\langle I,F \rangle$ 
+%domain, {\it i.e.} a Fixed-Point Finite Word Length with integer size $I$ and fractional
+%size $F$, we shall denote this domain as $\mathbb{R}\langle I,F \rangle$ 
+and assume that there exists a function $FWL[\cdot]:\mathbb{R}^{n}\rightarrow \mathbb{R}^{n}\langle I,F \rangle$, which applies the FWL effects to a polynomial. Thus the perturbed controller model $\hat{C}(z)$ may be computed from the original model $C(z)=\frac{N_{C}(z)}{D_{C}(z)}$ using the following expression:
+\begin{equation}
+\hat{C}(z)=\frac{FWL[N_{C}(z)]}{FWL[D_{C}(z)]}
+\end{equation}}
+
+\textcolor{blue}{[IB: And I propose to exchange the remaining paragraphs by the previous blue]}
+
+\textcolor{green}{[DC: I changed it to a separate section to differentiate the effects, so we should keep both]}
+
+%------------------------------------
+\subsection{Using Fixed Point Arithmetic for verification}
+\label{fixedpoint_verification}
+%------------------------------------
+
 Let $\tilde C(z)$ and $\tilde G(z)$ be the transfer functions represented
-using a Fixed-Point Finite Word Length with integer size $I$ and fractional
-size $F$.  We shall denote this domain as $\mathbb{R}\langle I,F \rangle$ and obtain 
+using Fixed-Point bit vectors with integer size $I_b$ and fractional
+size $F_b$, whose domain is $\mathbb{R}\langle I_b,F_b \rangle \supseteq \mathbb{R}\langle I,F \rangle$.
 %
 \begin{align}
 \small
@@ -688,21 +713,8 @@ size $F$.  We shall denote this domain as $\mathbb{R}\langle I,F \rangle$ and ob
 %\label{plant_tf}
 \tilde G(z)&=\frac{\tilde b_{0}+\tilde b_{1}z^{-1}+...+\tilde b_{M_G}z^{-M_G}}{\tilde a_{0}+\tilde a_{1}z^{-1}+...+\tilde a_{N_G}z^{-N_G}}.
 \end{align}
-
-
-\textcolor{blue}{The digital controller $C(z)$ also suffers disturbances from the FWL effects, with roundoffs in coefficients that may change the closed-loop poles and zeros position, and consequently affect its stability, as shown in~\cite{Bessa16}.}
-
-\textcolor{blue}{Since the controller is implemented in the $\mathbb{R}\langle I,F \rangle$ 
-domain, {\it i.e.} a Fixed-Point Finite Word Length with integer size $I$ and fractional
-size $F$, we shall denote this domain as $\mathbb{R}\langle I,F \rangle$ and assume that there exists a function $FWL[\cdot]:\mathbb{R}^{n}\rightarrow \mathbb{R}^{n}\langle I,F \rangle$, which applies the FWL effects to a polynomial. Thus the perturbed controller model $\hat{C}(z)$ may be computed from the original model $C(z)=\frac{N_{C}(z)}{D_{C}(z)}$ using the following expression:
-\begin{equation}
-\hat{C}(z)=\frac{FWL[N_{C}(z)]}{FWL[D_{C}(z)]}
-\end{equation}}
-
-\textcolor{blue}{[IB: And I propose to exchange the remaining paragraphs by the previous blue]}
-
  
-Since the controller is implemented in the $\mathbb{R}\langle I,F \rangle$
+Since the controller is synthesised in the $\mathbb{R}\langle I,F \rangle$
 domain,
 %
  $$\forall i \leq N_C, j \leq M_C\ \  \tilde \beta_{i} \equiv \beta_{i} \wedge \tilde \alpha_{j} \equiv \alpha_{j} \Leftrightarrow \tilde C(z) \equiv C(z)$$
@@ -711,26 +723,30 @@ However, given a real plant and real controller $\hat{G}(z), \hat{C}(z)$, and a 
 \begin{align}
 \small
 \label{FWL_tf}
-&f (x \in \mathbb{R}) \rightarrow \tilde x \in \mathbb{R}\langle I,F \rangle \triangleq \tilde x = x-(x\mod\tilde x)
+&f_b (x \in \mathbb{R}) \rightarrow \tilde x \in \mathbb{R}\langle I_b,F_b \rangle \triangleq \tilde x = x-(x\mod\tilde x)
 \end{align}
 we calculate $\tilde C(z)=f(\hat{C}(z))$ and $\tilde G(z)=f(\hat{G}(z))$
 \begin{align}
 \label{digital_controller_tf}
 \tilde C(z)&=\frac{(\hat{\beta}_{0}+\Delta_q \hat{\beta}_{0}) +...+(\hat{\beta}_{M_C}+\Delta_q \hat{\beta}_{M_C})z^{-M_C}}{(\hat{\alpha}_{0}+\Delta_q \hat{\alpha}_{0})+...+(\hat{\alpha}_{N_C}+\Delta_q \hat{\alpha}_{N_C})z^{-N_G}} \nonumber \\
-&= C(z) =\hat{C}(z) + \Delta{C}(z)\\
+&= C(z) =\hat{C}(z) + \Delta{C}_b(z)\\
 \label{digital_plant_tf}
 \tilde G(z)&=\frac{(\hat{b}_{0}+\Delta_q \hat{b}_{0}) +...+(\hat{b}_{M_G}+\Delta_q \hat{b}_{M_G})z^{-M_G}}{(\hat{a}_{0}+\Delta_q \hat{a}_{0})+...+(\hat{a}_{N_G}+\Delta_q \hat{a}_{N_G})z^{-N_G}} \nonumber \\
-&=G(z)+\Delta{G}_P(z)+\Delta{G}_Q(z).
+&=G(z)+\Delta{G}_P(z)+\Delta{G}_b(z).
 \end{align}
-where $\Delta_q\hat{c}_i=\hat{c}_i\mod \tilde{c}_i$
-\red{[please, how can you claim that the error enters as written? Can you show the derivation? Can you show a reference that has derived this form?]}
-\green{[the definition of f (now included) should explain it clearly]}
-and $\Delta{G}_Q(z)$ represents the plant uncertainty caused by
+where $\Delta_b\hat{c}_i=\hat{c}_i\mod \tilde{c}_i$
+and $\Delta{G}_b(z)$ represents the plant uncertainty caused by
 the rounding off effect.  We may encompass all the uncertainty as
-$\Delta{G}(z)=\Delta{G}_P(z)+\Delta{G}_Q(z)$.  Since this value is
+$\Delta{G}(z)=\Delta{G}_P(z)+\Delta{G}_b(z)$.  Since this value is
 nondeterministic, the set of possible polynomial coefficients of $\tilde G(z)$ is
 denoted by $\mathfrak{G}(z)$.
 
+Two approaches have been taken to synthesise a stabe controller based on this model.
+The first uses a nondeterministic plant selected from $\mathfrak{G}(z)$ where the expected error of the bit vector calculations is upper bound at the source by selecting a conservative $\Delta{G}_b(z)$ that encompasses its propagation over a number of operations. The verification phase produces a counterexample if some instance of $\mathfrak{G}(z)$ does not verify the properties and the CEGIS loop iteratively looks for a new controller that verifies the supplied counterexamples.
+Although it is fast, the conservative error calculation can be restrictive to a small number of benchmarks.
+
+The second approch uses interval arithmetic, representing the coefficients $[{c}_i-\Delta_p{c}_i-\Delta_b{c}_i\ ,\ {c}_i+\Delta_p{c}_i-\Delta_b{c}_i+(2^{-F_b})]$ 
+and rounding operations outwards during the process. This results in a tighter calculation of the error at the cost of performance.
 %------------------------------------
 \subsection{DSVerifier Verification Flow}
 \label{verification-flow}
