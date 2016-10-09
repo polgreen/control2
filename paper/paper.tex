@@ -317,6 +317,8 @@ synthesis of the controller.
 
 %\red{Alessandro, I've made the changes as requested. Please let me know if this is good enough or if I made it too short}
 
+\textcolor{blue}{[IB: I'm proposing some changes in this section based on Alessandro's comments and trying to obtain a simpler and uniform notation.]}
+
 In this study, the methodology used for verifying closed-loop digital
 control system is based on the Digital-System Verifier
 (DSVerifier)~\cite{IsmailBCFF15}, which checks the stability of control
@@ -363,6 +365,301 @@ For the sake of brevity,
 we will use only the notation $G(z)$ to represent the pulse transfer function.
 %
 \end{mylemma}
+
+
+\textcolor{blue}{
+Although the pulse transfer function $G(z)$ represents adequately $G(s)$ domain, the model $G(z)$ may not be accurate and some uncertainties may not be covered by that model. These uncertainties may be parametrically expressed by an additive transfer function $\Delta G(z)$, resulting in a uncertain model $\hat{G}(z)$, such that:
+\begin{equation}
+\hat{G}(z)=G(z)+\Delta G(z),
+\end{equation}
+that may be represented by the following transfer function:
+\begin{equation}
+\hat{G}(z)=\frac{\hat{b}_{0}+\hat{b}_{1}z^{-1}+...+\hat{b}_{M_G}z^{-M_G}}{\hat{a}_{0}+\hat{a}_{1}z^{-1}+...+\hat{a}_{N_G}z^{-N_G}}.
+\end{equation}}
+
+\textcolor{blue}{
+The vector of parametric uncertainties  $\Delta{p}$ for $G(z)$ is defined by:
+\begin{equation}
+\Delta{p}=\begin{bmatrix}
+\hat{b_{0}} - b_{0}\\
+\hat{b_{1}} - b_{1}\\
+\vdots \\
+\hat{b}_{M_G} - b_{M_{G}}\\
+\hat{a_{0}} - a_{0}\\
+\hat{a_{1}} - a_{1}\\
+\vdots\\
+\hat{a}_{N_G} - a_{N_{G}}\\
+\end{bmatrix}.
+\end{equation}}
+
+\textcolor{blue}{
+A typical hybrid system is shown in Figure~\ref{fig:sampledsystem}, where the DAC and ADC converters introduce quantisation noises $\nu_{1}(z)$ and $\nu_{2}(z)$, $G(s)$ is the continuous-time plant model with parametric additive uncertainty $\Delta G_{P}(s)$, $R(z)$ is the reference signal, $U(z)$ is the control signal, and $\hat{Y}(z)$ is the output signal affected by the noises and uncertainties in the closed-loop system.}
+
+\begin{figure*}[htb]
+\centering
+
+\tikzset{add/.style n args={4}{
+    minimum width=6mm,
+    path picture={
+        \draw[circle] 
+            (path picture bounding box.south east) -- (path picture bounding box.north west)
+            (path picture bounding box.south west) -- (path picture bounding box.north east);
+        \node[draw=none] at ($(path picture bounding box.south)+(0,0.13)$)     {\small #1};
+        \node[draw=none] at ($(path picture bounding box.west)+(0.13,0)$)      {\small #2};
+        \node[draw=none] at ($(path picture bounding box.north)+(0,-0.13)$)    {\small #3};
+        \node[draw=none] at ($(path picture bounding box.east)+(-0.13,0)$)     {\small #4};
+        }
+    }
+ }
+
+\resizebox{.8\textwidth}{!}{
+ \begin{tikzpicture}[scale=0.6,-,>=stealth',shorten >=.2pt,auto,
+     semithick, initial text=, ampersand replacement=\&,]
+
+  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center}, row sep=.6cm, column sep=.3cm] {
+    \node[draw=none] (r) {$R(z)$};
+%   \& \coordinate (aux0);
+   \& \node[circle,add={-}{+}{}{}] (circle) {};
+   \node[draw=none] (ez) at ([xshift=1cm,yshift=.15cm]circle)  {$e(z)$};
+   \& \node[rectangle,draw,
+	minimum width=1cm,
+	minimum height=1cm,
+        label=\textbf{Controller}] (cz) {{\sc C(z)}};
+   \node[draw=none] (ud) at ([xshift=1cm,yshift=.15cm]cz)  {$U(z)$};
+     
+   \& complexnode/.pic={ 
+      \node[rectangle,draw,
+	minimum width=3cm,
+	minimum height=1.6cm,
+	label=\textbf{DAC},] (dac) {};
+     \node[circle,add={}{+}{+}{},fill=yellow!20] (q2) at ([xshift=-.65cm]dac.center) {};
+     \node[draw=none] (q2t)  at ([xshift=-.65cm,yshift=-.65cm]dac.center) {{\sc Q2}};
+     \node[draw=none] (v2)  at ([xshift=-.65cm,yshift=1.5cm]dac.center) {$\nu_2(z)$};
+     \node[fill=yellow!20] (zoh) at ([xshift=.65cm]dac.center) {{\sc ZOH}};}
+   \& \node[rectangle,draw,
+	minimum width=1cm,
+	minimum height=1cm,
+        label=\textbf{Plant}] (gs) {{\sc $G(s) + \Delta G(s)$}};
+   \node[draw=none] (ud) at ([xshift=-1cm,yshift=.15cm]gs)  {$U(s)$};
+   \node[draw=none] (y) at ([xshift=1cm,yshift=.15cm]gs)  {$Y(s)$};
+   \& complexnode/.pic={ 
+     \node[rectangle,draw,
+	minimum width=4cm,
+	minimum height=1.6cm,
+	label=\textbf{ADC},] (adc) {};
+   \draw[] ([xshift=-1cm]adc.center) -- ++(0.5,0.2cm);
+   \coordinate (switch1) at ([xshift=-1cm]adc.center);
+   \coordinate (switch2) at ([xshift=-0.4cm]adc.center);
+   \node[circle,add={}{+}{+}{},fill=yellow!20] (q1) at ([xshift=1cm]adc.center) {};} 
+     \node[draw=none] (q2t)  at ([xshift=1cm,yshift=-.65cm]adc.center) {{\sc Q1}};
+   \node[draw=none] (v1)  at ([xshift=1cm,yshift=1.5cm]adc.center) {$\nu_1(z)$};
+   \& \coordinate (aux1);
+   \& \node[draw=none] (yz) {$\hat{Y}(z)$};\\
+   \& \coordinate (aux3); 
+   \&
+   \&
+   \& 
+   \& 
+   \& \coordinate (aux2);\\
+  };
+
+
+  \path[->] (v1) edge (q1.north);
+  \path[->] (v2) edge (q2.north);
+  \path[->] (r) edge (circle.west);
+  \path[->] (aux1) edge (yz);
+  \path  
+   (circle.east) edge (cz)
+   (cz.east) edge (q2.west)
+   (q2.east) edge (zoh.west)
+   (zoh.east) edge (gs.west)
+   (switch2) edge (q1.west)
+   (q1.east) edge (aux1.west)
+   (gs.east) edge (switch1.west)
+   (aux1.south) edge (aux2.north)
+   (aux2.west) edge (aux3.east); 
+  \path[->]  (aux3.north) edge (circle.south);
+ \end{tikzpicture}
+}
+ \caption{Sampled System. \label{fig:sampledsystem}}
+\end{figure*}
+
+\textcolor{blue}{
+The ADC and DAC may be abstracted changing the hybrid system in figure~\ref{fig:sampledsystem} to the digital system in figure~\ref{fig:digsystem1} where the parametric uncertainties are represented by $\Delta G_{P}(z)$ and the entire effect of $\nu_{1}$ and $\nu_{2}$ in the output $Y(z)$ is represented as an additive measurement noise $\nu(z)$.}
+
+\begin{figure}[ht]
+\centering
+
+\tikzset{add/.style n args={4}{
+    minimum width=6mm,
+    path picture={
+        \draw[circle] 
+            (path picture bounding box.south east) -- (path picture bounding box.north west)
+            (path picture bounding box.south west) -- (path picture bounding box.north east);
+        \node[draw=none] at ($(path picture bounding box.south)+(0,0.13)$)     {\small #1};
+        \node[draw=none] at ($(path picture bounding box.west)+(0.13,0)$)      {\small #2};
+        \node[draw=none] at ($(path picture bounding box.north)+(0,-0.13)$)    {\small #3};
+        \node[draw=none] at ($(path picture bounding box.east)+(-0.13,0)$)     {\small #4};
+        }
+    }
+ }
+
+\resizebox{.5\textwidth}{!}{
+ \begin{tikzpicture}[scale=0.3,-,>=stealth',shorten >=.2pt,auto,
+     semithick, initial text=, ampersand replacement=\&,]
+
+  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center}, row sep=.6cm, column sep=.3cm] {
+    \node[draw=none] (r) {$R(z)$};
+%   \& \coordinate (aux0);
+   \& \node[circle,add={-}{+}{}{}] (circle) {};
+   \node[draw=none] (ez) at ([xshift=1cm,yshift=.15cm]circle)  {$e(z)$};
+   \& \node[rectangle,draw,
+	minimum width=1cm,
+	minimum height=1cm,
+        label=\textbf{Controller}] (cz) {{\sc C(z)}};
+   \node[draw=none] (ud) at ([xshift=1cm,yshift=.15cm]cz)  {$U(z)$};
+   \& \node[rectangle,draw,
+	minimum width=1cm,
+	minimum height=1cm,
+        label=\textbf{Plant}] (gs) {{\sc $G(z) + \Delta G_{P}(z)$}};
+   \node[draw=none] (y) at ([xshift=1cm,yshift=.15cm]gs)  {$Y(z)$};
+
+   \& \node[circle,add={}{+}{+}{}] (circle2) {};
+%   \node[draw=none] (tyz) at ([xshift=-1cm,yshift=.15cm]circle2)  {$Y(z)$};
+   \node[draw=none] (nu) at ([yshift=1cm]circle2)  {$\nu(z)$};
+   \& \coordinate (aux1);
+   \& \node[draw=none] (yz) {$\tilde Y(z)$};\\
+   \& \coordinate (aux3); 
+   \&
+   \& 
+   \& 
+   \& \coordinate (aux2);\\
+  };
+
+
+%  \path[->] (v1) edge (q1.north);
+%  \path[->] (v2) edge (q2.north);
+  \path[->] (r) edge (circle.west);
+  \path[->] (nu) edge (circle2.north);
+  \path[->] (aux1) edge (yz);
+  \path  
+   (circle.east) edge (cz)
+   (cz.east) edge (gs.west)
+   (gs.east) edge (circle2.west)
+   (circle2.east) edge (aux1.west)
+   (aux1.south) edge (aux2.north)
+   (aux2.west) edge (aux3.east); 
+  \path[->]  (aux3.north) edge (circle.south);
+ \end{tikzpicture}
+}
+ \caption{Digital system equivalent to ~\ref{fig:sampledsystem}. \label{fig:digsystem1}}
+\end{figure}
+
+
+%
+\textcolor{blue}{
+In figure~\ref{fig:digsystem1}, two sources of uncertainties are considered: parametric uncertainties related to modeling errors, and uncertainties introduced by quantisations in sampling and holding process, {\it i.e.} ADC and DAC conversions. Assuming linearity and independence between these sources, the uncertain model may be rewritten as follows:
+\begin{equation}
+\hat{G}(z)=G(z)+\Delta G_{P}(z)+\Delta G_{Q}(z),
+\end{equation}
+where $\Delta G_{P}(z)$ is the term that corresponds to the parametric uncertainties and $\Delta G_{Q}(z)$ is the term that reflects the quantisation effects on the plant model. Figure~\ref{fig:digsystem2} shows the digital closed loop systems with $\Delta G_{P}(z)$ and $\Delta G_{Q}(z)$.}
+
+
+\begin{figure}[ht]
+\centering
+
+\tikzset{add/.style n args={4}{
+    minimum width=6mm,
+    path picture={
+        \draw[circle] 
+            (path picture bounding box.south east) -- (path picture bounding box.north west)
+            (path picture bounding box.south west) -- (path picture bounding box.north east);
+        \node[draw=none] at ($(path picture bounding box.south)+(0,0.13)$)     {\small #1};
+        \node[draw=none] at ($(path picture bounding box.west)+(0.13,0)$)      {\small #2};
+        \node[draw=none] at ($(path picture bounding box.north)+(0,-0.13)$)    {\small #3};
+        \node[draw=none] at ($(path picture bounding box.east)+(-0.13,0)$)     {\small #4};
+        }
+    }
+ }
+
+\resizebox{.5\textwidth}{!}{
+ \begin{tikzpicture}[scale=0.3,-,>=stealth',shorten >=.2pt,auto,
+     semithick, initial text=, ampersand replacement=\&,]
+
+  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center}, row sep=.6cm, column sep=.3cm] {
+  %
+	\& 
+	\&
+	\& \coordinate (aux7); 
+	\& \node[rectangle,draw,
+	minimum width=1cm,
+	minimum height=1cm] (deltag2) {{\sc $\Delta G_{Q}(z)$}};
+	\& \coordinate (aux8);\\
+    \node[draw=none] (r) {$R(z)$};
+%   \& \coordinate (aux0);
+   \& \node[circle,add={-}{+}{}{}] (circle) {};
+   \node[draw=none] (ez) at ([xshift=1cm,yshift=.15cm]circle)  {$e(z)$};
+   \& \node[rectangle,draw,
+	minimum width=1cm,
+	minimum height=1cm,
+        label=\textbf{Controller}] (cz) {{\sc C(z)}};
+   \node[draw=none] (ud) at ([xshift=1cm,yshift=.15cm]cz)  {$U(z)$};
+   \& \coordinate (aux4);
+   \& \node[rectangle,draw,
+	minimum width=1cm,
+	minimum height=1cm,
+        label=\textbf{Plant}] (gs) {{\sc G(z)}};
+   \node[draw=none] (y) at ([xshift=1cm,yshift=.15cm]gs)  {$Y(z)$};
+   \& \node[circle,add={+}{+}{+}{}] (circle2) {};
+%   \node[draw=none] (tyz) at ([xshift=-1cm,yshift=.15cm]circle2)  {$Y(z)$};
+%   \node[draw=none] (nu) at ([yshift=1cm]circle2)  {$\nu(z)$};
+   \& \coordinate (aux1);
+   \& \node[draw=none] (yz) {$\hat{Y}(z)$};\\
+   \& 
+   \&
+   \& \coordinate (aux5); 
+   \& \node[rectangle,draw,
+	minimum width=1cm,
+	minimum height=1cm] (deltag) {{\sc $\Delta G_{P}(z)$}};
+   \& \coordinate (aux6);\\
+   \& \coordinate (aux3); 
+   \&
+   \& 
+   \& 
+   \&
+   \& \coordinate (aux2);\\
+  };
+
+
+%  \path[->] (v1) edge (q1.north);
+%  \path[->] (v2) edge (q2.north);
+  \path[->] (r) edge (circle.west);
+%  \path[->] (nu) edge (circle2.north);
+  \path[->] (aux1) edge (yz);
+  \path  
+   (aux4.north) edge (aux5.south)
+   (aux4.north) edge (aux7.south)
+   (aux5.east) edge (deltag.west)
+   (aux7.east) edge (deltag2.west)
+   (deltag.east) edge (aux6.west)
+   (deltag2.east) edge (aux8.west)
+   (circle.east) edge (cz)
+   (cz.east) edge (gs.west)
+   (circle2.east) edge (aux1.west)
+   (aux1.south) edge (aux2.north)
+   (aux2.west) edge (aux3.east); 
+  \path[->] (aux8.south) edge (circle2.north); 
+  \path[->] (aux6.south) edge (circle2.south);
+  \path[->] (gs.east) edge (circle2.west);
+  \path[->] (aux3.north) edge (circle.south);
+ \end{tikzpicture}
+}
+ \caption{Digital system with additive uncertainties $\Delta G_{P}(z)$ and $\Delta G_{Q}(z)$. \label{fig:digsystem2}}
+\end{figure}
+
+\textcolor{blue}{[IB: I propose to exchange the following paragraphs by the previous blue]}
+
+
 Since $G(z)$ is an approximation of $G(s)$ we introduce an error term caused during its calculation as $\Delta{G}_P$
 
 %
@@ -608,253 +905,253 @@ and quantized ($Q1$) by means of an analog-to-digital converter (ADC)
 synchronized with the DAC.  Each quantizer ($Q1$ and $Q2$) will present some
 contribution for the total quantization noise.
 %    
-\begin{figure*}[ht]
-\centering
-
-\tikzset{add/.style n args={4}{
-    minimum width=6mm,
-    path picture={
-        \draw[circle] 
-            (path picture bounding box.south east) -- (path picture bounding box.north west)
-            (path picture bounding box.south west) -- (path picture bounding box.north east);
-        \node[draw=none] at ($(path picture bounding box.south)+(0,0.13)$)     {\small #1};
-        \node[draw=none] at ($(path picture bounding box.west)+(0.13,0)$)      {\small #2};
-        \node[draw=none] at ($(path picture bounding box.north)+(0,-0.13)$)    {\small #3};
-        \node[draw=none] at ($(path picture bounding box.east)+(-0.13,0)$)     {\small #4};
-        }
-    }
- }
-
-\resizebox{.8\textwidth}{!}{
- \begin{tikzpicture}[scale=0.6,-,>=stealth',shorten >=.2pt,auto,
-     semithick, initial text=, ampersand replacement=\&,]
-
-  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center}, row sep=.6cm, column sep=.3cm] {
-    \node[draw=none] (r) {$\tilde R(z)$};
-%   \& \coordinate (aux0);
-   \& \node[circle,add={-}{+}{}{}] (circle) {};
-   \node[draw=none] (ez) at ([xshift=1cm,yshift=.15cm]circle)  {$\tilde e(z)$};
-   \& \node[rectangle,draw,
-	minimum width=1cm,
-	minimum height=1cm,
-        label=\textbf{Controller}] (cz) {{\sc C(z)}};
-   \node[draw=none] (ud) at ([xshift=1cm,yshift=.15cm]cz)  {$\tilde U(z)$};
-     
-   \& complexnode/.pic={ 
-      \node[rectangle,draw,
-	minimum width=3cm,
-	minimum height=1.6cm,
-	label=\textbf{DAC},] (dac) {};
-     \node[circle,add={}{+}{+}{},fill=yellow!20] (q2) at ([xshift=-.65cm]dac.center) {};
-     \node[draw=none] (q2t)  at ([xshift=-.65cm,yshift=-.65cm]dac.center) {{\sc Q2}};
-     \node[draw=none] (v2)  at ([xshift=-.65cm,yshift=1.5cm]dac.center) {$\nu_2(z)$};
-     \node[fill=yellow!20] (zoh) at ([xshift=.65cm]dac.center) {{\sc ZOH}};}
-   \& \node[rectangle,draw,
-	minimum width=1cm,
-	minimum height=1cm,
-        label=\textbf{Plant}] (gs) {{\sc G(s)}};
-   \node[draw=none] (ud) at ([xshift=-1cm,yshift=.15cm]gs)  {$U(s)$};
-   \node[draw=none] (y) at ([xshift=1cm,yshift=.15cm]gs)  {$Y(s)$};
-   \& complexnode/.pic={ 
-     \node[rectangle,draw,
-	minimum width=4cm,
-	minimum height=1.6cm,
-	label=\textbf{ADC},] (adc) {};
-   \draw[] ([xshift=-1cm]adc.center) -- ++(0.5,0.2cm);
-   \coordinate (switch1) at ([xshift=-1cm]adc.center);
-   \coordinate (switch2) at ([xshift=-0.4cm]adc.center);
-   \node[circle,add={}{+}{+}{},fill=yellow!20] (q1) at ([xshift=1cm]adc.center) {};} 
-     \node[draw=none] (q2t)  at ([xshift=1cm,yshift=-.65cm]adc.center) {{\sc Q1}};
-   \node[draw=none] (v1)  at ([xshift=1cm,yshift=1.5cm]adc.center) {$\nu_1(z)$};
-   \& \coordinate (aux1);
-   \& \node[draw=none] (yz) {$\tilde Y(z)$};\\
-   \& \coordinate (aux3); 
-   \&
-   \&
-   \& 
-   \& 
-   \& \coordinate (aux2);\\
-  };
-
-
-  \path[->] (v1) edge (q1.north);
-  \path[->] (v2) edge (q2.north);
-  \path[->] (r) edge (circle.west);
-  \path[->] (aux1) edge (yz);
-  \path  
-   (circle.east) edge (cz)
-   (cz.east) edge (q2.west)
-   (q2.east) edge (zoh.west)
-   (zoh.east) edge (gs.west)
-   (switch2) edge (q1.west)
-   (q1.east) edge (aux1.west)
-   (gs.east) edge (switch1.west)
-   (aux1.south) edge (aux2.north)
-   (aux2.west) edge (aux3.east); 
-  \path[->]  (aux3.north) edge (circle.south);
- \end{tikzpicture}
-}
- \caption{Sampled System. \label{fig:sampledsystem}}
-\end{figure*}
-
-%% \begin{figure}[ht]
-%% \centering
-%% \includegraphics[width=\columnwidth]{figures/hsystembd.pdf}
-%% \caption{Sampled system.}
-%% \label{fig:sampledsystem}
-%% \end{figure}
-
-
-\begin{figure}[ht]
-\centering
-
-\tikzset{add/.style n args={4}{
-    minimum width=6mm,
-    path picture={
-        \draw[circle] 
-            (path picture bounding box.south east) -- (path picture bounding box.north west)
-            (path picture bounding box.south west) -- (path picture bounding box.north east);
-        \node[draw=none] at ($(path picture bounding box.south)+(0,0.13)$)     {\small #1};
-        \node[draw=none] at ($(path picture bounding box.west)+(0.13,0)$)      {\small #2};
-        \node[draw=none] at ($(path picture bounding box.north)+(0,-0.13)$)    {\small #3};
-        \node[draw=none] at ($(path picture bounding box.east)+(-0.13,0)$)     {\small #4};
-        }
-    }
- }
-
-\resizebox{.5\textwidth}{!}{
- \begin{tikzpicture}[scale=0.3,-,>=stealth',shorten >=.2pt,auto,
-     semithick, initial text=, ampersand replacement=\&,]
-
-  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center}, row sep=.6cm, column sep=.3cm] {
-    \node[draw=none] (r) {$R(z)$};
-%   \& \coordinate (aux0);
-   \& \node[circle,add={-}{+}{}{}] (circle) {};
-   \node[draw=none] (ez) at ([xshift=1cm,yshift=.15cm]circle)  {$e(z)$};
-   \& \node[rectangle,draw,
-	minimum width=1cm,
-	minimum height=1cm,
-        label=\textbf{Controller}] (cz) {{\sc C(z)}};
-   \node[draw=none] (ud) at ([xshift=1cm,yshift=.15cm]cz)  {$U(z)$};
-   \& \node[rectangle,draw,
-	minimum width=1cm,
-	minimum height=1cm,
-        label=\textbf{Plant}] (gs) {{\sc G(z)}};
-   \node[draw=none] (y) at ([xshift=1cm,yshift=.15cm]gs)  {$Y(z)$};
-
-   \& \node[circle,add={}{+}{+}{}] (circle2) {};
-%   \node[draw=none] (tyz) at ([xshift=-1cm,yshift=.15cm]circle2)  {$Y(z)$};
-   \node[draw=none] (nu) at ([yshift=1cm]circle2)  {$\nu(z)$};
-   \& \coordinate (aux1);
-   \& \node[draw=none] (yz) {$\tilde Y(z)$};\\
-   \& \coordinate (aux3); 
-   \&
-   \& 
-   \& 
-   \& \coordinate (aux2);\\
-  };
-
-
+%\begin{figure*}[ht]
+%\centering
+%
+%\tikzset{add/.style n args={4}{
+%    minimum width=6mm,
+%    path picture={
+%        \draw[circle] 
+%            (path picture bounding box.south east) -- (path picture bounding box.north west)
+%            (path picture bounding box.south west) -- (path picture bounding box.north east);
+%        \node[draw=none] at ($(path picture bounding box.south)+(0,0.13)$)     {\small #1};
+%        \node[draw=none] at ($(path picture bounding box.west)+(0.13,0)$)      {\small #2};
+%        \node[draw=none] at ($(path picture bounding box.north)+(0,-0.13)$)    {\small #3};
+%        \node[draw=none] at ($(path picture bounding box.east)+(-0.13,0)$)     {\small #4};
+%        }
+%    }
+% }
+%
+%\resizebox{.8\textwidth}{!}{
+% \begin{tikzpicture}[scale=0.6,-,>=stealth',shorten >=.2pt,auto,
+%     semithick, initial text=, ampersand replacement=\&,]
+%
+%  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center}, row sep=.6cm, column sep=.3cm] {
+%    \node[draw=none] (r) {$\tilde R(z)$};
+%%   \& \coordinate (aux0);
+%   \& \node[circle,add={-}{+}{}{}] (circle) {};
+%   \node[draw=none] (ez) at ([xshift=1cm,yshift=.15cm]circle)  {$\tilde e(z)$};
+%   \& \node[rectangle,draw,
+%	minimum width=1cm,
+%	minimum height=1cm,
+%        label=\textbf{Controller}] (cz) {{\sc C(z)}};
+%   \node[draw=none] (ud) at ([xshift=1cm,yshift=.15cm]cz)  {$\tilde U(z)$};
+%     
+%   \& complexnode/.pic={ 
+%      \node[rectangle,draw,
+%	minimum width=3cm,
+%	minimum height=1.6cm,
+%	label=\textbf{DAC},] (dac) {};
+%     \node[circle,add={}{+}{+}{},fill=yellow!20] (q2) at ([xshift=-.65cm]dac.center) {};
+%     \node[draw=none] (q2t)  at ([xshift=-.65cm,yshift=-.65cm]dac.center) {{\sc Q2}};
+%     \node[draw=none] (v2)  at ([xshift=-.65cm,yshift=1.5cm]dac.center) {$\nu_2(z)$};
+%     \node[fill=yellow!20] (zoh) at ([xshift=.65cm]dac.center) {{\sc ZOH}};}
+%   \& \node[rectangle,draw,
+%	minimum width=1cm,
+%	minimum height=1cm,
+%        label=\textbf{Plant}] (gs) {{\sc G(s)}};
+%   \node[draw=none] (ud) at ([xshift=-1cm,yshift=.15cm]gs)  {$U(s)$};
+%   \node[draw=none] (y) at ([xshift=1cm,yshift=.15cm]gs)  {$Y(s)$};
+%   \& complexnode/.pic={ 
+%     \node[rectangle,draw,
+%	minimum width=4cm,
+%	minimum height=1.6cm,
+%	label=\textbf{ADC},] (adc) {};
+%   \draw[] ([xshift=-1cm]adc.center) -- ++(0.5,0.2cm);
+%   \coordinate (switch1) at ([xshift=-1cm]adc.center);
+%   \coordinate (switch2) at ([xshift=-0.4cm]adc.center);
+%   \node[circle,add={}{+}{+}{},fill=yellow!20] (q1) at ([xshift=1cm]adc.center) {};} 
+%     \node[draw=none] (q2t)  at ([xshift=1cm,yshift=-.65cm]adc.center) {{\sc Q1}};
+%   \node[draw=none] (v1)  at ([xshift=1cm,yshift=1.5cm]adc.center) {$\nu_1(z)$};
+%   \& \coordinate (aux1);
+%   \& \node[draw=none] (yz) {$\tilde Y(z)$};\\
+%   \& \coordinate (aux3); 
+%   \&
+%   \&
+%   \& 
+%   \& 
+%   \& \coordinate (aux2);\\
+%  };
+%
+%
 %  \path[->] (v1) edge (q1.north);
 %  \path[->] (v2) edge (q2.north);
-  \path[->] (r) edge (circle.west);
-  \path[->] (nu) edge (circle2.north);
-  \path[->] (aux1) edge (yz);
-  \path  
-   (circle.east) edge (cz)
-   (cz.east) edge (gs.west)
-   (gs.east) edge (circle2.west)
-   (circle2.east) edge (aux1.west)
-   (aux1.south) edge (aux2.north)
-   (aux2.west) edge (aux3.east); 
-  \path[->]  (aux3.north) edge (circle.south);
- \end{tikzpicture}
-}
- \caption{Sampled System. \label{fig:sampledsystem}}
-\end{figure}
-
+%  \path[->] (r) edge (circle.west);
+%  \path[->] (aux1) edge (yz);
+%  \path  
+%   (circle.east) edge (cz)
+%   (cz.east) edge (q2.west)
+%   (q2.east) edge (zoh.west)
+%   (zoh.east) edge (gs.west)
+%   (switch2) edge (q1.west)
+%   (q1.east) edge (aux1.west)
+%   (gs.east) edge (switch1.west)
+%   (aux1.south) edge (aux2.north)
+%   (aux2.west) edge (aux3.east); 
+%  \path[->]  (aux3.north) edge (circle.south);
+% \end{tikzpicture}
+%}
+% \caption{Sampled System. \label{fig:sampledsystem}}
+%\end{figure*}
+%
+%%% \begin{figure}[ht]
+%%% \centering
+%%% \includegraphics[width=\columnwidth]{figures/hsystembd.pdf}
+%%% \caption{Sampled system.}
+%%% \label{fig:sampledsystem}
+%%% \end{figure}
 %
 %
-
-\begin{figure}[ht]
-\centering
-
-\tikzset{add/.style n args={4}{
-    minimum width=6mm,
-    path picture={
-        \draw[circle] 
-            (path picture bounding box.south east) -- (path picture bounding box.north west)
-            (path picture bounding box.south west) -- (path picture bounding box.north east);
-        \node[draw=none] at ($(path picture bounding box.south)+(0,0.13)$)     {\small #1};
-        \node[draw=none] at ($(path picture bounding box.west)+(0.13,0)$)      {\small #2};
-        \node[draw=none] at ($(path picture bounding box.north)+(0,-0.13)$)    {\small #3};
-        \node[draw=none] at ($(path picture bounding box.east)+(-0.13,0)$)     {\small #4};
-        }
-    }
- }
-
-\resizebox{.5\textwidth}{!}{
- \begin{tikzpicture}[scale=0.3,-,>=stealth',shorten >=.2pt,auto,
-     semithick, initial text=, ampersand replacement=\&,]
-
-  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center}, row sep=.6cm, column sep=.3cm] {
-    \node[draw=none] (r) {$R(z)$};
-%   \& \coordinate (aux0);
-   \& \node[circle,add={-}{+}{}{}] (circle) {};
-   \node[draw=none] (ez) at ([xshift=1cm,yshift=.15cm]circle)  {$e(z)$};
-   \& \coordinate (aux4);
-   \& \node[rectangle,draw,
-	minimum width=1cm,
-	minimum height=1cm,
-        label=\textbf{Controller}] (cz) {{\sc C(z)}};
-   \node[draw=none] (ud) at ([xshift=1cm,yshift=.15cm]cz)  {$U(z)$};
-   \& \node[rectangle,draw,
-	minimum width=1cm,
-	minimum height=1cm,
-        label=\textbf{Plant}] (gs) {{\sc G(z)}};
-   \node[draw=none] (y) at ([xshift=1cm,yshift=.15cm]gs)  {$Y(z)$};
-   \& \node[circle,add={+}{+}{}{}] (circle2) {};
-%   \node[draw=none] (tyz) at ([xshift=-1cm,yshift=.15cm]circle2)  {$Y(z)$};
+%\begin{figure}[ht]
+%\centering
+%
+%\tikzset{add/.style n args={4}{
+%    minimum width=6mm,
+%    path picture={
+%        \draw[circle] 
+%            (path picture bounding box.south east) -- (path picture bounding box.north west)
+%            (path picture bounding box.south west) -- (path picture bounding box.north east);
+%        \node[draw=none] at ($(path picture bounding box.south)+(0,0.13)$)     {\small #1};
+%        \node[draw=none] at ($(path picture bounding box.west)+(0.13,0)$)      {\small #2};
+%        \node[draw=none] at ($(path picture bounding box.north)+(0,-0.13)$)    {\small #3};
+%        \node[draw=none] at ($(path picture bounding box.east)+(-0.13,0)$)     {\small #4};
+%        }
+%    }
+% }
+%
+%\resizebox{.5\textwidth}{!}{
+% \begin{tikzpicture}[scale=0.3,-,>=stealth',shorten >=.2pt,auto,
+%     semithick, initial text=, ampersand replacement=\&,]
+%
+%  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center}, row sep=.6cm, column sep=.3cm] {
+%    \node[draw=none] (r) {$R(z)$};
+%%   \& \coordinate (aux0);
+%   \& \node[circle,add={-}{+}{}{}] (circle) {};
+%   \node[draw=none] (ez) at ([xshift=1cm,yshift=.15cm]circle)  {$e(z)$};
+%   \& \node[rectangle,draw,
+%	minimum width=1cm,
+%	minimum height=1cm,
+%        label=\textbf{Controller}] (cz) {{\sc C(z)}};
+%   \node[draw=none] (ud) at ([xshift=1cm,yshift=.15cm]cz)  {$U(z)$};
+%   \& \node[rectangle,draw,
+%	minimum width=1cm,
+%	minimum height=1cm,
+%        label=\textbf{Plant}] (gs) {{\sc G(z)}};
+%   \node[draw=none] (y) at ([xshift=1cm,yshift=.15cm]gs)  {$Y(z)$};
+%
+%   \& \node[circle,add={}{+}{+}{}] (circle2) {};
+%%   \node[draw=none] (tyz) at ([xshift=-1cm,yshift=.15cm]circle2)  {$Y(z)$};
 %   \node[draw=none] (nu) at ([yshift=1cm]circle2)  {$\nu(z)$};
-   \& \coordinate (aux1);
-   \& \node[draw=none] (yz) {$\tilde Y(z)$};\\
-   \& 
-   \& \coordinate (aux5); 
-   \& \node[rectangle,draw,
-	minimum width=1cm,
-	minimum height=1cm] (deltag) {{\sc $\Delta G(z)$}};
-   \&
-   \& \coordinate (aux6);\\
-   \& \coordinate (aux3); 
-   \&
-   \& 
-   \& 
-   \&
-   \& \coordinate (aux2);\\
-  };
-
-
-%  \path[->] (v1) edge (q1.north);
-%  \path[->] (v2) edge (q2.north);
-  \path[->] (r) edge (circle.west);
+%   \& \coordinate (aux1);
+%   \& \node[draw=none] (yz) {$\tilde Y(z)$};\\
+%   \& \coordinate (aux3); 
+%   \&
+%   \& 
+%   \& 
+%   \& \coordinate (aux2);\\
+%  };
+%
+%
+%%  \path[->] (v1) edge (q1.north);
+%%  \path[->] (v2) edge (q2.north);
+%  \path[->] (r) edge (circle.west);
 %  \path[->] (nu) edge (circle2.north);
-  \path[->] (aux1) edge (yz);
-  \path  
-   (aux4.north) edge (aux5.south)
-   (aux5.east) edge (deltag.west)
-   (deltag.east) edge (aux6.west)
-   (aux6.south) edge (circle2.south)
-   (circle.east) edge (cz)
-   (cz.east) edge (gs.west)
-   (gs.east) edge (circle2.west)
-   (circle2.east) edge (aux1.west)
-   (aux1.south) edge (aux2.north)
-   (aux2.west) edge (aux3.east); 
-  \path[->]  (aux3.north) edge (circle.south);
- \end{tikzpicture}
-}
- \caption{Sampled System. \label{fig:sampledsystem}}
-\end{figure}
+%  \path[->] (aux1) edge (yz);
+%  \path  
+%   (circle.east) edge (cz)
+%   (cz.east) edge (gs.west)
+%   (gs.east) edge (circle2.west)
+%   (circle2.east) edge (aux1.west)
+%   (aux1.south) edge (aux2.north)
+%   (aux2.west) edge (aux3.east); 
+%  \path[->]  (aux3.north) edge (circle.south);
+% \end{tikzpicture}
+%}
+% \caption{Sampled System. \label{fig:sampledsystem}}
+%\end{figure}
+%
+%%
+%%
+%
+%\begin{figure}[ht]
+%\centering
+%
+%\tikzset{add/.style n args={4}{
+%    minimum width=6mm,
+%    path picture={
+%        \draw[circle] 
+%            (path picture bounding box.south east) -- (path picture bounding box.north west)
+%            (path picture bounding box.south west) -- (path picture bounding box.north east);
+%        \node[draw=none] at ($(path picture bounding box.south)+(0,0.13)$)     {\small #1};
+%        \node[draw=none] at ($(path picture bounding box.west)+(0.13,0)$)      {\small #2};
+%        \node[draw=none] at ($(path picture bounding box.north)+(0,-0.13)$)    {\small #3};
+%        \node[draw=none] at ($(path picture bounding box.east)+(-0.13,0)$)     {\small #4};
+%        }
+%    }
+% }
+%
+%\resizebox{.5\textwidth}{!}{
+% \begin{tikzpicture}[scale=0.3,-,>=stealth',shorten >=.2pt,auto,
+%     semithick, initial text=, ampersand replacement=\&,]
+%
+%  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center}, row sep=.6cm, column sep=.3cm] {
+%    \node[draw=none] (r) {$R(z)$};
+%%   \& \coordinate (aux0);
+%   \& \node[circle,add={-}{+}{}{}] (circle) {};
+%   \node[draw=none] (ez) at ([xshift=1cm,yshift=.15cm]circle)  {$e(z)$};
+%   \& \coordinate (aux4);
+%   \& \node[rectangle,draw,
+%	minimum width=1cm,
+%	minimum height=1cm,
+%        label=\textbf{Controller}] (cz) {{\sc C(z)}};
+%   \node[draw=none] (ud) at ([xshift=1cm,yshift=.15cm]cz)  {$U(z)$};
+%   \& \node[rectangle,draw,
+%	minimum width=1cm,
+%	minimum height=1cm,
+%        label=\textbf{Plant}] (gs) {{\sc G(z)}};
+%   \node[draw=none] (y) at ([xshift=1cm,yshift=.15cm]gs)  {$Y(z)$};
+%   \& \node[circle,add={+}{+}{}{}] (circle2) {};
+%%   \node[draw=none] (tyz) at ([xshift=-1cm,yshift=.15cm]circle2)  {$Y(z)$};
+%%   \node[draw=none] (nu) at ([yshift=1cm]circle2)  {$\nu(z)$};
+%   \& \coordinate (aux1);
+%   \& \node[draw=none] (yz) {$\tilde Y(z)$};\\
+%   \& 
+%   \& \coordinate (aux5); 
+%   \& \node[rectangle,draw,
+%	minimum width=1cm,
+%	minimum height=1cm] (deltag) {{\sc $\Delta G(z)$}};
+%   \&
+%   \& \coordinate (aux6);\\
+%   \& \coordinate (aux3); 
+%   \&
+%   \& 
+%   \& 
+%   \&
+%   \& \coordinate (aux2);\\
+%  };
+%
+%
+%%  \path[->] (v1) edge (q1.north);
+%%  \path[->] (v2) edge (q2.north);
+%  \path[->] (r) edge (circle.west);
+%%  \path[->] (nu) edge (circle2.north);
+%  \path[->] (aux1) edge (yz);
+%  \path  
+%   (aux4.north) edge (aux5.south)
+%   (aux5.east) edge (deltag.west)
+%   (deltag.east) edge (aux6.west)
+%   (aux6.south) edge (circle2.south)
+%   (circle.east) edge (cz)
+%   (cz.east) edge (gs.west)
+%   (gs.east) edge (circle2.west)
+%   (circle2.east) edge (aux1.west)
+%   (aux1.south) edge (aux2.north)
+%   (aux2.west) edge (aux3.east); 
+%  \path[->]  (aux3.north) edge (circle.south);
+% \end{tikzpicture}
+%}
+% \caption{Sampled System. \label{fig:sampledsystem}}
+%\end{figure}
 
 First, some assumptions have to be established to obtain a model for the
 quantization effects (seen as noise) on the closed loop system.
