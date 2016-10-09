@@ -259,7 +259,7 @@ synthesis of the controller.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Preliminaries}
 
-\blue{Please insert a figure clearly distinguishing between continuous and discretised/quantised plant - a template is in a picture sent out by Lucas late last week. Please introduced signals on the plot. 
+%\blue{Please insert a figure clearly distinguishing between continuous and discretised/quantised plant - a template is in a picture sent out by Lucas late last week. Please introduced signals on the plot. 
 
 %Let us straighten the notations next. 
 %We should have 
@@ -305,7 +305,7 @@ synthesis of the controller.
 %which perhaps can indeed be re-written as $G^\ast (s) = G(s) + \Delta G_P(s)$? (This proof should come from that above.) 
 %We should argue that this error is encompassed by the one derived above (or isn't it?). 
 %\end{itemize}
-}
+%}
 
 %------------------------------------
 \subsection{Verifying Closed-loop Control Systems}
@@ -688,6 +688,19 @@ size $F$.  We shall denote this domain as $\mathbb{R}\langle I,F \rangle$ and ob
 %\label{plant_tf}
 \tilde G(z)&=\frac{\tilde b_{0}+\tilde b_{1}z^{-1}+...+\tilde b_{M_G}z^{-M_G}}{\tilde a_{0}+\tilde a_{1}z^{-1}+...+\tilde a_{N_G}z^{-N_G}}.
 \end{align}
+
+
+\textcolor{blue}{The digital controller $C(z)$ also suffers disturbances from the FWL effects, with roundoffs in coefficients that may change the closed-loop poles and zeros position, and consequently affect its stability, as shown in~\cite{Bessa16}.}
+
+\textcolor{blue}{Since the controller is implemented in the $\mathbb{R}\langle I,F \rangle$ 
+domain, {\it i.e.} a Fixed-Point Finite Word Length with integer size $I$ and fractional
+size $F$, we shall denote this domain as $\mathbb{R}\langle I,F \rangle$ and assume that there exists a function $FWL[\cdot]:\mathbb{R}^{n}\rightarrow \mathbb{R}^{n}\langle I,F \rangle$, which applies the FWL effects to a polynomial. Thus the perturbed controller model $\hat{C}(z)$ may be computed from the original model $C(z)=\frac{N_{C}(z)}{D_{C}(z)}$ using the following expression:
+\begin{equation}
+\hat{C}(z)=\frac{FWL[N_{C}(z)]}{FWL[D_{C}(z)]}
+\end{equation}}
+
+\textcolor{blue}{[IB: And I propose to exchange the remaining paragraphs by the previous blue]}
+
  
 Since the controller is implemented in the $\mathbb{R}\langle I,F \rangle$
 domain,
