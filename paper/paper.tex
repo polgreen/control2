@@ -363,9 +363,8 @@ For the sake of brevity,
 we will use only the notation $G(z)$ to represent the pulse transfer function.
 %
 \end{mylemma}
+Since $G(z)$ is an approximation of $G(s)$ we introduce an error term caused during its calculation as $\Delta{G}_P$
 
-Since $G(z)$ is an approximation of $G(s)$ \red{we denote [AA: why `denote'? Shouldn't we prove that we go from the $G(s)$ TF to the $G(z,T)$ form above?]} the error in the
-approximation for time $t \neq kT$ as $\Delta{G}_P$
 %
 \begin{align}
 \small
@@ -375,9 +374,11 @@ approximation for time $t \neq kT$ as $\Delta{G}_P$
 \end{align}
 %
 Note that $\Delta{G}_P$ is undefined and upperbound by a user defined
-percentage such that $\hat{G}(z)$ corresponds to the polynomial set of
-possible values of $G(z, T): \forall T \in \mathbb{R}$. 
+value such that $\hat{G}(z)$ corresponds to the set of
+possible polynomial forms of $G(z, T)$ that overapproximate $G(s)$.
+This calculation is performed outside of the scope of this work since it depends on the nature of the tool used to obtain the $\mathcal{Z}$ form. The error comes from the bounded horizon and mathematical precision used to calculate the $\mathcal{Z}$ transform, which will be tool and user dependent.
 \red{[The previous statement is confusing and I must disagree here: I want hard error bounds on a specific value of T.]}
+\green{[You are correct. It was absolutely wrong. Hopefully this explanation is clear. We use MATLAB, but still don't know the details of their implementation, so I don't have hard data on how this error is calculated.}
 
 Let $\tilde C(z)$ and $\tilde G(z)$ be the transfer functions represented
 using a Fixed-Point Finite Word Length with integer size $I$ and fractional
@@ -396,13 +397,14 @@ domain,
 %
  $$\forall i \leq N_C, j \leq M_C\ \  \tilde \beta_{i} \equiv \beta_{i} \wedge \tilde \alpha_{j} \equiv \alpha_{j} \Leftrightarrow \tilde C(z) \equiv C(z)$$
 %
-However, given a real plant and real controller $\hat{G}(z), \hat{C}(z)$, 
-\red{[the first line is not clear, there is in particular a function that is left undefined.]}
-%
+However, given a real plant and real controller $\hat{G}(z), \hat{C}(z)$, and a discretizing function
 \begin{align}
 \small
 \label{FWL_tf}
-&\exists f (x \in \mathbb{R}) \rightarrow \tilde x \in \mathbb{R}\langle I,F \rangle : \\
+&f (x \in \mathbb{R}) \rightarrow \tilde x \in \mathbb{R}\langle I,F \rangle \triangleq \tilde x = x-(x\mod\tilde x)
+\end{align}
+we calculate $\tilde C(z)=f(\hat{C}(z))$ and $\tilde G(z)=f(\hat{G}(z))$
+\begin{align}
 \label{digital_controller_tf}
 \tilde C(z)&=\frac{(\hat{\beta}_{0}+\Delta_q \hat{\beta}_{0}) +...+(\hat{\beta}_{M_C}+\Delta_q \hat{\beta}_{M_C})z^{-M_C}}{(\hat{\alpha}_{0}+\Delta_q \hat{\alpha}_{0})+...+(\hat{\alpha}_{N_C}+\Delta_q \hat{\alpha}_{N_C})z^{-N_G}} \nonumber \\
 &= C(z) =\hat{C}(z) + \Delta{C}(z)\\
@@ -410,11 +412,13 @@ However, given a real plant and real controller $\hat{G}(z), \hat{C}(z)$,
 \tilde G(z)&=\frac{(\hat{b}_{0}+\Delta_q \hat{b}_{0}) +...+(\hat{b}_{M_G}+\Delta_q \hat{b}_{M_G})z^{-M_G}}{(\hat{a}_{0}+\Delta_q \hat{a}_{0})+...+(\hat{a}_{N_G}+\Delta_q \hat{a}_{N_G})z^{-N_G}} \nonumber \\
 &=G(z)+\Delta{G}_P(z)+\Delta{G}_Q(z).
 \end{align}
+where $\Delta_q\hat{c}_i=\hat{c}_i\mod \tilde{c}_i$
 \red{[please, how can you claim that the error enters as written? Can you show the derivation? Can you show a reference that has derived this form?]}
-where $\Delta{G}_Q(z)$ represents the plant uncertainty caused by
+\green{[the definition of f (now included) should explain it clearly]}
+and $\Delta{G}_Q(z)$ represents the plant uncertainty caused by
 the rounding off effect.  We may encompass all the uncertainty as
 $\Delta{G}(z)=\Delta{G}_P(z)+\Delta{G}_Q(z)$.  Since this value is
-nondeterministic, the polynomial \red{[why polynomial?]} set of possible values of $\tilde G(z)$ is
+nondeterministic, the set of possible polynomial coefficients of $\tilde G(z)$ is
 denoted by $\mathfrak{G}(z)$.
 
 %------------------------------------
@@ -1021,7 +1025,7 @@ Figure~\ref{fig:sampledsystem}
 %
 \begin{equation}
 \resizebox{0.48\textwidth}{!}{
-$\hat{Y}(z)=\nu_{1}(z)C(z)G(z)+\nu_{2}(z)G(z)+R(z)C(z)G(z)-\hat{Y}(z)C(z)G(z),$
+$\tilde{Y}(z)=\tilde R(z)C(z)G(z)-\tilde{Y}(z)C(z)G(z)+\nu_{1}(z)+\nu_{2}(z)G(z),$
 }
 \end{equation}
 
@@ -1029,12 +1033,12 @@ $\hat{Y}(z)=\nu_{1}(z)C(z)G(z)+\nu_{2}(z)G(z)+R(z)C(z)G(z)-\hat{Y}(z)C(z)G(z),$
 %
 \begin{equation}
 \label{eq:outputfunctions}
-\hat{Y}(z)=H_{1}(z)\left(R(z)+\nu_{1}(z)\right)+H_{2}(z)\nu_{2}(z)
+\tilde{Y}(z)=C(z)G(z)H(z)R(z)+H(z)\nu_{1}(z)+G(z)H(z)\nu_{2}(z)
 \end{equation}
-$$H_{1}(z)=\frac{C(z)G(z)}{1+C(z)G(z)}$$
-$$H_{2}(z)=\frac{G(z)}{1+C(z)G(z)}$$
+$$H(z)=\frac{1}{1+C(z)G(z)}$$
 
-In the case of stability properties we need to verify the stability of both $H_{1}(z)$ and $H_{2}(z)$ to validate the stability of the whole system.
+Note that $H(z)$ cancels the poles of both $G(z)$ and $C(z)$, thus we need only verify the stability of $H(z)$
+to validate the stability of the whole system.
 %These equations are sufficient for computing $\sigma_{Q}^{2}$.  However,
 %there is still a gap for a complete model for $\Delta{G_{Q}(z)}$ in
 %Eq.~\eqref{eq:deltag_var}, {\it i.e.}, the z-transform of control action
