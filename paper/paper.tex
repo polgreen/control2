@@ -365,6 +365,22 @@ we will use only the notation $G(z)$ to represent the pulse transfer function.
 %
 \end{mylemma}
 
+\begin{myassumption}
+%
+The DAC and ADC are synchronized, {\it i.e.}, there is no delay between
+sampling the plant output at ADC and updating the DAC accordingly.
+%
+\end{myassumption}
+
+
+\begin{myassumption}
+%
+The DAC interpolator is an ideal ZOH; it takes the discrete value of control
+signal $\tilde u(k)$ at instant $k$ and produces a rectangular pulse of height
+$u(k)$ and width equal to the sample time $T$.
+%
+\end{myassumption}
+
 
 \begin{myassumption}
 %
@@ -734,7 +750,7 @@ H_{2}=\frac{\hat{G}(z)}{1+\hat{C}(z)\hat{G}(z)},
 
 
 
-A discrete-time linear system is said to be Bounded-Input and Bounded-Output (BIBO) stable if and only if every pole of its transfer function lies inside the unit circle. Analyzing the~\eqref{eq:outputfunctions} and based on assumption~\ref{assumption:cont_and_plant}, the following lemma states necessary conditions for stability of closed-loop system in figure~\ref{fig:sampledsystem}.
+A discrete-time linear system is said to be Bounded-Input and Bounded-Output (BIBO) stable if and only if every pole of its transfer function lies inside the unit circle. Analyzing the~\eqref{eq:outputfunctions} and based on assumption~\ref{assumption:cont_and_plant}, the following lemma states necessary conditions for stability of closed-loop system in figure~\ref{fig:sampledsystem}, since the the exogenous signals $R(z)$, $\nu_{1}$, and $\nu_{2}$ are bounded.
 
 \begin{mylemma}{\cite{Bessa16,fadali}}
 \label{internal_stab_lemma}
@@ -742,14 +758,15 @@ A feedback hybrid control system as shown in Fig.~\ref{fig:sampledsystem}, with 
 \begin{itemize}
 \item  the roots of characteristic polynomial $S(z)$ are inside the open unit circle, where $S(z)$ is:
 \begin{equation}
-\label{eq_int_stab}
+\label{lemma:eq_int_stab}
 S(z)=FWL[N_{C}(z)]\hat{N}_{G}(z)+FWL[D_{C}(z)]\hat{D}_{G}(z);
 \end{equation}
-\item the direct loop product $\frac{NFWL[_{C}(z)]}{FWL[D_{C}(z)]}\cdot \frac{\hat{N}_{G}(z)}{\hat{D}_{G}(z)}$ has no pole-zero cancellation on or outside the unit circle;
+\item the direct loop product $\frac{FWL[N_{C}(z)]}{FWL[D_{C}(z)]}\cdot \frac{\hat{N}_{G}(z)}{\hat{D}_{G}(z)}$ has no pole-zero cancellation on or outside the unit circle;
 \item the controller $\hat{C}(z)$ is a minimum-phase system. 
 \end{itemize}
 \end{mylemma}
 
+The Lemma~\ref{lemma:eq_int_stab} provides the necessary conditions for synthesis of digital controllers able to stabilize closed loop system, considering plant parametric uncertainties ($\Delta G_{P}(z)$), quantization noises ($\nu_{1}$ and $\nu_{2}$) and FWL effects in digital controllers. Based on it, the model for plant uncertainty due quantization noise ($\Delta G(z)$ may be disregarded if the conditions on Lemma~\ref{lemma:eq_int_stab} are attended and if the quantization noise is bounded. 
 
 %------------------------------------
 \subsection{Using Fixed Point Arithmetic for verification}
@@ -1257,21 +1274,6 @@ where $q$ is the step size of quantizer.
 %, thus supporting this assumption.
 \end{myassumption}
 
-\begin{myassumption}
-%
-The DAC and ADC are synchronized, {\it i.e.}, there is no delay between
-sampling the plant output at ADC and updating the DAC accordingly.
-%
-\end{myassumption}
-
-
-\begin{myassumption}
-%
-The DAC interpolator is an ideal ZOH; it takes the discrete value of control
-signal $\tilde u(k)$ at instant $k$ and produces a rectangular pulse of height
-$u(k)$ and width equal to the sample time $T$.
-%
-\end{myassumption}
 
 %\begin{myprop}
 %Considering the quantisation noise $\nu(k)$ as an output error in the
