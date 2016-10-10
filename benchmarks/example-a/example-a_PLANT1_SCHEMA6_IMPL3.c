@@ -1,22 +1,22 @@
 // tag-#anon#ST[ARR100{F64}$F64$'a'|S32'a_size'|U32'$pad0'|ARR100{F64}$F64$'b'|S32'b_size'|U32'$pad1'|F64'sample_time'|ARR100{F64}$F64$'a_uncertainty'|ARR100{F64}$F64$'b_uncertainty']
-// file /home/lucascordeiro/dsverifier/bmc/core/definitions.h line 130
-struct anonymous$3;
-
-// tag-#anon#ST[ARR20{ARR20{F64}$F64$}$ARR20{F64}$F64$$'A'|ARR20{ARR20{F64}$F64$}$ARR20{F64}$F64$$'B'|ARR20{ARR20{F64}$F64$}$ARR20{F64}$F64$$'C'|ARR20{ARR20{F64}$F64$}$ARR20{F64}$F64$$'D'|ARR20{ARR20{F64}$F64$}$ARR20{F64}$F64$$'states'|ARR20{ARR20{F64}$F64$}$ARR20{F64}$F64$$'outputs'|ARR20{ARR20{F64}$F64$}$ARR20{F64}$F64$$'inputs'|ARR20{ARR20{F64}$F64$}$ARR20{F64}$F64$$'K'|U32'nStates'|U32'nInputs'|U32'nOutputs'|U32'$pad0']
-// file /home/lucascordeiro/dsverifier/bmc/core/definitions.h line 142
+// file /home/lucascordeiro/dsverifier/bmc/core/definitions.h line 144
 struct anonymous$0;
 
-// tag-#anon#ST[S32'int_bits'|S32'frac_bits'|F64'max'|F64'min'|S32'default_realization'|U32'$pad0'|F64'delta'|S32'scale'|U32'$pad1'|F64'max_error']
-// file /home/lucascordeiro/dsverifier/bmc/core/definitions.h line 157
-struct anonymous$2;
-
-// tag-#anon#ST[S32'push'|S32'in'|S32'sbiw'|S32'cli'|S32'out'|S32'std'|S32'ldd'|S32'subi'|S32'sbci'|S32'lsl'|S32'rol'|S32'add'|S32'adc'|S32'adiw'|S32'rjmp'|S32'mov'|S32'sbc'|S32'ld'|S32'rcall'|S32'cp'|S32'cpc'|S32'ldi'|S32'brge'|S32'pop'|S32'ret'|S32'st'|S32'brlt'|S32'cpi']
-// file /home/lucascordeiro/dsverifier/bmc/core/definitions.h line 169
+// tag-#anon#ST[ARR20{ARR20{F64}$F64$}$ARR20{F64}$F64$$'A'|ARR20{ARR20{F64}$F64$}$ARR20{F64}$F64$$'B'|ARR20{ARR20{F64}$F64$}$ARR20{F64}$F64$$'C'|ARR20{ARR20{F64}$F64$}$ARR20{F64}$F64$$'D'|ARR20{ARR20{F64}$F64$}$ARR20{F64}$F64$$'states'|ARR20{ARR20{F64}$F64$}$ARR20{F64}$F64$$'outputs'|ARR20{ARR20{F64}$F64$}$ARR20{F64}$F64$$'inputs'|ARR20{ARR20{F64}$F64$}$ARR20{F64}$F64$$'K'|U32'nStates'|U32'nInputs'|U32'nOutputs'|U32'$pad0']
+// file /home/lucascordeiro/dsverifier/bmc/core/definitions.h line 156
 struct anonymous$1;
 
-// tag-#anon#ST[S64'clock'|S32'device'|U32'$pad0'|F64'cycle'|SYM#tag-#anon#ST[S32'push'|S32'in'|S32'sbiw'|S32'cli'|S32'out'|S32'std'|S32'ldd'|S32'subi'|S32'sbci'|S32'lsl'|S32'rol'|S32'add'|S32'adc'|S32'adiw'|S32'rjmp'|S32'mov'|S32'sbc'|S32'ld'|S32'rcall'|S32'cp'|S32'cpc'|S32'ldi'|S32'brge'|S32'pop'|S32'ret'|S32'st'|S32'brlt'|S32'cpi']#'assembly']
-// file /home/lucascordeiro/dsverifier/bmc/core/definitions.h line 201
+// tag-#anon#ST[S32'int_bits'|S32'frac_bits'|F64'max'|F64'min'|S32'default_realization'|U32'$pad0'|F64'delta'|S32'scale'|U32'$pad1'|F64'max_error']
+// file /home/lucascordeiro/dsverifier/bmc/core/definitions.h line 171
+struct anonymous$3;
+
+// tag-#anon#ST[S32'push'|S32'in'|S32'sbiw'|S32'cli'|S32'out'|S32'std'|S32'ldd'|S32'subi'|S32'sbci'|S32'lsl'|S32'rol'|S32'add'|S32'adc'|S32'adiw'|S32'rjmp'|S32'mov'|S32'sbc'|S32'ld'|S32'rcall'|S32'cp'|S32'cpc'|S32'ldi'|S32'brge'|S32'pop'|S32'ret'|S32'st'|S32'brlt'|S32'cpi']
+// file /home/lucascordeiro/dsverifier/bmc/core/definitions.h line 183
 struct anonymous;
+
+// tag-#anon#ST[S64'clock'|S32'device'|U32'$pad0'|F64'cycle'|SYM#tag-#anon#ST[S32'push'|S32'in'|S32'sbiw'|S32'cli'|S32'out'|S32'std'|S32'ldd'|S32'subi'|S32'sbci'|S32'lsl'|S32'rol'|S32'add'|S32'adc'|S32'adiw'|S32'rjmp'|S32'mov'|S32'sbc'|S32'ld'|S32'rcall'|S32'cp'|S32'cpc'|S32'ldi'|S32'brge'|S32'pop'|S32'ret'|S32'st'|S32'brlt'|S32'cpi']#'assembly']
+// file /home/lucascordeiro/dsverifier/bmc/core/definitions.h line 215
+struct anonymous$2;
 
 #include <assert.h>
 
@@ -39,17 +39,11 @@ void __DSVERIFIER_assume(_Bool expression);
 // __assert_fail
 // file /usr/include/assert.h line 67
 extern void __assert_fail(const char *, const char *, unsigned int, const char *) _Noreturn;
-// binomial
-// file /home/lucascordeiro/dsverifier/bmc/core/delta-operator.h line 26
-void binomial(signed int degree, double delta, double *out);
-// binomial_coefficient
-// file /home/lucascordeiro/dsverifier/bmc/core/delta-operator.h line 22
-signed int binomial_coefficient(signed int n, signed int p);
 // call_closedloop_verification_task
-// file /home/lucascordeiro/dsverifier/bmc/dsverifier.h line 296
+// file /home/lucascordeiro/dsverifier/bmc/dsverifier.h line 369
 void call_closedloop_verification_task(void *closedloop_verification_task);
 // call_verification_task
-// file /home/lucascordeiro/dsverifier/bmc/dsverifier.h line 245
+// file /home/lucascordeiro/dsverifier/bmc/dsverifier.h line 268
 void call_verification_task(void *verification_task);
 // check_stability
 // file /home/lucascordeiro/dsverifier/bmc/core/util.h line 59
@@ -58,10 +52,10 @@ signed int check_stability(double *a, signed int n);
 // file /home/lucascordeiro/dsverifier/bmc/core/closed-loop.h line 70
 signed int check_stability_closedloop(double *a, signed int n, double *plant_num, signed int p_num_size, double *plant_den, signed int p_den_size);
 // determinant
-// file /home/lucascordeiro/dsverifier/bmc/core/util.h line 499
+// file /home/lucascordeiro/dsverifier/bmc/core/util.h line 498
 double determinant(double (*a)[20l], signed int n);
 // double_add_matrix
-// file /home/lucascordeiro/dsverifier/bmc/core/util.h line 316
+// file /home/lucascordeiro/dsverifier/bmc/core/util.h line 315
 void double_add_matrix(unsigned int lines, unsigned int columns, double (*m1)[20l], double (*m2)[20l], double (*result)[20l]);
 // double_check_limit_cycle
 // file /home/lucascordeiro/dsverifier/bmc/core/util.h line 218
@@ -88,16 +82,16 @@ double double_direct_form_2(double *w, double x, double *a, double *b, signed in
 // file /home/lucascordeiro/dsverifier/bmc/core/realizations.h line 230
 double double_direct_form_2_MSP430(double *w, double x, double *a, double *b, signed int Na, signed int Nb);
 // double_exp_matrix
-// file /home/lucascordeiro/dsverifier/bmc/core/util.h line 429
+// file /home/lucascordeiro/dsverifier/bmc/core/util.h line 428
 void double_exp_matrix(unsigned int lines, unsigned int columns, double (*m1)[20l], unsigned int expNumber, double (*result)[20l]);
 // double_matrix_multiplication
-// file /home/lucascordeiro/dsverifier/bmc/core/util.h line 338
+// file /home/lucascordeiro/dsverifier/bmc/core/util.h line 337
 void double_matrix_multiplication(unsigned int i1, unsigned int j1, unsigned int i2, unsigned int j2, double (*m1)[20l], double (*m2)[20l], double (*m3)[20l]);
 // double_state_space_representation
 // file /home/lucascordeiro/dsverifier/bmc/core/state-space.h line 23
 double double_state_space_representation(void);
 // double_sub_matrix
-// file /home/lucascordeiro/dsverifier/bmc/core/util.h line 327
+// file /home/lucascordeiro/dsverifier/bmc/core/util.h line 326
 void double_sub_matrix(unsigned int lines, unsigned int columns, double (*m1)[20l], double (*m2)[20l], double (*result)[20l]);
 // double_transposed_direct_form_2
 // file /home/lucascordeiro/dsverifier/bmc/core/realizations.h line 122
@@ -130,13 +124,13 @@ void ft_closedloop_sensitivity(double *c_num, signed int Nc_num, double *c_den, 
 // file /home/lucascordeiro/dsverifier/bmc/core/closed-loop.h line 28
 void ft_closedloop_series(double *c_num, signed int Nc_num, double *c_den, signed int Nc_den, double *model_num, signed int Nmodel_num, double *model_den, signed int Nmodel_den, double *ans_num, signed int Nans_num, double *ans_den, signed int Nans_den);
 // fxp_abs
-// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 299
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 303
 signed long int fxp_abs(signed long int a);
 // fxp_add
-// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 311
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 315
 signed long int fxp_add(signed long int aadd, signed long int badd);
 // fxp_add_matrix
-// file /home/lucascordeiro/dsverifier/bmc/core/util.h line 468
+// file /home/lucascordeiro/dsverifier/bmc/core/util.h line 467
 void fxp_add_matrix(unsigned int lines, unsigned int columns, signed long int (*m1)[20l], signed long int (*m2)[20l], signed long int (*result)[20l]);
 // fxp_check_limit_cycle
 // file /home/lucascordeiro/dsverifier/bmc/core/functions.h line 163
@@ -148,7 +142,7 @@ void fxp_check_oscillations(signed long int *y, signed int y_size);
 // file /home/lucascordeiro/dsverifier/bmc/core/functions.h line 201
 void fxp_check_persistent_limit_cycle(signed long int *y, signed int y_size);
 // fxp_determinant
-// file /home/lucascordeiro/dsverifier/bmc/core/util.h line 530
+// file /home/lucascordeiro/dsverifier/bmc/core/util.h line 529
 double fxp_determinant(signed long int (*a_fxp)[20l], signed int n);
 // fxp_direct_form_1
 // file /home/lucascordeiro/dsverifier/bmc/core/realizations.h line 22
@@ -160,31 +154,31 @@ void fxp_direct_form_1_impl2(signed long int *x, signed int x_size, signed long 
 // file /home/lucascordeiro/dsverifier/bmc/core/realizations.h line 41
 signed long int fxp_direct_form_2(signed long int *w, signed long int x, signed long int *a, signed long int *b, signed int Na, signed int Nb);
 // fxp_div
-// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 353
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 357
 signed long int fxp_div(signed long int a, signed long int b);
 // fxp_double_to_fxp
-// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 207
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 211
 signed long int fxp_double_to_fxp(double value);
 // fxp_double_to_fxp_array
-// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 243
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 247
 void fxp_double_to_fxp_array(double *f, signed long int *r, signed int N);
 // fxp_exp_matrix
-// file /home/lucascordeiro/dsverifier/bmc/core/util.h line 391
+// file /home/lucascordeiro/dsverifier/bmc/core/util.h line 390
 void fxp_exp_matrix(unsigned int lines, unsigned int columns, signed long int (*m1)[20l], unsigned int expNumber, signed long int (*result)[20l]);
 // fxp_float_to_fxp
-// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 194
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 198
 signed long int fxp_float_to_fxp(float f);
 // fxp_float_to_fxp_array
-// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 236
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 240
 void fxp_float_to_fxp_array(float *f, signed long int *r, signed int N);
 // fxp_get_frac_part
-// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 121
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 125
 signed long int fxp_get_frac_part(signed long int in);
 // fxp_get_int_part
-// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 111
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 115
 signed long int fxp_get_int_part(signed long int in);
 // fxp_int_to_fxp
-// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 166
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 170
 signed long int fxp_int_to_fxp(signed int in);
 // fxp_ln
 // file /home/lucascordeiro/dsverifier/bmc/core/functions.h line 288
@@ -196,77 +190,74 @@ double fxp_log10(double x);
 // file /home/lucascordeiro/dsverifier/bmc/core/functions.h line 333
 double fxp_log10_low(double x);
 // fxp_matrix_multiplication
-// file /home/lucascordeiro/dsverifier/bmc/core/util.h line 369
+// file /home/lucascordeiro/dsverifier/bmc/core/util.h line 368
 void fxp_matrix_multiplication(unsigned int i1, unsigned int j1, unsigned int i2, unsigned int j2, signed long int (*m1)[20l], signed long int (*m2)[20l], signed long int (*m3)[20l]);
 // fxp_mult
-// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 335
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 339
 signed long int fxp_mult(signed long int amult, signed long int bmult);
 // fxp_neg
-// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 363
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 367
 signed long int fxp_neg(signed long int aneg);
 // fxp_print_float
-// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 403
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 407
 void fxp_print_float(signed long int a);
 // fxp_print_float_array
-// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 407
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 411
 void fxp_print_float_array(signed long int *a, signed int N);
 // fxp_print_int
-// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 399
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 403
 void fxp_print_int(signed long int a);
 // fxp_quantize
-// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 132
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 136
 signed long int fxp_quantize(signed long int aquant);
 // fxp_shrl
-// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 386
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 390
 signed long int fxp_shrl(signed long int in, signed int shift);
 // fxp_sign
-// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 376
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 380
 signed long int fxp_sign(signed long int a);
 // fxp_square
-// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 395
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 399
 signed long int fxp_square(signed long int a);
 // fxp_state_space_representation
 // file /home/lucascordeiro/dsverifier/bmc/core/state-space.h line 67
 double fxp_state_space_representation(void);
 // fxp_sub
-// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 323
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 327
 signed long int fxp_sub(signed long int asub, signed long int bsub);
 // fxp_sub_matrix
-// file /home/lucascordeiro/dsverifier/bmc/core/util.h line 475
+// file /home/lucascordeiro/dsverifier/bmc/core/util.h line 474
 void fxp_sub_matrix(unsigned int lines, unsigned int columns, signed long int (*m1)[20l], signed long int (*m2)[20l], signed long int (*result)[20l]);
 // fxp_to_double
-// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 267
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 271
 double fxp_to_double(signed long int fxp);
 // fxp_to_double_array
-// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 287
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 291
 void fxp_to_double_array(double *f, signed long int *r, signed int N);
 // fxp_to_float
-// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 260
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 264
 float fxp_to_float(signed long int fxp);
 // fxp_to_float_array
-// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 280
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 284
 void fxp_to_float_array(float *f, signed long int *r, signed int N);
 // fxp_to_int
-// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 178
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 182
 signed int fxp_to_int(signed long int fxp);
 // fxp_transpose
-// file /home/lucascordeiro/dsverifier/bmc/core/util.h line 583
+// file /home/lucascordeiro/dsverifier/bmc/core/util.h line 582
 void fxp_transpose(signed long int (*a)[20l], signed long int (*b)[20l], signed int n, signed int m);
 // fxp_transposed_direct_form_2
 // file /home/lucascordeiro/dsverifier/bmc/core/realizations.h line 61
 signed long int fxp_transposed_direct_form_2(signed long int *w, signed long int x, signed long int *a, signed long int *b, signed int Na, signed int Nb);
 // fxp_verify_overflow
-// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 149
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 153
 void fxp_verify_overflow(signed long int value);
 // fxp_verify_overflow_array
-// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 154
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 158
 void fxp_verify_overflow_array(signed long int *array, signed int n);
 // generate_delta_coefficients
-// file /home/lucascordeiro/dsverifier/bmc/core/delta-operator.h line 35
+// file /home/lucascordeiro/dsverifier/bmc/core/delta-operator.h line 33
 void generate_delta_coefficients(double *vetor, double *out, signed int n, double delta);
-// generate_delta_coefficients_with_base
-// file /home/lucascordeiro/dsverifier/bmc/core/delta-operator.h line 56
-void generate_delta_coefficients_with_base(double *vetor, double *out, signed int n, double delta);
 // generic_timing_double_direct_form_1
 // file /home/lucascordeiro/dsverifier/bmc/core/realizations.h line 286
 double generic_timing_double_direct_form_1(double *y, double *x, double *a, double *b, signed int Na, signed int Nb);
@@ -283,10 +274,10 @@ double generic_timing_shift_l_double(double zIn, double *z, signed int N);
 // file /home/lucascordeiro/dsverifier/bmc/core/functions.h line 37
 double generic_timing_shift_r_double(double zIn, double *z, signed int N);
 // get_delta_transfer_function
-// file /home/lucascordeiro/dsverifier/bmc/core/delta-operator.h line 66
+// file /home/lucascordeiro/dsverifier/bmc/core/delta-operator.h line 52
 void get_delta_transfer_function(double *b, double *b_out, signed int b_size, double *a, double *a_out, signed int a_size, double delta);
 // get_delta_transfer_function_with_base
-// file /home/lucascordeiro/dsverifier/bmc/core/delta-operator.h line 73
+// file /home/lucascordeiro/dsverifier/bmc/core/delta-operator.h line 59
 void get_delta_transfer_function_with_base(double *b, double *b_out, signed int b_size, double *a, double *a_out, signed int a_size, double delta);
 // iirIIOutTime
 // file /home/lucascordeiro/dsverifier/bmc/core/functions.h line 428
@@ -327,6 +318,9 @@ double internal_abs(double a);
 // internal_pow
 // file /home/lucascordeiro/dsverifier/bmc/core/util.h line 39
 double internal_pow(double a, double b);
+// nchoosek
+// file /home/lucascordeiro/dsverifier/bmc/core/delta-operator.h line 23
+signed int nchoosek(signed int n, signed int k);
 // nondet_double
 // file /home/lucascordeiro/dsverifier/bmc/engine/verify_limit_cycle_closedloop.h line 27
 double nondet_double();
@@ -346,13 +340,13 @@ void poly_mult(double *a, signed int Na, double *b, signed int Nb, double *ans, 
 // file /home/lucascordeiro/dsverifier/bmc/core/util.h line 141
 void poly_sum(double *a, signed int Na, double *b, signed int Nb, double *ans, signed int Nans);
 // print_array_elements
-// file /home/lucascordeiro/dsverifier/bmc/core/util.h line 306
+// file /home/lucascordeiro/dsverifier/bmc/core/util.h line 305
 void print_array_elements(char *name, double *v, signed int n);
 // print_fxp_array_elements
-// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 415
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 419
 void print_fxp_array_elements(char *name, signed long int *v, signed int n);
 // print_matrix
-// file /home/lucascordeiro/dsverifier/bmc/core/util.h line 482
+// file /home/lucascordeiro/dsverifier/bmc/core/util.h line 481
 void print_matrix(double (*matrix)[20l], unsigned int lines, unsigned int columns);
 // printf
 // file /usr/include/stdio.h line 362
@@ -403,10 +397,10 @@ float snrVariance(float *s, float *n, signed int blksz);
 // file /home/lucascordeiro/dsverifier/bmc/core/functions.h line 423
 extern void srand(unsigned int seed);
 // transpose
-// file /home/lucascordeiro/dsverifier/bmc/core/util.h line 572
+// file /home/lucascordeiro/dsverifier/bmc/core/util.h line 571
 void transpose(double (*a)[20l], double (*b)[20l], signed int n, signed int m);
 // validation
-// file /home/lucascordeiro/dsverifier/bmc/dsverifier.h line 118
+// file /home/lucascordeiro/dsverifier/bmc/dsverifier.h line 125
 void validation();
 // verify_controllability
 // file /home/lucascordeiro/dsverifier/bmc/engine/verify_controllability.h line 16
@@ -457,10 +451,10 @@ signed int verify_timing_msp_430(void);
 // file /home/lucascordeiro/dsverifier/bmc/engine/verify_zero_input_limit_cycle.h line 16
 signed int verify_zero_input_limit_cycle(void);
 // wrap
-// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 96
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 100
 signed long int wrap(signed long int kX, signed long int kLowerBound, signed long int kUpperBound);
 
-struct anonymous$3
+struct anonymous$0
 {
   // a
   double a[100l];
@@ -478,7 +472,7 @@ struct anonymous$3
   double b_uncertainty[100l];
 };
 
-struct anonymous$0
+struct anonymous$1
 {
   // A
   double A[20l][20l];
@@ -504,7 +498,7 @@ struct anonymous$0
   unsigned int nOutputs;
 };
 
-struct anonymous$2
+struct anonymous$3
 {
   // int_bits
   signed int int_bits;
@@ -524,7 +518,7 @@ struct anonymous$2
   double max_error;
 };
 
-struct anonymous$1
+struct anonymous
 {
   // push
   signed int push;
@@ -584,7 +578,7 @@ struct anonymous$1
   signed int cpi;
 };
 
-struct anonymous
+struct anonymous$2
 {
   // clock
   signed long int clock;
@@ -593,30 +587,30 @@ struct anonymous
   // cycle
   double cycle;
   // assembly
-  struct anonymous$1 assembly;
+  struct anonymous assembly;
 };
 
 
-// OVERFLOW_MODE
-// file /home/lucascordeiro/dsverifier/bmc/core/definitions.h line 116
-signed int OVERFLOW_MODE=1;
-// ROUNDING_MODE
-// file /home/lucascordeiro/dsverifier/bmc/core/definitions.h line 117
-signed int ROUNDING_MODE=0;
 // X_SIZE_VALUE
-// file /home/lucascordeiro/dsverifier/bmc/core/definitions.h line 115
+// file /home/lucascordeiro/dsverifier/bmc/core/definitions.h line 121
 signed int X_SIZE_VALUE=0;
 // _controller
 // file /home/lucascordeiro/dsverifier/bmc/core/state-space.h line 17
-extern struct anonymous$0 _controller;
-// _fxp_fmask
+extern struct anonymous$1 _controller;
+// _dbl_max
 // file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 45
+double _dbl_max;
+// _dbl_min
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 46
+double _dbl_min;
+// _fxp_fmask
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 49
 signed long int _fxp_fmask;
 // _fxp_half
 // file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 39
 signed long int _fxp_half;
 // _fxp_imask
-// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 48
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 52
 signed long int _fxp_imask;
 // _fxp_max
 // file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 42
@@ -631,13 +625,14 @@ signed long int _fxp_minus_one;
 // file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 38
 signed long int _fxp_one;
 // controller
-// file example-a.c line 369
-struct anonymous$3 controller={ .a={ 1.0, -1.00706037056799, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000 }, .a_size=2,
-    .b={ 11.4958082843740, -11.4845259551093, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000 }, .b_size=2,
-    .sample_time=0.001, .a_uncertainty={ 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000 }, .b_uncertainty={ 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000 } };
+// file example-a.c line 397
+struct anonymous$0 controller={ .a={ 1.000000, -1.035807e+0, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000 }, .a_size=2,
+    .b={ 1.168335e+1, -1.162613e+1, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000 }, .b_size=2,
+    .sample_time=5.000000e-3, .a_uncertainty={ 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000 },
+    .b_uncertainty={ 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000 } };
 // ds
 // file /home/lucascordeiro/dsverifier/bmc/core/realizations.h line 17
-extern struct anonymous$3 ds;
+extern struct anonymous$0 ds;
 // error_limit
 // file /home/lucascordeiro/dsverifier/bmc/engine/verify_error_state_space.h line 18
 extern double error_limit;
@@ -646,10 +641,10 @@ extern double error_limit;
 signed int generic_timer=0;
 // hw
 // file /home/lucascordeiro/dsverifier/bmc/core/functions.h line 18
-extern struct anonymous hw;
+extern struct anonymous$2 hw;
 // impl
-// file example-a.c line 387
-struct anonymous$2 impl={ .int_bits=16, .frac_bits=8, .max=0.000000, .min=0.000000,
+// file example-a.c line 422
+struct anonymous$3 impl={ .int_bits=16, .frac_bits=12, .max=0.000000, .min=0.000000,
     .default_realization=0, .delta=0.000000,
     .scale=0, .max_error=0.000000 };
 // nInputs
@@ -664,20 +659,27 @@ extern signed int nStates;
 // next
 // file /home/lucascordeiro/dsverifier/bmc/core/functions.h line 416
 unsigned long int next=1ul;
+// overflow_mode
+// file /home/lucascordeiro/dsverifier/bmc/core/definitions.h line 122
+signed int overflow_mode=1;
 // plant
-// file example-a.c line 353
-struct anonymous$3 plant={ .a={ 1.0, -2.00100250116738, 1.00100050016671, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000 }, .a_size=3,
-    .b={ 0.00100000033341672, -0.00100100083375018, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000 }, .b_size=2,
-    .sample_time=0.001, .a_uncertainty={ 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000 }, .b_uncertainty={ 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000 } };
+// file example-a.c line 367
+struct anonymous$0 plant={ .a={ 1.000000, -2.005063e+0, 1.005013e+0, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000 }, .a_size=3,
+    .b={ 5.000042e-3, -5.025104e-3, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000 }, .b_size=2,
+    .sample_time=5.000000e-3, .a_uncertainty={ 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000 },
+    .b_uncertainty={ 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000 } };
 // plant_cbmc
 // file /home/lucascordeiro/dsverifier/bmc/dsverifier.h line 46
-struct anonymous$3 plant_cbmc;
+struct anonymous$0 plant_cbmc;
+// rounding_mode
+// file /home/lucascordeiro/dsverifier/bmc/core/definitions.h line 123
+signed int rounding_mode=0;
 // scale_factor
-// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 51
-static const double scale_factor[31l]={ 1.0, 2.0, 4.0, 8.0, 16.0, 32.0, 64.0, 128.0, 256.0, 512.0, 1024.0, 2048.0, 4096.0, 8192.0, 16384.0, 32768.0, 65536.0, 131072.0, 262144.0, 524288.0, 1048576.0, 2097152.0, 4194304.0, 8388608.0, 16777216.0, 33554432.0, 67108864.0, 134217728.0, 268435456.0, 536870912.0, 1073741824.0 };
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 55
+static const double scale_factor[31l]={ 1.000000, 2.000000, 4.000000, 8.000000, 16.000000, 32.000000, 64.000000, 128.000000, 256.000000, 512.000000, 1024.000000, 2048.000000, 4096.000000, 8192.000000, 16384.000000, 32768.000000, 65536.000000, 1.310720e+5, 2.621440e+5, 5.242880e+5, 1.048576e+6, 2.097152e+6, 4.194304e+6, 8.388608e+6, 1.677722e+7, 3.355443e+7, 6.710886e+7, 1.342177e+8, 2.684355e+8, 5.368709e+8, 1.073742e+9 };
 // scale_factor_inv
-// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 58
-static const double scale_factor_inv[31l]={ 1.0, 0.5, 0.25, 0.125, 0.0625, 0.03125, 0.015625, 0.0078125, 0.00390625, 0.001953125, 0.0009765625, 0.00048828125, 0.000244140625, 0.0001220703125, 0.00006103515625, 0.000030517578125, 0.000015258789063, 0.000007629394531, 0.000003814697266, 0.000001907348633, 0.000000953674316, 0.000000476837158, 0.000000238418579, 0.000000119209290, 0.000000059604645, 0.000000029802322, 0.000000014901161, 0.000000007450581, 0.000000003725290, 0.000000001862645, 0.000000000931323 };
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 62
+static const double scale_factor_inv[31l]={ 1.000000, 5.000000e-1, 2.500000e-1, 1.250000e-1, 6.250000e-2, 3.125000e-2, 1.562500e-2, 7.812500e-3, 3.906250e-3, 1.953125e-3, 9.765625e-4, 4.882813e-4, 2.441406e-4, 1.220703e-4, 6.103516e-5, 3.051758e-5, 1.525879e-5, 7.629395e-6, 3.814697e-6, 1.907349e-6, 9.536743e-7, 4.768372e-7, 2.384186e-7, 1.192093e-7, 5.960465e-8, 2.980232e-8, 1.490116e-8, 7.450581e-9, 3.725290e-9, 1.862645e-9, 9.313230e-10 };
 
 // __DSVERIFIER_assert
 // file /home/lucascordeiro/dsverifier/bmc/core/compatibility.h line 35
@@ -709,32 +711,8 @@ void __DSVERIFIER_assume(_Bool expression)
   __CPROVER_assume(expression != (_Bool)0);
 }
 
-// binomial
-// file /home/lucascordeiro/dsverifier/bmc/core/delta-operator.h line 26
-void binomial(signed int degree, double delta, double *out)
-{
-  initialize_array(out, 3);
-  signed int i=0;
-  for( ; degree >= i; i = i + 1)
-  {
-    signed int return_value_binomial_coefficient$1=binomial_coefficient(degree, i);
-    double return_value_internal_pow$2=internal_pow(delta, (double)(degree - i));
-    out[(signed long int)(degree - i)] = (double)return_value_binomial_coefficient$1 * return_value_internal_pow$2;
-  }
-}
-
-// binomial_coefficient
-// file /home/lucascordeiro/dsverifier/bmc/core/delta-operator.h line 22
-signed int binomial_coefficient(signed int n, signed int p)
-{
-  signed int return_value_fatorial$1=fatorial(n);
-  signed int return_value_fatorial$2=fatorial(p);
-  signed int return_value_fatorial$3=fatorial(n - p);
-  return return_value_fatorial$1 / (return_value_fatorial$2 * return_value_fatorial$3);
-}
-
 // call_closedloop_verification_task
-// file /home/lucascordeiro/dsverifier/bmc/dsverifier.h line 296
+// file /home/lucascordeiro/dsverifier/bmc/dsverifier.h line 369
 void call_closedloop_verification_task(void *closedloop_verification_task)
 {
   _Bool base_case_executed=(_Bool)0;
@@ -807,70 +785,138 @@ void call_closedloop_verification_task(void *closedloop_verification_task)
 }
 
 // call_verification_task
-// file /home/lucascordeiro/dsverifier/bmc/dsverifier.h line 245
+// file /home/lucascordeiro/dsverifier/bmc/dsverifier.h line 268
 void call_verification_task(void *verification_task)
 {
-  _Bool base_case_executed=(_Bool)0;
   signed int i=0;
-  i = 0;
-  for( ; !(i >= ds.b_size); i = i + 1)
+  _Bool base_case_executed=(_Bool)0;
+  if((_Bool)0)
   {
-    if(ds.b_uncertainty[(signed long int)i] > 0.000000)
+    i = 0;
+    for( ; !(i >= ds.b_size); i = i + 1)
     {
-      double factor=(ds.b[(signed long int)i] * ds.b_uncertainty[(signed long int)i]) / 100.000000;
-      factor = factor < 0.000000 ? factor * (double)-1 : factor;
-      double call_verification_task$$1$$1$$1$$1$$min=ds.b[(signed long int)i] - factor;
-      double call_verification_task$$1$$1$$1$$1$$max=ds.b[(signed long int)i] + factor;
-      if((signed int)base_case_executed == 1 && IEEE_FLOAT_EQUAL(factor, 0.000000))
-        goto __CPROVER_DUMP_L8;
+      if(ds.b_uncertainty[(signed long int)i] > 0.000000)
+      {
+        double call_verification_task$$1$$1$$1$$1$$1$$factor=ds.b_uncertainty[(signed long int)i];
+        call_verification_task$$1$$1$$1$$1$$1$$factor = call_verification_task$$1$$1$$1$$1$$1$$factor < 0.000000 ? call_verification_task$$1$$1$$1$$1$$1$$factor * (double)-1 : call_verification_task$$1$$1$$1$$1$$1$$factor;
+        double call_verification_task$$1$$1$$1$$1$$1$$min=ds.b[(signed long int)i] - call_verification_task$$1$$1$$1$$1$$1$$factor;
+        double max=ds.b[(signed long int)i] + call_verification_task$$1$$1$$1$$1$$1$$factor;
+        if((signed int)base_case_executed == 1 && IEEE_FLOAT_EQUAL(call_verification_task$$1$$1$$1$$1$$1$$factor, 0.000000))
+          goto __CPROVER_DUMP_L8;
 
-      else
-        if((signed int)base_case_executed == 0 && IEEE_FLOAT_EQUAL(factor, 0.000000))
-          base_case_executed = (_Bool)0;
+        else
+          if((signed int)base_case_executed == 0 && IEEE_FLOAT_EQUAL(call_verification_task$$1$$1$$1$$1$$1$$factor, 0.000000))
+            base_case_executed = (_Bool)0;
 
-      ds.b[(signed long int)i] = nondet_double();
-      _Bool tmp_if_expr$1;
-      if(ds.b[(signed long int)i] >= call_verification_task$$1$$1$$1$$1$$min)
-        tmp_if_expr$1 = ds.b[(signed long int)i] <= call_verification_task$$1$$1$$1$$1$$max ? (_Bool)1 : (_Bool)0;
+        ds.b[(signed long int)i] = nondet_double();
+        _Bool tmp_if_expr$1;
+        if(ds.b[(signed long int)i] >= call_verification_task$$1$$1$$1$$1$$1$$min)
+          tmp_if_expr$1 = ds.b[(signed long int)i] <= max ? (_Bool)1 : (_Bool)0;
 
-      else
-        tmp_if_expr$1 = (_Bool)0;
-      __DSVERIFIER_assume(tmp_if_expr$1);
+        else
+          tmp_if_expr$1 = (_Bool)0;
+        __DSVERIFIER_assume(tmp_if_expr$1);
+      }
+
+
+    __CPROVER_DUMP_L8:
+      ;
     }
+    i = 0;
+    for( ; !(i >= ds.a_size); i = i + 1)
+    {
+      if(ds.a_uncertainty[(signed long int)i] > 0.000000)
+      {
+        double call_verification_task$$1$$1$$2$$1$$1$$factor=ds.a_uncertainty[(signed long int)i];
+        call_verification_task$$1$$1$$2$$1$$1$$factor = call_verification_task$$1$$1$$2$$1$$1$$factor < 0.000000 ? call_verification_task$$1$$1$$2$$1$$1$$factor * (double)-1 : call_verification_task$$1$$1$$2$$1$$1$$factor;
+        double min=ds.a[(signed long int)i] - call_verification_task$$1$$1$$2$$1$$1$$factor;
+        double call_verification_task$$1$$1$$2$$1$$1$$max=ds.a[(signed long int)i] + call_verification_task$$1$$1$$2$$1$$1$$factor;
+        if((signed int)base_case_executed == 1 && IEEE_FLOAT_EQUAL(call_verification_task$$1$$1$$2$$1$$1$$factor, 0.000000))
+          goto __CPROVER_DUMP_L17;
+
+        else
+          if((signed int)base_case_executed == 0 && IEEE_FLOAT_EQUAL(call_verification_task$$1$$1$$2$$1$$1$$factor, 0.000000))
+            base_case_executed = (_Bool)0;
+
+        ds.a[(signed long int)i] = nondet_double();
+        _Bool tmp_if_expr$2;
+        if(ds.a[(signed long int)i] >= min)
+          tmp_if_expr$2 = ds.a[(signed long int)i] <= call_verification_task$$1$$1$$2$$1$$1$$max ? (_Bool)1 : (_Bool)0;
+
+        else
+          tmp_if_expr$2 = (_Bool)0;
+        __DSVERIFIER_assume(tmp_if_expr$2);
+      }
 
 
-  __CPROVER_DUMP_L8:
-    ;
+    __CPROVER_DUMP_L17:
+      ;
+    }
   }
-  i = 0;
-  for( ; !(i >= ds.a_size); i = i + 1)
+
+  else
   {
-    if(ds.a_uncertainty[(signed long int)i] > 0.000000)
+    signed int call_verification_task$$1$$2$$i=0;
+    call_verification_task$$1$$2$$i = 0;
+    for( ; !(call_verification_task$$1$$2$$i >= ds.b_size); call_verification_task$$1$$2$$i = call_verification_task$$1$$2$$i + 1)
     {
-      double call_verification_task$$1$$2$$1$$1$$factor=(ds.a[(signed long int)i] * ds.a_uncertainty[(signed long int)i]) / 100.000000;
-      call_verification_task$$1$$2$$1$$1$$factor = call_verification_task$$1$$2$$1$$1$$factor < 0.000000 ? call_verification_task$$1$$2$$1$$1$$factor * (double)-1 : call_verification_task$$1$$2$$1$$1$$factor;
-      double min=ds.a[(signed long int)i] - call_verification_task$$1$$2$$1$$1$$factor;
-      double max=ds.a[(signed long int)i] + call_verification_task$$1$$2$$1$$1$$factor;
-      if((signed int)base_case_executed == 1 && IEEE_FLOAT_EQUAL(call_verification_task$$1$$2$$1$$1$$factor, 0.000000))
-        goto __CPROVER_DUMP_L17;
+      if(ds.b_uncertainty[(signed long int)call_verification_task$$1$$2$$i] > 0.000000)
+      {
+        double factor=(ds.b[(signed long int)call_verification_task$$1$$2$$i] * ds.b_uncertainty[(signed long int)call_verification_task$$1$$2$$i]) / 100.000000;
+        factor = factor < 0.000000 ? factor * (double)-1 : factor;
+        double call_verification_task$$1$$2$$1$$1$$1$$min=ds.b[(signed long int)call_verification_task$$1$$2$$i] - factor;
+        double call_verification_task$$1$$2$$1$$1$$1$$max=ds.b[(signed long int)call_verification_task$$1$$2$$i] + factor;
+        if((signed int)base_case_executed == 1 && IEEE_FLOAT_EQUAL(factor, 0.000000))
+          goto __CPROVER_DUMP_L27;
 
-      else
-        if((signed int)base_case_executed == 0 && IEEE_FLOAT_EQUAL(call_verification_task$$1$$2$$1$$1$$factor, 0.000000))
-          base_case_executed = (_Bool)0;
+        else
+          if((signed int)base_case_executed == 0 && IEEE_FLOAT_EQUAL(factor, 0.000000))
+            base_case_executed = (_Bool)0;
 
-      ds.a[(signed long int)i] = nondet_double();
-      _Bool tmp_if_expr$2;
-      if(ds.a[(signed long int)i] >= min)
-        tmp_if_expr$2 = ds.a[(signed long int)i] <= max ? (_Bool)1 : (_Bool)0;
+        ds.b[(signed long int)call_verification_task$$1$$2$$i] = nondet_double();
+        _Bool tmp_if_expr$3;
+        if(ds.b[(signed long int)call_verification_task$$1$$2$$i] >= call_verification_task$$1$$2$$1$$1$$1$$min)
+          tmp_if_expr$3 = ds.b[(signed long int)call_verification_task$$1$$2$$i] <= call_verification_task$$1$$2$$1$$1$$1$$max ? (_Bool)1 : (_Bool)0;
 
-      else
-        tmp_if_expr$2 = (_Bool)0;
-      __DSVERIFIER_assume(tmp_if_expr$2);
+        else
+          tmp_if_expr$3 = (_Bool)0;
+        __DSVERIFIER_assume(tmp_if_expr$3);
+      }
+
+
+    __CPROVER_DUMP_L27:
+      ;
     }
+    call_verification_task$$1$$2$$i = 0;
+    for( ; !(call_verification_task$$1$$2$$i >= ds.a_size); call_verification_task$$1$$2$$i = call_verification_task$$1$$2$$i + 1)
+    {
+      if(ds.a_uncertainty[(signed long int)call_verification_task$$1$$2$$i] > 0.000000)
+      {
+        double call_verification_task$$1$$2$$2$$1$$1$$factor=(ds.a[(signed long int)call_verification_task$$1$$2$$i] * ds.a_uncertainty[(signed long int)call_verification_task$$1$$2$$i]) / 100.000000;
+        call_verification_task$$1$$2$$2$$1$$1$$factor = call_verification_task$$1$$2$$2$$1$$1$$factor < 0.000000 ? call_verification_task$$1$$2$$2$$1$$1$$factor * (double)-1 : call_verification_task$$1$$2$$2$$1$$1$$factor;
+        double call_verification_task$$1$$2$$2$$1$$1$$min=ds.a[(signed long int)call_verification_task$$1$$2$$i] - call_verification_task$$1$$2$$2$$1$$1$$factor;
+        double call_verification_task$$1$$2$$2$$1$$1$$max=ds.a[(signed long int)call_verification_task$$1$$2$$i] + call_verification_task$$1$$2$$2$$1$$1$$factor;
+        if((signed int)base_case_executed == 1 && IEEE_FLOAT_EQUAL(call_verification_task$$1$$2$$2$$1$$1$$factor, 0.000000))
+          goto __CPROVER_DUMP_L36;
+
+        else
+          if((signed int)base_case_executed == 0 && IEEE_FLOAT_EQUAL(call_verification_task$$1$$2$$2$$1$$1$$factor, 0.000000))
+            base_case_executed = (_Bool)0;
+
+        ds.a[(signed long int)call_verification_task$$1$$2$$i] = nondet_double();
+        _Bool tmp_if_expr$4;
+        if(ds.a[(signed long int)call_verification_task$$1$$2$$i] >= call_verification_task$$1$$2$$2$$1$$1$$min)
+          tmp_if_expr$4 = ds.a[(signed long int)call_verification_task$$1$$2$$i] <= call_verification_task$$1$$2$$2$$1$$1$$max ? (_Bool)1 : (_Bool)0;
+
+        else
+          tmp_if_expr$4 = (_Bool)0;
+        __DSVERIFIER_assume(tmp_if_expr$4);
+      }
 
 
-  __CPROVER_DUMP_L17:
-    ;
+    __CPROVER_DUMP_L36:
+      ;
+    }
   }
   ((void (*)())verification_task)();
 }
@@ -1041,7 +1087,7 @@ signed int check_stability_closedloop(double *a, signed int n, double *plant_num
 }
 
 // determinant
-// file /home/lucascordeiro/dsverifier/bmc/core/util.h line 499
+// file /home/lucascordeiro/dsverifier/bmc/core/util.h line 498
 double determinant(double (*a)[20l], signed int n)
 {
   signed int i;
@@ -1082,7 +1128,7 @@ double determinant(double (*a)[20l], signed int n)
 
             }
           }
-          double return_value_internal_pow$1=internal_pow(-1.0, 1.0 + (double)j1 + 1.0);
+          double return_value_internal_pow$1=internal_pow(-1.000000, 1.000000 + (double)j1 + 1.000000);
           double return_value_determinant$2=determinant(m, n - 1);
           det = det + return_value_internal_pow$1 * a[0l][(signed long int)j1] * return_value_determinant$2;
         }
@@ -1093,7 +1139,7 @@ double determinant(double (*a)[20l], signed int n)
 }
 
 // double_add_matrix
-// file /home/lucascordeiro/dsverifier/bmc/core/util.h line 316
+// file /home/lucascordeiro/dsverifier/bmc/core/util.h line 315
 void double_add_matrix(unsigned int lines, unsigned int columns, double (*m1)[20l], double (*m2)[20l], double (*result)[20l])
 {
   unsigned int i;
@@ -1450,7 +1496,7 @@ double double_direct_form_2_MSP430(double *w, double x, double *a, double *b, si
 }
 
 // double_exp_matrix
-// file /home/lucascordeiro/dsverifier/bmc/core/util.h line 429
+// file /home/lucascordeiro/dsverifier/bmc/core/util.h line 428
 void double_exp_matrix(unsigned int lines, unsigned int columns, double (*m1)[20l], unsigned int expNumber, double (*result)[20l])
 {
   unsigned int i;
@@ -1466,10 +1512,10 @@ void double_exp_matrix(unsigned int lines, unsigned int columns, double (*m1)[20
       j = 0u;
       for( ; !(j >= columns); j = j + 1u)
         if(i == j)
-          result[(signed long int)i][(signed long int)j] = 1.0;
+          result[(signed long int)i][(signed long int)j] = 1.000000;
 
         else
-          result[(signed long int)i][(signed long int)j] = 0.0;
+          result[(signed long int)i][(signed long int)j] = 0.000000;
     }
   }
 
@@ -1519,7 +1565,7 @@ void double_exp_matrix(unsigned int lines, unsigned int columns, double (*m1)[20
 }
 
 // double_matrix_multiplication
-// file /home/lucascordeiro/dsverifier/bmc/core/util.h line 338
+// file /home/lucascordeiro/dsverifier/bmc/core/util.h line 337
 void double_matrix_multiplication(unsigned int i1, unsigned int j1, unsigned int i2, unsigned int j2, double (*m1)[20l], double (*m2)[20l], double (*m3)[20l])
 {
   unsigned int i;
@@ -1589,7 +1635,7 @@ double double_state_space_representation(void)
 }
 
 // double_sub_matrix
-// file /home/lucascordeiro/dsverifier/bmc/core/util.h line 327
+// file /home/lucascordeiro/dsverifier/bmc/core/util.h line 326
 void double_sub_matrix(unsigned int lines, unsigned int columns, double (*m1)[20l], double (*m2)[20l], double (*result)[20l])
 {
   unsigned int i;
@@ -1857,7 +1903,7 @@ void ft_closedloop_series(double *c_num, signed int Nc_num, double *c_den, signe
 }
 
 // fxp_abs
-// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 299
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 303
 signed long int fxp_abs(signed long int a)
 {
   signed long int tmp=a < 0l ? -((signed long int)a) : a;
@@ -1865,7 +1911,7 @@ signed long int fxp_abs(signed long int a)
 }
 
 // fxp_add
-// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 311
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 315
 signed long int fxp_add(signed long int aadd, signed long int badd)
 {
   signed long int tmpadd=(signed long int)aadd + (signed long int)badd;
@@ -1873,7 +1919,7 @@ signed long int fxp_add(signed long int aadd, signed long int badd)
 }
 
 // fxp_add_matrix
-// file /home/lucascordeiro/dsverifier/bmc/core/util.h line 468
+// file /home/lucascordeiro/dsverifier/bmc/core/util.h line 467
 void fxp_add_matrix(unsigned int lines, unsigned int columns, signed long int (*m1)[20l], signed long int (*m2)[20l], signed long int (*result)[20l])
 {
   unsigned int i;
@@ -2030,7 +2076,7 @@ void fxp_check_persistent_limit_cycle(signed long int *y, signed int y_size)
 }
 
 // fxp_determinant
-// file /home/lucascordeiro/dsverifier/bmc/core/util.h line 530
+// file /home/lucascordeiro/dsverifier/bmc/core/util.h line 529
 double fxp_determinant(signed long int (*a_fxp)[20l], signed int n)
 {
   signed int i;
@@ -2079,7 +2125,7 @@ double fxp_determinant(signed long int (*a_fxp)[20l], signed int n)
 
             }
           }
-          double return_value_internal_pow$1=internal_pow(-1.0, 1.0 + (double)j1 + 1.0);
+          double return_value_internal_pow$1=internal_pow(-1.000000, 1.000000 + (double)j1 + 1.000000);
           double return_value_determinant$2=determinant(m, n - 1);
           det = det + return_value_internal_pow$1 * a[0l][(signed long int)j1] * return_value_determinant$2;
         }
@@ -2209,7 +2255,7 @@ signed long int fxp_direct_form_2(signed long int *w, signed long int x, signed 
 }
 
 // fxp_div
-// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 353
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 357
 signed long int fxp_div(signed long int a, signed long int b)
 {
   signed long int tmpdiv=(a << impl.frac_bits) / b;
@@ -2217,22 +2263,22 @@ signed long int fxp_div(signed long int a, signed long int b)
 }
 
 // fxp_double_to_fxp
-// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 207
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 211
 signed long int fxp_double_to_fxp(double value)
 {
   signed long int tmp;
   double ftemp=value * scale_factor[(signed long int)impl.frac_bits];
-  if(ROUNDING_MODE == 0)
+  if(rounding_mode == 0)
   {
     if(value >= 0.000000)
-      tmp = (signed long int)(ftemp + 0.5);
+      tmp = (signed long int)(ftemp + 5.000000e-1);
 
     else
-      tmp = (signed long int)(ftemp - 0.5);
+      tmp = (signed long int)(ftemp - 5.000000e-1);
   }
 
   else
-    if(ROUNDING_MODE == 1)
+    if(rounding_mode == 1)
     {
       tmp = (signed long int)ftemp;
       double residue=ftemp - (double)tmp;
@@ -2245,14 +2291,14 @@ signed long int fxp_double_to_fxp(double value)
     }
 
     else
-      if(ROUNDING_MODE == 0)
+      if(rounding_mode == 0)
         tmp = (signed long int)ftemp;
 
   return tmp;
 }
 
 // fxp_double_to_fxp_array
-// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 243
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 247
 void fxp_double_to_fxp_array(double *f, signed long int *r, signed int N)
 {
   signed int i=0;
@@ -2261,7 +2307,7 @@ void fxp_double_to_fxp_array(double *f, signed long int *r, signed int N)
 }
 
 // fxp_exp_matrix
-// file /home/lucascordeiro/dsverifier/bmc/core/util.h line 391
+// file /home/lucascordeiro/dsverifier/bmc/core/util.h line 390
 void fxp_exp_matrix(unsigned int lines, unsigned int columns, signed long int (*m1)[20l], unsigned int expNumber, signed long int (*result)[20l])
 {
   unsigned int i;
@@ -2277,7 +2323,7 @@ void fxp_exp_matrix(unsigned int lines, unsigned int columns, signed long int (*
       j = 0u;
       for( ; !(j >= columns); j = j + 1u)
         if(i == j)
-          result[(signed long int)i][(signed long int)j]=fxp_double_to_fxp(1.0);
+          result[(signed long int)i][(signed long int)j]=fxp_double_to_fxp(1.000000);
 
         else
           result[(signed long int)i][(signed long int)j] = 0l;
@@ -2333,21 +2379,21 @@ void fxp_exp_matrix(unsigned int lines, unsigned int columns, signed long int (*
 }
 
 // fxp_float_to_fxp
-// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 194
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 198
 signed long int fxp_float_to_fxp(float f)
 {
   signed long int tmp;
   double ftemp=(double)f * scale_factor[(signed long int)impl.frac_bits];
   if(f >= 0.000000f)
-    tmp = (signed long int)(ftemp + 0.5);
+    tmp = (signed long int)(ftemp + 5.000000e-1);
 
   else
-    tmp = (signed long int)(ftemp - 0.5);
+    tmp = (signed long int)(ftemp - 5.000000e-1);
   return tmp;
 }
 
 // fxp_float_to_fxp_array
-// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 236
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 240
 void fxp_float_to_fxp_array(float *f, signed long int *r, signed int N)
 {
   signed int i=0;
@@ -2356,21 +2402,21 @@ void fxp_float_to_fxp_array(float *f, signed long int *r, signed int N)
 }
 
 // fxp_get_frac_part
-// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 121
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 125
 signed long int fxp_get_frac_part(signed long int in)
 {
   return in < 0l ? -(-in & _fxp_fmask) : in & _fxp_fmask;
 }
 
 // fxp_get_int_part
-// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 111
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 115
 signed long int fxp_get_int_part(signed long int in)
 {
   return in < 0l ? -(-in & _fxp_imask) : in & _fxp_imask;
 }
 
 // fxp_int_to_fxp
-// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 166
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 170
 signed long int fxp_int_to_fxp(signed int in)
 {
   signed long int lin=(signed long int)in * _fxp_one;
@@ -2382,87 +2428,87 @@ signed long int fxp_int_to_fxp(signed int in)
 signed int fxp_ln(signed int x)
 {
   signed int t;
-  signed int y=0xa65af;
-  if(!(x >= 0x00008000))
+  signed int y=0xA65AF;
+  if(!(x >= 0x8000))
   {
     x = x << 16;
-    y = y - 0xb1721;
+    y = y - 0xB1721;
   }
 
-  if(!(x >= 0x00800000))
+  if(!(x >= 0x800000))
   {
     x = x << 8;
-    y = y - 0x58b91;
+    y = y - 0x58B91;
   }
 
-  if(!(x >= 0x08000000))
+  if(!(x >= 0x8000000))
   {
     x = x << 4;
-    y = y - 0x2c5c8;
+    y = y - 0x2C5C8;
   }
 
   if(!(x >= 0x20000000))
   {
     x = x << 2;
-    y = y - 0x162e4;
+    y = y - 0x162E4;
   }
 
   if(!(x >= 0x40000000))
   {
     x = x << 1;
-    y = y - 0x0b172;
+    y = y - 0xB172;
   }
 
   t = x + (x >> 1);
-  if((0x80000000 & (unsigned int)t) == 0u)
+  if((0x80000000u & (unsigned int)t) == 0u)
   {
     x = t;
-    y = y - 0x067cd;
+    y = y - 0x67CD;
   }
 
   t = x + (x >> 2);
-  if((0x80000000 & (unsigned int)t) == 0u)
+  if((0x80000000u & (unsigned int)t) == 0u)
   {
     x = t;
-    y = y - 0x03920;
+    y = y - 0x3920;
   }
 
   t = x + (x >> 3);
-  if((0x80000000 & (unsigned int)t) == 0u)
+  if((0x80000000u & (unsigned int)t) == 0u)
   {
     x = t;
-    y = y - 0x01e27;
+    y = y - 0x1E27;
   }
 
   t = x + (x >> 4);
-  if((0x80000000 & (unsigned int)t) == 0u)
+  if((0x80000000u & (unsigned int)t) == 0u)
   {
     x = t;
-    y = y - 0x00f85;
+    y = y - 0xF85;
   }
 
   t = x + (x >> 5);
-  if((0x80000000 & (unsigned int)t) == 0u)
+  if((0x80000000u & (unsigned int)t) == 0u)
   {
     x = t;
-    y = y - 0x007e1;
+    y = y - 0x7E1;
   }
 
   t = x + (x >> 6);
-  if((0x80000000 & (unsigned int)t) == 0u)
+  if((0x80000000u & (unsigned int)t) == 0u)
   {
     x = t;
-    y = y - 0x003f8;
+    y = y - 0x3F8;
   }
 
   t = x + (x >> 7);
-  if((0x80000000 & (unsigned int)t) == 0u)
+  if((0x80000000u & (unsigned int)t) == 0u)
   {
     x = t;
-    y = y - 0x001fe;
+    y = y - 0x1FE;
   }
 
-  x = (signed int)(0x80000000 - (unsigned int)x);
+  x = (signed int)(0x80000000u - (unsigned int)x);
   y = y - (x >> 15);
   return y;
 }
@@ -2471,18 +2517,18 @@ signed int fxp_ln(signed int x)
 // file /home/lucascordeiro/dsverifier/bmc/core/functions.h line 345
 double fxp_log10(double x)
 {
-  if(x > 32767.0)
+  if(x > 32767.000000)
   {
-    if(x > 1073676289.0)
+    if(x > 1.073676e+9)
     {
-      x = x / 1073676289.0;
+      x = x / 1.073676e+9;
       double return_value_fxp_log10_low$1=fxp_log10_low(x);
-      return return_value_fxp_log10_low$1 + 9.030873362;
+      return return_value_fxp_log10_low$1 + 9.030873e+0;
     }
 
-    x = x / 32767.0;
+    x = x / 32767.000000;
     double return_value_fxp_log10_low$2=fxp_log10_low(x);
-    return return_value_fxp_log10_low$2 + 4.515436681;
+    return return_value_fxp_log10_low$2 + 4.515437e+0;
   }
 
   else
@@ -2496,14 +2542,14 @@ double fxp_log10(double x)
 // file /home/lucascordeiro/dsverifier/bmc/core/functions.h line 333
 double fxp_log10_low(double x)
 {
-  signed int xint=(signed int)(x * 65536.0 + 0.5);
+  signed int xint=(signed int)(x * 65536.000000 + 5.000000e-1);
   signed int lnum=fxp_ln(xint);
   signed int lden=fxp_ln(655360);
   return (double)lnum / (double)lden;
 }
 
 // fxp_matrix_multiplication
-// file /home/lucascordeiro/dsverifier/bmc/core/util.h line 369
+// file /home/lucascordeiro/dsverifier/bmc/core/util.h line 368
 void fxp_matrix_multiplication(unsigned int i1, unsigned int j1, unsigned int i2, unsigned int j2, signed long int (*m1)[20l], signed long int (*m2)[20l], signed long int (*m3)[20l])
 {
   unsigned int i;
@@ -2539,7 +2585,7 @@ void fxp_matrix_multiplication(unsigned int i1, unsigned int j1, unsigned int i2
 }
 
 // fxp_mult
-// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 335
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 339
 signed long int fxp_mult(signed long int amult, signed long int bmult)
 {
   signed long int tmpmult;
@@ -2554,7 +2600,7 @@ signed long int fxp_mult(signed long int amult, signed long int bmult)
 }
 
 // fxp_neg
-// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 363
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 367
 signed long int fxp_neg(signed long int aneg)
 {
   signed long int tmpneg=-((signed long int)aneg);
@@ -2562,7 +2608,7 @@ signed long int fxp_neg(signed long int aneg)
 }
 
 // fxp_print_float
-// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 403
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 407
 void fxp_print_float(signed long int a)
 {
   float return_value_fxp_to_float$1=fxp_to_float(a);
@@ -2570,7 +2616,7 @@ void fxp_print_float(signed long int a)
 }
 
 // fxp_print_float_array
-// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 407
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 411
 void fxp_print_float_array(signed long int *a, signed int N)
 {
   signed int i=0;
@@ -2582,17 +2628,17 @@ void fxp_print_float_array(signed long int *a, signed int N)
 }
 
 // fxp_print_int
-// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 399
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 403
 void fxp_print_int(signed long int a)
 {
   printf("\n%i", (signed int)a);
 }
 
 // fxp_quantize
-// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 132
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 136
 signed long int fxp_quantize(signed long int aquant)
 {
-  if(OVERFLOW_MODE == 2)
+  if(overflow_mode == 2)
   {
     if(!(aquant >= _fxp_min))
       return _fxp_min;
@@ -2604,7 +2650,7 @@ signed long int fxp_quantize(signed long int aquant)
   }
 
   else
-    if(OVERFLOW_MODE == 3)
+    if(overflow_mode == 3)
     {
       if(!(_fxp_max >= aquant) || !(aquant >= _fxp_min))
       {
@@ -2618,21 +2664,21 @@ signed long int fxp_quantize(signed long int aquant)
 }
 
 // fxp_shrl
-// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 386
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 390
 signed long int fxp_shrl(signed long int in, signed int shift)
 {
   return (signed long int)((unsigned int)in >> shift);
 }
 
 // fxp_sign
-// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 376
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 380
 signed long int fxp_sign(signed long int a)
 {
   return a == 0l ? 0l : (a < 0l ? _fxp_minus_one : _fxp_one);
 }
 
 // fxp_square
-// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 395
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 399
 signed long int fxp_square(signed long int a)
 {
   signed long int return_value_fxp_mult$1=fxp_mult(a, a);
@@ -2793,7 +2839,7 @@ double fxp_state_space_representation(void)
 }
 
 // fxp_sub
-// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 323
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 327
 signed long int fxp_sub(signed long int asub, signed long int bsub)
 {
   signed long int tmpsub=(signed long int)((signed long int)asub - (signed long int)bsub);
@@ -2801,7 +2847,7 @@ signed long int fxp_sub(signed long int asub, signed long int bsub)
 }
 
 // fxp_sub_matrix
-// file /home/lucascordeiro/dsverifier/bmc/core/util.h line 475
+// file /home/lucascordeiro/dsverifier/bmc/core/util.h line 474
 void fxp_sub_matrix(unsigned int lines, unsigned int columns, signed long int (*m1)[20l], signed long int (*m2)[20l], signed long int (*result)[20l])
 {
   unsigned int i;
@@ -2816,7 +2862,7 @@ void fxp_sub_matrix(unsigned int lines, unsigned int columns, signed long int (*
 }
 
 // fxp_to_double
-// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 267
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 271
 double fxp_to_double(signed long int fxp)
 {
   double f;
@@ -2826,7 +2872,7 @@ double fxp_to_double(signed long int fxp)
 }
 
 // fxp_to_double_array
-// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 287
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 291
 void fxp_to_double_array(double *f, signed long int *r, signed int N)
 {
   signed int i=0;
@@ -2835,7 +2881,7 @@ void fxp_to_double_array(double *f, signed long int *r, signed int N)
 }
 
 // fxp_to_float
-// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 260
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 264
 float fxp_to_float(signed long int fxp)
 {
   float f;
@@ -2845,7 +2891,7 @@ float fxp_to_float(signed long int fxp)
 }
 
 // fxp_to_float_array
-// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 280
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 284
 void fxp_to_float_array(float *f, signed long int *r, signed int N)
 {
   signed int i=0;
@@ -2854,7 +2900,7 @@ void fxp_to_float_array(float *f, signed long int *r, signed int N)
 }
 
 // fxp_to_int
-// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 178
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 182
 signed int fxp_to_int(signed long int fxp)
 {
   if(fxp >= 0l)
@@ -2867,7 +2913,7 @@ signed int fxp_to_int(signed long int fxp)
 }
 
 // fxp_transpose
-// file /home/lucascordeiro/dsverifier/bmc/core/util.h line 583
+// file /home/lucascordeiro/dsverifier/bmc/core/util.h line 582
 void fxp_transpose(signed long int (*a)[20l], signed long int (*b)[20l], signed int n, signed int m)
 {
   signed int i;
@@ -2922,7 +2968,7 @@ signed long int fxp_transposed_direct_form_2(signed long int *w, signed long int
 }
 
 // fxp_verify_overflow
-// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 149
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 153
 void fxp_verify_overflow(signed long int value)
 {
   fxp_quantize(value);
@@ -2930,7 +2976,7 @@ void fxp_verify_overflow(signed long int value)
 }
 
 // fxp_verify_overflow_array
-// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 154
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 158
 void fxp_verify_overflow_array(signed long int *array, signed int n)
 {
   signed int i=0;
@@ -2940,46 +2986,26 @@ void fxp_verify_overflow_array(signed long int *array, signed int n)
 }
 
 // generate_delta_coefficients
-// file /home/lucascordeiro/dsverifier/bmc/core/delta-operator.h line 35
+// file /home/lucascordeiro/dsverifier/bmc/core/delta-operator.h line 33
 void generate_delta_coefficients(double *vetor, double *out, signed int n, double delta)
 {
-  initialize_array(out, n);
-  const signed long int generate_delta_coefficients$array_size0=(signed long int)n;
-  double a_invertido[generate_delta_coefficients$array_size0];
-  initialize_array(a_invertido, n);
-  revert_array(vetor, a_invertido, n);
-  const signed long int a_invertido$array_size0=(signed long int)n;
-  double _a[a_invertido$array_size0];
-  initialize_array(_a, n);
   signed int i;
   signed int j;
+  signed int N=n - 1;
+  double sum_delta_operator;
   i = 0;
-  for( ; !(i >= n); i = i + 1)
+  for( ; N >= i; i = i + 1)
   {
-    const signed long int j$array_size0=(signed long int)(n + 1);
-    double b[j$array_size0];
-    initialize_array(b, n + 1);
-    binomial(i, delta, b);
+    sum_delta_operator = 0.000000;
     j = 0;
-    for( ; !(j >= 1 + i); j = j + 1)
+    for( ; i >= j; j = j + 1)
     {
-      b[(signed long int)j] = b[(signed long int)j] * a_invertido[(signed long int)i];
-      _a[(signed long int)j] = _a[(signed long int)j] + b[(signed long int)j];
+      signed int return_value_nchoosek$1=nchoosek(N - j, i - j);
+      sum_delta_operator = sum_delta_operator + vetor[(signed long int)j] * (double)return_value_nchoosek$1;
     }
+    double return_value_internal_pow$2=internal_pow(delta, (double)(N - i));
+    out[(signed long int)i] = return_value_internal_pow$2 * sum_delta_operator;
   }
-  revert_array(_a, out, n);
-}
-
-// generate_delta_coefficients_with_base
-// file /home/lucascordeiro/dsverifier/bmc/core/delta-operator.h line 56
-void generate_delta_coefficients_with_base(double *vetor, double *out, signed int n, double delta)
-{
-  generate_delta_coefficients(vetor, out, n, delta);
-  signed int i;
-  double base=out[0l];
-  i = 0;
-  for( ; !(i >= n); i = i + 1)
-    out[(signed long int)i] = out[(signed long int)i] / base;
 }
 
 // generic_timing_double_direct_form_1
@@ -3152,7 +3178,7 @@ double generic_timing_shift_r_double(double zIn, double *z, signed int N)
 }
 
 // get_delta_transfer_function
-// file /home/lucascordeiro/dsverifier/bmc/core/delta-operator.h line 66
+// file /home/lucascordeiro/dsverifier/bmc/core/delta-operator.h line 52
 void get_delta_transfer_function(double *b, double *b_out, signed int b_size, double *a, double *a_out, signed int a_size, double delta)
 {
   generate_delta_coefficients(b, b_out, b_size, delta);
@@ -3160,18 +3186,40 @@ void get_delta_transfer_function(double *b, double *b_out, signed int b_size, do
 }
 
 // get_delta_transfer_function_with_base
-// file /home/lucascordeiro/dsverifier/bmc/core/delta-operator.h line 73
+// file /home/lucascordeiro/dsverifier/bmc/core/delta-operator.h line 59
 void get_delta_transfer_function_with_base(double *b, double *b_out, signed int b_size, double *a, double *a_out, signed int a_size, double delta)
 {
-  get_delta_transfer_function(b, b_out, b_size, a, a_out, a_size, delta);
-  signed int i=0;
-  double base=a_out[0l];
+  signed int i;
+  signed int j;
+  signed int N=a_size - 1;
+  signed int M=b_size - 1;
+  double sum_delta_operator;
   i = 0;
-  for( ; !(i >= b_size); i = i + 1)
-    b_out[(signed long int)i] = b_out[(signed long int)i] / base;
+  for( ; N >= i; i = i + 1)
+  {
+    sum_delta_operator = 0.000000;
+    j = 0;
+    for( ; i >= j; j = j + 1)
+    {
+      signed int return_value_nchoosek$1=nchoosek(N - j, i - j);
+      sum_delta_operator = sum_delta_operator + a[(signed long int)j] * (double)return_value_nchoosek$1;
+    }
+    double return_value_internal_pow$2=internal_pow(delta, (double)(N - i));
+    a_out[(signed long int)i] = return_value_internal_pow$2 * sum_delta_operator;
+  }
   i = 0;
-  for( ; !(i >= a_size); i = i + 1)
-    a_out[(signed long int)i] = a_out[(signed long int)i] / base;
+  for( ; M >= i; i = i + 1)
+  {
+    sum_delta_operator = 0.000000;
+    j = 0;
+    for( ; i >= j; j = j + 1)
+    {
+      signed int return_value_nchoosek$3=nchoosek(M - j, i - j);
+      sum_delta_operator = sum_delta_operator + b[(signed long int)j] * (double)return_value_nchoosek$3;
+    }
+    double return_value_internal_pow$4=internal_pow(delta, (double)(M - i));
+    b_out[(signed long int)i] = return_value_internal_pow$4 * sum_delta_operator;
+  }
 }
 
 // iirIIOutTime
@@ -3671,13 +3719,17 @@ void initialization()
     _fxp_one = 2147483647l;
 
   else
-    _fxp_one = (signed long int)(0x00000001 << impl.frac_bits);
-  _fxp_half = (signed long int)(0x00000001 << impl.frac_bits - 1);
-  _fxp_minus_one = (signed long int)-(0x00000001 << impl.frac_bits);
-  _fxp_min = (signed long int)-(0x00000001 << (impl.frac_bits + impl.int_bits) - 1);
-  _fxp_max = (signed long int)((0x00000001 << (impl.frac_bits + impl.int_bits) - 1) - 1);
+    _fxp_one = (signed long int)(0x1 << impl.frac_bits);
+  _fxp_half = (signed long int)(0x1 << impl.frac_bits - 1);
+  _fxp_minus_one = (signed long int)-(0x1 << impl.frac_bits);
+  _fxp_min = (signed long int)-(0x1 << (impl.frac_bits + impl.int_bits) - 1);
+  _fxp_max = (signed long int)((0x1 << (impl.frac_bits + impl.int_bits) - 1) - 1);
   _fxp_fmask = (signed long int)((1 << impl.frac_bits) - 1);
-  _fxp_imask = (signed long int)(0x80000000 >> (32 - impl.frac_bits) - 1);
+  _fxp_imask = (signed long int)(0x80000000u >> (32 - impl.frac_bits) - 1);
+  _dbl_min = (double)_fxp_min;
+  _dbl_min = _dbl_min / (double)(1 << impl.frac_bits);
+  _dbl_max = (double)_fxp_max;
+  _dbl_max = _dbl_max / (double)(1 << impl.frac_bits);
   if(impl.scale == 0 || impl.scale == 1)
     impl.scale = 1;
 
@@ -3726,9 +3778,23 @@ signed int main()
 {
   initialization();
   validation();
-  ROUNDING_MODE = 1;
+  rounding_mode = 1;
   call_closedloop_verification_task((void *)verify_stability_closedloop_using_dslib);
   return 0;
+}
+
+// nchoosek
+// file /home/lucascordeiro/dsverifier/bmc/core/delta-operator.h line 23
+signed int nchoosek(signed int n, signed int k)
+{
+  if(k == 0)
+    return 1;
+
+  else
+  {
+    signed int return_value_nchoosek$1=nchoosek(n - 1, k - 1);
+    return (n * return_value_nchoosek$1) / k;
+  }
 }
 
 // order
@@ -3794,7 +3860,7 @@ void poly_sum(double *a, signed int Na, double *b, signed int Nb, double *ans, s
 }
 
 // print_array_elements
-// file /home/lucascordeiro/dsverifier/bmc/core/util.h line 306
+// file /home/lucascordeiro/dsverifier/bmc/core/util.h line 305
 void print_array_elements(char *name, double *v, signed int n)
 {
   printf("%s = {", name);
@@ -3805,7 +3871,7 @@ void print_array_elements(char *name, double *v, signed int n)
 }
 
 // print_fxp_array_elements
-// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 415
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 419
 void print_fxp_array_elements(char *name, signed long int *v, signed int n)
 {
   printf("%s = {", name);
@@ -3816,7 +3882,7 @@ void print_fxp_array_elements(char *name, signed long int *v, signed int n)
 }
 
 // print_matrix
-// file /home/lucascordeiro/dsverifier/bmc/core/util.h line 482
+// file /home/lucascordeiro/dsverifier/bmc/core/util.h line 481
 void print_matrix(double (*matrix)[20l], unsigned int lines, unsigned int columns)
 {
   printf("\nMatrix\n=====================\n\n");
@@ -4004,7 +4070,7 @@ float snrPoint(float *s, float *n, signed int blksz)
 
     }
 
-  return 9999.9f;
+  return 9.999900e+3f;
 }
 
 // snrPower
@@ -4033,7 +4099,7 @@ float snrPower(float *s, float *n, signed int blksz)
   }
 
   else
-    return 9999.9f;
+    return 9.999900e+3f;
 }
 
 // snrVariance
@@ -4072,7 +4138,7 @@ float snrVariance(float *s, float *n, signed int blksz)
   }
 
   else
-    return 9999.9f;
+    return 9.999900e+3f;
 }
 
 // srand
@@ -4083,7 +4149,7 @@ extern void srand(unsigned int seed)
 }
 
 // transpose
-// file /home/lucascordeiro/dsverifier/bmc/core/util.h line 572
+// file /home/lucascordeiro/dsverifier/bmc/core/util.h line 571
 void transpose(double (*a)[20l], double (*b)[20l], signed int n, signed int m)
 {
   signed int i;
@@ -4098,17 +4164,37 @@ void transpose(double (*a)[20l], double (*b)[20l], signed int n, signed int m)
 }
 
 // validation
-// file /home/lucascordeiro/dsverifier/bmc/dsverifier.h line 118
+// file /home/lucascordeiro/dsverifier/bmc/dsverifier.h line 125
 void validation()
 {
   if(controller.a_size == 0 || plant.b_size == 0 || impl.int_bits == 0)
   {
     printf("\n\n*****************************************************************************************************\n");
-    printf("* It is necessary to set (controller, plant and, impl) parameters to check CLOSED LOOP with DSVerifier *\n");
+    printf("* set (controller, plant, and impl) parameters to check CLOSED LOOP with DSVerifier *\n");
     printf("*****************************************************************************************************\n");
     __DSVERIFIER_assert((_Bool)0);
   }
 
+  else
+  {
+    printf("\n\n*****************************************************************************************************\n");
+    printf("* set (controller and impl) parameters so that they do not overflow *\n");
+    printf("*****************************************************************************************************\n");
+    unsigned int j=0u;
+    for( ; !(j >= (unsigned int)controller.a_size); j = j + 1u)
+    {
+      const double value=controller.a[(signed long int)j];
+      __DSVERIFIER_assert(value <= _dbl_max);
+      __DSVERIFIER_assert(value >= _dbl_min);
+    }
+    j = 0u;
+    for( ; !(j >= (unsigned int)controller.b_size); j = j + 1u)
+    {
+      const double validation$$1$$6$$2$$2$$1$$value=controller.b[(signed long int)j];
+      __DSVERIFIER_assert(validation$$1$$6$$2$$2$$1$$value <= _dbl_max);
+      __DSVERIFIER_assert(validation$$1$$6$$2$$2$$1$$value >= _dbl_min);
+    }
+  }
 }
 
 // verify_controllability
@@ -4134,7 +4220,7 @@ signed int verify_controllability(void)
       controllabilityMatrix[(signed long int)i][(signed long int)j] = 0l;
       backup[(signed long int)i][(signed long int)j] = 0l;
       backupSecond[(signed long int)i][(signed long int)j] = 0l;
-      controllabilityMatrix_double[(signed long int)i][(signed long int)j] = 0.0;
+      controllabilityMatrix_double[(signed long int)i][(signed long int)j] = 0.000000;
     }
   }
   i = 0;
@@ -4255,7 +4341,7 @@ signed int verify_controllability_double(void)
     {
       j = 0;
       for( ; !(j >= nInputs * nStates); j = j + 1)
-        backup[(signed long int)i][(signed long int)j] = 0.0;
+        backup[(signed long int)i][(signed long int)j] = 0.000000;
     }
     transpose(controllabilityMatrix, backup, nStates, nStates * nInputs);
     double mimo_controllabilityMatrix_double[20l][20l];
@@ -4293,7 +4379,7 @@ signed int verify_controllability_double(void)
 // file /home/lucascordeiro/dsverifier/bmc/engine/verify_error.h line 20
 signed int verify_error(void)
 {
-  OVERFLOW_MODE = 2;
+  overflow_mode = 2;
   double a_cascade[100l];
   signed int a_cascade_size;
   double b_cascade[100l];
@@ -4308,9 +4394,6 @@ signed int verify_error(void)
   double yf[x$array_size0];
   const signed long int yf$array_size0=(signed long int)X_SIZE_VALUE;
   double xf[yf$array_size0];
-  const signed long int xf$array_size0=(signed long int)X_SIZE_VALUE;
-  double error[xf$array_size0];
-  double snrvalue;
   signed int Nw=0;
   Nw = ds.a_size > ds.b_size ? ds.a_size : ds.b_size;
   const signed long int Nw$array_size0=(signed long int)ds.a_size;
@@ -4325,22 +4408,6 @@ signed int verify_error(void)
   double xfaux[yfaux$array_size0];
   const signed long int xfaux$array_size0=(signed long int)Nw;
   double wfaux[xfaux$array_size0];
-  signed long int xk;
-  signed long int temp;
-  signed long int *aptr;
-  signed long int *bptr;
-  signed long int *xptr;
-  signed long int *yptr;
-  signed long int *wptr;
-  double xkf;
-  double tempf;
-  double *afptr;
-  double *bfptr;
-  double *xfptr;
-  double *yfptr;
-  double *wfptr;
-  signed long int sum;
-  double sumf;
   signed int i=0;
   for( ; !(i >= ds.a_size); i = i + 1)
   {
@@ -4375,14 +4442,13 @@ signed int verify_error(void)
     yf[(signed long int)i] = 0.000000;
     xf[(signed long int)i]=fxp_to_double(x[(signed long int)i]);
   }
-  signed int j;
   i = 0;
   for( ; !(i >= X_SIZE_VALUE); i = i + 1)
   {
-    double __quant_error;
-    double return_value_fxp_to_double$3=fxp_to_double((signed long int)yf[(signed long int)i]);
-    __quant_error = ((return_value_fxp_to_double$3 - (double)y[(signed long int)i]) / (double)y[(signed long int)i]) * 100.000000;
-    __DSVERIFIER_assert(__quant_error < impl.max_error && __quant_error > -impl.max_error);
+    double absolute_error;
+    double return_value_fxp_to_double$3=fxp_to_double(y[(signed long int)i]);
+    absolute_error = yf[(signed long int)i] - return_value_fxp_to_double$3;
+    __DSVERIFIER_assert(absolute_error < impl.max_error && absolute_error > -impl.max_error);
   }
   return 0;
 }
@@ -4391,7 +4457,7 @@ signed int verify_error(void)
 // file /home/lucascordeiro/dsverifier/bmc/engine/verify_error_closedloop.h line 27
 signed int verify_error_closedloop(void)
 {
-  OVERFLOW_MODE = 3;
+  overflow_mode = 3;
   double *c_num=controller.b;
   signed int c_num_size=controller.b_size;
   double *c_den=controller.a;
@@ -4474,21 +4540,13 @@ signed int verify_error_closedloop(void)
     waux_qtz[(signed long int)i] = 0.000000;
     waux_double[(signed long int)i] = 0.000000;
   }
-  double xk;
-  double temp;
-  double *aptr;
-  double *bptr;
-  double *xptr;
-  double *yptr;
-  double *wptr;
-  signed int j;
   i = 0;
   for( ; !(i >= X_SIZE_VALUE); i = i + 1)
   {
-    double __quant_error;
+    double absolute_error;
     double return_value_fxp_to_double$1=fxp_to_double((signed long int)y_qtz[(signed long int)i]);
-    __quant_error = ((return_value_fxp_to_double$1 - y_double[(signed long int)i]) / y_double[(signed long int)i]) * 100.000000;
-    __DSVERIFIER_assert(__quant_error < impl.max_error && __quant_error > -impl.max_error);
+    absolute_error = y_double[(signed long int)i] - return_value_fxp_to_double$1;
+    __DSVERIFIER_assert(absolute_error < impl.max_error && absolute_error > -impl.max_error);
   }
   return 0;
 }
@@ -4497,8 +4555,8 @@ signed int verify_error_closedloop(void)
 // file /home/lucascordeiro/dsverifier/bmc/engine/verify_error_state_space.h line 20
 signed int verify_error_state_space(void)
 {
-  OVERFLOW_MODE = 0;
-  struct anonymous$0 __backupController;
+  overflow_mode = 0;
+  struct anonymous$1 __backupController;
   signed int i;
   signed int j;
   i = 0;
@@ -4550,7 +4608,7 @@ signed int verify_error_state_space(void)
     for( ; !(j >= 1); j = j + 1)
       __backupController.outputs[(signed long int)i][(signed long int)j] = _controller.outputs[(signed long int)i][(signed long int)j];
   }
-  double __quant_error=0.0;
+  double __quant_error=0.000000;
   double output_double=double_state_space_representation();
   i = 0;
   for( ; !(i >= nStates); i = i + 1)
@@ -4681,7 +4739,7 @@ signed int verify_generic_timing(void)
 // file /home/lucascordeiro/dsverifier/bmc/engine/verify_limit_cycle.h line 111
 signed int verify_limit_cycle(void)
 {
-  OVERFLOW_MODE = 3;
+  overflow_mode = 3;
   signed int i;
   signed int Set_xsize_at_least_two_times_Na=2 * ds.a_size;
   printf("X_SIZE must be at least 2 * ds.a_size");
@@ -4748,7 +4806,7 @@ signed int verify_limit_cycle(void)
 // file /home/lucascordeiro/dsverifier/bmc/engine/verify_limit_cycle_closedloop.h line 29
 signed int verify_limit_cycle_closed_loop(void)
 {
-  OVERFLOW_MODE = 3;
+  overflow_mode = 3;
   double *c_num=controller.b;
   signed int c_num_size=controller.b_size;
   double *c_den=controller.a;
@@ -4905,7 +4963,7 @@ signed int verify_limit_cycle_state_space(void)
 // file /home/lucascordeiro/dsverifier/bmc/engine/verify_minimum_phase.h line 24
 signed int verify_minimum_phase(void)
 {
-  OVERFLOW_MODE = 0;
+  overflow_mode = 0;
   return 0;
 }
 
@@ -5024,7 +5082,7 @@ signed int verify_observability(void)
 // file /home/lucascordeiro/dsverifier/bmc/engine/verify_overflow.h line 23
 signed int verify_overflow(void)
 {
-  OVERFLOW_MODE = 1;
+  overflow_mode = 1;
   signed long int min_fxp=fxp_double_to_fxp(impl.min);
   signed long int max_fxp=fxp_double_to_fxp(impl.max);
   const signed long int max_fxp$array_size0=(signed long int)X_SIZE_VALUE;
@@ -5081,7 +5139,7 @@ signed int verify_overflow(void)
 // file /home/lucascordeiro/dsverifier/bmc/engine/verify_stability.h line 24
 signed int verify_stability(void)
 {
-  OVERFLOW_MODE = 0;
+  overflow_mode = 0;
   return 0;
 }
 
@@ -5177,7 +5235,7 @@ signed int verify_timing_msp_430(void)
 // file /home/lucascordeiro/dsverifier/bmc/engine/verify_zero_input_limit_cycle.h line 16
 signed int verify_zero_input_limit_cycle(void)
 {
-  OVERFLOW_MODE = 3;
+  overflow_mode = 3;
   signed int i;
   signed int j;
   signed int Set_xsize_at_least_two_times_Na=2 * ds.a_size;
@@ -5243,7 +5301,7 @@ signed int verify_zero_input_limit_cycle(void)
 }
 
 // wrap
-// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 96
+// file /home/lucascordeiro/dsverifier/bmc/core/fixed-point.h line 100
 signed long int wrap(signed long int kX, signed long int kLowerBound, signed long int kUpperBound)
 {
   signed int range_size=(signed int)((kUpperBound - kLowerBound) + 1l);

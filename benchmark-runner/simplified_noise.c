@@ -58,6 +58,7 @@ control_floatt _dbl_min;
 signed long int _fxp_max;
 signed long int _fxp_min;
 signed long int _fxp_one;
+control_floatt _dbl_lsb;
 
 struct anonymous0 impl={ .int_bits=_CONTROLER_INT_BITS, .frac_bits=_CONTROLER_FRAC_BITS};
 
@@ -98,10 +99,11 @@ void initialization()
     _fxp_one = 2147483647l;
   else
     _fxp_one = (1 << impl.frac_bits);
+  _dbl_lsb=1.0/(1 << impl.frac_bits);
   _fxp_min = -(1 << (impl.frac_bits + impl.int_bits -1));
   _fxp_max = (1 << (impl.frac_bits + impl.int_bits-1))-1;
   _dbl_max = (1 << (impl.int_bits-1))-1;//Integer part
-  _dbl_max += (_fxp_one-1)/(1 << impl.frac_bits);//Fractional part
+  _dbl_max += (1.0-_dbl_lsb);//Fractional part
   _dbl_min = -_dbl_max;
 }
 
@@ -301,10 +303,7 @@ signed int check_stability_closedloop(control_floatt *a, cnttype n)
   cnttype i;
   cnttype j;
   control_floatt sum=0.0;
-  // XXX: Debug
-  control_floatt __tmp_val=0.0;
-  // XXX: Debug
-  for(i = 0 ; i < n; i++) { __tmp_val=a[i]; sum += a[i]; }
+  for(i = 0 ; i < n; i++) { sum += a[i]; }
 #ifdef __CPROVER
   __DSVERIFIER_assert(a[0] > 0.0);
   __DSVERIFIER_assert(sum > 0.0);
@@ -377,7 +376,9 @@ signed long int fxp_control_floatt_to_fxp(control_floatt value)
 void fxp_check(control_floatt *value)
 {
 #ifdef __CPROVER
-  __DSVERIFIER_assert((~_dbl_max&*value)==0);
+  control_floatt tmp_value=*value;
+  if (tmp_value < 0.0) tmp_value=-tmp_value;
+  __DSVERIFIER_assert((~_dbl_max&tmp_value)==0);
 #else
   *value=fxp_control_floatt_to_fxp(*value);
   *value/=_fxp_one;
@@ -454,10 +455,6 @@ int verify_stability_closedloop_using_dslib(void)
 #ifdef __CPROVER    
   __DSVERIFIER_assert(!(return_value2 == 0));
 #else
-  if (return_value2 == 0) return 10;
-#endif
-  
-#ifndef __CPROVER
   fputs("plant_num=", stdout);
   //std::cout << "plant_num=";
   print_poly(plant_cbmc.num,plant_cbmc.num_size);
@@ -467,7 +464,9 @@ int verify_stability_closedloop_using_dslib(void)
   fputs("ans=", stdout);
   //std::cout << "ans=";
   print_poly(ans_den, ans_den_size);
+  if (return_value2 == 0) return 10;
 #endif
+  return 0;
 }
 
 // main
@@ -476,12 +475,14 @@ int main()
   initialization();
   int result=validation();
 #ifndef __CPROVER
-  if (result!=0) return result;
+  if (result!=0) return 10;
 #endif
   call_closedloop_verification_task();
   result=verify_stability_closedloop_using_dslib();
 #ifdef __CPROVER
   //__DSVERIFIER_assert(0);
+#else
+  if (result!=0) return 10;
 #endif
-  return result;
+  return 0;
 }
