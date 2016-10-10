@@ -335,8 +335,8 @@ C(z)&=\frac{\beta_{0}+\beta_{1}z^{-1}+...+\beta_{M_C}z^{-M_C}}{\alpha_{0}+\alpha
 G(z)&=\frac{b_{0}+b_{1}z^{-1}+...+b_{M_G}z^{-M_G}}{a_{0}+a_{1}z^{-1}+...+a_{N_G}z^{-N_G}}.
 \end{align}
 %
-\noindent where $\beta$ and $\alpha$ are vectors containing the controller's coefficients;  
-similarly $b$ and $a$ encompas the plant's coefficients;  
+\noindent where $\vec{\beta}$ and $\vec{\alpha}$ are vectors containing the controller's coefficients;  
+similarly $\vec{b}$ and $\vec{a}$ encompas the plant's coefficients;  
 and $N_{(\cdot)}$ and $M_{(\cdot)}$ denote the number of poles and zeros for the corresponding block.
 
 Note that $G(z)$ is a discrete model of a real (and continuous) plant, {\it
@@ -351,9 +351,9 @@ models the exact effect of sampling and DAC interpolation over the plant.
 \begin{mylemma}\cite{astrom1997computer}
 %
 The pulse transfer function $G(z)$ is a z-domain model that relates the
-output sampled by a ADC and the digital input provided by ZOH.  It is
-equivalent at the sample times ({\it i.e.}, $kT$ to the continuous transfer
-function $G(s)$ driven by ZOH).  This pulse transfer function can be
+output sampled by a ADC and the digital input provided by ZOH.  It is sufficiently
+equivalent at the sample times ({\it i.e.}, $t=kT$) to the continuous transfer
+function $G(s)$ driven by ZOH.  This pulse transfer function can be
 computed as
 %
 \begin{equation}
@@ -367,7 +367,6 @@ we will use only the notation $G(z)$ to represent the pulse transfer function.
 \end{mylemma}
 
 
-\textcolor{blue}{
 Although the pulse transfer function $G(z)$ represents adequately $G(s)$ domain, the model $G(z)$ may not be accurate and some uncertainties may not be covered by that model. These uncertainties may be parametrically expressed by an additive transfer function $\Delta G(z)$, resulting in a uncertain model $\hat{G}(z)$, such that:
 \begin{equation}
 \hat{G}(z)=G(z)+\Delta G(z),
@@ -375,9 +374,8 @@ Although the pulse transfer function $G(z)$ represents adequately $G(s)$ domain,
 that may be represented by the following transfer function:
 \begin{equation}
 \hat{G}(z)=\frac{\hat{b}_{0}+\hat{b}_{1}z^{-1}+...+\hat{b}_{M_G}z^{-M_G}}{\hat{a}_{0}+\hat{a}_{1}z^{-1}+...+\hat{a}_{N_G}z^{-N_G}}.
-\end{equation}}
+\end{equation}
 
-\textcolor{blue}{
 The vector of parametric uncertainties  $\Delta{p}$ for $G(z)$ is defined by:
 \begin{equation}
 \Delta{p}=\begin{bmatrix}
@@ -389,8 +387,16 @@ The vector of parametric uncertainties  $\Delta{p}$ for $G(z)$ is defined by:
 \hat{a_{1}} - a_{1}\\
 \vdots\\
 \hat{a}_{N_G} - a_{N_{G}}\\
-\end{bmatrix}.
-\end{equation}}
+\end{bmatrix}=\begin{bmatrix}
+\vec{\hat{b}}\\
+\vec{\hat{a}}
+\end{bmatrix}-\begin{bmatrix}
+\vec{b}\\
+\vec{a}
+\end{bmatrix}
+\end{equation}
+
+
 
 \textcolor{blue}{
 A typical hybrid system is shown in Figure~\ref{fig:sampledsystem}, where the DAC and ADC converters introduce quantisation noises $\nu_{1}(z)$ and $\nu_{2}(z)$, $G(s)$ is the continuous-time plant model with parametric additive uncertainty $\Delta G_{P}(s)$, $R(z)$ is the reference signal, $U(z)$ is the control signal, and $\hat{Y}(z)$ is the output signal affected by the noises and uncertainties in the closed-loop system.}
