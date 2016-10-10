@@ -405,8 +405,7 @@ The vector of parametric uncertainties  $\Delta{p}$ for $G(z)$ is defined by:
 
 
 
-\textcolor{blue}{
-A typical hybrid system is shown in Figure~\ref{fig:sampledsystem}, where the DAC and ADC converters introduce quantisation noises $\nu_{1}(z)$ and $\nu_{2}(z)$, $G(s)$ is the continuous-time plant model with parametric additive uncertainty $\Delta G_{P}(s)$, $R(z)$ is the reference signal, $U(z)$ is the control signal, and $\hat{Y}(z)$ is the output signal affected by the noises and uncertainties in the closed-loop system.}
+A typical hybrid system is shown in Figure~\ref{fig:sampledsystem}, where the DAC and ADC converters introduce quantisation noises $\nu_{1}(z)$ and $\nu_{2}(z)$, $G(s)$ is the continuous-time plant model with parametric additive uncertainty $\Delta G_{P}(s)$, $R(z)$ is the reference signal, $U(z)$ is the control signal, and $\hat{Y}(z)$ is the output signal affected by the noises and uncertainties in the closed-loop system.
 
 \begin{figure*}[htb]
 \centering
@@ -429,7 +428,7 @@ A typical hybrid system is shown in Figure~\ref{fig:sampledsystem}, where the DA
  \begin{tikzpicture}[scale=0.6,-,>=stealth',shorten >=.2pt,auto,
      semithick, initial text=, ampersand replacement=\&,]
 
-  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center}, row sep=.6cm, column sep=.3cm] {
+  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center}, row sep=.6cm, column sep=.6cm] {
     \node[draw=none] (r) {$R(z)$};
 %   \& \coordinate (aux0);
    \& \node[circle,add={-}{+}{}{}] (circle) {};
@@ -448,13 +447,13 @@ A typical hybrid system is shown in Figure~\ref{fig:sampledsystem}, where the DA
      \node[circle,add={}{+}{+}{},fill=yellow!20] (q2) at ([xshift=-.65cm]dac.center) {};
      \node[draw=none] (q2t)  at ([xshift=-.65cm,yshift=-.65cm]dac.center) {{\sc Q2}};
      \node[draw=none] (v2)  at ([xshift=-.65cm,yshift=1.5cm]dac.center) {$\nu_2(z)$};
-     \node[fill=yellow!20] (zoh) at ([xshift=.65cm]dac.center) {{\sc ZOH}};}
+     \node[fill=yellow!20] (zoh) at ([xshift=.65cm]dac.center) {{\sc ZOH}};}   
    \& \node[rectangle,draw,
 	minimum width=1cm,
 	minimum height=1cm,
         label=\textbf{Plant}] (gs) {{\sc $G(s) + \Delta G(s)$}};
-   \node[draw=none] (ud) at ([xshift=-1cm,yshift=.15cm]gs)  {$U(s)$};
-   \node[draw=none] (y) at ([xshift=1cm,yshift=.15cm]gs)  {$Y(s)$};
+   \node[draw=none] (ud) at ([xshift=-2cm,yshift=.15cm]gs)  {$U(s)$};
+   \node[draw=none] (y) at ([xshift=2cm,yshift=.15cm]gs)  {$Y(s)$};
    \& complexnode/.pic={ 
      \node[rectangle,draw,
 	minimum width=4cm,
@@ -497,8 +496,8 @@ A typical hybrid system is shown in Figure~\ref{fig:sampledsystem}, where the DA
  \caption{Sampled System. \label{fig:sampledsystem}}
 \end{figure*}
 
-\textcolor{blue}{
-The ADC and DAC may be abstracted changing the hybrid system in figure~\ref{fig:sampledsystem} to the digital system in figure~\ref{fig:digsystem1} where the parametric uncertainties are represented by $\Delta G_{P}(z)$ and the entire effect of $\nu_{1}$ and $\nu_{2}$ in the output $Y(z)$ is represented as an additive measurement noise $\nu(z)$.}
+
+The ADC and DAC may be abstracted changing the hybrid system in figure~\ref{fig:sampledsystem} to the digital system in figure~\ref{fig:digsystem1} where the parametric uncertainties are represented by $\Delta G_{P}(z)=\mathcal{Z}\left\lbrace{G_{P}(s)}\right\rbrace$ and the entire effect of $\nu_{1}$ and $\nu_{2}$ in the output $Y(z)$ is represented as an additive measurement noise $\nu(z)$.
 
 \begin{figure}[ht]
 \centering
@@ -535,7 +534,7 @@ The ADC and DAC may be abstracted changing the hybrid system in figure~\ref{fig:
 	minimum width=1cm,
 	minimum height=1cm,
         label=\textbf{Plant}] (gs) {{\sc $G(z) + \Delta G_{P}(z)$}};
-   \node[draw=none] (y) at ([xshift=1cm,yshift=.15cm]gs)  {$Y(z)$};
+   \node[draw=none] (y) at ([xshift=2cm,yshift=.15cm]gs)  {$Y(z)$};
 
    \& \node[circle,add={}{+}{+}{}] (circle2) {};
 %   \node[draw=none] (tyz) at ([xshift=-1cm,yshift=.15cm]circle2)  {$Y(z)$};
@@ -570,12 +569,11 @@ The ADC and DAC may be abstracted changing the hybrid system in figure~\ref{fig:
 
 
 %
-\textcolor{blue}{
 In figure~\ref{fig:digsystem1}, two sources of uncertainties are considered: parametric uncertainties related to modeling errors, and uncertainties introduced by quantisations in sampling and holding process, {\it i.e.} ADC and DAC conversions. Assuming linearity and independence between these sources, the uncertain model may be rewritten as follows:
 \begin{equation}
 \hat{G}(z)=G(z)+\Delta G_{P}(z)+\Delta G_{Q}(z),
 \end{equation}
-where $\Delta G_{P}(z)$ is the term that corresponds to the parametric uncertainties and $\Delta G_{Q}(z)$ is the term that reflects the quantisation effects on the plant model. Figure~\ref{fig:digsystem2} shows the digital closed loop systems with $\Delta G_{P}(z)$ and $\Delta G_{Q}(z)$.}
+where $\Delta G_{P}(z)$ is the term that corresponds to the parametric uncertainties and $\Delta G_{Q}(z)$ is the term that reflects the quantisation effects on the plant model. Figure~\ref{fig:digsystem2} shows the digital closed loop systems with $\Delta G_{P}(z)$ and $\Delta G_{Q}(z)$.
 
 
 \begin{figure}[ht]
@@ -670,32 +668,31 @@ where $\Delta G_{P}(z)$ is the term that corresponds to the parametric uncertain
  \caption{Digital system with additive uncertainties $\Delta G_{P}(z)$ and $\Delta G_{Q}(z)$. \label{fig:digsystem2}}
 \end{figure}
 
-\textcolor{blue}{[IB: I propose to exchange the following paragraphs by the previous blue]}
+%\textcolor{blue}{[IB: I propose to exchange the following paragraphs by the previous blue]}
 
-\textcolor{green}{DC: I believe Alessandro wanted to be more specific about the nature of the modelling error which is why I was trying to explain it. In this case I believe there are also two separate sources for $\Delta{G}_p(z)$. The first is $\Delta{G}_p(s)$ (which is basically a known tolerance that may come from G(t)), whilst the second is the error introduced by the calculations in the $\mathcal{Z}$ transform. Alessandro, do you want to address this second term (possibly as explained below) or just leave the blue section as is?}
+%\textcolor{green}{DC: I believe Alessandro wanted to be more specific about the nature of the modelling error which is why I was trying to explain it. In this case I believe there are also two separate sources for $\Delta{G}_p(z)$. The first is $\Delta{G}_p(s)$ (which is basically a known tolerance that may come from G(t)), whilst the second is the error introduced by the calculations in the $\mathcal{Z}$ transform. Alessandro, do you want to address this second term (possibly as explained below) or just leave the blue section as is?}
 
 
-Since $G(z)$ is an approximation of $G(s)$ we introduce an error term caused during its calculation as $\Delta{G}_P$
-
+%Since $G(z)$ is an approximation of $G(s)$ we introduce an error term caused during its calculation as $\Delta{G}_P$
 %
-\begin{align}
-\small
-\label{parametric_plant_tf}
-\hat{G}(z)&=\frac{(b_{0}+\Delta_p b_{0}) +...+(b_{M_G}+\Delta_p b_{M_G})z^{-M_G}}{(a_{0}+\Delta_p a_{0})+...+(a_{N_G}+\Delta_p a_{N_G})z^{-N_G}} \nonumber \\
-&=G(z)+\Delta{G}_P(z).
-\end{align}
-%
-Note that $\Delta{G}_P$ is undefined and upperbound by a user defined
-value such that $\hat{G}(z)$ corresponds to the set of
-possible polynomial forms of $G(z, T)$ that overapproximate $G(s)$.
-This calculation is performed outside of the scope of this work since it depends on the nature of the tool used to obtain the $\mathcal{Z}$ form. The error comes from the bounded horizon and mathematical precision used to calculate the $\mathcal{Z}$ transform, which will be tool and user dependent.
-\red{[The previous statement is confusing and I must disagree here: I want hard error bounds on a specific value of T.]}
-\green{[You are correct. It was absolutely wrong. Hopefully this explanation is clear. We use MATLAB, but still don't know the details of their implementation, so I don't have hard data on how this error is calculated.}
+%%
+%\begin{align}
+%\small
+%\label{parametric_plant_tf}
+%\hat{G}(z)&=\frac{(b_{0}+\Delta_p b_{0}) +...+(b_{M_G}+\Delta_p b_{M_G})z^{-M_G}}{(a_{0}+\Delta_p a_{0})+...+(a_{N_G}+\Delta_p a_{N_G})z^{-N_G}} \nonumber \\
+%&=G(z)+\Delta{G}_P(z).
+%\end{align}
+%%
+%Note that $\Delta{G}_P$ is undefined and upperbound by a user defined
+%value such that $\hat{G}(z)$ corresponds to the set of
+%possible polynomial forms of $G(z, T)$ that overapproximate $G(s)$.
+%This calculation is performed outside of the scope of this work since it depends on the nature of the tool used to obtain the $\mathcal{Z}$ form. The error comes from the bounded horizon and mathematical precision used to calculate the $\mathcal{Z}$ transform, which will be tool and user dependent.
+%\red{[The previous statement is confusing and I must disagree here: I want hard error bounds on a specific value of T.]}
+%\green{[You are correct. It was absolutely wrong. Hopefully this explanation is clear. We use MATLAB, but still don't know the details of their implementation, so I don't have hard data on how this error is calculated.}
 
-\textcolor{blue}{Since the controller is implemented using a FWL, $C(z)$ also suffers disturbances from the FWL effects, with roundoffs in coefficients that may change the closed-loop poles and zeros position, and consequently affect its stability, as shown in~\cite{Bessa16}.}
+Since the controller is implemented using a FWL, $C(z)$ also suffers disturbances from the FWL effects, with roundoffs in coefficients that may change the closed-loop poles and zeros position, and consequently affect its stability, as shown in~\cite{Bessa16}.
 
 
-\textcolor{blue}{
 Let $\hat{C}(z)$ be the transfer function of the digital controller represented using this FWL with integer size $I$ and fractional
 size $F$.  We shall denote this domain as $\mathbb{R}\langle I,F \rangle$
 %Since the controller is implemented in the $\mathbb{R}\langle I,F \rangle$ 
@@ -703,12 +700,12 @@ size $F$.  We shall denote this domain as $\mathbb{R}\langle I,F \rangle$
 %size $F$, we shall denote this domain as $\mathbb{R}\langle I,F \rangle$ 
 and assume that there exists a function $FWL[\cdot]:\mathbb{R}^{n}\rightarrow \mathbb{R}^{n}\langle I,F \rangle$, which applies the FWL effects to a polynomial. Thus the perturbed controller model $\hat{C}(z)$ may be computed from the original model $C(z)=\frac{N_{C}(z)}{D_{C}(z)}$ using the following expression:
 \begin{equation}
-\hat{C}(z)=\frac{FWL[N_{C}(z)]}{FWL[D_{C}(z)]}
-\end{equation}}
+\hat{C}(z)=\frac{FWL[N_{C}(z)]}{FWL[D_{C}(z)]}.
+\end{equation}
 
-\textcolor{blue}{[IB: And I propose to exchange the remaining paragraphs by the previous blue]}
-
-\textcolor{green}{[DC: I changed it to a separate section to differentiate the effects, so we should keep both]}
+%\textcolor{blue}{[IB: And I propose to exchange the remaining paragraphs by the previous blue]}
+%
+%\textcolor{green}{[DC: I changed it to a separate section to differentiate the effects, so we should keep both]}
 
 %------------------------------------
 \subsection{Using Fixed Point Arithmetic for verification}
