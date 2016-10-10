@@ -753,12 +753,12 @@ H_{2}=\frac{\hat{G}(z)}{1+\hat{C}(z)\hat{G}(z)},
 A discrete-time linear system is said to be Bounded-Input and Bounded-Output (BIBO) stable if and only if every pole of its transfer function lies inside the unit circle. Analyzing the~\eqref{eq:outputfunctions} and based on assumption~\ref{assumption:cont_and_plant}, the following lemma states necessary conditions for stability of closed-loop system in figure~\ref{fig:sampledsystem}, since the the exogenous signals $R(z)$, $\nu_{1}$, and $\nu_{2}$ are bounded.
 
 \begin{mylemma}{\cite{Bessa16,fadali}}
-\label{internal_stab_lemma}
+\label{lemma:eq_int_stab}
 A feedback hybrid control system as shown in Fig.~\ref{fig:sampledsystem}, with transfer functions $\hat{C}(z) = \frac{FWL[N_{C}(z)]}{FWL[D_{C}(z)]}$ and $\hat{G}(z)=\frac{\hat{N}_{G}(z)}{\hat{D}_{G}(z)}$, is internally stable if and only if:
 \begin{itemize}
 \item  the roots of characteristic polynomial $S(z)$ are inside the open unit circle, where $S(z)$ is:
 \begin{equation}
-\label{lemma:eq_int_stab}
+\label{eq:internal_stab_lemma}
 S(z)=FWL[N_{C}(z)]\hat{N}_{G}(z)+FWL[D_{C}(z)]\hat{D}_{G}(z);
 \end{equation}
 \item the direct loop product $\frac{FWL[N_{C}(z)]}{FWL[D_{C}(z)]}\cdot \frac{\hat{N}_{G}(z)}{\hat{D}_{G}(z)}$ has no pole-zero cancellation on or outside the unit circle;
@@ -1579,9 +1579,9 @@ Schur's decomposition and another one based on Jury's
 criteria~\cite{astrom1997computer}.  Here, we choose Jury's
 method~\cite{astrom1997computer}, due to its efficiency.
 
-We use this method to check the stability in the $z$-domain for the characteristic polynomial $S(z)$ of 
-the matrix $\left( \begin{array}{c} Y \\ U \end{array}\right)$, where $Y(z)$ is the 
-closed-loop system output and U(z) is the controller output. 
+We use this method to check the stability in the $z$-domain for the characteristic polynomial $S(z)$ defined in~\eqref{eq:internal_stab_lemma}.
+
+% of the matrix $\left( \begin{array}{c} Y \\ U \end{array}\right)$, where $Y(z)$ is the closed-loop system output and U(z) is the controller output. 
 %% \red{[unclear: what matrix? We need to clarify the relationship
 %% between the char. poly. $S(z)$ and the later quantities $\Delta
 %% N_{G}(z), \Delta D_{G}(z)$ and corresponding controller's
@@ -1590,7 +1590,7 @@ closed-loop system output and U(z) is the controller output.
 We consider the following form for $S(z)$:
 %
 $$
-S(z) = a_0Z^N+a_1z^{N-1}+\cdots+a_{N-1}z+a_N=0, a_0\neq0
+S(z) = a_0z^N+a_1z^{N-1}+\cdots+a_{N-1}z+a_N=0, a_0\neq0
 $$
 %
 %\cdsay{is this for the matrix $\left( \begin{array}{c} Y \\ U \end{array}\right)$?}
