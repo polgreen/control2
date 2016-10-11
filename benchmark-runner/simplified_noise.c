@@ -30,7 +30,7 @@
     #define _CONTORL_RADIX_WIDTH _CONTROL_FLOAT_WIDTH / 2
   #endif
   typedef __CPROVER_fixedbv[_CONTROL_FLOAT_WIDTH][_CONTORL_RADIX_WIDTH] control_floatt;
-  control_floatt _imp_max=(((1 <<_(_CONTROL_FLOAT_WIDTH-1))-1)<<1)+1;
+  control_floatt _imp_max=(((1 <<(_CONTROL_FLOAT_WIDTH-1))-1)<<1)+1;
 #endif
   typedef unsigned char cnttype;
 #else

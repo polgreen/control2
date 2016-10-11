@@ -30,7 +30,7 @@
     #define _CONTORL_RADIX_WIDTH _CONTROL_FLOAT_WIDTH / 2
   #endif
   typedef __CPROVER_fixedbv[_CONTROL_FLOAT_WIDTH][_CONTORL_RADIX_WIDTH] control_floatt;
-  control_floatt _imp_max=(((1 <<_(_CONTROL_FLOAT_WIDTH-1))-1)<<1)+1;
+  control_floatt _imp_max=(((1 <<(_CONTROL_FLOAT_WIDTH-1))-1)<<1)+1;
 #endif
   typedef unsigned char cnttype;
 #else
@@ -213,7 +213,7 @@ void call_closedloop_verification_task()
   for(i = 0;i < plant.num_size; i++)
   {
 #ifdef __NORMALIZED
-    control_floatt value=plant.num[i]/_plant_norm
+    control_floatt value=plant.num[i]/_plant_norm;
     control_floatt factor=(value * plant.num_uncertainty[i]) / 100.0;
     factor = (factor < 0.0) ? -factor : factor;
     plant_cbmc.numBot[i]=value-factor;
@@ -229,7 +229,7 @@ void call_closedloop_verification_task()
   for(i = 0;i < plant.den_size; i++)
   {
 #ifdef __NORMALIZED
-    control_floatt value=plant.den[i]/_plant_norm
+    control_floatt value=plant.den[i]/_plant_norm;
     control_floatt factor=(value * plant.den_uncertainty[i]) / 100.0;
     factor = (factor < 0.0) ? -factor : factor;
     plant_cbmc.denBot[i]=value-factor;

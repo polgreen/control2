@@ -31,11 +31,20 @@ function extend_array {
  echo ${result}
 }
 
+function write_success_message {
+ start_time=$1
+ log_file=$2
+ end_time=`date +%s`
+ runtime=$((end_time-start_time))
+ echo 'SYNTHESIS SUCCESSFUL' >>${log_file}
+ echo "<control_synthesis_time>${runtime}</control_synthesis_time>" >>${log_file}
+}
+
 sizes_header_file='sizes.h'
 plant_header_file='plant.h'
 controller_header_file='controller.h'
 
-benchmark='/users/pkesseli/documents/control-synthesis/benchmarks/example-a/example-a_SCHEMA1_IMPL1.c'
+benchmark='/users/pkesseli/documents/control-synthesis/benchmarks/example-a/example-a_PLANT1_SCHEMA3_IMPL3.c'
 #benchmark='/users/pkesseli/documents/control-synthesis/benchmarks/CruiseControl/CruiseControl02.c'
 #benchmark_dir='/users/pkesseli/documents/control-synthesis/benchmarks/SpringMassDamper/'
 
@@ -76,57 +85,67 @@ benchmark='/users/pkesseli/documents/control-synthesis/benchmarks/example-a/exam
 
   echo "#define __PLANT_DEN_SIZE ${plant_a_size}" >${sizes_header_file}
   echo "#define __PLANT_NUM_SIZE ${plant_b_size}" >>${sizes_header_file}
-  echo "#define __CONTROLLER_DEN_SIZE ${struct_a_size}" >>${sizes_header_file}
-  echo "#define __CONTROLLER_NUM_SIZE ${struct_b_size}" >>${sizes_header_file}
+  echo "#define __CONTROLLER_DEN_SIZE ${controller_a_size}" >>${sizes_header_file}
+  echo "#define __CONTROLLER_NUM_SIZE ${controller_b_size}" >>${sizes_header_file}
   echo "#define SOLUTION_DEN_SIZE ${struct_a_size}" >>${sizes_header_file}
   echo "#define SOLUTION_NUM_SIZE ${struct_b_size}" >>${sizes_header_file}
 
   echo "struct anonymous3 plant={ .den={ ${plant_a} }, .den_uncertainty={ ${plant_a_uncertainty} }, .den_size=${plant_a_size}, .num={ ${plant_b} }, .num_uncertainty={ ${plant_b_uncertainty} }, .num_size=${plant_b_size} };" >${plant_header_file}
-  echo "struct anonymous3 controller={ .den={ ${controller_a} }, .den_uncertainty={ ${controller_a_uncertainty} }, .den_size=${struct_a_size}, .num={ ${controller_b} }, .num_uncertainty={ ${controller_b_uncertainty} }, .num_size=${struct_b_size} };" >${controller_header_file}
+  echo "struct anonymous3 controller={ .den={ ${controller_a} }, .den_uncertainty={ ${controller_a_uncertainty} }, .den_size=${controller_a_size}, .num={ ${controller_b} }, .num_uncertainty={ ${controller_b_uncertainty} }, .num_size=${controller_b_size} };" >${controller_header_file}
 
- min_fixed_point_word_size=$((impl_int_bits+impl_frac_bits))
- min_fixed_point_word_size_offset=$((min_fixed_point_word_size%8))
- [ ${min_fixed_point_word_size_offset} -ne 0 ] && min_fixed_point_word_size=$((min_fixed_point_word_size+8-min_fixed_point_word_size_offset))
-
- timeout_time=900s
- kill_time=960s
-
- log_file="${benchmark%.c}.log"
- echo ${benchmark} | tee ${log_file}
- echo "CEGIS" | tee -a ${log_file}
+ max_length=64
+ integer_width=8
+ radix_width=$((impl_int_bits+impl_frac_bits))
+ min_size_offset=$(((integer_width+radix_width)%8))
+ [ ${min_size_offset} -ne 0 ] && integer_width=$((integer_width+8-min_size_offset))
  start_time=`date +%s`
- for ((word_width=min_fixed_point_word_size;word_width<=64;word_width+=8)); do
-  echo "Word width: ${word_width}" | tee -a ${log_file}
-  timeout --preserve-status --kill-after=${kill_time} ${timeout_time} cegis -D __CPROVER -D _FIXEDBV -D _CONTROL_FLOAT_WIDTH=${word_width} -D _CONTROLER_INT_BITS=${impl_int_bits} -D _CONTROLER_FRAC_BITS=${impl_frac_bits} -D _CONTORL_RADIX_WIDTH=${impl_frac_bits} --fixedbv --round-to-minus-inf --cegis-control --cegis-statistics --cegis-genetic --cegis-max-size 1 --cegis-show-iterations simplified_noise.c >>${log_file} 2>&1
-  if [ $? -eq 0 ]; then
-   solution_decl=`grep -Pzo '  controller=.*(\n.*?)*?} \(' ${log_file}`
-   solution_a=$(extract_array "${solution_decl}" 'den' "${struct_a_size}")
-   solution_b=$(extract_array "${solution_decl}" 'num' "${struct_b_size}")
-   echo "struct anonymous3 controller={ .den={ ${solution_a} }, .den_uncertainty={ ${controller_a_uncertainty} }, .den_size=${controller_a_size}, .num={ ${solution_b} }, .num_uncertainty={ ${controller_b_uncertainty} }, .num_size=${controller_b_size} };" >${controller_header_file}
-   gcc -std=c99 -D _CONTROLER_INT_BITS=${impl_int_bits} -D _CONTROLER_FRAC_BITS=${impl_frac_bits} simplified_noise.c -o simplified_noise
-   ./simplified_noise >>${log_file}
-   if [ $? -eq 0 ]; then
-    end_time=`date +%s`
-    runtime=$((end_time-start_time))
-    echo 'SYNTHESIS SUCCESSFUL' >>${log_file}
-    echo "<control_synthesis_time>${runtime}</control_synthesis_time>" >>${log_file}
-    break
-   else
-    echo 'SYNTHESIS FAILED' >>${log_file}
-   fi
-  fi
- done
 
- #q_log_file="${benchmark%.c}_q.log"
- #echo ${benchmark} | tee ${q_log_file}
- #echo "CBMC" | tee -a ${q_log_file}
- #start_time=`date +%s`
- ##for ((word_width=min_fixed_point_word_size;word_width<=64;word_width+=2)); do
- #for ((word_width=min_fixed_point_word_size;word_width<=64;word_width+=8)); do
- # echo "Word width: ${word_width}" | tee -a ${q_log_file}
- # cbmc -D __CPROVER -D _FIXEDBV -D _CONTROL_FLOAT_WIDTH=${word_width} -D _CONTROLER_INT_BITS=${impl_int_bits} -D _CONTROLER_FRAC_BITS=${impl_frac_bits} --fixedbv --stop-on-fail --round-to-minus-inf simplified_noiseQ.c >>${q_log_file} 2>&1
- # if [ $? -eq 10 ]; then break; fi
- #done
+ if [ "$1" != 'range' ]; then
+
+  timeout_time=14400s
+  kill_time=14460
+  log_file="${benchmark%.c}_simple.log"
+  echo ${benchmark} | tee ${log_file}
+  echo "CEGIS" | tee -a ${log_file}
+  while [ $((integer_width+radix_width)) -lt ${max_length} ]; do
+   echo "int: ${integer_width}, radix: ${radix_width}" | tee -a ${log_file}
+   timeout --preserve-status --kill-after=${kill_time} ${timeout_time} cegis -D __CPROVER -D _FIXEDBV -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTORL_RADIX_WIDTH=${radix_width} -D _CONTROLER_INT_BITS=${impl_int_bits} -D _CONTROLER_FRAC_BITS=${impl_frac_bits} --fixedbv --round-to-minus-inf --cegis-control --cegis-statistics --cegis-genetic --cegis-max-size 1 --cegis-show-iterations simplified_noise.c >>${log_file} 2>&1
+   if [ $? -eq 0 ]; then
+    solution_decl=`grep -Pzo '  controller=.*(\n.*?)*?} \(' ${log_file}`
+    solution_a=$(extract_array "${solution_decl}" 'den' "${struct_a_size}")
+    solution_b=$(extract_array "${solution_decl}" 'num' "${struct_b_size}")
+    echo "struct anonymous3 controller={ .den={ ${solution_a} }, .den_uncertainty={ ${controller_a_uncertainty} }, .den_size=${controller_a_size}, .num={ ${solution_b} }, .num_uncertainty={ ${controller_b_uncertainty} }, .num_size=${controller_b_size} };" >${controller_header_file}
+    gcc -std=c99 -D _CONTROLER_INT_BITS=${impl_int_bits} -D _CONTROLER_FRAC_BITS=${impl_frac_bits} simplified_noise.c -o simplified_noise
+    ./simplified_noise >>${log_file}
+    if [ $? -eq 0 ]; then
+     $(write_success_message ${start_time} ${log_file})
+     break
+    else
+     echo 'SYNTHESIS FAILED' >>${log_file}
+    fi
+   fi
+   integer_width=$((integer_width+4))
+   radix_width=$((radix_width+4))
+  done
+
+ else
+
+  timeout_time=14400s
+  kill_time=14460s
+  log_file="${benchmark%.c}_q.log"
+  echo ${benchmark} | tee ${log_file}
+  echo "CBMC" | tee -a ${log_file}
+  while [ $((integer_width+radix_width)) -lt ${max_length} ]; do
+   echo "int: ${integer_width}, radix: ${radix_width}" | tee -a ${log_file}
+   timeout --preserve-status --kill-after=${kill_time} ${timeout_time} cbmc -D __CPROVER -D _FIXEDBV -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTORL_RADIX_WIDTH=${radix_width} -D _CONTROLER_INT_BITS=${impl_int_bits} -D _CONTROLER_FRAC_BITS=${impl_frac_bits} --fixedbv --stop-on-fail --round-to-minus-inf simplified_noiseQ.c >>${log_file} 2>&1
+   if [ $? -eq 10 ]; then
+    $(write_success_message ${start_time} ${log_file})
+    break
+   fi
+   integer_width=$((integer_width+4))
+   radix_width=$((radix_width+4))
+  done
+ fi
 
 # done
 #done
