@@ -215,9 +215,10 @@ stability, we have modeled a digital equivalent of the plant by evaluating
 the effects of the quantisers (A/D and D/A converters) as time
 discretisation elements with quantisation noise.  The resulting closed loop
 system is a program loop working over bit-vectors of fixed-point arithmetic
-with fixed word length.  The effect of the FWL is included in the model as a
-parametric uncertainty which must be taken into account for the correct
-synthesis of the controller.
+with fixed word length.  \blue{The deterministic effect of the FWL is considered
+and quantization errors are included in the model as a additive uncertainty 
+which must be taken into account for the correct synthesis of the robust controller
+for linear systems with parametric uncertainties.}
 
 %\begin{figure}
 %\centering
@@ -391,7 +392,7 @@ be disregarded. Additionally, the pulse transfer function obtained via \eqref{eq
 %
 \end{myassumption}
 
-Although the pulse transfer function $G(z)$ represents adequately $G(s)$ domain, the model $G(z)$ may not be accurate and some uncertainties may not be covered by that model. These uncertainties may be parametrically expressed by an additive transfer function $\Delta G(z)$, resulting in a uncertain model $\hat{G}(z)$, such that:
+Although the pulse transfer function $G(z)$ represents adequately $G(s)$ in z-domain, the model $G(z)$ may not be accurate and some uncertainties may not be covered by that model. These uncertainties may be parametrically expressed by an additive transfer function $\Delta G(z)$, resulting in a uncertain model $\hat{G}(z)$, such that:
 \begin{equation}
 \hat{G}(z)=G(z)+\Delta G(z),
 \end{equation}
@@ -514,7 +515,7 @@ A typical hybrid system is shown in Figure~\ref{fig:sampledsystem}, where the DA
 \end{figure*}
 
 
-The ADC and DAC may be abstracted changing the hybrid system in figure~\ref{fig:sampledsystem} to the digital system in figure~\ref{fig:digsystem1} where the parametric uncertainties are represented by $\Delta G_{P}(z)=\mathcal{Z}\left\lbrace{G_{P}(s)}\right\rbrace$ and the entire effect of $\nu_{1}$ and $\nu_{2}$ in the output $Y(z)$ is represented as an additive measurement noise $\nu(z)$.
+The ADC and DAC may be abstracted changing the hybrid system in figure~\ref{fig:sampledsystem} to the digital system in figure~\ref{fig:digsystem1} where the parametric uncertainties are represented by $\Delta G_{P}(z)=\mathcal{Z}\left\lbrace{G_{P}(s)}\right\rbrace$ and the entire effect of $\nu_{1}$ and $\nu_{2}$ in the output $Y(z)$ is represented as an additive (output) measurement noise $\nu(z)$.
 
 \begin{figure}[ht]
 \centering
