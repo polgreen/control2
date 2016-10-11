@@ -119,6 +119,7 @@ void initialization()
   _dbl_max += (1.0-_dbl_lsb);//Fractional part
 #endif
   _dbl_min = -_dbl_max;
+#ifdef __CHECK_FP
   if (SOLUTION_DEN_SIZE>SOLUTION_NUM_SIZE)
   {  
     _poly_error=2*_dbl_lsb*SOLUTION_DEN_SIZE;
@@ -129,6 +130,10 @@ void initialization()
     _poly_error=2*_dbl_lsb*SOLUTION_NUM_SIZE;
     _sum_error=2*_poly_error*SOLUTION_DEN_SIZE;
   }
+#else
+  _poly_error=0;
+  _sum_error=0;
+#endif
 }
 
 int validation()
@@ -320,14 +325,14 @@ signed int check_stability_closedloop(control_floatt *a, cnttype n)
   for(i=1;i<n;i++)
   {
     //denominator is always >0
-    if (m[i-1][0]<0) __DSVERIFIER_assert(m[i-1][0]<-(mag*mag/_imp_max+_poly_error));
-    else             __DSVERIFIER_assert(m[i-1][0]> (mag*mag/_imp_max+_poly_error));//check for overflow. 
     control_floatt factor=m[i-1][columns] / m[i-1][0];
+#ifdef __CHECK_FP
+    if (m[i-1][0]<0) __DSVERIFIER_assert(m[i-1][0]<-(mag*mag/_imp_max+_poly_error));
+    else             __DSVERIFIER_assert(m[i-1][0]> (mag*mag/_imp_max+_poly_error));//check for overflow.
     control_floatt efactor=m[i-1][columns];
     if (efactor<0) efactor=-efactor;
     efactor+=_poly_error;
-    if (m[i-1][0]<0) efactor/=-m[i-1][0]-_poly_error;
-    else  efactor/=m[i-1][0]+_poly_error;
+    efactor/=m[i-1][0]-_poly_error;
     efactor-=factor;
     __DSVERIFIER_assert(efactor<_poly_error*mag);
     if (factor>0) 
@@ -340,6 +345,7 @@ signed int check_stability_closedloop(control_floatt *a, cnttype n)
       _poly_error*=2-factor;
       mag-=mag*factor;
     }
+#endif
     for(j=0;j<columns;j++)
     {
       m[i][j] = m[i - 1][j] - factor * m[i - 1][columns-j];
@@ -347,8 +353,8 @@ signed int check_stability_closedloop(control_floatt *a, cnttype n)
 #ifdef __CPROVER
       __DSVERIFIER_assert(m[i][0l] >= _poly_error);
 #else
-  printf("m[%d]=%f>0\n", i, m[i][0]);
-	//std::cout << "m[" << i << "]=" << m[i][0] << ">0" << std::endl;
+    printf("m[%d]=%f>0\n", i, m[i][0]);
+    //std::cout << "m[" << i << "]=" << m[i][0] << ">0" << std::endl;
     if (!(m[i][0] >= _poly_error)) return 0;
 #endif
     columns--;
