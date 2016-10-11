@@ -274,78 +274,6 @@ void call_closedloop_verification_task()
 #endif  
 }
 
-/*signed int check_stability_closedloop(control_floatt *a, cnttype n)
-{
-  cnttype columns=n;
-  control_floatt m[n][n];
-  cnttype i;
-  cnttype j;
-  control_floatt sum=0.0;
-  // XXX: Debug
-  control_floatt __tmp_controller_num_0=controller.num[0];
-  control_floatt __tmp_controller_num_1=controller.num[1];
-  control_floatt __tmp_controller_a_0=a[0];
-  control_floatt __tmp_controller_a_1=a[1];
-  control_floatt __tmp_val=0.0;
-  control_floatt *__tmp_num=controller.num;
-  control_floatt *__tmp_a=a;
-  // XXX: Debug
-  for(i = 0 ; i < n; i++) { __tmp_val=a[i]; sum += a[i]; }
-#ifdef __CPROVER
-  __DSVERIFIER_assert(a[0] > 0.0);
-  __DSVERIFIER_assert(sum > 0.0);
-  __DSVERIFIER_assert(a[n-1] < a[0]);
-  __DSVERIFIER_assert(-a[n-1] < a[0]);
-#else
-  printf("m[0]=%f>0\n");
-  //std::cout << "m[0]=" << a[0] << ">0" << std::endl;
-  printf("fabs(m[%d]=%f)<m[0]=%f\n", n-1, a[n-1], a[0]);
-  //std::cout << "fabs(m[" << n-1 << "]=" << a[n-1] << ")<" << "m[0]=" << a[0] << std::endl;
-  printf("sum=%f>0\n", sum);
-  //std::cout << "sum=" << sum << ">0" << std::endl;
-  if (!(a[0] > 0.0)) return 0;
-  if (!(sum > 0.0)) return 0;
-  if (!(a[n - 1] < a[0])) return 0;
-  if (!(-a[n - 1] < a[0])) return 0;
-#endif
-  sum = 0.0;
-  for(i = 0 ; i < n; i++)
-  {
-    if (((n -i)&1)!=0) sum+=a[i];
-    else               sum-=a[i];
-  }
-  if ((n&1)==0) sum=-sum;
-#ifdef __CPROVER
-  __DSVERIFIER_assert(sum > 0.0);
-  if (a[n-1]<0) __DSVERIFIER_assert(-a[n-1] < a[0]);
-  else __DSVERIFIER_assert(a[n-1] < a[0]);
-#else
-  printf("sumEven-sumOdd=%f>0\n", sum);
-  //std::cout << "sumEven-sumOdd=" << sum << ">0" << std::endl;
-  if (!(sum > 0)) return 0;
-#endif
-  for(j=0;j<columns;j++) m[0][j]=a[j];
-  columns--;
-  for(i=1;i<n;i++)
-  {
-    //denominator is always >0
-    control_floatt factor=m[i-1][columns] / m[i-1][0];
-    for(j=0;j<columns;j++)
-    {
-      m[i][j] = m[i - 1][j] - factor * m[i - 1][columns-j];
-    }
-#ifdef __CPROVER
-      __DSVERIFIER_assert(m[i][0l] >= 0.0);
-#else
-  printf("m[%d]=%f>0\n", i, m[i][0]);
-	//std::cout << "m[" << i << "]=" << m[i][0] << ">0" << std::endl;
-    if (!(m[i][0] >= 0.0)) return 0;
-#endif
-    columns--;
-  }
-  return 1;
-}*/
-
 signed int check_stability_closedloop(control_floatt *a, cnttype n)
 {
   cnttype columns=n;
@@ -395,14 +323,21 @@ signed int check_stability_closedloop(control_floatt *a, cnttype n)
     if (m[i-1][0]<0) __DSVERIFIER_assert(m[i-1][0]<-(mag*mag/_imp_max+_poly_error));
     else             __DSVERIFIER_assert(m[i-1][0]> (mag*mag/_imp_max+_poly_error));//check for overflow. 
     control_floatt factor=m[i-1][columns] / m[i-1][0];
+    control_floatt efactor=m[i-1][columns];
+    if (efactor<0) efactor=-efactor;
+    efactor+=_poly_error;
+    if (m[i-1][0]<0) efactor/=-m[i-1][0]-_poly_error;
+    else  efactor/=m[i-1][0]+_poly_error;
+    efactor-=factor;
+    __DSVERIFIER_assert(efactor<_poly_error*mag);
     if (factor>0) 
     {
-      _poly_error*=1+factor;//Unsound! does not consider the error in factor (a+e/b-e = a/(b-e) +e/(b-e))
+      _poly_error*=2+factor;//Unsound! does not consider the error in factor (a+e/b-e = a/(b-e) +e/(b-e))
       mag+=mag*factor;
     }
     else
     {
-      _poly_error*=1-factor;
+      _poly_error*=2-factor;
       mag-=mag*factor;
     }
     for(j=0;j<columns;j++)

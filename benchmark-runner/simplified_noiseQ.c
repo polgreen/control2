@@ -382,28 +382,25 @@ int verify_stability_closedloop_using_dslib(void)
   for (int i=0;i<ans_num_size;i++) ans_num_bot[i]=ans_num_top[i]=3;
   for (int i=0;i<ans_den_size;i++) ans_den_bot[i]=ans_den_top[i]=3;
 #endif
-  for (i=0;i<__CONTROLLER_NUM_SIZE;i++) ans_den_top[i]=-controller.num[i];
+/*  for (i=0;i<__CONTROLLER_NUM_SIZE;i++) ans_den_top[i]=-controller.num[i];
   signed int return_value1=check_stability_closedloop(controller.num,ans_den_top, __CONTROLLER_NUM_SIZE);
 #ifdef __CPROVER  
   __DSVERIFIER_assume(!(return_value1 == 0));
 #else
   if (return_value1 == 0) return 10;
-#endif
+#endif*/
   ft_closedloop_series(ans_num_bot,ans_num_top, ans_num_size, ans_den_bot,ans_den_top, ans_den_size);
   signed int return_value2=check_stability_closedloop(ans_den_bot,ans_den_top, ans_den_size);
 #ifdef __CPROVER    
   __DSVERIFIER_assume(!(return_value2 == 0));
 #else
-  if (return_value2 == 0) return 10;
-#endif
-  
-#ifndef __CPROVER
   std::cout << "plant_num=";
   print_poly(plant_cbmc.numBot,plant_cbmc.numTop, plant_cbmc.num_size);
   std::cout << "plant_den=";
   print_poly(plant_cbmc.denBot,plant_cbmc.denTop, plant_cbmc.den_size);
   std::cout << "ans=";
   print_poly(ans_den_bot,ans_den_top, ans_den_size);
+  if (return_value2 == 0) return 10;
 #endif
 }
 
