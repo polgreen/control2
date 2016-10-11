@@ -783,7 +783,7 @@ $Q2$) are energy bounded uncorrelated white noises.
 
 \begin{mylemma}
 \label{lemma:variance}
-In particular, \cite{widrow1956} models the quantisation noise as a gaussian
+In particular, Widrow \cite{widrow1956} models the quantisation noise as a gaussian
 model in which the second moment (variance) of the probability density
 function (PDF) of the quantisation noise is given by
 %
@@ -796,9 +796,9 @@ where $q$ is the step size of quantizer. (Proof is on \cite{widrow1956})
 
 \begin{mylemma}
 \label{lemma:boundednoise}
-The z-transform of the quantisation noise $\nu(z)=\mathcal{Z}\left\lbrace\nu(k)\right\rbrace$ in figure~\ref{fig:digsystem1} may be calculated through the power spectral density of $\nu(k)$, thus:
+The power spectral density of the quantisation noise (supposed white) $S_{\nu}(z)$ is bounded and may be computed through the z-transform of autocorrelation function of $\nu(k)$, thus:
 \begin{equation}
-\nu(z)= \sigma_{Q}^{2}.
+S_{\nu}(z)= \sigma_{Q}^{2}=\frac{q^{2}}{12}.
 \end{equation}
 \end{mylemma}
 
@@ -811,9 +811,15 @@ where $\delta(\tau)$ is the Dirac delta function at delay time $\tau$.
 
 By definition~\cite{poularikas2000transforms}, the power spectral density of  $nu(k)$ is the z-transform of $R_{\nu\nu}(\tau)$, thus
 \begin{equation}
-\nu(z)=  \sum\limits_{k=-\infty}^{\infty}{R_{\nu\nu}(k)z^{-k}} = \sigma_{Q}^{2}.
+\nu(z)=  \sum\limits_{k=-\infty}^{\infty}{R_{\nu\nu}(k)z^{-k}} = \sigma_{Q}^{2},
+\end{equation}
+considering the Lemma~\ref{lemma:variance}:
+\begin{equation}
+\nu(z)=  \frac{q^{2}}{12}.
 \end{equation}
 \end{proof}
+
+Finally, the quantisation noise may be considered a energy-bounded signal (Lemma~\ref{lemma:boundednoise}) and thus $\hat{Y}(z)$ will be bounded and the closed-loop system stable if the conditions in Lemma~\ref{lemma:eq_int_stab} are followed.
 
 %, thus supporting this assumption.
 
