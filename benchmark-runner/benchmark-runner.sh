@@ -40,9 +40,24 @@ function write_success_message {
  echo "<control_synthesis_time>${runtime}</control_synthesis_time>" >>${log_file}
 }
 
+function setup_benchmark {
+ mkdir -p "$1" 2>/dev/null
+ cp simplified_noise.c simplified_noiseQ.c "$1"
+ echo "#define __PLANT_DEN_SIZE ${plant_a_size}" >"$1/${sizes_header_file}"
+ echo "#define __PLANT_NUM_SIZE ${plant_b_size}" >>"$1/${sizes_header_file}"
+ echo "#define __CONTROLLER_DEN_SIZE ${controller_a_size}" >>"$1/${sizes_header_file}"
+ echo "#define __CONTROLLER_NUM_SIZE ${controller_b_size}" >>"$1/${sizes_header_file}"
+ echo "#define SOLUTION_DEN_SIZE ${struct_a_size}" >>"$1/${sizes_header_file}"
+ echo "#define SOLUTION_NUM_SIZE ${struct_b_size}" >>"$1/${sizes_header_file}"
+ echo "struct anonymous3 plant={ .den={ ${plant_a} }, .den_uncertainty={ ${plant_a_uncertainty} }, .den_size=${plant_a_size}, .num={ ${plant_b} }, .num_uncertainty={ ${plant_b_uncertainty} }, .num_size=${plant_b_size} };" >"$1/${plant_header_file}"
+ echo "struct anonymous3 controller={ .den={ ${controller_a} }, .den_uncertainty={ ${controller_a_uncertainty} }, .den_size=${controller_a_size}, .num={ ${controller_b} }, .num_uncertainty={ ${controller_b_uncertainty} }, .num_size=${controller_b_size} };" >"$1/${controller_header_file}"
+}
+
 sizes_header_file='sizes.h'
 plant_header_file='plant.h'
 controller_header_file='controller.h'
+working_directory_base='/tmp/control_synthesis'
+mkdir -p ${working_directory_base} 2>/dev/null
 
 benchmark='/users/pkesseli/documents/control-synthesis/benchmarks/example-a/example-a_PLANT1_SCHEMA3_IMPL3.c'
 #benchmark='/users/pkesseli/documents/control-synthesis/benchmarks/CruiseControl/CruiseControl02.c'
@@ -83,33 +98,34 @@ benchmark='/users/pkesseli/documents/control-synthesis/benchmarks/example-a/exam
   controller_b=$(extend_array "${controller_b}" "${struct_b_size}")
   controller_b_uncertainty=$(extend_array "${controller_b_uncertainty}" "${struct_b_size}")
 
-  echo "#define __PLANT_DEN_SIZE ${plant_a_size}" >${sizes_header_file}
-  echo "#define __PLANT_NUM_SIZE ${plant_b_size}" >>${sizes_header_file}
-  echo "#define __CONTROLLER_DEN_SIZE ${controller_a_size}" >>${sizes_header_file}
-  echo "#define __CONTROLLER_NUM_SIZE ${controller_b_size}" >>${sizes_header_file}
-  echo "#define SOLUTION_DEN_SIZE ${struct_a_size}" >>${sizes_header_file}
-  echo "#define SOLUTION_NUM_SIZE ${struct_b_size}" >>${sizes_header_file}
-
-  echo "struct anonymous3 plant={ .den={ ${plant_a} }, .den_uncertainty={ ${plant_a_uncertainty} }, .den_size=${plant_a_size}, .num={ ${plant_b} }, .num_uncertainty={ ${plant_b_uncertainty} }, .num_size=${plant_b_size} };" >${plant_header_file}
-  echo "struct anonymous3 controller={ .den={ ${controller_a} }, .den_uncertainty={ ${controller_a_uncertainty} }, .den_size=${controller_a_size}, .num={ ${controller_b} }, .num_uncertainty={ ${controller_b_uncertainty} }, .num_size=${controller_b_size} };" >${controller_header_file}
-
- max_length=64
- integer_width=8
- radix_width=$((impl_int_bits+impl_frac_bits))
- min_size_offset=$(((integer_width+radix_width)%8))
- [ ${min_size_offset} -ne 0 ] && integer_width=$((integer_width+8-min_size_offset))
- start_time=`date +%s`
+  max_length=64
+  integer_width=8
+  radix_width=$((impl_int_bits+impl_frac_bits))
+  min_size_offset=$(((integer_width+radix_width)%8))
+  [ ${min_size_offset} -ne 0 ] && integer_width=$((integer_width+8-min_size_offset))
+  start_time=`date +%s`
 
  if [ "$1" != 'range' ]; then
+  if [ "$1" != 'simple' ]; then
+   simple_switch='-D __CHECK_FP'
+   working_directory="${working_directory_base}/bound"
+   log_file="${benchmark%.c}_bound.log"
+   timeout_time=14400s
+   kill_time=14460s
+  else
+   working_directory="${working_directory_base}/bound_simple"
+   log_file="${benchmark%.c}_bound_simple.log"
+   timeout_time=7200s
+   kill_time=7260s
+  fi
+  $(setup_benchmark ${working_directory})
+  cd ${working_directory}
 
-  timeout_time=14400s
-  kill_time=14460
-  log_file="${benchmark%.c}_simple.log"
   echo ${benchmark} | tee ${log_file}
   echo "CEGIS" | tee -a ${log_file}
   while [ $((integer_width+radix_width)) -lt ${max_length} ]; do
    echo "int: ${integer_width}, radix: ${radix_width}" | tee -a ${log_file}
-   timeout --preserve-status --kill-after=${kill_time} ${timeout_time} cegis -D __CPROVER -D _FIXEDBV -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTORL_RADIX_WIDTH=${radix_width} -D _CONTROLER_INT_BITS=${impl_int_bits} -D _CONTROLER_FRAC_BITS=${impl_frac_bits} --fixedbv --round-to-minus-inf --cegis-control --cegis-statistics --cegis-genetic --cegis-max-size 1 --cegis-show-iterations simplified_noise.c >>${log_file} 2>&1
+   timeout --preserve-status --kill-after=${kill_time} ${timeout_time} cegis -D __CPROVER -D _FIXEDBV -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTORL_RADIX_WIDTH=${radix_width} -D _CONTROLER_INT_BITS=${impl_int_bits} -D _CONTROLER_FRAC_BITS=${impl_frac_bits} ${simple_switch} --fixedbv --round-to-minus-inf --cegis-control --cegis-statistics --cegis-genetic --cegis-max-size 1 --cegis-show-iterations simplified_noise.c >>${log_file} 2>&1
    if [ $? -eq 0 ]; then
     solution_decl=`grep -Pzo '  controller=.*(\n.*?)*?} \(' ${log_file}`
     solution_a=$(extract_array "${solution_decl}" 'den' "${struct_a_size}")
@@ -130,9 +146,13 @@ benchmark='/users/pkesseli/documents/control-synthesis/benchmarks/example-a/exam
 
  else
 
-  timeout_time=14400s
-  kill_time=14460s
-  log_file="${benchmark%.c}_q.log"
+  working_directory="${working_directory_base}/range"
+  log_file="${benchmark%.c}_range.log"
+  timeout_time=28800s
+  kill_time=28860s
+  $(setup_benchmark ${working_directory})
+  cd ${working_directory}
+
   echo ${benchmark} | tee ${log_file}
   echo "CBMC" | tee -a ${log_file}
   while [ $((integer_width+radix_width)) -lt ${max_length} ]; do
