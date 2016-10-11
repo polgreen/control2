@@ -11,6 +11,7 @@
 #define __OPENLOOP_DEN_SIZE (__CONTROLLER_DEN_SIZE+__PLANT_DEN_SIZE-1)
 #define __OPENLOOP_NUM_SIZE (__CONTROLLER_NUM_SIZE+__PLANT_NUM_SIZE-1)
 
+#define __NORMALIZED
 #ifdef __CPROVER
 #ifndef _FIXEDBV
   #ifndef _EXPONENT_WIDTH
@@ -20,6 +21,7 @@
   #define _FRACTION_WIDTH 11
   #endif
   typedef __CPROVER_floatbv[_EXPONENT_WIDTH][_FRACTION_WIDTH] control_floatt;
+  control_floatt _imp_max=(((1 <<(_EXPONENT_WIDTH-1))-1)<<1)+1;
 #else
   #ifndef _CONTROL_FLOAT_WIDTH
     #define _CONTROL_FLOAT_WIDTH 16
@@ -28,6 +30,7 @@
     #define _CONTORL_RADIX_WIDTH _CONTROL_FLOAT_WIDTH / 2
   #endif
   typedef __CPROVER_fixedbv[_CONTROL_FLOAT_WIDTH][_CONTORL_RADIX_WIDTH] control_floatt;
+  control_floatt _imp_max=(((1 <<_(_CONTROL_FLOAT_WIDTH-1))-1)<<1)+1;
 #endif
   typedef unsigned char cnttype;
 #else
@@ -59,6 +62,9 @@ signed long int _fxp_max;
 signed long int _fxp_min;
 signed long int _fxp_one;
 control_floatt _dbl_lsb;
+control_floatt _poly_error;
+control_floatt _sum_error;
+control_floatt _plant_norm;
 
 struct anonymous0 impl={ .int_bits=_CONTROLER_INT_BITS, .frac_bits=_CONTROLER_FRAC_BITS};
 
@@ -95,6 +101,13 @@ void __DSVERIFIER_assert(_Bool expression)
 void initialization()
 {
   __DSVERIFIER_assert(impl.int_bits+impl.frac_bits < 32);
+#ifdef __NORMALIZED
+  _fxp_one = 1 << (impl.frac_bits + impl.int_bits);
+  _dbl_lsb=1.0/(1 << impl.frac_bits + impl.int_bits);
+  _fxp_min = -(1 << (impl.frac_bits + impl.int_bits -1));
+  _fxp_max = (1 << (impl.frac_bits + impl.int_bits-1))-1;
+  _dbl_max = (1.0-_dbl_lsb);//Fractional part
+#else
   if(impl.frac_bits >= 31)
     _fxp_one = 2147483647l;
   else
@@ -104,7 +117,18 @@ void initialization()
   _fxp_max = (1 << (impl.frac_bits + impl.int_bits-1))-1;
   _dbl_max = (1 << (impl.int_bits-1))-1;//Integer part
   _dbl_max += (1.0-_dbl_lsb);//Fractional part
+#endif
   _dbl_min = -_dbl_max;
+  if (SOLUTION_DEN_SIZE>SOLUTION_NUM_SIZE)
+  {  
+    _poly_error=2*_dbl_lsb*SOLUTION_DEN_SIZE;
+    _sum_error=2*_poly_error*SOLUTION_DEN_SIZE;
+  }
+  else
+  {
+    _poly_error=2*_dbl_lsb*SOLUTION_NUM_SIZE;
+    _sum_error=2*_poly_error*SOLUTION_DEN_SIZE;
+  }
 }
 
 int validation()
@@ -120,17 +144,30 @@ int validation()
     else if (-plant.den[i]>max) max=-plant.den[i];
   }
   unsigned int max_int=max;
+#ifdef __NORMALIZED
+  cnttype mult_bits=1;
+#else
   cnttype mult_bits=12;
+#endif
   while (max_int>0) 
   {
     mult_bits++;
     max_int>>=1;
   }
+  _plant_norm=1<<mult_bits;
 #ifdef __CPROVER 
   #ifndef _FIXEDBV
-    __DSVERIFIER_assert((impl.frac_bits<=_FRACTION_WIDTH) && (impl.int_bits+mult_bits<_EXPONENT_WIDTH));
+    #ifdef __NORMALIZED
+      __DSVERIFIER_assert((impl.int_bits+impl.frac_bits<=_FRACTION_WIDTH) && (mult_bits<_EXPONENT_WIDTH));
+    #else
+      __DSVERIFIER_assert((impl.frac_bits<=_FRACTION_WIDTH) && (impl.int_bits+mult_bits<_EXPONENT_WIDTH));
+    #endif
   #else
-    __DSVERIFIER_assert((impl.frac_bits<=_CONTORL_RADIX_WIDTH) && (impl.int_bits+mult_bits<_CONTROL_FLOAT_WIDTH));
+    #ifdef __NORMALIZED
+      __DSVERIFIER_assert((impl.int_bits+impl.frac_bits<=_CONTORL_RADIX_WIDTH) && (mult_bits<_CONTROL_FLOAT_WIDTH));
+    #else
+      __DSVERIFIER_assert((impl.frac_bits<=_CONTORL_RADIX_WIDTH) && (impl.int_bits+mult_bits<_CONTROL_FLOAT_WIDTH));
+    #endif
   #endif
   __DSVERIFIER_assert((__CONTROLLER_DEN_SIZE == controller.den_size) && (__CONTROLLER_NUM_SIZE == controller.num_size) && (plant.num_size != 0) && (impl.int_bits != 0));
 #else
@@ -155,7 +192,7 @@ int validation()
     __DSVERIFIER_assume(value <= _dbl_max);
     __DSVERIFIER_assume(value >= _dbl_min);
 #else
-	if (value > _dbl_max) return 10;
+    if (value > _dbl_max) return 10;
     if (value < _dbl_min) return 10;
 #endif
   }
@@ -201,11 +238,17 @@ void call_closedloop_verification_task()
       plant_cbmc.num[i] = nondet_double();
       __DSVERIFIER_assume(plant_cbmc.num[i] >= min);
       __DSVERIFIER_assume(plant_cbmc.num[i] <= max);
+#ifdef __NORMALIZED
+      plant_cbmc.num[i]/=_plant_norm;
+#endif
     }
     else
 #endif
+#ifdef __NORMALIZED
+      plant_cbmc.num[i] = plant.num[i]/_plant_norm;
+#else
       plant_cbmc.num[i] = plant.num[i];
-  
+#endif  
   plant_cbmc.den_size=plant.den_size;
   for(i = 0; i < plant.den_size; i++)
 #ifdef __CPROVER 
@@ -214,14 +257,21 @@ void call_closedloop_verification_task()
       control_floatt factor=(plant.den[i] * plant.den_uncertainty[i]) / 100.0;
       factor = factor < 0.000000 ? -factor : factor;
       control_floatt min=plant.den[i] -factor;
-	  control_floatt max=plant.den[i] +factor;
+      control_floatt max=plant.den[i] +factor;
       plant_cbmc.den[i] = nondet_double();
       __DSVERIFIER_assume(plant_cbmc.den[i] >= min);
-	  __DSVERIFIER_assume(plant_cbmc.den[i] <= max);
+      __DSVERIFIER_assume(plant_cbmc.den[i] <= max);
+#ifdef __NORMALIZED
+      plant_cbmc.den[i]/=_plant_norm;
+#endif
     }
     else
 #endif
+#ifdef __NORMALIZED
+      plant_cbmc.den[i] = plant.den[i]/_plant_norm;
+#else
       plant_cbmc.den[i] = plant.den[i];
+#endif  
 }
 
 /*signed int check_stability_closedloop(control_floatt *a, cnttype n)
@@ -305,10 +355,10 @@ signed int check_stability_closedloop(control_floatt *a, cnttype n)
   control_floatt sum=0.0;
   for(i = 0 ; i < n; i++) { sum += a[i]; }
 #ifdef __CPROVER
-  __DSVERIFIER_assert(a[0] > 0.0);
-  __DSVERIFIER_assert(sum > 0.0);
-  __DSVERIFIER_assert(a[n-1] < a[0]);
-  __DSVERIFIER_assert(-a[n-1] < a[0]);
+  __DSVERIFIER_assert(a[0] > _poly_error);
+  __DSVERIFIER_assert(sum > _sum_error);
+  __DSVERIFIER_assert(a[n-1]+_poly_error < a[0]);
+  __DSVERIFIER_assert(-a[n-1]+_poly_error < a[0]);
 #else
   printf("m[0]=%f>0\n", a[0]);
   //std::cout << "m[0]=" << a[0] << ">0" << std::endl;
@@ -316,10 +366,10 @@ signed int check_stability_closedloop(control_floatt *a, cnttype n)
   //std::cout << "fabs(m[" << n-1 << "]=" << a[n-1] << ")<" << "m[0]=" << a[0] << std::endl;
   printf("sum=%f>0\n", sum);
   //std::cout << "sum=" << sum << ">0" << std::endl;
-  if (!(a[0] > 0.0)) return 0;
-  if (!(sum > 0.0)) return 0;
-  if (!(a[n - 1] < a[0])) return 0;
-  if (!(-a[n - 1] < a[0])) return 0;
+  if (!(a[0] > _poly_error)) return 0;
+  if (!(sum > _sum_error)) return 0;
+  if (!(a[n - 1]+_poly_error < a[0])) return 0;
+  if (!(-a[n - 1]+_poly_error < a[0])) return 0;
 #endif
   sum = 0.0;
   for(i = 0 ; i < n; i++)
@@ -329,30 +379,42 @@ signed int check_stability_closedloop(control_floatt *a, cnttype n)
   }
   if ((n&1)==0) sum=-sum;
 #ifdef __CPROVER
-  __DSVERIFIER_assert(sum > 0.0);
-  if (a[n-1]<0) __DSVERIFIER_assert(-a[n-1] < a[0]);
-  else __DSVERIFIER_assert(a[n-1] < a[0]);
+  __DSVERIFIER_assert(sum > _sum_error);
 #else
   printf("sumEven-sumOdd=%f>0\n", sum);
   //std::cout << "sumEven-sumOdd=" << sum << ">0" << std::endl;
-  if (!(sum > 0)) return 0;
+  if (!(sum > _sum_error)) return 0;
 #endif
   for(j=0;j<columns;j++) m[0][j]=a[j];
   columns--;
+  control_floatt error=_poly_error;
+  control_floatt mag=1;
   for(i=1;i<n;i++)
   {
     //denominator is always >0
+    if (m[i-1][0]<0) __DSVERIFIER_assert(m[i-1][0]<-(mag*mag/_imp_max+_poly_error));
+    else             __DSVERIFIER_assert(m[i-1][0]> (mag*mag/_imp_max+_poly_error));//check for overflow. 
     control_floatt factor=m[i-1][columns] / m[i-1][0];
+    if (factor>0) 
+    {
+      _poly_error*=1+factor;//Unsound! does not consider the error in factor (a+e/b-e = a/(b-e) +e/(b-e))
+      mag+=mag*factor;
+    }
+    else
+    {
+      _poly_error*=1-factor;
+      mag-=mag*factor;
+    }
     for(j=0;j<columns;j++)
     {
       m[i][j] = m[i - 1][j] - factor * m[i - 1][columns-j];
     }
 #ifdef __CPROVER
-      __DSVERIFIER_assert(m[i][0l] >= 0.0);
+      __DSVERIFIER_assert(m[i][0l] >= _poly_error);
 #else
   printf("m[%d]=%f>0\n", i, m[i][0]);
 	//std::cout << "m[" << i << "]=" << m[i][0] << ">0" << std::endl;
-    if (!(m[i][0] >= 0.0)) return 0;
+    if (!(m[i][0] >= _poly_error)) return 0;
 #endif
     columns--;
   }
