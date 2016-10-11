@@ -11,6 +11,7 @@
 #define __OPENLOOP_DEN_SIZE (__CONTROLLER_DEN_SIZE+__PLANT_DEN_SIZE-1)
 #define __OPENLOOP_NUM_SIZE (__CONTROLLER_NUM_SIZE+__PLANT_NUM_SIZE-1)
 
+#define __NORMALIZED
 #ifdef __CPROVER
 #ifndef _FIXEDBV
   #ifndef _EXPONENT_WIDTH
@@ -20,6 +21,7 @@
   #define _FRACTION_WIDTH 11
   #endif
   typedef __CPROVER_floatbv[_EXPONENT_WIDTH][_FRACTION_WIDTH] control_floatt;
+  control_floatt _imp_max=(((1 <<(_EXPONENT_WIDTH-1))-1)<<1)+1;
 #else
   #ifndef _CONTROL_FLOAT_WIDTH
     #define _CONTROL_FLOAT_WIDTH 16
@@ -28,6 +30,7 @@
     #define _CONTORL_RADIX_WIDTH _CONTROL_FLOAT_WIDTH / 2
   #endif
   typedef __CPROVER_fixedbv[_CONTROL_FLOAT_WIDTH][_CONTORL_RADIX_WIDTH] control_floatt;
+  control_floatt _imp_max=(((1 <<_(_CONTROL_FLOAT_WIDTH-1))-1)<<1)+1;
 #endif
   typedef unsigned char cnttype;
 #else
@@ -68,6 +71,8 @@ control_floatt _dbl_min;
 signed long int _fxp_max;
 signed long int _fxp_min;
 signed long int _fxp_one;
+control_floatt _dbl_lsb;
+control_floatt _plant_norm;
 
 struct anonymous0 impl={ .int_bits=_CONTROLER_INT_BITS, .frac_bits=_CONTROLER_FRAC_BITS};
 
@@ -105,11 +110,20 @@ void __DSVERIFIER_assert(_Bool expression)
 void initialization()
 {
   __DSVERIFIER_assume(impl.int_bits+impl.frac_bits < 32);
+#ifdef __NORMALIZED
+  _fxp_one = 1 << (impl.frac_bits + impl.int_bits);
+  _dbl_lsb=1.0/(1 << impl.frac_bits + impl.int_bits);
+  _fxp_min = -(1 << (impl.frac_bits + impl.int_bits -1));
+  _fxp_max = (1 << (impl.frac_bits + impl.int_bits-1))-1;
+  _dbl_max = (1.0-_dbl_lsb);//Fractional part
+#else
   _fxp_one = (1 << impl.frac_bits);
+  _dbl_lsb=1.0/(1 << impl.frac_bits);
   _fxp_min = -(1 << (impl.frac_bits + impl.int_bits -1));
   _fxp_max = (1 << (impl.frac_bits + impl.int_bits-1))-1;
   _dbl_max = (1 << (impl.int_bits-1))-1;//Integer part
-  _dbl_max += (_fxp_one-1)/(1 << impl.frac_bits);//Fractional part
+  _dbl_max += (1.0-_dbl_lsb);//Fractional part
+#endif
   _dbl_min = -_dbl_max;
 }
 
@@ -126,17 +140,30 @@ int validation()
     else if (-plant.den[i]>max) max=-plant.den[i];
   }
   unsigned int max_int=max;
+#ifdef __NORMALIZED
   cnttype mult_bits=1;
+#else
+  cnttype mult_bits=12;
+#endif
   while (max_int>0) 
   {
     mult_bits++;
     max_int>>=1;
   }
+  _plant_norm=1<<mult_bits;
 #ifdef __CPROVER 
   #ifndef _FIXEDBV
-    __DSVERIFIER_assume((impl.frac_bits<=_FRACTION_WIDTH) && (impl.int_bits+mult_bits<_EXPONENT_WIDTH));
+    #ifdef __NORMALIZED
+      __DSVERIFIER_assume((impl.int_bits+impl.frac_bits<=_FRACTION_WIDTH) && (mult_bits<_EXPONENT_WIDTH));
+    #else
+      __DSVERIFIER_assume((impl.frac_bits<=_FRACTION_WIDTH) && (impl.int_bits+mult_bits<_EXPONENT_WIDTH));
+    #endif
   #else
-    __DSVERIFIER_assume((impl.frac_bits<=_CONTORL_RADIX_WIDTH) && (impl.int_bits+mult_bits<_CONTROL_FLOAT_WIDTH));
+    #ifdef __NORMALIZED
+      __DSVERIFIER_assume((impl.int_bits+impl.frac_bits<=_CONTORL_RADIX_WIDTH) && (mult_bits<_CONTROL_FLOAT_WIDTH));
+    #else
+      __DSVERIFIER_assume((impl.frac_bits<=_CONTORL_RADIX_WIDTH) && (impl.int_bits+mult_bits<_CONTROL_FLOAT_WIDTH));
+    #endif
   #endif
   __DSVERIFIER_assume((__CONTROLLER_DEN_SIZE == controller.den_size) && (__CONTROLLER_NUM_SIZE == controller.num_size) && (plant.num_size != 0) && (impl.int_bits != 0));
 #else
@@ -160,7 +187,7 @@ int validation()
     __DSVERIFIER_assume(value <= _dbl_max);
     __DSVERIFIER_assume(value >= _dbl_min);
 #else
-	if (value > _dbl_max) return 10;
+    if (value > _dbl_max) return 10;
     if (value < _dbl_min) return 10;
 #endif
   }
@@ -185,18 +212,34 @@ void call_closedloop_verification_task()
   plant_cbmc.num_size=plant.num_size;
   for(i = 0;i < plant.num_size; i++)
   {
+#ifdef __NORMALIZED
+    control_floatt value=plant.num[i]/_plant_norm
+    control_floatt factor=(value * plant.num_uncertainty[i]) / 100.0;
+    factor = (factor < 0.0) ? -factor : factor;
+    plant_cbmc.numBot[i]=value-factor;
+    plant_cbmc.numTop[i]=-value-factor;
+#else
     control_floatt factor=(plant.num[i] * plant.num_uncertainty[i]) / 100.0;
     factor = (factor < 0.0) ? -factor : factor;
     plant_cbmc.numBot[i]=plant.num[i]-factor;
-    plant_cbmc.numTop[i]=-plant.num[i]-factor;  
+    plant_cbmc.numTop[i]=-plant.num[i]-factor;
+#endif
   }
   plant_cbmc.den_size=plant.den_size;
   for(i = 0;i < plant.den_size; i++)
   {
+#ifdef __NORMALIZED
+    control_floatt value=plant.den[i]/_plant_norm
+    control_floatt factor=(value * plant.den_uncertainty[i]) / 100.0;
+    factor = (factor < 0.0) ? -factor : factor;
+    plant_cbmc.denBot[i]=value-factor;
+    plant_cbmc.denTop[i]=-value-factor;  
+#else
     control_floatt factor=(plant.den[i] * plant.den_uncertainty[i]) / 100.0;
     factor = (factor < 0.0) ? -factor : factor;
     plant_cbmc.denBot[i]=plant.den[i]-factor;
     plant_cbmc.denTop[i]=-plant.den[i]-factor;  
+#endif
   }
 }
 
