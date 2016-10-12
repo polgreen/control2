@@ -431,7 +431,7 @@ The vector of parametric uncertainties  $\Delta{p}$ for $G(z)$ is defined by:
 \vec{a}
 \end{bmatrix}
 \end{equation}
-
+\red{[where is this new variable used later?]}
 
 
 A typical hybrid system \red{[clarify the adjective ``hybrid'']} is shown in Figure~\ref{fig:sampledsystem}, where the DAC and ADC converters introduce quantisation noises $\nu_{1}(z)$ and $\nu_{2}(z)$, $G(s)$ is the continuous-time plant model with parametric additive uncertainty $\Delta G_{P}(s)$ 
@@ -847,6 +847,8 @@ Finally, the quantisation noise may be considered a energy-bounded signal (Lemma
 \label{fixedpoint_verification}
 %------------------------------------
 
+\red{[relate this discussion with the FWL one (and related notations) above.]}
+
 Let $\tilde C(z)$ and $\tilde G(z)$ be the transfer functions represented
 using Fixed-Point bit vectors with integer size $I_b$ and fractional
 size $F_b$, whose domain is $\mathbb{R}\langle I_b,F_b \rangle \supseteq \mathbb{R}\langle I,F \rangle$.
@@ -887,7 +889,7 @@ nondeterministic, the set of possible polynomial coefficients of $\tilde G(z)$ i
 denoted by $\mathfrak{G}(z)$.
 
 Two approaches have been taken to synthesise a stabe controller based on this model.
-The first uses a nondeterministic plant selected from $\mathfrak{G}(z)$ where the expected error of the bit vector calculations is upper bound at the source by selecting a conservative $\Delta{G}_b(z)$ that encompasses its propagation over a number of operations. The verification phase produces a counterexample if some instance of $\mathfrak{G}(z)$ does not verify the properties and the CEGIS loop iteratively looks for a new controller that verifies the supplied counterexamples.
+The first uses a nondeterministic plant selected from $\mathfrak{G}(z)$ where the expected error of the bit vector calculations is upper bound at the source by selecting a conservative $\Delta{G}_b(z)$ that encompasses \red{[how? is this always possible?]} its propagation over a number of operations. The verification phase produces a counterexample if some instance of $\mathfrak{G}(z)$ does not verify the properties and the CEGIS loop iteratively looks for a new controller that verifies the supplied counterexamples.
 Although it is fast, the conservative error calculation can be restrictive to a small number of benchmarks.
 
 The second approch uses interval arithmetic, representing the coefficients $[{c}_i-\Delta_p{c}_i-\Delta_b{c}_i\ ,\ {c}_i+\Delta_p{c}_i-\Delta_b{c}_i+(2^{-F_b})]$ 
