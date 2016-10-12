@@ -990,10 +990,8 @@ expression:
 %
 \begin{equation}
 \label{Eq:running-example-controller-quantized}
-\resizebox{0.5\textwidth}{!}{
-$C_{q}\left(z\right) {:=} \frac{2.7199859619140625z^2{-}4.1529998779296875z
-{+}1.89599609375}{z^2{-}1.843994140625z+0.8495941162109375},$
-}
+C_{q}\left(z\right) {:=} \frac{2.719986z^2{-}4.153000z
+{+}1.895996}{z^2{-}1.843994z+0.849594},
 \end{equation} 
 %
 which makes the system unstable in closed-loop using fixed-point arithmetic
@@ -1677,7 +1675,8 @@ system stable for all the uncertainties accumulated in {\sc inputs}.
 \paragraph{Program synthesis for the running example}
 We will illustrate our synthesis approach on the running example 
 in Sec.~\ref{sec:running-ex}.
-We start with the candidate solution given below, which has all coefficients 0.
+We start with the candidate solution given below at $I_b=16,F_b=24$,
+which has all coefficients 0.
 Note that the digital controller is designed with typical control system
 techniques \cite{Kuo:2002:ACS:579453,Ogata:1987:DCS:26170}.
 %\red{[Be more explicit, write out spurious candidate solution with zero coefficients. KISS - you don't want to lose the control audience here.]}.
@@ -1693,8 +1692,8 @@ $$
 In the first {\sc verify} phase we obtain the following counterexample:
 $$
 \begin{array}{ll}
-\Delta N_G(z) = 0.02634525299072265625\\
-\Delta D_G(z) = 0.9979267120361328125z-0.99768829345703125
+\Delta N_G(z) = 0.026506\\
+\Delta D_G(z) = 1.000610z+1.002838
 \end{array}
 $$
 
@@ -1702,32 +1701,35 @@ We add this counterexample to {\sc inputs} and initiate the {\sc synthesise} pha
 %\red{[ How is the order of the candidate solution chosen here?]}
 $$
 \begin{array}{ll}
-N_C(z) {=} 4.00888156890869140625z^2{-}0.00041961669921875z\\
-\qquad\qquad -0.000213623046875\\
-D_C(z) {=} -0.003753662109375z^2{+}7.37355804443359375z \\
-\qquad\qquad -7.2847900390625\\
+N_C(z) {=} 12.402664z^2{-}11.439667z{+}0.596756\\
+D_C(z) {=} 4.003906z^2{-}0.287949z{+}0.015625\\
 \end{array}
 $$
 
 In the second {\sc verify} phase, we check whether the current candidate
-solution above is the final solution. It is not and we get a new counterexample:
+solution above is the final solution. It is not and the verifier signals
+that it is due to lack of precision. We thus increase our precision to
+$I_b=20,F_b=28$.
+%
+We stay in the {\sc verify} phase and receive a new counterexample at
+higher precision:
+%
 $$
 \begin{array}{ll}
-\Delta N_G(z) = 0.02644824981689453125\\
-\Delta D_G(z) {=} 1.00053310394287109375z{-}1.0014629364013671875
+\Delta N_G(z) {=} 0.026314\\
+\Delta D_G(z) {=} 0.999024z{-}1.004785
 \end{array}
 $$
 %\blue{[Nice, now I'm in the groove. Next unfolds well.] }
-After adding this new counterexample to the set of {\sc inputs}, in the 
-next {\sc synthesise} phase, we get a new candidate solution that holds
-for both uncertainties in {\sc Inputs}:
+Since previous counterexamples were attained at lower precision, we 
+remove them from the counterexample set. In the next {\sc synthesise}
+phase, we get a new candidate solution that holds for the newly
+inserted counterexample:
 
 $$
 \begin{array}{ll}
-N_C(z) {=} 7.515781402587890625z^2{-}4.385616302490234375z\\
-\qquad\qquad +4.142093658447265625\\
-D_C(z) {=} -3.52398681640625z^2{-}1.530254364013671875z \\
-\qquad\qquad +7.58094024658203125\\
+N_C(z) {=} 11.035202z^2{+}5.846100z{+}4.901855\\
+D_C(z) {=} 1.097901z^2{+}0.063110z{+}0.128357\\
 \end{array}
 $$
 
