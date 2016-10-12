@@ -1540,10 +1540,9 @@ control systems.
 %% (Be cognisant that control audience might be unfamiliar with the cegis architecture.) ]}
 % 
 The input specification provided to the program synthesiser is of the
-form $\exists \vec{P} . \forall \vec{x} \in \text{\sc inputs}
-. \sigma(\vec{x}, \vec{P})$ where $\vec{P}$ ranges over functions,
+form $\exists \vec{P} . \forall \vec{x}. \sigma(\vec{x}, \vec{P})$ where $\vec{P}$ ranges over functions,
 $\vec{x}$ ranges over ground terms and $\sigma$ is a quantifier-free
-formula.  We interpret the ground terms over some finite domain
+formula.  We interpret the ground terms over some domain
 $\mathcal{D}$.
 
 The design of our synthesiser is given in Fig.~\ref{fig:CEGIS} and
@@ -1552,27 +1551,37 @@ interact via a finite set of test vectors {\sc inputs} that is updated
 incrementally.  Given the aforementioned specification $\sigma$, the
 {\sc synth} procedure tries to find an existential witness $\vec{P}$
 satisfying the specification $\sigma(\vec{x}, \vec{P})$ for all
-$\vec{x}$.
+$\vec{x}$ in {\sc inputs} (as opposed to all $\vec{x} \in \mathcal{D}$).
 %
 If {\sc synthesise} succeeds in finding an witness $\vec{P}$, this
-witness is a candidate solution to the full synthesis formula.  We
-pass this candidate solution to {\sc verify}, which determines whether
-it does satisfy the specification on all inputs by checking
-satisfiability of the following verification formula:
+witness is a candidate solution to the full synthesis formula. 
+We pass this candidate solution to {\sc verify}, which 
+checks whether it is a full solution.
+%determines whether
+%it does satisfy the specification on all inputs by checking
+%satisfiability of the following verification formula:
 %
-$\exists \vec{x} . \lnot \sigma(\vec{x}, \vec{P})$
+%$\exists \vec{x} . \lnot \sigma(\vec{x}, \vec{P})$
+%If this formula is unsatisfiable, 
+%% the candidate solution is in fact a 
+%% full solution.
+If this is the case, then
+the algorithm terminates.
+Otherwise, additional information is provided to the {\sc synthesise}
+phase (e.g. a new counterexample that is added to the {\sc inputs} set)
+and the loop iterates again.
 
-If this formula is unsatisfiable, the candidate solution is in fact a
-solution to the synthesis formula and so the algorithm terminates.
-Otherwise, the witness $\vec{x}$ denote an input on which the
-candidate solution fails to meet the specification.  Thus, $\vec{x}$ is
-added to the {\sc inputs} set, and the loop iterates again.  It is
-worth noting that each iteration of the loop adds a new input to the
-finite set $\text{\sc inputs}$ being used for synthesis.  Given that
-the full set of inputs $\mathcal{D}$
-%\blue{[which by now should have a name, as suggested to be introduced above]} 
-is finite, this means that the refinement loop
-can only iterate a finite number of times.
+%% the witness $\vec{x}$ denote an input on which the
+%% candidate solution fails to meet the specification.  Thus, $\vec{x}$ is
+%% added to the {\sc inputs} set, and the loop iterates again.  
+
+%% It is
+%% worth noting that each iteration of the loop adds a new input to the
+%% finite set $\text{\sc inputs}$ being used for synthesis.  Given that
+%% the full set of inputs $\mathcal{D}$
+%% %\blue{[which by now should have a name, as suggested to be introduced above]} 
+%% is finite, this means that the refinement loop
+%% can only iterate a finite number of times.
 
 \paragraph{Synthesis elements specific to control systems}
 
