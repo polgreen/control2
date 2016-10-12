@@ -886,12 +886,11 @@ $\Delta{G}(z)=\Delta{G}_P(z)+\Delta{G}_b(z)$.  Since this value is
 nondeterministic, the set of possible polynomial coefficients of $\tilde G(z)$ is
 denoted by $\mathfrak{G}(z)$.
 
-Two approaches have been taken to synthesise a stabe controller based on this model.
-The first uses a nondeterministic plant selected from $\mathfrak{G}(z)$ where the expected error of the bit vector calculations is upper bound at the source by selecting a conservative $\Delta{G}_b(z)$ that encompasses its propagation over a number of operations. The verification phase produces a counterexample if some instance of $\mathfrak{G}(z)$ does not verify the properties and the CEGIS loop iteratively looks for a new controller that verifies the supplied counterexamples.
-Although it is fast, the conservative error calculation can be restrictive to a small number of benchmarks.
-
-The second approch uses interval arithmetic, representing the coefficients $[{c}_i-\Delta_p{c}_i-\Delta_b{c}_i\ ,\ {c}_i+\Delta_p{c}_i-\Delta_b{c}_i+(2^{-F_b})]$ 
+Two approaches have been taken to synthesise a stable controller based on this model.
+The first uses interval arithmetic, representing the coefficients $[{c}_i-\Delta_p{c}_i-\Delta_b{c}_i\ ,\ {c}_i+\Delta_p{c}_i-\Delta_b{c}_i+(2^{-F_b})]$ 
 and rounding operations outwards during the process. This results in a tighter calculation of the error at the cost of performance.
+
+The second approach uses a nondeterministic plant selected from $\mathfrak{G}(z)$ where the expected error of the bit vector calculations is assumed to be within the expected bounds and verified after synthesis using the interval version of the program. The first verification phase produces a counterexample if some instance of $\mathfrak{G}(z)$ does not verify the properties and the CEGIS loop iteratively looks for a new controller that verifies the supplied counterexamples. The second phase verifies the propagation of the error in the fixed point calculations. If the second phase fails verification, we increase the precision of the analyser and feed the CEGIS loop again to find a sound solution. The resulting increase in speed of this approach over the former, which is of several orders of magnitude, vouches for the use of CEGIS in most of our benchmarks.
 %------------------------------------
 \subsection{DSVerifier Verification Flow}
 \label{verification-flow}
