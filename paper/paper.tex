@@ -772,8 +772,7 @@ A discrete-time linear system is said to be Bounded-Input and Bounded-Output (BI
 
 \begin{mylemma}{\cite{Bessa16,fadali}}
 \label{lemma:eq_int_stab} 
-A feedback hybrid control system as shown in Fig.~\ref{fig:sampledsystem}, with a FWL implementation of the digital controller $\hat{C}(z) = \frac{FWL[N_{C}(z)]}{FWL[D_{C}(z)]}$ and uncertain discrete model of the plant $\hat{G}(z)=G(z)+\Delta G_{P}(z)=\frac{\hat{N}_{G}(z)}{\hat{D}_{G}(z)}$, is BIBO-stable if and only if: 
-\red{[this statement does not seem to encompass the quantisation effects on the plant?]} 
+A feedback hybrid control system as shown in Fig.~\ref{fig:sampledsystem}, with a FWL implementation of the digital controller $\hat{C}(z) = \frac{FWL[N_{C}(z)]}{FWL[D_{C}(z)]}$ and uncertain discrete model of the plant $\hat{G}(z)=G(z)+\Delta G_{P}(z)+\Delta G_{Q}(z)=\frac{\hat{N}_{G}(z)}{\hat{D}_{G}(z)}$, is BIBO-stable if and only if: 
 \begin{itemize}
 \item  the roots of characteristic polynomial $S(z)$ are inside the open unit circle, where $S(z)$ is:
 \begin{equation}
@@ -788,15 +787,14 @@ The Lemma~\ref{lemma:eq_int_stab} provides the necessary conditions for synthesi
 
 The quantisation noise is indeed bounded, since the following assumption~\ref{whitenoise} and the Lemmas~\ref{lemma:variance} and~\ref{lemma:boundednoise} are true.
 
-\red{[first: lemmae precede theorems. \\
-second: bounded is not energy bounded. ]}
+\red{[first: lemmae precede theorems. ]}
 
 %
 \begin{myassumption}
 \label{whitenoise}
 %
 The quantisation noises $\nu_{1}$ (from the $Q1$) and $\nu_{2}$ (from the
-$Q2$) are energy bounded uncorrelated white noises.
+$Q2$) are bounded uncorrelated white noises.
 % 
 \end{myassumption}
 
