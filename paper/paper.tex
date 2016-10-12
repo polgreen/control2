@@ -143,11 +143,11 @@ classically studied in digital control literature.
 %
 In this study, we plan to provide a principled approach to extend this
 literature in a number of directions: we are interested in quantitative
-tasks; we focus on automated correct-by-design synthesis algorithms, as
+tasks; we focus on automated correct-by-construction synthesis algorithms, as
 opposed to verification objectives; and we encompass the complete range of
 approximations, related to time discretisation, quantisation effects, and
 finite-precision representations (with related rounding errors).  To this
-end, we propose a CEGIS-based solution that uses inductive invariant
+end, we propose a CEGIS-based solution that uses inductive 
 synthesis in conjunction with a digital verification algorithm to find a
 parametric solution for a digital controller given a continuous plant
 specification.
@@ -1758,7 +1758,8 @@ $I_b=20,F_b=28$.
 %
 We stay in the {\sc verify} phase and receive a new counterexample at
 higher precision:
-\cdsay{Pascal, this sounds confusing. if you want to increase precision on-the-fly, 
+\cdsay{Pascal, this sounds confusing. if you want to increase precision on-the-fly, i.e. 
+not going back to the synthesise phase, 
 then this illustration doesn't follow the general diagram in Fig.5. 
 We need to decide which direction we keep.}
 %
