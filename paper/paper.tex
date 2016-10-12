@@ -706,17 +706,20 @@ Since the controller is implemented using a FWL, $C(z)$ also suffers disturbance
 
 
 Let $\hat{C}(z)$ be the transfer function of the digital controller represented using this FWL with integer size $I$ and fractional
-size $F$.  We shall denote this domain as $\mathbb{R}\langle I,F \rangle$
+size $F$.  We shall denote the FWL domain of coefficients as $\mathbb{R}\langle I,F \rangle$
 %Since the controller is implemented in the $\mathbb{R}\langle I,F \rangle$ 
 %domain, {\it i.e.} a Fixed-Point Finite Word Length with integer size $I$ and fractional
 %size $F$, we shall denote this domain as $\mathbb{R}\langle I,F \rangle$ 
-and assume that there exists a function $FWL[\cdot]:\mathbb{R}^{n}\rightarrow \mathbb{R}^{n}\langle I,F \rangle$, which applies the FWL effects to a polynomial \red{[explain index n! why do you need to work on a Euclidean domain?]}. Thus the perturbed controller model $\hat{C}(z)$ may be computed from the original model $C(z)=\frac{N_{C}(z)}{D_{C}(z)}$ using the following expression:
+and assume that there exists a function $FWL[\cdot]:\mathcal{P}^{n}\rightarrow \mathcal{P}^{n}\langle I,F \rangle$, which applies the FWL effects to a polynomial. $\mathcal{P}^{n}$ is the space of polynomials of $n$-th order and $\mathcal{P}^{n}\langle I,F \rangle$ is is the space of polynomials with coefficients in $\mathbb{R}\langle I,F \rangle$.
+%, \red{[explain index n! why do you need to work on a Euclidean domain?]}. 
+Thus the perturbed controller model $\hat{C}(z)$ may be computed from the original model $C(z)=\frac{N_{C}(z)}{D_{C}(z)}$ using the following expression:
 \begin{equation}
 \hat{C}(z)=\frac{FWL[N_{C}(z)]}{FWL[D_{C}(z)]}.
 \end{equation}
 In the case of a synthesised controller, because the synthesis is performed using FWL, $\hat{C}(z) \equiv C(z)$. 
 
 \red{[what is the relationship between FWL effects over C, and the parametric uncertainty Delta Gp over the plant?]} 
+\blue{[IB: There is no relationship. We must separate that content in another section?]}
 
 %\textcolor{blue}{[IB: And I propose to exchange the remaining paragraphs by the previous blue]}
 %
@@ -750,26 +753,6 @@ H_{2}=\frac{\hat{G}(z)}{1+\hat{C}(z)\hat{G}(z)},
 
 A discrete-time linear system is said to be Bounded-Input and Bounded-Output (BIBO) stable if and only if every pole of its transfer function lies inside the unit circle. Analyzing the~\eqref{eq:outputfunctions} and based on assumption~\ref{assumption:cont_and_plant}, the following lemma states necessary conditions for BIBO stability of closed-loop system in figure~\ref{fig:sampledsystem}, since the the exogenous signals $R(z)$, $\nu_{1}$, and $\nu_{2}$ are bounded.
 
-\begin{mylemma}{\cite{Bessa16,fadali}}
-\label{lemma:eq_int_stab} 
-A feedback hybrid control system as shown in Fig.~\ref{fig:sampledsystem}, with a FWL implementation of the digital controller $\hat{C}(z) = \frac{FWL[N_{C}(z)]}{FWL[D_{C}(z)]}$ and uncertain discrete model of the plant $\hat{G}(z)=G(z)+\Delta G_{P}(z)+\Delta G_{Q}(z)=\frac{\hat{N}_{G}(z)}{\hat{D}_{G}(z)}$, is BIBO-stable if and only if: 
-\begin{itemize}
-\item  the roots of characteristic polynomial $S(z)$ are inside the open unit circle, where $S(z)$ is:
-\begin{equation}
-\label{eq:internal_stab_lemma}
-S(z)=FWL[N_{C}(z)]\hat{N}_{G}(z)+FWL[D_{C}(z)]\hat{D}_{G}(z);
-\end{equation}
-\item the direct loop product $\frac{FWL[N_{C}(z)]}{FWL[D_{C}(z)]}\cdot \frac{\hat{N}_{G}(z)}{\hat{D}_{G}(z)}$ has no pole-zero cancellation on or outside the unit circle.
-\end{itemize}
-\end{mylemma}
-
-The Lemma~\ref{lemma:eq_int_stab} provides the necessary conditions for synthesis of digital controllers able to stabilize closed loop system, considering plant parametric uncertainties ({\it i.e.}, $\Delta G_{P}(z)$), quantisation noises ($\nu_{1}$ and $\nu_{2}$) and FWL effects in digital controllers. Based on it, the model for plant uncertainty due quantisation noise ({\it i.e.}, $\Delta G_{Q}(z)$) may be disregarded if the conditions on Lemma~\ref{lemma:eq_int_stab} are attended and if the quantisation noise is bounded. 
-
-The quantisation noise is indeed bounded, since the following assumption~\ref{whitenoise} and the Lemmas~\ref{lemma:variance} and~\ref{lemma:boundednoise} are true.
-
-\red{[first: lemmae precede theorems. ]}
-
-%
 \begin{myassumption}
 \label{whitenoise}
 %
@@ -806,17 +789,37 @@ R_{\nu\nu}(\tau)=E[\nu(t+\tau)\nu(t)]=\sigma_{Q}^{2}\cdot \delta(\tau),
 \end{equation}
 where $\delta(\tau)$ is the Dirac delta function at delay time $\tau$.
 
-By definition~\cite{poularikas2000transforms}, the power spectral density of  $nu(k)$ is the z-transform of $R_{\nu\nu}(\tau)$, thus
+By definition~\cite{poularikas2000transforms}, the power spectral density of  $\nu(k)$ is the z-transform of $R_{\nu\nu}(\tau)$, thus
 \begin{equation}
-\nu(z)=  \sum\limits_{k=-\infty}^{\infty}{R_{\nu\nu}(k)z^{-k}} = \sigma_{Q}^{2},
+S_{\nu}(z)=  \sum\limits_{k=-\infty}^{\infty}{R_{\nu\nu}(k)z^{-k}} = \sigma_{Q}^{2},
 \end{equation}
 considering the Lemma~\ref{lemma:variance}:
 \begin{equation}
-\nu(z)=  \frac{q^{2}}{12}.
+S_{\nu}(z)=  \frac{q^{2}}{12}.
 \end{equation}
 \end{proof}
 
 Finally, the quantisation noise may be considered a energy-bounded signal (Lemma~\ref{lemma:boundednoise}) and thus $\hat{Y}(z)$ will be bounded and the closed-loop system stable if the conditions in Lemma~\ref{lemma:eq_int_stab} are followed.
+
+
+\begin{mylemma}{\cite{Bessa16,fadali}}
+\label{lemma:eq_int_stab} 
+A feedback hybrid control system as shown in Fig.~\ref{fig:sampledsystem}, with a FWL implementation of the digital controller $\hat{C}(z) = \frac{FWL[N_{C}(z)]}{FWL[D_{C}(z)]}$ and uncertain discrete model of the plant $\hat{G}(z)=G(z)+\Delta G_{P}(z)+\Delta G_{Q}(z)=\frac{\hat{N}_{G}(z)}{\hat{D}_{G}(z)}$, is BIBO-stable if and only if: 
+\begin{itemize}
+\item  the roots of characteristic polynomial $S(z)$ are inside the open unit circle, where $S(z)$ is:
+\begin{equation}
+\label{eq:internal_stab_lemma}
+S(z)=FWL[N_{C}(z)]\hat{N}_{G}(z)+FWL[D_{C}(z)]\hat{D}_{G}(z);
+\end{equation}
+\item the direct loop product $\frac{FWL[N_{C}(z)]}{FWL[D_{C}(z)]}\cdot \frac{\hat{N}_{G}(z)}{\hat{D}_{G}(z)}$ has no pole-zero cancellation on or outside the unit circle.
+\end{itemize}
+\end{mylemma}
+
+The Lemma~\ref{lemma:eq_int_stab} provides the necessary conditions for synthesis of digital controllers able to stabilize closed loop system, considering plant parametric uncertainties ({\it i.e.}, $\Delta G_{P}(z)$), quantisation noises ($\nu_{1}$ and $\nu_{2}$) and FWL effects in digital controllers. Based on it, the model for plant uncertainty due quantisation noise ({\it i.e.}, $\Delta G_{Q}(z)$) may be disregarded if the conditions on Lemma~\ref{lemma:eq_int_stab} are attended and if the quantisation noise is bounded.  The quantisation noise is indeed bounded, since the following assumption~\ref{whitenoise} and the Lemmas~\ref{lemma:variance} and~\ref{lemma:boundednoise} are true.
+
+%\red{[first: lemmae precede theorems. ]}
+
+%
 
 %, thus supporting this assumption.
 
