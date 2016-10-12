@@ -1917,6 +1917,14 @@ the experimental evaluation of the present approach aims to answer two research 
 %---------------------------------
 \subsection{Results}
 \label{experimental-results}
+We outline the runtimes required to synthesise a stable controller for each
+benchmark in Table~\ref{tab:results}. For most benchmarks the conjecture explained
+in section~\ref{fixedpoint_verification} holds and the inductive back-end is able
+to find a stable solution in less than one minute. This is possible if the inductive
+solutions need to be refined with few counterexamples and fixed point precision
+increases. However, some of our benchmarks did not meet these criteria. In these
+cases the interval arithmetic back-end was able to complement the inductive approach
+and synthesise a solution instead, albeit with significantly larger runtimes.
 
 \begin{figure}[H]
 \centering
@@ -1929,12 +1937,18 @@ SpringMassDamper       &          &         &         &
 \end{tabular}
 
 \vspace{0.5em}
-\scriptsize{* = solved with interval backend}
+\scriptsize{* = solved with interval back-end}
 \vspace{0.5em}
 
 \caption{Experimental results. \label{tab:results}}
 \end{figure}
 %---------------------------------
+
+We conclude from these results that the inductive back-end provides excellent performance
+for synthesising stable controllers in the majority of the benchmarks, and can be
+complemented using the interval arithmetic back-end where the inductive conjectures fail
+too frequently. Both back-ends enabled controller synthesis for all benchmarks within
+reasonable time frames.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Related Work}
