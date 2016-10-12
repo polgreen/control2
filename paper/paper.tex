@@ -1534,7 +1534,7 @@ control systems.
 %specialised it for stream refactoring.  
 % adding JST for stream refactoring
 
-\paragraph{General architecture of the program synthesiser}
+\subsection{General architecture of the program synthesiser}
 %
 %% \red{[I would recommend to clarify the domain of definition of $\sigma$, particularly over the set where $x$ ranges over. 
 %% (Be cognisant that control audience might be unfamiliar with the cegis architecture.) ]}
@@ -1542,7 +1542,7 @@ control systems.
 The input specification provided to the program synthesiser is of the
 form $\exists \vec{P} . \forall \vec{x}. \sigma(\vec{x}, \vec{P})$ where $\vec{P}$ ranges over functions,
 $\vec{x}$ ranges over ground terms and $\sigma$ is a quantifier-free
-formula.  We interpret the ground terms over some domain
+formula.  We interpret the ground terms over some finite domain
 $\mathcal{D}$.
 
 The design of our synthesiser is given in Fig.~\ref{fig:CEGIS} and
@@ -1583,8 +1583,9 @@ and the loop iterates again.
 %% is finite, this means that the refinement loop
 %% can only iterate a finite number of times.
 
-\paragraph{Synthesis elements specific to control systems}
+\subsection{Synthesis elements specific to control systems}
 
+\paragraph{Property specification}
 Next, we describe the specific property that we pass to the program
 synthesiser as the specification $\sigma$.  There are two different
 algorithms in DSVerifier that can be used for stability
@@ -1593,7 +1594,9 @@ Schur's decomposition and another one based on Jury's
 criteria~\cite{astrom1997computer}.  Here, we choose Jury's
 method~\cite{astrom1997computer}, due to its efficiency.
 
-We use this method to check the stability in the $z$-domain for the characteristic polynomial $S(z)$ defined in~\eqref{eq:internal_stab_lemma}.
+We use this method to check the stability in the $z$-domain for the
+characteristic polynomial $S(z)$ defined
+in~\eqref{eq:internal_stab_lemma}.
 
 % of the matrix $\left( \begin{array}{c} Y \\ U \end{array}\right)$, where $Y(z)$ is the closed-loop system output and U(z) is the controller output. 
 %% \red{[unclear: what matrix? We need to clarify the relationship
@@ -1678,12 +1681,23 @@ When mapping back to the notation used for describing the general architecture
 of the program synthesiser, the controller $(N_c,D_c)$ denotes $P$ and 
 $(\Delta N_G, \Delta D_G)$ represents $x$. 
 
-\red{[clear elucidation of the mapping between this and the domains used 
-in the general description of the synthesiser]}
+%% \red{[clear elucidation of the mapping between this and the domains used 
+%% in the general description of the synthesiser]}
 
-In the {\sc verify} phase, if the system is unstable for the current candidate solution,
-{\it i.e.}, if $\neg \phi_{stability}$ is satisfiable for $S(z)$, 
-then we obtain a counterexample denoted by 
+\paragraph{The {\sc Synthesise} and {\sc Verify} phases}
+The {\sc synthesise} phase uses a BMC-based verifier to 
+compute a solution ($N_c$,$D_C$). An important remark is that this 
+controller is synthesised in the $\mathbb{R}\langle I,F \rangle$
+domain.  
+\cdsay{integrate sec 2.4 with Dario}
+
+In the {\sc verify} phase, we have a two-step process. 
+First, in the {\sc Uncertainty} sub-phase, assuming the 
+current precision \param{I_b}{F_b},
+we check whether 
+the system is unstable for the current candidate solution,
+{\it i.e.}, if $\neg \phi_{stability}$ is satisfiable for $S(z)$.
+If this is the case, then we obtain a counterexample denoted by 
 values for each coefficients of $\Delta N_{G}(z)$ and $\Delta D_{G}(z)$, 
 %\red{[see my comment above - these quantities pop up too abruptly.]},
 which make the closed-loop system unstable. 
@@ -1693,7 +1707,15 @@ we obtain a candidate solution consisting
 of a controller $D_C$ and $N_C$, which makes the closed-loop 
 system stable for all the uncertainties accumulated in {\sc inputs}.
 
-\paragraph{Program synthesis for the running example}
+If the result of the {\sc Uncertainty} verification is that
+$\neg \phi_{stability}$ is unsatisfiable for $S(z)$, then we pass 
+the current candidate solution to the {\sc Precision} verification sub-phase, 
+which checks the propagation of the error in the fixed-point 
+calculations. If this check returns $false$, then we 
+increase the precision of \param{I_b}{F_b} and re-start the {\sc synthesise} phase
+with an empty {\sc inputs} set.
+
+\subsection{Program synthesis for the running example}
 We will illustrate our synthesis approach on the running example 
 in Sec.~\ref{sec:running-ex}.
 We start with the candidate solution given below at $I_b=16,F_b=24$,
@@ -1825,7 +1847,7 @@ This candidate solution is validated as the final solution by the next
     (aux1) edge (synth.north);
    \path[-]
    (verif2.north) edge node[align=center] {} ([xshift=6.7cm]aux2)
-   ([xshift=6.7cm]aux2) edge node[align=center] {Reset} (aux1);
+   ([xshift=6.7cm]aux2) edge node[align=center] {Increase Precision} (aux1);
 
  \end{tikzpicture}
 }
