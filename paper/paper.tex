@@ -309,36 +309,13 @@ for linear systems with parametric uncertainties.
 %}
 
 %------------------------------------
-\subsection{Verifying Closed-loop Control Systems}
-\label{verifying-closed-loop-control-systems}
+\subsection{Sampling and Holding in Hybrid Systems}
+\label{ssec:SandH}
 %------------------------------------
 
-%\red{[This section and the next should be merged into a crisp section with the background on DSVerifier, if not included in previous work? 
-%Please stick to the introduced notations. Please clarify what the function FWL does, compared to the general approximations introduced above.]}
+The digital controllers synthesized in this paper are typically used in closed loops with continuous (and physical) plants. Thus, the proposed approach have to consider dynamics of continuous parts of system ({\it e.g.}, plant) and discrete parts ({\it e.g.}, digital controller), {\it i.e.} the synthesized controller have to consider the issues related to the hybrid systems studies.
 
-%\red{Alessandro, I've made the changes as requested. Please let me know if this is good enough or if I made it too short}
-
-%\textcolor{blue}{[IB: I'm proposing some changes in this section based on Alessandro's comments and trying to obtain a simpler and uniform notation.]}
-
-In this study, the methodology used for verifying closed-loop digital
-control system is based on the Digital-System Verifier
-(DSVerifier)~\cite{IsmailBCFF15}, which checks the stability of control
-systems considering finite-word length (FWL) effects in the digital
-controller and uncertainty parameters in the plant model (plant
-intervals)~\cite{Bessa16}.  Let $C(z)$ be a digital controller and $G(z)$ be
-a plant model given as
-%
-\begin{align}
-\small
-\label{controller_plant_tf}
-C(z)&=\frac{\beta_{0}+\beta_{1}z^{-1}+...+\beta_{M_C}z^{-M_C}}{\alpha_{0}+\alpha_{1}z^{-1}+...+\alpha_{N_C}z^{-N_C}}, \\
-%\label{plant_tf}
-G(z)&=\frac{b_{0}+b_{1}z^{-1}+...+b_{M_G}z^{-M_G}}{a_{0}+a_{1}z^{-1}+...+a_{N_G}z^{-N_G}}.
-\end{align}
-%
-\noindent where $\vec{\beta}$ and $\vec{\alpha}$ are vectors containing the controller's coefficients;  
-similarly $\vec{b}$ and $\vec{a}$ encompas the plant's coefficients;  
-and $N_{(\cdot)}$ and $M_{(\cdot)}$ denote the number of poles and zeros for the corresponding block.
+For this purpose, the design procedure is based on a discretized model for a continuous plant. For transfer function models, we are interested in a $z$-domain transfer function that considers all the aspects about the continuous plant ($G(s)$) and the sampling and hold process.
 
 Note that $G(z)$ is a discrete model of a real (and continuous) plant, {\it
 i.e.}, a continuous model of the plant must be discretized to obtain the
@@ -372,6 +349,40 @@ G(z,T) = (1-z^{-1})\mathcal{Z}\left\lbrace{\mathcal{L}^{-1}\left\lbrace{\frac{G(
 For the sake of brevity, we will use the notation $G(z)$ to represent the pulse transfer function.
 %
 \end{mylemma}
+
+%------------------------------------
+\subsection{Verifying Closed-loop Control Systems}
+\label{verifying-closed-loop-control-systems}
+%------------------------------------
+
+%\red{[This section and the next should be merged into a crisp section with the background on DSVerifier, if not included in previous work? 
+%Please stick to the introduced notations. Please clarify what the function FWL does, compared to the general approximations introduced above.]}
+
+%\red{Alessandro, I've made the changes as requested. Please let me know if this is good enough or if I made it too short}
+
+%\textcolor{blue}{[IB: I'm proposing some changes in this section based on Alessandro's comments and trying to obtain a simpler and uniform notation.]}
+
+In this study, the methodology used for verifying closed-loop digital
+control system is based on the Digital-System Verifier
+(DSVerifier)~\cite{IsmailBCFF15}, which checks the stability of control
+systems considering finite-word length (FWL) effects in the digital
+controller and uncertainty parameters in the plant model (plant
+intervals)~\cite{Bessa16}.  Let $C(z)$ be a digital controller and $G(z)$ be
+a plant model given as
+%
+\begin{align}
+\small
+\label{controller_plant_tf}
+C(z)&=\frac{\beta_{0}+\beta_{1}z^{-1}+...+\beta_{M_C}z^{-M_C}}{\alpha_{0}+\alpha_{1}z^{-1}+...+\alpha_{N_C}z^{-N_C}}, \\
+%\label{plant_tf}
+G(z)&=\frac{b_{0}+b_{1}z^{-1}+...+b_{M_G}z^{-M_G}}{a_{0}+a_{1}z^{-1}+...+a_{N_G}z^{-N_G}}.
+\end{align}
+%
+\noindent where $\vec{\beta}$ and $\vec{\alpha}$ are vectors containing the controller's coefficients;  
+similarly $\vec{b}$ and $\vec{a}$ encompas the plant's coefficients;  
+and $N_{(\cdot)}$ and $M_{(\cdot)}$ denote the number of poles and zeros for the corresponding block.
+
+
 
 Uncertainties in $G(z)$ may appear due to uncertainties in $G(s)$ (\emph{ie} $\Delta{G}_p(s)$), errors in the numeric calculations, or roundoffs in the quantization.
 These uncertainties may be parametrically expressed by an additive transfer function $\Delta G(z)$, resulting in a uncertain model $\hat{G}(z)$, such that:
