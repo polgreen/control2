@@ -1708,12 +1708,14 @@ of a controller $D_C$ and $N_C$, which makes the closed-loop
 system stable for all the uncertainties accumulated in {\sc inputs}.
 
 If the result of the {\sc Uncertainty} verification is that
-$\neg \phi_{stability}$ is unsatisfiable for $S(z)$, then we pass 
-the current candidate solution to the {\sc Precision} verification sub-phase, 
+the system is stable for the current candidate solution,
+then we pass this solution to the {\sc Precision} verification sub-phase, 
 which checks the propagation of the error in the fixed-point 
 calculations. If this check returns $false$, then we 
 increase the precision of \param{I_b}{F_b} and re-start the {\sc synthesise} phase
 with an empty {\sc inputs} set.
+Otherwise, we found a full solution for our synthesis problem
+and we are done.
 
 \subsection{Program synthesis for the running example}
 We will illustrate our synthesis approach on the running example 
@@ -1756,6 +1758,9 @@ $I_b=20,F_b=28$.
 %
 We stay in the {\sc verify} phase and receive a new counterexample at
 higher precision:
+\cdsay{Pascal, this sounds confusing. if you want to increase precision on-the-fly, 
+then this illustration doesn't follow the general diagram in Fig.5. 
+We need to decide which direction we keep.}
 %
 $$
 \begin{array}{ll}
