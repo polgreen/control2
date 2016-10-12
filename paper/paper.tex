@@ -315,14 +315,14 @@ for linear systems with parametric uncertainties.
 
 The digital controllers synthesized in this paper are typically used in closed loops with continuous (and physical) plants. Thus, the proposed approach have to consider dynamics of continuous parts of system ({\it e.g.}, plant) and discrete parts ({\it e.g.}, digital controller), {\it i.e.} the synthesized controller have to consider the issues related to the hybrid systems studies.
 
-For this purpose, the design procedure is based on a discretized model for a continuous plant. For transfer function models, we are interested in a $z$-domain transfer function that considers all the aspects about the continuous plant ($G(s)$) and the sampling and hold process.
+For this purpose, the design procedure is based on a discretized model for a continuous plant. Considering only transfer function models, we are interested in a $z$-domain transfer function that considers all the aspects about the continuous plant ($G(s)$) and the sampling and hold process.
 
 Note that $G(z)$ is a discrete model of a real (and continuous) plant, {\it
 i.e.}, a continuous model of the plant must be discretized to obtain the
-discrete equivalent coefficients $b$ and $a$~\cite{Astrom08} via ZOH
+discrete equivalent coefficients via ZOH
 discretization.  
 
-\red{[why do we discuss the ZOH at this point?]}
+%\red{[why do we discuss the ZOH at this point?]}
 
 Although there are several discretization methods available
 in the literature~\cite{Franklin15}, the zero-order hold (ZOH)
@@ -384,7 +384,7 @@ and $N_{(\cdot)}$ and $M_{(\cdot)}$ denote the number of poles and zeros for the
 
 
 
-Uncertainties in $G(z)$ may appear due to uncertainties in $G(s)$ (\emph{ie} $\Delta{G}_p(s)$), errors in the numeric calculations, or roundoffs in the quantization.
+Uncertainties in $G(z)$ may appear due to uncertainties in $G(s)$ (\emph{i.e.} $\Delta{G}_p(s)$), errors in the numeric calculations, or roundoffs in the quantization.
 These uncertainties may be parametrically expressed by an additive transfer function $\Delta G(z)$, resulting in a uncertain model $\hat{G}(z)$, such that:
 \begin{equation}
 \hat{G}(z)=G(z)+\Delta G(z),
@@ -414,8 +414,6 @@ The vector of parametric uncertainties  $\Delta{p}$ for $G(z)$ is defined by:
 \vec{a}
 \end{bmatrix}
 \end{equation}
-
-
 
 A typical hybrid system, with a continuous plant and discrete controller, is shown in Figure~\ref{fig:sampledsystem}, where the DAC and ADC converters introduce quantisation noises $\nu_{1}(z)$ and $\nu_{2}(z)$, $G(s)$ is the continuous-time plant model with parametric additive uncertainty $\Delta G_{P}(s)$ 
 , $R(z)$ is the reference signal, $U(z)$ is the control signal, and $\hat{Y}(z)$ is the output signal affected by the noises and uncertainties in the closed-loop system.
@@ -587,100 +585,100 @@ In figure~\ref{fig:digsystem1}, two sources of uncertainties are considered: par
 \label{eq:complete_unc_model}
 \hat{G}(z)=G(z)+\Delta G_{P}(z)+\Delta G_{Q}(z),
 \end{equation}
-where $\Delta G_{P}(z)$ is the term that corresponds to the parametric uncertainties and $\Delta G_{Q}(z)$ is the term that reflects the quantisation effects on the plant model. \red{[next figure is a bit unnecessary, does not ad much to the previous one.]} Figure~\ref{fig:digsystem2} shows the digital closed loop systems with $\Delta G_{P}(z)$ and $\Delta G_{Q}(z)$.
+where $\Delta G_{P}(z)$ is the term that corresponds to the parametric uncertainties and $\Delta G_{Q}(z)$ is the term that reflects the quantisation effects on the plant model. %\red{[next figure is a bit unnecessary, does not ad much to the previous one.]} Figure~\ref{fig:digsystem2} shows the digital closed loop systems with $\Delta G_{P}(z)$ and $\Delta G_{Q}(z)$.
 
 
-\begin{figure}[ht]
-\centering
-
-\tikzset{add/.style n args={4}{
-    minimum width=6mm,
-    path picture={
-        \draw[circle] 
-            (path picture bounding box.south east) -- (path picture bounding box.north west)
-            (path picture bounding box.south west) -- (path picture bounding box.north east);
-        \node[draw=none] at ($(path picture bounding box.south)+(0,0.13)$)     {\small #1};
-        \node[draw=none] at ($(path picture bounding box.west)+(0.13,0)$)      {\small #2};
-        \node[draw=none] at ($(path picture bounding box.north)+(0,-0.13)$)    {\small #3};
-        \node[draw=none] at ($(path picture bounding box.east)+(-0.13,0)$)     {\small #4};
-        }
-    }
- }
-
-\resizebox{.5\textwidth}{!}{
- \begin{tikzpicture}[scale=0.3,-,>=stealth',shorten >=.2pt,auto,
-     semithick, initial text=, ampersand replacement=\&,]
-
-  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center}, row sep=.6cm, column sep=.3cm] {
-  %
-	\& 
-	\&
-	\& \coordinate (aux7); 
-	\& \node[rectangle,draw,
-	minimum width=1cm,
-	minimum height=1cm] (deltag2) {{\sc $\Delta G_{Q}(z)$}};
-	\& \coordinate (aux8);\\
-    \node[draw=none] (r) {$R(z)$};
-%   \& \coordinate (aux0);
-   \& \node[circle,add={-}{+}{}{}] (circle) {};
-   \node[draw=none] (ez) at ([xshift=1cm,yshift=.15cm]circle)  {$e(z)$};
-   \& \node[rectangle,draw,
-	minimum width=1cm,
-	minimum height=1cm,
-        label=\textbf{Controller}] (cz) {{\sc C(z)}};
-   \node[draw=none] (ud) at ([xshift=1cm,yshift=.15cm]cz)  {$U(z)$};
-   \& \coordinate (aux4);
-   \& \node[rectangle,draw,
-	minimum width=1cm,
-	minimum height=1cm,
-        label=\textbf{Plant}] (gs) {{\sc G(z)}};
-   \node[draw=none] (y) at ([xshift=1cm,yshift=.15cm]gs)  {$Y(z)$};
-   \& \node[circle,add={+}{+}{+}{}] (circle2) {};
-%   \node[draw=none] (tyz) at ([xshift=-1cm,yshift=.15cm]circle2)  {$Y(z)$};
-%   \node[draw=none] (nu) at ([yshift=1cm]circle2)  {$\nu(z)$};
-   \& \coordinate (aux1);
-   \& \node[draw=none] (yz) {$\hat{Y}(z)$};\\
-   \& 
-   \&
-   \& \coordinate (aux5); 
-   \& \node[rectangle,draw,
-	minimum width=1cm,
-	minimum height=1cm] (deltag) {{\sc $\Delta G_{P}(z)$}};
-   \& \coordinate (aux6);\\
-   \& \coordinate (aux3); 
-   \&
-   \& 
-   \& 
-   \&
-   \& \coordinate (aux2);\\
-  };
-
-
-%  \path[->] (v1) edge (q1.north);
-%  \path[->] (v2) edge (q2.north);
-  \path[->] (r) edge (circle.west);
-%  \path[->] (nu) edge (circle2.north);
-  \path[->] (aux1) edge (yz);
-  \path  
-   (aux4.north) edge (aux5.south)
-   (aux4.north) edge (aux7.south)
-   (aux5.east) edge (deltag.west)
-   (aux7.east) edge (deltag2.west)
-   (deltag.east) edge (aux6.west)
-   (deltag2.east) edge (aux8.west)
-   (circle.east) edge (cz)
-   (cz.east) edge (gs.west)
-   (circle2.east) edge (aux1.west)
-   (aux1.south) edge (aux2.north)
-   (aux2.west) edge (aux3.east); 
-  \path[->] (aux8.south) edge (circle2.north); 
-  \path[->] (aux6.south) edge (circle2.south);
-  \path[->] (gs.east) edge (circle2.west);
-  \path[->] (aux3.north) edge (circle.south);
- \end{tikzpicture}
-}
- \caption{Digital system with additive uncertainties $\Delta G_{P}(z)$ and $\Delta G_{Q}(z)$. \label{fig:digsystem2}}
-\end{figure}
+%\begin{figure}[ht]
+%\centering
+%
+%\tikzset{add/.style n args={4}{
+%    minimum width=6mm,
+%    path picture={
+%        \draw[circle] 
+%            (path picture bounding box.south east) -- (path picture bounding box.north west)
+%            (path picture bounding box.south west) -- (path picture bounding box.north east);
+%        \node[draw=none] at ($(path picture bounding box.south)+(0,0.13)$)     {\small #1};
+%        \node[draw=none] at ($(path picture bounding box.west)+(0.13,0)$)      {\small #2};
+%        \node[draw=none] at ($(path picture bounding box.north)+(0,-0.13)$)    {\small #3};
+%        \node[draw=none] at ($(path picture bounding box.east)+(-0.13,0)$)     {\small #4};
+%        }
+%    }
+% }
+%
+%\resizebox{.5\textwidth}{!}{
+% \begin{tikzpicture}[scale=0.3,-,>=stealth',shorten >=.2pt,auto,
+%     semithick, initial text=, ampersand replacement=\&,]
+%
+%  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center}, row sep=.6cm, column sep=.3cm] {
+%  %
+%	\& 
+%	\&
+%	\& \coordinate (aux7); 
+%	\& \node[rectangle,draw,
+%	minimum width=1cm,
+%	minimum height=1cm] (deltag2) {{\sc $\Delta G_{Q}(z)$}};
+%	\& \coordinate (aux8);\\
+%    \node[draw=none] (r) {$R(z)$};
+%%   \& \coordinate (aux0);
+%   \& \node[circle,add={-}{+}{}{}] (circle) {};
+%   \node[draw=none] (ez) at ([xshift=1cm,yshift=.15cm]circle)  {$e(z)$};
+%   \& \node[rectangle,draw,
+%	minimum width=1cm,
+%	minimum height=1cm,
+%        label=\textbf{Controller}] (cz) {{\sc C(z)}};
+%   \node[draw=none] (ud) at ([xshift=1cm,yshift=.15cm]cz)  {$U(z)$};
+%   \& \coordinate (aux4);
+%   \& \node[rectangle,draw,
+%	minimum width=1cm,
+%	minimum height=1cm,
+%        label=\textbf{Plant}] (gs) {{\sc G(z)}};
+%   \node[draw=none] (y) at ([xshift=1cm,yshift=.15cm]gs)  {$Y(z)$};
+%   \& \node[circle,add={+}{+}{+}{}] (circle2) {};
+%%   \node[draw=none] (tyz) at ([xshift=-1cm,yshift=.15cm]circle2)  {$Y(z)$};
+%%   \node[draw=none] (nu) at ([yshift=1cm]circle2)  {$\nu(z)$};
+%   \& \coordinate (aux1);
+%   \& \node[draw=none] (yz) {$\hat{Y}(z)$};\\
+%   \& 
+%   \&
+%   \& \coordinate (aux5); 
+%   \& \node[rectangle,draw,
+%	minimum width=1cm,
+%	minimum height=1cm] (deltag) {{\sc $\Delta G_{P}(z)$}};
+%   \& \coordinate (aux6);\\
+%   \& \coordinate (aux3); 
+%   \&
+%   \& 
+%   \& 
+%   \&
+%   \& \coordinate (aux2);\\
+%  };
+%
+%
+%%  \path[->] (v1) edge (q1.north);
+%%  \path[->] (v2) edge (q2.north);
+%  \path[->] (r) edge (circle.west);
+%%  \path[->] (nu) edge (circle2.north);
+%  \path[->] (aux1) edge (yz);
+%  \path  
+%   (aux4.north) edge (aux5.south)
+%   (aux4.north) edge (aux7.south)
+%   (aux5.east) edge (deltag.west)
+%   (aux7.east) edge (deltag2.west)
+%   (deltag.east) edge (aux6.west)
+%   (deltag2.east) edge (aux8.west)
+%   (circle.east) edge (cz)
+%   (cz.east) edge (gs.west)
+%   (circle2.east) edge (aux1.west)
+%   (aux1.south) edge (aux2.north)
+%   (aux2.west) edge (aux3.east); 
+%  \path[->] (aux8.south) edge (circle2.north); 
+%  \path[->] (aux6.south) edge (circle2.south);
+%  \path[->] (gs.east) edge (circle2.west);
+%  \path[->] (aux3.north) edge (circle.south);
+% \end{tikzpicture}
+%}
+% \caption{Digital system with additive uncertainties $\Delta G_{P}(z)$ and $\Delta G_{Q}(z)$. \label{fig:digsystem2}}
+%\end{figure}
 
 %\textcolor{blue}{[IB: I propose to exchange the following paragraphs by the previous blue]}
 
