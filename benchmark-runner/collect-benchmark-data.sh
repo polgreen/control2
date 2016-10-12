@@ -1,7 +1,7 @@
 #!/bin/bash
 
 for benchmark_dir in /users/pkesseli/documents/control-synthesis/benchmarks/*/; do
- for benchmark_log in ${benchmark_dir}*.log; do
+ for benchmark_log in ${benchmark_dir}*bound_simple.log; do
   execution_time_and_date=`date -r ${benchmark_log}`
   benchmark_id=$(basename $(dirname ${benchmark_log}))/$(basename ${benchmark_log})
   if [ `grep -c CEGIS ${benchmark_log}` -ne 0 ]; then

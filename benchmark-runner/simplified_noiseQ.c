@@ -37,7 +37,8 @@
   typedef double control_floatt;
   typedef unsigned int cnttype;
   #include <stdlib.h>
-  #include <iostream> 
+//  #include <iostream>
+  #include <stdio.h> 
 #endif
 
 struct anonymous0
@@ -88,8 +89,9 @@ struct anonymous3 controller_cbmc;
 #ifdef __CPROVER
 extern struct anonymous3 controller;
 #else
-struct anonymous3 controller = { .den={ -32768, -28676, -32768 }, .den_uncertainty={0.0, 0.0, 0.0}, .den_size=3,
- .num={ 256, -209.5625, 0 }, .num_uncertainty={0.0, 0.0, 0.0}, .num_size=3};
+#include "controller.h"
+/*struct anonymous3 controller = { .den={ -32768, -28676, -32768 }, .den_uncertainty={0.0, 0.0, 0.0}, .den_size=3,
+ .num={ 256, -209.5625, 0 }, .num_uncertainty={0.0, 0.0, 0.0}, .num_size=3};*/
 //struct anonymous3 controller = { .den={ 32620.5, -153.4375, 0 },.den_size=2,
 // .num={ -32758.125, -3143.0625, 0.0 }, .num_size=2};
 #endif
@@ -200,9 +202,11 @@ void print_poly(control_floatt *bot,control_floatt *top,cnttype n)
   cnttype i;
   for (i=0;i<n;i++)
   {
-    std::cout << "[" << bot[i] << "," << -top[i] << "]z" << n-i-1 << " ";
+    printf("[%f,%f]z%d ", bot[i], -top[i], n-i-1);
+    //std::cout << "[" << bot[i] << "," << -top[i] << "]z" << n-i-1 << " ";
   }
-  std::cout << std::endl;
+  puts("");
+  //std::cout << std::endl;
 }
 #endif
 
@@ -255,8 +259,10 @@ signed int check_stability_closedloop(control_floatt *denBot,control_floatt *den
   __DSVERIFIER_assume(-denTop[n - 1] < denBot[0]);
   __DSVERIFIER_assume(-denBot[n - 1] < denBot[0]);
 #else
-  std::cout << "m[0]=[" << denBot[0] << "," << -denTop[0] << "]>0" << std::endl;
-  std::cout << "fabs(m[" << n-1 << "]=[" << denBot[n-1] << "," << -denTop[n-1] << "])<" << "m[0]=[" << denBot[0] << "," << -denTop[0] << "]" << std::endl;
+  printf("m[0]=[%f,%f]>0\n", denBot[0], -denTop[0]);
+  //std::cout << "m[0]=[" << denBot[0] << "," << -denTop[0] << "]>0" << std::endl;
+  printf("fabs(m[%d]=[%f,%f])<m[0]=[%f,%f]\n", n-1, denBot[n-1], -denTop[n-1], denBot[0], -denTop[0]);
+  //std::cout << "fabs(m[" << n-1 << "]=[" << denBot[n-1] << "," << -denTop[n-1] << "])<" << "m[0]=[" << denBot[0] << "," << -denTop[0] << "]" << std::endl;
   if (!(denBot[0] > 0.0)) return 0;
   if (!(-denTop[n - 1] < denBot[0])) return 0;
   if (!(-denBot[n - 1] < denBot[0])) return 0;
@@ -266,14 +272,16 @@ signed int check_stability_closedloop(control_floatt *denBot,control_floatt *den
 #ifdef __CPROVER
   __DSVERIFIER_assume(sumBot > -sumTop);
 #else
-  std::cout << "sumEven-sumOdd=[" << sumBot+sumTop << ",?]>0" << std::endl;
+  printf("sumEven-sumOdd=[%f,?]>0\n", sumBot+sumTop);
+  //std::cout << "sumEven-sumOdd=[" << sumBot+sumTop << ",?]>0" << std::endl;
   if (!(sumBot > -sumTop)) return 0;
 #endif
   for(i = 1 ; i < n; i+=2) sumBot+=denBot[i];
 #ifdef __CPROVER
   __DSVERIFIER_assume(sumBot > 0);
 #else
-  std::cout << "sum=[" << sumBot << ",?]>0" << std::endl;
+  printf("sum=[%f,?]>0\n", sumBot);
+  //std::cout << "sum=[" << sumBot << ",?]>0" << std::endl;
   if (!(sumBot > 0)) return 0;
 #endif
   
@@ -318,7 +326,8 @@ signed int check_stability_closedloop(control_floatt *denBot,control_floatt *den
 #ifdef __CPROVER
     __DSVERIFIER_assume(bot[i][0] >= 0.0);
 #else
-	std::cout << "m[" << i << "]=[" << bot[i][0] << "," << -top[i][0] << "]>0" << std::endl;
+  printf("m[%d]=[%f,%f]>0\n", i, bot[i][0], -top[i][0]);
+	//std::cout << "m[" << i << "]=[" << bot[i][0] << "," << -top[i][0] << "]>0" << std::endl;
     if (!(bot[i][0] >= 0.0)) return 0;
 #endif		
     columns--;
@@ -437,11 +446,14 @@ int verify_stability_closedloop_using_dslib(void)
 #ifdef __CPROVER    
   __DSVERIFIER_assume(!(return_value2 == 0));
 #else
-  std::cout << "plant_num=";
+  fputs("plant_num=", stdout);
+  //std::cout << "plant_num=";
   print_poly(plant_cbmc.numBot,plant_cbmc.numTop, plant_cbmc.num_size);
-  std::cout << "plant_den=";
+  fputs("plant_den=", stdout);
+  //std::cout << "plant_den=";
   print_poly(plant_cbmc.denBot,plant_cbmc.denTop, plant_cbmc.den_size);
-  std::cout << "ans=";
+  fputs("ans=", stdout);
+  //std::cout << "ans=";
   print_poly(ans_den_bot,ans_den_top, ans_den_size);
   if (return_value2 == 0) return 10;
 #endif

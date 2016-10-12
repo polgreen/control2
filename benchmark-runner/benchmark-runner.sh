@@ -42,7 +42,7 @@ function write_success_message {
 
 function setup_benchmark {
  mkdir -p "$1" 2>/dev/null
- cp simplified_noise.c simplified_noiseQ.c "$1"
+ cp simplified_noise.c simplified_noiseQ.c "$1" 2>/dev/null
  echo "#define __PLANT_DEN_SIZE ${plant_a_size}" >"$1/${sizes_header_file}"
  echo "#define __PLANT_NUM_SIZE ${plant_b_size}" >>"$1/${sizes_header_file}"
  echo "#define __CONTROLLER_DEN_SIZE ${controller_a_size}" >>"$1/${sizes_header_file}"
@@ -53,18 +53,31 @@ function setup_benchmark {
  echo "struct anonymous3 controller={ .den={ ${controller_a} }, .den_uncertainty={ ${controller_a_uncertainty} }, .den_size=${controller_a_size}, .num={ ${controller_b} }, .num_uncertainty={ ${controller_b_uncertainty} }, .num_size=${controller_b_size} };" >"$1/${controller_header_file}"
 }
 
+contains_element () {
+  local e
+  for e in "${@:2}"; do [[ "$e" == "$1" ]] && return 0; done
+  return 1
+}
+
 sizes_header_file='sizes.h'
 plant_header_file='plant.h'
 controller_header_file='controller.h'
 working_directory_base='/tmp/control_synthesis'
 mkdir -p ${working_directory_base} 2>/dev/null
 
-benchmark='/users/pkesseli/documents/control-synthesis/benchmarks/example-a/example-a_PLANT1_SCHEMA3_IMPL3.c'
+#benchmarks_base='/users/pkesseli/documents/control-synthesis/benchmarks'
+#solved_benchmarks=("${benchmarks_base}/CruiseControl/CruiseControl02.c" "${benchmarks_base}/example-a/example-a_PLANT1_SCHEMA2_IMPL1.c" "${benchmarks_base}/example-a/example-a_PLANT1_SCHEMA3_IMPL1.c" "${benchmarks_base}/example-a/example-a_PLANT1_SCHEMA3_IMPL2.c" "${benchmarks_base}/example-a/example-a_PLANT1_SCHEMA3_IMPL3.c" "${benchmarks_base}/example-a/example-a_PLANT1_SCHEMA4_IMPL2.c")
+
+#benchmark='/users/pkesseli/documents/control-synthesis/benchmarks/example-a/example-a_PLANT1_SCHEMA3_IMPL3.c'
 #benchmark='/users/pkesseli/documents/control-synthesis/benchmarks/CruiseControl/CruiseControl02.c'
 #benchmark_dir='/users/pkesseli/documents/control-synthesis/benchmarks/SpringMassDamper/'
 
+benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/CruiseControl/' '/users/pkesseli/documents/control-synthesis/benchmarks/Satellite/' '/users/pkesseli/documents/control-synthesis/benchmarks/SpringMassDamper/' '/users/pkesseli/documents/control-synthesis/benchmarks/example-a/' '/users/pkesseli/documents/control-synthesis/benchmarks/example-a_uncertainty/')
 #for benchmark_dir in /users/pkesseli/documents/control-synthesis/benchmarks/*/; do
-# for benchmark in ${benchmark_dir}*.c; do
+for benchmark_dir in ${benchmark_dirs[@]}; do
+ for benchmark in ${benchmark_dir}*.c; do
+  #$(contains_element "${benchmark}" "${solved_benchmarks[@]}") && continue
+
   impl_decl=`grep -Pzo '.*impl *=.*(\n.*?)*?;' ${benchmark}`
   impl_int_bits=$(extract_variable "${impl_decl}" 'int_bits')
   impl_frac_bits=$(extract_variable "${impl_decl}" 'frac_bits')
@@ -123,7 +136,7 @@ benchmark='/users/pkesseli/documents/control-synthesis/benchmarks/example-a/exam
 
   echo ${benchmark} | tee ${log_file}
   echo "CEGIS" | tee -a ${log_file}
-  while [ $((integer_width+radix_width)) -lt ${max_length} ]; do
+  while [ $((integer_width+radix_width)) -le ${max_length} ]; do
    echo "int: ${integer_width}, radix: ${radix_width}" | tee -a ${log_file}
    timeout --preserve-status --kill-after=${kill_time} ${timeout_time} cegis -D __CPROVER -D _FIXEDBV -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTORL_RADIX_WIDTH=${radix_width} -D _CONTROLER_INT_BITS=${impl_int_bits} -D _CONTROLER_FRAC_BITS=${impl_frac_bits} ${simple_switch} --fixedbv --round-to-minus-inf --cegis-control --cegis-statistics --cegis-genetic --cegis-max-size 1 --cegis-show-iterations simplified_noise.c >>${log_file} 2>&1
    if [ $? -eq 0 ]; then
@@ -131,8 +144,8 @@ benchmark='/users/pkesseli/documents/control-synthesis/benchmarks/example-a/exam
     solution_a=$(extract_array "${solution_decl}" 'den' "${struct_a_size}")
     solution_b=$(extract_array "${solution_decl}" 'num' "${struct_b_size}")
     echo "struct anonymous3 controller={ .den={ ${solution_a} }, .den_uncertainty={ ${controller_a_uncertainty} }, .den_size=${controller_a_size}, .num={ ${solution_b} }, .num_uncertainty={ ${controller_b_uncertainty} }, .num_size=${controller_b_size} };" >${controller_header_file}
-    gcc -std=c99 -D _CONTROLER_INT_BITS=${impl_int_bits} -D _CONTROLER_FRAC_BITS=${impl_frac_bits} simplified_noise.c -o simplified_noise
-    ./simplified_noise >>${log_file}
+    gcc -std=c99 -D _CONTROLER_INT_BITS=${impl_int_bits} -D _CONTROLER_FRAC_BITS=${impl_frac_bits} simplified_noiseQ.c -o simplified_noiseQ
+    ./simplified_noiseQ >>${log_file}
     if [ $? -eq 0 ]; then
      $(write_success_message ${start_time} ${log_file})
      break
@@ -155,7 +168,7 @@ benchmark='/users/pkesseli/documents/control-synthesis/benchmarks/example-a/exam
 
   echo ${benchmark} | tee ${log_file}
   echo "CBMC" | tee -a ${log_file}
-  while [ $((integer_width+radix_width)) -lt ${max_length} ]; do
+  while [ $((integer_width+radix_width)) -le ${max_length} ]; do
    echo "int: ${integer_width}, radix: ${radix_width}" | tee -a ${log_file}
    timeout --preserve-status --kill-after=${kill_time} ${timeout_time} cbmc -D __CPROVER -D _FIXEDBV -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTORL_RADIX_WIDTH=${radix_width} -D _CONTROLER_INT_BITS=${impl_int_bits} -D _CONTROLER_FRAC_BITS=${impl_frac_bits} --fixedbv --stop-on-fail --round-to-minus-inf simplified_noiseQ.c >>${log_file} 2>&1
    if [ $? -eq 10 ]; then
@@ -167,5 +180,5 @@ benchmark='/users/pkesseli/documents/control-synthesis/benchmarks/example-a/exam
   done
  fi
 
-# done
-#done
+ done
+done
