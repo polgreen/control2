@@ -353,62 +353,34 @@ discretization is more suitable for representing the sample and hold
 processes that are typically employed in complex systems~\cite{istepanian2012digital}, {\it i.e.}, the ZOH discretization
 models the exact effect of sampling and DAC interpolation over the plant.
 
+\begin{myassumption}
+%
+The Sample and Hold of the ADC and the ZOH of the DAC are synchronized, {\it i.e.}, there is no delay between
+sampling the plant output at ADC and updating the DAC accordingly. The DAC interpolator is an ideal ZOH.
+%
+\end{myassumption}
+
 \begin{mylemma}\cite{astrom1997computer}
 %
-The pulse transfer function $G(z)$ is a z-domain model that relates the
-output sampled by an ADC and the digital input provided by the ZOH.  It is equivalent at the sample times ({\it i.e.}, $t=kT$) to the continuous transfer
-function $G(s)$ driven by ZOH.  
-\red{[what does it mean that it is continuous ``at the sample times''? We're working in frequency. Are you matching poles? There is still no clear relationship between continuous and samples transfer functions, it is not formal in my opinion.]}
-This pulse transfer function can be computed as
+Given a synchronized ZOH input and sample and hold output on the plant with a sample time $T$ satisfying Nyquist's sampling criteria, the discrete pulse transfer function $G(z,T)$ is an exact z-domain representation of $G(s)$ which can be computed using the following formula: 
 %
 \begin{equation}
 \label{eq:pulsetf}
 G(z,T) = (1-z^{-1})\mathcal{Z}\left\lbrace{\mathcal{L}^{-1}\left\lbrace{\frac{G(s)}{s}}\right\rbrace_{t=kT}}\right\rbrace.
 \end{equation}
 %
-For the sake of brevity, 
-we will use the notation $G(z)$ to represent the pulse transfer function.
+For the sake of brevity, we will use the notation $G(z)$ to represent the pulse transfer function.
 %
 \end{mylemma}
 
-\begin{myassumption}
-%
-The DAC and ADC are synchronized, {\it i.e.}, there is no delay between
-sampling the plant output at ADC and updating the DAC accordingly.
-%
-\end{myassumption}
-
-
-\begin{myassumption}
-%
-The DAC interpolator is an ideal ZOH; it takes the discrete value of control
-signal $\tilde u(k)$ \red{[is this a new notation over the time domain? It does not reflect the signals used in the plot -- utterly confusing!]} at instant $k$ and produces a rectangular pulse of height
-$u(k)$ and width equal to the sample time $T$.
-%
-\end{myassumption}
-
-
-\begin{myassumption}
-%
-\label{assumption:cont_and_plant}
-The controller and the plant are linear time-invariant (LTI) systems, {\it i.e.}, 
-\red{[!! of course, we're working with transfer functions!!]}
-any source of
-nonlinearity ({\it e.g.}, saturation, overflow, ADC/DAC nonlinearities) will
-be disregarded \red{[how is this related to ADC/DAC? very confusing.]}
-. Additionally, the pulse transfer function is obtained via \eqref{eq:pulsetf} using an appropriate sample rate ({\it i.e.}, obeying the Nyquist sampling conditions)  is a precise discrete-time representation of $G(s)$. \red{[clarify this: this cannot be an assumption, since it is hinging on a specific numerical scheme. Assumptions deal with structural properties for example, or choices of certain parameters ... ]}
-%
-\end{myassumption}
-
-Although the pulse transfer function $G(z)$ represents adequately \red{[clarify adverb]} $G(s)$ in the z-domain, 
-the model $G(z)$ may not be accurate and some uncertainties may not be covered by that model. 
-These uncertainties may be \red{[clarify use of conditional tense]} parametrically expressed by an additive transfer function $\Delta G(z)$, resulting in a uncertain model $\hat{G}(z)$, such that:
+Uncertainties in $G(z)$ may appear due to uncertainties in $G(s)$ (\emph{ie} $\Delta{G}_p(s)$), errors in the numeric calculations, or roundoffs in the quantization.
+These uncertainties may be parametrically expressed by an additive transfer function $\Delta G(z)$, resulting in a uncertain model $\hat{G}(z)$, such that:
 \begin{equation}
 \hat{G}(z)=G(z)+\Delta G(z),
 \end{equation}
-that may be \red{[\ldots]} represented by the following transfer function:
+which will be represented by the following transfer function:
 \begin{equation}
-\hat{G}(z)=\frac{\hat{b}_{0}+\hat{b}_{1}z^{-1}+...+\hat{b}_{M_G}z^{-M_G}}{\hat{a}_{0}+\hat{a}_{1}z^{-1}+...+\hat{a}_{N_G}z^{-N_G}}.
+\hat{G}(z)=\frac{\hat{b}_{0}+\hat{b}_{1}z^{-1}+...+\hat{b}_{M_G}z^{-M_G}}{\hat{a}_{0}+\hat{a}_{1}z^{-1}+...+\hat{a}_{N_G}z^{-N_G}} : N_G \geq M_G .
 \end{equation}
 \red{[same order?]} 
 
@@ -434,8 +406,7 @@ The vector of parametric uncertainties  $\Delta{p}$ for $G(z)$ is defined by:
 
 
 
-A typical hybrid system \red{[clarify the adjective ``hybrid'']} is shown in Figure~\ref{fig:sampledsystem}, where the DAC and ADC converters introduce quantisation noises $\nu_{1}(z)$ and $\nu_{2}(z)$, $G(s)$ is the continuous-time plant model with parametric additive uncertainty $\Delta G_{P}(s)$ 
-\red{[this Delta term now refers to the continuous plant? this is not what has been discussed before, nor what is in some of the plots.]} 
+A typical hybrid system, with a continuous plant and discrete controller, is shown in Figure~\ref{fig:sampledsystem}, where the DAC and ADC converters introduce quantisation noises $\nu_{1}(z)$ and $\nu_{2}(z)$, $G(s)$ is the continuous-time plant model with parametric additive uncertainty $\Delta G_{P}(s)$ 
 , $R(z)$ is the reference signal, $U(z)$ is the control signal, and $\hat{Y}(z)$ is the output signal affected by the noises and uncertainties in the closed-loop system.
 
 \begin{figure*}[htb]
@@ -482,7 +453,7 @@ A typical hybrid system \red{[clarify the adjective ``hybrid'']} is shown in Fig
    \& \node[rectangle,draw,
 	minimum width=1cm,
 	minimum height=1cm,
-        label=\textbf{Plant}] (gs) {{\sc $G(s) + \Delta G(s)$}};
+        label=\textbf{Plant}] (gs) {{\sc $G(s) + \Delta G_p(s)$}};
    \node[draw=none] (ud) at ([xshift=-2cm,yshift=.15cm]gs)  {$U(s)$};
    \node[draw=none] (y) at ([xshift=2cm,yshift=.15cm]gs)  {$Y(s)$};
    \& complexnode/.pic={ 
