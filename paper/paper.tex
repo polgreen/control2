@@ -721,6 +721,7 @@ and assume that there exists a function $FWL[\cdot]:\mathbb{R}^{n}\rightarrow \m
 \begin{equation}
 \hat{C}(z)=\frac{FWL[N_{C}(z)]}{FWL[D_{C}(z)]}.
 \end{equation}
+In the case of a synthesised controller, because the synthesis is performed using FWL, $\hat{C}(z) \equiv C(z)$.
 
 %\textcolor{blue}{[IB: And I propose to exchange the remaining paragraphs by the previous blue]}
 %
@@ -763,8 +764,7 @@ A feedback hybrid control system as shown in Fig.~\ref{fig:sampledsystem}, with 
 \label{eq:internal_stab_lemma}
 S(z)=FWL[N_{C}(z)]\hat{N}_{G}(z)+FWL[D_{C}(z)]\hat{D}_{G}(z);
 \end{equation}
-\item the direct loop product $\frac{FWL[N_{C}(z)]}{FWL[D_{C}(z)]}\cdot \frac{\hat{N}_{G}(z)}{\hat{D}_{G}(z)}$ has no pole-zero cancellation on or outside the unit circle;
-\item the controller $\hat{C}(z)$ is a minimum-phase system. 
+\item the direct loop product $\frac{FWL[N_{C}(z)]}{FWL[D_{C}(z)]}\cdot \frac{\hat{N}_{G}(z)}{\hat{D}_{G}(z)}$ has no pole-zero cancellation on or outside the unit circle.
 \end{itemize}
 \end{mylemma}
 
@@ -805,7 +805,7 @@ S_{\nu}(z)= \sigma_{Q}^{2}=\frac{q^{2}}{12}.
 \begin{proof}
 Considering $\nu(k)$ a random process, where $\nu(k)$ is independent from $\nu(k+i)$ for every  integer $k\neq 0$. The autocorrelation function of $\nu(k)$, {\it i.e.} $R_{\nu\nu}(\tau)$ may be computed as follows:
 \begin{equation}
-R_{\nu\nu}(\tau)=E[\nu(t+\tau)\nu]=\sigma_{Q}^{2}\cdot \delta(\tau),
+R_{\nu\nu}(\tau)=E[\nu(t+\tau)\nu(t)]=\sigma_{Q}^{2}\cdot \delta(\tau),
 \end{equation}
 where $\delta(\tau)$ is the Dirac delta function at delay time $\tau$.
 
