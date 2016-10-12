@@ -1990,16 +1990,16 @@ and synthesise a solution instead, albeit with significantly larger runtimes.
 
 \begin{figure}[H]
 \centering
-\begin{tabular}{l | r l r l}
-Benchmark              & Base     &         & Unc     & \\\cline{1-4}
-CruiseControl02        & 17\,s    &         & 46\,s   & \\
-SatelliteB2            & 7\,s     &         & 6601\,s & \tbmark\\
-SatelliteC2            & 369\,s   & \tbmark & 76\,s   & \tbmark\\
-SpringMassDamper       &          &         &         & 
+\begin{tabular}{l | r r l}
+Benchmark              & Base     & Unc     & \\\cline{1-4}
+CruiseControl02        & 17\,s    & 46\,s   & \\
+SatelliteB2            & 7\,s     & 6601\,s & \tbmark\\
+SatelliteC2            & 2\,s     & 76\,s   & \tbmark\\
+SpringMassDamper       & 28\,s    & \xmark  &
 \end{tabular}
 
 \vspace{0.5em}
-\scriptsize{* = solved with interval back-end}
+\scriptsize{* = solved with interval back-end, \xmark = uncontrollable}
 \vspace{0.5em}
 
 \caption{Experimental results. \label{tab:results}}
