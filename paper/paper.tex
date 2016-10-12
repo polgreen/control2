@@ -343,7 +343,11 @@ and $N_{(\cdot)}$ and $M_{(\cdot)}$ denote the number of poles and zeros for the
 Note that $G(z)$ is a discrete model of a real (and continuous) plant, {\it
 i.e.}, a continuous model of the plant must be discretized to obtain the
 discrete equivalent coefficients $b$ and $a$~\cite{Astrom08} via ZOH
-discretization.  Although there are several discretization methods available
+discretization.  
+
+\red{[why do we discuss the ZOH at this point?]}
+
+Although there are several discretization methods available
 in the literature~\cite{Franklin15}, the zero-order hold (ZOH)
 discretization is more suitable for representing the sample and hold
 processes that are typically employed in complex systems~\cite{istepanian2012digital}, {\it i.e.}, the ZOH discretization
@@ -353,8 +357,9 @@ models the exact effect of sampling and DAC interpolation over the plant.
 %
 The pulse transfer function $G(z)$ is a z-domain model that relates the
 output sampled by an ADC and the digital input provided by the ZOH.  It is equivalent at the sample times ({\it i.e.}, $t=kT$) to the continuous transfer
-function $G(s)$ driven by ZOH.  This pulse transfer function can be
-computed as
+function $G(s)$ driven by ZOH.  
+\red{[what does it mean that it is continuous ``at the sample times''? We're working in frequency. Are you matching poles? There is still no clear relationship between continuous and samples transfer functions, it is not formal in my opinion.]}
+This pulse transfer function can be computed as
 %
 \begin{equation}
 \label{eq:pulsetf}
@@ -377,7 +382,7 @@ sampling the plant output at ADC and updating the DAC accordingly.
 \begin{myassumption}
 %
 The DAC interpolator is an ideal ZOH; it takes the discrete value of control
-signal $\tilde u(k)$ at instant $k$ and produces a rectangular pulse of height
+signal $\tilde u(k)$ \red{[is this a new notation over the time domain? It does not reflect the signals used in the plot -- utterly confusing!]} at instant $k$ and produces a rectangular pulse of height
 $u(k)$ and width equal to the sample time $T$.
 %
 \end{myassumption}
@@ -386,20 +391,26 @@ $u(k)$ and width equal to the sample time $T$.
 \begin{myassumption}
 %
 \label{assumption:cont_and_plant}
-The controller and the plant are linear time-invariant (LTI) systems, {\it i.e.}, any source of
+The controller and the plant are linear time-invariant (LTI) systems, {\it i.e.}, 
+\red{[!! of course, we're working with transfer functions!!]}
+any source of
 nonlinearity ({\it e.g.}, saturation, overflow, ADC/DAC nonlinearities) will
-be disregarded. Additionally, the pulse transfer function obtained via \eqref{eq:pulsetf} using an appropriate sample rate ({\it i.e.}, obeying the Nyquist sampling conditions)  is a precise discrete-time representation of $G(s)$.
+be disregarded \red{[how is this related to ADC/DAC? very confusing.]}
+. Additionally, the pulse transfer function is obtained via \eqref{eq:pulsetf} using an appropriate sample rate ({\it i.e.}, obeying the Nyquist sampling conditions)  is a precise discrete-time representation of $G(s)$. \red{[clarify this: this cannot be an assumption, since it is hinging on a specific numerical scheme. Assumptions deal with structural properties for example, or choices of certain parameters ... ]}
 %
 \end{myassumption}
 
-Although the pulse transfer function $G(z)$ represents adequately $G(s)$ in the z-domain, the model $G(z)$ may not be accurate and some uncertainties may not be covered by that model. These uncertainties may be parametrically expressed by an additive transfer function $\Delta G(z)$, resulting in a uncertain model $\hat{G}(z)$, such that:
+Although the pulse transfer function $G(z)$ represents adequately \red{[clarify adverb]} $G(s)$ in the z-domain, 
+the model $G(z)$ may not be accurate and some uncertainties may not be covered by that model. 
+These uncertainties may be \red{[clarify use of conditional tense]} parametrically expressed by an additive transfer function $\Delta G(z)$, resulting in a uncertain model $\hat{G}(z)$, such that:
 \begin{equation}
 \hat{G}(z)=G(z)+\Delta G(z),
 \end{equation}
-that may be represented by the following transfer function:
+that may be \red{[\ldots]} represented by the following transfer function:
 \begin{equation}
 \hat{G}(z)=\frac{\hat{b}_{0}+\hat{b}_{1}z^{-1}+...+\hat{b}_{M_G}z^{-M_G}}{\hat{a}_{0}+\hat{a}_{1}z^{-1}+...+\hat{a}_{N_G}z^{-N_G}}.
 \end{equation}
+\red{[same order?]} 
 
 The vector of parametric uncertainties  $\Delta{p}$ for $G(z)$ is defined by:
 \begin{equation}
@@ -423,7 +434,9 @@ The vector of parametric uncertainties  $\Delta{p}$ for $G(z)$ is defined by:
 
 
 
-A typical hybrid system is shown in Figure~\ref{fig:sampledsystem}, where the DAC and ADC converters introduce quantisation noises $\nu_{1}(z)$ and $\nu_{2}(z)$, $G(s)$ is the continuous-time plant model with parametric additive uncertainty $\Delta G_{P}(s)$, $R(z)$ is the reference signal, $U(z)$ is the control signal, and $\hat{Y}(z)$ is the output signal affected by the noises and uncertainties in the closed-loop system.
+A typical hybrid system \red{[clarify the adjective ``hybrid'']} is shown in Figure~\ref{fig:sampledsystem}, where the DAC and ADC converters introduce quantisation noises $\nu_{1}(z)$ and $\nu_{2}(z)$, $G(s)$ is the continuous-time plant model with parametric additive uncertainty $\Delta G_{P}(s)$ 
+\red{[this Delta term now refers to the continuous plant? this is not what has been discussed before, nor what is in some of the plots.]} 
+, $R(z)$ is the reference signal, $U(z)$ is the control signal, and $\hat{Y}(z)$ is the output signal affected by the noises and uncertainties in the closed-loop system.
 
 \begin{figure*}[htb]
 \centering
@@ -592,7 +605,7 @@ In figure~\ref{fig:digsystem1}, two sources of uncertainties are considered: par
 \label{eq:complete_unc_model}
 \hat{G}(z)=G(z)+\Delta G_{P}(z)+\Delta G_{Q}(z),
 \end{equation}
-where $\Delta G_{P}(z)$ is the term that corresponds to the parametric uncertainties and $\Delta G_{Q}(z)$ is the term that reflects the quantisation effects on the plant model. Figure~\ref{fig:digsystem2} shows the digital closed loop systems with $\Delta G_{P}(z)$ and $\Delta G_{Q}(z)$.
+where $\Delta G_{P}(z)$ is the term that corresponds to the parametric uncertainties and $\Delta G_{Q}(z)$ is the term that reflects the quantisation effects on the plant model. \red{[next figure is a bit unnecessary, does not ad much to the previous one.]} Figure~\ref{fig:digsystem2} shows the digital closed loop systems with $\Delta G_{P}(z)$ and $\Delta G_{Q}(z)$.
 
 
 \begin{figure}[ht]
@@ -717,11 +730,13 @@ size $F$.  We shall denote this domain as $\mathbb{R}\langle I,F \rangle$
 %Since the controller is implemented in the $\mathbb{R}\langle I,F \rangle$ 
 %domain, {\it i.e.} a Fixed-Point Finite Word Length with integer size $I$ and fractional
 %size $F$, we shall denote this domain as $\mathbb{R}\langle I,F \rangle$ 
-and assume that there exists a function $FWL[\cdot]:\mathbb{R}^{n}\rightarrow \mathbb{R}^{n}\langle I,F \rangle$, which applies the FWL effects to a polynomial. Thus the perturbed controller model $\hat{C}(z)$ may be computed from the original model $C(z)=\frac{N_{C}(z)}{D_{C}(z)}$ using the following expression:
+and assume that there exists a function $FWL[\cdot]:\mathbb{R}^{n}\rightarrow \mathbb{R}^{n}\langle I,F \rangle$, which applies the FWL effects to a polynomial \red{[explain index n! why do you need to work on a Euclidean domain?]}. Thus the perturbed controller model $\hat{C}(z)$ may be computed from the original model $C(z)=\frac{N_{C}(z)}{D_{C}(z)}$ using the following expression:
 \begin{equation}
 \hat{C}(z)=\frac{FWL[N_{C}(z)]}{FWL[D_{C}(z)]}.
 \end{equation}
-In the case of a synthesised controller, because the synthesis is performed using FWL, $\hat{C}(z) \equiv C(z)$.
+In the case of a synthesised controller, because the synthesis is performed using FWL, $\hat{C}(z) \equiv C(z)$. 
+
+\red{[what is the relationship between FWL effects over C, and the parametric uncertainty Delta Gp over the plant?]} 
 
 %\textcolor{blue}{[IB: And I propose to exchange the remaining paragraphs by the previous blue]}
 %
@@ -756,8 +771,9 @@ H_{2}=\frac{\hat{G}(z)}{1+\hat{C}(z)\hat{G}(z)},
 A discrete-time linear system is said to be Bounded-Input and Bounded-Output (BIBO) stable if and only if every pole of its transfer function lies inside the unit circle. Analyzing the~\eqref{eq:outputfunctions} and based on assumption~\ref{assumption:cont_and_plant}, the following lemma states necessary conditions for BIBO stability of closed-loop system in figure~\ref{fig:sampledsystem}, since the the exogenous signals $R(z)$, $\nu_{1}$, and $\nu_{2}$ are bounded.
 
 \begin{mylemma}{\cite{Bessa16,fadali}}
-\label{lemma:eq_int_stab}
-A feedback hybrid control system as shown in Fig.~\ref{fig:sampledsystem}, with a FWL implementation of the digital controller $\hat{C}(z) = \frac{FWL[N_{C}(z)]}{FWL[D_{C}(z)]}$ and uncertain discrete-model of the plant $\hat{G}(z)=G(z)+\Delta G_{P}(z)=\frac{\hat{N}_{G}(z)}{\hat{D}_{G}(z)}$, is BIBO-stable if and only if:
+\label{lemma:eq_int_stab} 
+A feedback hybrid control system as shown in Fig.~\ref{fig:sampledsystem}, with a FWL implementation of the digital controller $\hat{C}(z) = \frac{FWL[N_{C}(z)]}{FWL[D_{C}(z)]}$ and uncertain discrete model of the plant $\hat{G}(z)=G(z)+\Delta G_{P}(z)=\frac{\hat{N}_{G}(z)}{\hat{D}_{G}(z)}$, is BIBO-stable if and only if: 
+\red{[this statement does not seem to encompass the quantisation effects on the plant?]} 
 \begin{itemize}
 \item  the roots of characteristic polynomial $S(z)$ are inside the open unit circle, where $S(z)$ is:
 \begin{equation}
@@ -771,6 +787,9 @@ S(z)=FWL[N_{C}(z)]\hat{N}_{G}(z)+FWL[D_{C}(z)]\hat{D}_{G}(z);
 The Lemma~\ref{lemma:eq_int_stab} provides the necessary conditions for synthesis of digital controllers able to stabilize closed loop system, considering plant parametric uncertainties ({\it i.e.}, $\Delta G_{P}(z)$), quantisation noises ($\nu_{1}$ and $\nu_{2}$) and FWL effects in digital controllers. Based on it, the model for plant uncertainty due quantisation noise ({\it i.e.}, $\Delta G_{Q}(z)$) may be disregarded if the conditions on Lemma~\ref{lemma:eq_int_stab} are attended and if the quantisation noise is bounded. 
 
 The quantisation noise is indeed bounded, since the following assumption~\ref{whitenoise} and the Lemmas~\ref{lemma:variance} and~\ref{lemma:boundednoise} are true.
+
+\red{[first: lemmae precede theorems. \\
+second: bounded is not energy bounded. ]}
 
 %
 \begin{myassumption}
