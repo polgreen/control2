@@ -343,7 +343,11 @@ and $N_{(\cdot)}$ and $M_{(\cdot)}$ denote the number of poles and zeros for the
 Note that $G(z)$ is a discrete model of a real (and continuous) plant, {\it
 i.e.}, a continuous model of the plant must be discretized to obtain the
 discrete equivalent coefficients $b$ and $a$~\cite{Astrom08} via ZOH
-discretization.  Although there are several discretization methods available
+discretization.  
+
+\red{[why do we discuss the ZOH at this point?]}
+
+Although there are several discretization methods available
 in the literature~\cite{Franklin15}, the zero-order hold (ZOH)
 discretization is more suitable for representing the sample and hold
 processes that are typically employed in complex systems~\cite{istepanian2012digital}, {\it i.e.}, the ZOH discretization
@@ -353,8 +357,9 @@ models the exact effect of sampling and DAC interpolation over the plant.
 %
 The pulse transfer function $G(z)$ is a z-domain model that relates the
 output sampled by an ADC and the digital input provided by the ZOH.  It is equivalent at the sample times ({\it i.e.}, $t=kT$) to the continuous transfer
-function $G(s)$ driven by ZOH.  This pulse transfer function can be
-computed as
+function $G(s)$ driven by ZOH.  
+\red{[what does it mean that it is continuous ``at the sample times''? We're working in frequency. Are you matching poles? There is still no clear relationship between continuous and samples transfer functions, it is not formal in my opinion.]}
+This pulse transfer function can be computed as
 %
 \begin{equation}
 \label{eq:pulsetf}
@@ -377,7 +382,7 @@ sampling the plant output at ADC and updating the DAC accordingly.
 \begin{myassumption}
 %
 The DAC interpolator is an ideal ZOH; it takes the discrete value of control
-signal $\tilde u(k)$ at instant $k$ and produces a rectangular pulse of height
+signal $\tilde u(k)$ \red{[is this a new notation over the time domain? It does not reflect the signals used in the plot -- utterly confusing!]} at instant $k$ and produces a rectangular pulse of height
 $u(k)$ and width equal to the sample time $T$.
 %
 \end{myassumption}
