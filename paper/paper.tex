@@ -211,7 +211,7 @@ where the plant displays a continuous behaviour and the controller operates in
 both discrete time and state-space, we initially translate the problem into
 a single domain, which represents a bi-simulation of the original dynamics. 
 Given our primary interest in evaluating digital effects in addition to
-stability, we have modeled a digital equivalent of the plant by evaluating
+stability, we have modelled a digital equivalent of the plant by evaluating
 the effects of the quantisers (A/D and D/A converters) as time
 discretisation elements with quantisation noise.  The resulting closed loop
 system is a program loop working over bit-vectors of fixed-point arithmetic
@@ -379,7 +379,7 @@ G(z)&=\frac{b_{0}+b_{1}z^{-1}+...+b_{M_G}z^{-M_G}}{a_{0}+a_{1}z^{-1}+...+a_{N_G}
 \end{align}
 %
 \noindent where $\vec{\beta}$ and $\vec{\alpha}$ are vectors containing the controller's coefficients;  
-similarly $\vec{b}$ and $\vec{a}$ encompas the plant's coefficients;  
+similarly $\vec{b}$ and $\vec{a}$ encompass the plant's coefficients;  
 and $N_{(\cdot)}$ and $M_{(\cdot)}$ denote the number of poles and zeros for the corresponding block.
 
 
@@ -393,7 +393,7 @@ which will be represented by the following transfer function:
 \begin{equation}
 \hat{G}(z)=\frac{\hat{b}_{0}+\hat{b}_{1}z^{-1}+...+\hat{b}_{M_G}z^{-M_G}}{\hat{a}_{0}+\hat{a}_{1}z^{-1}+...+\hat{a}_{N_G}z^{-N_G}} : N_G \geq M_G .
 \end{equation}
-Due to the nature of the methods used for stability check in this paper, we require that  the parametric errors in the plant have the same polynomial order as the plant itself (other errors are ensured to fulfill this property in our implementation). 
+Due to the nature of the methods used for stability check in this paper, we require that  the parametric errors in the plant have the same polynomial order as the plant itself (other errors are ensured to fulfil this property in our implementation). 
 
 The vector of parametric coefficient uncertainties $\Delta{p}$ of $\Delta{G}_p(z)$ is defined by:
 \begin{equation}
@@ -628,7 +628,7 @@ This noise $\nu(z)$ may represent exactly the same effects that $\nu_{1}(z)$ and
 
 
 %
-In figure~\ref{fig:digsystem1}, two sources of uncertainties are considered: parametric uncertainties related to modeling errors, and uncertainties introduced by quantisations in sampling and holding process, {\it i.e.} ADC and DAC conversions. Assuming linearity and independence between these sources, the uncertain model may be rewritten as follows:
+In figure~\ref{fig:digsystem1}, two sources of uncertainties are considered: parametric uncertainties related to modelling errors, and uncertainties introduced by quantisations in sampling and holding process, {\it i.e.} ADC and DAC conversions. Assuming linearity and independence between these sources, the uncertain model may be rewritten as follows:
 \begin{equation}
 \label{eq:complete_unc_model}
 \hat{G}(z)=G(z)+\Delta G_{P}(z)+\Delta G_{Q}(z),
@@ -2227,14 +2227,14 @@ provide link here.}
 \paragraph{Robust synthesis of Linear Systems} 
 
 The problem of parametric control synthesis based on stability measures for
-continous Linear Time Invariant (LTI) Single Input-Single Output (SISO)
+continuous Linear Time Invariant (LTI) Single Input-Single Output (SISO)
 systems has been researched for several decades.  On a theoretical level it
 is a solved problem~\cite{wonham1967pole} for which researches continuously
 seek better results based on a number of properties in addition to
 stability.  A vast range of pole placement techniques such as Moore's
 algorithm for eigenstructure assignment~\cite{klein1977eigenvalue} or the
 more recent Linear Quadratic Regulator (LQR)~\cite{bemporad2002explicit}
-have been used in several studies with increasing degrees of succes to
+have been used in several studies with increasing degrees of success to
 ensure stability.  The latter approach highlights the importance of
 conserving energy during the control process, which results in lower running
 costs.  Since real systems are subject to tolerance and noise as well as the
@@ -2273,7 +2273,7 @@ looking for optimal parameter representations using FWL, but ignoring the
 effects of rounding errors due to issues of mathematical tractability.  The
 analyses in~\cite{DBLP:conf/hybrid/WangGRJF16,DBLP:conf/hybrid/RouxJG15}
 rely on an invariant computation on the discrete system dynamics using
-Semi-Definite Pogramming (SDP).  Whilst the former uses BIBO properties to
+Semi-Definite Programming (SDP).  Whilst the former uses BIBO properties to
 determine stability, the latter uses Lyapunov-based quadratic invariants. 
 In both cases, the SDP solver uses floating-point arithmetic and soundness
 is checked by upper bounding the error.  An alternative approach is taken by
@@ -2326,7 +2326,7 @@ combination of a synthesis engine with a control verification tool that
 addresses the challenges presented here in the form of FWL effects and
 stability measures for LTI SISO controllers.  We take the former
 from~\cite{DBLP:conf/lpar/DavidKL15} and the latter from~\cite{daes20161}
-whilst enhancing the procedure by evaluating the quantaization effects of
+whilst enhancing the procedure by evaluating the quantization effects of
 the Hardware interfaces (ADC/DAC) to obtain an accurate discrete time FWL
 representation of the continuous dynamics.
  
@@ -2340,7 +2340,7 @@ in conjunction with a robust closed-loop stability verification algorithm to fin
 solution for a digital controller given a continuous (or discrete) plant specification.
 In particular, we have exploited the automatic synthesis of correct-by-construction 
 digital controllers along with a model of their physical environment.
-We have also modeled a digital equivalent of the physical plant by evaluating the 
+We have also modelled a digital equivalent of the physical plant by evaluating the 
 effects of the quantisers (A/D and D/A converters) as time discretisation elements 
 with quantisation noise. Experimental results show that our
 CEGIS-based approach is able to synthesise stable controllers in most benchmarks
