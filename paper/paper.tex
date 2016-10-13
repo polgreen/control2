@@ -857,7 +857,7 @@ We shall denote the FWL domain of coefficients as $\mathbb{R}\langle I,F
 %size $F$, we shall denote this domain as $\mathbb{R}\langle I,F \rangle$ 
 %
 and assume that there exists a function
-$FWL[\cdot]:\mathcal{P}^{n}\rightarrow \mathcal{P}^{n}\langle I,F \rangle$,
+$\mathit{FWL}[\cdot]:\mathcal{P}^{n}\rightarrow \mathcal{P}^{n}\langle I,F \rangle$,
 which applies the FWL effects to a polynomial.  $\mathcal{P}^{n}$ is the
 space of polynomials of $n$-th order and $\mathcal{P}^{n}\langle I,F
 \rangle$ is is the space of polynomials with coefficients in
@@ -869,7 +869,7 @@ Thus, the perturbed controller model $\hat{C}(z)$ may be obtained from the
 original model $C(z)=\frac{N_{C}(z)}{D_{C}(z)}$ as follows:
 %
 \begin{equation}
-\hat{C}(z)=\frac{FWL[N_{C}(z)]}{FWL[D_{C}(z)]}.
+\hat{C}(z)=\frac{\mathit{FWL}[N_{C}(z)]}{\mathit{FWL}[D_{C}(z)]}.
 \end{equation}
 %
 In the case of a synthesised controller, because the synthesis is performed
@@ -993,18 +993,18 @@ $\nu_{1}$, and $\nu_{2}$ are bounded.
 %
 A feedback hybrid control system as shown in Fig.~\ref{fig:sampledsystem},
 with a FWL implementation of the digital controller $\hat{C}(z) =
-\frac{FWL[N_{C}(z)]}{FWL[D_{C}(z)]}$ and uncertain discrete model of the
-plant $\vec{\hat{G}}=\vec{G}+\Delta_p \vec{G}+\Delta_q \vec{G} \Rightarrow
-\hat{G}(z)=\frac{\hat{N}_{G}(z)}{\hat{D}_{G}(z)}$, is BIBO-stable if and
-only if:
+\frac{\mathit{FWL}[N_{C}(z)]}{\mathit{FWL}[D_{C}(z)]}$ and uncertain
+discrete model of the plant $\vec{\hat{G}}=\vec{G}+\Delta_p \vec{G}+\Delta_q
+\vec{G} \Rightarrow \hat{G}(z)=\frac{\hat{N}_{G}(z)}{\hat{D}_{G}(z)}$, is
+BIBO-stable if and only if:
 %
 \begin{itemize}
 \item  the roots of characteristic polynomial $S(z)$ are inside the open unit circle, where $S(z)$ is:
 \begin{equation}
 \label{eq:internal_stab_lemma}
-S(z)=FWL[N_{C}(z)]\hat{N}_{G}(z)+FWL[D_{C}(z)]\hat{D}_{G}(z);
+S(z)=\mathit{FWL}[N_{C}(z)]\hat{N}_{G}(z)+\mathit{FWL}[D_{C}(z)]\hat{D}_{G}(z);
 \end{equation}
-\item the direct loop product $\frac{FWL[N_{C}(z)]}{FWL[D_{C}(z)]}\cdot \frac{\hat{N}_{G}(z)}{\hat{D}_{G}(z)}$ has no pole-zero cancellation on or outside the unit circle.
+\item the direct loop product $\frac{\mathit{FWL}[N_{C}(z)]}{\mathit{FWL}[D_{C}(z)]}\cdot \frac{\hat{N}_{G}(z)}{\hat{D}_{G}(z)}$ has no pole-zero cancellation on or outside the unit circle.
 \end{itemize}
 \end{mylemma}
 
