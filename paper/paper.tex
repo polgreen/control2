@@ -1816,12 +1816,11 @@ solution above is the final solution. It is not and the verifier signals
 that it is due to lack of precision. We thus increase our precision to
 $I_b=20,F_b=28$.
 %
-We stay in the {\sc verify} phase and receive a new counterexample at
-higher precision:
-\cdsay{Pascal, this sounds confusing. if you want to increase precision on-the-fly, i.e. 
-not going back to the synthesise phase, 
-then this illustration doesn't follow the general diagram in Fig.5. 
-We need to decide which direction we keep.}
+Since previous counterexamples were attained at lower precision, we 
+remove them from the counterexample set. Back in the {\sc synthesise}
+phase, we thus retrieve a candidate solution with all coefficients 0.
+The {\sc verify} phase now provides the first counterexample at higher
+precision:
 %
 %$$
 %\begin{array}{ll}
@@ -1836,10 +1835,8 @@ $$
 $$
 
 %\blue{[Nice, now I'm in the groove. Next unfolds well.] }
-Since previous counterexamples were attained at lower precision, we 
-remove them from the counterexample set. In the next {\sc synthesise}
-phase, we get a new candidate solution that holds for the newly
-inserted counterexample:
+In the next {\sc synthesise} phase, we get a new candidate solution that holds for
+the new, higher precision counterexample:
 
 $$
 \blue{
