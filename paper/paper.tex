@@ -221,7 +221,7 @@ quantisers (A/D and D/A converters) as time discretisation elements with
 quantisation noise.  The resulting closed-loop system is a program loop that
 operates on bit-vectors encoded using fixed-point arithmetic with fixed word
 length (FWL).  We calculate the deterministic effect of the FWL and
-quantization errors are included in the model as an additive uncertainty,
+quantisation errors are included in the model as an additive uncertainty,
 which is taken into account during the synthesis of the controller.
 
 In summary, this paper makes the following original contributions.
@@ -374,13 +374,16 @@ which can be computed using the following formula:
 %
 \begin{equation}
 \label{eq:pulsetf}
-G(z,T) = \mathcal{ZOH}\left\lbrace{G(s)}\right\rbrace =(1-z^{-1})\mathcal{Z}\left\lbrace{\mathcal{L}^{-1}\left\lbrace{\frac{G(s)}{s}}\right\rbrace_{t=kT}}\right\rbrace.
+G(z,T) = %\mathcal{ZOH}\left\lbrace{G(s)}\right\rbrace =
+(1-z^{-1})\mathcal{Z}\left\lbrace{\mathcal{L}^{-1}\left\lbrace{\frac{G(s)}{s}}\right\rbrace_{t=kT}}\right\rbrace.
 \end{equation}
 %
 For the sake of brevity, we will use the notation $G(z)$ to represent the
 pulse transfer function.
 %
 \end{mylemma}
+
+The lemma \ref{eq:pulsetf} is ensures the poles and zeros matching with $\mathcal{Z}\left\lbrace{\mathcal{L}^{-1}\left\lbrace{\cdot}\right\rbrace_{t=kT}}\right\rbrace$ operations and includes the ZOH dynamics in the $(1-z^{-1})$ term, that is sufficient for the stability studies over $G(s)$
 
 %------------------------------------
 \subsection{Verifying Closed-loop Control Systems}
@@ -417,7 +420,7 @@ of poles and zeros for the corresponding block.
 
 Uncertainties in $G(z)$ may appear due to uncertainties in $G(s)$
 (\emph{i.e.} $\Delta_p{G}_n(s),\Delta_p{G}_d(s)$), errors in the numeric
-calculations, or roundoffs in the quantization.  These uncertainties may be
+calculations, or roundoffs in the quantisation.  These uncertainties may be
 parametrically expressed by additive terms, resulting in a uncertain model
 $\hat{G}(z)$, such that:
 %
@@ -586,7 +589,7 @@ represented by $\Delta_p \vec{G}$
 and the entire effect of $\nu_{1}$ and $\nu_{2}$ in the output $Y(z)$ is
 represented as an additive (output) measurement noise $\nu(z)$, thus
 %$\hat{Y}(z)=Y(z)+\nu(z)$.  The measurement noise $\nu(k)$ is enough for
-%represent both quantization noises ($\nu_{1}$ and $\nu_{2}$) what can be
+%represent both quantisation noises ($\nu_{1}$ and $\nu_{2}$) what can be
 %obtained reorganizing the equations~\ref{eq:outputfunctions}:
 %%
 %\begin{equation}
@@ -594,7 +597,7 @@ represented as an additive (output) measurement noise $\nu(z)$, thus
 %\hat{Y}(z)=H_{1}R(z)+H_{1}\nu_{1}(z)+H_{2}(z)\nu_{2}(z),
 %\end{equation}
 %%
-%where $H_{1}R(z)$ is exactly equal to $Y(z)$ without quantization noise effects, thus:
+%where $H_{1}R(z)$ is exactly equal to $Y(z)$ without quantisation noise effects, thus:
 %%
 %\begin{equation}
 %\nu(z)=H_{1}\nu_{1}(z)+H_{2}(z)\nu_{2}(z).
@@ -630,7 +633,7 @@ represented as an additive (output) measurement noise $\nu(z)$, thus
 
 
 
-%Considering the quantization noise $\nu(k)$ as an output error in discrete plant model, we may represent it as an additive noise in the plant output $y(k)$ resulting in the noisy output $\hat{y}(k)$:
+%Considering the quantisation noise $\nu(k)$ as an output error in discrete plant model, we may represent it as an additive noise in the plant output $y(k)$ resulting in the noisy output $\hat{y}(k)$:
 %\begin{equation}
 %
 %\end{equation}
@@ -871,7 +874,7 @@ using FWL, $\hat{C}(z) \equiv C(z)$.
 
 In order to obtain a sound synthesis of the digital controller, the effect
 of FWL implementation in controller and quantisation noises in closed loop
-system have to be considered.  Considering that the quantizer $Q1$ is the
+system have to be considered.  Considering that the quantiser $Q1$ is the
 source of a white noise $\nu_{1}$ and $Q2$ is the source of a white noise
 $\nu_{2}$, the following equation is written for the system in
 Figure~\ref{fig:sampledsystem}, considering the parametric uncertainties
@@ -904,74 +907,74 @@ H_{2}=\frac{\hat{G}(z)}{1+\hat{C}(z)\hat{G}(z)},
 \label{whitenoise}
 %
 The quantisation noises $\nu_{1}$ (from the $Q1$) and $\nu_{2}$ (from the
-$Q2$) are bounded uncorrelated white noises.
+$Q2$) are uncorrelated white noises and their amplitudes are always bounded by the half of quantisation step \cite{astrom1997computer}, {\it i.e.} $\vert \nu_{1} \vert \leq \frac{q_{1}}{2}$ and $\vert \nu_{2} \vert \leq \frac{q_{2}}{2}$, where $q_{1}$ and $q_{2}$ are respectively the quantisation step of  ADC and DAC.
 % 
 \end{myassumption}
 
-\begin{mylemma}
-\label{lemma:variance}
+%\begin{mylemma}
+%\label{lemma:variance}
+%%
+%In particular, Widrow \cite{widrow1956} models the quantisation noise as a
+%gaussian model in which the second moment (variance) of the probability
+%density function (PDF) of the quantisation noise is given by
+%%
+%\begin{equation}
+%\label{eq:variancelemma}
+%\sigma_{Q}^{2}=\frac{q^{2}}{12},
+%\end{equation}
+%where $q$ is the step size of quantiser. (Proof is on \cite{widrow1956})
+%\end{mylemma}
 %
-In particular, Widrow \cite{widrow1956} models the quantisation noise as a
-gaussian model in which the second moment (variance) of the probability
-density function (PDF) of the quantisation noise is given by
+%\begin{mylemma}
+%\label{lemma:boundednoise}
+%%
+%The power spectral density of the quantisation noise (supposed white)
+%$S_{\nu}(z)$ is bounded and may be computed through the z-transform of
+%autocorrelation function of $\nu(k)$, thus:
+%%
+%\begin{equation}
+%S_{\nu}(z)= \sigma_{Q}^{2}=\frac{q^{2}}{12}.
+%\end{equation}
+%\end{mylemma}
 %
-\begin{equation}
-\label{eq:variancelemma}
-\sigma_{Q}^{2}=\frac{q^{2}}{12},
-\end{equation}
-where $q$ is the step size of quantizer. (Proof is on \cite{widrow1956})
-\end{mylemma}
-
-\begin{mylemma}
-\label{lemma:boundednoise}
+%\begin{proof}
+%%
+%Considering $\nu(k)$ a random process, where $\nu(k)$ is independent from
+%$\nu(k+i)$ for every integer $k\neq 0$.  The autocorrelation function of
+%$\nu(k)$, {\it i.e.} $R_{\nu\nu}(\tau)$ may be computed as follows:
+%%
+%\begin{equation}
+%R_{\nu\nu}(\tau)=E[\nu(t+\tau)\nu(t)]=\sigma_{Q}^{2}\cdot \delta(\tau),
+%\end{equation}
+%%
+%where $\delta(\tau)$ is the Dirac delta function at delay time $\tau$.
 %
-The power spectral density of the quantisation noise (supposed white)
-$S_{\nu}(z)$ is bounded and may be computed through the z-transform of
-autocorrelation function of $\nu(k)$, thus:
+%By definition~\cite{poularikas2000transforms}, the power spectral density of
+%$\nu(k)$ is the z-transform of $R_{\nu\nu}(\tau)$, thus
+%%
+%\begin{equation}
+%S_{\nu}(z)=  \sum\limits_{k=-\infty}^{\infty}{R_{\nu\nu}(k)z^{-k}} = \sigma_{Q}^{2},
+%\end{equation}
+%considering the Lemma~\ref{lemma:variance}:
+%\begin{equation}
+%S_{\nu}(z)=  \frac{q^{2}}{12}.
+%\end{equation}
+%\end{proof}
 %
-\begin{equation}
-S_{\nu}(z)= \sigma_{Q}^{2}=\frac{q^{2}}{12}.
-\end{equation}
-\end{mylemma}
-
-\begin{proof}
-%
-Considering $\nu(k)$ a random process, where $\nu(k)$ is independent from
-$\nu(k+i)$ for every integer $k\neq 0$.  The autocorrelation function of
-$\nu(k)$, {\it i.e.} $R_{\nu\nu}(\tau)$ may be computed as follows:
-%
-\begin{equation}
-R_{\nu\nu}(\tau)=E[\nu(t+\tau)\nu(t)]=\sigma_{Q}^{2}\cdot \delta(\tau),
-\end{equation}
-%
-where $\delta(\tau)$ is the Dirac delta function at delay time $\tau$.
-
-By definition~\cite{poularikas2000transforms}, the power spectral density of
-$\nu(k)$ is the z-transform of $R_{\nu\nu}(\tau)$, thus
-%
-\begin{equation}
-S_{\nu}(z)=  \sum\limits_{k=-\infty}^{\infty}{R_{\nu\nu}(k)z^{-k}} = \sigma_{Q}^{2},
-\end{equation}
-considering the Lemma~\ref{lemma:variance}:
-\begin{equation}
-S_{\nu}(z)=  \frac{q^{2}}{12}.
-\end{equation}
-\end{proof}
-
-Finally, the quantisation noise spectrum may be considered a energy-bounded
-(Lemma~\ref{lemma:boundednoise}), and consequently the Parseval's theorem
-ensures that the quantisation noise is also energy-bounded in time-domain. 
-Thus $\hat{Y}(z)$ will be bounded and the closed-loop system stable if the
-conditions in Lemma~\ref{lemma:eq_int_stab} are followed.
+%Finally, the quantisation noise spectrum may be considered a energy-bounded
+%(Lemma~\ref{lemma:boundednoise}), and consequently the Parseval's theorem
+%ensures that the quantisation noise is also energy-bounded in time-domain. 
+%Thus $\hat{Y}(z)$ will be bounded and the closed-loop system stable if the
+%conditions in Lemma~\ref{lemma:eq_int_stab} are followed.
 
 %\red{[Add remark on bound (q/2) for signal. We need a bounded signal to be able to leverage BIBO stability results. ]}
 
 A discrete-time linear system is said to be Bounded-Input and Bounded-Output
 (BIBO) stable if and only if every pole of its transfer function lies inside
-the unit circle.  \textcolor{red}{Analyzing Eq.~\eqref{eq:outputfunctions}, the following lemma
+the unit circle.  Analyzing Eq.~\eqref{eq:outputfunctions}, the following lemma
 states necessary conditions for BIBO stability of closed-loop system in
 Figure~\ref{fig:sampledsystem}, since the the exogenous signals $R(z)$,
-$\nu_{1}$, and $\nu_{2}$ are bounded.}
+$\nu_{1}$, and $\nu_{2}$ are bounded.
 
 \begin{mylemma}{\cite{Bessa16,fadali}}
 \label{lemma:eq_int_stab} 
@@ -1001,8 +1004,7 @@ controllers.  Based on it, the model for plant uncertainty due quantisation
 noise ({\it i.e.}, $\Delta_q \vec{G}$) may be disregarded if the conditions
 on Lemma~\ref{lemma:eq_int_stab} are attended and if the quantisation noise
 is bounded.  The quantisation noise is indeed bounded, since the following
-assumption~\ref{whitenoise} and the Lemmas~\ref{lemma:variance}
-and~\ref{lemma:boundednoise} are true.
+assumption~\ref{whitenoise}.
 
 %\red{[first: lemmae precede theorems. ]}
 
@@ -1114,9 +1116,9 @@ well as the restrictions set in the representation of these coefficients.
 %which simulates the plant model dynamics considering uncertainties; and
 %``assert'' and ``assume'' statements, which control the verification flow. 
 %For the digital controller code, transfer functions coefficients are
-%quantized and deterministic, and all operations use fixed-point arithmetic. 
+%quantised and deterministic, and all operations use fixed-point arithmetic. 
 %\textcolor{red}{In the plant model code, transfer function coefficients are
-%not quantized, but represented with maximum precision based on float
+%not quantised, but represented with maximum precision based on float
 %data-type variables}; they are treated as non-deterministic variables to
 %support model uncertainties.  The directive ``assume'' bounds
 %non-deterministic variables, {\it i.e.}, inputs and plant uncertain
@@ -1173,12 +1175,12 @@ well as the restrictions set in the representation of these coefficients.
 %
 %Consider the closed-loop sampled system in Figure~\ref{fig:sampledsystem},
 %where $C(z)$ is the digital controller model, whose control output signal is
-%quantized ($Q2$) and interpolated via a ZOH using digital-to-analog
+%quantised ($Q2$) and interpolated via a ZOH using digital-to-analog
 %converter (DAC).  The quantisation occurs because the DAC resolution may be
 %different from the fixed point representation of the controller.  $G(s)$ is
 %the continuous-time model of the plant, from which output samples are taken
-%and quantized ($Q1$) by means of an analog-to-digital converter (ADC)
-%synchronized with the DAC.  Each quantizer ($Q1$ and $Q2$) will present some
+%and quantised ($Q1$) by means of an analog-to-digital converter (ADC)
+%synchronized with the DAC.  Each quantiser ($Q1$ and $Q2$) will present some
 %contribution for the total quantisation noise.
 %    
 %\begin{figure*}[ht]
@@ -1529,7 +1531,7 @@ well as the restrictions set in the representation of these coefficients.
 %of quantisation noise $\sigma_{Q}^{2}$.  To obtain such estimation, the
 %methodology presented by~\cite{widrow2008quantisation}
 %is used.  The authors provide an algorithm for computing the mean square of
-%the output noise due to $Q1$ and $Q2$.  Considering that each quantizer
+%the output noise due to $Q1$ and $Q2$.  Considering that each quantiser
 %contribution can be represented by a white noise with zero mean
 %(Assumption~\ref{whitenoise}), the mean square can be considered as the
 %variance of noise ($\sigma_{Q}^{2}$), which can be calculated as
@@ -1550,7 +1552,7 @@ well as the restrictions set in the representation of these coefficients.
 %\red{[The following text needs to be completed. (Notice typos, reference to wrong signal $R$, and to wrong TF $C,G$.]}
 %
 %Considering that
-%the quantizer $Q1$ is the source of a white noise with zero mean $\nu_{1}$
+%the quantiser $Q1$ is the source of a white noise with zero mean $\nu_{1}$
 %and $Q2$ is the source of a white noise with zero mean $\nu_{2}$, the
 %following equation can be written for the system in
 %Figure~\ref{fig:sampledsystem}
@@ -1926,7 +1928,7 @@ uses a two-stage verification such that in the first stage it
 assumes a certain precision \param{I_b}{F_b}, whose 
 soundness is checked in the second verification stage.
 
-Essentially, in the first stage, denoted by {\sc Uncertainty} in Fig.~\ref{fig:CEGIS}, 
+In more detail, in the first stage, denoted by {\sc Uncertainty} in Fig.~\ref{fig:CEGIS}, 
 assuming a precision \param{I_b}{F_b} 
 we check whether the system is unstable for the current candidate solution,
 {\it i.e.}, if $\neg \phi_{stability}$ is satisfiable for $S(z)$.
@@ -1997,7 +1999,7 @@ bits for the fractional part) can be represented by the following
 expression:
 %
 \begin{equation}
-\label{Eq:running-example-controller-quantized}
+\label{Eq:running-example-controller-quantised}
 C_{q}\left(z\right) {:=} \frac{2.719986z^2{-}4.153000z
 {+}1.895996}{z^2{-}1.843994z+0.849594},
 \end{equation} 
@@ -2487,7 +2489,7 @@ combination of a synthesis engine with a control verification tool that
 addresses the challenges presented here in the form of FWL effects and
 stability measures for LTI SISO controllers.  We take the former
 from~\cite{DBLP:conf/lpar/DavidKL15} and the latter from~\cite{daes20161}
-whilst enhancing the procedure by evaluating the quantization effects of
+whilst enhancing the procedure by evaluating the quantisation effects of
 the Hardware interfaces (ADC/DAC) to obtain an accurate discrete time FWL
 representation of the continuous dynamics.
  
