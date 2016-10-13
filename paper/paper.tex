@@ -364,9 +364,9 @@ digital controller).  To obtain a joint model, the discretise the continuous
 plant. We briefly recall the standard foundations of this step.
 
 We only consider transfer function models, and require a $z$-domain
-transfer function that captures all aspects of the continuous plant (with a
+transfer function $G(z)$ that captures all aspects of the continuous plant (with a
 Laplace domain transfer function $G(s)$) and the sampling and hold process.
-Note that $G(z)$ is a discrete model of a real-domain (and continuous)
+Note that $G(z)$ is a discrete model of a physical, continuous
 plant, i.e., the continuous model of the plant must be discretised to obtain
 the discrete equivalent coefficients via ZOH discretisation.
 
@@ -381,7 +381,7 @@ interpolation over the plant.
 
 \begin{myassumption}
 %
-The Sample and Hold of the ADC and the ZOH of the DAC are synchronized,
+The Sample and Hold of the ADC and the ZOH of the DAC are synchronised,
 i.e., there is no delay between sampling the plant output at ADC and
 updating the DAC accordingly.  The DAC interpolator is an ideal ZOH.
 %
@@ -389,7 +389,7 @@ updating the DAC accordingly.  The DAC interpolator is an ideal ZOH.
 
 \begin{mylemma}\cite{astrom1997computer}
 %
-Given a synchronized ZOH input and sample and hold output on the plant with
+Given a synchronised ZOH input and sample and hold output on the plant with
 a sample time $T$ satisfying Nyquist's sampling criteria, the discrete pulse
 transfer function $G(z,T)$ is an exact z-domain representation of $G(s)$
 which can be computed using the following formula:
@@ -1117,12 +1117,12 @@ user/synthesiser and Steps~A to D are automatically performed by DSVerifier.
 %user steps described in Steps $1$--$5$ result in an ANSI-C code that should
 %be used as an input for DSVerifier.
 
-Given a model for a plant for which to synthesize a controller, provided in
+Given a model for a plant for which to synthesise a controller, provided in
 an ANSI-C code input file (Steps 1-3), DSVerifier constructs a
 non-deterministic model to represent the plant family (Step A), and
 formulates a function (step B) using implementation details provided from
 Step $2$ and $3$ to calculate the parameters of the controller to be
-synthesized (step C).  Finally DSVerifier builds an intermediate ANSI-C code
+synthesised (step C).  Finally DSVerifier builds an intermediate ANSI-C code
 for the digital system implementation, which is used as input for the
 controller synthesiser (Step D).
 
@@ -1130,13 +1130,13 @@ This intermediate ANSI-C code model contains a specification $\phi$ for the
 verification properties ({\it i.e.}, robust stability) and is provided to
 CBMC's~\cite{ClarkeKL04} integrated Counterexample-Guided Inductive
 Synthesis (CEGIS) module, where the controller is marked as input variable
-to synthesize.  The properties specified in the ANSI-C code model can only
-be satisfied if CEGIS synthesizes controller coefficients satisfying $\phi$. 
+to synthesise.  The properties specified in the ANSI-C code model can only
+be satisfied if CEGIS synthesises controller coefficients satisfying $\phi$. 
 CEGIS employs an iterative, counterexample-guided refinement process which
 is explained in detail in section~\ref{synthesiser-general}.  A successful
 synthesis result is reported if CEGIS generates a controller which is safe
 with respect to $\phi$.  In particular, the ANSI-C code model guarantees
-that a synthesized solution is complete and sound with respect to stability
+that a synthesised solution is complete and sound with respect to stability
 property $\phi$, since it does not depend on system inputs and outputs.  In
 the case of stability, the specification $\phi$ consists in a number of
 assumptions on the polynomial coefficients, following Jury's Criteria, as
@@ -1944,14 +1944,12 @@ The first approach uses interval arithmetic \cite{moore1966interval}
 to represent the coefficients
 $[{c}_i-\Delta_p{c}_i-\Delta_b{c}_i\ ,\
 {c}_i+\Delta_p{c}_i-\Delta_b{c}_i+(2^{-F_b})]$ 
-and rounds operations outwards during calculations. 
-%\cdsay{dario, what coefficients are these?}
-% This results in a
-% tighter calculation of the error at the cost of
-% performance.
+and rounds operations outwards during calculations. This effectively allows
+us to simultaneously evaluate the whole collection of plants $\mathfrak{G}$
+plus the effects of numeric calculations in the engine.
 Synthesised controllers using this verifier will always
-be correct and only generate counterexamples when the precision of the
-engine is insufficient. Given the high computational cost of this
+be stable for all plants in the family and only generate counterexamples when the precision of the
+engine is insufficient (\emph{ie} no stable plant could be found). Given the high computational cost of this
 approach, we also designed a second approach, which we describe below.
 Our experimental results described in Sec.~\ref{sec:experiments},  
 %try both approaches and provide the time for the fastest. 
@@ -2544,7 +2542,7 @@ We have presented a CEGIS-based approach that uses inductive synthesis in
 conjunction with an algorithm for verifying robust closed-loop stability, 
 in order to compute a parametric solution for a digital controller given 
 a continuous (or discrete) plant specification.  This enables us to automatically
-synthesize correct-by-construction digital controllers for a given model of
+synthesise correct-by-construction digital controllers for a given model of
 their physical environment.  Our approach addresses the effects of the
 quantisers (A/D and D/A converters) as time discretisation elements with
 quantisation noise.  Our experimental results show that our CEGIS-based
