@@ -706,8 +706,7 @@ where $\Delta G_{P}(z)$ is the term that corresponds to the parametric uncertain
 Since the controller is implemented using a FWL, $C(z)$ also suffers disturbances from the FWL effects, with roundoffs in coefficients that may change the closed-loop poles and zeros position, and consequently affect its stability, as shown in~\cite{Bessa16}.
 
 
-Let $\hat{C}(z)$ be the transfer function of the digital controller represented using this FWL with integer size $I$ and fractional
-size $F$.  We shall denote the FWL domain of coefficients as $\mathbb{R}\langle I,F \rangle$
+Let $\hat{C}(z)$ be the transfer function of the digital controller represented using this FWL with integer size $I$ and fractional size $F$.  We shall denote the FWL domain of coefficients as $\mathbb{R}\langle I,F \rangle$
 %Since the controller is implemented in the $\mathbb{R}\langle I,F \rangle$ 
 %domain, {\it i.e.} a Fixed-Point Finite Word Length with integer size $I$ and fractional
 %size $F$, we shall denote this domain as $\mathbb{R}\langle I,F \rangle$ 
@@ -820,26 +819,29 @@ The Lemma~\ref{lemma:eq_int_stab} provides the necessary conditions for synthesi
 
 %\red{[first: lemmae precede theorems. ]}
 
-Let $\tilde C(z)$ and $\tilde G(z)$ be the transfer functions represented
-using Fixed-Point bit vectors with integer size $I_b$ and fractional
-size $F_b$, whose domain is $\mathbb{R}\langle I_b,F_b \rangle \supseteq \mathbb{R}\langle I,F \rangle$.
-%
-\begin{align}
-\small
-\label{digital_controller_plant_tf}
-\tilde C(z)&=\frac{\tilde \beta_{0}+\tilde \beta_{1}z^{-1}+...+\tilde \beta_{M_C}z^{-M_C}}{\tilde \alpha_{0}+\tilde \alpha_{1}z^{-1}+...+\tilde \alpha_{N_C}z^{-N_C}}, \\
-%\label{plant_tf}
-\tilde G(z)&=\frac{\tilde b_{0}+\tilde b_{1}z^{-1}+...+\tilde b_{M_G}z^{-M_G}}{\tilde a_{0}+\tilde a_{1}z^{-1}+...+\tilde a_{N_G}z^{-N_G}}.
-\end{align}
+% Let $\tilde C(z)$ and $\tilde G(z)$ be the transfer functions represented
+% using Fixed-Point bit vectors with integer size $I_b$ and fractional
+% size $F_b$, whose domain is $\mathbb{R}\langle I_b,F_b \rangle \supseteq \mathbb{R}\langle I,F \rangle$.
+% %
+% \begin{align}
+% \small
+% \label{digital_controller_plant_tf}
+% \tilde C(z)&=\frac{\tilde \beta_{0}+\tilde \beta_{1}z^{-1}+...+\tilde \beta_{M_C}z^{-M_C}}{\tilde \alpha_{0}+\tilde \alpha_{1}z^{-1}+...+\tilde \alpha_{N_C}z^{-N_C}}, \\
+% %\label{plant_tf}
+% \tilde G(z)&=\frac{\tilde b_{0}+\tilde b_{1}z^{-1}+...+\tilde b_{M_G}z^{-M_G}}{\tilde a_{0}+\tilde a_{1}z^{-1}+...+\tilde a_{N_G}z^{-N_G}}.
+% \end{align}
  
-Since the controller is synthesized in the $\mathbb{R}\langle I,F \rangle$
-domain,
-%
- $$\forall i \leq N_C, j \leq M_C\ \  \tilde \beta_{i} \equiv \beta_{i} \wedge \tilde \alpha_{j} \equiv \alpha_{j} \Leftrightarrow \tilde C(z) \equiv C(z)$$
+% Since the controller is synthesized in the $\mathbb{R}\langle I,F \rangle$
+% domain,
+% %
+%  $$\forall i \leq N_C, j \leq M_C\ \  \tilde \beta_{i} \equiv \beta_{i} \wedge \tilde \alpha_{j} \equiv \alpha_{j} \Leftrightarrow \tilde C(z) \equiv C(z)$$
 
-Two approaches have been taken to synthesise a stable controller based on this model.
-The first uses interval arithmetic, representing the coefficients $[{c}_i-\Delta_p{c}_i-\Delta_b{c}_i\ ,\ {c}_i+\Delta_p{c}_i-\Delta_b{c}_i+(2^{-F_b})]$  
-and rounding operations outwards during the process. This results in a tighter calculation of the error at the cost of performance.
+% Two approaches have been taken to synthesise a stable controller based on this model.
+% The first uses interval arithmetic, representing the coefficients $[{c}_i-\Delta_p{c}_i-\Delta_b{c}_i\ ,\ {c}_i+\Delta_p{c}_i-\Delta_b{c}_i+(2^{-F_b})]$  
+
+% \cdsay{Dario, what coefficients are these?}
+
+% and rounding operations outwards during the process. This results in a tighter calculation of the error at the cost of performance.
 
 %, thus supporting this assumption.
 
@@ -1721,6 +1723,7 @@ coefficients
 $[{c}_i-\Delta_p{c}_i-\Delta_b{c}_i\ ,\
 {c}_i+\Delta_p{c}_i-\Delta_b{c}_i+(2^{-F_b})]$
 and rounding operations outwards during the process. 
+\cdsay{dario, what coefficients are these?}
 % This results in a
 % tighter calculation of the error at the cost of
 % performance.
@@ -1785,9 +1788,7 @@ techniques \cite{Kuo:2002:ACS:579453,Ogata:1987:DCS:26170}.
 %\end{array}
 %$$
 $$
-\blue{
 C(z)=\frac{0z^2{+}0z{+}0}{0z^2{+}0z{+}0}
-}
 $$
 
 In the first {\sc verify} phase we obtain the following counterexample:
@@ -2089,7 +2090,7 @@ and synthesise a solution instead, albeit with significantly larger runtimes.
 \begin{table}[H]
 \centering
 \begin{tabular}{c l | r l}
-Plant & Benchmark                  & Base    & \\\cline{1-2}
+Plant & Benchmark                  & Time    & \\\cline{1-3}
 $G_1$ & CruiseControl02            & 17\,s   & \\
 $G_1$ & CruiseControl02$^\dagger$  & 46\,s   & \\
 $G_2$ & SpringMassDamper           & 28\,s   & \\
