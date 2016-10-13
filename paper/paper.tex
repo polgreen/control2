@@ -1092,7 +1092,7 @@ assumption~\ref{whitenoise}.
 
 The synthesis process is illustrated in Fig.~\ref{DSVerifier_process}. 
 A~detailed description of DSVerifier tool can be found
-in~\cite{IsmailBCFF15}.  Steps $1$ to $5$ are performed by the
+in~\cite{IsmailBCFF15}.  Steps $1$ to $3$ are performed by the
 user/synthesiser and Steps~A to D are automatically performed by DSVerifier.
 %
 %, which accepts the
@@ -1121,10 +1121,10 @@ user/synthesiser and Steps~A to D are automatically performed by DSVerifier.
 %be used as an input for DSVerifier.
 
 Given a model for a plant for which to synthesize a controller, provided in
-an ANSI-C code input file (Steps 1-5), DSVerifier constructs a
+an ANSI-C code input file (Steps 1-3), DSVerifier constructs a
 non-deterministic model to represent the plant family (Step A), and
 formulates a function (step B) using implementation details provided from
-Steps $2$ and $3$ to calculate the parameters of the controller to be
+Step $2$ and $3$ to calculate the parameters of the controller to be
 synthesized (step C).  Finally DSVerifier builds an intermediate ANSI-C code
 for the digital system implementation, which is used as input for the
 controller synthesiser (Step D).
