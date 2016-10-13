@@ -897,13 +897,13 @@ The Lemma~\ref{lemma:eq_int_stab} provides the necessary conditions for synthesi
 %------------------------------------
 
 %------------------------------------
-\subsection{Synthesis Process using DSVerifier}
+\subsection{Overview of the Synthesis Process using DSVerifier}
 \label{verification-flow}
 %------------------------------------
 
 %\red{[The following description can be made shorter, crisper?]}
 
-The full synthesis process is illustrated in Fig.~\ref{DSVerifier_process};
+An overview of the synthesis process is illustrated in Fig.~\ref{DSVerifier_process};
 a detailed description of DSVerifier tool can be found in~\cite{IsmailBCFF15}.
 Steps $1$ to $5$ are performed by the user/synthesiser and
 Steps A to D are automatically performed by DSVerifier.
@@ -935,11 +935,11 @@ Steps A to D are automatically performed by DSVerifier.
 
 Given a model for a plant for which to synthesize a controller,
 provided in an ANSI-C code input file (Steps 1-5), DSVerifier constructs a
-non-deterministic model to represent the plant family (Step A), and a transfer
-function $f$ represented by Eq.~\ref{FWL_tf} (step B) to calculate the parameters
-of the controller to be synthesized (step C).  Finally DSVerifier builds an
-intermediate ANSI-C code for the digital system implementation, which is used as
-input for the controller synthesiser (Step D).
+non-deterministic model to represent the plant family (Step A), and formulates a 
+function (step B) using implementation details provided from Steps $2$ and $3$ 
+to calculate the parameters of the controller to be synthesized (step C).  
+Finally DSVerifier builds an intermediate ANSI-C code for the digital system 
+implementation, which is used as input for the controller synthesiser (Step D).
 
 This intermediate ANSI-C code model contains a specification $\phi$ for the
 verification properties ({\it i.e.}, robust stability) and is provided to
@@ -955,8 +955,9 @@ and sound with respect to stability property $\phi$, since it does not depend on
 system inputs and outputs.  In the case of stability, the specification $\phi$
 consists in a number of assumptions on the polynomial coefficients, following
 Jury's Criteria, as well as the restrictions set in the representation of these
-coefficients by the function $f$ (cf.~Eq.~\eqref{FWL_tf}).
+coefficients.
 
+% by the function $f$ (cf.~Eq.~\eqref{FWL_tf})
 %In Step A, DSVerifier constructs a non-deterministic model to represent the
 %plant family $\mathfrak{G}$ using $g_0$ and $\Delta{g}\%$, which are
 %provided in Step $1$.  DSVerifier then formulates $\mathit{FWL}[\cdot]$ in
