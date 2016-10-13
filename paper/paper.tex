@@ -709,7 +709,11 @@ In figure~\ref{fig:digsystem1}, two sources of uncertainties are considered: par
 \vec{\hat{G}}=\vec{G}+\Delta_p \vec{G}+\Delta_q \vec{G},
 \end{equation}
 %
-where $\Delta_p \vec{G}$ is the term that corresponds to the parametric uncertainties and $\Delta_q \vec{G}$ is the term that reflects the quantisation effects on the plant model. %\red{[next figure is a bit unnecessary, does not ad much to the previous one.]} Figure~\ref{fig:digsystem2} shows the digital closed loop systems with $\Delta G_{P}(z)$ and $\Delta G_{Q}(z)$.
+where $\Delta_p \vec{G}$ is the term that corresponds to the parametric
+uncertainties and $\Delta_q \vec{G}$ is the term that reflects the
+quantisation effects on the plant model.
+
+%\red{[next figure is a bit unnecessary, does not ad much to the previous one.]} Figure~\ref{fig:digsystem2} shows the digital closed loop systems with $\Delta G_{P}(z)$ and $\Delta G_{Q}(z)$.
 
 
 %\begin{figure}[ht]
@@ -826,21 +830,32 @@ where $\Delta_p \vec{G}$ is the term that corresponds to the parametric uncertai
 %\red{[The previous statement is confusing and I must disagree here: I want hard error bounds on a specific value of T.]}
 %\green{[You are correct. It was absolutely wrong. Hopefully this explanation is clear. We use MATLAB, but still don't know the details of their implementation, so I don't have hard data on how this error is calculated.}
 
-Since the controller is implemented using a FWL, $C(z)$ also suffers disturbances from the FWL effects, with roundoffs in coefficients that may change the closed-loop poles and zeros position, and consequently affect its stability, as shown in~\cite{Bessa16}.
+Since the controller is implemented using a FWL, $C(z)$ also suffers
+disturbances from the FWL effects, with roundoffs in coefficients that may
+change the closed-loop poles and zeros position, and consequently affect its
+stability, as shown in~\cite{Bessa16}.
 
-
-Let $\hat{C}(z)$ be the transfer function of the digital controller represented using this FWL with integer size $I$ and fractional
-size $F$.  We shall denote the FWL domain of coefficients as $\mathbb{R}\langle I,F \rangle$
+Let $\hat{C}(z)$ be the transfer function of the digital controller
+represented using this FWL with integer size $I$ and fractional size $F$. 
+We shall denote the FWL domain of coefficients as $\mathbb{R}\langle I,F
+\rangle$
+%
 %Since the controller is implemented in the $\mathbb{R}\langle I,F \rangle$ 
 %domain, {\it i.e.} a Fixed-Point Finite Word Length with integer size $I$ and fractional
 %size $F$, we shall denote this domain as $\mathbb{R}\langle I,F \rangle$ 
 and assume that there exists a function $FWL[\cdot]:\mathcal{P}^{n}\rightarrow \mathcal{P}^{n}\langle I,F \rangle$, which applies the FWL effects to a polynomial. $\mathcal{P}^{n}$ is the space of polynomials of $n$-th order and $\mathcal{P}^{n}\langle I,F \rangle$ is is the space of polynomials with coefficients in $\mathbb{R}\langle I,F \rangle$.
 %, \red{[explain index n! why do you need to work on a Euclidean domain?]}. 
-Thus the perturbed controller model $\hat{C}(z)$ may be computed from the original model $C(z)=\frac{N_{C}(z)}{D_{C}(z)}$ using the following expression:
+%
+Thus the perturbed controller model $\hat{C}(z)$ may be computed from the
+original model $C(z)=\frac{N_{C}(z)}{D_{C}(z)}$ using the following
+expression:
+%
 \begin{equation}
 \hat{C}(z)=\frac{FWL[N_{C}(z)]}{FWL[D_{C}(z)]}.
 \end{equation}
-In the case of a synthesised controller, because the synthesis is performed using FWL, $\hat{C}(z) \equiv C(z)$. 
+%
+In the case of a synthesised controller, because the synthesis is performed
+using FWL, $\hat{C}(z) \equiv C(z)$.
 
 %\textcolor{blue}{[IB: And I propose to exchange the remaining paragraphs by the previous blue]}
 %
@@ -851,25 +866,44 @@ In the case of a synthesised controller, because the synthesis is performed usin
 \label{sec:stability}
 %------------------------------------
 
-In order to obtain a sound synthesis of the digital controller, the effect of FWL implementation in controller and quantisation noises in closed loop system have to be considered. Considering that the quantizer $Q1$ is the source of a white noise $\nu_{1}$ and $Q2$ is the source of a white noise $\nu_{2}$, the following equation is written for the system in Figure~\ref{fig:sampledsystem}, considering the parametric uncertainties $\Delta \vec{G}$ and the FWL effects on controller ($\hat{C}(z)$):
+In order to obtain a sound synthesis of the digital controller, the effect
+of FWL implementation in controller and quantisation noises in closed loop
+system have to be considered.  Considering that the quantizer $Q1$ is the
+source of a white noise $\nu_{1}$ and $Q2$ is the source of a white noise
+$\nu_{2}$, the following equation is written for the system in
+Figure~\ref{fig:sampledsystem}, considering the parametric uncertainties
+$\Delta \vec{G}$ and the FWL effects on controller ($\hat{C}(z)$):
+%
 \begin{equation}
 \hat{Y}(z)=\hat{C}(z)\hat{G}(z)[R(z)+\nu_{1}(z)]+\nu_{2}(z)\hat{G}(z)-\hat{Y}(z)\hat{C}(z)\hat{G}(z),
 \end{equation}
+%
 that can be rewritten as follows:
+%
 \begin{equation}
 \label{eq:outputfunctions}
 \hat{Y}(z)=H_{1}[R(z)+\nu_{1}(z)]+H_{2}(z)\nu_{2}(z),
 \end{equation}
+%
 where
+%
 \begin{equation}
 H_{1}=\frac{\hat{C}(z)\hat{G}(z)}{1+\hat{C}(z)\hat{G}(z)},
 \end{equation}
+%
 and
+%
 \begin{equation}
 H_{2}=\frac{\hat{G}(z)}{1+\hat{C}(z)\hat{G}(z)},
 \end{equation}
 
-A discrete-time linear system is said to be Bounded-Input and Bounded-Output (BIBO) stable if and only if every pole of its transfer function lies inside the unit circle. \textcolor{red}{Analyzing Eq.~\eqref{eq:outputfunctions} and based on assumption~\ref{assumption:cont_and_plant}, the following lemma states necessary conditions for BIBO stability of closed-loop system in Figure~\ref{fig:sampledsystem}, since the the exogenous signals $R(z)$, $\nu_{1}$, and $\nu_{2}$ are bounded.}
+A discrete-time linear system is said to be Bounded-Input and Bounded-Output
+(BIBO) stable if and only if every pole of its transfer function lies inside
+the unit circle.  \textcolor{red}{Analyzing Eq.~\eqref{eq:outputfunctions}
+and based on assumption~\ref{assumption:cont_and_plant}, the following lemma
+states necessary conditions for BIBO stability of closed-loop system in
+Figure~\ref{fig:sampledsystem}, since the the exogenous signals $R(z)$,
+$\nu_{1}$, and $\nu_{2}$ are bounded.}
 
 \begin{myassumption}
 \label{whitenoise}
@@ -881,9 +915,10 @@ $Q2$) are bounded uncorrelated white noises.
 
 \begin{mylemma}
 \label{lemma:variance}
-In particular, Widrow \cite{widrow1956} models the quantisation noise as a gaussian
-model in which the second moment (variance) of the probability density
-function (PDF) of the quantisation noise is given by
+%
+In particular, Widrow \cite{widrow1956} models the quantisation noise as a
+gaussian model in which the second moment (variance) of the probability
+density function (PDF) of the quantisation noise is given by
 %
 \begin{equation}
 \label{eq:variancelemma}
@@ -894,20 +929,31 @@ where $q$ is the step size of quantizer. (Proof is on \cite{widrow1956})
 
 \begin{mylemma}
 \label{lemma:boundednoise}
-The power spectral density of the quantisation noise (supposed white) $S_{\nu}(z)$ is bounded and may be computed through the z-transform of autocorrelation function of $\nu(k)$, thus:
+%
+The power spectral density of the quantisation noise (supposed white)
+$S_{\nu}(z)$ is bounded and may be computed through the z-transform of
+autocorrelation function of $\nu(k)$, thus:
+%
 \begin{equation}
 S_{\nu}(z)= \sigma_{Q}^{2}=\frac{q^{2}}{12}.
 \end{equation}
 \end{mylemma}
 
 \begin{proof}
-Considering $\nu(k)$ a random process, where $\nu(k)$ is independent from $\nu(k+i)$ for every  integer $k\neq 0$. The autocorrelation function of $\nu(k)$, {\it i.e.} $R_{\nu\nu}(\tau)$ may be computed as follows:
+%
+Considering $\nu(k)$ a random process, where $\nu(k)$ is independent from
+$\nu(k+i)$ for every integer $k\neq 0$.  The autocorrelation function of
+$\nu(k)$, {\it i.e.} $R_{\nu\nu}(\tau)$ may be computed as follows:
+%
 \begin{equation}
 R_{\nu\nu}(\tau)=E[\nu(t+\tau)\nu(t)]=\sigma_{Q}^{2}\cdot \delta(\tau),
 \end{equation}
+%
 where $\delta(\tau)$ is the Dirac delta function at delay time $\tau$.
 
-By definition~\cite{poularikas2000transforms}, the power spectral density of  $\nu(k)$ is the z-transform of $R_{\nu\nu}(\tau)$, thus
+By definition~\cite{poularikas2000transforms}, the power spectral density of
+$\nu(k)$ is the z-transform of $R_{\nu\nu}(\tau)$, thus
+%
 \begin{equation}
 S_{\nu}(z)=  \sum\limits_{k=-\infty}^{\infty}{R_{\nu\nu}(k)z^{-k}} = \sigma_{Q}^{2},
 \end{equation}
@@ -917,13 +963,24 @@ S_{\nu}(z)=  \frac{q^{2}}{12}.
 \end{equation}
 \end{proof}
 
-Finally, the quantisation noise spectrum may be considered a energy-bounded (Lemma~\ref{lemma:boundednoise}), and consequently the Parseval's theorem ensures that the quantisation noise is also energy-bounded in time-domain.  Thus $\hat{Y}(z)$ will be bounded and the closed-loop system stable if the conditions in Lemma~\ref{lemma:eq_int_stab} are followed.
+Finally, the quantisation noise spectrum may be considered a energy-bounded
+(Lemma~\ref{lemma:boundednoise}), and consequently the Parseval's theorem
+ensures that the quantisation noise is also energy-bounded in time-domain. 
+Thus $\hat{Y}(z)$ will be bounded and the closed-loop system stable if the
+conditions in Lemma~\ref{lemma:eq_int_stab} are followed.
 
 \red{[Add remark on bound (q/2) for signal. We need a bounded signal to be able to leverage BIBO stability results. ]}
 
 \begin{mylemma}{\cite{Bessa16,fadali}}
 \label{lemma:eq_int_stab} 
-A feedback hybrid control system as shown in Fig.~\ref{fig:sampledsystem}, with a FWL implementation of the digital controller $\hat{C}(z) = \frac{FWL[N_{C}(z)]}{FWL[D_{C}(z)]}$ and uncertain discrete model of the plant $\vec{\hat{G}}=\vec{G}+\Delta_p \vec{G}+\Delta_q \vec{G} \Rightarrow \hat{G}(z)=\frac{\hat{N}_{G}(z)}{\hat{D}_{G}(z)}$, is BIBO-stable if and only if: 
+%
+A feedback hybrid control system as shown in Fig.~\ref{fig:sampledsystem},
+with a FWL implementation of the digital controller $\hat{C}(z) =
+\frac{FWL[N_{C}(z)]}{FWL[D_{C}(z)]}$ and uncertain discrete model of the
+plant $\vec{\hat{G}}=\vec{G}+\Delta_p \vec{G}+\Delta_q \vec{G} \Rightarrow
+\hat{G}(z)=\frac{\hat{N}_{G}(z)}{\hat{D}_{G}(z)}$, is BIBO-stable if and
+only if:
+%
 \begin{itemize}
 \item  the roots of characteristic polynomial $S(z)$ are inside the open unit circle, where $S(z)$ is:
 \begin{equation}
@@ -934,7 +991,16 @@ S(z)=FWL[N_{C}(z)]\hat{N}_{G}(z)+FWL[D_{C}(z)]\hat{D}_{G}(z);
 \end{itemize}
 \end{mylemma}
 
-The Lemma~\ref{lemma:eq_int_stab} provides the necessary conditions for synthesis of digital controllers able to stabilize closed loop system, considering plant parametric uncertainties ({\it i.e.}, $\Delta_p \vec{G}$), quantisation noises ($\nu_{1}$ and $\nu_{2}$) and FWL effects in digital controllers. Based on it, the model for plant uncertainty due quantisation noise ({\it i.e.}, $\Delta_q \vec{G}$) may be disregarded if the conditions on Lemma~\ref{lemma:eq_int_stab} are attended and if the quantisation noise is bounded.  The quantisation noise is indeed bounded, since the following assumption~\ref{whitenoise} and the Lemmas~\ref{lemma:variance} and~\ref{lemma:boundednoise} are true.
+The Lemma~\ref{lemma:eq_int_stab} provides the necessary conditions for
+synthesis of digital controllers able to stabilize closed loop system,
+considering plant parametric uncertainties ({\it i.e.}, $\Delta_p \vec{G}$),
+quantisation noises ($\nu_{1}$ and $\nu_{2}$) and FWL effects in digital
+controllers.  Based on it, the model for plant uncertainty due quantisation
+noise ({\it i.e.}, $\Delta_q \vec{G}$) may be disregarded if the conditions
+on Lemma~\ref{lemma:eq_int_stab} are attended and if the quantisation noise
+is bounded.  The quantisation noise is indeed bounded, since the following
+assumption~\ref{whitenoise} and the Lemmas~\ref{lemma:variance}
+and~\ref{lemma:boundednoise} are true.
 
 %\red{[first: lemmae precede theorems. ]}
 
@@ -976,10 +1042,11 @@ The Lemma~\ref{lemma:eq_int_stab} provides the necessary conditions for synthesi
 
 %\red{[The following description can be made shorter, crisper?]}
 
-An overview of the synthesis process is illustrated in Fig.~\ref{DSVerifier_process};
-a detailed description of DSVerifier tool can be found in~\cite{IsmailBCFF15}.
-Steps $1$ to $5$ are performed by the user/synthesiser and
-Steps A to D are automatically performed by DSVerifier.
+An overview of the synthesis process is illustrated in
+Fig.~\ref{DSVerifier_process}; a detailed description of DSVerifier tool can
+be found in~\cite{IsmailBCFF15}.  Steps $1$ to $5$ are performed by the
+user/synthesiser and Steps A to D are automatically performed by DSVerifier.
+%
 %, which accepts the
 %digital controller transfer functions together with the plant model.  For
 %any digital controller, implementation details should be provided ({\it
@@ -1006,29 +1073,30 @@ Steps A to D are automatically performed by DSVerifier.
 %user steps described in Steps $1$--$5$ result in an ANSI-C code that should
 %be used as an input for DSVerifier.
 
-Given a model for a plant for which to synthesize a controller,
-provided in an ANSI-C code input file (Steps 1-5), DSVerifier constructs a
-non-deterministic model to represent the plant family (Step A), and formulates a 
-function (step B) using implementation details provided from Steps $2$ and $3$ 
-to calculate the parameters of the controller to be synthesized (step C).  
-Finally DSVerifier builds an intermediate ANSI-C code for the digital system 
-implementation, which is used as input for the controller synthesiser (Step D).
+Given a model for a plant for which to synthesize a controller, provided in
+an ANSI-C code input file (Steps 1-5), DSVerifier constructs a
+non-deterministic model to represent the plant family (Step A), and
+formulates a function (step B) using implementation details provided from
+Steps $2$ and $3$ to calculate the parameters of the controller to be
+synthesized (step C).  Finally DSVerifier builds an intermediate ANSI-C code
+for the digital system implementation, which is used as input for the
+controller synthesiser (Step D).
 
 This intermediate ANSI-C code model contains a specification $\phi$ for the
 verification properties ({\it i.e.}, robust stability) and is provided to
-CBMC's~\cite{ClarkeKL04} integrated Counterexample-Guided Inductive Synthesis
-(CEGIS) module, where the controller is marked as input variable to synthesize.
-The properties specified in the ANSI-C code model can only be satisfied if CEGIS
-synthesizes controller coefficients satisfying $\phi$. CEGIS employs an iterative,
-counterexample-guided refinement process which is explained in detail in
-section~\ref{synthesiser-general}. A successful synthesis result is reported if
-CEGIS generates a controller which is safe with respect to $\phi$.  In particular,
-the ANSI-C code model guarantees that a synthesized solution is complete
-and sound with respect to stability property $\phi$, since it does not depend on
-system inputs and outputs.  In the case of stability, the specification $\phi$
-consists in a number of assumptions on the polynomial coefficients, following
-Jury's Criteria, as well as the restrictions set in the representation of these
-coefficients.
+CBMC's~\cite{ClarkeKL04} integrated Counterexample-Guided Inductive
+Synthesis (CEGIS) module, where the controller is marked as input variable
+to synthesize.  The properties specified in the ANSI-C code model can only
+be satisfied if CEGIS synthesizes controller coefficients satisfying $\phi$. 
+CEGIS employs an iterative, counterexample-guided refinement process which
+is explained in detail in section~\ref{synthesiser-general}.  A successful
+synthesis result is reported if CEGIS generates a controller which is safe
+with respect to $\phi$.  In particular, the ANSI-C code model guarantees
+that a synthesized solution is complete and sound with respect to stability
+property $\phi$, since it does not depend on system inputs and outputs.  In
+the case of stability, the specification $\phi$ consists in a number of
+assumptions on the polynomial coefficients, following Jury's Criteria, as
+well as the restrictions set in the representation of these coefficients.
 
 % by the function $f$ (cf.~Eq.~\eqref{FWL_tf})
 %In Step A, DSVerifier constructs a non-deterministic model to represent the
@@ -1576,10 +1644,9 @@ coefficients.
 % We use CounterExample-Guided Inductive Synthesis (CEGIS), as
 % illustrated in Fig~\ref{fig:CEGIS}.
 
-In order to synthesise closed-loop digital control systems, we use a
-program synthesis engine.  Nowadays, such engines are used
-increasingly often in program
-verification~\cite{DBLP:conf/lpar/DavidKL15,DBLP:conf/cav/0001A14}.
+In order to synthesise closed-loop digital control systems, we use a program
+synthesis engine.  Nowadays, such engines are used increasingly often in
+program verification~\cite{DBLP:conf/lpar/DavidKL15, DBLP:conf/cav/0001A14}. 
 Our program synthesiser makes use of Counter-Example Guided Inductive
 Synthesis (CEGIS) \cite{sketch}.  We start by presenting its general
 architecture followed by describing the parts specific to closed-loop
@@ -1594,26 +1661,26 @@ control systems.
 %% \red{[I would recommend to clarify the domain of definition of $\sigma$, particularly over the set where $x$ ranges over. 
 %% (Be cognisant that control audience might be unfamiliar with the cegis architecture.) ]}
 % 
-The input specification provided to the program synthesiser is of the
-form $\exists \vec{P} . \forall \vec{x}. \sigma(\vec{x}, \vec{P})$ where $\vec{P}$ ranges over functions,
-$\vec{x}$ ranges over ground terms and $\sigma$ is a quantifier-free
-formula.  We interpret the ground terms over some finite domain
-$\mathcal{D}$.
+The input specification provided to the program synthesiser is of the form
+$\exists \vec{P} .  \forall \vec{x}.  \sigma(\vec{x}, \vec{P})$ where
+$\vec{P}$ ranges over functions, $\vec{x}$ ranges over ground terms and
+$\sigma$ is a quantifier-free formula.  We interpret the ground terms over
+some finite domain $\mathcal{D}$.
 
-The design of our synthesiser is given in Fig.~\ref{fig:CEGIS} and
-consists of two phases, {\sc Synthesise} and {\sc Verify}, which
-interact via a finite set of test vectors {\sc inputs} that is updated
-incrementally.  Given the aforementioned specification $\sigma$, the
-{\sc synth} procedure tries to find an existential witness $\vec{P}$
-satisfying the specification $\sigma(\vec{x}, \vec{P})$ for all
-$\vec{x}$ in {\sc inputs} (as opposed to all $\vec{x} \in \mathcal{D}$).
+The design of our synthesiser is given in Fig.~\ref{fig:CEGIS} and consists
+of two phases, {\sc Synthesise} and {\sc Verify}, which interact via a
+finite set of test vectors {\sc inputs} that is updated incrementally. 
+Given the aforementioned specification $\sigma$, the {\sc synth} procedure
+tries to find an existential witness $\vec{P}$ satisfying the specification
+$\sigma(\vec{x}, \vec{P})$ for all $\vec{x}$ in {\sc inputs} (as opposed to
+all $\vec{x} \in \mathcal{D}$).
 %
-If {\sc synthesise} succeeds in finding an witness $\vec{P}$, this
-witness is a candidate solution to the full synthesis formula. 
-We pass this candidate solution to {\sc verify}, which 
-checks whether it is a full solution ({\it i.e.}, $\vec{P}$
-satisfies the specification $\sigma(\vec{x}, \vec{P})$ for all
-$\vec{x}\in\mathcal{D}$).
+If {\sc synthesise} succeeds in finding an witness $\vec{P}$, this witness
+is a candidate solution to the full synthesis formula.  We pass this
+candidate solution to {\sc verify}, which checks whether it is a full
+solution ({\it i.e.}, $\vec{P}$ satisfies the specification $\sigma(\vec{x},
+\vec{P})$ for all $\vec{x}\in\mathcal{D}$).
+%
 %determines whether
 %it does satisfy the specification on all inputs by checking
 %satisfiability of the following verification formula:
@@ -1622,13 +1689,13 @@ $\vec{x}\in\mathcal{D}$).
 %If this formula is unsatisfiable, 
 %% the candidate solution is in fact a 
 %% full solution.
-If this is the case, then the algorithm terminates.
-Otherwise, additional information is provided to the {\sc synthesise}
-phase in the form of a new counterexample that is added to the {\sc inputs} set
-and the loop iterates again (note that, for now, we ignore the 
-second feedback signal ``Increase Precision'' provided by the {\sc Verify}
-phase in Fig.~\ref{fig:CEGIS} as it is specific to control synthesis and will 
-be described in the next section).
+%
+If this is the case, then the algorithm terminates.  Otherwise, additional
+information is provided to the {\sc synthesise} phase in the form of a new
+counterexample that is added to the {\sc inputs} set and the loop iterates
+again (note that, for now, we ignore the second feedback signal ``Increase
+Precision'' provided by the {\sc Verify} phase in Fig.~\ref{fig:CEGIS} as it
+is specific to control synthesis and will be described in the next section).
 
 %% the witness $\vec{x}$ denote an input on which the
 %% candidate solution fails to meet the specification.  Thus, $\vec{x}$ is
@@ -1774,13 +1841,16 @@ domain,
  $$\forall i \leq N_C, j \leq M_C\ \  \tilde \beta_{i} \equiv \beta_{i} \wedge \tilde \alpha_{j} \equiv \alpha_{j} \Leftrightarrow \tilde C(z) \equiv C(z)$$
 %
 However, given a real plant $\hat{G}(z)$, and a discretising function
+%
 \begin{align}
 \small
 \label{FWL_tf}
 &f_b (x \in \mathbb{R}) \rightarrow \tilde x \in \mathbb{R}\langle I_b,F_b \rangle \triangleq \tilde x = x-(x\mod\tilde x) \\
 &FWL_b[P \in \mathcal{P}] = \tilde P \in \mathcal{P}^{n}\langle I_b,F_b \rangle : c_i \in \vec{P} \wedge \tilde c_i \in \tilde \vec{P}=f_b(c_i)  \nonumber
 \end{align}
+%
 we calculate $\tilde G(z)=FWL_b(\hat{G}(z))$
+%
 \begin{align}
 % \label{digital_controller_tf}
 % \tilde C(z)&=\frac{(\hat{\beta}_{0}+\Delta_q \hat{\beta}_{0}) +...+(\hat{\beta}_{M_C}+\Delta_b \hat{\beta}_{M_C})z^{-M_C}}{(\hat{\alpha}_{0}+\Delta_q \hat{\alpha}_{0})+...+(\hat{\alpha}_{N_C}+\Delta_q \hat{\alpha}_{N_C})z^{-N_G}} \nonumber \\
@@ -1983,11 +2053,11 @@ and we pass the current candidate solution to the {\sc precision} verification s
 We obtain the result $false$, meaning that the current precision is insufficient.
 Consequently, we increase our precision to $I_b=20,F_b=28$.
 %
-Since the previous counterexamples were attained at lower precision, we 
-remove them from the counterexample set. Back in the {\sc synthesise}
-phase, we re-start the process with a candidate solution with all coefficients 0.
-Next, the {\sc uncertainty} verification stage provides the first counterexample at higher
-precision:
+Since the previous counterexamples were attained at lower precision, we
+remove them from the counterexample set.  Back in the {\sc synthesise}
+phase, we re-start the process with a candidate solution with all
+coefficients $0$.  Next, the {\sc uncertainty} verification stage provides
+the first counterexample at higher precision:
 %
 %$$
 %\begin{array}{ll}
@@ -2160,7 +2230,7 @@ A third set of benchmarks that consists of a physical plant for satellite
 applications is considered~\cite{Franklin15}, in order to evaluate the
 present approach full capabilities.  In particular, satellites often require
 attitude (pose) control for proper orientation of antennas and sensors
-w.r.t.  earth.  The satellite attitude control is typically used for
+w.r.t.~earth.  The satellite attitude control is typically used for
 three-axis attitude tracking, but here only one axis at a time is
 considered.  The motion equation for the one-axis system, despising
 disturbance torques, is given by
@@ -2170,10 +2240,11 @@ disturbance torques, is given by
 I\cdot \ddot{\theta} = \tau_{C},
 \end{equation}
 
-\noindent where $I$ is the inertia moment of satellite about its mass center, $\tau_{C}$ is the control 
-torque applied by thusters, and $\theta$ is the controlled attitude angle. 
-Normalizing Eq.~\eqref{eq:satelliteode} by defining the control signal $u=\frac{\tau_{C}}{I}$ and 
-taking Laplace transform, the following $s$-domain transfer function $G(s)$ is obtained
+\noindent where $I$ is the inertia moment of satellite about its mass
+center, $\tau_{C}$ is the control torque applied by thusters, and $\theta$
+is the controlled attitude angle.  Normalizing Eq.~\eqref{eq:satelliteode}
+by defining the control signal $u=\frac{\tau_{C}}{I}$ and taking Laplace
+transform, the following $s$-domain transfer function $G(s)$ is obtained
 %
 \begin{equation}
 \label{eq:satellitetf}
@@ -2200,8 +2271,9 @@ G_{3}(z)= \frac{T^{2}}{2} \frac{z+1}{(z+1)^{2}}.
 %C_{5}(z)=\frac{0.43z^2 - 0.2408z - 0.1316}{1.0z^2 + 1.5z + 0.97 + 0.183}. \nonumber
 %\end{equation} 
 
-The fourth (and last) set of benchmarks considers the following description for the plant 
-$G_{4}(s)$, which is typically used for evaluating stability margins~\cite{bhattacharyya97,keel_Bhattacharyya_examples}
+The fourth (and last) set of benchmarks considers the following description
+for the plant $G_{4}(s)$, which is typically used for evaluating stability
+margins~\cite{bhattacharyya97, keel_Bhattacharyya_examples}
 %
 \begin{equation}
 \label{exampleA}
@@ -2238,25 +2310,30 @@ the experimental evaluation of the present approach aims to answer two research 
 %---------------------------------
 
 We outline the runtimes required to synthesise a stable controller for each
-benchmark in Table~\ref{tab:results}. Here, \textit{Plant} is the discrete or 
-continuous plant model, \textit{Benchmark} is the name of the employed benchmark,
-\textit{I} and \textit{F} represent the number of integer and fractional bits of the 
-stable controller, respectively, while \textit{Time} represents the total time 
-(in seconds) to synthesise a stable controller for the given plant.
+benchmark in Table~\ref{tab:results}.  Here, \textit{Plant} is the discrete
+or continuous plant model, \textit{Benchmark} is the name of the employed
+benchmark, \textit{I} and \textit{F} represent the number of integer and
+fractional bits of the stable controller, respectively, while \textit{Time}
+represents the total time (in seconds) to synthesise a stable controller for
+the given plant.
 
-For the majority of our benchmarks, the conjecture explained
-in section~\ref{synthesis-elements}  holds and the inductive back-end is able to find a stable
-solution in less than one minute.  This is possible if the inductive solutions need to be refined
-with few counterexamples and fixed-point precision increases. However, $2$ benchmarks in our set
-required too many counterexamples to refine their solution (marked with $^*$ in Table~\ref{tab:results}). 
-In these cases, the interval arithmetic back-end is able to complement the inductive approach
-and synthesise a solution instead, albeit with significantly larger runtimes.  This performance
-difference is due to  the fact that the interval back-end does not take advantage of the inductive
-conjecture inherent to CEGIS, but instead fully explores the counterexample space.  The result is
-a performance difference of at least two orders of magnitude in our experiments, leading to the
-interval back-end timing out on the majority of our benchmarks.  Table~\ref{tab:results} only
-lists the faster of the two back-ends for each benchmark, which in $12$ out of $15$ benchmarks is the inductive
-back-end.
+For the majority of our benchmarks, the conjecture explained in
+section~\ref{synthesis-elements} holds and the inductive back-end is able to
+find a stable solution in less than one minute.  This is possible if the
+inductive solutions need to be refined with few counterexamples and
+fixed-point precision increases.  However, $2$ benchmarks in our set
+required too many counterexamples to refine their solution (marked with $^*$
+in Table~\ref{tab:results}).  In these cases, the interval arithmetic
+back-end is able to complement the inductive approach and synthesise a
+solution instead, albeit with significantly larger runtimes.  This
+performance difference is due to the fact that the interval back-end does
+not take advantage of the inductive conjecture inherent to CEGIS, but
+instead fully explores the counterexample space.  The result is a
+performance difference of at least two orders of magnitude in our
+experiments, leading to the interval back-end timing out on the majority of
+our benchmarks.  Table~\ref{tab:results} only lists the faster of the two
+back-ends for each benchmark, which in $12$ out of $15$ benchmarks is the
+inductive back-end.
 
 \begin{table}[H]
 \centering
@@ -2287,19 +2364,22 @@ back-end.
 \end{table}
 %---------------------------------
 
-The median runtime for our benchmark set is $197$\,s, implying that half of the controllers
-can be synthesised in less than $5$ minutes using our present approach. Overall the average synthesis
-time amounts to approximately $30$ minutes. With respect to RQ2 we consider
-these times short enough to be of practical use to control engineers.
-Regarding RQ1 we further conclude that the inductive back-end is able to synthesise 
-stable controllers in the $12$ out of $15$ benchmarks, and can be complemented using 
-the interval arithmetic back-end for $2$ additional benchmarks, where the inductive 
-conjectures fail. Both back-ends together enabled controller synthesis for $14$ 
-out of $15$ benchmarks.  For the $1$ remaining benchmark our approach failed to synthesise
-a stable controller in the requested time limits. This can be addressed by either increasing
-the fixed point word widths considered or using floating point arithmetic instead. A link
-to the full experimental environment, including scripts to reproduce the experiment, all
-benchmarks and the CEGIS tool is provided in the footnote.\footnote{\url{https://drive.google.com/file/d/0ByIexo3Z5N91QkhrMi1rdkZFTWc/view}}
+The median runtime for our benchmark set is $197$\,s, implying that half of
+the controllers can be synthesised in less than $5$ minutes using our
+present approach.  Overall the average synthesis time amounts to
+approximately $30$ minutes.  With respect to RQ2 we consider these times
+short enough to be of practical use to control engineers.  Regarding RQ1 we
+further conclude that the inductive back-end is able to synthesise stable
+controllers in the $12$ out of $15$ benchmarks, and can be complemented
+using the interval arithmetic back-end for $2$ additional benchmarks, where
+the inductive conjectures fail.  Both back-ends together enabled controller
+synthesis for $14$ out of $15$ benchmarks.  For the $1$ remaining benchmark
+our approach failed to synthesise a stable controller in the requested time
+limits.  This can be addressed by either increasing the fixed point word
+widths considered or using floating point arithmetic instead.  A link to the
+full experimental environment, including scripts to reproduce the
+experiment, all benchmarks and the CEGIS tool is provided in the
+footnote.\footnote{\url{https://drive.google.com/file/d/0ByIexo3Z5N91QkhrMi1rdkZFTWc/view}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Related Work}
@@ -2319,12 +2399,11 @@ ensure stability.  The latter approach highlights the importance of
 conserving energy during the control process, which results in lower running
 costs.  Since real systems are subject to tolerance and noise as well as the
 need for economy, more recent studies focus on the problems of achieving
-robust stability with minimum
-gain~\cite{schmid2014unified,konigorski2012pole}.  However, when extending
-the problem to digital controller synthesis, many of these techniques lack
-the ability to produce sound or stable results because they disregard the
-effects of quantisation and rounding.  Recent papers on
-implementations/synthesis of LTI digital
+robust stability with minimum gain~\cite{schmid2014unified,
+konigorski2012pole}.  However, when extending the problem to digital
+controller synthesis, many of these techniques lack the ability to produce
+sound or stable results because they disregard the effects of quantisation
+and rounding.  Recent papers on implementations/synthesis of LTI digital
 controllers~\cite{das2013lqr,ghosh2013fpga} focus on time discretisation,
 failing to account for these error-inducing effects and can therefore result
 in digitally unstable systems that have been proven to be robustly stable in
