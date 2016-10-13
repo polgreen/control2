@@ -2104,10 +2104,10 @@ We outline the runtimes required to synthesise a stable controller for each
 benchmark in Table~\ref{tab:results}. For the majority of our benchmarks the conjecture explained
 in section~\ref{synthesis-elements}  holds and the inductive back-end is able to find a stable
 solution in less than one minute.  This is possible if the inductive solutions need to be refined
-with few counterexamples  and fixed point precision increases. However, two benchmarks in our set
-did not meet these criteria (marked with $^*$ in Table~\ref{tab:results}). In these cases, 
-the interval arithmetic back-end is able to complement the inductive approach
-and synthesise a solution instead, albeit with significantly larger runtimes.
+with few counterexamples and fixed-point precision increases. However, two benchmarks in our set
+did not meet these criteria (marked with $^*$ in Table~\ref{tab:results}) \textcolor{red}{Pascal: Why they did not meet the criteria?}. 
+In these cases, the interval arithmetic back-end is able to complement the inductive approach
+and synthesise a solution instead, albeit with significantly larger runtimes \textcolor{red}{Pascal: Why is it slower?}.
 
 \textcolor{red}{Pascal: Can you please add FWL for each synthesized controller using the following format <I,F>, where I represents the number of bits in the integer part and F represents the number of bits in the fractional part?}
 
@@ -2140,12 +2140,12 @@ $G_4$ & a\_PL1\_SCH4\_IMPL1        & 6304\,s & \\
 \end{table}
 %---------------------------------
 
-We conclude from these results that the inductive back-end provides excellent performance
-for synthesising stable controllers in the 12 out of 15 benchmarks, and can be
-complemented using the interval arithmetic back-end for 2 additional benchmarks,
-where the inductive conjectures fail too frequently. Both back-ends together enabled controller
-synthesis for 14 out of 15 benchmarks within reasonable time frames. \pksay{TODO: Upload full
-experiments environment including README and result log files to anonymous Google Drive and
+We conclude from these results that the inductive back-end is able to synthesise 
+stable controllers in the $12$ out of $15$ benchmarks, and can be complemented using 
+the interval arithmetic back-end for $2$ additional benchmarks, where the inductive 
+conjectures fail. Both back-ends together enabled controller synthesis for $14$ 
+out of $15$ benchmarks within reasonable time frames. \textcolor{red}{Why do we fail to synthesise 1 controller?} 
+\pksay{TODO: Upload full experiments environment including README and result log files to anonymous Google Drive and
 provide link here.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
