@@ -1657,33 +1657,29 @@ $$
 %% \red{[Yes, intuitively all clear, however for the sake of clarity I would like to see the explicit mapping between the above formula and the previously used specification 
 %% $\sigma(x, P)$, with clear elucidation of the relationship between the domain of $z$ and that of $x$.]}
 
-Essentially, the synthesis problem we are trying to solve is the following:
-find a digital controller denoted by  $N_c$ and $D_c$ that
-makes the closed-loop system stable 
-for all possible uncertainties $\Delta{\vec{p}}$ (\ref{eq:uncertainty}).
-%$(\Delta N_G, \Delta D_G)$. 
-% Note that, similar to the rest of the paper, we use the notation 
-% $\hat{N_G}(z) = N_G(z) + \Delta N_G(z)$ and 
-% $\hat{N_C}(z) = N_C(z) + \Delta N_C(z)$.
-When mapping back to the notation used for describing the general architecture 
-of the program synthesiser, the controller $(N_c,D_c)$ denotes $P$ and 
-$\Delta{\vec{p}}$ represents $x$. 
-
 % \red{[clear elucidation of the mapping between this and the domains used 
 % in the general description of the synthesiser]}
 
 \paragraph{Use of fixed-point computation in the program synthesis engine}
 The program synthesis engine uses fixed-point arithmetic.
-Thus, we compute the coefficients for $N_c$ and $D_c$ in the domains 
-$\mathbb{R}^{n_C}\param{I}{F}$ and $\mathbb{R}^{m_C}\param{I}{F}$, respectively, where 
-$n_C$ and $m_C$ denote the order of the corresponding polynomials
-and $I$ and $F$ denote the integer and fractional size, respectively.
-Regarding the uncertainty, this is synthesised over the 
-domain $\mathbb{R}^{n_G+m_G}\param{I_b}{F_b}$, where $n_G$ and $m_G$ 
-denote the order of the polynomials representing the 
-numerator and denominator of the plant's transfer function, respectively. 
-Again, $I_b$ and $F_b$ denote the integer and fractional size, respectively, with
+Namely, we use the domain $\mathbb{R}\param{I}{F}$
+for the controller's coefficients and the domain 
+$\mathbb{R}\param{I_b}{F_b}$ for the plant's coefficients.
+Note that $I$ and $F$, as well as $I_b$ and $F_b$, 
+denote the integer and fractional size, respectively, with
 $\mathbb{R}\langle I_b,F_b \rangle \supseteq \mathbb{R}\langle I,F \rangle$.
+%the coefficients for $C(z)$ 
+%$N_c$ and $D_c$ 
+%in the domain $\mathbb{R}\param{I}{F}$, 
+%and $\mathbb{R}^{m_C}\param{I}{F}$, respectively, 
+%where $n_C$ and $m_C$ denote the order of the corresponding polynomials
+%where $I$ and $F$ denote the integer and fractional size, respectively.
+%Regarding the plant, its coefficients are this is synthesised over the 
+%domain $\mathbb{R}^{n_G+m_G}\param{I_b}{F_b}$, where $n_G$ and $m_G$ 
+%denote the order of the polynomials representing the 
+%numerator and denominator of the plant's transfer function, respectively. 
+%Again, $I_b$ and $F_b$ denote the integer and fractional size, respectively, with
+%$\mathbb{R}\langle I_b,F_b \rangle \supseteq \mathbb{R}\langle I,F \rangle$.
 
 Given the use of fixed-point arithmetic, 
 we need to examine the effect of discretization during these operations.
@@ -1725,6 +1721,30 @@ the rounding off effect.  We may encompass all the uncertainty as
 $\Delta{G}(z)=\Delta{G}_P(z)+\Delta{G}_b(z)$.  % Since this value is
 % nondeterministic, the set of possible polynomial coefficients of $\tilde G(z)$ is
 % denoted by $\mathfrak{G}(z)$.
+
+\paragraph{Our synthesis problem}
+The synthesis problem we are trying to solve is the following:
+find a digital controller $C(z)$ %denoted by  $N_c$ and $D_c$ 
+that makes the closed-loop system stable 
+for all possible uncertainties 
+%$\Delta{\vec{p}}$ (\ref{eq:uncertainty}).
+$\tilde G(z)$ (\ref{digital_plant_tf}).
+%, where we precisely describe 
+%$(\Delta N_G, \Delta D_G)$. 
+% Note that, similar to the rest of the paper, we use the notation 
+% $\tilda{N_G}(z) = N_G(z) + \Delta N_G(z)$ and 
+% $\hat{N_C}(z) = N_C(z) + \Delta N_C(z)$.
+When mapping back to the notation used for describing the general architecture 
+of the program synthesiser, the controller $C(z)$ denotes $P$ and 
+$\tilde G(z)$ represents $x$. 
+
+As mentioned above, we compute the coefficients for $C(z)$ 
+%$N_c$ and $D_c$ 
+in the domain $\mathbb{R}\param{I}{F}$, 
+%and $\mathbb{R}^{m_C}\param{I}{F}$, respectively, 
+%where $n_C$ and $m_C$ denote the order of the corresponding polynomials
+and those for $\tilde G(z)$ in the domain
+$\mathbb{R}\langle I_b,F_b \rangle$.
 
 \paragraph{The {\sc Synthesise} and {\sc Verify} phases}
 The {\sc synthesise} phase uses BMC to 
