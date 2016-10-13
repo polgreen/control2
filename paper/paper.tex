@@ -1948,13 +1948,18 @@ and rounds operations outwards during calculations. This effectively allows
 us to simultaneously evaluate the whole collection of plants $\mathfrak{G}$
 plus the effects of numeric calculations in the engine.
 Synthesised controllers using this verifier will always
-be stable for all plants in the family and only generate counterexamples when the precision of the
-engine is insufficient (\emph{ie} no stable plant could be found). Given the high computational cost of this
-approach, we also designed a second approach, which we describe below.
-Our experimental results described in Sec.~\ref{sec:experiments},  
+be stable for all plants in the family.
+% and only generate counterexamples when the precision of the
+%engine is insufficient (\emph{ie} no stable plant could be found). 
+Our preliminary experiments showed that a synthesis approach
+using this verification engine has poor performance and we
+%Given the high computational cost of this
+%approach, 
+therefore designed a second approach, which we describe below.
+Our experimental results described in Sec.~\ref{sec:experiments}, 
 %try both approaches and provide the time for the fastest. 
-show that the increase in speed of the second approach 
-over the first one is in most cases of several orders of magnitude.
+show that the speedup yielded by the second approach 
+is in most cases of several orders of magnitude.
 
 The second approach is illustrated in Fig.~\ref{fig:CEGIS} and 
 uses a two-stage verification with a first stage that performs unsound fixed point operations given the precision \param{I_b}{F_b}, and a second stage that restores soundness by validating these operations using interval arithmetic on the synthesised plant.
