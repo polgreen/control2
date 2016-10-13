@@ -880,23 +880,23 @@ using FWL, $\hat{C}(z) \equiv C(z)$.
 %\textcolor{green}{[DC: I changed it to a separate section to differentiate the effects, so we should keep both]}
 
 %------------------------------------
-\subsection{On the stability considering effects of implementation issues and quantisation noises}
+\subsection{Stability under FWL and Noise}
 \label{sec:stability}
 %------------------------------------
 
-In order to obtain a sound synthesis of the digital controller, the effect
-of FWL implementation in controller and quantisation noises in closed loop
-system have to be considered.  Considering that the quantiser $Q1$ is the
-source of a white noise $\nu_{1}$ and $Q2$ is the source of a white noise
-$\nu_{2}$, the following equation is written for the system in
-Figure~\ref{fig:sampledsystem}, considering the parametric uncertainties
-$\Delta \vec{G}$ and the FWL effects on controller ($\hat{C}(z)$):
+Correct synthesis of the digital controller requires consideration of the
+effect of FWL in controller and quantisation noises in the closed loop
+system.  Let the quantiser $Q1$ be the source of a white noise $\nu_{1}$ and
+$Q2$ be the source of a white noise $\nu_{2}$.  The following equation
+models the system in Figure~\ref{fig:sampledsystem}, encompassing the
+parametric uncertainties $\Delta \vec{G}$ and the FWL effects on
+the controller ($\hat{C}(z)$):
 %
 \begin{equation}
 \hat{Y}(z)=\hat{C}(z)\hat{G}(z)[R(z)+\nu_{1}(z)]+\nu_{2}(z)\hat{G}(z)-\hat{Y}(z)\hat{C}(z)\hat{G}(z),
 \end{equation}
 %
-that can be rewritten as follows:
+The above can be rewritten as follows:
 %
 \begin{equation}
 \label{eq:outputfunctions}
@@ -912,14 +912,18 @@ H_{1}=\frac{\hat{C}(z)\hat{G}(z)}{1+\hat{C}(z)\hat{G}(z)},
 and
 %
 \begin{equation}
-H_{2}=\frac{\hat{G}(z)}{1+\hat{C}(z)\hat{G}(z)},
+H_{2}=\frac{\hat{G}(z)}{1+\hat{C}(z)\hat{G}(z)}.
 \end{equation}
 
 \begin{myassumption}
 \label{whitenoise}
 %
-The quantisation noises $\nu_{1}$ (from the $Q1$) and $\nu_{2}$ (from the
-$Q2$) are uncorrelated white noises and their amplitudes are always bounded by the half of quantisation step \cite{astrom1997computer}, {\it i.e.} $\vert \nu_{1} \vert \leq \frac{q_{1}}{2}$ and $\vert \nu_{2} \vert \leq \frac{q_{2}}{2}$, where $q_{1}$ and $q_{2}$ are respectively the quantisation step of  ADC and DAC.
+The quantisation noises $\nu_{1}$ (from $Q1$) and $\nu_{2}$ (from $Q2$) are
+uncorrelated white noises and their amplitudes are always bounded by the
+half of quantisation step~\cite{astrom1997computer}, i.e., $\vert \nu_{1}
+\vert \leq \frac{q_{1}}{2}$ and $\vert \nu_{2} \vert \leq \frac{q_{2}}{2}$,
+where $q_{1}$ and $q_{2}$, respectively, are the quantisation steps of ADC
+and DAC.
 % 
 \end{myassumption}
 
@@ -983,9 +987,9 @@ $Q2$) are uncorrelated white noises and their amplitudes are always bounded by t
 
 A discrete-time linear system is said to be Bounded-Input and Bounded-Output
 (BIBO) stable if and only if every pole of its transfer function lies inside
-the unit circle.  Analyzing Eq.~\eqref{eq:outputfunctions}, the following lemma
-states necessary conditions for BIBO stability of closed-loop system in
-Figure~\ref{fig:sampledsystem}, since the the exogenous signals $R(z)$,
+the unit circle.  Analyzing Eq.~\eqref{eq:outputfunctions}, the following
+lemma states necessary conditions for BIBO stability of closed-loop system
+in Figure~\ref{fig:sampledsystem}, since the the exogenous signals $R(z)$,
 $\nu_{1}$, and $\nu_{2}$ are bounded.
 
 \begin{mylemma}{\cite{Bessa16,fadali}}
@@ -1008,14 +1012,14 @@ S(z)=\mathit{FWL}[N_{C}(z)]\hat{N}_{G}(z)+\mathit{FWL}[D_{C}(z)]\hat{D}_{G}(z);
 \end{itemize}
 \end{mylemma}
 
-The Lemma~\ref{lemma:eq_int_stab} provides the necessary conditions for
-synthesis of digital controllers able to stabilize closed loop system,
-considering plant parametric uncertainties ({\it i.e.}, $\Delta_p \vec{G}$),
-quantisation noises ($\nu_{1}$ and $\nu_{2}$) and FWL effects in digital
-controllers.  Based on it, the model for plant uncertainty due quantisation
-noise ({\it i.e.}, $\Delta_q \vec{G}$) may be disregarded if the conditions
-on Lemma~\ref{lemma:eq_int_stab} are attended and if the quantisation noise
-is bounded.  The quantisation noise is indeed bounded, since the following
+Lemma~\ref{lemma:eq_int_stab} provides the necessary conditions for the
+ability of a digital controller to stabilize the closed loop system,
+considering plant parametric uncertainties (i.e., $\Delta_p \vec{G}$),
+quantisation noises ($\nu_{1}$ and $\nu_{2}$) and FWL effects in the control
+software.  Based on it, the model for plant uncertainty due quantisation
+noise (i.e., $\Delta_q \vec{G}$) may be disregarded if the conditions on
+Lemma~\ref{lemma:eq_int_stab} are satisfied and if the quantisation noise is
+bounded.  The boundedness of the quantisation noise is
 assumption~\ref{whitenoise}.
 
 %\red{[first: lemmae precede theorems. ]}
