@@ -893,14 +893,6 @@ and
 H_{2}=\frac{\hat{G}(z)}{1+\hat{C}(z)\hat{G}(z)},
 \end{equation}
 
-A discrete-time linear system is said to be Bounded-Input and Bounded-Output
-(BIBO) stable if and only if every pole of its transfer function lies inside
-the unit circle.  \textcolor{red}{Analyzing Eq.~\eqref{eq:outputfunctions}
-and based on assumption~\ref{assumption:cont_and_plant}, the following lemma
-states necessary conditions for BIBO stability of closed-loop system in
-Figure~\ref{fig:sampledsystem}, since the the exogenous signals $R(z)$,
-$\nu_{1}$, and $\nu_{2}$ are bounded.}
-
 \begin{myassumption}
 \label{whitenoise}
 %
@@ -965,7 +957,14 @@ ensures that the quantisation noise is also energy-bounded in time-domain.
 Thus $\hat{Y}(z)$ will be bounded and the closed-loop system stable if the
 conditions in Lemma~\ref{lemma:eq_int_stab} are followed.
 
-\red{[Add remark on bound (q/2) for signal. We need a bounded signal to be able to leverage BIBO stability results. ]}
+%\red{[Add remark on bound (q/2) for signal. We need a bounded signal to be able to leverage BIBO stability results. ]}
+
+A discrete-time linear system is said to be Bounded-Input and Bounded-Output
+(BIBO) stable if and only if every pole of its transfer function lies inside
+the unit circle.  \textcolor{red}{Analyzing Eq.~\eqref{eq:outputfunctions}, the following lemma
+states necessary conditions for BIBO stability of closed-loop system in
+Figure~\ref{fig:sampledsystem}, since the the exogenous signals $R(z)$,
+$\nu_{1}$, and $\nu_{2}$ are bounded.}
 
 \begin{mylemma}{\cite{Bessa16,fadali}}
 \label{lemma:eq_int_stab} 
