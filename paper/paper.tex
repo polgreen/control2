@@ -782,9 +782,6 @@ Thus the perturbed controller model $\hat{C}(z)$ may be computed from the origin
 \end{equation}
 In the case of a synthesised controller, because the synthesis is performed using FWL, $\hat{C}(z) \equiv C(z)$. 
 
-\red{[what is the relationship between FWL effects over C, and the parametric uncertainty Delta Gp over the plant?]} 
-\blue{[IB: There is no relationship. We must separate that content in another section?]}
-
 %\textcolor{blue}{[IB: And I propose to exchange the remaining paragraphs by the previous blue]}
 %
 %\textcolor{green}{[DC: I changed it to a separate section to differentiate the effects, so we should keep both]}
@@ -913,13 +910,13 @@ The Lemma~\ref{lemma:eq_int_stab} provides the necessary conditions for synthesi
 %------------------------------------
 
 %------------------------------------
-\subsection{Synthesis Process using DSVerifier}
+\subsection{Overview of the Synthesis Process using DSVerifier}
 \label{verification-flow}
 %------------------------------------
 
 %\red{[The following description can be made shorter, crisper?]}
 
-The full synthesis process is illustrated in Fig.~\ref{DSVerifier_process};
+An overview of the synthesis process is illustrated in Fig.~\ref{DSVerifier_process};
 a detailed description of DSVerifier tool can be found in~\cite{IsmailBCFF15}.
 Steps $1$ to $5$ are performed by the user/synthesiser and
 Steps A to D are automatically performed by DSVerifier.
@@ -932,7 +929,7 @@ Steps A to D are automatically performed by DSVerifier.
 \centering
 \includegraphics[width=\textwidth]{figures/verification-flow.png}
 \vspace{1ex}
-\caption{DSVerifier Verification Flow.}
+\caption{Synthesis process using DSVerifier and the CBMC CEGIS module.}
 \label{DSVerifier_process}
 \end{figure*}
 
@@ -949,32 +946,31 @@ Steps A to D are automatically performed by DSVerifier.
 %user steps described in Steps $1$--$5$ result in an ANSI-C code that should
 %be used as an input for DSVerifier.
 
-Given a model $(\hat{C}(z),\hat{G}(z), \mathbb{R}\langle I,F \rangle)$,
+Given a model for a plant for which to synthesize a controller,
 provided in an ANSI-C code input file (Steps 1-5), DSVerifier constructs a
-non-deterministic model to represent the plant family $\mathfrak{G}(z)$
-(Step A), and a transfer function $FWL$ represented by Eq.~\ref{FWL_tf} (step B) to
-calculate the implementation $FWL(\hat{C}(z)) \rightarrow \tilde C(z)$ of the
-controller (step C).  Finally DSVerifier builds an intermediate ANSI-C code
-for the digital system implementation, which is used as input for the
-model-checker (Step D).
+non-deterministic model to represent the plant family (Step A), and formulates a 
+function (step B) using implementation details provided from Steps $2$ and $3$ 
+to calculate the parameters of the controller to be synthesized (step C).  
+Finally DSVerifier builds an intermediate ANSI-C code for the digital system 
+implementation, which is used as input for the controller synthesiser (Step D).
 
-This intermediate ANSI-C code model $(\tilde C(z),\mathfrak{G}(z),\phi)$
-containing a specification $\phi$ for the verification properties ({\it
-i.e.}, robust stability) is provided to CBMC's~\cite{ClarkeKL04} integrated
-CEGIS synthesis module, where $\tilde C(z)$ is marked as input variable to
-synthesise.  If any property violation is found, then
-a counterexample is reported, which contains system inputs or
-parametric deviations $\Delta{\vec{G}}$ that lead the system to a failure.  
-This information allows the CEGIS module to refine its search for a stable
-controller, which we explain in detail in section~\ref{synthesiser-general}.
-A successful verification result is reported if the system is safe with
-respect to $\phi$.  In particular, the stability verification is complete
-and sound, since it does not depend on system inputs and outputs.  In the
-case of stability, the specification $\phi$ consists in a number of
-assumptions on the polynomial coefficients, following Jury's Criteria, as
-well as the restrictions set in the representation of these coefficients by
-the function $f$ (cf.~Eq.~\eqref{FWL_tf}).
+This intermediate ANSI-C code model contains a specification $\phi$ for the
+verification properties ({\it i.e.}, robust stability) and is provided to
+CBMC's~\cite{ClarkeKL04} integrated Counterexample-Guided Inductive Synthesis
+(CEGIS) module, where the controller is marked as input variable to synthesize.
+The properties specified in the ANSI-C code model can only be satisfied if CEGIS
+synthesizes controller coefficients satisfying $\phi$. CEGIS employs an iterative,
+counterexample-guided refinement process which is explained in detail in
+section~\ref{synthesiser-general}. A successful synthesis result is reported if
+CEGIS generates a controller which is safe with respect to $\phi$.  In particular,
+the ANSI-C code model guarantees that a synthesized solution is complete
+and sound with respect to stability property $\phi$, since it does not depend on
+system inputs and outputs.  In the case of stability, the specification $\phi$
+consists in a number of assumptions on the polynomial coefficients, following
+Jury's Criteria, as well as the restrictions set in the representation of these
+coefficients.
 
+% by the function $f$ (cf.~Eq.~\eqref{FWL_tf})
 %In Step A, DSVerifier constructs a non-deterministic model to represent the
 %plant family $\mathfrak{G}$ using $g_0$ and $\Delta{g}\%$, which are
 %provided in Step $1$.  DSVerifier then formulates $\mathit{FWL}[\cdot]$ in
@@ -1007,51 +1003,6 @@ the function $f$ (cf.~Eq.~\eqref{FWL_tf}).
 %result is reported if the system is safe with respect to $\phi$.  In
 %particular, the stability verification is complete and sound, since it does
 %not depend on system outputs and inputs.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Running Example} \label{sec:running-ex}
-
-In order to exploit the present approach full potential, a dynamical plant that can
-present physical components must be considered.  However, a discrete plant
-model can also demonstrate some benefits of the present approach, which
-considers FWL effects in the digital controller implementation.  In
-particular, a classical cruise control example is extracted from the
-literature~\cite{Astrom08}, where the discrete plant model (with time step
-of $0.2$s) is represented by the following z-expression:
-%
-\begin{equation}
-\label{Eq:running-example-plant}
-G\left(z\right) := \frac{0.0264}{z-0.9998}.
-\end{equation}
-
-Using an optimisation tool, the work in~\cite{DBLP:conf/hybrid/WangGRJF16}
-has designed a high-performance controller, which is characterised by the
-following z-domain transfer function:
-%
-\begin{equation}
-\label{Eq:running-example-controller}
-C\left(z\right) := \frac{2.72z^2 - 4.153z + 1.896}{z^2 - 1.844z + 0.8496}.
-\end{equation}
-%
-The authors claim that this controller $C(z)$ stabilizes the closed-loop
-system for the discrete plant model $G(z)$.  However, if implementation
-aspects are considered during verification ({\it e.g.}, fixed-point
-arithmetic and word-length), then this closed-loop system becomes unstable.
-%
-Indeed, the actual implementation of $C(z)$ using \param{4}{16}
-implementation format ({\it i.e.}, $4$ bits for the integer part and $16$
-bits for the fractional part) can be represented by the following
-expression:
-%
-\begin{equation}
-\label{Eq:running-example-controller-quantized}
-C_{q}\left(z\right) {:=} \frac{2.719986z^2{-}4.153000z
-{+}1.895996}{z^2{-}1.843994z+0.849594},
-\end{equation} 
-%
-which makes the system unstable in closed-loop using fixed-point arithmetic
-and the typical series loop configuration, where $C_{q}\left(z\right)$ and
-$G\left(z\right)$ are in the forward path.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %\section{Modelling Errors} 
@@ -1878,7 +1829,53 @@ with an empty {\sc inputs} set.
 Otherwise, we found a full solution for our synthesis problem
 and we are done.
 
-\subsection{Program synthesis for the running example}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Illustrative Example} \label{sec:running-ex}
+
+In order to exploit the present approach full potential, a dynamical plant that can
+present physical components must be considered.  However, a discrete plant
+model can also demonstrate some benefits of the present approach, which
+considers FWL effects in the digital controller implementation.  In
+particular, a classical cruise control example is extracted from the
+literature~\cite{Astrom08}, where the discrete plant model (with time step
+of $0.2$s) is represented by the following z-expression:
+%
+\begin{equation}
+\label{Eq:running-example-plant}
+G\left(z\right) := \frac{0.0264}{z-0.9998}.
+\end{equation}
+
+Using an optimisation tool, the work in~\cite{DBLP:conf/hybrid/WangGRJF16}
+has designed a high-performance controller, which is characterised by the
+following z-domain transfer function:
+%
+\begin{equation}
+\label{Eq:running-example-controller}
+C\left(z\right) := \frac{2.72z^2 - 4.153z + 1.896}{z^2 - 1.844z + 0.8496}.
+\end{equation}
+%
+The authors claim that this controller $C(z)$ (Eq.~\eqref{Eq:running-example-plant}) 
+stabilizes the closed-loop system for the discrete plant model $G(z)$ (Eq.~\ref{Eq:running-example-controller}).  
+However, if implementation aspects are considered during verification ({\it e.g.}, fixed-point
+arithmetic and word-length), then this closed-loop system becomes unstable.
+%
+Indeed, the actual implementation of $C(z)$ using \param{4}{16}
+implementation format ({\it i.e.}, $4$ bits for the integer part and $16$
+bits for the fractional part) can be represented by the following
+expression:
+%
+\begin{equation}
+\label{Eq:running-example-controller-quantized}
+C_{q}\left(z\right) {:=} \frac{2.719986z^2{-}4.153000z
+{+}1.895996}{z^2{-}1.843994z+0.849594},
+\end{equation} 
+%
+which makes the system unstable in closed-loop using fixed-point arithmetic
+and the typical series loop configuration, where $C_{q}\left(z\right)$ and
+$G\left(z\right)$ are in the forward path.
+
+
+\subsubsection{Program synthesis for the illustrative example}
 We will illustrate our synthesis approach on the running example 
 in Sec.~\ref{sec:running-ex}.
 We start with the candidate solution with all coefficients zero 
@@ -2181,10 +2178,16 @@ the experimental evaluation of the present approach aims to answer two research 
 %---------------------------------
 
 We outline the runtimes required to synthesise a stable controller for each
-benchmark in Table~\ref{tab:results}. For the majority of our benchmarks the conjecture explained
+benchmark in Table~\ref{tab:results}. Here, \textit{Plant} is the discrete or 
+continuous plant model, \textit{Benchmark} is the name of the employed benchmark,
+\textit{I} and \textit{F} represent the number of integer and fractional bits of the 
+stable controller, respectively, while \textit{Time} represents the total time 
+(in seconds) to synthesise a stable controller for the given plant.
+
+For the majority of our benchmarks, the conjecture explained
 in section~\ref{synthesis-elements}  holds and the inductive back-end is able to find a stable
 solution in less than one minute.  This is possible if the inductive solutions need to be refined
-with few counterexamples and fixed-point precision increases. However, two benchmarks in our set
+with few counterexamples and fixed-point precision increases. However, $2$ benchmarks in our set
 required too many counterexamples to refine their solution (marked with $^*$ in Table~\ref{tab:results}). 
 In these cases, the interval arithmetic back-end is able to complement the inductive approach
 and synthesise a solution instead, albeit with significantly larger runtimes.  This performance
@@ -2192,28 +2195,28 @@ difference is due to  the fact that the interval back-end does not take advantag
 conjecture inherent to CEGIS, but instead fully explores the counterexample space.  The result is
 a performance difference of at least two orders of magnitude in our experiments, leading to the
 interval back-end timing out on the majority of our benchmarks.  Table~\ref{tab:results} only
-lists the faster of the two back-ends for each benchmark, which in 12 out of 14 cases is the inductive
+lists the faster of the two back-ends for each benchmark, which in $12$ out of $15$ benchmarks is the inductive
 back-end.
 
 \begin{table}[H]
 \centering
-\begin{tabular}{c | l r r | r l}
-Plant & Benchmark                  & $I$ & $F$ & Time    & \\\cline{1-5}
-$G_1$ & CruiseControl02            &   4 &  16 & 17\,s   & \\
-$G_1$ & CruiseControl02$^\dagger$  &   4 &  16 & 46\,s   & \\
-$G_2$ & SpringMassDamper           &  15 &  16 & 28\,s   & \\
-$G_2$ & SpringMassDamper$^\dagger$ &  15 &  16 & \xmark  & \\
-$G_3$ & SatelliteB2                &   3 &   7 & 7\,s    & \\
-$G_3$ & SatelliteB2$^\dagger$      &   3 &   7 & 6601\,s & \tbmark\\
-$G_3$ & SatelliteC2                &   3 &   5 & 2\,s    & \\
-$G_3$ & SatelliteC2$^\dagger$      &   3 &   5 & 76\,s   & \tbmark\\
-$G_4$ & a\_ST1\_IMPL1              &  16 &   4 & 2704\,s & \\
-$G_4$ & a\_ST1\_IMPL2              &  16 &   8 & 538\,s  & \\
-$G_4$ & a\_ST1\_IMPL3              &  16 &  12 & 12\,s   & \\
-$G_4$ & a\_ST2\_IMPL1              &  16 &   4 & 318\,s  & \\
-$G_4$ & a\_ST2\_IMPL2              &  16 &   8 & 967\,s  & \\
-$G_4$ & a\_ST2\_IMPL3              &  16 &  12 & 9798\,s & \\
-$G_4$ & a\_ST3\_IMPL1              &  16 &   4 & 6304\,s & \\
+\begin{tabular}{c | c | l | r r | r l}
+\# & Plant & Benchmark                  & $I$ & $F$ & Time    & \\\cline{1-6}
+1  & $G_1$ & CruiseControl02            &   4 &  16 & 17\,s   & \\
+2  & $G_1$ & CruiseControl02$^\dagger$  &   4 &  16 & 46\,s   & \\
+3  & $G_2$ & SpringMassDamper           &  15 &  16 & 28\,s   & \\
+4  & $G_2$ & SpringMassDamper$^\dagger$ &  15 &  16 & \xmark  & \\
+5  & $G_3$ & SatelliteB2                &   3 &   7 & 7\,s    & \\
+6  & $G_3$ & SatelliteB2$^\dagger$      &   3 &   7 & 6601\,s & \tbmark\\
+7  & $G_3$ & SatelliteC2                &   3 &   5 & 2\,s    & \\
+8  & $G_3$ & SatelliteC2$^\dagger$      &   3 &   5 & 76\,s   & \tbmark\\
+9  & $G_4$ & a\_ST1\_IMPL1              &  16 &   4 & 2704\,s & \\
+10 & $G_4$ & a\_ST1\_IMPL2              &  16 &   8 & 538\,s  & \\
+11 & $G_4$ & a\_ST1\_IMPL3              &  16 &  12 & 12\,s   & \\
+12 & $G_4$ & a\_ST2\_IMPL1              &  16 &   4 & 318\,s  & \\
+13 & $G_4$ & a\_ST2\_IMPL2              &  16 &   8 & 967\,s  & \\
+14 & $G_4$ & a\_ST2\_IMPL3              &  16 &  12 & 9798\,s & \\
+15 & $G_4$ & a\_ST3\_IMPL1              &  16 &   4 & 6304\,s & \\
 \end{tabular}
 
 \vspace{0.5em}
@@ -2224,15 +2227,15 @@ $G_4$ & a\_ST3\_IMPL1              &  16 &   4 & 6304\,s & \\
 \end{table}
 %---------------------------------
 
-The median runtime for our benchmark set is 318\,s, implying that half of the controllers
-can be synthesised in 5 minutes or less using our approach. Overall the average synthesis
-time amounts to approximately 30 minutes. With respect to RQ2 we consider
+The median runtime for our benchmark set is $318$\,s, implying that half of the controllers
+can be synthesised in $5$ minutes or less using our present approach. Overall the average synthesis
+time amounts to approximately $30$ minutes. With respect to RQ2 we consider
 these times short enough to be of practical use to control engineers.
 Regarding RQ1 we further conclude that the inductive back-end is able to synthesise 
 stable controllers in the $12$ out of $15$ benchmarks, and can be complemented using 
 the interval arithmetic back-end for $2$ additional benchmarks, where the inductive 
 conjectures fail. Both back-ends together enabled controller synthesis for $14$ 
-out of $15$ benchmarks.  For the 1 remaining benchmark our approach failed to synthesise
+out of $15$ benchmarks.  For the $1$ remaining benchmark our approach failed to synthesise
 a stable controller in the requested time limits. This can be addressed by either increasing
 the fixed point word widths considered or using floating point arithmetic instead. 
 \pksay{TODO: Upload full experiments environment including README and result log files to anonymous Google Drive and
