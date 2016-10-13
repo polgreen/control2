@@ -413,6 +413,7 @@ The vector of parametric coefficient uncertainties $\Delta{p}$ of $\Delta{G}_p(z
 \vec{b}\\
 \vec{a}
 \end{bmatrix}
+\label{eq:uncertainty}
 \end{equation}
 
 A typical hybrid system, with a continuous plant and a discrete controller, is shown in Figure~\ref{fig:sampledsystem}, where the DAC and ADC converters introduce quantisation noises $\nu_{1}(z)$ and $\nu_{2}(z)$, $G(s)$ is the continuous-time plant model with parametric additive uncertainty $\Delta G_{P}(s)$ 
@@ -1598,9 +1599,9 @@ $$
 %
 %\cdsay{is this for the matrix $\left( \begin{array}{c} Y \\ U \end{array}\right)$?}
 
-Assuming that $\hat{G}(z) = \frac{\hat{N_G}(z)}{\hat{D_G}(z)}$
-and $\hat{C}(z) = \frac{\hat{N_C}(z)}{\hat{D_C}(z)}$, then:
-$$S(z) = FWL[N_C(z)] \times \hat{N_G}(z) + FWL[D_C(z)] \times \hat{D_G}(z)$$
+% Assuming that $\hat{G}(z) = \frac{\hat{N_G}(z)}{\hat{D_G}(z)}$
+% and $\hat{C}(z) = \frac{\hat{N_C}(z)}{\hat{D_C}(z)}$, then:
+% $$S(z) = FWL[N_C(z)] \times \hat{N_G}(z) + FWL[D_C(z)] \times \hat{D_G}(z)$$
 
 Next, the following Jury matrix
 $M = [m_{ij}]_{(2N−2)\times N}$ is built from $S(z)$ coefficients:
@@ -1659,26 +1660,36 @@ $$
 Essentially, the synthesis problem we are trying to solve is the following:
 find a digital controller denoted by  $N_c$ and $D_c$ that
 makes the closed-loop system stable 
-for all possible uncertainties $(\Delta N_G, \Delta D_G)$. 
-Note that, similar to the rest of the paper, we use the notation 
-$\hat{N_G}(z) = N_G(z) + \Delta N_G(z)$ and 
-$\hat{N_C}(z) = N_C(z) + \Delta N_C(z)$.
+for all possible uncertainties $\Delta{\vec{p}}$ (\ref{eq:uncertainty}).
+%$(\Delta N_G, \Delta D_G)$. 
+% Note that, similar to the rest of the paper, we use the notation 
+% $\hat{N_G}(z) = N_G(z) + \Delta N_G(z)$ and 
+% $\hat{N_C}(z) = N_C(z) + \Delta N_C(z)$.
 When mapping back to the notation used for describing the general architecture 
 of the program synthesiser, the controller $(N_c,D_c)$ denotes $P$ and 
-$(\Delta N_G, \Delta D_G)$ represents $x$. 
-We compute the controller $(N_c,D_c)$ in the domain 
-$\mathbb{R}\langle I,F \rangle$ and 
-the uncertainty in $\mathbb{R}\langle I_b,F_b \rangle$.
+$\Delta{\vec{p}}$ represents $x$. 
 
 % \red{[clear elucidation of the mapping between this and the domains used 
 % in the general description of the synthesiser]}
 
 \paragraph{Use of fixed-point computation in the program synthesis engine}
-The program synthesis engine uses fixed-point arithmetic,
-therefore we need to examine the effect of discretization during these operations.
+The program synthesis engine uses fixed-point arithmetic.
+Thus, we compute the coefficients for $N_c$ and $D_c$ in the domains 
+$\mathbb{R}^{n_C}\param{I}{F}$ and $\mathbb{R}^{m_C}\param{I}{F}$, respectively, where 
+$n_C$ and $m_C$ denote the order of the corresponding polynomials
+and $I$ and $F$ denote the integer and fractional size, respectively.
+Regarding the uncertainty, this is synthesised over the 
+domain $\mathbb{R}^{n_G+m_G}\param{I_b}{F_b}$, where $n_G$ and $m_G$ 
+denote the order of the polynomials representing the 
+numerator and denominator of the plant's transfer function, respectively. 
+Again, $I_b$ and $F_b$ denote the integer and fractional size, respectively, with
+$\mathbb{R}\langle I_b,F_b \rangle \supseteq \mathbb{R}\langle I,F \rangle$.
+
+Given the use of fixed-point arithmetic, 
+we need to examine the effect of discretization during these operations.
 Let $\tilde C(z)$ and $\tilde G(z)$ be the transfer functions represented
-using Fixed-Point bit vectors with integer size $I_b$ and fractional
-size $F_b$, whose domain is $\mathbb{R}\langle I_b,F_b \rangle \supseteq \mathbb{R}\langle I,F \rangle$.
+using fixed-point bit vectors.%  with integer size $I_b$ and fractional
+% size $F_b$, whose domain is $\mathbb{R}\langle I_b,F_b \rangle \supseteq \mathbb{R}\langle I,F \rangle$.
 %
 \begin{align}
 \small
@@ -1711,9 +1722,9 @@ we calculate $\tilde G(z)=f(\hat{G}(z))$
 where $\Delta_b\hat{c}_i=\hat{c}_i\mod \tilde{c}_i$
 and $\Delta{G}_b(z)$ represents the plant uncertainty caused by
 the rounding off effect.  We may encompass all the uncertainty as
-$\Delta{G}(z)=\Delta{G}_P(z)+\Delta{G}_b(z)$.  Since this value is
-nondeterministic, the set of possible polynomial coefficients of $\tilde G(z)$ is
-denoted by $\mathfrak{G}(z)$.
+$\Delta{G}(z)=\Delta{G}_P(z)+\Delta{G}_b(z)$.  % Since this value is
+% nondeterministic, the set of possible polynomial coefficients of $\tilde G(z)$ is
+% denoted by $\mathfrak{G}(z)$.
 
 \paragraph{The {\sc Synthesise} and {\sc Verify} phases}
 The {\sc synthesise} phase uses BMC to 
@@ -1725,9 +1736,9 @@ There are two approaches for the {\sc verify} phase based on the
 described model.  The first uses interval arithmetic, representing the
 coefficients
 $[{c}_i-\Delta_p{c}_i-\Delta_b{c}_i\ ,\
-{c}_i+\Delta_p{c}_i-\Delta_b{c}_i+(2^{-F_b})]$
+{c}_i+\Delta_p{c}_i-\Delta_b{c}_i+(2^{-F_b})]$ 
 and rounding operations outwards during the process. 
-\cdsay{dario, what coefficients are these?}
+%\cdsay{dario, what coefficients are these?}
 % This results in a
 % tighter calculation of the error at the cost of
 % performance.
@@ -1735,30 +1746,32 @@ Synthesised controllers using this verifier will always
 be correct and only generate counterexamples when the precision of the
 engine is insuficient.  Given the high computational cost of this
 approach, we also designed a second approach, which we describe below.
-In our experimental section Sec.~\ref{sec:experiments}, we 
-show that the increase in speed of the second approach 
-over the first one is in most cases of several orders of magnitude.
+In our implementation described in Sec.~\ref{sec:experiments}, we 
+try both approaches and provide the time for the fastest. 
+% show that the increase in speed of the second approach 
+% over the first one is in most cases of several orders of magnitude.
 
 In Fig.~\ref{fig:CEGIS}, we illustrate the second approach, which 
 uses a two-stage verification. 
-First, in the {\sc Uncertainty} sub-phase, assuming the 
-current precision \param{I_b}{F_b},
-we check whether 
-the system is unstable for the current candidate solution,
+In the first stage, denoted by {\sc Uncertainty} in Fig.~\ref{fig:CEGIS}, 
+assuming a certain precision \param{I_b}{F_b} for the uncertainty,
+\cdsay{how about the controller?}
+we check whether the system is unstable for the current candidate solution,
 {\it i.e.}, if $\neg \phi_{stability}$ is satisfiable for $S(z)$.
-If this is the case, then we obtain a counterexample denoted by 
-values for each coefficients of $\Delta N_{G}(z)$ and $\Delta D_{G}(z)$, 
+If this is the case, then we obtain a counterexample 
+$\Delta \vec{p}$, 
+%denoted by values for each coefficients of $\Delta N_{G}(z)$ and $\Delta D_{G}(z)$, 
 %\red{[see my comment above - these quantities pop up too abruptly.]},
-which make the closed-loop system unstable. 
+which makes the closed-loop system unstable. 
 This uncertainty is added to 
 the set {\sc inputs} such that, in the subsequent {\sc synthesise} phase, 
 we obtain a candidate solution consisting 
 of a controller $D_C$ and $N_C$, which makes the closed-loop 
 system stable for all the uncertainties accumulated in {\sc inputs}.
 
-If the result of the {\sc Uncertainty} verification is that
+If the {\sc Uncertainty} verification stage concludes that
 the system is stable for the current candidate solution,
-then we pass this solution to the {\sc Precision} verification sub-phase, 
+then we pass this solution to the second verification stage, {\sc Precision}, 
 which checks the propagation of the error in the fixed-point 
 calculations using a Fixed-point Arithmetic Verifier based on 
 interval arithmetic. 
@@ -1770,7 +1783,7 @@ interval arithmetic.
 % vouches for the use of CEGIS in most of our benchmarks.
 % \cdsay{end of integration}
 
-If this check returns $false$, then we 
+If the {\sc precision} verification returns $false$, then we 
 increase the precision of \param{I_b}{F_b} and re-start the {\sc synthesise} phase
 with an empty {\sc inputs} set.
 Otherwise, we found a full solution for our synthesis problem
@@ -1779,8 +1792,8 @@ and we are done.
 \subsection{Program synthesis for the running example}
 We will illustrate our synthesis approach on the running example 
 in Sec.~\ref{sec:running-ex}.
-We start with the candidate solution given below at $I_b=16,F_b=24$,
-which has all coefficients 0.
+We start with the candidate solution with all coefficients zero 
+given below at $I_b=16,F_b=24$.
 Note that the digital controller is designed with typical control system
 techniques \cite{Kuo:2002:ACS:579453,Ogata:1987:DCS:26170}.
 %\red{[Be more explicit, write out spurious candidate solution with zero coefficients. KISS - you don't want to lose the control audience here.]}.
@@ -1795,12 +1808,11 @@ $$
 C(z)=\frac{0z^2{+}0z{+}0}{0z^2{+}0z{+}0}
 $$
 
-In the first {\sc verify} phase we obtain the following counterexample:
+In the first {\sc verify} stage, the {\sc uncertainty} 
+check finds the following counterexample:
 
 $$
-\blue{
 \Delta{\vec{p}} = [0.026506~ 1.000610~ 1.002838]^T
-}
 $$
 
 
@@ -1814,20 +1826,21 @@ $$
 We add this counterexample to {\sc inputs} and initiate the {\sc synthesise} phase, where we get the following candidate solution: 
 %\red{[ How is the order of the candidate solution chosen here?]}
 $$
-\blue{
 C(z)=\frac{12.402664z^2{-}11.439667z{+}0.596756}{4.003906z^2{-}0.287949z{+}0.015625}
-}
 $$
 
-In the second {\sc verify} phase, we check whether the current candidate
-solution above is the final solution. It is not and the verifier signals
-that it is due to lack of precision. We thus increase our precision to
-$I_b=20,F_b=28$.
+This time the {\sc uncertainty} check doesn't find any more counterexamples 
+and we pass the current candidate solution to the {\sc precision} verification stage.
+% In the second {\sc verify} phase, we check whether the current candidate
+% solution above is the final solution. It is not and the verifier signals
+% that it is due to lack of precision.
+We obtain the result $false$, meaning that the current precision is insuficient.
+Consequently, we increase our precision to $I_b=20,F_b=28$.
 %
-Since previous counterexamples were attained at lower precision, we 
+Since the previous counterexamples were attained at lower precision, we 
 remove them from the counterexample set. Back in the {\sc synthesise}
-phase, we thus retrieve a candidate solution with all coefficients 0.
-The {\sc verify} phase now provides the first counterexample at higher
+phase, we re-start the process with a candidate solution with all coefficients 0.
+Next, the {\sc uncertainty} verification stage provides the first counterexample at higher
 precision:
 %
 %$$
@@ -1837,9 +1850,7 @@ precision:
 %\end{array}
 %$$
 $$
-\blue{
 \Delta{\vec{p}} = [0.026314~ 0.999024~ {-}1.004785]^T
-}
 $$
 
 %\blue{[Nice, now I'm in the groove. Next unfolds well.] }
@@ -1847,9 +1858,7 @@ In the next {\sc synthesise} phase, we get a new candidate solution that holds f
 the new, higher precision counterexample:
 
 $$
-\blue{
 C(z)=\frac{11.035202z^2{+}5.846100z{+}4.901855}{1.097901z^2{+}0.063110z{+}0.128357}
-}
 $$
 %
 %$$
@@ -1859,8 +1868,9 @@ $$
 %\end{array}
 %$$
 
-This candidate solution is validated as the final solution by the next 
-{\sc verify} phase, which fails to find a new counterexample (i.e. returns UNSAT).
+This candidate solution is validated as the final solution by both stages 
+{\sc uncertainty} and {\sc precision} in the
+{\sc verify} phase. %, which fails to find a new counterexample (i.e. returns UNSAT).
 
 \blue{
 For the same cruise control system, the synthesis may be done considering that the plant model have parametric uncertainties ($\Delta G_{P}(z)$). Thus, the synthesised controller must to stabilize for any parametric variation $\Delta p$ inside of a given region. Specially, in this example, was assumed that each coefficient of $G(z)$ may vary $\pm 0.5\%$.
