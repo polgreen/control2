@@ -415,7 +415,11 @@ The vector of parametric uncertainties  $\Delta{p}$ for $G(z)$ is defined by:
 \end{bmatrix}
 \end{equation}
 
-A typical hybrid system, with a continuous plant and discrete controller, is shown in Figure~\ref{fig:sampledsystem}, where the DAC and ADC converters introduce quantisation noises $\nu_{1}(z)$ and $\nu_{2}(z)$, $G(s)$ is the continuous-time plant model with parametric additive uncertainty $\Delta G_{P}(s)$ 
+\red{[where is this new variable used later?]}
+
+
+A typical hybrid system \red{[clarify the adjective ``hybrid'']} is shown in Figure~\ref{fig:sampledsystem}, where the DAC and ADC converters introduce quantisation noises $\nu_{1}(z)$ and $\nu_{2}(z)$, $G(s)$ is the continuous-time plant model with parametric additive uncertainty $\Delta G_{P}(s)$ 
+\red{[this Delta term now refers to the continuous plant? this is not what has been discussed before, nor what is in some of the plots.]} 
 , $R(z)$ is the reference signal, $U(z)$ is the control signal, and $\hat{Y}(z)$ is the output signal affected by the noises and uncertainties in the closed-loop system.
 
 \begin{figure*}[htb]
@@ -819,7 +823,26 @@ The Lemma~\ref{lemma:eq_int_stab} provides the necessary conditions for synthesi
 
 %\red{[first: lemmae precede theorems. ]}
 
+Let $\tilde C(z)$ and $\tilde G(z)$ be the transfer functions represented
+using Fixed-Point bit vectors with integer size $I_b$ and fractional
+size $F_b$, whose domain is $\mathbb{R}\langle I_b,F_b \rangle \supseteq \mathbb{R}\langle I,F \rangle$.
 %
+\begin{align}
+\small
+\label{digital_controller_plant_tf}
+\tilde C(z)&=\frac{\tilde \beta_{0}+\tilde \beta_{1}z^{-1}+...+\tilde \beta_{M_C}z^{-M_C}}{\tilde \alpha_{0}+\tilde \alpha_{1}z^{-1}+...+\tilde \alpha_{N_C}z^{-N_C}}, \\
+%\label{plant_tf}
+\tilde G(z)&=\frac{\tilde b_{0}+\tilde b_{1}z^{-1}+...+\tilde b_{M_G}z^{-M_G}}{\tilde a_{0}+\tilde a_{1}z^{-1}+...+\tilde a_{N_G}z^{-N_G}}.
+\end{align}
+ 
+Since the controller is synthesized in the $\mathbb{R}\langle I,F \rangle$
+domain,
+%
+ $$\forall i \leq N_C, j \leq M_C\ \  \tilde \beta_{i} \equiv \beta_{i} \wedge \tilde \alpha_{j} \equiv \alpha_{j} \Leftrightarrow \tilde C(z) \equiv C(z)$$
+
+Two approaches have been taken to synthesise a stable controller based on this model.
+The first uses interval arithmetic, representing the coefficients $[{c}_i-\Delta_p{c}_i-\Delta_b{c}_i\ ,\ {c}_i+\Delta_p{c}_i-\Delta_b{c}_i+(2^{-F_b})]$  
+and rounding operations outwards during the process. This results in a tighter calculation of the error at the cost of performance.
 
 %, thus supporting this assumption.
 
@@ -827,6 +850,7 @@ The Lemma~\ref{lemma:eq_int_stab} provides the necessary conditions for synthesi
 %\subsection{Using Fixed Point Arithmetic for verification}
 %\label{fixedpoint_verification}
 %------------------------------------
+>>>>>>> 37d4cc3c530b25bf97f1052f7c187af06f832aea
 
 %------------------------------------
 \subsection{DSVerifier Verification Flow}
