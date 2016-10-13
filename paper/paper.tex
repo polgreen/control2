@@ -397,7 +397,7 @@ which will be represented by the following transfer function:
 
 The vector of parametric coefficient uncertainties $\Delta{p}$ of $\Delta{G}_p(z)$ is defined by:
 \begin{equation}
-\Delta{p}=\begin{bmatrix}
+\Delta{\vec{p}}=\begin{bmatrix}
 \hat{b_{0}} - b_{0}\\
 \hat{b_{1}} - b_{1}\\
 \vdots \\
@@ -1771,29 +1771,40 @@ Note that the digital controller is designed with typical control system
 techniques \cite{Kuo:2002:ACS:579453,Ogata:1987:DCS:26170}.
 %\red{[Be more explicit, write out spurious candidate solution with zero coefficients. KISS - you don't want to lose the control audience here.]}.
 
+%$$
+%\begin{array}{ll}
+%N_C(z) {=} 0z^2{+}0z{+}0\\
+%D_C(z) {=} 0z^2{+}0z{+}0\\
+%\end{array}
+%$$
 $$
-\begin{array}{ll}
-N_C(z) {=} 0z^2{+}0z{+}0\\
-D_C(z) {=} 0z^2{+}0z{+}0\\
-\end{array}
+\blue{
+C(z)=\frac{0z^2{+}0z{+}0}{0z^2{+}0z{+}0}
+}
 $$
-
 
 In the first {\sc verify} phase we obtain the following counterexample:
+
 $$
-\begin{array}{ll}
-\Delta N_G(z) = 0.026506\\
-\Delta D_G(z) = 1.000610z+1.002838
-\end{array}
+\blue{
+\Delta{\vec{p}} = [0.026506~ 1.000610~ 1.002838]^T
+}
 $$
+
+
+%$$
+%\begin{array}{ll}
+%\Delta N_G(z) = 0.026506\\
+%\Delta D_G(z) = 1.000610z+1.002838
+%\end{array}
+%$$
 
 We add this counterexample to {\sc inputs} and initiate the {\sc synthesise} phase, where we get the following candidate solution: 
 %\red{[ How is the order of the candidate solution chosen here?]}
 $$
-\begin{array}{ll}
-N_C(z) {=} 12.402664z^2{-}11.439667z{+}0.596756\\
-D_C(z) {=} 4.003906z^2{-}0.287949z{+}0.015625\\
-\end{array}
+\blue{
+C(z)=\frac{12.402664z^2{-}11.439667z{+}0.596756}{4.003906z^2{-}0.287949z{+}0.015625}
+}
 $$
 
 In the second {\sc verify} phase, we check whether the current candidate
@@ -1808,12 +1819,18 @@ not going back to the synthesise phase,
 then this illustration doesn't follow the general diagram in Fig.5. 
 We need to decide which direction we keep.}
 %
+%$$
+%\begin{array}{ll}
+%\Delta N_G(z) {=} 0.026314\\
+%\Delta D_G(z) {=} 0.999024z{-}1.004785
+%\end{array}
+%$$
 $$
-\begin{array}{ll}
-\Delta N_G(z) {=} 0.026314\\
-\Delta D_G(z) {=} 0.999024z{-}1.004785
-\end{array}
+\blue{
+\Delta{\vec{p}} = [0.026314~ 0.999024~ {-}1.004785]^T
+}
 $$
+
 %\blue{[Nice, now I'm in the groove. Next unfolds well.] }
 Since previous counterexamples were attained at lower precision, we 
 remove them from the counterexample set. In the next {\sc synthesise}
@@ -1821,11 +1838,17 @@ phase, we get a new candidate solution that holds for the newly
 inserted counterexample:
 
 $$
-\begin{array}{ll}
-N_C(z) {=} 11.035202z^2{+}5.846100z{+}4.901855\\
-D_C(z) {=} 1.097901z^2{+}0.063110z{+}0.128357\\
-\end{array}
+\blue{
+C(z)=\frac{11.035202z^2{+}5.846100z{+}4.901855}{1.097901z^2{+}0.063110z{+}0.128357}
+}
 $$
+%
+%$$
+%\begin{array}{ll}
+%N_C(z) {=} \\
+%D_C(z) {=} \\
+%\end{array}
+%$$
 
 This candidate solution is validated as the final solution by the next 
 {\sc verify} phase, which fails to find a new counterexample (i.e. returns UNSAT).
@@ -1834,9 +1857,27 @@ This candidate solution is validated as the final solution by the next
 For the same cruise control system, the synthesis may be done considering that the plant model have parametric uncertainties ($\Delta G_{P}(z)$). Thus, the synthesised controller must to stabilize for any parametric variation $\Delta p$ inside of a given region. Specially, in this example, was assumed that each coefficient of $G(z)$ may vary $\pm 0.5\%$.
 }
 
-\blue{Initially, the controller denominator and numerator  ($D_{C}(z)$ and $N_{C}(z)$) are started with zero coefficients, as in previous example. Thus,  in the first {\sc verify} phase a counterexample is presented, that is added to {\sc inputs}, whis is usede in the first  {\sc synthesise} phase. The resulting controller is
+\blue{Initially, the controller denominator and numerator  ($D_{C}(z)$ and $N_{C}(z)$) are started with zero coefficients, as in previous example. Thus,  in the first {\sc verify} phase a counterexample is presented, that is added to {\sc inputs}, whis is usede in the first  {\sc synthesise} phase. The resulting controller is:
 }
+$$
+{
+\blue{
+C(z)=\frac{0.77516z^2{+}-0.71497z{+}0.03729}{0.25024z^2{-}0.01799z{+}0.00097}
+}}
+$$
 
+\blue{In the second {\sc verify} phase, the controller failed to stabilize the system for all the range of uncertainties, another counterexample was provided, and the following candidate controller is presented in another {\sc synthesise} phase:}
+$$
+{
+\blue{
+C(z)=\frac{0.68970z^2{+}0.36538z{+}0.30637}{0.06862z^2{+}0.00394z{+}0.00802}
+}}
+$$
+
+\blue{
+This candidate solution is validated as the final solution by the next 
+{\sc verify} phase.
+}
 
 % Counterexample from first cruisecontrol02.c benchmark with uncertainty and
 % nondeterminism:
@@ -2039,35 +2080,48 @@ benchmark in Table~\ref{tab:results}. \textcolor{red}{Which section do you refer
 For most benchmarks the conjecture explained in section~\ref{fixedpoint_verification} 
 holds and the inductive back-end is able to find a stable solution in less than one minute}. 
 This is possible if the inductive solutions need to be refined with few counterexamples 
-and fixed point precision increases. However, some of our benchmarks did not meet these criteria. 
-\textcolor{red}{Which cases? Can you refer to Table~\ref{tab:results} In these cases, 
+and fixed point precision increases. However, two benchmarks in our set did not meet these
+criteria (marked with $^*$ in Table~\ref{tab:results}). In these cases, 
 the interval arithmetic back-end is able to complement the inductive approach
-and synthesise a solution instead, albeit with significantly larger runtimes}.
+and synthesise a solution instead, albeit with significantly larger runtimes.
 
-\begin{figure}[H]
+\textcolor{red}{Can you relate the benchmarks in Table~\ref{tab:results} in terms of 
+$C$ and $G$ as described in section~\ref{experimental-setup}. You could add an additional column to that table.}
+
+\begin{table}[H]
 \centering
-\begin{tabular}{l | r r l}
-Benchmark              & Base     & Unc     & \\\cline{1-4}
-CruiseControl02        & 17\,s    & 46\,s   & \\
-SatelliteB2            & 7\,s     & 6601\,s & \tbmark\\
-SatelliteC2            & 2\,s     & 76\,s   & \tbmark\\
-SpringMassDamper       & 28\,s    & \xmark  &
+\begin{tabular}{l | r l}
+Benchmark                 & Base    & \\\cline{1-2}
+CruiseControl02           & 17\,s   & \\
+CruiseControl02$^\dagger$ & 46\,s   & \\
+SatelliteB2               & 7\,s    & \\
+SatelliteB2$^\dagger$     & 6601\,s & \tbmark\\
+SatelliteC2               & 2\,s    & \\
+SatelliteC2$^\dagger$     & 76\,s   & \tbmark\\
+SpringMassDamper          & 28\,s   & \\
+a\_PL1\_SCH2\_IMPL1       & 2704\,s & \\
+a\_PL1\_SCH2\_IMPL2       & 538\,s  & \\
+a\_PL1\_SCH2\_IMPL3       & 12\,s   & \\
+a\_PL1\_SCH3\_IMPL1       & 318\,s  & \\
+a\_PL1\_SCH3\_IMPL2       & 967\,s  & \\
+a\_PL1\_SCH3\_IMPL3       & 9798\,s & \\
+a\_PL1\_SCH4\_IMPL1       & 6304\,s & \\
 \end{tabular}
 
 \vspace{0.5em}
-\scriptsize{* = solved with interval back-end, \xmark = uncontrollable}
+\scriptsize{* = solved with interval back-end, $\dagger$ = with uncertainty}
 \vspace{0.5em}
 
 \caption{Experimental results. \label{tab:results}}
-\end{figure}
+\end{table}
 %---------------------------------
 
 \textcolor{red}{Can you provide the synthesised controllers? Iury could then check the solution using the bode diagram.}
 We conclude from these results that the inductive back-end provides excellent performance
-for synthesising stable controllers in the majority of the benchmarks \textcolor{red}{can you be more specific? which benchmarks?}, and can be
-complemented using the interval arithmetic back-end, where the inductive conjectures fail
-too frequently. Both back-ends enabled controller synthesis for all benchmarks within
-reasonable time frames.
+for synthesising stable controllers in the 12 out of 14 benchmarks, and can be
+complemented using the interval arithmetic back-end for the remaining 2 benchmarks,
+where the inductive conjectures fail too frequently. Both back-ends together enabled controller
+synthesis for all benchmarks within reasonable time frames.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Related Work}
@@ -2182,6 +2236,22 @@ representation of the continuous dynamics.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusions}
+
+In this study, we have investigated a CEGIS-based approach that uses inductive synthesis 
+in conjunction with a robust closed-loop stability verification algorithm to find a parametric 
+solution for a digital controller given a continuous (or discrete) plant specification.
+In particular, we have exploited the automatic synthesis of correct-by-construction 
+digital controllers along with a model of their physical environment.
+We have also modeled a digital equivalent of the physical plant by evaluating the 
+effects of the quantisers (A/D and D/A converters) as time discretisation elements 
+with quantisation noise. Experimental results show that the inductive back-end of our
+CEGIS-based approach is able to synthesise stable controllers in most benchmarks and can be 
+complemented using the interval arithmetic back-end, where the inductive conjectures fail. 
+Both back-ends enabled controller synthesis for all benchmarks within reasonable time frames.
+Further studies include the extension of this CEGIS-based approach for different classes of systems
+({\it e.g.}, state-space) and also consider performance requirements while synthesising 
+the digital controller.
+
 
 \bibliographystyle{abbrv}
 \bibliography{paper}  
