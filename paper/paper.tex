@@ -229,17 +229,42 @@ In summary, this paper makes the following original contributions.
 %
 \begin{itemize}
 
-\item We exploit a CEGIS-based approach that uses inductive synthesis
-together with a bit-precise formal verification algorithm for synthesising
-correct-by-design robust digital controllers for non-fragile closed-loop
-stability.
+\item We designed and implemented an automatic approach for 
+generating {\em corect-by-construction} digital controllers that is 
+based on state-of-the-art inductive synthesis techniques.
+Our application of program synthesis is non-trivial 
+and requires addressing challenges specific to
+control systems such as the effects of quantisers 
+and FWL. In particular, we found that a two-stage 
+verification engine that continuously refines the precision
+of the fixed-point representation is key to the performance of our approach 
+yielding, in most cases,  a speed-up  
+of several orders of magnitude over 
+a conventional one-stage verification 
+approach.
 
-\item Experimental results with our synthesiser show that the
-combination of interval arithmetic to represent the controller coefficients
-and a two-stage verification approach to continuously refine precision
-enables us to compute a parametric, sound solution for $14$ out of $15$
-digital stabilizing controllers for a set of continuous and discrete plants
-with parametric uncertainties.
+\item We provide experimental results showing that
+our fully automatic program synthesis based approach is able to synthesise 
+stable controllers
+%sound parametric solutions for digital stabilizing controllers
+for a set of intricate benchmarks taken from 
+the literature in a reasonable amount of time 
+(the median runtime for our benchmark set is 197s, 
+implying that half of the controllers can be synthesised in less
+than 5 minutes). 
+
+%% \item We exploit a CEGIS-based approach that uses inductive synthesis
+%% together with a bit-precise formal verification algorithm for synthesising
+%% correct-by-design robust digital controllers for non-fragile closed-loop
+%% stability.
+
+%% \item Experimental results with our synthesiser show that the
+%% combination of interval arithmetic to represent the controller coefficients
+%% and a two-stage verification approach to continuously refine precision
+%% enables us to compute a parametric, sound solution for $14$ out of $15$
+%% digital stabilizing controllers for a set of continuous and discrete plants
+%% with parametric uncertainties.
+
 
 \end{itemize}
 
