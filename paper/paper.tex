@@ -1810,6 +1810,14 @@ $$
 This candidate solution is validated as the final solution by the next 
 {\sc verify} phase, which fails to find a new counterexample (i.e. returns UNSAT).
 
+\blue{
+For the same cruise control system, the synthesis may be done considering that the plant model have parametric uncertainties ($\Delta G_{P}(z)$). Thus, the synthesised controller must to stabilize for any parametric variation $\Delta p$ inside of a given region. Specially, in this example, was assumed that each coefficient of $G(z)$ may vary $\pm 0.5\%$.
+}
+
+\blue{Initially, the controller denominator and numerator  ($D_{C}(z)$ and $N_{C}(z)$) are started with zero coefficients, as in previous example. Thus,  in the first {\sc verify} phase a counterexample is presented, that is added to {\sc inputs}, whis is usede in the first  {\sc synthesise} phase. The resulting controller is
+}
+
+
 % Counterexample from first cruisecontrol02.c benchmark with uncertainty and
 % nondeterminism:
 % 1) { (0.02634525299072265625, 0.9979267120361328125, -0.99768829345703125) }
