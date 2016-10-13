@@ -143,11 +143,11 @@ classically studied in digital control literature.
 %
 In this study, we plan to provide a principled approach to extend this
 literature in a number of directions: we are interested in quantitative
-tasks; we focus on automated correct-by-design synthesis algorithms, as
+tasks; we focus on automated correct-by-construction synthesis algorithms, as
 opposed to verification objectives; and we encompass the complete range of
 approximations, related to time discretisation, quantisation effects, and
 finite-precision representations (with related rounding errors).  To this
-end, we propose a CEGIS-based solution that uses inductive invariant
+end, we propose a CEGIS-based solution that uses inductive 
 synthesis in conjunction with a digital verification algorithm to find a
 parametric solution for a digital controller given a continuous plant
 specification.
@@ -309,6 +309,48 @@ for linear systems with parametric uncertainties.
 %}
 
 %------------------------------------
+\subsection{Sampling and Holding in Hybrid Systems}
+\label{ssec:SandH}
+%------------------------------------
+
+The digital controllers synthesized in this paper are typically used in closed loops with continuous (and physical) plants. Thus, the proposed approach have to consider dynamics of continuous parts of system ({\it e.g.}, plant) and discrete parts ({\it e.g.}, digital controller), {\it i.e.} the synthesized controller have to consider the issues related to the hybrid systems studies.
+
+For this purpose, the design procedure is based on a discretized model for a continuous plant. Considering only transfer function models, we are interested in a $z$-domain transfer function that considers all the aspects about the continuous plant ($G(s)$) and the sampling and hold process.
+
+Note that $G(z)$ is a discrete model of a real (and continuous) plant, {\it
+i.e.}, a continuous model of the plant must be discretized to obtain the
+discrete equivalent coefficients via ZOH
+discretization.  
+
+%\red{[why do we discuss the ZOH at this point?]}
+
+Although there are several discretization methods available
+in the literature~\cite{Franklin15}, the zero-order hold (ZOH)
+discretization is more suitable for representing the sample and hold
+processes that are typically employed in complex systems~\cite{istepanian2012digital}, {\it i.e.}, the ZOH discretization
+models the exact effect of sampling and DAC interpolation over the plant.
+
+\begin{myassumption}
+%
+The Sample and Hold of the ADC and the ZOH of the DAC are synchronized, {\it i.e.}, there is no delay between
+sampling the plant output at ADC and updating the DAC accordingly. The DAC interpolator is an ideal ZOH.
+%
+\end{myassumption}
+
+\begin{mylemma}\cite{astrom1997computer}
+%
+Given a synchronized ZOH input and sample and hold output on the plant with a sample time $T$ satisfying Nyquist's sampling criteria, the discrete pulse transfer function $G(z,T)$ is an exact z-domain representation of $G(s)$ which can be computed using the following formula: 
+%
+\begin{equation}
+\label{eq:pulsetf}
+G(z,T) = (1-z^{-1})\mathcal{Z}\left\lbrace{\mathcal{L}^{-1}\left\lbrace{\frac{G(s)}{s}}\right\rbrace_{t=kT}}\right\rbrace.
+\end{equation}
+%
+For the sake of brevity, we will use the notation $G(z)$ to represent the pulse transfer function.
+%
+\end{mylemma}
+
+%------------------------------------
 \subsection{Verifying Closed-loop Control Systems}
 \label{verifying-closed-loop-control-systems}
 %------------------------------------
@@ -340,75 +382,16 @@ G(z)&=\frac{b_{0}+b_{1}z^{-1}+...+b_{M_G}z^{-M_G}}{a_{0}+a_{1}z^{-1}+...+a_{N_G}
 similarly $\vec{b}$ and $\vec{a}$ encompas the plant's coefficients;  
 and $N_{(\cdot)}$ and $M_{(\cdot)}$ denote the number of poles and zeros for the corresponding block.
 
-Note that $G(z)$ is a discrete model of a real (and continuous) plant, {\it
-i.e.}, a continuous model of the plant must be discretized to obtain the
-discrete equivalent coefficients $b$ and $a$~\cite{Astrom08} via ZOH
-discretization.  
-
-\red{[why do we discuss the ZOH at this point?]}
-
-Although there are several discretization methods available
-in the literature~\cite{Franklin15}, the zero-order hold (ZOH)
-discretization is more suitable for representing the sample and hold
-processes that are typically employed in complex systems~\cite{istepanian2012digital}, {\it i.e.}, the ZOH discretization
-models the exact effect of sampling and DAC interpolation over the plant.
-
-\begin{mylemma}\cite{astrom1997computer}
-%
-The pulse transfer function $G(z)$ is a z-domain model that relates the
-output sampled by an ADC and the digital input provided by the ZOH.  It is equivalent at the sample times ({\it i.e.}, $t=kT$) to the continuous transfer
-function $G(s)$ driven by ZOH.  
-\red{[what does it mean that it is continuous ``at the sample times''? We're working in frequency. Are you matching poles? There is still no clear relationship between continuous and samples transfer functions, it is not formal in my opinion.]}
-This pulse transfer function can be computed as
-%
-\begin{equation}
-\label{eq:pulsetf}
-G(z,T) = (1-z^{-1})\mathcal{Z}\left\lbrace{\mathcal{L}^{-1}\left\lbrace{\frac{G(s)}{s}}\right\rbrace_{t=kT}}\right\rbrace.
-\end{equation}
-%
-For the sake of brevity, 
-we will use the notation $G(z)$ to represent the pulse transfer function.
-%
-\end{mylemma}
-
-\begin{myassumption}
-%
-The DAC and ADC are synchronized, {\it i.e.}, there is no delay between
-sampling the plant output at ADC and updating the DAC accordingly.
-%
-\end{myassumption}
 
 
-\begin{myassumption}
-%
-The DAC interpolator is an ideal ZOH; it takes the discrete value of control
-signal $\tilde u(k)$ \red{[is this a new notation over the time domain? It does not reflect the signals used in the plot -- utterly confusing!]} at instant $k$ and produces a rectangular pulse of height
-$u(k)$ and width equal to the sample time $T$.
-%
-\end{myassumption}
-
-
-\begin{myassumption}
-%
-\label{assumption:cont_and_plant}
-The controller and the plant are linear time-invariant (LTI) systems, {\it i.e.}, 
-\red{[!! of course, we're working with transfer functions!!]}
-any source of
-nonlinearity ({\it e.g.}, saturation, overflow, ADC/DAC nonlinearities) will
-be disregarded \red{[how is this related to ADC/DAC? very confusing.]}
-. Additionally, the pulse transfer function is obtained via \eqref{eq:pulsetf} using an appropriate sample rate ({\it i.e.}, obeying the Nyquist sampling conditions)  is a precise discrete-time representation of $G(s)$. \red{[clarify this: this cannot be an assumption, since it is hinging on a specific numerical scheme. Assumptions deal with structural properties for example, or choices of certain parameters ... ]}
-%
-\end{myassumption}
-
-Although the pulse transfer function $G(z)$ represents adequately \red{[clarify adverb]} $G(s)$ in the z-domain, 
-the model $G(z)$ may not be accurate and some uncertainties may not be covered by that model. 
-These uncertainties may be \red{[clarify use of conditional tense]} parametrically expressed by an additive transfer function $\Delta G(z)$, resulting in a uncertain model $\hat{G}(z)$, such that:
+Uncertainties in $G(z)$ may appear due to uncertainties in $G(s)$ (\emph{i.e.} $\Delta{G}_p(s)$), errors in the numeric calculations, or roundoffs in the quantization.
+These uncertainties may be parametrically expressed by an additive transfer function $\Delta G(z)$, resulting in a uncertain model $\hat{G}(z)$, such that:
 \begin{equation}
 \hat{G}(z)=G(z)+\Delta G(z),
 \end{equation}
-that may be \red{[\ldots]} represented by the following transfer function:
+which will be represented by the following transfer function:
 \begin{equation}
-\hat{G}(z)=\frac{\hat{b}_{0}+\hat{b}_{1}z^{-1}+...+\hat{b}_{M_G}z^{-M_G}}{\hat{a}_{0}+\hat{a}_{1}z^{-1}+...+\hat{a}_{N_G}z^{-N_G}}.
+\hat{G}(z)=\frac{\hat{b}_{0}+\hat{b}_{1}z^{-1}+...+\hat{b}_{M_G}z^{-M_G}}{\hat{a}_{0}+\hat{a}_{1}z^{-1}+...+\hat{a}_{N_G}z^{-N_G}} : N_G \geq M_G .
 \end{equation}
 \red{[same order?]} 
 
@@ -431,6 +414,7 @@ The vector of parametric uncertainties  $\Delta{p}$ for $G(z)$ is defined by:
 \vec{a}
 \end{bmatrix}
 \end{equation}
+
 \red{[where is this new variable used later?]}
 
 
@@ -482,7 +466,7 @@ A typical hybrid system \red{[clarify the adjective ``hybrid'']} is shown in Fig
    \& \node[rectangle,draw,
 	minimum width=1cm,
 	minimum height=1cm,
-        label=\textbf{Plant}] (gs) {{\sc $G(s) + \Delta G(s)$}};
+        label=\textbf{Plant}] (gs) {{\sc $G(s) + \Delta G_p(s)$}};
    \node[draw=none] (ud) at ([xshift=-2cm,yshift=.15cm]gs)  {$U(s)$};
    \node[draw=none] (y) at ([xshift=2cm,yshift=.15cm]gs)  {$Y(s)$};
    \& complexnode/.pic={ 
@@ -605,100 +589,100 @@ In figure~\ref{fig:digsystem1}, two sources of uncertainties are considered: par
 \label{eq:complete_unc_model}
 \hat{G}(z)=G(z)+\Delta G_{P}(z)+\Delta G_{Q}(z),
 \end{equation}
-where $\Delta G_{P}(z)$ is the term that corresponds to the parametric uncertainties and $\Delta G_{Q}(z)$ is the term that reflects the quantisation effects on the plant model. \red{[next figure is a bit unnecessary, does not ad much to the previous one.]} Figure~\ref{fig:digsystem2} shows the digital closed loop systems with $\Delta G_{P}(z)$ and $\Delta G_{Q}(z)$.
+where $\Delta G_{P}(z)$ is the term that corresponds to the parametric uncertainties and $\Delta G_{Q}(z)$ is the term that reflects the quantisation effects on the plant model. %\red{[next figure is a bit unnecessary, does not ad much to the previous one.]} Figure~\ref{fig:digsystem2} shows the digital closed loop systems with $\Delta G_{P}(z)$ and $\Delta G_{Q}(z)$.
 
 
-\begin{figure}[ht]
-\centering
-
-\tikzset{add/.style n args={4}{
-    minimum width=6mm,
-    path picture={
-        \draw[circle] 
-            (path picture bounding box.south east) -- (path picture bounding box.north west)
-            (path picture bounding box.south west) -- (path picture bounding box.north east);
-        \node[draw=none] at ($(path picture bounding box.south)+(0,0.13)$)     {\small #1};
-        \node[draw=none] at ($(path picture bounding box.west)+(0.13,0)$)      {\small #2};
-        \node[draw=none] at ($(path picture bounding box.north)+(0,-0.13)$)    {\small #3};
-        \node[draw=none] at ($(path picture bounding box.east)+(-0.13,0)$)     {\small #4};
-        }
-    }
- }
-
-\resizebox{.5\textwidth}{!}{
- \begin{tikzpicture}[scale=0.3,-,>=stealth',shorten >=.2pt,auto,
-     semithick, initial text=, ampersand replacement=\&,]
-
-  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center}, row sep=.6cm, column sep=.3cm] {
-  %
-	\& 
-	\&
-	\& \coordinate (aux7); 
-	\& \node[rectangle,draw,
-	minimum width=1cm,
-	minimum height=1cm] (deltag2) {{\sc $\Delta G_{Q}(z)$}};
-	\& \coordinate (aux8);\\
-    \node[draw=none] (r) {$R(z)$};
-%   \& \coordinate (aux0);
-   \& \node[circle,add={-}{+}{}{}] (circle) {};
-   \node[draw=none] (ez) at ([xshift=1cm,yshift=.15cm]circle)  {$e(z)$};
-   \& \node[rectangle,draw,
-	minimum width=1cm,
-	minimum height=1cm,
-        label=\textbf{Controller}] (cz) {{\sc C(z)}};
-   \node[draw=none] (ud) at ([xshift=1cm,yshift=.15cm]cz)  {$U(z)$};
-   \& \coordinate (aux4);
-   \& \node[rectangle,draw,
-	minimum width=1cm,
-	minimum height=1cm,
-        label=\textbf{Plant}] (gs) {{\sc G(z)}};
-   \node[draw=none] (y) at ([xshift=1cm,yshift=.15cm]gs)  {$Y(z)$};
-   \& \node[circle,add={+}{+}{+}{}] (circle2) {};
-%   \node[draw=none] (tyz) at ([xshift=-1cm,yshift=.15cm]circle2)  {$Y(z)$};
-%   \node[draw=none] (nu) at ([yshift=1cm]circle2)  {$\nu(z)$};
-   \& \coordinate (aux1);
-   \& \node[draw=none] (yz) {$\hat{Y}(z)$};\\
-   \& 
-   \&
-   \& \coordinate (aux5); 
-   \& \node[rectangle,draw,
-	minimum width=1cm,
-	minimum height=1cm] (deltag) {{\sc $\Delta G_{P}(z)$}};
-   \& \coordinate (aux6);\\
-   \& \coordinate (aux3); 
-   \&
-   \& 
-   \& 
-   \&
-   \& \coordinate (aux2);\\
-  };
-
-
-%  \path[->] (v1) edge (q1.north);
-%  \path[->] (v2) edge (q2.north);
-  \path[->] (r) edge (circle.west);
-%  \path[->] (nu) edge (circle2.north);
-  \path[->] (aux1) edge (yz);
-  \path  
-   (aux4.north) edge (aux5.south)
-   (aux4.north) edge (aux7.south)
-   (aux5.east) edge (deltag.west)
-   (aux7.east) edge (deltag2.west)
-   (deltag.east) edge (aux6.west)
-   (deltag2.east) edge (aux8.west)
-   (circle.east) edge (cz)
-   (cz.east) edge (gs.west)
-   (circle2.east) edge (aux1.west)
-   (aux1.south) edge (aux2.north)
-   (aux2.west) edge (aux3.east); 
-  \path[->] (aux8.south) edge (circle2.north); 
-  \path[->] (aux6.south) edge (circle2.south);
-  \path[->] (gs.east) edge (circle2.west);
-  \path[->] (aux3.north) edge (circle.south);
- \end{tikzpicture}
-}
- \caption{Digital system with additive uncertainties $\Delta G_{P}(z)$ and $\Delta G_{Q}(z)$. \label{fig:digsystem2}}
-\end{figure}
+%\begin{figure}[ht]
+%\centering
+%
+%\tikzset{add/.style n args={4}{
+%    minimum width=6mm,
+%    path picture={
+%        \draw[circle] 
+%            (path picture bounding box.south east) -- (path picture bounding box.north west)
+%            (path picture bounding box.south west) -- (path picture bounding box.north east);
+%        \node[draw=none] at ($(path picture bounding box.south)+(0,0.13)$)     {\small #1};
+%        \node[draw=none] at ($(path picture bounding box.west)+(0.13,0)$)      {\small #2};
+%        \node[draw=none] at ($(path picture bounding box.north)+(0,-0.13)$)    {\small #3};
+%        \node[draw=none] at ($(path picture bounding box.east)+(-0.13,0)$)     {\small #4};
+%        }
+%    }
+% }
+%
+%\resizebox{.5\textwidth}{!}{
+% \begin{tikzpicture}[scale=0.3,-,>=stealth',shorten >=.2pt,auto,
+%     semithick, initial text=, ampersand replacement=\&,]
+%
+%  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center}, row sep=.6cm, column sep=.3cm] {
+%  %
+%	\& 
+%	\&
+%	\& \coordinate (aux7); 
+%	\& \node[rectangle,draw,
+%	minimum width=1cm,
+%	minimum height=1cm] (deltag2) {{\sc $\Delta G_{Q}(z)$}};
+%	\& \coordinate (aux8);\\
+%    \node[draw=none] (r) {$R(z)$};
+%%   \& \coordinate (aux0);
+%   \& \node[circle,add={-}{+}{}{}] (circle) {};
+%   \node[draw=none] (ez) at ([xshift=1cm,yshift=.15cm]circle)  {$e(z)$};
+%   \& \node[rectangle,draw,
+%	minimum width=1cm,
+%	minimum height=1cm,
+%        label=\textbf{Controller}] (cz) {{\sc C(z)}};
+%   \node[draw=none] (ud) at ([xshift=1cm,yshift=.15cm]cz)  {$U(z)$};
+%   \& \coordinate (aux4);
+%   \& \node[rectangle,draw,
+%	minimum width=1cm,
+%	minimum height=1cm,
+%        label=\textbf{Plant}] (gs) {{\sc G(z)}};
+%   \node[draw=none] (y) at ([xshift=1cm,yshift=.15cm]gs)  {$Y(z)$};
+%   \& \node[circle,add={+}{+}{+}{}] (circle2) {};
+%%   \node[draw=none] (tyz) at ([xshift=-1cm,yshift=.15cm]circle2)  {$Y(z)$};
+%%   \node[draw=none] (nu) at ([yshift=1cm]circle2)  {$\nu(z)$};
+%   \& \coordinate (aux1);
+%   \& \node[draw=none] (yz) {$\hat{Y}(z)$};\\
+%   \& 
+%   \&
+%   \& \coordinate (aux5); 
+%   \& \node[rectangle,draw,
+%	minimum width=1cm,
+%	minimum height=1cm] (deltag) {{\sc $\Delta G_{P}(z)$}};
+%   \& \coordinate (aux6);\\
+%   \& \coordinate (aux3); 
+%   \&
+%   \& 
+%   \& 
+%   \&
+%   \& \coordinate (aux2);\\
+%  };
+%
+%
+%%  \path[->] (v1) edge (q1.north);
+%%  \path[->] (v2) edge (q2.north);
+%  \path[->] (r) edge (circle.west);
+%%  \path[->] (nu) edge (circle2.north);
+%  \path[->] (aux1) edge (yz);
+%  \path  
+%   (aux4.north) edge (aux5.south)
+%   (aux4.north) edge (aux7.south)
+%   (aux5.east) edge (deltag.west)
+%   (aux7.east) edge (deltag2.west)
+%   (deltag.east) edge (aux6.west)
+%   (deltag2.east) edge (aux8.west)
+%   (circle.east) edge (cz)
+%   (cz.east) edge (gs.west)
+%   (circle2.east) edge (aux1.west)
+%   (aux1.south) edge (aux2.north)
+%   (aux2.west) edge (aux3.east); 
+%  \path[->] (aux8.south) edge (circle2.north); 
+%  \path[->] (aux6.south) edge (circle2.south);
+%  \path[->] (gs.east) edge (circle2.west);
+%  \path[->] (aux3.north) edge (circle.south);
+% \end{tikzpicture}
+%}
+% \caption{Digital system with additive uncertainties $\Delta G_{P}(z)$ and $\Delta G_{Q}(z)$. \label{fig:digsystem2}}
+%\end{figure}
 
 %\textcolor{blue}{[IB: I propose to exchange the following paragraphs by the previous blue]}
 
@@ -726,17 +710,20 @@ Since the controller is implemented using a FWL, $C(z)$ also suffers disturbance
 
 
 Let $\hat{C}(z)$ be the transfer function of the digital controller represented using this FWL with integer size $I$ and fractional
-size $F$.  We shall denote this domain as $\mathbb{R}\langle I,F \rangle$
+size $F$.  We shall denote the FWL domain of coefficients as $\mathbb{R}\langle I,F \rangle$
 %Since the controller is implemented in the $\mathbb{R}\langle I,F \rangle$ 
 %domain, {\it i.e.} a Fixed-Point Finite Word Length with integer size $I$ and fractional
 %size $F$, we shall denote this domain as $\mathbb{R}\langle I,F \rangle$ 
-and assume that there exists a function $FWL[\cdot]:\mathbb{R}^{n}\rightarrow \mathbb{R}^{n}\langle I,F \rangle$, which applies the FWL effects to a polynomial \red{[explain index n! why do you need to work on a Euclidean domain?]}. Thus the perturbed controller model $\hat{C}(z)$ may be computed from the original model $C(z)=\frac{N_{C}(z)}{D_{C}(z)}$ using the following expression:
+and assume that there exists a function $FWL[\cdot]:\mathcal{P}^{n}\rightarrow \mathcal{P}^{n}\langle I,F \rangle$, which applies the FWL effects to a polynomial. $\mathcal{P}^{n}$ is the space of polynomials of $n$-th order and $\mathcal{P}^{n}\langle I,F \rangle$ is is the space of polynomials with coefficients in $\mathbb{R}\langle I,F \rangle$.
+%, \red{[explain index n! why do you need to work on a Euclidean domain?]}. 
+Thus the perturbed controller model $\hat{C}(z)$ may be computed from the original model $C(z)=\frac{N_{C}(z)}{D_{C}(z)}$ using the following expression:
 \begin{equation}
 \hat{C}(z)=\frac{FWL[N_{C}(z)]}{FWL[D_{C}(z)]}.
 \end{equation}
 In the case of a synthesised controller, because the synthesis is performed using FWL, $\hat{C}(z) \equiv C(z)$. 
 
 \red{[what is the relationship between FWL effects over C, and the parametric uncertainty Delta Gp over the plant?]} 
+\blue{[IB: There is no relationship. We must separate that content in another section?]}
 
 %\textcolor{blue}{[IB: And I propose to exchange the remaining paragraphs by the previous blue]}
 %
@@ -770,33 +757,11 @@ H_{2}=\frac{\hat{G}(z)}{1+\hat{C}(z)\hat{G}(z)},
 
 A discrete-time linear system is said to be Bounded-Input and Bounded-Output (BIBO) stable if and only if every pole of its transfer function lies inside the unit circle. Analyzing the~\eqref{eq:outputfunctions} and based on assumption~\ref{assumption:cont_and_plant}, the following lemma states necessary conditions for BIBO stability of closed-loop system in figure~\ref{fig:sampledsystem}, since the the exogenous signals $R(z)$, $\nu_{1}$, and $\nu_{2}$ are bounded.
 
-\begin{mylemma}{\cite{Bessa16,fadali}}
-\label{lemma:eq_int_stab} 
-A feedback hybrid control system as shown in Fig.~\ref{fig:sampledsystem}, with a FWL implementation of the digital controller $\hat{C}(z) = \frac{FWL[N_{C}(z)]}{FWL[D_{C}(z)]}$ and uncertain discrete model of the plant $\hat{G}(z)=G(z)+\Delta G_{P}(z)=\frac{\hat{N}_{G}(z)}{\hat{D}_{G}(z)}$, is BIBO-stable if and only if: 
-\red{[this statement does not seem to encompass the quantisation effects on the plant?]} 
-\begin{itemize}
-\item  the roots of characteristic polynomial $S(z)$ are inside the open unit circle, where $S(z)$ is:
-\begin{equation}
-\label{eq:internal_stab_lemma}
-S(z)=FWL[N_{C}(z)]\hat{N}_{G}(z)+FWL[D_{C}(z)]\hat{D}_{G}(z);
-\end{equation}
-\item the direct loop product $\frac{FWL[N_{C}(z)]}{FWL[D_{C}(z)]}\cdot \frac{\hat{N}_{G}(z)}{\hat{D}_{G}(z)}$ has no pole-zero cancellation on or outside the unit circle.
-\end{itemize}
-\end{mylemma}
-
-The Lemma~\ref{lemma:eq_int_stab} provides the necessary conditions for synthesis of digital controllers able to stabilize closed loop system, considering plant parametric uncertainties ({\it i.e.}, $\Delta G_{P}(z)$), quantisation noises ($\nu_{1}$ and $\nu_{2}$) and FWL effects in digital controllers. Based on it, the model for plant uncertainty due quantisation noise ({\it i.e.}, $\Delta G_{Q}(z)$) may be disregarded if the conditions on Lemma~\ref{lemma:eq_int_stab} are attended and if the quantisation noise is bounded. 
-
-The quantisation noise is indeed bounded, since the following assumption~\ref{whitenoise} and the Lemmas~\ref{lemma:variance} and~\ref{lemma:boundednoise} are true.
-
-\red{[first: lemmae precede theorems. \\
-second: bounded is not energy bounded. ]}
-
-%
 \begin{myassumption}
 \label{whitenoise}
 %
 The quantisation noises $\nu_{1}$ (from the $Q1$) and $\nu_{2}$ (from the
-$Q2$) are energy bounded uncorrelated white noises.
+$Q2$) are bounded uncorrelated white noises.
 % 
 \end{myassumption}
 
@@ -828,26 +793,35 @@ R_{\nu\nu}(\tau)=E[\nu(t+\tau)\nu(t)]=\sigma_{Q}^{2}\cdot \delta(\tau),
 \end{equation}
 where $\delta(\tau)$ is the Dirac delta function at delay time $\tau$.
 
-By definition~\cite{poularikas2000transforms}, the power spectral density of  $nu(k)$ is the z-transform of $R_{\nu\nu}(\tau)$, thus
+By definition~\cite{poularikas2000transforms}, the power spectral density of  $\nu(k)$ is the z-transform of $R_{\nu\nu}(\tau)$, thus
 \begin{equation}
-\nu(z)=  \sum\limits_{k=-\infty}^{\infty}{R_{\nu\nu}(k)z^{-k}} = \sigma_{Q}^{2},
+S_{\nu}(z)=  \sum\limits_{k=-\infty}^{\infty}{R_{\nu\nu}(k)z^{-k}} = \sigma_{Q}^{2},
 \end{equation}
 considering the Lemma~\ref{lemma:variance}:
 \begin{equation}
-\nu(z)=  \frac{q^{2}}{12}.
+S_{\nu}(z)=  \frac{q^{2}}{12}.
 \end{equation}
 \end{proof}
 
 Finally, the quantisation noise may be considered a energy-bounded signal (Lemma~\ref{lemma:boundednoise}) and thus $\hat{Y}(z)$ will be bounded and the closed-loop system stable if the conditions in Lemma~\ref{lemma:eq_int_stab} are followed.
 
-%, thus supporting this assumption.
 
-%------------------------------------
-\subsection{Using Fixed Point Arithmetic for verification}
-\label{fixedpoint_verification}
-%------------------------------------
+\begin{mylemma}{\cite{Bessa16,fadali}}
+\label{lemma:eq_int_stab} 
+A feedback hybrid control system as shown in Fig.~\ref{fig:sampledsystem}, with a FWL implementation of the digital controller $\hat{C}(z) = \frac{FWL[N_{C}(z)]}{FWL[D_{C}(z)]}$ and uncertain discrete model of the plant $\hat{G}(z)=G(z)+\Delta G_{P}(z)+\Delta G_{Q}(z)=\frac{\hat{N}_{G}(z)}{\hat{D}_{G}(z)}$, is BIBO-stable if and only if: 
+\begin{itemize}
+\item  the roots of characteristic polynomial $S(z)$ are inside the open unit circle, where $S(z)$ is:
+\begin{equation}
+\label{eq:internal_stab_lemma}
+S(z)=FWL[N_{C}(z)]\hat{N}_{G}(z)+FWL[D_{C}(z)]\hat{D}_{G}(z);
+\end{equation}
+\item the direct loop product $\frac{FWL[N_{C}(z)]}{FWL[D_{C}(z)]}\cdot \frac{\hat{N}_{G}(z)}{\hat{D}_{G}(z)}$ has no pole-zero cancellation on or outside the unit circle.
+\end{itemize}
+\end{mylemma}
 
-\red{[relate this discussion with the FWL one (and related notations) above.]}
+The Lemma~\ref{lemma:eq_int_stab} provides the necessary conditions for synthesis of digital controllers able to stabilize closed loop system, considering plant parametric uncertainties ({\it i.e.}, $\Delta G_{P}(z)$), quantisation noises ($\nu_{1}$ and $\nu_{2}$) and FWL effects in digital controllers. Based on it, the model for plant uncertainty due quantisation noise ({\it i.e.}, $\Delta G_{Q}(z)$) may be disregarded if the conditions on Lemma~\ref{lemma:eq_int_stab} are attended and if the quantisation noise is bounded.  The quantisation noise is indeed bounded, since the following assumption~\ref{whitenoise} and the Lemmas~\ref{lemma:variance} and~\ref{lemma:boundednoise} are true.
+
+%\red{[first: lemmae precede theorems. ]}
 
 Let $\tilde C(z)$ and $\tilde G(z)$ be the transfer functions represented
 using Fixed-Point bit vectors with integer size $I_b$ and fractional
@@ -865,34 +839,19 @@ Since the controller is synthesized in the $\mathbb{R}\langle I,F \rangle$
 domain,
 %
  $$\forall i \leq N_C, j \leq M_C\ \  \tilde \beta_{i} \equiv \beta_{i} \wedge \tilde \alpha_{j} \equiv \alpha_{j} \Leftrightarrow \tilde C(z) \equiv C(z)$$
-%
-However, given a real plant and real controller $\hat{G}(z), \hat{C}(z)$, and a discretizing function
-\begin{align}
-\small
-\label{FWL_tf}
-&f_b (x \in \mathbb{R}) \rightarrow \tilde x \in \mathbb{R}\langle I_b,F_b \rangle \triangleq \tilde x = x-(x\mod\tilde x)
-\end{align}
-we calculate $\tilde C(z)=f(\hat{C}(z))$ and $\tilde G(z)=f(\hat{G}(z))$
-\begin{align}
-\label{digital_controller_tf}
-\tilde C(z)&=\frac{(\hat{\beta}_{0}+\Delta_q \hat{\beta}_{0}) +...+(\hat{\beta}_{M_C}+\Delta_q \hat{\beta}_{M_C})z^{-M_C}}{(\hat{\alpha}_{0}+\Delta_q \hat{\alpha}_{0})+...+(\hat{\alpha}_{N_C}+\Delta_q \hat{\alpha}_{N_C})z^{-N_G}} \nonumber \\
-&= C(z) =\hat{C}(z) + \Delta{C}_b(z)\\
-\label{digital_plant_tf}
-\tilde G(z)&=\frac{(\hat{b}_{0}+\Delta_q \hat{b}_{0}) +...+(\hat{b}_{M_G}+\Delta_q \hat{b}_{M_G})z^{-M_G}}{(\hat{a}_{0}+\Delta_q \hat{a}_{0})+...+(\hat{a}_{N_G}+\Delta_q \hat{a}_{N_G})z^{-N_G}} \nonumber \\
-&=G(z)+\Delta{G}_P(z)+\Delta{G}_b(z).
-\end{align}
-where $\Delta_b\hat{c}_i=\hat{c}_i\mod \tilde{c}_i$
-and $\Delta{G}_b(z)$ represents the plant uncertainty caused by
-the rounding off effect.  We may encompass all the uncertainty as
-$\Delta{G}(z)=\Delta{G}_P(z)+\Delta{G}_b(z)$.  Since this value is
-nondeterministic, the set of possible polynomial coefficients of $\tilde G(z)$ is
-denoted by $\mathfrak{G}(z)$.
 
 Two approaches have been taken to synthesise a stable controller based on this model.
 The first uses interval arithmetic, representing the coefficients $[{c}_i-\Delta_p{c}_i-\Delta_b{c}_i\ ,\ {c}_i+\Delta_p{c}_i-\Delta_b{c}_i+(2^{-F_b})]$  
 and rounding operations outwards during the process. This results in a tighter calculation of the error at the cost of performance.
 
-The second approach uses a nondeterministic plant selected from $\mathfrak{G}(z)$ where the expected error of the bit vector calculations is assumed to be within the expected bounds and verified after synthesis using the interval version of the program. The first verification phase produces a counterexample if some instance of $\mathfrak{G}(z)$ does not verify the properties and the CEGIS loop iteratively looks for a new controller that verifies the supplied counterexamples. The second phase verifies the propagation of the error in the fixed point calculations. If the second phase fails verification, we increase the precision of the analyser and feed the CEGIS loop again to find a sound solution. The resulting increase in speed of this approach over the former, which is of several orders of magnitude, vouches for the use of CEGIS in most of our benchmarks.
+%, thus supporting this assumption.
+
+%------------------------------------
+%\subsection{Using Fixed Point Arithmetic for verification}
+%\label{fixedpoint_verification}
+%------------------------------------
+>>>>>>> 37d4cc3c530b25bf97f1052f7c187af06f832aea
+
 %------------------------------------
 \subsection{DSVerifier Verification Flow}
 \label{verification-flow}
@@ -1023,10 +982,8 @@ expression:
 %
 \begin{equation}
 \label{Eq:running-example-controller-quantized}
-\resizebox{0.5\textwidth}{!}{
-$C_{q}\left(z\right) {:=} \frac{2.7199859619140625z^2{-}4.1529998779296875z
-{+}1.89599609375}{z^2{-}1.843994140625z+0.8495941162109375},$
-}
+C_{q}\left(z\right) {:=} \frac{2.719986z^2{-}4.153000z
+{+}1.895996}{z^2{-}1.843994z+0.849594},
 \end{equation} 
 %
 which makes the system unstable in closed-loop using fixed-point arithmetic
@@ -1557,14 +1514,13 @@ control systems.
 %specialised it for stream refactoring.  
 % adding JST for stream refactoring
 
-\paragraph{General architecture of the program synthesiser}
+\subsection{General architecture of the program synthesiser}
 %
 %% \red{[I would recommend to clarify the domain of definition of $\sigma$, particularly over the set where $x$ ranges over. 
 %% (Be cognisant that control audience might be unfamiliar with the cegis architecture.) ]}
 % 
 The input specification provided to the program synthesiser is of the
-form $\exists \vec{P} . \forall \vec{x} \in \text{\sc inputs}
-. \sigma(\vec{x}, \vec{P})$ where $\vec{P}$ ranges over functions,
+form $\exists \vec{P} . \forall \vec{x}. \sigma(\vec{x}, \vec{P})$ where $\vec{P}$ ranges over functions,
 $\vec{x}$ ranges over ground terms and $\sigma$ is a quantifier-free
 formula.  We interpret the ground terms over some finite domain
 $\mathcal{D}$.
@@ -1575,30 +1531,41 @@ interact via a finite set of test vectors {\sc inputs} that is updated
 incrementally.  Given the aforementioned specification $\sigma$, the
 {\sc synth} procedure tries to find an existential witness $\vec{P}$
 satisfying the specification $\sigma(\vec{x}, \vec{P})$ for all
-$\vec{x}$.
+$\vec{x}$ in {\sc inputs} (as opposed to all $\vec{x} \in \mathcal{D}$).
 %
 If {\sc synthesise} succeeds in finding an witness $\vec{P}$, this
-witness is a candidate solution to the full synthesis formula.  We
-pass this candidate solution to {\sc verify}, which determines whether
-it does satisfy the specification on all inputs by checking
-satisfiability of the following verification formula:
+witness is a candidate solution to the full synthesis formula. 
+We pass this candidate solution to {\sc verify}, which 
+checks whether it is a full solution.
+%determines whether
+%it does satisfy the specification on all inputs by checking
+%satisfiability of the following verification formula:
 %
-$\exists \vec{x} . \lnot \sigma(\vec{x}, \vec{P})$
+%$\exists \vec{x} . \lnot \sigma(\vec{x}, \vec{P})$
+%If this formula is unsatisfiable, 
+%% the candidate solution is in fact a 
+%% full solution.
+If this is the case, then
+the algorithm terminates.
+Otherwise, additional information is provided to the {\sc synthesise}
+phase (e.g. a new counterexample that is added to the {\sc inputs} set)
+and the loop iterates again.
 
-If this formula is unsatisfiable, the candidate solution is in fact a
-solution to the synthesis formula and so the algorithm terminates.
-Otherwise, the witness $\vec{x}$ denote an input on which the
-candidate solution fails to meet the specification.  Thus, $\vec{x}$ is
-added to the {\sc inputs} set, and the loop iterates again.  It is
-worth noting that each iteration of the loop adds a new input to the
-finite set $\text{\sc inputs}$ being used for synthesis.  Given that
-the full set of inputs $\mathcal{D}$
-%\blue{[which by now should have a name, as suggested to be introduced above]} 
-is finite, this means that the refinement loop
-can only iterate a finite number of times.
+%% the witness $\vec{x}$ denote an input on which the
+%% candidate solution fails to meet the specification.  Thus, $\vec{x}$ is
+%% added to the {\sc inputs} set, and the loop iterates again.  
 
-\paragraph{Synthesis elements specific to control systems}
+%% It is
+%% worth noting that each iteration of the loop adds a new input to the
+%% finite set $\text{\sc inputs}$ being used for synthesis.  Given that
+%% the full set of inputs $\mathcal{D}$
+%% %\blue{[which by now should have a name, as suggested to be introduced above]} 
+%% is finite, this means that the refinement loop
+%% can only iterate a finite number of times.
 
+\subsection{Synthesis elements specific to control systems}
+
+\paragraph{Property specification}
 Next, we describe the specific property that we pass to the program
 synthesiser as the specification $\sigma$.  There are two different
 algorithms in DSVerifier that can be used for stability
@@ -1607,7 +1574,9 @@ Schur's decomposition and another one based on Jury's
 criteria~\cite{astrom1997computer}.  Here, we choose Jury's
 method~\cite{astrom1997computer}, due to its efficiency.
 
-We use this method to check the stability in the $z$-domain for the characteristic polynomial $S(z)$ defined in~\eqref{eq:internal_stab_lemma}.
+We use this method to check the stability in the $z$-domain for the
+characteristic polynomial $S(z)$ defined
+in~\eqref{eq:internal_stab_lemma}.
 
 % of the matrix $\left( \begin{array}{c} Y \\ U \end{array}\right)$, where $Y(z)$ is the closed-loop system output and U(z) is the controller output. 
 %% \red{[unclear: what matrix? We need to clarify the relationship
@@ -1692,12 +1661,69 @@ When mapping back to the notation used for describing the general architecture
 of the program synthesiser, the controller $(N_c,D_c)$ denotes $P$ and 
 $(\Delta N_G, \Delta D_G)$ represents $x$. 
 
-\red{[clear elucidation of the mapping between this and the domains used 
-in the general description of the synthesiser]}
+%% \red{[clear elucidation of the mapping between this and the domains used 
+%% in the general description of the synthesiser]}
 
-In the {\sc verify} phase, if the system is unstable for the current candidate solution,
-{\it i.e.}, if $\neg \phi_{stability}$ is satisfiable for $S(z)$, 
-then we obtain a counterexample denoted by 
+\paragraph{The {\sc Synthesise} and {\sc Verify} phases}
+The {\sc synthesise} phase uses a BMC-based verifier to 
+compute a solution ($N_c$,$D_C$). An important remark is that this 
+controller is synthesised in the $\mathbb{R}\langle I,F \rangle$
+domain.  
+\cdsay{integrate the following with Dario}
+Let $\tilde C(z)$ and $\tilde G(z)$ be the transfer functions represented
+using Fixed-Point bit vectors with integer size $I_b$ and fractional
+size $F_b$, whose domain is $\mathbb{R}\langle I_b,F_b \rangle \supseteq \mathbb{R}\langle I,F \rangle$.
+%
+\begin{align}
+\small
+\label{digital_controller_plant_tf}
+\tilde C(z)&=\frac{\tilde \beta_{0}+\tilde \beta_{1}z^{-1}+...+\tilde \beta_{M_C}z^{-M_C}}{\tilde \alpha_{0}+\tilde \alpha_{1}z^{-1}+...+\tilde \alpha_{N_C}z^{-N_C}}, \\
+%\label{plant_tf}
+\tilde G(z)&=\frac{\tilde b_{0}+\tilde b_{1}z^{-1}+...+\tilde b_{M_G}z^{-M_G}}{\tilde a_{0}+\tilde a_{1}z^{-1}+...+\tilde a_{N_G}z^{-N_G}}.
+\end{align}
+ 
+Since the controller is synthesized in the $\mathbb{R}\langle I,F \rangle$
+domain,
+%
+ $$\forall i \leq N_C, j \leq M_C\ \  \tilde \beta_{i} \equiv \beta_{i} \wedge \tilde \alpha_{j} \equiv \alpha_{j} \Leftrightarrow \tilde C(z) \equiv C(z)$$
+%
+However, given a real plant and real controller $\hat{G}(z), \hat{C}(z)$, and a discretizing function
+\begin{align}
+\small
+\label{FWL_tf}
+&f_b (x \in \mathbb{R}) \rightarrow \tilde x \in \mathbb{R}\langle I_b,F_b \rangle \triangleq \tilde x = x-(x\mod\tilde x)
+\end{align}
+we calculate $\tilde C(z)=f(\hat{C}(z))$ and $\tilde G(z)=f(\hat{G}(z))$
+\begin{align}
+\label{digital_controller_tf}
+\tilde C(z)&=\frac{(\hat{\beta}_{0}+\Delta_q \hat{\beta}_{0}) +...+(\hat{\beta}_{M_C}+\Delta_q \hat{\beta}_{M_C})z^{-M_C}}{(\hat{\alpha}_{0}+\Delta_q \hat{\alpha}_{0})+...+(\hat{\alpha}_{N_C}+\Delta_q \hat{\alpha}_{N_C})z^{-N_G}} \nonumber \\
+&= C(z) =\hat{C}(z) + \Delta{C}_b(z)\\
+\label{digital_plant_tf}
+\tilde G(z)&=\frac{(\hat{b}_{0}+\Delta_q \hat{b}_{0}) +...+(\hat{b}_{M_G}+\Delta_q \hat{b}_{M_G})z^{-M_G}}{(\hat{a}_{0}+\Delta_q \hat{a}_{0})+...+(\hat{a}_{N_G}+\Delta_q \hat{a}_{N_G})z^{-N_G}} \nonumber \\
+&=G(z)+\Delta{G}_P(z)+\Delta{G}_b(z).
+\end{align}
+where $\Delta_b\hat{c}_i=\hat{c}_i\mod \tilde{c}_i$
+and $\Delta{G}_b(z)$ represents the plant uncertainty caused by
+the rounding off effect.  We may encompass all the uncertainty as
+$\Delta{G}(z)=\Delta{G}_P(z)+\Delta{G}_b(z)$.  Since this value is
+nondeterministic, the set of possible polynomial coefficients of $\tilde G(z)$ is
+denoted by $\mathfrak{G}(z)$.
+
+Two approaches have been taken to synthesise a stable controller based on this model.
+The first uses interval arithmetic, representing the coefficients $[{c}_i-\Delta_p{c}_i-\Delta_b{c}_i\ ,\ {c}_i+\Delta_p{c}_i-\Delta_b{c}_i+(2^{-F_b})]$ 
+and rounding operations outwards during the process. This results in a tighter calculation of the error at the cost of performance.
+
+The second approach uses a nondeterministic plant selected from $\mathfrak{G}(z)$ where the expected error of the bit vector calculations is assumed to be within the expected bounds and verified after synthesis using the interval version of the program. The first verification phase produces a counterexample if some instance of $\mathfrak{G}(z)$ does not verify the properties and the CEGIS loop iteratively looks for a new controller that verifies the supplied counterexamples. The second phase verifies the propagation of the error in the fixed point calculations. If the second phase fails verification, we increase the precision of the analyser and feed the CEGIS loop again to find a sound solution. The resulting increase in speed of this approach over the former, which is of several orders of magnitude, vouches for the use of CEGIS in most of our benchmarks.
+\cdsay{end of integration}
+
+
+In the {\sc verify} phase, we have a two-step process. 
+First, in the {\sc Uncertainty} sub-phase, assuming the 
+current precision \param{I_b}{F_b},
+we check whether 
+the system is unstable for the current candidate solution,
+{\it i.e.}, if $\neg \phi_{stability}$ is satisfiable for $S(z)$.
+If this is the case, then we obtain a counterexample denoted by 
 values for each coefficients of $\Delta N_{G}(z)$ and $\Delta D_{G}(z)$, 
 %\red{[see my comment above - these quantities pop up too abruptly.]},
 which make the closed-loop system unstable. 
@@ -1707,10 +1733,21 @@ we obtain a candidate solution consisting
 of a controller $D_C$ and $N_C$, which makes the closed-loop 
 system stable for all the uncertainties accumulated in {\sc inputs}.
 
-\paragraph{Program synthesis for the running example}
+If the result of the {\sc Uncertainty} verification is that
+the system is stable for the current candidate solution,
+then we pass this solution to the {\sc Precision} verification sub-phase, 
+which checks the propagation of the error in the fixed-point 
+calculations. If this check returns $false$, then we 
+increase the precision of \param{I_b}{F_b} and re-start the {\sc synthesise} phase
+with an empty {\sc inputs} set.
+Otherwise, we found a full solution for our synthesis problem
+and we are done.
+
+\subsection{Program synthesis for the running example}
 We will illustrate our synthesis approach on the running example 
 in Sec.~\ref{sec:running-ex}.
-We start with the candidate solution given below, which has all coefficients 0.
+We start with the candidate solution given below at $I_b=16,F_b=24$,
+which has all coefficients 0.
 Note that the digital controller is designed with typical control system
 techniques \cite{Kuo:2002:ACS:579453,Ogata:1987:DCS:26170}.
 %\red{[Be more explicit, write out spurious candidate solution with zero coefficients. KISS - you don't want to lose the control audience here.]}.
@@ -1726,8 +1763,8 @@ $$
 In the first {\sc verify} phase we obtain the following counterexample:
 $$
 \begin{array}{ll}
-\Delta N_G(z) = 0.02634525299072265625\\
-\Delta D_G(z) = 0.9979267120361328125z-0.99768829345703125
+\Delta N_G(z) = 0.026506\\
+\Delta D_G(z) = 1.000610z+1.002838
 \end{array}
 $$
 
@@ -1735,32 +1772,39 @@ We add this counterexample to {\sc inputs} and initiate the {\sc synthesise} pha
 %\red{[ How is the order of the candidate solution chosen here?]}
 $$
 \begin{array}{ll}
-N_C(z) {=} 4.00888156890869140625z^2{-}0.00041961669921875z\\
-\qquad\qquad -0.000213623046875\\
-D_C(z) {=} -0.003753662109375z^2{+}7.37355804443359375z \\
-\qquad\qquad -7.2847900390625\\
+N_C(z) {=} 12.402664z^2{-}11.439667z{+}0.596756\\
+D_C(z) {=} 4.003906z^2{-}0.287949z{+}0.015625\\
 \end{array}
 $$
 
 In the second {\sc verify} phase, we check whether the current candidate
-solution above is the final solution. It is not and we get a new counterexample:
+solution above is the final solution. It is not and the verifier signals
+that it is due to lack of precision. We thus increase our precision to
+$I_b=20,F_b=28$.
+%
+We stay in the {\sc verify} phase and receive a new counterexample at
+higher precision:
+\cdsay{Pascal, this sounds confusing. if you want to increase precision on-the-fly, i.e. 
+not going back to the synthesise phase, 
+then this illustration doesn't follow the general diagram in Fig.5. 
+We need to decide which direction we keep.}
+%
 $$
 \begin{array}{ll}
-\Delta N_G(z) = 0.02644824981689453125\\
-\Delta D_G(z) {=} 1.00053310394287109375z{-}1.0014629364013671875
+\Delta N_G(z) {=} 0.026314\\
+\Delta D_G(z) {=} 0.999024z{-}1.004785
 \end{array}
 $$
 %\blue{[Nice, now I'm in the groove. Next unfolds well.] }
-After adding this new counterexample to the set of {\sc inputs}, in the 
-next {\sc synthesise} phase, we get a new candidate solution that holds
-for both uncertainties in {\sc Inputs}:
+Since previous counterexamples were attained at lower precision, we 
+remove them from the counterexample set. In the next {\sc synthesise}
+phase, we get a new candidate solution that holds for the newly
+inserted counterexample:
 
 $$
 \begin{array}{ll}
-N_C(z) {=} 7.515781402587890625z^2{-}4.385616302490234375z\\
-\qquad\qquad +4.142093658447265625\\
-D_C(z) {=} -3.52398681640625z^2{-}1.530254364013671875z \\
-\qquad\qquad +7.58094024658203125\\
+N_C(z) {=} 11.035202z^2{+}5.846100z{+}4.901855\\
+D_C(z) {=} 1.097901z^2{+}0.063110z{+}0.128357\\
 \end{array}
 $$
 
@@ -1792,29 +1836,51 @@ This candidate solution is validated as the final solution by the next
  \begin{tikzpicture}[scale=0.3,->,>=stealth',shorten >=.2pt,auto, semithick, initial text=, ampersand replacement=\&,]
   \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center
 },
-          row sep=1cm, column sep=1cm] {
-   \& \node[ellipse, fill=yellow!20] (done) {{\sc Done}}; \\
+          row sep=1cm, column sep=1.5cm] {
+   \coordinate (aux1);
+   \& \coordinate (aux2);
+   \&;\\
    \node[fill=yellow!20] (synth) {{\sc Synthesise}};
    \&
-   \node[fill=yellow!20] (verif) {{\sc Verify}}; \\
-
+   complexnode/.pic={ 
+     \node[rectangle,draw,dashed,
+	minimum width=7cm,
+	minimum height=.8cm,
+	label={\sc Verify},] (verif) {};
+   \node[fill=yellow!20] (verif1) at ([xshift=-2cm]verif.center) {{\sc ~Uncertainty~~~~}};
+   \node[fill=yellow!20] (verif2) at ([xshift=2cm]verif.center) {{\sc ~~~~~Precision~~~}};
+   } 
+   \& \node[ellipse, fill=yellow!20] (done) {{\sc Done}};\\
+   %% \node[fill=yellow!20] (verif) {{\sc ~~~~~~Uncertainty~~~~~~}};
+   %% \&
+   %% \node[fill=yellow!20] (verif2) {{\sc ~~~~~~Precision~~~~~~~}};\\
    \& \\
    \& \\
-   \node (gp) {~~~~~~~~~~~~~~Closed-loop System Search~~~~~~~~~~~~~~~};
+   \node (gp) {Closed-loop System Search};
    \&
-   \node (bmc) {~~~~~~~~~~~~~~~BMC-based Verifier~~~~~~~~~~~~~~~};
-   
+   complexnode/.pic={ 
+     \coordinate (aux);
+   \node (bmc) at ([xshift=-2cm]aux.center) {BMC-based Verifier};
+   \node (fp)  at ([xshift=2cm]aux.center) {Fixed-point \\Arithmetic Verifier};
+   }   
     \\
   };
 
    \path
-    ([yshift=2em]synth.east) edge node {Candidate solution} ([yshift=2em]verif.west)
-    ([yshift=-2em]verif.west) edge node {Counterexample} ([yshift=-2em]synth.east)
-    ([xshift=5em]verif.south) edge node {Candidate $P$} ([xshift=5em]bmc.north)
-    ([xshift=-5em]bmc.north) edge node[align=center]  {UNSAT/\\model} ([xshift=-5em]verif.south)
-    (verif) edge node {} (done)
+    ([yshift=2em]synth.east) edge node {Candidate solution} ([yshift=2em]verif1.west)
+    ([yshift=-2em]verif1.west) edge node {Counterexample} ([yshift=-2em]synth.east)
+    ([xshift=5em]verif1.south) edge node[align=center] {Candidate\\ $P$} ([xshift=5em]bmc.north)
+    ([xshift=5em]verif2.south) edge node[align=center] {Candidate\\ $P$} ([xshift=5em]fp.north)
+    ([xshift=-5em]bmc.north) edge node[align=center]  {UNSAT/\\model} ([xshift=-5em]verif1.south)
+    ([xshift=-5em]fp.north) edge node[align=center]  {True/\\False} ([xshift=-5em]verif2.south)
+    (verif2) edge node {} (done)
     ([xshift=5em]synth.south) edge node[align=center] {Inputs} ([xshift=5em]gp.north)
-    ([xshift=-5em]gp.north) edge node[align=center] {UNSAT/\\candidate} ([xshift=-5em]synth.south);
+    ([xshift=-5em]gp.north) edge node[align=center] {UNSAT/\\candidate} ([xshift=-5em]synth.south)
+    (aux1) edge (synth.north);
+   \path[-]
+   (verif2.north) edge node[align=center] {} ([xshift=6.7cm]aux2)
+   ([xshift=6.7cm]aux2) edge node[align=center] {Increase Precision} (aux1);
+
  \end{tikzpicture}
 }
  \caption{Counterexample-Guided Inductive Synthesis of Closed-loop System (CEGIS paradigm). \label{fig:CEGIS}}
@@ -1937,7 +2003,38 @@ the experimental evaluation of the present approach aims to answer two research 
 %---------------------------------
 \subsection{Results}
 \label{experimental-results}
+We outline the runtimes required to synthesise a stable controller for each
+benchmark in Table~\ref{tab:results}. For most benchmarks the conjecture explained
+in section~\ref{fixedpoint_verification} holds and the inductive back-end is able
+to find a stable solution in less than one minute. This is possible if the inductive
+solutions need to be refined with few counterexamples and fixed point precision
+increases. However, some of our benchmarks did not meet these criteria. In these
+cases the interval arithmetic back-end was able to complement the inductive approach
+and synthesise a solution instead, albeit with significantly larger runtimes.
+
+\begin{figure}[H]
+\centering
+\begin{tabular}{l | r r l}
+Benchmark              & Base     & Unc     & \\\cline{1-4}
+CruiseControl02        & 17\,s    & 46\,s   & \\
+SatelliteB2            & 7\,s     & 6601\,s & \tbmark\\
+SatelliteC2            & 2\,s     & 76\,s   & \tbmark\\
+SpringMassDamper       & 28\,s    & \xmark  &
+\end{tabular}
+
+\vspace{0.5em}
+\scriptsize{* = solved with interval back-end, \xmark = uncontrollable}
+\vspace{0.5em}
+
+\caption{Experimental results. \label{tab:results}}
+\end{figure}
 %---------------------------------
+
+We conclude from these results that the inductive back-end provides excellent performance
+for synthesising stable controllers in the majority of the benchmarks, and can be
+complemented using the interval arithmetic back-end where the inductive conjectures fail
+too frequently. Both back-ends enabled controller synthesis for all benchmarks within
+reasonable time frames.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Related Work}
