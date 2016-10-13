@@ -916,7 +916,7 @@ Steps A to D are automatically performed by DSVerifier.
 \centering
 \includegraphics[width=\textwidth]{figures/verification-flow.png}
 \vspace{1ex}
-\caption{DSVerifier Verification Flow.}
+\caption{Synthesis process using DSVerifier and the CBMC CEGIS module.}
 \label{DSVerifier_process}
 \end{figure*}
 
@@ -933,31 +933,29 @@ Steps A to D are automatically performed by DSVerifier.
 %user steps described in Steps $1$--$5$ result in an ANSI-C code that should
 %be used as an input for DSVerifier.
 
-Given a model $(\hat{C}(z),\hat{G}(z), \mathbb{R}\langle I,F \rangle)$,
+Given a model for a plant for which to synthesize a controller,
 provided in an ANSI-C code input file (Steps 1-5), DSVerifier constructs a
-non-deterministic model to represent the plant family $\mathfrak{G}(z)$
-(Step A), and a transfer function $f$ represented by Eq.~\ref{FWL_tf} (step B) to
-calculate the implementation $f(\hat{C}(z)) \rightarrow \tilde C(z)$ of the
-controller (step C).  Finally DSVerifier builds an intermediate ANSI-C code
-for the digital system implementation, which is used as input for the
-model-checker (Step D).
+non-deterministic model to represent the plant family (Step A), and a transfer
+function $f$ represented by Eq.~\ref{FWL_tf} (step B) to calculate the parameters
+of the controller to be synthesized (step C).  Finally DSVerifier builds an
+intermediate ANSI-C code for the digital system implementation, which is used as
+input for the controller synthesiser (Step D).
 
-This intermediate ANSI-C code model $(\tilde C(z),\mathfrak{G}(z),\phi)$
-containing a specification $\phi$ for the verification properties ({\it
-i.e.}, robust stability) is provided to CBMC's~\cite{ClarkeKL04} integrated
-CEGIS synthesis module, where $\tilde C(z)$ is marked as input variable to
-synthesise.  If any property violation is found, then
-a counterexample is reported, which contains system inputs or
-parametric deviations $\Delta{G}$ that lead the system to a failure.  
-This information allows the CEGIS module to refine its search for a stable
-controller, which we explain in detail in section~\ref{synthesiser-general}.
-A successful verification result is reported if the system is safe with
-respect to $\phi$.  In particular, the stability verification is complete
-and sound, since it does not depend on system inputs and outputs.  In the
-case of stability, the specification $\phi$ consists in a number of
-assumptions on the polynomial coefficients, following Jury's Criteria, as
-well as the restrictions set in the representation of these coefficients by
-the function $f$ (cf.~Eq.~\eqref{FWL_tf}).
+This intermediate ANSI-C code model contains a specification $\phi$ for the
+verification properties ({\it i.e.}, robust stability) and is provided to
+CBMC's~\cite{ClarkeKL04} integrated Counterexample-Guided Inductive Synthesis
+(CEGIS) module, where the controller is marked as input variable to synthesize.
+The properties specified in the ANSI-C code model can only be satisfied if CEGIS
+synthesizes controller coefficients satisfying $\phi$. CEGIS employs an iterative,
+counterexample-guided refinement process which is explained in detail in
+section~\ref{synthesiser-general}. A successful synthesis result is reported if
+CEGIS generates a controller which is safe with respect to $\phi$.  In particular,
+the ANSI-C code model guarantees that a synthesized solution is complete
+and sound with respect to stability property $\phi$, since it does not depend on
+system inputs and outputs.  In the case of stability, the specification $\phi$
+consists in a number of assumptions on the polynomial coefficients, following
+Jury's Criteria, as well as the restrictions set in the representation of these
+coefficients by the function $f$ (cf.~Eq.~\eqref{FWL_tf}).
 
 %In Step A, DSVerifier constructs a non-deterministic model to represent the
 %plant family $\mathfrak{G}$ using $g_0$ and $\Delta{g}\%$, which are
