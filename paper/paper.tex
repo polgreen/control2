@@ -2058,38 +2058,48 @@ benchmark in Table~\ref{tab:results}. \textcolor{red}{Which section do you refer
 For most benchmarks the conjecture explained in section~\ref{fixedpoint_verification} 
 holds and the inductive back-end is able to find a stable solution in less than one minute}. 
 This is possible if the inductive solutions need to be refined with few counterexamples 
-and fixed point precision increases. However, some of our benchmarks did not meet these criteria. 
-\textcolor{red}{Which cases? Can you refer to Table~\ref{tab:results} In these cases, 
+and fixed point precision increases. However, two benchmarks in our set did not meet these
+criteria (marked with $^*$ in Table~\ref{tab:results}). In these cases, 
 the interval arithmetic back-end is able to complement the inductive approach
-and synthesise a solution instead, albeit with significantly larger runtimes}.
+and synthesise a solution instead, albeit with significantly larger runtimes.
 
 \textcolor{red}{Can you relate the benchmarks in Table~\ref{tab:results} in terms of 
 $C$ and $G$ as described in section~\ref{experimental-setup}. You could add an additional column to that table.}
 
-\begin{figure}[H]
+\begin{table}[H]
 \centering
-\begin{tabular}{l | r r l}
-Benchmark              & Base     & Unc     & \\\cline{1-4}
-CruiseControl02        & 17\,s    & 46\,s   & \\
-SatelliteB2            & 7\,s     & 6601\,s & \tbmark\\
-SatelliteC2            & 2\,s     & 76\,s   & \tbmark\\
-SpringMassDamper       & 28\,s    & \xmark  &
+\begin{tabular}{l | r l}
+Benchmark                 & Base    & \\\cline{1-2}
+CruiseControl02           & 17\,s   & \\
+CruiseControl02$^\dagger$ & 46\,s   & \\
+SatelliteB2               & 7\,s    & \\
+SatelliteB2$^\dagger$     & 6601\,s & \tbmark\\
+SatelliteC2               & 2\,s    & \\
+SatelliteC2$^\dagger$     & 76\,s   & \tbmark\\
+SpringMassDamper          & 28\,s   & \\
+a\_PL1\_SCH2\_IMPL1       & 2704\,s & \\
+a\_PL1\_SCH2\_IMPL2       & 538\,s  & \\
+a\_PL1\_SCH2\_IMPL3       & 12\,s   & \\
+a\_PL1\_SCH3\_IMPL1       & 318\,s  & \\
+a\_PL1\_SCH3\_IMPL2       & 967\,s  & \\
+a\_PL1\_SCH3\_IMPL3       & 9798\,s & \\
+a\_PL1\_SCH4\_IMPL1       & 6304\,s & \\
 \end{tabular}
 
 \vspace{0.5em}
-\scriptsize{* = solved with interval back-end, \xmark = uncontrollable}
+\scriptsize{* = solved with interval back-end, $\dagger$ = with uncertainty}
 \vspace{0.5em}
 
-\caption{Experimental results. \textcolor{red}{It should be a table and not a figure.} \label{tab:results}}
-\end{figure}
+\caption{Experimental results. \label{tab:results}}
+\end{table}
 %---------------------------------
 
 \textcolor{red}{Can you provide the synthesised controllers? Iury could then check the solution using the bode diagram.}
 We conclude from these results that the inductive back-end provides excellent performance
-for synthesising stable controllers in the majority of the benchmarks \textcolor{red}{can you be more specific? which benchmarks?}, and can be
-complemented using the interval arithmetic back-end, where the inductive conjectures fail
-too frequently. Both back-ends enabled controller synthesis for all benchmarks within
-reasonable time frames.
+for synthesising stable controllers in the 12 out of 14 benchmarks, and can be
+complemented using the interval arithmetic back-end for the remaining 2 benchmarks,
+where the inductive conjectures fail too frequently. Both back-ends together enabled controller
+synthesis for all benchmarks within reasonable time frames.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Related Work}
