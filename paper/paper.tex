@@ -2164,6 +2164,22 @@ representation of the continuous dynamics.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusions}
 
+In this study, we have investigated a CEGIS-based approach that uses inductive synthesis 
+in conjunction with a robust closed-loop stability verification algorithm to find a parametric 
+solution for a digital controller given a continuous (or discrete) plant specification.
+In particular, we have exploited the automatic synthesis of correct-by-construction 
+digital controllers along with a model of their physical environment.
+We have also modeled a digital equivalent of the physical plant by evaluating the 
+effects of the quantisers (A/D and D/A converters) as time discretisation elements 
+with quantisation noise. Experimental results show that the inductive back-end of our
+CEGIS-based approach is able to synthesise stable controllers in most benchmarks and can be 
+complemented using the interval arithmetic back-end, where the inductive conjectures fail. 
+Both back-ends enabled controller synthesis for all benchmarks within reasonable time frames.
+Further studies include the extension of this CEGIS-based approach for different classes of systems
+({\it e.g.}, state-space) and also consider performance requirements while synthesising 
+the digital controller.
+
+
 \bibliographystyle{abbrv}
 \bibliography{paper}  
 
