@@ -169,8 +169,8 @@ plant specification.
 
 Modern implementations of embedded control have proliferated with the
 availability of low-cost devices that can perform highly non-trivial control
-tasks, with impact in numerous application areas such as environmental
-control and robotics~\cite{astrom1997computer, Franklin15}.
+tasks, with significant impact in numerous application areas such as
+environmental control and robotics~\cite{astrom1997computer, Franklin15}.
 
 Correct control is non-trivial, however. The problem is exacerbated by
 artefacts specific to digital control such as the effects of
@@ -186,16 +186,16 @@ fixed-point arithmetic and the word length used~\cite{Bessa16}.  This work
 exploits advances in bit-accurate verification of C programs to obtain a
 verifier for software-implemented digital control.
 
-By contrast, we propose to leverage very recent step-change in \emph{program
-synthesis}.  Program synthesis engines use a program specification as the
-starting point, and subsequently generate a sequence of candidate programs. 
-The candidate programs are iteratively refined to match the specification
-more closely.  Program synthesisers that implement Counter-Example Guided
-Inductive Synthesis (CEGIS)~\cite{sketch} are now able to generate programs
-for highly non-trivial specifications with a very high degree of automation. 
-Modern CEGIS engines implement combinations of automated testing, genetic
-algorithms and SMT-based automated reasoning~\cite{DBLP:conf/lpar/DavidKL15,
-DBLP:conf/cav/0001A14}.
+By contrast, we leverage very recent step-change in the scalability of
+\emph{program synthesis}.  Program synthesis engines use a program
+specification as the starting point, and subsequently generate a sequence of
+candidate programs.  The candidate programs are iteratively refined to match
+the specification more closely.  Program synthesisers that implement
+Counter-Example Guided Inductive Synthesis (CEGIS)~\cite{sketch} are now
+able to generate programs for highly non-trivial specifications with a very
+high degree of automation.  Modern CEGIS engines implement combinations of
+automated testing, genetic algorithms and SMT-based automated
+reasoning~\cite{DBLP:conf/lpar/DavidKL15, DBLP:conf/cav/0001A14}.
 
 By applying a state-of-the-art CEGIS engine we are now able to present a
 tool that automatically \emph{generates} digital controllers for a given
@@ -212,8 +212,8 @@ controller dynamics.
 Our work addresses particularly challenging aspects of the control synthesis
 problem.  We perform digital control synthesis over a hybrid model, where
 the plant exhibits continuous behaviour and the controller operates in both
-discrete time and state-space.  The key insight of our approach is that the
-problem can be translated into a \emph{single, joint domain}, which
+discrete time and discrete state space.  The key insight of our approach is
+that the problem can be translated into a \emph{single, joint domain}, which
 represents a bi-simulation of the original, hybrid dynamics.  Given our
 primary interest in stability despite digitisation effects, we have modelled
 a digital equivalent of the plant by evaluating the effects of the
@@ -222,7 +222,8 @@ quantisation noise.  The resulting closed-loop system is a program loop that
 operates on bit-vectors encoded using fixed-point arithmetic with fixed word
 length (FWL).  We calculate the deterministic effect of the FWL and
 quantization errors are included in the model as an additive uncertainty,
-which is taken into account during the synthesis of the controller.
+which is taken into account during the CEGIS-based synthesis of the
+control software for the plant.
 
 In summary, this paper makes the following original contributions.
 %
