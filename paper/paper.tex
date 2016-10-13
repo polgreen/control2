@@ -1742,6 +1742,9 @@ in the domain $\mathbb{R}\param{I}{F}$,
 %where $n_C$ and $m_C$ denote the order of the corresponding polynomials
 and those for $\tilde G(z)$ in the domain
 $\mathbb{R}\langle I_b,F_b \rangle$.
+While the controller's precision $\param{I}{F}$ is given, 
+we can vary $\param{I_b}{F_b}$ such that 
+$\mathbb{R}\langle I_b,F_b \rangle \supseteq \mathbb{R}\langle I,F \rangle$.
 
 \paragraph{The {\sc Synthesise} and {\sc Verify} phases}
 The {\sc synthesise} phase uses BMC to 
@@ -1762,7 +1765,7 @@ and the rounding operations outwards during the process.
 % performance.
 Synthesised controllers using this verifier will always
 be correct and only generate counterexamples when the precision of the
-engine is insuficient.  Given the high computational cost of this
+engine is insufficient. Given the high computational cost of this
 approach, we also designed a second approach, which we describe below.
 Our experimental results described in Sec.~\ref{sec:experiments},  
 %try both approaches and provide the time for the fastest. 
@@ -1771,23 +1774,23 @@ over the first one is in most cases of several orders of magnitude.
 
 In Fig.~\ref{fig:CEGIS}, we illustrate the second approach, which 
 uses a two-stage verification such that in the first stage we 
-assume a certain precision for the uncertainty
-followed by a second stage, where we check the soundness of our assumption.
+assume a certain precision \param{I_b}{F_b}  
+followed by checking the soundness of our assumption
+in a second verification stage.
 
 Essentially, in the first stage, denoted by {\sc Uncertainty} in Fig.~\ref{fig:CEGIS}, 
-assuming a certain precision \param{I_b}{F_b} 
-\cdsay{how about the controller?}
+assuming a precision \param{I_b}{F_b} 
 we check whether the system is unstable for the current candidate solution,
 {\it i.e.}, if $\neg \phi_{stability}$ is satisfiable for $S(z)$.
 If this is the case, then we obtain a counterexample 
-$\Delta \vec{p}$, 
+$\tilde G(z)$, 
 %denoted by values for each coefficients of $\Delta N_{G}(z)$ and $\Delta D_{G}(z)$, 
 %\red{[see my comment above - these quantities pop up too abruptly.]},
 which makes the closed-loop system unstable. 
 This uncertainty is added to 
 the set {\sc inputs} such that, in the subsequent {\sc synthesise} phase, 
 we obtain a candidate solution consisting 
-of a controller $D_C$ and $N_C$, which makes the closed-loop 
+of a controller $C(z)$, which makes the closed-loop 
 system stable for all the uncertainties accumulated in {\sc inputs}.
 
 If the {\sc Uncertainty} verification stage concludes that
@@ -1855,7 +1858,7 @@ and we pass the current candidate solution to the {\sc precision} verification s
 % In the second {\sc verify} phase, we check whether the current candidate
 % solution above is the final solution. It is not and the verifier signals
 % that it is due to lack of precision.
-We obtain the result $false$, meaning that the current precision is insuficient.
+We obtain the result $false$, meaning that the current precision is insufficient.
 Consequently, we increase our precision to $I_b=20,F_b=28$.
 %
 Since the previous counterexamples were attained at lower precision, we 
