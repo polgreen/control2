@@ -1655,33 +1655,29 @@ $$
 %% \red{[Yes, intuitively all clear, however for the sake of clarity I would like to see the explicit mapping between the above formula and the previously used specification 
 %% $\sigma(x, P)$, with clear elucidation of the relationship between the domain of $z$ and that of $x$.]}
 
-Essentially, the synthesis problem we are trying to solve is the following:
-find a digital controller denoted by  $N_c$ and $D_c$ that
-makes the closed-loop system stable 
-for all possible uncertainties $\Delta{\vec{p}}$ (\ref{eq:uncertainty}).
-%$(\Delta N_G, \Delta D_G)$. 
-% Note that, similar to the rest of the paper, we use the notation 
-% $\hat{N_G}(z) = N_G(z) + \Delta N_G(z)$ and 
-% $\hat{N_C}(z) = N_C(z) + \Delta N_C(z)$.
-When mapping back to the notation used for describing the general architecture 
-of the program synthesiser, the controller $(N_c,D_c)$ denotes $P$ and 
-$\Delta{\vec{p}}$ represents $x$. 
-
 % \red{[clear elucidation of the mapping between this and the domains used 
 % in the general description of the synthesiser]}
 
 \paragraph{Use of fixed-point computation in the program synthesis engine}
 The program synthesis engine uses fixed-point arithmetic.
-Thus, we compute the coefficients for $N_c$ and $D_c$ in the domains 
-$\mathbb{R}^{n_C}\param{I}{F}$ and $\mathbb{R}^{m_C}\param{I}{F}$, respectively, where 
-$n_C$ and $m_C$ denote the order of the corresponding polynomials
-and $I$ and $F$ denote the integer and fractional size, respectively.
-Regarding the uncertainty, this is synthesised over the 
-domain $\mathbb{R}^{n_G+m_G}\param{I_b}{F_b}$, where $n_G$ and $m_G$ 
-denote the order of the polynomials representing the 
-numerator and denominator of the plant's transfer function, respectively. 
-Again, $I_b$ and $F_b$ denote the integer and fractional size, respectively, with
+Namely, we use the domain $\mathbb{R}\param{I}{F}$
+for the controller's coefficients and the domain 
+$\mathbb{R}\param{I_b}{F_b}$ for the plant's coefficients.
+Note that $I$ and $F$, as well as $I_b$ and $F_b$, 
+denote the integer and fractional size, respectively, with
 $\mathbb{R}\langle I_b,F_b \rangle \supseteq \mathbb{R}\langle I,F \rangle$.
+%the coefficients for $C(z)$ 
+%$N_c$ and $D_c$ 
+%in the domain $\mathbb{R}\param{I}{F}$, 
+%and $\mathbb{R}^{m_C}\param{I}{F}$, respectively, 
+%where $n_C$ and $m_C$ denote the order of the corresponding polynomials
+%where $I$ and $F$ denote the integer and fractional size, respectively.
+%Regarding the plant, its coefficients are this is synthesised over the 
+%domain $\mathbb{R}^{n_G+m_G}\param{I_b}{F_b}$, where $n_G$ and $m_G$ 
+%denote the order of the polynomials representing the 
+%numerator and denominator of the plant's transfer function, respectively. 
+%Again, $I_b$ and $F_b$ denote the integer and fractional size, respectively, with
+%$\mathbb{R}\langle I_b,F_b \rangle \supseteq \mathbb{R}\langle I,F \rangle$.
 
 Given the use of fixed-point arithmetic, 
 we need to examine the effect of discretization during these operations.
@@ -1706,16 +1702,17 @@ However, given a real plant $\hat{G}(z)$, and a discretizing function
 \begin{align}
 \small
 \label{FWL_tf}
-&f_b (x \in \mathbb{R}) \rightarrow \tilde x \in \mathbb{R}\langle I_b,F_b \rangle \triangleq \tilde x = x-(x\mod\tilde x)
+&f_b (x \in \mathbb{R}) \rightarrow \tilde x \in \mathbb{R}\langle I_b,F_b \rangle \triangleq \tilde x = x-(x\mod\tilde x) \\
+&FWL_b[P \in \mathcal{P}] = \tilde P \in \mathcal{P}^{n}\langle I_b,F_b \rangle : c_i \in P \wedge \tilde c_i \in \tilde P=f_b(c_i)  \nonumber
 \end{align}
-we calculate $\tilde G(z)=f(\hat{G}(z))$
+we calculate $\tilde G(z)=FWL_b(\hat{G}(z))$
 \begin{align}
 % \label{digital_controller_tf}
 % \tilde C(z)&=\frac{(\hat{\beta}_{0}+\Delta_q \hat{\beta}_{0}) +...+(\hat{\beta}_{M_C}+\Delta_q \hat{\beta}_{M_C})z^{-M_C}}{(\hat{\alpha}_{0}+\Delta_q \hat{\alpha}_{0})+...+(\hat{\alpha}_{N_C}+\Delta_q \hat{\alpha}_{N_C})z^{-N_G}} \nonumber \\
 % &= C(z) =\hat{C}(z) + \Delta{C}_b(z)\\
 \label{digital_plant_tf}
 \tilde G(z)&=\frac{(\hat{b}_{0}+\Delta_b \hat{b}_{0}) +...+(\hat{b}_{M_G}+\Delta_b \hat{b}_{M_G})z^{-M_G}}{(\hat{a}_{0}+\Delta_b \hat{a}_{0})+...+(\hat{a}_{N_G}+\Delta_b \hat{a}_{N_G})z^{-N_G}} \nonumber \\
-&=G(z)+\Delta{G}_P(z)+\Delta{G}_b(z).
+&=\hat{G}(z)+\Delta{G}_b(z)=G(z)+\Delta{G}_P(z)+\Delta{G}_b(z).
 \end{align}
 where $\Delta_b\hat{c}_i=\hat{c}_i\mod \tilde{c}_i$
 and $\Delta{G}_b(z)$ represents the plant uncertainty caused by
@@ -1723,6 +1720,30 @@ the rounding off effect.  We may encompass all the uncertainty as
 $\Delta{G}(z)=\Delta{G}_P(z)+\Delta{G}_b(z)$.  % Since this value is
 % nondeterministic, the set of possible polynomial coefficients of $\tilde G(z)$ is
 % denoted by $\mathfrak{G}(z)$.
+
+\paragraph{Our synthesis problem}
+The synthesis problem we are trying to solve is the following:
+find a digital controller $C(z)$ %denoted by  $N_c$ and $D_c$ 
+that makes the closed-loop system stable 
+for all possible uncertainties 
+%$\Delta{\vec{p}}$ (\ref{eq:uncertainty}).
+$\tilde G(z)$ (\ref{digital_plant_tf}).
+%, where we precisely describe 
+%$(\Delta N_G, \Delta D_G)$. 
+% Note that, similar to the rest of the paper, we use the notation 
+% $\tilda{N_G}(z) = N_G(z) + \Delta N_G(z)$ and 
+% $\hat{N_C}(z) = N_C(z) + \Delta N_C(z)$.
+When mapping back to the notation used for describing the general architecture 
+of the program synthesiser, the controller $C(z)$ denotes $P$ and 
+$\tilde G(z)$ represents $x$. 
+
+As mentioned above, we compute the coefficients for $C(z)$ 
+%$N_c$ and $D_c$ 
+in the domain $\mathbb{R}\param{I}{F}$, 
+%and $\mathbb{R}^{m_C}\param{I}{F}$, respectively, 
+%where $n_C$ and $m_C$ denote the order of the corresponding polynomials
+and those for $\tilde G(z)$ in the domain
+$\mathbb{R}\langle I_b,F_b \rangle$.
 
 \paragraph{The {\sc Synthesise} and {\sc Verify} phases}
 The {\sc synthesise} phase uses BMC to 
@@ -1810,7 +1831,7 @@ In the first {\sc verify} stage, the {\sc uncertainty}
 check finds the following counterexample:
 
 $$
-\Delta{\vec{p}} = [0.026506~ 1.000610~ 1.002838]^T
+\tilde G(z) = \frac{0.026506}{1.000610z+1.002838}
 $$
 
 
@@ -1848,7 +1869,7 @@ precision:
 %\end{array}
 %$$
 $$
-\Delta{\vec{p}} = [0.026314~ 0.999024~ {-}1.004785]^T
+\tilde G(z) = \frac{0.026314}{0.999024z{-}1.004785}
 $$
 
 %\blue{[Nice, now I'm in the groove. Next unfolds well.] }
@@ -1870,50 +1891,31 @@ This candidate solution is validated as the final solution by both stages
 {\sc uncertainty} and {\sc precision} in the
 {\sc verify} phase. %, which fails to find a new counterexample (i.e. returns UNSAT).
 
-\blue{
-For the same cruise control system, the synthesis may be done considering that the plant model have parametric uncertainties ($\Delta G_{P}(z)$). Thus, the synthesised controller must to stabilize for any parametric variation $\Delta p$ inside of a given region. Specially, in this example, was assumed that each coefficient of $G(z)$ may vary $\pm 0.5\%$.
-}
+% \blue{
+% For the same cruise control system, the synthesis may be done considering that the plant model have parametric uncertainties ($\Delta G_{P}(z)$). Thus, the synthesised controller must to stabilize for any parametric variation $\Delta p$ inside of a given region. Specially, in this example, was assumed that each coefficient of $G(z)$ may vary $\pm 0.5\%$.
+% }
 
-\blue{Initially, the controller denominator and numerator  ($D_{C}(z)$ and $N_{C}(z)$) are started with zero coefficients, as in previous example. Thus,  in the first {\sc verify} phase a counterexample is presented, that is added to {\sc inputs}, whis is usede in the first  {\sc synthesise} phase. The resulting controller is:
-}
-$$
-{
-\blue{
-C(z)=\frac{0.77516z^2{+}-0.71497z{+}0.03729}{0.25024z^2{-}0.01799z{+}0.00097}
-}}
-$$
+% \blue{Initially, the controller denominator and numerator  ($D_{C}(z)$ and $N_{C}(z)$) are started with zero coefficients, as in previous example. Thus,  in the first {\sc verify} phase a counterexample is presented, that is added to {\sc inputs}, whis is usede in the first  {\sc synthesise} phase. The resulting controller is:
+% }
+% $$
+% {
+% \blue{
+% C(z)=\frac{0.77516z^2{+}-0.71497z{+}0.03729}{0.25024z^2{-}0.01799z{+}0.00097}
+% }}
+% $$
 
-\blue{In the second {\sc verify} phase, the controller failed to stabilize the system for all the range of uncertainties, another counterexample was provided, and the following candidate controller is presented in another {\sc synthesise} phase:}
-$$
-{
-\blue{
-C(z)=\frac{0.68970z^2{+}0.36538z{+}0.30637}{0.06862z^2{+}0.00394z{+}0.00802}
-}}
-$$
+% \blue{In the second {\sc verify} phase, the controller failed to stabilize the system for all the range of uncertainties, another counterexample was provided, and the following candidate controller is presented in another {\sc synthesise} phase:}
+% $$
+% {
+% \blue{
+% C(z)=\frac{0.68970z^2{+}0.36538z{+}0.30637}{0.06862z^2{+}0.00394z{+}0.00802}
+% }}
+% $$
 
-\blue{
-This candidate solution is validated as the final solution by the next 
-{\sc verify} phase.
-}
-
-% Counterexample from first cruisecontrol02.c benchmark with uncertainty and
-% nondeterminism:
-% 1) { (0.02634525299072265625, 0.9979267120361328125, -0.99768829345703125) }
-
-% 2) { (0.02644824981689453125, 1.00053310394287109375, -1.0014629364013671875) }
-
-% <a>
-% <item>7.515781402587890625</item>
-% <item>-4.385616302490234375</item>
-% <item>4.142093658447265625</item>
-% </a>
-% <a_size>3</a_size>
-% <b>
-% <item>-3.52398681640625</item>
-% <item>-1.530254364013671875</item>
-% <item>7.58094024658203125</item>
-% </b>
-% <b_size>3</b_size>
+% \blue{
+% This candidate solution is validated as the final solution by the next 
+% {\sc verify} phase.
+% }
 
 \begin{figure*}
 \centering
@@ -2085,7 +2087,8 @@ seconds).
 
 All experiments were conducted on a 12-core 2.40\,GHz Intel Xeon E5-2440 with 96\,GB
 of RAM, and Linux OS.  All times given are wall clock time in seconds as measured
-by the UNIX date command.
+by the UNIX date command.  For the inductive back-end we apply a timeout of 8 hours
+per benchmark, and 24 hours for the interval arithmetic back-end.
 
 %---------------------------------
 \subsection{Objectives}
@@ -2114,7 +2117,13 @@ solution in less than one minute.  This is possible if the inductive solutions n
 with few counterexamples and fixed-point precision increases. However, two benchmarks in our set
 did not meet these criteria (marked with $^*$ in Table~\ref{tab:results}) \textcolor{red}{Pascal: Why they did not meet the criteria?}. 
 In these cases, the interval arithmetic back-end is able to complement the inductive approach
-and synthesise a solution instead, albeit with significantly larger runtimes \textcolor{red}{Pascal: Why is it slower?}.
+and synthesise a solution instead, albeit with significantly larger runtimes.  This performance
+difference is due to  the fact that the interval back-end does not take advantage of the inductive
+conjecture inherent to CEGIS, but instead fully explores the counterexample space.  The result is
+a performance difference of at least two orders of magnitude in our experiments, leading to the
+interval back-end timing out on the majority of our benchmarks.  Table~\ref{tab:results} only
+lists the faster of the two back-ends for each benchmark, which in 12 out of 14 cases is the inductive
+back-end.
 
 \begin{table}[H]
 \centering
@@ -2149,7 +2158,10 @@ We conclude from these results that the inductive back-end is able to synthesise
 stable controllers in the $12$ out of $15$ benchmarks, and can be complemented using 
 the interval arithmetic back-end for $2$ additional benchmarks, where the inductive 
 conjectures fail. Both back-ends together enabled controller synthesis for $14$ 
-out of $15$ benchmarks within reasonable time frames. \textcolor{red}{Why do we fail to synthesise 1 controller?} 
+out of $15$ benchmarks within reasonable time frames.  For the 1 remaining benchmark
+our approach failed to synthesise a stable controller in the requested time limits.
+This can be addressed by either increasing the fixed point word widths considered or
+using floating point arithmetic instead. 
 \pksay{TODO: Upload full experiments environment including README and result log files to anonymous Google Drive and
 provide link here.}
 
