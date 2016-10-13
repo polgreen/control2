@@ -991,51 +991,6 @@ coefficients by the function $f$ (cf.~Eq.~\eqref{FWL_tf}).
 %not depend on system outputs and inputs.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Running Example} \label{sec:running-ex}
-
-In order to exploit the present approach full potential, a dynamical plant that can
-present physical components must be considered.  However, a discrete plant
-model can also demonstrate some benefits of the present approach, which
-considers FWL effects in the digital controller implementation.  In
-particular, a classical cruise control example is extracted from the
-literature~\cite{Astrom08}, where the discrete plant model (with time step
-of $0.2$s) is represented by the following z-expression:
-%
-\begin{equation}
-\label{Eq:running-example-plant}
-G\left(z\right) := \frac{0.0264}{z-0.9998}.
-\end{equation}
-
-Using an optimisation tool, the work in~\cite{DBLP:conf/hybrid/WangGRJF16}
-has designed a high-performance controller, which is characterised by the
-following z-domain transfer function:
-%
-\begin{equation}
-\label{Eq:running-example-controller}
-C\left(z\right) := \frac{2.72z^2 - 4.153z + 1.896}{z^2 - 1.844z + 0.8496}.
-\end{equation}
-%
-The authors claim that this controller $C(z)$ stabilizes the closed-loop
-system for the discrete plant model $G(z)$.  However, if implementation
-aspects are considered during verification ({\it e.g.}, fixed-point
-arithmetic and word-length), then this closed-loop system becomes unstable.
-%
-Indeed, the actual implementation of $C(z)$ using \param{4}{16}
-implementation format ({\it i.e.}, $4$ bits for the integer part and $16$
-bits for the fractional part) can be represented by the following
-expression:
-%
-\begin{equation}
-\label{Eq:running-example-controller-quantized}
-C_{q}\left(z\right) {:=} \frac{2.719986z^2{-}4.153000z
-{+}1.895996}{z^2{-}1.843994z+0.849594},
-\end{equation} 
-%
-which makes the system unstable in closed-loop using fixed-point arithmetic
-and the typical series loop configuration, where $C_{q}\left(z\right)$ and
-$G\left(z\right)$ are in the forward path.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %\section{Modelling Errors} 
 
 %In this section, we show how to embed discretisation errors on the plant model, as follows: 
@@ -1860,7 +1815,53 @@ with an empty {\sc inputs} set.
 Otherwise, we found a full solution for our synthesis problem
 and we are done.
 
-\subsection{Program synthesis for the running example}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Illustrative Example} \label{sec:running-ex}
+
+In order to exploit the present approach full potential, a dynamical plant that can
+present physical components must be considered.  However, a discrete plant
+model can also demonstrate some benefits of the present approach, which
+considers FWL effects in the digital controller implementation.  In
+particular, a classical cruise control example is extracted from the
+literature~\cite{Astrom08}, where the discrete plant model (with time step
+of $0.2$s) is represented by the following z-expression:
+%
+\begin{equation}
+\label{Eq:running-example-plant}
+G\left(z\right) := \frac{0.0264}{z-0.9998}.
+\end{equation}
+
+Using an optimisation tool, the work in~\cite{DBLP:conf/hybrid/WangGRJF16}
+has designed a high-performance controller, which is characterised by the
+following z-domain transfer function:
+%
+\begin{equation}
+\label{Eq:running-example-controller}
+C\left(z\right) := \frac{2.72z^2 - 4.153z + 1.896}{z^2 - 1.844z + 0.8496}.
+\end{equation}
+%
+The authors claim that this controller $C(z)$ (Eq.~\eqref{Eq:running-example-plant}) 
+stabilizes the closed-loop system for the discrete plant model $G(z)$ (Eq.~\ref{Eq:running-example-controller}).  
+However, if implementation aspects are considered during verification ({\it e.g.}, fixed-point
+arithmetic and word-length), then this closed-loop system becomes unstable.
+%
+Indeed, the actual implementation of $C(z)$ using \param{4}{16}
+implementation format ({\it i.e.}, $4$ bits for the integer part and $16$
+bits for the fractional part) can be represented by the following
+expression:
+%
+\begin{equation}
+\label{Eq:running-example-controller-quantized}
+C_{q}\left(z\right) {:=} \frac{2.719986z^2{-}4.153000z
+{+}1.895996}{z^2{-}1.843994z+0.849594},
+\end{equation} 
+%
+which makes the system unstable in closed-loop using fixed-point arithmetic
+and the typical series loop configuration, where $C_{q}\left(z\right)$ and
+$G\left(z\right)$ are in the forward path.
+
+
+\subsubsection{Program synthesis for the illustrative example}
 We will illustrate our synthesis approach on the running example 
 in Sec.~\ref{sec:running-ex}.
 We start with the candidate solution with all coefficients zero 
