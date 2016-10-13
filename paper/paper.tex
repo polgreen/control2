@@ -2119,27 +2119,25 @@ did not meet these criteria (marked with $^*$ in Table~\ref{tab:results}) \textc
 In these cases, the interval arithmetic back-end is able to complement the inductive approach
 and synthesise a solution instead, albeit with significantly larger runtimes \textcolor{red}{Pascal: Why is it slower?}.
 
-\textcolor{red}{Pascal: Can you please add FWL for each synthesized controller using the following format <I,F>, where I represents the number of bits in the integer part and F represents the number of bits in the fractional part?}
-
 \begin{table}[H]
 \centering
-\begin{tabular}{c | l | r l}
-Plant & Benchmark                  & Time    & \\\cline{1-3}
-$G_1$ & CruiseControl02            & 17\,s   & \\
-$G_1$ & CruiseControl02$^\dagger$  & 46\,s   & \\
-$G_2$ & SpringMassDamper           & 28\,s   & \\
-$G_2$ & SpringMassDamper$^\dagger$ & \xmark  & \\
-$G_3$ & SatelliteB2                & 7\,s    & \\
-$G_3$ & SatelliteB2$^\dagger$      & 6601\,s & \tbmark\\
-$G_3$ & SatelliteC2                & 2\,s    & \\
-$G_3$ & SatelliteC2$^\dagger$      & 76\,s   & \tbmark\\
-$G_4$ & a\_PL1\_SCH2\_IMPL1        & 2704\,s & \\
-$G_4$ & a\_PL1\_SCH2\_IMPL2        & 538\,s  & \\
-$G_4$ & a\_PL1\_SCH2\_IMPL3        & 12\,s   & \\
-$G_4$ & a\_PL1\_SCH3\_IMPL1        & 318\,s  & \\
-$G_4$ & a\_PL1\_SCH3\_IMPL2        & 967\,s  & \\
-$G_4$ & a\_PL1\_SCH3\_IMPL3        & 9798\,s & \\
-$G_4$ & a\_PL1\_SCH4\_IMPL1        & 6304\,s & \\
+\begin{tabular}{c | l r r | r l}
+Plant & Benchmark                  & $I$ & $F$ & Time    & \\\cline{1-5}
+$G_1$ & CruiseControl02            &   4 &  16 & 17\,s   & \\
+$G_1$ & CruiseControl02$^\dagger$  &   4 &  16 & 46\,s   & \\
+$G_2$ & SpringMassDamper           &  15 &  16 & 28\,s   & \\
+$G_2$ & SpringMassDamper$^\dagger$ &  15 &  16 & \xmark  & \\
+$G_3$ & SatelliteB2                &   3 &   7 & 7\,s    & \\
+$G_3$ & SatelliteB2$^\dagger$      &   3 &   7 & 6601\,s & \tbmark\\
+$G_3$ & SatelliteC2                &   3 &   5 & 2\,s    & \\
+$G_3$ & SatelliteC2$^\dagger$      &   3 &   5 & 76\,s   & \tbmark\\
+$G_4$ & a\_PL1\_SCH2\_IMPL1        &  16 &   4 & 2704\,s & \\
+$G_4$ & a\_PL1\_SCH2\_IMPL2        &  16 &   8 & 538\,s  & \\
+$G_4$ & a\_PL1\_SCH2\_IMPL3        &  16 &  12 & 12\,s   & \\
+$G_4$ & a\_PL1\_SCH3\_IMPL1        &  16 &   4 & 318\,s  & \\
+$G_4$ & a\_PL1\_SCH3\_IMPL2        &  16 &   8 & 967\,s  & \\
+$G_4$ & a\_PL1\_SCH3\_IMPL3        &  16 &  12 & 9798\,s & \\
+$G_4$ & a\_PL1\_SCH4\_IMPL1        &  16 &   4 & 6304\,s & \\
 \end{tabular}
 
 \vspace{0.5em}
