@@ -508,7 +508,55 @@ A typical hybrid system, with a continuous plant and a discrete controller, is s
 \end{figure*}
 
 
-The ADC and DAC may be abstracted changing the hybrid system in figure~\ref{fig:sampledsystem} to the digital system in figure~\ref{fig:digsystem1} where the parametric uncertainties are represented by $\Delta G_{P}(z)=\mathcal{Z}\left\lbrace{G_{P}(s)}\right\rbrace$ and the entire effect of $\nu_{1}$ and $\nu_{2}$ in the output $Y(z)$ is represented as an additive (output) measurement noise $\nu(z)$.
+The ADC and DAC may be abstracted changing the hybrid system in figure~\ref{fig:sampledsystem} to the digital system in figure~\ref{fig:digsystem1} where the parametric uncertainties are represented by $\Delta G_{P}(z)=\mathcal{Z}\left\lbrace{G_{P}(s)}\right\rbrace$ and the entire effect of $\nu_{1}$ and $\nu_{2}$ in the output $Y(z)$ is represented as an additive (output) measurement noise $\nu(z)$, thus $\hat{Y}(z)=Y(z)+\nu(z)$. The measurement noise $\nu(k)$ is enough for represent both quantization noises ($\nu_{1}$ and $\nu_{2}$) what can be obtained reorganizing the equations~\ref{eq:outputfunctions}:
+\begin{equation}
+\label{eq:outputfunctions2}
+\hat{Y}(z)=H_{1}R(z)+H_{1}\nu_{1}(z)+H_{2}(z)\nu_{2}(z),
+\end{equation}
+where $H_{1}R(z)$ is exactly equal to $Y(z)$ without quantization noise effects, thus:
+\begin{equation}
+\nu(z)=H_{1}\nu_{1}(z)+H_{2}(z)\nu_{2}(z).
+\end{equation}
+
+
+
+%The system in equation~\ref{controller_plant_tf} (disregarding the $\Delta{G}_{P}(z)$ may be represented by the following difference equation model:
+%\begin{equation}
+%\begin{split}
+%y(k)=-a_{1}y(k-1)-a_{2}y(k-2)-\cdots - a_{N}y(k-N)\\
+%+b_{0}u(k)+b_{1}u(k-1)+b_{2}u(k-2)+\cdots+b_{M}u(k-M),
+%\end{split}
+%\end{equation}
+%and consequently $\hat{y}(k)$ may be represented by the following difference equation:
+%\begin{equation}
+%\label{eq:differencewithnoise}
+%\begin{split}
+%\hat{y}(k)=-a_{1}y(k-1)-a_{2}y(k-2)-\cdots - a_{N_{G}}y(k-N_{G})\\
+%+b_{0}u(k)+b_{1}u(k-1)+b_{2}u(k-2)+\cdots+b_{M_{G}}u(k-M_{G})+\nu(k).
+%\end{split}
+%\end{equation}
+%
+%The z-transform of~\eqref{eq:differencewithnoise} is:
+%\begin{equation}
+%\begin{split}
+%\hat{Y}(z)=(-a_{1}z^{-1}-a_{2}z^{-2}-\cdots-a_{N_{G}}z^{-N_{G}})Y(z)\\
+%+(b_{0}+b_{1}z^{-1}+b_{2}z^{-2}+\cdots+b_{M_{G}}z^{-M_{G}})U(z)+\nu(z),
+%\end{split}
+%\end{equation}
+%dividing both sides by $U(z)$, it is equivalent to:
+%\begin{equation}
+%\frac{\hat{Y}(z)}{U(z)}=[1-D_{G}(z)]G(z)+U(z)D_{G}(z)+\frac{\nu(z)}{U(z)}=G(z)+\Delta{G}_{Q}(z),
+%\end{equation}
+
+
+
+%Considering the quantization noise $\nu(k)$ as an output error in discrete plant model, we may represent it as an additive noise in the plant output $y(k)$ resulting in the noisy output $\hat{y}(k)$:
+%\begin{equation}
+%
+%\end{equation}
+
+
+This noise $\nu(z)$ may represent exactly the same effects that $\nu_{1}(z)$ and $\nu_{2}(z)$ represents together.
 
 \begin{figure}[ht]
 \centering
@@ -705,7 +753,8 @@ where $\Delta G_{P}(z)$ is the term that corresponds to the parametric uncertain
 Since the controller is implemented using a FWL, $C(z)$ also suffers disturbances from the FWL effects, with roundoffs in coefficients that may change the closed-loop poles and zeros position, and consequently affect its stability, as shown in~\cite{Bessa16}.
 
 
-Let $\hat{C}(z)$ be the transfer function of the digital controller represented using this FWL with integer size $I$ and fractional size $F$.  We shall denote the FWL domain of coefficients as $\mathbb{R}\langle I,F \rangle$
+Let $\hat{C}(z)$ be the transfer function of the digital controller represented using this FWL with integer size $I$ and fractional
+size $F$.  We shall denote the FWL domain of coefficients as $\mathbb{R}\langle I,F \rangle$
 %Since the controller is implemented in the $\mathbb{R}\langle I,F \rangle$ 
 %domain, {\it i.e.} a Fixed-Point Finite Word Length with integer size $I$ and fractional
 %size $F$, we shall denote this domain as $\mathbb{R}\langle I,F \rangle$ 
@@ -795,7 +844,7 @@ S_{\nu}(z)=  \frac{q^{2}}{12}.
 \end{equation}
 \end{proof}
 
-Finally, the quantisation noise may be considered a energy-bounded signal (Lemma~\ref{lemma:boundednoise}) and thus $\hat{Y}(z)$ will be bounded and the closed-loop system stable if the conditions in Lemma~\ref{lemma:eq_int_stab} are followed.
+Finally, the quantisation noise spectrum may be considered a energy-bounded (Lemma~\ref{lemma:boundednoise}), and consequently the Parseval's theorem ensures that the quantisation noise is also energy-bounded in time-domain.  Thus $\hat{Y}(z)$ will be bounded and the closed-loop system stable if the conditions in Lemma~\ref{lemma:eq_int_stab} are followed.
 
 
 \begin{mylemma}{\cite{Bessa16,fadali}}
