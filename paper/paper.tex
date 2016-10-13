@@ -1560,6 +1560,7 @@ and the loop iterates again.
 %% can only iterate a finite number of times.
 
 \subsection{Synthesis elements specific to control systems}
+\label{synthesis-elements}
 
 \paragraph{Property specification}
 Next, we describe the specific property that we pass to the program
@@ -2073,39 +2074,34 @@ the experimental evaluation of the present approach aims to answer two research 
 \subsection{Results}
 \label{experimental-results}
 
-\textcolor{red}{How did you obtain the results from Table~\ref{tab:results}? 
-Can you provide the command-line? The reviewers should be able to reproduce our experiments.}
 We outline the runtimes required to synthesise a stable controller for each
-benchmark in Table~\ref{tab:results}. \textcolor{red}{Which section do you refer??
-For most benchmarks the conjecture explained in section~\ref{fixedpoint_verification} 
-holds and the inductive back-end is able to find a stable solution in less than one minute}. 
-This is possible if the inductive solutions need to be refined with few counterexamples 
-and fixed point precision increases. However, two benchmarks in our set did not meet these
-criteria (marked with $^*$ in Table~\ref{tab:results}). In these cases, 
+benchmark in Table~\ref{tab:results}. For the majority of our benchmarks the conjecture explained
+in section~\ref{synthesis-elements}  holds and the inductive back-end is able to find a stable
+solution in less than one minute.  This is possible if the inductive solutions need to be refined
+with few counterexamples  and fixed point precision increases. However, two benchmarks in our set
+did not meet these criteria (marked with $^*$ in Table~\ref{tab:results}). In these cases, 
 the interval arithmetic back-end is able to complement the inductive approach
 and synthesise a solution instead, albeit with significantly larger runtimes.
 
-\textcolor{red}{Can you relate the benchmarks in Table~\ref{tab:results} in terms of 
-$C$ and $G$ as described in section~\ref{experimental-setup}. You could add an additional column to that table.}
-
 \begin{table}[H]
 \centering
-\begin{tabular}{l | r l}
-Benchmark                 & Base    & \\\cline{1-2}
-CruiseControl02           & 17\,s   & \\
-CruiseControl02$^\dagger$ & 46\,s   & \\
-SatelliteB2               & 7\,s    & \\
-SatelliteB2$^\dagger$     & 6601\,s & \tbmark\\
-SatelliteC2               & 2\,s    & \\
-SatelliteC2$^\dagger$     & 76\,s   & \tbmark\\
-SpringMassDamper          & 28\,s   & \\
-a\_PL1\_SCH2\_IMPL1       & 2704\,s & \\
-a\_PL1\_SCH2\_IMPL2       & 538\,s  & \\
-a\_PL1\_SCH2\_IMPL3       & 12\,s   & \\
-a\_PL1\_SCH3\_IMPL1       & 318\,s  & \\
-a\_PL1\_SCH3\_IMPL2       & 967\,s  & \\
-a\_PL1\_SCH3\_IMPL3       & 9798\,s & \\
-a\_PL1\_SCH4\_IMPL1       & 6304\,s & \\
+\begin{tabular}{c l | r l}
+      & Benchmark                  & Base    & \\\cline{1-2}
+$G_1$ & CruiseControl02            & 17\,s   & \\
+$G_1$ & CruiseControl02$^\dagger$  & 46\,s   & \\
+$G_2$ & SpringMassDamper           & 28\,s   & \\
+$G_2$ & SpringMassDamper$^\dagger$ & \xmark  & \\
+$G_2$ & SatelliteB2                & 7\,s    & \\
+$G_2$ & SatelliteB2$^\dagger$      & 6601\,s & \tbmark\\
+$G_2$ & SatelliteC2                & 2\,s    & \\
+$G_2$ & SatelliteC2$^\dagger$      & 76\,s   & \tbmark\\
+      & a\_PL1\_SCH2\_IMPL1        & 2704\,s & \\
+      & a\_PL1\_SCH2\_IMPL2        & 538\,s  & \\
+      & a\_PL1\_SCH2\_IMPL3        & 12\,s   & \\
+      & a\_PL1\_SCH3\_IMPL1        & 318\,s  & \\
+      & a\_PL1\_SCH3\_IMPL2        & 967\,s  & \\
+      & a\_PL1\_SCH3\_IMPL3        & 9798\,s & \\
+      & a\_PL1\_SCH4\_IMPL1        & 6304\,s & \\
 \end{tabular}
 
 \vspace{0.5em}
@@ -2114,14 +2110,16 @@ a\_PL1\_SCH4\_IMPL1       & 6304\,s & \\
 
 \caption{Experimental results. \label{tab:results}}
 \end{table}
+\pksay{TODO: @Lucas: Please complete $G_x$ in table.}
 %---------------------------------
 
-\textcolor{red}{Can you provide the synthesised controllers? Iury could then check the solution using the bode diagram.}
 We conclude from these results that the inductive back-end provides excellent performance
-for synthesising stable controllers in the 12 out of 14 benchmarks, and can be
-complemented using the interval arithmetic back-end for the remaining 2 benchmarks,
+for synthesising stable controllers in the 12 out of 15 benchmarks, and can be
+complemented using the interval arithmetic back-end for 2 additional benchmarks,
 where the inductive conjectures fail too frequently. Both back-ends together enabled controller
-synthesis for all benchmarks within reasonable time frames.
+synthesis for 14 out of 15 benchmarks within reasonable time frames. \pksay{TODO: Upload full
+experiments environment including README and result log files to anonymous Google Drive and
+provide link here.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Related Work}
