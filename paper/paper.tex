@@ -731,8 +731,7 @@ In the case of a synthesised controller, because the synthesis is performed usin
 \label{sec:stability}
 %------------------------------------
 
-
-In order to obtain a sound synthesis of digital controller, the effect of FWL implementation in controller and quantisation noises in closed loop system have to be considered. Considering that the quantizer $Q1$ is the source of a white noise $\nu_{1}$ and $Q2$ is the source of a white noise $\nu_{2}$, the following equation may be written for the system in figure~\ref{fig:sampledsystem} considering the parametric uncertainties $\Delta G(z)$ and the FWL effects on controller  ($\hat{C}(z)$):
+In order to obtain a sound synthesis of the digital controller, the effect of FWL implementation in controller and quantisation noises in closed loop system have to be considered. Considering that the quantizer $Q1$ is the source of a white noise $\nu_{1}$ and $Q2$ is the source of a white noise $\nu_{2}$, the following equation is written for the system in Figure~\ref{fig:sampledsystem}, considering the parametric uncertainties $\Delta G(z)$ and the FWL effects on controller ($\hat{C}(z)$):
 \begin{equation}
 \hat{Y}(z)=\hat{C}(z)\hat{G}(z)[R(z)+\nu_{1}(z)]+\nu_{2}(z)\hat{G}(z)-\hat{Y}(z)\hat{C}(z)\hat{G}(z),
 \end{equation}
@@ -750,9 +749,7 @@ and
 H_{2}=\frac{\hat{G}(z)}{1+\hat{C}(z)\hat{G}(z)},
 \end{equation}
 
-
-
-A discrete-time linear system is said to be Bounded-Input and Bounded-Output (BIBO) stable if and only if every pole of its transfer function lies inside the unit circle. Analyzing the~\eqref{eq:outputfunctions} and based on assumption~\ref{assumption:cont_and_plant}, the following lemma states necessary conditions for BIBO stability of closed-loop system in figure~\ref{fig:sampledsystem}, since the the exogenous signals $R(z)$, $\nu_{1}$, and $\nu_{2}$ are bounded.
+A discrete-time linear system is said to be Bounded-Input and Bounded-Output (BIBO) stable if and only if every pole of its transfer function lies inside the unit circle. \textcolor{red}{Analyzing Eq.~\eqref{eq:outputfunctions} and based on assumption~\ref{assumption:cont_and_plant}, the following lemma states necessary conditions for BIBO stability of closed-loop system in Figure~\ref{fig:sampledsystem}, since the the exogenous signals $R(z)$, $\nu_{1}$, and $\nu_{2}$ are bounded.}
 
 \begin{myassumption}
 \label{whitenoise}
@@ -852,13 +849,13 @@ The Lemma~\ref{lemma:eq_int_stab} provides the necessary conditions for synthesi
 %------------------------------------
 
 %------------------------------------
-\subsection{DSVerifier Verification Flow}
+\subsection{Synthesis Process using DSVerifier}
 \label{verification-flow}
 %------------------------------------
 
 %\red{[The following description can be made shorter, crisper?]}
 
-The DSVerifier verification flow is illustrated in Fig.~\ref{DSVerifier_process};
+The full synthesis process is illustrated in Fig.~\ref{DSVerifier_process};
 a detailed description of DSVerifier tool can be found in~\cite{IsmailBCFF15}.
 Steps $1$ to $5$ are performed by the user/synthesiser and
 Steps A to D are automatically performed by DSVerifier.
@@ -891,28 +888,28 @@ Steps A to D are automatically performed by DSVerifier.
 Given a model $(\hat{C}(z),\hat{G}(z), \mathbb{R}\langle I,F \rangle)$,
 provided in an ANSI-C code input file (Steps 1-5), DSVerifier constructs a
 non-deterministic model to represent the plant family $\mathfrak{G}(z)$
-(Step A), and a transfer function $f$ [eq.  \ref{FWL_tf}] (step B) to
-calulate the implementation $f(\hat{C}(z)) \rightarrow \tilde C(z)$ of the
+(Step A), and a transfer function $f$ represented by Eq.~\ref{FWL_tf} (step B) to
+calculate the implementation $f(\hat{C}(z)) \rightarrow \tilde C(z)$ of the
 controller (step C).  Finally DSVerifier builds an intermediate ANSI-C code
 for the digital system implementation, which is used as input for the
 model-checker (Step D).
 
 This intermediate ANSI-C code model $(\tilde C(z),\mathfrak{G}(z),\phi)$
 containing a specification $\phi$ for the verification properties ({\it
-i.e.}, robust stability) is translated into SAT/SMT formulae by a back-end
-model-checking tool ({\it e.g.}, CBMC~\cite{ClarkeKL04} or
-ESBMC~\cite{CordeiroFM12}).  If any property violation is found, then
-DSVerifier reports a counterexample, which contains system inputs or
-parametric deviations $\Delta{G}$ that lead the system to a failure.  A
-successful verification result is reported if the system is safe with
+i.e.}, robust stability) is provided to CBMC's~\cite{ClarkeKL04} integrated
+CEGIS synthesis module, where $\tilde C(z)$ is marked as input variable to
+synthesise.  If any property violation is found, then
+a counterexample is reported, which contains system inputs or
+parametric deviations $\Delta{G}$ that lead the system to a failure.  
+This information allows the CEGIS module to refine its search for a stable
+controller, which we explain in detail in section~\ref{synthesiser-general}.
+A successful verification result is reported if the system is safe with
 respect to $\phi$.  In particular, the stability verification is complete
 and sound, since it does not depend on system inputs and outputs.  In the
 case of stability, the specification $\phi$ consists in a number of
 assumptions on the polynomial coefficients, following Jury's Criteria, as
 well as the restrictions set in the representation of these coefficients by
 the function $f$ (cf.~Eq.~\eqref{FWL_tf}).
-
-\textcolor{red}{Pascal: can you please update this section to include the CEGIS step?}
 
 %In Step A, DSVerifier constructs a non-deterministic model to represent the
 %plant family $\mathfrak{G}$ using $g_0$ and $\Delta{g}\%$, which are
@@ -950,7 +947,7 @@ the function $f$ (cf.~Eq.~\eqref{FWL_tf}).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Running Example} \label{sec:running-ex}
 
-To exploit the present approach full potential, a dynamical plant that can
+In order to exploit the present approach full potential, a dynamical plant that can
 present physical components must be considered.  However, a discrete plant
 model can also demonstrate some benefits of the present approach, which
 considers FWL effects in the digital controller implementation.  In
@@ -1517,6 +1514,7 @@ control systems.
 % adding JST for stream refactoring
 
 \subsection{General architecture of the program synthesiser}
+\label{synthesiser-general}
 %
 %% \red{[I would recommend to clarify the domain of definition of $\sigma$, particularly over the set where $x$ ranges over. 
 %% (Be cognisant that control audience might be unfamiliar with the cegis architecture.) ]}
@@ -1576,7 +1574,7 @@ can only iterate a finite number of times.
 Next, we describe the specific property that we pass to the program
 synthesiser as the specification $\sigma$.  There are two different
 algorithms in DSVerifier that can be used for stability
-verification~\cite{DBLP:journals/dafes/BessaICF16}, one based on
+verification~\cite{daes20161,Bessa16}, one based on
 Schur's decomposition and another one based on Jury's
 criteria~\cite{astrom1997computer}.  Here, we choose Jury's
 method~\cite{astrom1997computer}, due to its efficiency.
@@ -2105,10 +2103,9 @@ G_{4}(s)=\frac{s-1}{s^{2}-s-2}
 in Eq.~\eqref{eq:pulsetf} with $3$ different sample times ($0.1$, $0.05$, and $0.03$ 
 seconds).
 
-\textcolor{red}{Pascal: Can you please check whether this configuration is correct?}
-All experiments were conducted on an otherwise idle Intel Core i$7$-$4790$ 
-CPU $3$.$60$ GHz, $16$ GB of RAM, and Linux OS.  All times given are wall 
-clock time in seconds as measured by the UNIX time command.
+All experiments were conducted on a 12-core 2.40\,GHz Intel Xeon E5-2440 with 96\,GB
+of RAM, and Linux OS.  All times given are wall clock time in seconds as measured
+by the UNIX date command.
 
 %---------------------------------
 \subsection{Objectives}
@@ -2139,27 +2136,25 @@ did not meet these criteria (marked with $^*$ in Table~\ref{tab:results}) \textc
 In these cases, the interval arithmetic back-end is able to complement the inductive approach
 and synthesise a solution instead, albeit with significantly larger runtimes \textcolor{red}{Pascal: Why is it slower?}.
 
-\textcolor{red}{Pascal: Can you please add FWL for each synthesized controller using the following format <I,F>, where I represents the number of bits in the integer part and F represents the number of bits in the fractional part?}
-
 \begin{table}[H]
 \centering
-\begin{tabular}{c | l | r l}
-Plant & Benchmark                  & Time    & \\\cline{1-3}
-$G_1$ & CruiseControl02            & 17\,s   & \\
-$G_1$ & CruiseControl02$^\dagger$  & 46\,s   & \\
-$G_2$ & SpringMassDamper           & 28\,s   & \\
-$G_2$ & SpringMassDamper$^\dagger$ & \xmark  & \\
-$G_3$ & SatelliteB2                & 7\,s    & \\
-$G_3$ & SatelliteB2$^\dagger$      & 6601\,s & \tbmark\\
-$G_3$ & SatelliteC2                & 2\,s    & \\
-$G_3$ & SatelliteC2$^\dagger$      & 76\,s   & \tbmark\\
-$G_4$ & a\_PL1\_SCH2\_IMPL1        & 2704\,s & \\
-$G_4$ & a\_PL1\_SCH2\_IMPL2        & 538\,s  & \\
-$G_4$ & a\_PL1\_SCH2\_IMPL3        & 12\,s   & \\
-$G_4$ & a\_PL1\_SCH3\_IMPL1        & 318\,s  & \\
-$G_4$ & a\_PL1\_SCH3\_IMPL2        & 967\,s  & \\
-$G_4$ & a\_PL1\_SCH3\_IMPL3        & 9798\,s & \\
-$G_4$ & a\_PL1\_SCH4\_IMPL1        & 6304\,s & \\
+\begin{tabular}{c | l r r | r l}
+Plant & Benchmark                  & $I$ & $F$ & Time    & \\\cline{1-5}
+$G_1$ & CruiseControl02            &   4 &  16 & 17\,s   & \\
+$G_1$ & CruiseControl02$^\dagger$  &   4 &  16 & 46\,s   & \\
+$G_2$ & SpringMassDamper           &  15 &  16 & 28\,s   & \\
+$G_2$ & SpringMassDamper$^\dagger$ &  15 &  16 & \xmark  & \\
+$G_3$ & SatelliteB2                &   3 &   7 & 7\,s    & \\
+$G_3$ & SatelliteB2$^\dagger$      &   3 &   7 & 6601\,s & \tbmark\\
+$G_3$ & SatelliteC2                &   3 &   5 & 2\,s    & \\
+$G_3$ & SatelliteC2$^\dagger$      &   3 &   5 & 76\,s   & \tbmark\\
+$G_4$ & a\_PL1\_SCH2\_IMPL1        &  16 &   4 & 2704\,s & \\
+$G_4$ & a\_PL1\_SCH2\_IMPL2        &  16 &   8 & 538\,s  & \\
+$G_4$ & a\_PL1\_SCH2\_IMPL3        &  16 &  12 & 12\,s   & \\
+$G_4$ & a\_PL1\_SCH3\_IMPL1        &  16 &   4 & 318\,s  & \\
+$G_4$ & a\_PL1\_SCH3\_IMPL2        &  16 &   8 & 967\,s  & \\
+$G_4$ & a\_PL1\_SCH3\_IMPL3        &  16 &  12 & 9798\,s & \\
+$G_4$ & a\_PL1\_SCH4\_IMPL1        &  16 &   4 & 6304\,s & \\
 \end{tabular}
 
 \vspace{0.5em}
