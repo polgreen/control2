@@ -195,7 +195,7 @@ quantisation effects.  As a result, the stability verification method
 proposed by Bessa {\it et al.} is incomplete, given that false alarms can be
 produced due to quantisation effects.  Additionally, the authors do not
 find a parametric solution for a digital controller given as a continuous
-plant specification, in order to synthesize the controller implementation.
+plant specification, in order to synthesise the controller implementation.
 
 Our work makes two major contributions. First, we explore the automatic synthesis 
 of {\em correct-by-construction} digital controllers, which reduces the development
@@ -313,21 +313,21 @@ for linear systems with parametric uncertainties.
 \label{ssec:SandH}
 %------------------------------------
 
-The digital controllers synthesized in this paper are typically used in closed loops with continuous (and physical) plants. Thus, the proposed approach has to consider dynamics of continuous parts of system ({\it e.g.}, plant) and discrete parts ({\it e.g.}, digital controller), {\it i.e.} the synthesized controller has to consider the issues related to the hybrid systems studies.
+The digital controllers synthesised in this paper are typically used in closed loops with continuous (and physical) plants. Thus, the proposed approach has to consider dynamics of continuous parts of system ({\it e.g.}, plant) and discrete parts ({\it e.g.}, digital controller), {\it i.e.} the synthesised controller has to consider the issues related to the hybrid systems studies.
 
-For this purpose, the design procedure is based on a discretized model for a continuous plant. Considering only transfer function models, we are interested in a $z$-domain transfer function that considers all the aspects about the continuous plant ($G(s)$) and the sampling and hold process.
+For this purpose, the design procedure is based on a discretised model for a continuous plant. Considering only transfer function models, we are interested in a $z$-domain transfer function that considers all the aspects about the continuous plant ($G(s)$) and the sampling and hold process.
 
 Note that $G(z)$ is a discrete model of a real (and continuous) plant, {\it
-i.e.}, a continuous model of the plant must be discretized to obtain the
+i.e.}, a continuous model of the plant must be discretised to obtain the
 discrete equivalent coefficients via ZOH
-discretization.  
+discretisation.  
 
 %\red{[why do we discuss the ZOH at this point?]}
 
-Although there are several discretization methods available
+Although there are several discretisation methods available
 in the literature~\cite{Franklin15}, the zero-order hold (ZOH)
-discretization is more suitable for representing the sample and hold
-processes that are typically employed in complex systems~\cite{istepanian2012digital}, {\it i.e.}, the ZOH discretization
+discretisation is more suitable for representing the sample and hold
+processes that are typically employed in complex systems~\cite{istepanian2012digital}, {\it i.e.}, the ZOH discretisation
 models the exact effect of sampling and DAC interpolation over the plant.
 
 \begin{myassumption}
@@ -1052,7 +1052,7 @@ $G\left(z\right)$ are in the forward path.
 %$\Delta{G_{Q}(z)}$ represents the quantisation uncertainty model, 
 %and $\Delta{G_{P}(z)}$ describes the parametric uncertainty model. 
 
-%\noindent where $G(z)$ is the discretized nominal plant model and
+%\noindent where $G(z)$ is the discretised nominal plant model and
 %$\Delta{G(z)}$ is the additive uncertainty, which is related to parametric
 %uncertainties~\cite{Bessa16}.  
 
@@ -1728,7 +1728,7 @@ $\mathbb{R}\langle I_b,F_b \rangle \supseteq \mathbb{R}\langle I,F \rangle$.
 %$\mathbb{R}\langle I_b,F_b \rangle \supseteq \mathbb{R}\langle I,F \rangle$.
 
 Given the use of fixed-point arithmetic, 
-we need to examine the effect of discretization during these operations. 
+we need to examine the effect of discretisation during these operations.
 Let $\tilde C(z)$ and $\tilde G(z)$ be the transfer functions represented
 using fixed-point bit vectors.%  with integer size $I_b$ and fractional
 % size $F_b$, whose domain is $\mathbb{R}\langle I_b,F_b \rangle \supseteq \mathbb{R}\langle I,F \rangle$.
@@ -1741,12 +1741,12 @@ using fixed-point bit vectors.%  with integer size $I_b$ and fractional
 \tilde G(z)&=\frac{\tilde b_{0}+\tilde b_{1}z^{-1}+...+\tilde b_{M_G}z^{-M_G}}{\tilde a_{0}+\tilde a_{1}z^{-1}+...+\tilde a_{N_G}z^{-N_G}}.
 \end{align}
  
-Since the controller is synthesized in the $\mathbb{R}\langle I,F \rangle$
+Since the controller is synthesised in the $\mathbb{R}\langle I,F \rangle$
 domain,
 %
  $$\forall i \leq N_C, j \leq M_C\ \  \tilde \beta_{i} \equiv \beta_{i} \wedge \tilde \alpha_{j} \equiv \alpha_{j} \Leftrightarrow \tilde C(z) \equiv C(z)$$
 %
-However, given a real plant $\hat{G}(z)$, and a discretizing function
+However, given a real plant $\hat{G}(z)$, and a discretising function
 \begin{align}
 \small
 \label{FWL_tf}
@@ -1973,7 +1973,7 @@ This candidate solution is validated as the final solution by both stages
 
 \begin{figure*}
 \centering
-\resizebox{.7\textwidth}{!}{
+\resizebox{.8\textwidth}{!}{
  \begin{tikzpicture}[scale=0.3,->,>=stealth',shorten >=.2pt,auto, semithick, initial text=, ampersand replacement=\&,]
   \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center
 },
@@ -1981,17 +1981,17 @@ This candidate solution is validated as the final solution by both stages
    \coordinate (aux1);
    \& \coordinate (aux2);
    \&;\\
-   \node[fill=yellow!20] (synth) {{\sc Synthesise}};
+   \node[fill=gray!20] (synth) {{\sc Synthesise}};
    \&
    complexnode/.pic={ 
      \node[rectangle,draw,dashed,
 	minimum width=7cm,
 	minimum height=.8cm,
 	label={\sc Verify},] (verif) {};
-   \node[fill=yellow!20] (verif1) at ([xshift=-2cm]verif.center) {{\sc ~Uncertainty~~~~}};
-   \node[fill=yellow!20] (verif2) at ([xshift=2cm]verif.center) {{\sc ~~~~~Precision~~~}};
+   \node[fill=gray!20] (verif1) at ([xshift=-2cm]verif.center) {{\sc ~Uncertainty~~~~}};
+   \node[fill=gray!20] (verif2) at ([xshift=2cm]verif.center) {{\sc ~~~~~Precision~~~}};
    } 
-   \& \node[ellipse, fill=yellow!20] (done) {{\sc Done}};\\
+   \& \node[ellipse, fill=gray!20] (done) {{\sc Done}};\\
    %% \node[fill=yellow!20] (verif) {{\sc ~~~~~~Uncertainty~~~~~~}};
    %% \&
    %% \node[fill=yellow!20] (verif2) {{\sc ~~~~~~Precision~~~~~~~}};\\
@@ -2008,7 +2008,7 @@ This candidate solution is validated as the final solution by both stages
   };
 
    \path
-    ([yshift=2em]synth.east) edge node {Candidate solution} ([yshift=2em]verif1.west)
+    ([yshift=2em]synth.east) edge node[xshift=-0.5em] {Candidate solution} ([yshift=2em]verif1.west)
     ([yshift=-2em]verif1.west) edge node {Counterexample} ([yshift=-2em]synth.east)
     ([xshift=5em]verif1.south) edge node[align=center] {Candidate\\ $P$} ([xshift=5em]bmc.north)
     ([xshift=5em]verif2.south) edge node[align=center] {Candidate\\ $P$} ([xshift=5em]fp.north)
@@ -2154,7 +2154,7 @@ the experimental evaluation of the present approach aims to answer two research 
 %
 \begin{enumerate}
 	\item RQ1 \textbf{(sanity check)} which results does our CEGIS approach to FWL controller synthesis 
-	obtain upon synthesizing/verifying benchmarks that compose the specified suite?
+	obtain upon synthesising/verifying benchmarks that compose the specified suite?
   \item RQ2 \textbf{(performance)} does the CEGIS approach provide a feasible solution in reasonable time
 	considering robust stability of FWL digital controllers?	
 \end{enumerate}
@@ -2246,11 +2246,11 @@ the problem to digital controller synthesis, many of these techniques lack
 the ability to produce sound or stable results because they disregard the
 effects of quantisation and rounding.  Recent papers on
 implementations/synthesis of LTI digital
-controllers~\cite{das2013lqr,ghosh2013fpga} focus on time discretization,
+controllers~\cite{das2013lqr,ghosh2013fpga} focus on time discretisation,
 failing to account for these error-inducing effects and can therefore result
 in digitally unstable systems that have been proven to be robustly stable in
 a continuous space.  This situation demands the inclusion of formal methods
-to verify the effects of space discretization on the implementation of the
+to verify the effects of space discretisation on the implementation of the
 controller.
 
 \paragraph{Formal Verification of Linear Digital Controllers} 
