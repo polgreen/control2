@@ -1792,8 +1792,8 @@ and we are done.
 \subsection{Program synthesis for the running example}
 We will illustrate our synthesis approach on the running example 
 in Sec.~\ref{sec:running-ex}.
-We start with the candidate solution given below at $I_b=16,F_b=24$,
-which has all coefficients 0.
+We start with the candidate solution with all coefficients zero 
+given below at $I_b=16,F_b=24$.
 Note that the digital controller is designed with typical control system
 techniques \cite{Kuo:2002:ACS:579453,Ogata:1987:DCS:26170}.
 %\red{[Be more explicit, write out spurious candidate solution with zero coefficients. KISS - you don't want to lose the control audience here.]}.
@@ -1808,12 +1808,11 @@ $$
 C(z)=\frac{0z^2{+}0z{+}0}{0z^2{+}0z{+}0}
 $$
 
-In the first {\sc verify} phase we obtain the following counterexample:
+In the first {\sc verify} stage, the {\sc uncertainty} 
+check finds the following counterexample:
 
 $$
-\blue{
 \Delta{\vec{p}} = [0.026506~ 1.000610~ 1.002838]^T
-}
 $$
 
 
@@ -1827,20 +1826,21 @@ $$
 We add this counterexample to {\sc inputs} and initiate the {\sc synthesise} phase, where we get the following candidate solution: 
 %\red{[ How is the order of the candidate solution chosen here?]}
 $$
-\blue{
 C(z)=\frac{12.402664z^2{-}11.439667z{+}0.596756}{4.003906z^2{-}0.287949z{+}0.015625}
-}
 $$
 
-In the second {\sc verify} phase, we check whether the current candidate
-solution above is the final solution. It is not and the verifier signals
-that it is due to lack of precision. We thus increase our precision to
-$I_b=20,F_b=28$.
+This time the {\sc uncertainty} check doesn't find any more counterexamples 
+and we pass the current candidate solution to the {\sc precision} verification stage.
+% In the second {\sc verify} phase, we check whether the current candidate
+% solution above is the final solution. It is not and the verifier signals
+% that it is due to lack of precision.
+We obtain the result $false$, meaning that the current precision is insuficient.
+Consequently, we increase our precision to $I_b=20,F_b=28$.
 %
-Since previous counterexamples were attained at lower precision, we 
+Since the previous counterexamples were attained at lower precision, we 
 remove them from the counterexample set. Back in the {\sc synthesise}
-phase, we thus retrieve a candidate solution with all coefficients 0.
-The {\sc verify} phase now provides the first counterexample at higher
+phase, we re-start the process with a candidate solution with all coefficients 0.
+Next, the {\sc uncertainty} verification stage provides the first counterexample at higher
 precision:
 %
 %$$
@@ -1850,9 +1850,7 @@ precision:
 %\end{array}
 %$$
 $$
-\blue{
 \Delta{\vec{p}} = [0.026314~ 0.999024~ {-}1.004785]^T
-}
 $$
 
 %\blue{[Nice, now I'm in the groove. Next unfolds well.] }
@@ -1860,9 +1858,7 @@ In the next {\sc synthesise} phase, we get a new candidate solution that holds f
 the new, higher precision counterexample:
 
 $$
-\blue{
 C(z)=\frac{11.035202z^2{+}5.846100z{+}4.901855}{1.097901z^2{+}0.063110z{+}0.128357}
-}
 $$
 %
 %$$
@@ -1872,8 +1868,9 @@ $$
 %\end{array}
 %$$
 
-This candidate solution is validated as the final solution by the next 
-{\sc verify} phase, which fails to find a new counterexample (i.e. returns UNSAT).
+This candidate solution is validated as the final solution by both stages 
+{\sc uncertainty} and {\sc precision} in the
+{\sc verify} phase. %, which fails to find a new counterexample (i.e. returns UNSAT).
 
 \blue{
 For the same cruise control system, the synthesis may be done considering that the plant model have parametric uncertainties ($\Delta G_{P}(z)$). Thus, the synthesised controller must to stabilize for any parametric variation $\Delta p$ inside of a given region. Specially, in this example, was assumed that each coefficient of $G(z)$ may vary $\pm 0.5\%$.
