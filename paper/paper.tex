@@ -1961,8 +1961,11 @@ Our experimental results described in Sec.~\ref{sec:experiments},
 show that the speedup yielded by the second approach 
 is in most cases of several orders of magnitude.
 
-The second approach is illustrated in Fig.~\ref{fig:CEGIS} and 
-uses a two-stage verification with a first stage that performs unsound fixed point operations given the precision \param{I_b}{F_b}, and a second stage that restores soundness by validating these operations using interval arithmetic on the synthesised plant.
+The second approach is illustrated in Fig.~\ref{fig:CEGIS} and uses a
+two-stage verification: the first stage performs potentially unsound
+fixed-point operations assuming a precision \param{I_b}{F_b}, and the
+second stage restores soundness by validating these operations
+using interval arithmetic on the synthesised controller.
 
 In more detail, in the first stage, denoted by {\sc Uncertainty} in Fig.~\ref{fig:CEGIS}, 
 assuming a precision \param{I_b}{F_b} 
