@@ -393,7 +393,7 @@ which will be represented by the following transfer function:
 \begin{equation}
 \hat{G}(z)=\frac{\hat{b}_{0}+\hat{b}_{1}z^{-1}+...+\hat{b}_{M_G}z^{-M_G}}{\hat{a}_{0}+\hat{a}_{1}z^{-1}+...+\hat{a}_{N_G}z^{-N_G}} : N_G \geq M_G .
 \end{equation}
-\red{[same order?]} 
+Due to the nature of the methods used for stability check in this paper, we require that  the parametric errors in the plant have the same polynomial order as the plant itself (other errors are ensured to fulfill this property in our implementation). 
 
 The vector of parametric coefficient uncertainties $\Delta{p}$ of $\Delta{G}_p(z)$ is defined by:
 \begin{equation}
@@ -416,9 +416,7 @@ The vector of parametric coefficient uncertainties $\Delta{p}$ of $\Delta{G}_p(z
 \label{eq:uncertainty}
 \end{equation}
 
-A typical hybrid system, with a continuous plant and a discrete controller, is shown in Figure~\ref{fig:sampledsystem}, where the DAC and ADC converters introduce quantisation noises $\nu_{1}(z)$ and $\nu_{2}(z)$, $G(s)$ is the continuous-time plant model with parametric additive uncertainty $\Delta G_{P}(s)$ 
-\red{[this Delta term now refers to the continuous plant? this is not what has been discussed before, nor what is in some of the plots.]} 
-, $R(z)$ is the reference signal, $U(z)$ is the control signal, and $\hat{Y}(z)$ is the output signal affected by the noises and uncertainties in the closed-loop system.
+A typical hybrid system, with a continuous plant and a discrete controller, is shown in Figure~\ref{fig:sampledsystem}, where the DAC and ADC converters introduce quantisation noises $\nu_{1}(z)$ and $\nu_{2}(z)$, $G(s)$ is the continuous-time plant model with parametric additive uncertainty $\Delta G_{P}(s)$ , $R(z)$ is the reference signal, $U(z)$ is the control signal, and $\hat{Y}(z)$ is the output signal affected by the noises and uncertainties in the closed-loop system.
 
 \begin{figure*}[htb]
 \centering
