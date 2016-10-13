@@ -2039,10 +2039,10 @@ benchmark in Table~\ref{tab:results}. \textcolor{red}{Which section do you refer
 For most benchmarks the conjecture explained in section~\ref{fixedpoint_verification} 
 holds and the inductive back-end is able to find a stable solution in less than one minute}. 
 This is possible if the inductive solutions need to be refined with few counterexamples 
-and fixed point precision increases. However, some of our benchmarks did not meet these criteria. 
-\textcolor{red}{Which cases? Can you refer to Table~\ref{tab:results} In these cases, 
+and fixed point precision increases. However, two benchmarks in our set did not meet these
+criteria (marked with $^*$ in Table~\ref{tab:results}). In these cases, 
 the interval arithmetic back-end is able to complement the inductive approach
-and synthesise a solution instead, albeit with significantly larger runtimes}.
+and synthesise a solution instead, albeit with significantly larger runtimes.
 
 \textcolor{red}{Can you relate the benchmarks in Table~\ref{tab:results} in terms of 
 $C$ and $G$ as described in section~\ref{experimental-setup}. You could add an additional column to that table.}
@@ -2077,10 +2077,10 @@ a\_PL1\_SCH4\_IMPL1       & 6304\,s & \\
 
 \textcolor{red}{Can you provide the synthesised controllers? Iury could then check the solution using the bode diagram.}
 We conclude from these results that the inductive back-end provides excellent performance
-for synthesising stable controllers in the majority of the benchmarks \textcolor{red}{can you be more specific? which benchmarks?}, and can be
-complemented using the interval arithmetic back-end, where the inductive conjectures fail
-too frequently. Both back-ends enabled controller synthesis for all benchmarks within
-reasonable time frames.
+for synthesising stable controllers in the 12 out of 14 benchmarks, and can be
+complemented using the interval arithmetic back-end for the remaining 2 benchmarks,
+where the inductive conjectures fail too frequently. Both back-ends together enabled controller
+synthesis for all benchmarks within reasonable time frames.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Related Work}
