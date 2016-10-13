@@ -332,7 +332,7 @@ with parametric uncertainties.
 %}
 
 %------------------------------------
-\subsection{Sampling and Holding in Closed-loop Systems}
+\subsection{Discretising the Plant}
 \label{ssec:SandH}
 %------------------------------------
 
@@ -341,10 +341,11 @@ paper are typically used in closed loops with continuous (and physical)
 plants.  Thus, the proposed approach has to consider dynamics of continuous
 parts of the system (i.e., the plant) and the discrete parts (i.e., the
 digital controller).  To obtain a joint model, the discretise the continuous
-plant.  We only consider transfer function models, and require a $z$-domain
+plant. We briefly recall the standard foundations of this step.
+
+We only consider transfer function models, and require a $z$-domain
 transfer function that captures all aspects of the continuous plant (with a
 Laplace domain transfer function $G(s)$) and the sampling and hold process.
-
 Note that $G(z)$ is a discrete model of a real-domain (and continuous)
 plant, i.e., the continuous model of the plant must be discretised to obtain
 the discrete equivalent coefficients via ZOH discretisation.
