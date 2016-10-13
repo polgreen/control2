@@ -1755,7 +1755,7 @@ compute a solution $C(z)$. % An important remark is that this
 
 There are two approaches for the {\sc verify} phase.
 % based on the described model.  
-The first uses interval arithmetic \cite{moore1966interval}
+The first approach uses interval arithmetic \cite{moore1966interval}
 to represent the coefficients
 $[{c}_i-\Delta_p{c}_i-\Delta_b{c}_i\ ,\
 {c}_i+\Delta_p{c}_i-\Delta_b{c}_i+(2^{-F_b})]$ 
@@ -1774,10 +1774,9 @@ show that the increase in speed of the second approach
 over the first one is in most cases of several orders of magnitude.
 
 The second approach is illustrated in Fig.~\ref{fig:CEGIS} and 
-uses a two-stage verification such that in the first stage we 
-assume a certain precision \param{I_b}{F_b}  
-followed by checking the soundness of our assumption
-in a second verification stage.
+uses a two-stage verification such that in the first stage it 
+assumes a certain precision \param{I_b}{F_b}, whose 
+soundness is checked in the second verification stage.
 
 Essentially, in the first stage, denoted by {\sc Uncertainty} in Fig.~\ref{fig:CEGIS}, 
 assuming a precision \param{I_b}{F_b} 
