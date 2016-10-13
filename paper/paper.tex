@@ -2001,6 +2001,9 @@ with an empty {\sc inputs} set.
 Otherwise, we found a full solution for our synthesis problem
 and we are done.
 
+In the rest of the paper, we will refer to the two approaches 
+for the {\sc verify} phase as one-stage and two-stage, respectively.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Illustrative Example} \label{sec:running-ex}
 
@@ -2360,22 +2363,24 @@ represents the total time (in seconds) to synthesise a stable controller for
 the given plant.
 
 For the majority of our benchmarks, the conjecture explained in
-section~\ref{synthesis-elements} holds and the inductive back-end is able to
-find a stable solution in less than one minute.  This is possible if the
+Section~\ref{synthesis-elements} holds and the two-stage verification 
+engine %inductive back-end 
+is able to find a stable solution in less than one minute.  This is possible if the
 inductive solutions need to be refined with few counterexamples and
 fixed-point precision increases.  However, $2$ benchmarks in our set
 required too many counterexamples to refine their solution (marked with $^*$
-in Table~\ref{tab:results}).  In these cases, the interval arithmetic
-back-end is able to complement the inductive approach and synthesise a
+in Table~\ref{tab:results}).  In these cases, the one-stage engine 
+%interval arithmetic back-end 
+is able to complement the two-stage approach and synthesise a
 solution instead, albeit with significantly larger runtimes.  This
-performance difference is due to the fact that the interval back-end does
+performance difference is due to the fact that the one-stage verification engine does
 not take advantage of the inductive conjecture inherent to CEGIS, but
 instead fully explores the counterexample space.  The result is a
 performance difference of at least two orders of magnitude in our
-experiments, leading to the interval back-end timing out on the majority of
+experiments, leading to the one-stage engine timing out on the majority of
 our benchmarks.  Table~\ref{tab:results} only lists the faster of the two
-back-ends for each benchmark, which in $12$ out of $15$ benchmarks is the
-inductive back-end.
+verification engines for each benchmark, which in $12$ out of $15$ benchmarks is the
+two-stage one.
 
 \begin{table}[H]
 \centering
@@ -2411,10 +2416,10 @@ the controllers can be synthesised in less than $5$ minutes using our
 present approach.  Overall the average synthesis time amounts to
 approximately $30$ minutes.  With respect to RQ2 we consider these times
 short enough to be of practical use to control engineers.  Regarding RQ1 we
-further conclude that the inductive back-end is able to synthesise stable
+further conclude that the two-stage verification engine is able to synthesise stable
 controllers in the $12$ out of $15$ benchmarks, and can be complemented
-using the interval arithmetic back-end for $2$ additional benchmarks, where
-the inductive conjectures fail.  Both back-ends together enabled controller
+using the one-stage engine for $2$ additional benchmarks, where
+the inductive conjectures fail.  Both verification engines together enabled controller
 synthesis for $14$ out of $15$ benchmarks.  For the $1$ remaining benchmark
 our approach failed to synthesise a stable controller in the requested time
 limits.  This can be addressed by either increasing the fixed point word
