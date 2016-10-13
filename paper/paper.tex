@@ -168,57 +168,71 @@ plant specification.
 \section{Introduction}
 
 Modern implementations of embedded control have proliferated with the
-availability of low cost devices that can perform simple tasks for linear
-control, spanning many areas such as environmental control and robotic
-manipulations~\cite{astrom1997computer,Franklin15}.  The downside to this
-approach is that in order to achieve low prices, devices are often limited
-in their capabilities, be it a low number of gates in an FPGA or short word
-lengths for microcontrollers.  In most cases, a floating-point implementation
-is not feasible and the system can benefit from the added resolution of a
-fixed-point representation.  The ubiquity of these devices requires that
-they have a robust design that ensures the correct behaviour in a number of
-different environments.
+availability of low-cost devices that can perform highly non-trivial control
+tasks, with impact in numerous application areas such as environmental
+control and robotics~\cite{astrom1997computer, Franklin15}.
+
+Correct control is non-trivial, however. The problem is exacerbated by
+artefacts specific to digital control such as the effects of
+finite-precision arithmetic, time discretisation, and quantisation noise
+introduced by A/D and D/A conversion.  Thus, the programming is a key
+barrier to broad adoption of digital control, and requires considerable
+expertise.
+
+There has been plenty of previous work that aims at \emph{verifying} a given
+controller designed by the engineer.  Recent work can show the stability
+digital controllers with considerations to implementation aspects, i.e.,
+fixed-point arithmetic and the word length used~\cite{Bessa16}.  This work
+exploits advances in bit-accurate verification of C programs to obtain a
+verifier for software-implemented digital control.
+
+By contrast, we propose to leverage very recent step-change in \emph{program
+synthesis}.  Program synthesis engines use a program specification as the
+starting point, and subsequently generate a sequence of candidate programs. 
+The candidate programs are iteratively refined to match the specification
+more closely.  Program synthesisers that implement Counter-Example Guided
+Inductive Synthesis (CEGIS)~\cite{sketch} are now able to generate programs
+for highly non-trivial specifications with a very high degree of automation. 
+Modern CEGIS engines implement combinations of automated testing, genetic
+algorithms and SMT-based automated reasoning~\cite{DBLP:conf/lpar/DavidKL15,
+DBLP:conf/cav/0001A14}.
+
+By applying a state-of-the-art CEGIS engine we are now able to present a
+tool that automatically \emph{generates} digital controllers for a given
+plant model that are correct by construction.  This approach promises to
+reduce the cost and time of development of digital control dramatically, and
+requires considerably less expertise than methodologies driven by
+verification.  Specifically, we synthesise controllers for hybrid
+closed-loop systems, i.e., software-implemented embedded controllers along
+with a model of their physical environment (the plant), that are
+\emph{stable}.  Due to the complexity of such systems, we focus on linear
+models with known configurations to perform parametric synthesis of the
+controller dynamics.
+
+Our work addresses particularly challenging aspects of the control synthesis
+problem.  We perform digital control synthesis over a hybrid model, where
+the plant exhibits continuous behaviour and the controller operates in both
+discrete time and state-space.  The key insight of our approach is that the
+problem can be translated into a \emph{single, joint domain}, which
+represents a bi-simulation of the original, hybrid dynamics.  Given our
+primary interest in stability despite digitisation effects, we have modelled
+a digital equivalent of the plant by evaluating the effects of the
+quantisers (A/D and D/A converters) as time discretisation elements with
+quantisation noise.  The resulting closed-loop system is a program loop that
+operates on bit-vectors encoded using fixed-point arithmetic with fixed word
+length (FWL).  We calculate the deterministic effect of the FWL and
+quantization errors are included in the model as an additive uncertainty,
+which is taken into account during the synthesis of the controller.
+
+In summary, this paper makes the following original contributions.
 %
-% For this reason it is
-% necessary to provide design tools that formally verify the correctness
-% of the digital controller.
+\begin{itemize}
 
-There has been previous work to formally verify uncertain linear systems
-stability in digital controllers with considerations to the implementation
-aspects ({\it i.e.}, fixed-point arithmetic and word-length)~\cite{Bessa16}. 
-In particular, Bessa {\it et al.} consider finite-word length (FWL) effects
-over digital controllers and also parameter uncertainties in the context of
-verifying the (so-called) robust non-fragile
-stability~\cite{bhattacharyya97}.  However, the authors do not consider the
-compete range of approximations, related to time discretisation, and
-quantisation effects.  As a result, the stability verification method
-proposed by Bessa {\it et al.} is incomplete, given that false alarms can be
-produced due to quantisation effects.  Additionally, the authors do not
-find a parametric solution for a digital controller given as a continuous
-plant specification, in order to synthesise the controller implementation.
+\item TODO 1
 
-Our work makes two major contributions. First, we explore the automatic synthesis 
-of {\em correct-by-construction} digital controllers, which reduces the development
-cost and design time for a number of models.  In particular, we are
-interested in synthesising controllers for {\em hybrid closed-loop systems},
-{\it i.e.}, embedded controllers along with a model of their physical
-environment (the plant), which are {\em stable}.  Due to the complexity of
-such systems, we focus on linear models with known configurations to perform
-parametric synthesis of the controller dynamics.
+\item TODO 2
 
-Second, since the digital control synthesis is performed over a hybrid model, 
-where the plant displays a continuous behaviour and the controller operates in
-both discrete time and state-space, we initially translate the problem into
-a single domain, which represents a bi-simulation of the original dynamics. 
-Given our primary interest in evaluating digital effects in addition to
-stability, we have modelled a digital equivalent of the plant by evaluating
-the effects of the quantisers (A/D and D/A converters) as time
-discretisation elements with quantisation noise.  The resulting closed loop
-system is a program loop working over bit-vectors of fixed-point arithmetic
-with fixed word length.  The deterministic effect of the FWL is considered
-and quantization errors are included in the model as an additive uncertainty, 
-which must be taken into account for the correct synthesis of the robust controller
-for linear systems with parametric uncertainties.
+\end{itemize}
 
 %\begin{figure}
 %\centering
