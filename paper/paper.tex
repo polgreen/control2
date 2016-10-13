@@ -373,9 +373,9 @@ a plant model given as
 \begin{align}
 \small
 \label{controller_plant_tf}
-C(z)&=\frac{\beta_{0}+\beta_{1}z^{-1}+...+\beta_{M_C}z^{-M_C}}{\alpha_{0}+\alpha_{1}z^{-1}+...+\alpha_{N_C}z^{-N_C}}, \\
+C(z)&=\frac{C_n(z)}{C_d{z}}=\frac{\beta_{0}+\beta_{1}z^{-1}+...+\beta_{M_C}z^{-M_C}}{\alpha_{0}+\alpha_{1}z^{-1}+...+\alpha_{N_C}z^{-N_C}}, \\
 %\label{plant_tf}
-G(z)&=\frac{b_{0}+b_{1}z^{-1}+...+b_{M_G}z^{-M_G}}{a_{0}+a_{1}z^{-1}+...+a_{N_G}z^{-N_G}}.
+G(z)&=\frac{G_n(z)}{G_d{z}}=\frac{b_{0}+b_{1}z^{-1}+...+b_{M_G}z^{-M_G}}{a_{0}+a_{1}z^{-1}+...+a_{N_G}z^{-N_G}}.
 \end{align}
 %
 \noindent where $\vec{\beta}$ and $\vec{\alpha}$ are vectors containing the controller's coefficients;  
@@ -384,10 +384,10 @@ and $N_{(\cdot)}$ and $M_{(\cdot)}$ denote the number of poles and zeros for the
 
 
 
-Uncertainties in $G(z)$ may appear due to uncertainties in $G(s)$ (\emph{i.e.} $\Delta{G}_p(s)$), errors in the numeric calculations, or roundoffs in the quantization.
-These uncertainties may be parametrically expressed by an additive transfer function $\Delta G(z)$, resulting in a uncertain model $\hat{G}(z)$, such that:
+Uncertainties in $G(z)$ may appear due to uncertainties in $G(s)$ (\emph{i.e.} $\Delta_p{G}_n(s),\Delta_p{G}_d(s)$), errors in the numeric calculations, or roundoffs in the quantization.
+These uncertainties may be parametrically expressed by additive terms, resulting in a uncertain model $\hat{G}(z)$, such that:
 \begin{equation}
-\hat{G}(z)=G(z)+\Delta G(z),
+\hat{G}(z)=\frac{G_n(z)+\Delta G_n(z)}{G_d(z)+\Delta G_d(z)},
 \end{equation}
 which will be represented by the following transfer function:
 \begin{equation}
@@ -395,28 +395,42 @@ which will be represented by the following transfer function:
 \end{equation}
 Due to the nature of the methods used for stability check in this paper, we require that  the parametric errors in the plant have the same polynomial order as the plant itself (other errors are ensured to fulfil this property in our implementation). 
 
-The vector of parametric coefficient uncertainties $\Delta{p}$ of $\Delta{G}_p(z)$ is defined by:
+In order to simplify the notations in this paper, we will use a notation based on the coefficients of the polynomials.
+Let $\mathcal{P}^{N}$ be a polynomial domain of order $N$
+Let $P \in \mathcal{P}^{M,N}$ be a rational polynomial $\frac{P_n}{P_d} : P_n \in \mathcal{P}^{M} \wedge P_d \in \mathcal{P}^{N}$. There is a vector of coefficients 
 \begin{equation}
-\Delta{\vec{p}}=\begin{bmatrix}
-\hat{b_{0}} - b_{0}\\
-\hat{b_{1}} - b_{1}\\
-\vdots \\
-\hat{b}_{M_G} - b_{M_{G}}\\
-\hat{a_{0}} - a_{0}\\
-\hat{a_{1}} - a_{1}\\
-\vdots\\
-\hat{a}_{N_G} - a_{N_{G}}\\
-\end{bmatrix}=\begin{bmatrix}
-\vec{\hat{b}}\\
-\vec{\hat{a}}
-\end{bmatrix}-\begin{bmatrix}
-\vec{b}\\
-\vec{a}
-\end{bmatrix}
-\label{eq:uncertainty}
+\vec{P} \in \mathbb{R}^{N+M+2}=[n_{0}\ n_{1}\ \hdots \ n_{M}\ d_{0}\ d_{1}\ \hdots\ d_{N}\ ]^T
+\label{eq:coefficients}
 \end{equation}
+with uncertainty
+\begin{equation}
+\Delta{\vec{P}}=[\Delta{n}_{0}\ \Delta{n}_{1}\ \hdots \ \Delta{n}_{M}\ \Delta{d}_{0}\ \Delta{d}_{1}\ \hdots\ \Delta{d}_{N}\ ]^T
+\label{eq:coefficients}
+\end{equation}
+Then $\vec{\hat{G}}=\vec{G}+\Delta{\vec{G}}$.
+In the following we may use either notation to represent the functions $G(z)$, $C(z)$, and their respective uncertainties.\\
 
-A typical hybrid system, with a continuous plant and a discrete controller, is shown in Figure~\ref{fig:sampledsystem}, where the DAC and ADC converters introduce quantisation noises $\nu_{1}(z)$ and $\nu_{2}(z)$, $G(s)$ is the continuous-time plant model with parametric additive uncertainty $\Delta G_{P}(s)$ , $R(z)$ is the reference signal, $U(z)$ is the control signal, and $\hat{Y}(z)$ is the output signal affected by the noises and uncertainties in the closed-loop system.
+%\begin{equation}
+%\Delta{\vec{p}}=\begin{bmatrix}
+%\hat{b_{0}} - b_{0}\\
+%\hat{b_{1}} - b_{1}\\
+%\vdots \\
+%\hat{b}_{M_G} - b_{M_{G}}\\
+%\hat{a_{0}} - a_{0}\\
+%\hat{a_{1}} - a_{1}\\
+%\vdots\\
+%\hat{a}_{N_G} - a_{N_{G}}\\
+%\end{bmatrix}=\begin{bmatrix}
+%\vec{\hat{b}}\\
+%\vec{\hat{a}}
+%\end{bmatrix}-\begin{bmatrix}
+%\vec{b}\\
+%\vec{a}
+%\end{bmatrix}
+%\label{eq:uncertainty}
+%\end{equation}
+
+A typical hybrid system, with a continuous plant and a discrete controller, is shown in Figure~\ref{fig:sampledsystem}, where the DAC and ADC converters introduce quantisation noises $\nu_{1}(z)$ and $\nu_{2}(z)$, $G(s)$ is the continuous-time plant model with parametric additive uncertainty $\Delta_p \vec{G}_s$ , $R(z)$ is the reference signal, $U(z)$ is the control signal, and $\hat{Y}(z)$ is the output signal affected by the noises and uncertainties in the closed-loop system.
 
 \begin{figure*}[htb]
 \centering
@@ -462,7 +476,7 @@ A typical hybrid system, with a continuous plant and a discrete controller, is s
    \& \node[rectangle,draw,
 	minimum width=1cm,
 	minimum height=1cm,
-        label=\textbf{Plant}] (gs) {{\sc $G(s) + \Delta G_p(s)$}};
+        label=\textbf{Plant}] (gs) {{\sc $G(s) + \Delta_p G_s$}};
    \node[draw=none] (ud) at ([xshift=-2cm,yshift=.15cm]gs)  {$U(s)$};
    \node[draw=none] (y) at ([xshift=2cm,yshift=.15cm]gs)  {$Y(s)$};
    \& complexnode/.pic={ 
@@ -508,7 +522,9 @@ A typical hybrid system, with a continuous plant and a discrete controller, is s
 \end{figure*}
 
 
-The ADC and DAC may be abstracted changing the hybrid system in figure~\ref{fig:sampledsystem} to the digital system in figure~\ref{fig:digsystem1} where the parametric uncertainties are represented by $\Delta G_{P}(z)=\mathcal{Z}\left\lbrace{G_{P}(s)}\right\rbrace$ and the entire effect of $\nu_{1}$ and $\nu_{2}$ in the output $Y(z)$ is represented as an additive (output) measurement noise $\nu(z)$, thus $\hat{Y}(z)=Y(z)+\nu(z)$. The measurement noise $\nu(k)$ is enough for represent both quantization noises ($\nu_{1}$ and $\nu_{2}$) what can be obtained reorganizing the equations~\ref{eq:outputfunctions}:
+The ADC and DAC may be abstracted changing the hybrid system in figure~\ref{fig:sampledsystem} to the digital system in figure~\ref{fig:digsystem1} where the parametric uncertainties are represented by $\Delta_p \vec{G}$
+%=\mathcal{Z}\left\lbrace{G_{P}(s)}\right\rbrace$
+and the entire effect of $\nu_{1}$ and $\nu_{2}$ in the output $Y(z)$ is represented as an additive (output) measurement noise $\nu(z)$, thus $\hat{Y}(z)=Y(z)+\nu(z)$. The measurement noise $\nu(k)$ is enough for represent both quantization noises ($\nu_{1}$ and $\nu_{2}$) what can be obtained reorganizing the equations~\ref{eq:outputfunctions}:
 \begin{equation}
 \label{eq:outputfunctions2}
 \hat{Y}(z)=H_{1}R(z)+H_{1}\nu_{1}(z)+H_{2}(z)\nu_{2}(z),
@@ -592,7 +608,7 @@ This noise $\nu(z)$ may represent exactly the same effects that $\nu_{1}(z)$ and
    \& \node[rectangle,draw,
 	minimum width=1cm,
 	minimum height=1cm,
-        label=\textbf{Plant}] (gs) {{\sc $G(z) + \Delta G_{P}(z)$}};
+        label=\textbf{Plant}] (gs) {{\sc $G(z) + \Delta_p \vec{G}$}};
    \node[draw=none] (y) at ([xshift=2cm,yshift=.15cm]gs)  {$Y(z)$};
 
    \& \node[circle,add={}{+}{+}{}] (circle2) {};
@@ -631,9 +647,9 @@ This noise $\nu(z)$ may represent exactly the same effects that $\nu_{1}(z)$ and
 In figure~\ref{fig:digsystem1}, two sources of uncertainties are considered: parametric uncertainties related to modelling errors, and uncertainties introduced by quantisations in sampling and holding process, {\it i.e.} ADC and DAC conversions. Assuming linearity and independence between these sources, the uncertain model may be rewritten as follows:
 \begin{equation}
 \label{eq:complete_unc_model}
-\hat{G}(z)=G(z)+\Delta G_{P}(z)+\Delta G_{Q}(z),
+\vec{\hat{G}}=\vec{G}+\Delta_p \vec{G}+\Delta_q \vec{G},
 \end{equation}
-where $\Delta G_{P}(z)$ is the term that corresponds to the parametric uncertainties and $\Delta G_{Q}(z)$ is the term that reflects the quantisation effects on the plant model. %\red{[next figure is a bit unnecessary, does not ad much to the previous one.]} Figure~\ref{fig:digsystem2} shows the digital closed loop systems with $\Delta G_{P}(z)$ and $\Delta G_{Q}(z)$.
+where $\Delta_p \vec{G}$ is the term that corresponds to the parametric uncertainties and $\Delta_q \vec{G}$ is the term that reflects the quantisation effects on the plant model. %\red{[next figure is a bit unnecessary, does not ad much to the previous one.]} Figure~\ref{fig:digsystem2} shows the digital closed loop systems with $\Delta G_{P}(z)$ and $\Delta G_{Q}(z)$.
 
 
 %\begin{figure}[ht]
@@ -775,7 +791,7 @@ In the case of a synthesised controller, because the synthesis is performed usin
 \label{sec:stability}
 %------------------------------------
 
-In order to obtain a sound synthesis of the digital controller, the effect of FWL implementation in controller and quantisation noises in closed loop system have to be considered. Considering that the quantizer $Q1$ is the source of a white noise $\nu_{1}$ and $Q2$ is the source of a white noise $\nu_{2}$, the following equation is written for the system in Figure~\ref{fig:sampledsystem}, considering the parametric uncertainties $\Delta G(z)$ and the FWL effects on controller ($\hat{C}(z)$):
+In order to obtain a sound synthesis of the digital controller, the effect of FWL implementation in controller and quantisation noises in closed loop system have to be considered. Considering that the quantizer $Q1$ is the source of a white noise $\nu_{1}$ and $Q2$ is the source of a white noise $\nu_{2}$, the following equation is written for the system in Figure~\ref{fig:sampledsystem}, considering the parametric uncertainties $\Delta \vec{G}$ and the FWL effects on controller ($\hat{C}(z)$):
 \begin{equation}
 \hat{Y}(z)=\hat{C}(z)\hat{G}(z)[R(z)+\nu_{1}(z)]+\nu_{2}(z)\hat{G}(z)-\hat{Y}(z)\hat{C}(z)\hat{G}(z),
 \end{equation}
@@ -847,7 +863,7 @@ Finally, the quantisation noise spectrum may be considered a energy-bounded (Lem
 
 \begin{mylemma}{\cite{Bessa16,fadali}}
 \label{lemma:eq_int_stab} 
-A feedback hybrid control system as shown in Fig.~\ref{fig:sampledsystem}, with a FWL implementation of the digital controller $\hat{C}(z) = \frac{FWL[N_{C}(z)]}{FWL[D_{C}(z)]}$ and uncertain discrete model of the plant $\hat{G}(z)=G(z)+\Delta G_{P}(z)+\Delta G_{Q}(z)=\frac{\hat{N}_{G}(z)}{\hat{D}_{G}(z)}$, is BIBO-stable if and only if: 
+A feedback hybrid control system as shown in Fig.~\ref{fig:sampledsystem}, with a FWL implementation of the digital controller $\hat{C}(z) = \frac{FWL[N_{C}(z)]}{FWL[D_{C}(z)]}$ and uncertain discrete model of the plant $\vec{\hat{G}}=\vec{G}+\Delta_p \vec{G}+\Delta_q \vec{G} \Rightarrow \hat{G}(z)=\frac{\hat{N}_{G}(z)}{\hat{D}_{G}(z)}$, is BIBO-stable if and only if: 
 \begin{itemize}
 \item  the roots of characteristic polynomial $S(z)$ are inside the open unit circle, where $S(z)$ is:
 \begin{equation}
@@ -858,7 +874,7 @@ S(z)=FWL[N_{C}(z)]\hat{N}_{G}(z)+FWL[D_{C}(z)]\hat{D}_{G}(z);
 \end{itemize}
 \end{mylemma}
 
-The Lemma~\ref{lemma:eq_int_stab} provides the necessary conditions for synthesis of digital controllers able to stabilize closed loop system, considering plant parametric uncertainties ({\it i.e.}, $\Delta G_{P}(z)$), quantisation noises ($\nu_{1}$ and $\nu_{2}$) and FWL effects in digital controllers. Based on it, the model for plant uncertainty due quantisation noise ({\it i.e.}, $\Delta G_{Q}(z)$) may be disregarded if the conditions on Lemma~\ref{lemma:eq_int_stab} are attended and if the quantisation noise is bounded.  The quantisation noise is indeed bounded, since the following assumption~\ref{whitenoise} and the Lemmas~\ref{lemma:variance} and~\ref{lemma:boundednoise} are true.
+The Lemma~\ref{lemma:eq_int_stab} provides the necessary conditions for synthesis of digital controllers able to stabilize closed loop system, considering plant parametric uncertainties ({\it i.e.}, $\Delta_p \vec{G}$), quantisation noises ($\nu_{1}$ and $\nu_{2}$) and FWL effects in digital controllers. Based on it, the model for plant uncertainty due quantisation noise ({\it i.e.}, $\Delta_q \vec{G}$) may be disregarded if the conditions on Lemma~\ref{lemma:eq_int_stab} are attended and if the quantisation noise is bounded.  The quantisation noise is indeed bounded, since the following assumption~\ref{whitenoise} and the Lemmas~\ref{lemma:variance} and~\ref{lemma:boundednoise} are true.
 
 %\red{[first: lemmae precede theorems. ]}
 
@@ -1702,21 +1718,21 @@ However, given a real plant $\hat{G}(z)$, and a discretising function
 \small
 \label{FWL_tf}
 &f_b (x \in \mathbb{R}) \rightarrow \tilde x \in \mathbb{R}\langle I_b,F_b \rangle \triangleq \tilde x = x-(x\mod\tilde x) \\
-&FWL_b[P \in \mathcal{P}] = \tilde P \in \mathcal{P}^{n}\langle I_b,F_b \rangle : c_i \in P \wedge \tilde c_i \in \tilde P=f_b(c_i)  \nonumber
+&FWL_b[P \in \mathcal{P}] = \tilde P \in \mathcal{P}^{n}\langle I_b,F_b \rangle : c_i \in \vec{P} \wedge \tilde c_i \in \tilde \vec{P}=f_b(c_i)  \nonumber
 \end{align}
 we calculate $\tilde G(z)=FWL_b(\hat{G}(z))$
 \begin{align}
 % \label{digital_controller_tf}
-% \tilde C(z)&=\frac{(\hat{\beta}_{0}+\Delta_q \hat{\beta}_{0}) +...+(\hat{\beta}_{M_C}+\Delta_q \hat{\beta}_{M_C})z^{-M_C}}{(\hat{\alpha}_{0}+\Delta_q \hat{\alpha}_{0})+...+(\hat{\alpha}_{N_C}+\Delta_q \hat{\alpha}_{N_C})z^{-N_G}} \nonumber \\
+% \tilde C(z)&=\frac{(\hat{\beta}_{0}+\Delta_q \hat{\beta}_{0}) +...+(\hat{\beta}_{M_C}+\Delta_b \hat{\beta}_{M_C})z^{-M_C}}{(\hat{\alpha}_{0}+\Delta_q \hat{\alpha}_{0})+...+(\hat{\alpha}_{N_C}+\Delta_q \hat{\alpha}_{N_C})z^{-N_G}} \nonumber \\
 % &= C(z) =\hat{C}(z) + \Delta{C}_b(z)\\
 \label{digital_plant_tf}
 \tilde G(z)&=\frac{(\hat{b}_{0}+\Delta_b \hat{b}_{0}) +...+(\hat{b}_{M_G}+\Delta_b \hat{b}_{M_G})z^{-M_G}}{(\hat{a}_{0}+\Delta_b \hat{a}_{0})+...+(\hat{a}_{N_G}+\Delta_b \hat{a}_{N_G})z^{-N_G}} \nonumber \\
-&=\hat{G}(z)+\Delta{G}_b(z)=G(z)+\Delta{G}_P(z)+\Delta{G}_b(z).
+&\Rightarrow \vec{\tilde G} =\vec{\hat{G}}+\Delta_b{\vec{G}}=\vec{G}+\Delta_p{\vec{G}}+\Delta_b{\vec{G}}.
 \end{align}
 where $\Delta_b\hat{c}_i=\hat{c}_i\mod \tilde{c}_i$
-and $\Delta{G}_b(z)$ represents the plant uncertainty caused by
+and $\Delta_b{G}$ represents the plant uncertainty caused by
 the rounding off effect.  We may encompass all the uncertainty as
-$\Delta{G}(z)=\Delta{G}_P(z)+\Delta{G}_b(z)$.  % Since this value is
+$\Delta{\vec{G}}=\Delta_p{\vec{G}}+\Delta_b{\vec{G}}$.  % Since this value is
 % nondeterministic, the set of possible polynomial coefficients of $\tilde G(z)$ is
 % denoted by $\mathfrak{G}(z)$.
 
