@@ -2168,7 +2168,7 @@ benchmark in Table~\ref{tab:results}. For the majority of our benchmarks the con
 in section~\ref{synthesis-elements}  holds and the inductive back-end is able to find a stable
 solution in less than one minute.  This is possible if the inductive solutions need to be refined
 with few counterexamples and fixed-point precision increases. However, two benchmarks in our set
-did not meet these criteria (marked with $^*$ in Table~\ref{tab:results}) \textcolor{red}{Pascal: Why they did not meet the criteria?}. 
+required too many counterexamples to refine their solution (marked with $^*$ in Table~\ref{tab:results}). 
 In these cases, the interval arithmetic back-end is able to complement the inductive approach
 and synthesise a solution instead, albeit with significantly larger runtimes.  This performance
 difference is due to  the fact that the interval back-end does not take advantage of the inductive
@@ -2190,7 +2190,7 @@ $G_3$ & SatelliteB2                &   3 &   7 & 7\,s    & \\
 $G_3$ & SatelliteB2$^\dagger$      &   3 &   7 & 6601\,s & \tbmark\\
 $G_3$ & SatelliteC2                &   3 &   5 & 2\,s    & \\
 $G_3$ & SatelliteC2$^\dagger$      &   3 &   5 & 76\,s   & \tbmark\\
-$G_4$ & a\_ST1\_IMPL1        			 &  16 &   4 & 2704\,s & \\
+$G_4$ & a\_ST1\_IMPL1              &  16 &   4 & 2704\,s & \\
 $G_4$ & a\_ST1\_IMPL2              &  16 &   8 & 538\,s  & \\
 $G_4$ & a\_ST1\_IMPL3              &  16 &  12 & 12\,s   & \\
 $G_4$ & a\_ST2\_IMPL1              &  16 &   4 & 318\,s  & \\
@@ -2207,14 +2207,17 @@ $G_4$ & a\_ST3\_IMPL1              &  16 &   4 & 6304\,s & \\
 \end{table}
 %---------------------------------
 
-We conclude from these results that the inductive back-end is able to synthesise 
+The median runtime for our benchmark set is 318\,s, implying that half of the controllers
+can be synthesised in 5 minutes or less using our approach. Overall the average synthesis
+time amounts to approximately 30 minutes. With respect to RQ2 we consider
+these times short enough to be of practical use to control engineers.
+Regarding RQ1 we further conclude that the inductive back-end is able to synthesise 
 stable controllers in the $12$ out of $15$ benchmarks, and can be complemented using 
 the interval arithmetic back-end for $2$ additional benchmarks, where the inductive 
 conjectures fail. Both back-ends together enabled controller synthesis for $14$ 
-out of $15$ benchmarks within reasonable time frames.  For the 1 remaining benchmark
-our approach failed to synthesise a stable controller in the requested time limits.
-This can be addressed by either increasing the fixed point word widths considered or
-using floating point arithmetic instead. 
+out of $15$ benchmarks.  For the 1 remaining benchmark our approach failed to synthesise
+a stable controller in the requested time limits. This can be addressed by either increasing
+the fixed point word widths considered or using floating point arithmetic instead. 
 \pksay{TODO: Upload full experiments environment including README and result log files to anonymous Google Drive and
 provide link here.}
 
