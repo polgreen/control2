@@ -1537,7 +1537,9 @@ $\vec{x}$ in {\sc inputs} (as opposed to all $\vec{x} \in \mathcal{D}$).
 If {\sc synthesise} succeeds in finding an witness $\vec{P}$, this
 witness is a candidate solution to the full synthesis formula. 
 We pass this candidate solution to {\sc verify}, which 
-checks whether it is a full solution.
+checks whether it is a full solution ({\it i.e.}, $\vec{P}$
+satisfies the specification $\sigma(\vec{x}, \vec{P})$ for all
+$\vec{x}\in\mathcal{D}$).
 %determines whether
 %it does satisfy the specification on all inputs by checking
 %satisfiability of the following verification formula:
@@ -1546,23 +1548,25 @@ checks whether it is a full solution.
 %If this formula is unsatisfiable, 
 %% the candidate solution is in fact a 
 %% full solution.
-If this is the case, then
-the algorithm terminates.
+If this is the case, then the algorithm terminates.
 Otherwise, additional information is provided to the {\sc synthesise}
-phase (e.g. a new counterexample that is added to the {\sc inputs} set)
-and the loop iterates again.
+phase in the form of a new counterexample that is added to the {\sc inputs} set
+and the loop iterates again (note that, for now, we ignore the 
+second feedback signal ``Increase Precision'' provided by the {\sc Verify}
+phase in Fig.~\ref{fig:CEGIS} as it is specific to control synthesis and will 
+be described in the next section).
 
 %% the witness $\vec{x}$ denote an input on which the
 %% candidate solution fails to meet the specification.  Thus, $\vec{x}$ is
 %% added to the {\sc inputs} set, and the loop iterates again.  
 
-%% It is
-%% worth noting that each iteration of the loop adds a new input to the
-%% finite set $\text{\sc inputs}$ being used for synthesis.  Given that
-%% the full set of inputs $\mathcal{D}$
-%% %\blue{[which by now should have a name, as suggested to be introduced above]} 
-%% is finite, this means that the refinement loop
-%% can only iterate a finite number of times.
+It is
+worth noting that each iteration of the loop adds a new input to the
+finite set $\text{\sc inputs}$ being used for synthesis.  Given that
+the full set of inputs $\mathcal{D}$
+%\blue{[which by now should have a name, as suggested to be introduced above]} 
+is finite, this means that the refinement loop
+can only iterate a finite number of times.
 
 \subsection{Synthesis elements specific to control systems}
 \label{synthesis-elements}
