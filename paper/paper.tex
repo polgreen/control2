@@ -336,33 +336,32 @@ with parametric uncertainties.
 \label{ssec:SandH}
 %------------------------------------
 
-The digital controllers synthesised in this paper are typically used in
-closed loops with continuous (and physical) plants.  Thus, the proposed
-approach has to consider dynamics of continuous parts of system ({\it e.g.},
-plant) and discrete parts ({\it e.g.}, digital controller).
+The digital controllers synthesised using the algorithm we present in this
+paper are typically used in closed loops with continuous (and physical)
+plants.  Thus, the proposed approach has to consider dynamics of continuous
+parts of the system (i.e., the plant) and the discrete parts (i.e., the
+digital controller).  To obtain a joint model, the discretise the continuous
+plant.  We only consider transfer function models, and require a $z$-domain
+transfer function that captures all aspects of the continuous plant (with a
+Laplace domain transfer function $G(s)$) and the sampling and hold process.
 
-For this purpose, the design procedure is based on a discretised model for a
-continuous plant.  Considering only transfer function models, we are
-interested in a $z$-domain transfer function that considers all the aspects
-about the continuous plant (with a Laplace domain transfer function $G(s)$) and the sampling and hold process.
-
-Note that $G(z)$ is a discrete model of a real (and continuous) plant, i.e.,
-a continuous model of the plant must be discretised to obtain the discrete
-equivalent coefficients via ZOH discretisation.
+Note that $G(z)$ is a discrete model of a real-domain (and continuous)
+plant, i.e., the continuous model of the plant must be discretised to obtain
+the discrete equivalent coefficients via ZOH discretisation.
 
 %\red{[why do we discuss the ZOH at this point?]}
 
 Although there are several discretisation methods available in the
 literature~\cite{Franklin15}, the zero-order hold (ZOH) discretisation is
 more suitable for representing the sample and hold processes that are
-typically employed in complex systems~\cite{istepanian2012digital}, {\it
-i.e.}, the ZOH discretisation models the exact effect of sampling and DAC
+typically employed in complex systems~\cite{istepanian2012digital}, i.e.,
+the ZOH discretisation models the exact effect of sampling and DAC
 interpolation over the plant.
 
 \begin{myassumption}
 %
-The Sample and Hold of the ADC and the ZOH of the DAC are synchronized, {\it
-i.e.}, there is no delay between sampling the plant output at ADC and
+The Sample and Hold of the ADC and the ZOH of the DAC are synchronized,
+i.e., there is no delay between sampling the plant output at ADC and
 updating the DAC accordingly.  The DAC interpolator is an ideal ZOH.
 %
 \end{myassumption}
@@ -385,7 +384,10 @@ pulse transfer function.
 %
 \end{mylemma}
 
-The lemma \ref{eq:pulsetf} is ensures the poles and zeros matching with $\mathcal{Z}\left\lbrace{\mathcal{L}^{-1}\left\lbrace{\cdot}\right\rbrace_{t=kT}}\right\rbrace$ operations and includes the ZOH dynamics in the $(1-z^{-1})$ term, that is sufficient for the stability studies over $G(s)$
+Lemma~\ref{eq:pulsetf} ensures the poles and zeros matching with
+$\mathcal{Z}\left\lbrace{\mathcal{L}^{-1}\left\lbrace{\cdot}\right\rbrace_{t=kT}}\right\rbrace$
+operations and includes the ZOH dynamics in the $(1-z^{-1})$ term, that is
+sufficient for the stability studies over $G(s)$.
 
 %------------------------------------
 \subsection{Verifying Closed-loop Control Systems}
