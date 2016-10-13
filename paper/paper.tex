@@ -2055,6 +2055,18 @@ C_{4}(z)=\frac{2.88z^2 - 4.896z + 2.074}{1.0z^2 - 0.42z - 0.3465 - 0.03915}. \no
 C_{5}(z)=\frac{0.43z^2 - 0.2408z - 0.1316}{1.0z^2 + 1.5z + 0.97 + 0.183}. \nonumber
 \end{equation} 
 
+The fourth (and last) set of benchmarks considers the following description for the plant 
+$G_{4}(s)$ extracted from Keel and Bhattacharyya~\cite{bhattacharyya97,keel_Bhattacharyya_examples}.
+%
+\begin{equation}
+\label{exampleA}
+G_{4}(s)=\frac{s-1}{s^{2}-s-2}
+\end{equation}
+%
+\noindent where $G_{4}(z)$ is obtained using the ZOH discretisation defined 
+in Eq.~\eqref{eq:pulsetf} with $3$ different sample times ($0.1$, $0.05$, and $0.03$ 
+seconds); and the controllers are synthesised using $4$, $8$, and $12$-bits.
+
 All experiments were conducted on an otherwise idle Intel Core i$7$-$4790$ 
 CPU $3$.$60$ GHz, $16$ GB of RAM, and Linux OS.  All times given are wall 
 clock time in seconds as measured by the UNIX time command.
