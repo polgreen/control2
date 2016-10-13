@@ -397,7 +397,7 @@ which will be represented by the following transfer function:
 
 The vector of parametric coefficient uncertainties $\Delta{p}$ of $\Delta{G}_p(z)$ is defined by:
 \begin{equation}
-\Delta{p}=\begin{bmatrix}
+\Delta{\vec{p}}=\begin{bmatrix}
 \hat{b_{0}} - b_{0}\\
 \hat{b_{1}} - b_{1}\\
 \vdots \\
@@ -887,9 +887,9 @@ Steps A to D are automatically performed by DSVerifier.
 Given a model $(\hat{C}(z),\hat{G}(z), \mathbb{R}\langle I,F \rangle)$,
 provided in an ANSI-C code input file (Steps 1-5), DSVerifier constructs a
 non-deterministic model to represent the plant family $\mathfrak{G}(z)$
-(Step A), and a transfer function $f$ represented by Eq.~\eqref{FWL_tf} 
-(step B) to calulate the implementation $f(\hat{C}(z)) \rightarrow \tilde C(z)$ 
-of the controller (step C).  Finally DSVerifier builds an intermediate ANSI-C code
+(Step A), and a transfer function $f$ [eq.  \ref{FWL_tf}] (step B) to
+calulate the implementation $f(\hat{C}(z)) \rightarrow \tilde C(z)$ of the
+controller (step C).  Finally DSVerifier builds an intermediate ANSI-C code
 for the digital system implementation, which is used as input for the
 model-checker (Step D).
 
@@ -1763,12 +1763,20 @@ C(z)=\frac{0z^2{+}0z{+}0}{0z^2{+}0z{+}0}
 $$
 
 In the first {\sc verify} phase we obtain the following counterexample:
+
 $$
-\begin{array}{ll}
-\Delta N_G(z) = 0.026506\\
-\Delta D_G(z) = 1.000610z+1.002838
-\end{array}
+\blue{
+\Delta{\vec{p}} = [0.026506~ 1.000610~ 1.002838]^T
+}
 $$
+
+
+%$$
+%\begin{array}{ll}
+%\Delta N_G(z) = 0.026506\\
+%\Delta D_G(z) = 1.000610z+1.002838
+%\end{array}
+%$$
 
 We add this counterexample to {\sc inputs} and initiate the {\sc synthesise} phase, where we get the following candidate solution: 
 %\red{[ How is the order of the candidate solution chosen here?]}
@@ -1790,12 +1798,18 @@ not going back to the synthesise phase,
 then this illustration doesn't follow the general diagram in Fig.5. 
 We need to decide which direction we keep.}
 %
+%$$
+%\begin{array}{ll}
+%\Delta N_G(z) {=} 0.026314\\
+%\Delta D_G(z) {=} 0.999024z{-}1.004785
+%\end{array}
+%$$
 $$
-\begin{array}{ll}
-\Delta N_G(z) {=} 0.026314\\
-\Delta D_G(z) {=} 0.999024z{-}1.004785
-\end{array}
+\blue{
+\Delta{\vec{p}} = [0.026314~ 0.999024~ {-}1.004785]^T
+}
 $$
+
 %\blue{[Nice, now I'm in the groove. Next unfolds well.] }
 Since previous counterexamples were attained at lower precision, we 
 remove them from the counterexample set. In the next {\sc synthesise}
@@ -1838,6 +1852,11 @@ $$
 C(z)=\frac{0.68970z^2{+}0.36538z{+}0.30637}{0.06862z^2{+}0.00394z{+}0.00802}
 }}
 $$
+
+\blue{
+This candidate solution is validated as the final solution by the next 
+{\sc verify} phase.
+}
 
 % Counterexample from first cruisecontrol02.c benchmark with uncertainty and
 % nondeterminism:
