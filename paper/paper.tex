@@ -239,9 +239,11 @@ and requires addressing challenges specific to
 control systems such as the effects of quantisers 
 and FWL. In particular, we found that a two-stage 
 verification engine that continuously refines the precision
-of the fixed-point representation is key to the performance of our approach
-(the increase in speed over a conventional one-stage verification 
-approach is in most cases of several orders of magnitude).
+of the fixed-point representation is key to the performance of our approach 
+yielding, in most cases,  a speed-up  
+of several orders of magnitude over 
+a conventional one-stage verification 
+approach.
 
 \item We provide experimental results showing that
 our fully automatic program synthesis based approach is able to synthesise 
@@ -1081,16 +1083,16 @@ assumption~\ref{whitenoise}.
 %------------------------------------
 
 %------------------------------------
-\subsection{Overview of the Synthesis Process using DSVerifier}
+\subsection{Overview of the Synthesis Process}
 \label{verification-flow}
 %------------------------------------
 
 %\red{[The following description can be made shorter, crisper?]}
 
-An overview of the synthesis process is illustrated in
-Fig.~\ref{DSVerifier_process}; a detailed description of DSVerifier tool can
-be found in~\cite{IsmailBCFF15}.  Steps $1$ to $5$ are performed by the
-user/synthesiser and Steps A to D are automatically performed by DSVerifier.
+The synthesis process is illustrated in Fig.~\ref{DSVerifier_process}. 
+A~detailed description of DSVerifier tool can be found
+in~\cite{IsmailBCFF15}.  Steps $1$ to $5$ are performed by the
+user/synthesiser and Steps~A to D are automatically performed by DSVerifier.
 %
 %, which accepts the
 %digital controller transfer functions together with the plant model.  For
@@ -1101,8 +1103,7 @@ user/synthesiser and Steps A to D are automatically performed by DSVerifier.
 \centering
 \includegraphics[width=\textwidth]{figures/verification-flow.png}
 \vspace{1ex}
-\caption{Synthesis process using DSVerifier and the CBMC CEGIS module.}
-\label{DSVerifier_process}
+\caption{Overview of the synthesis process\label{DSVerifier_process}}
 \end{figure*}
 
 %In Step $1$, the user provides inputs $G(z)$ and $\Delta{G}(z)$
@@ -1684,7 +1685,7 @@ well as the restrictions set in the representation of these coefficients.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Automated Program Synthesis \\ for Digital Controllers}
+\section{Automated Program Synthesis \\ for Digital Control}
 
 % We use CounterExample-Guided Inductive Synthesis (CEGIS), as
 % illustrated in Fig~\ref{fig:CEGIS}.
@@ -1700,7 +1701,7 @@ control systems.
 %specialised it for stream refactoring.  
 % adding JST for stream refactoring
 
-\subsection{General architecture of the program synthesiser}
+\subsection{Architecture of the program synthesiser}
 \label{synthesiser-general}
 %
 %% \red{[I would recommend to clarify the domain of definition of $\sigma$, particularly over the set where $x$ ranges over. 
@@ -1754,7 +1755,7 @@ the full set of inputs $\mathcal{D}$
 is finite, this means that the refinement loop
 can only iterate a finite number of times.
 
-\subsection{Synthesis elements specific to control systems}
+\subsection{Synthesis for to control}
 \label{synthesis-elements}
 
 \paragraph{Property specification}
