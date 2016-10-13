@@ -852,13 +852,13 @@ The Lemma~\ref{lemma:eq_int_stab} provides the necessary conditions for synthesi
 %------------------------------------
 
 %------------------------------------
-\subsection{DSVerifier Verification Flow}
+\subsection{Synthesis Process using DSVerifier}
 \label{verification-flow}
 %------------------------------------
 
 %\red{[The following description can be made shorter, crisper?]}
 
-The DSVerifier verification flow is illustrated in Fig.~\ref{DSVerifier_process};
+The full synthesis process is illustrated in Fig.~\ref{DSVerifier_process};
 a detailed description of DSVerifier tool can be found in~\cite{IsmailBCFF15}.
 Steps $1$ to $5$ are performed by the user/synthesiser and
 Steps A to D are automatically performed by DSVerifier.
@@ -899,20 +899,20 @@ model-checker (Step D).
 
 This intermediate ANSI-C code model $(\tilde C(z),\mathfrak{G}(z),\phi)$
 containing a specification $\phi$ for the verification properties ({\it
-i.e.}, robust stability) is translated into SAT/SMT formulae by a back-end
-model-checking tool ({\it e.g.}, CBMC~\cite{ClarkeKL04} or
-ESBMC~\cite{CordeiroFM12}).  If any property violation is found, then
-DSVerifier reports a counterexample, which contains system inputs or
-parametric deviations $\Delta{G}$ that lead the system to a failure.  A
-successful verification result is reported if the system is safe with
+i.e.}, robust stability) is provided to CBMC's~\cite{ClarkeKL04} integrated
+CEGIS synthesis module, where $\tilde C(z)$ is marked as input variable to
+synthesise.  If any property violation is found, then
+a counterexample is reported, which contains system inputs or
+parametric deviations $\Delta{G}$ that lead the system to a failure.  
+This information allows the CEGIS module to refine its search for a stable
+controller, which we explain in detail in section~\ref{synthesiser-general}.
+A successful verification result is reported if the system is safe with
 respect to $\phi$.  In particular, the stability verification is complete
 and sound, since it does not depend on system inputs and outputs.  In the
 case of stability, the specification $\phi$ consists in a number of
 assumptions on the polynomial coefficients, following Jury's Criteria, as
 well as the restrictions set in the representation of these coefficients by
 the function $f$ (cf.~Eq.~\eqref{FWL_tf}).
-
-\textcolor{red}{Pascal: can you please update this section to include the CEGIS step?}
 
 %In Step A, DSVerifier constructs a non-deterministic model to represent the
 %plant family $\mathfrak{G}$ using $g_0$ and $\Delta{g}\%$, which are
@@ -1517,6 +1517,7 @@ control systems.
 % adding JST for stream refactoring
 
 \subsection{General architecture of the program synthesiser}
+\label{synthesiser-general}
 %
 %% \red{[I would recommend to clarify the domain of definition of $\sigma$, particularly over the set where $x$ ranges over. 
 %% (Be cognisant that control audience might be unfamiliar with the cegis architecture.) ]}
