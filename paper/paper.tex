@@ -2328,8 +2328,9 @@ seconds).
 
 All experiments were conducted on a 12-core 2.40\,GHz Intel Xeon E5-2440 with 96\,GB
 of RAM, and Linux OS.  All times given are wall clock time in seconds as measured
-by the UNIX date command.  For the inductive back-end, we apply a timeout of 8 hours
-per benchmark, and 24 hours for the interval arithmetic back-end.
+by the UNIX date command.  For the approach using a two-stage verification engine
+we apply a timeout of 8 hours
+per benchmark, and 24 hours for the approach using a one-stage engine.
 
 %---------------------------------
 \subsection{Objectives}
@@ -2401,7 +2402,7 @@ two-stage one.
 \end{tabular}
 
 \vspace{0.5em}
-\scriptsize{* = solved with interval back-end, $\dagger$ = with uncertainty}
+\scriptsize{* = solved with the one-stage engine, $\dagger$ = with uncertainty}
 \vspace{0.5em}
 
 \caption{Experimental results. \label{tab:results}}
