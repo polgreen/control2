@@ -393,7 +393,7 @@ which will be represented by the following transfer function:
 \begin{equation}
 \hat{G}(z)=\frac{\hat{b}_{0}+\hat{b}_{1}z^{-1}+...+\hat{b}_{M_G}z^{-M_G}}{\hat{a}_{0}+\hat{a}_{1}z^{-1}+...+\hat{a}_{N_G}z^{-N_G}} : N_G \geq M_G .
 \end{equation}
-\red{[same order?]} 
+Due to the nature of the methods used for stability check in this paper, we require that  the parametric errors in the plant have the same polynomial order as the plant itself (other errors are ensured to fulfill this property in our implementation). 
 
 The vector of parametric coefficient uncertainties $\Delta{p}$ of $\Delta{G}_p(z)$ is defined by:
 \begin{equation}
@@ -416,9 +416,7 @@ The vector of parametric coefficient uncertainties $\Delta{p}$ of $\Delta{G}_p(z
 \label{eq:uncertainty}
 \end{equation}
 
-A typical hybrid system, with a continuous plant and a discrete controller, is shown in Figure~\ref{fig:sampledsystem}, where the DAC and ADC converters introduce quantisation noises $\nu_{1}(z)$ and $\nu_{2}(z)$, $G(s)$ is the continuous-time plant model with parametric additive uncertainty $\Delta G_{P}(s)$ 
-\red{[this Delta term now refers to the continuous plant? this is not what has been discussed before, nor what is in some of the plots.]} 
-, $R(z)$ is the reference signal, $U(z)$ is the control signal, and $\hat{Y}(z)$ is the output signal affected by the noises and uncertainties in the closed-loop system.
+A typical hybrid system, with a continuous plant and a discrete controller, is shown in Figure~\ref{fig:sampledsystem}, where the DAC and ADC converters introduce quantisation noises $\nu_{1}(z)$ and $\nu_{2}(z)$, $G(s)$ is the continuous-time plant model with parametric additive uncertainty $\Delta G_{P}(s)$ , $R(z)$ is the reference signal, $U(z)$ is the control signal, and $\hat{Y}(z)$ is the output signal affected by the noises and uncertainties in the closed-loop system.
 
 \begin{figure*}[htb]
 \centering
@@ -2087,7 +2085,8 @@ seconds).
 
 All experiments were conducted on a 12-core 2.40\,GHz Intel Xeon E5-2440 with 96\,GB
 of RAM, and Linux OS.  All times given are wall clock time in seconds as measured
-by the UNIX date command.
+by the UNIX date command.  For the inductive back-end we apply a timeout of 8 hours
+per benchmark, and 24 hours for the interval arithmetic back-end.
 
 %---------------------------------
 \subsection{Objectives}
@@ -2116,7 +2115,13 @@ solution in less than one minute.  This is possible if the inductive solutions n
 with few counterexamples and fixed-point precision increases. However, two benchmarks in our set
 did not meet these criteria (marked with $^*$ in Table~\ref{tab:results}) \textcolor{red}{Pascal: Why they did not meet the criteria?}. 
 In these cases, the interval arithmetic back-end is able to complement the inductive approach
-and synthesise a solution instead, albeit with significantly larger runtimes \textcolor{red}{Pascal: Why is it slower?}.
+and synthesise a solution instead, albeit with significantly larger runtimes.  This performance
+difference is due to  the fact that the interval back-end does not take advantage of the inductive
+conjecture inherent to CEGIS, but instead fully explores the counterexample space.  The result is
+a performance difference of at least two orders of magnitude in our experiments, leading to the
+interval back-end timing out on the majority of our benchmarks.  Table~\ref{tab:results} only
+lists the faster of the two back-ends for each benchmark, which in 12 out of 14 cases is the inductive
+back-end.
 
 \begin{table}[H]
 \centering
@@ -2130,13 +2135,13 @@ $G_3$ & SatelliteB2                &   3 &   7 & 7\,s    & \\
 $G_3$ & SatelliteB2$^\dagger$      &   3 &   7 & 6601\,s & \tbmark\\
 $G_3$ & SatelliteC2                &   3 &   5 & 2\,s    & \\
 $G_3$ & SatelliteC2$^\dagger$      &   3 &   5 & 76\,s   & \tbmark\\
-$G_4$ & a\_PL1\_SCH2\_IMPL1        &  16 &   4 & 2704\,s & \\
-$G_4$ & a\_PL1\_SCH2\_IMPL2        &  16 &   8 & 538\,s  & \\
-$G_4$ & a\_PL1\_SCH2\_IMPL3        &  16 &  12 & 12\,s   & \\
-$G_4$ & a\_PL1\_SCH3\_IMPL1        &  16 &   4 & 318\,s  & \\
-$G_4$ & a\_PL1\_SCH3\_IMPL2        &  16 &   8 & 967\,s  & \\
-$G_4$ & a\_PL1\_SCH3\_IMPL3        &  16 &  12 & 9798\,s & \\
-$G_4$ & a\_PL1\_SCH4\_IMPL1        &  16 &   4 & 6304\,s & \\
+$G_4$ & a\_ST1\_IMPL1        			 &  16 &   4 & 2704\,s & \\
+$G_4$ & a\_ST1\_IMPL2              &  16 &   8 & 538\,s  & \\
+$G_4$ & a\_ST1\_IMPL3              &  16 &  12 & 12\,s   & \\
+$G_4$ & a\_ST2\_IMPL1              &  16 &   4 & 318\,s  & \\
+$G_4$ & a\_ST2\_IMPL2              &  16 &   8 & 967\,s  & \\
+$G_4$ & a\_ST2\_IMPL3              &  16 &  12 & 9798\,s & \\
+$G_4$ & a\_ST3\_IMPL1              &  16 &   4 & 6304\,s & \\
 \end{tabular}
 
 \vspace{0.5em}
@@ -2151,7 +2156,10 @@ We conclude from these results that the inductive back-end is able to synthesise
 stable controllers in the $12$ out of $15$ benchmarks, and can be complemented using 
 the interval arithmetic back-end for $2$ additional benchmarks, where the inductive 
 conjectures fail. Both back-ends together enabled controller synthesis for $14$ 
-out of $15$ benchmarks within reasonable time frames. \textcolor{red}{Why do we fail to synthesise 1 controller?} 
+out of $15$ benchmarks within reasonable time frames.  For the 1 remaining benchmark
+our approach failed to synthesise a stable controller in the requested time limits.
+This can be addressed by either increasing the fixed point word widths considered or
+using floating point arithmetic instead. 
 \pksay{TODO: Upload full experiments environment including README and result log files to anonymous Google Drive and
 provide link here.}
 
