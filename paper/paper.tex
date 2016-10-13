@@ -143,11 +143,11 @@ classically studied in digital control literature.
 %
 In this study, we plan to provide a principled approach to extend this
 literature in a number of directions: we are interested in quantitative
-tasks; we focus on automated correct-by-design synthesis algorithms, as
+tasks; we focus on automated correct-by-construction synthesis algorithms, as
 opposed to verification objectives; and we encompass the complete range of
 approximations, related to time discretisation, quantisation effects, and
 finite-precision representations (with related rounding errors).  To this
-end, we propose a CEGIS-based solution that uses inductive invariant
+end, we propose a CEGIS-based solution that uses inductive 
 synthesis in conjunction with a digital verification algorithm to find a
 parametric solution for a digital controller given a continuous plant
 specification.
@@ -415,7 +415,11 @@ The vector of parametric uncertainties  $\Delta{p}$ for $G(z)$ is defined by:
 \end{bmatrix}
 \end{equation}
 
-A typical hybrid system, with a continuous plant and discrete controller, is shown in Figure~\ref{fig:sampledsystem}, where the DAC and ADC converters introduce quantisation noises $\nu_{1}(z)$ and $\nu_{2}(z)$, $G(s)$ is the continuous-time plant model with parametric additive uncertainty $\Delta G_{P}(s)$ 
+\red{[where is this new variable used later?]}
+
+
+A typical hybrid system \red{[clarify the adjective ``hybrid'']} is shown in Figure~\ref{fig:sampledsystem}, where the DAC and ADC converters introduce quantisation noises $\nu_{1}(z)$ and $\nu_{2}(z)$, $G(s)$ is the continuous-time plant model with parametric additive uncertainty $\Delta G_{P}(s)$ 
+\red{[this Delta term now refers to the continuous plant? this is not what has been discussed before, nor what is in some of the plots.]} 
 , $R(z)$ is the reference signal, $U(z)$ is the control signal, and $\hat{Y}(z)$ is the output signal affected by the noises and uncertainties in the closed-loop system.
 
 \begin{figure*}[htb]
@@ -819,15 +823,6 @@ The Lemma~\ref{lemma:eq_int_stab} provides the necessary conditions for synthesi
 
 %\red{[first: lemmae precede theorems. ]}
 
-%
-
-%, thus supporting this assumption.
-
-%------------------------------------
-\subsection{Using Fixed Point Arithmetic for verification}
-\label{fixedpoint_verification}
-%------------------------------------
-
 Let $\tilde C(z)$ and $\tilde G(z)$ be the transfer functions represented
 using Fixed-Point bit vectors with integer size $I_b$ and fractional
 size $F_b$, whose domain is $\mathbb{R}\langle I_b,F_b \rangle \supseteq \mathbb{R}\langle I,F \rangle$.
@@ -844,34 +839,18 @@ Since the controller is synthesized in the $\mathbb{R}\langle I,F \rangle$
 domain,
 %
  $$\forall i \leq N_C, j \leq M_C\ \  \tilde \beta_{i} \equiv \beta_{i} \wedge \tilde \alpha_{j} \equiv \alpha_{j} \Leftrightarrow \tilde C(z) \equiv C(z)$$
-%
-However, given a real plant and real controller $\hat{G}(z), \hat{C}(z)$, and a discretizing function
-\begin{align}
-\small
-\label{FWL_tf}
-&f_b (x \in \mathbb{R}) \rightarrow \tilde x \in \mathbb{R}\langle I_b,F_b \rangle \triangleq \tilde x = x-(x\mod\tilde x)
-\end{align}
-we calculate $\tilde C(z)=f(\hat{C}(z))$ and $\tilde G(z)=f(\hat{G}(z))$
-\begin{align}
-\label{digital_controller_tf}
-\tilde C(z)&=\frac{(\hat{\beta}_{0}+\Delta_q \hat{\beta}_{0}) +...+(\hat{\beta}_{M_C}+\Delta_q \hat{\beta}_{M_C})z^{-M_C}}{(\hat{\alpha}_{0}+\Delta_q \hat{\alpha}_{0})+...+(\hat{\alpha}_{N_C}+\Delta_q \hat{\alpha}_{N_C})z^{-N_G}} \nonumber \\
-&= C(z) =\hat{C}(z) + \Delta{C}_b(z)\\
-\label{digital_plant_tf}
-\tilde G(z)&=\frac{(\hat{b}_{0}+\Delta_q \hat{b}_{0}) +...+(\hat{b}_{M_G}+\Delta_q \hat{b}_{M_G})z^{-M_G}}{(\hat{a}_{0}+\Delta_q \hat{a}_{0})+...+(\hat{a}_{N_G}+\Delta_q \hat{a}_{N_G})z^{-N_G}} \nonumber \\
-&=G(z)+\Delta{G}_P(z)+\Delta{G}_b(z).
-\end{align}
-where $\Delta_b\hat{c}_i=\hat{c}_i\mod \tilde{c}_i$
-and $\Delta{G}_b(z)$ represents the plant uncertainty caused by
-the rounding off effect.  We may encompass all the uncertainty as
-$\Delta{G}(z)=\Delta{G}_P(z)+\Delta{G}_b(z)$.  Since this value is
-nondeterministic, the set of possible polynomial coefficients of $\tilde G(z)$ is
-denoted by $\mathfrak{G}(z)$.
 
 Two approaches have been taken to synthesise a stable controller based on this model.
-The first uses interval arithmetic, representing the coefficients $[{c}_i-\Delta_p{c}_i-\Delta_b{c}_i\ ,\ {c}_i+\Delta_p{c}_i-\Delta_b{c}_i+(2^{-F_b})]$ 
+The first uses interval arithmetic, representing the coefficients $[{c}_i-\Delta_p{c}_i-\Delta_b{c}_i\ ,\ {c}_i+\Delta_p{c}_i-\Delta_b{c}_i+(2^{-F_b})]$  
 and rounding operations outwards during the process. This results in a tighter calculation of the error at the cost of performance.
 
-The second approach uses a nondeterministic plant selected from $\mathfrak{G}(z)$ where the expected error of the bit vector calculations is assumed to be within the expected bounds and verified after synthesis using the interval version of the program. The first verification phase produces a counterexample if some instance of $\mathfrak{G}(z)$ does not verify the properties and the CEGIS loop iteratively looks for a new controller that verifies the supplied counterexamples. The second phase verifies the propagation of the error in the fixed point calculations. If the second phase fails verification, we increase the precision of the analyser and feed the CEGIS loop again to find a sound solution. The resulting increase in speed of this approach over the former, which is of several orders of magnitude, vouches for the use of CEGIS in most of our benchmarks.
+%, thus supporting this assumption.
+
+%------------------------------------
+%\subsection{Using Fixed Point Arithmetic for verification}
+%\label{fixedpoint_verification}
+%------------------------------------
+
 %------------------------------------
 \subsection{DSVerifier Verification Flow}
 \label{verification-flow}
@@ -1534,14 +1513,13 @@ control systems.
 %specialised it for stream refactoring.  
 % adding JST for stream refactoring
 
-\paragraph{General architecture of the program synthesiser}
+\subsection{General architecture of the program synthesiser}
 %
 %% \red{[I would recommend to clarify the domain of definition of $\sigma$, particularly over the set where $x$ ranges over. 
 %% (Be cognisant that control audience might be unfamiliar with the cegis architecture.) ]}
 % 
 The input specification provided to the program synthesiser is of the
-form $\exists \vec{P} . \forall \vec{x} \in \text{\sc inputs}
-. \sigma(\vec{x}, \vec{P})$ where $\vec{P}$ ranges over functions,
+form $\exists \vec{P} . \forall \vec{x}. \sigma(\vec{x}, \vec{P})$ where $\vec{P}$ ranges over functions,
 $\vec{x}$ ranges over ground terms and $\sigma$ is a quantifier-free
 formula.  We interpret the ground terms over some finite domain
 $\mathcal{D}$.
@@ -1552,30 +1530,41 @@ interact via a finite set of test vectors {\sc inputs} that is updated
 incrementally.  Given the aforementioned specification $\sigma$, the
 {\sc synth} procedure tries to find an existential witness $\vec{P}$
 satisfying the specification $\sigma(\vec{x}, \vec{P})$ for all
-$\vec{x}$.
+$\vec{x}$ in {\sc inputs} (as opposed to all $\vec{x} \in \mathcal{D}$).
 %
 If {\sc synthesise} succeeds in finding an witness $\vec{P}$, this
-witness is a candidate solution to the full synthesis formula.  We
-pass this candidate solution to {\sc verify}, which determines whether
-it does satisfy the specification on all inputs by checking
-satisfiability of the following verification formula:
+witness is a candidate solution to the full synthesis formula. 
+We pass this candidate solution to {\sc verify}, which 
+checks whether it is a full solution.
+%determines whether
+%it does satisfy the specification on all inputs by checking
+%satisfiability of the following verification formula:
 %
-$\exists \vec{x} . \lnot \sigma(\vec{x}, \vec{P})$
+%$\exists \vec{x} . \lnot \sigma(\vec{x}, \vec{P})$
+%If this formula is unsatisfiable, 
+%% the candidate solution is in fact a 
+%% full solution.
+If this is the case, then
+the algorithm terminates.
+Otherwise, additional information is provided to the {\sc synthesise}
+phase (e.g. a new counterexample that is added to the {\sc inputs} set)
+and the loop iterates again.
 
-If this formula is unsatisfiable, the candidate solution is in fact a
-solution to the synthesis formula and so the algorithm terminates.
-Otherwise, the witness $\vec{x}$ denote an input on which the
-candidate solution fails to meet the specification.  Thus, $\vec{x}$ is
-added to the {\sc inputs} set, and the loop iterates again.  It is
-worth noting that each iteration of the loop adds a new input to the
-finite set $\text{\sc inputs}$ being used for synthesis.  Given that
-the full set of inputs $\mathcal{D}$
-%\blue{[which by now should have a name, as suggested to be introduced above]} 
-is finite, this means that the refinement loop
-can only iterate a finite number of times.
+%% the witness $\vec{x}$ denote an input on which the
+%% candidate solution fails to meet the specification.  Thus, $\vec{x}$ is
+%% added to the {\sc inputs} set, and the loop iterates again.  
 
-\paragraph{Synthesis elements specific to control systems}
+%% It is
+%% worth noting that each iteration of the loop adds a new input to the
+%% finite set $\text{\sc inputs}$ being used for synthesis.  Given that
+%% the full set of inputs $\mathcal{D}$
+%% %\blue{[which by now should have a name, as suggested to be introduced above]} 
+%% is finite, this means that the refinement loop
+%% can only iterate a finite number of times.
 
+\subsection{Synthesis elements specific to control systems}
+
+\paragraph{Property specification}
 Next, we describe the specific property that we pass to the program
 synthesiser as the specification $\sigma$.  There are two different
 algorithms in DSVerifier that can be used for stability
@@ -1584,7 +1573,9 @@ Schur's decomposition and another one based on Jury's
 criteria~\cite{astrom1997computer}.  Here, we choose Jury's
 method~\cite{astrom1997computer}, due to its efficiency.
 
-We use this method to check the stability in the $z$-domain for the characteristic polynomial $S(z)$ defined in~\eqref{eq:internal_stab_lemma}.
+We use this method to check the stability in the $z$-domain for the
+characteristic polynomial $S(z)$ defined
+in~\eqref{eq:internal_stab_lemma}.
 
 % of the matrix $\left( \begin{array}{c} Y \\ U \end{array}\right)$, where $Y(z)$ is the closed-loop system output and U(z) is the controller output. 
 %% \red{[unclear: what matrix? We need to clarify the relationship
@@ -1669,12 +1660,69 @@ When mapping back to the notation used for describing the general architecture
 of the program synthesiser, the controller $(N_c,D_c)$ denotes $P$ and 
 $(\Delta N_G, \Delta D_G)$ represents $x$. 
 
-\red{[clear elucidation of the mapping between this and the domains used 
-in the general description of the synthesiser]}
+%% \red{[clear elucidation of the mapping between this and the domains used 
+%% in the general description of the synthesiser]}
 
-In the {\sc verify} phase, if the system is unstable for the current candidate solution,
-{\it i.e.}, if $\neg \phi_{stability}$ is satisfiable for $S(z)$, 
-then we obtain a counterexample denoted by 
+\paragraph{The {\sc Synthesise} and {\sc Verify} phases}
+The {\sc synthesise} phase uses a BMC-based verifier to 
+compute a solution ($N_c$,$D_C$). An important remark is that this 
+controller is synthesised in the $\mathbb{R}\langle I,F \rangle$
+domain.  
+\cdsay{integrate the following with Dario}
+Let $\tilde C(z)$ and $\tilde G(z)$ be the transfer functions represented
+using Fixed-Point bit vectors with integer size $I_b$ and fractional
+size $F_b$, whose domain is $\mathbb{R}\langle I_b,F_b \rangle \supseteq \mathbb{R}\langle I,F \rangle$.
+%
+\begin{align}
+\small
+\label{digital_controller_plant_tf}
+\tilde C(z)&=\frac{\tilde \beta_{0}+\tilde \beta_{1}z^{-1}+...+\tilde \beta_{M_C}z^{-M_C}}{\tilde \alpha_{0}+\tilde \alpha_{1}z^{-1}+...+\tilde \alpha_{N_C}z^{-N_C}}, \\
+%\label{plant_tf}
+\tilde G(z)&=\frac{\tilde b_{0}+\tilde b_{1}z^{-1}+...+\tilde b_{M_G}z^{-M_G}}{\tilde a_{0}+\tilde a_{1}z^{-1}+...+\tilde a_{N_G}z^{-N_G}}.
+\end{align}
+ 
+Since the controller is synthesized in the $\mathbb{R}\langle I,F \rangle$
+domain,
+%
+ $$\forall i \leq N_C, j \leq M_C\ \  \tilde \beta_{i} \equiv \beta_{i} \wedge \tilde \alpha_{j} \equiv \alpha_{j} \Leftrightarrow \tilde C(z) \equiv C(z)$$
+%
+However, given a real plant and real controller $\hat{G}(z), \hat{C}(z)$, and a discretizing function
+\begin{align}
+\small
+\label{FWL_tf}
+&f_b (x \in \mathbb{R}) \rightarrow \tilde x \in \mathbb{R}\langle I_b,F_b \rangle \triangleq \tilde x = x-(x\mod\tilde x)
+\end{align}
+we calculate $\tilde C(z)=f(\hat{C}(z))$ and $\tilde G(z)=f(\hat{G}(z))$
+\begin{align}
+\label{digital_controller_tf}
+\tilde C(z)&=\frac{(\hat{\beta}_{0}+\Delta_q \hat{\beta}_{0}) +...+(\hat{\beta}_{M_C}+\Delta_q \hat{\beta}_{M_C})z^{-M_C}}{(\hat{\alpha}_{0}+\Delta_q \hat{\alpha}_{0})+...+(\hat{\alpha}_{N_C}+\Delta_q \hat{\alpha}_{N_C})z^{-N_G}} \nonumber \\
+&= C(z) =\hat{C}(z) + \Delta{C}_b(z)\\
+\label{digital_plant_tf}
+\tilde G(z)&=\frac{(\hat{b}_{0}+\Delta_q \hat{b}_{0}) +...+(\hat{b}_{M_G}+\Delta_q \hat{b}_{M_G})z^{-M_G}}{(\hat{a}_{0}+\Delta_q \hat{a}_{0})+...+(\hat{a}_{N_G}+\Delta_q \hat{a}_{N_G})z^{-N_G}} \nonumber \\
+&=G(z)+\Delta{G}_P(z)+\Delta{G}_b(z).
+\end{align}
+where $\Delta_b\hat{c}_i=\hat{c}_i\mod \tilde{c}_i$
+and $\Delta{G}_b(z)$ represents the plant uncertainty caused by
+the rounding off effect.  We may encompass all the uncertainty as
+$\Delta{G}(z)=\Delta{G}_P(z)+\Delta{G}_b(z)$.  Since this value is
+nondeterministic, the set of possible polynomial coefficients of $\tilde G(z)$ is
+denoted by $\mathfrak{G}(z)$.
+
+Two approaches have been taken to synthesise a stable controller based on this model.
+The first uses interval arithmetic, representing the coefficients $[{c}_i-\Delta_p{c}_i-\Delta_b{c}_i\ ,\ {c}_i+\Delta_p{c}_i-\Delta_b{c}_i+(2^{-F_b})]$ 
+and rounding operations outwards during the process. This results in a tighter calculation of the error at the cost of performance.
+
+The second approach uses a nondeterministic plant selected from $\mathfrak{G}(z)$ where the expected error of the bit vector calculations is assumed to be within the expected bounds and verified after synthesis using the interval version of the program. The first verification phase produces a counterexample if some instance of $\mathfrak{G}(z)$ does not verify the properties and the CEGIS loop iteratively looks for a new controller that verifies the supplied counterexamples. The second phase verifies the propagation of the error in the fixed point calculations. If the second phase fails verification, we increase the precision of the analyser and feed the CEGIS loop again to find a sound solution. The resulting increase in speed of this approach over the former, which is of several orders of magnitude, vouches for the use of CEGIS in most of our benchmarks.
+\cdsay{end of integration}
+
+
+In the {\sc verify} phase, we have a two-step process. 
+First, in the {\sc Uncertainty} sub-phase, assuming the 
+current precision \param{I_b}{F_b},
+we check whether 
+the system is unstable for the current candidate solution,
+{\it i.e.}, if $\neg \phi_{stability}$ is satisfiable for $S(z)$.
+If this is the case, then we obtain a counterexample denoted by 
 values for each coefficients of $\Delta N_{G}(z)$ and $\Delta D_{G}(z)$, 
 %\red{[see my comment above - these quantities pop up too abruptly.]},
 which make the closed-loop system unstable. 
@@ -1684,7 +1732,17 @@ we obtain a candidate solution consisting
 of a controller $D_C$ and $N_C$, which makes the closed-loop 
 system stable for all the uncertainties accumulated in {\sc inputs}.
 
-\paragraph{Program synthesis for the running example}
+If the result of the {\sc Uncertainty} verification is that
+the system is stable for the current candidate solution,
+then we pass this solution to the {\sc Precision} verification sub-phase, 
+which checks the propagation of the error in the fixed-point 
+calculations. If this check returns $false$, then we 
+increase the precision of \param{I_b}{F_b} and re-start the {\sc synthesise} phase
+with an empty {\sc inputs} set.
+Otherwise, we found a full solution for our synthesis problem
+and we are done.
+
+\subsection{Program synthesis for the running example}
 We will illustrate our synthesis approach on the running example 
 in Sec.~\ref{sec:running-ex}.
 We start with the candidate solution given below at $I_b=16,F_b=24$,
@@ -1725,6 +1783,10 @@ $I_b=20,F_b=28$.
 %
 We stay in the {\sc verify} phase and receive a new counterexample at
 higher precision:
+\cdsay{Pascal, this sounds confusing. if you want to increase precision on-the-fly, i.e. 
+not going back to the synthesise phase, 
+then this illustration doesn't follow the general diagram in Fig.5. 
+We need to decide which direction we keep.}
 %
 $$
 \begin{array}{ll}
@@ -1781,29 +1843,51 @@ For the same cruise control system, the synthesis may be done considering that t
  \begin{tikzpicture}[scale=0.3,->,>=stealth',shorten >=.2pt,auto, semithick, initial text=, ampersand replacement=\&,]
   \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center
 },
-          row sep=1cm, column sep=1cm] {
-   \& \node[ellipse, fill=yellow!20] (done) {{\sc Done}}; \\
+          row sep=1cm, column sep=1.5cm] {
+   \coordinate (aux1);
+   \& \coordinate (aux2);
+   \&;\\
    \node[fill=yellow!20] (synth) {{\sc Synthesise}};
    \&
-   \node[fill=yellow!20] (verif) {{\sc Verify}}; \\
-
+   complexnode/.pic={ 
+     \node[rectangle,draw,dashed,
+	minimum width=7cm,
+	minimum height=.8cm,
+	label={\sc Verify},] (verif) {};
+   \node[fill=yellow!20] (verif1) at ([xshift=-2cm]verif.center) {{\sc ~Uncertainty~~~~}};
+   \node[fill=yellow!20] (verif2) at ([xshift=2cm]verif.center) {{\sc ~~~~~Precision~~~}};
+   } 
+   \& \node[ellipse, fill=yellow!20] (done) {{\sc Done}};\\
+   %% \node[fill=yellow!20] (verif) {{\sc ~~~~~~Uncertainty~~~~~~}};
+   %% \&
+   %% \node[fill=yellow!20] (verif2) {{\sc ~~~~~~Precision~~~~~~~}};\\
    \& \\
    \& \\
-   \node (gp) {~~~~~~~~~~~~~~Closed-loop System Search~~~~~~~~~~~~~~~};
+   \node (gp) {Closed-loop System Search};
    \&
-   \node (bmc) {~~~~~~~~~~~~~~~BMC-based Verifier~~~~~~~~~~~~~~~};
-   
+   complexnode/.pic={ 
+     \coordinate (aux);
+   \node (bmc) at ([xshift=-2cm]aux.center) {BMC-based Verifier};
+   \node (fp)  at ([xshift=2cm]aux.center) {Fixed-point \\Arithmetic Verifier};
+   }   
     \\
   };
 
    \path
-    ([yshift=2em]synth.east) edge node {Candidate solution} ([yshift=2em]verif.west)
-    ([yshift=-2em]verif.west) edge node {Counterexample} ([yshift=-2em]synth.east)
-    ([xshift=5em]verif.south) edge node {Candidate $P$} ([xshift=5em]bmc.north)
-    ([xshift=-5em]bmc.north) edge node[align=center]  {UNSAT/\\model} ([xshift=-5em]verif.south)
-    (verif) edge node {} (done)
+    ([yshift=2em]synth.east) edge node {Candidate solution} ([yshift=2em]verif1.west)
+    ([yshift=-2em]verif1.west) edge node {Counterexample} ([yshift=-2em]synth.east)
+    ([xshift=5em]verif1.south) edge node[align=center] {Candidate\\ $P$} ([xshift=5em]bmc.north)
+    ([xshift=5em]verif2.south) edge node[align=center] {Candidate\\ $P$} ([xshift=5em]fp.north)
+    ([xshift=-5em]bmc.north) edge node[align=center]  {UNSAT/\\model} ([xshift=-5em]verif1.south)
+    ([xshift=-5em]fp.north) edge node[align=center]  {True/\\False} ([xshift=-5em]verif2.south)
+    (verif2) edge node {} (done)
     ([xshift=5em]synth.south) edge node[align=center] {Inputs} ([xshift=5em]gp.north)
-    ([xshift=-5em]gp.north) edge node[align=center] {UNSAT/\\candidate} ([xshift=-5em]synth.south);
+    ([xshift=-5em]gp.north) edge node[align=center] {UNSAT/\\candidate} ([xshift=-5em]synth.south)
+    (aux1) edge (synth.north);
+   \path[-]
+   (verif2.north) edge node[align=center] {} ([xshift=6.7cm]aux2)
+   ([xshift=6.7cm]aux2) edge node[align=center] {Increase Precision} (aux1);
+
  \end{tikzpicture}
 }
  \caption{Counterexample-Guided Inductive Synthesis of Closed-loop System (CEGIS paradigm). \label{fig:CEGIS}}
@@ -1926,36 +2010,41 @@ the experimental evaluation of the present approach aims to answer two research 
 %---------------------------------
 \subsection{Results}
 \label{experimental-results}
+
+\textcolor{red}{How did you obtain the results from Table~\ref{tab:results}? 
+Can you provide the command-line? The reviewers should be able to reproduce our experiments.}
 We outline the runtimes required to synthesise a stable controller for each
-benchmark in Table~\ref{tab:results}. For most benchmarks the conjecture explained
-in section~\ref{fixedpoint_verification} holds and the inductive back-end is able
-to find a stable solution in less than one minute. This is possible if the inductive
-solutions need to be refined with few counterexamples and fixed point precision
-increases. However, some of our benchmarks did not meet these criteria. In these
-cases the interval arithmetic back-end was able to complement the inductive approach
-and synthesise a solution instead, albeit with significantly larger runtimes.
+benchmark in Table~\ref{tab:results}. \textcolor{red}{Which section do you refer??
+For most benchmarks the conjecture explained in section~\ref{fixedpoint_verification} 
+holds and the inductive back-end is able to find a stable solution in less than one minute}. 
+This is possible if the inductive solutions need to be refined with few counterexamples 
+and fixed point precision increases. However, some of our benchmarks did not meet these criteria. 
+\textcolor{red}{Which cases? Can you refer to Table~\ref{tab:results} In these cases, 
+the interval arithmetic back-end is able to complement the inductive approach
+and synthesise a solution instead, albeit with significantly larger runtimes}.
 
 \begin{figure}[H]
 \centering
-\begin{tabular}{l | r l r l}
-Benchmark              & Base     &         & Unc     & \\\cline{1-4}
-CruiseControl02        & 17\,s    &         & 46\,s   & \\
-SatelliteB2            & 7\,s     &         & 6601\,s & \tbmark\\
-SatelliteC2            & 369\,s   & \tbmark & 76\,s   & \tbmark\\
-SpringMassDamper       &          &         &         & 
+\begin{tabular}{l | r r l}
+Benchmark              & Base     & Unc     & \\\cline{1-4}
+CruiseControl02        & 17\,s    & 46\,s   & \\
+SatelliteB2            & 7\,s     & 6601\,s & \tbmark\\
+SatelliteC2            & 2\,s     & 76\,s   & \tbmark\\
+SpringMassDamper       & 28\,s    & \xmark  &
 \end{tabular}
 
 \vspace{0.5em}
-\scriptsize{* = solved with interval back-end}
+\scriptsize{* = solved with interval back-end, \xmark = uncontrollable}
 \vspace{0.5em}
 
 \caption{Experimental results. \label{tab:results}}
 \end{figure}
 %---------------------------------
 
+\textcolor{red}{Can you provide the synthesised controllers? Iury could then check the solution using the bode diagram.}
 We conclude from these results that the inductive back-end provides excellent performance
-for synthesising stable controllers in the majority of the benchmarks, and can be
-complemented using the interval arithmetic back-end where the inductive conjectures fail
+for synthesising stable controllers in the majority of the benchmarks \textcolor{red}{can you be more specific? which benchmarks?}, and can be
+complemented using the interval arithmetic back-end, where the inductive conjectures fail
 too frequently. Both back-ends enabled controller synthesis for all benchmarks within
 reasonable time frames.
 
