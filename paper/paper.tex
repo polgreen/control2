@@ -395,7 +395,7 @@ which will be represented by the following transfer function:
 \end{equation}
 \red{[same order?]} 
 
-The vector of parametric uncertainties  $\Delta{p}$ for $G(z)$ is defined by:
+The vector of parametric coefficient uncertainties $\Delta{p}$ of $\Delta{G}_p(z)$ is defined by:
 \begin{equation}
 \Delta{p}=\begin{bmatrix}
 \hat{b_{0}} - b_{0}\\
@@ -415,10 +415,7 @@ The vector of parametric uncertainties  $\Delta{p}$ for $G(z)$ is defined by:
 \end{bmatrix}
 \end{equation}
 
-\red{[where is this new variable used later?]}
-
-
-A typical hybrid system \red{[clarify the adjective ``hybrid'']} is shown in Figure~\ref{fig:sampledsystem}, where the DAC and ADC converters introduce quantisation noises $\nu_{1}(z)$ and $\nu_{2}(z)$, $G(s)$ is the continuous-time plant model with parametric additive uncertainty $\Delta G_{P}(s)$ 
+A typical hybrid system, with a continuous plant and a discrete controller, is shown in Figure~\ref{fig:sampledsystem}, where the DAC and ADC converters introduce quantisation noises $\nu_{1}(z)$ and $\nu_{2}(z)$, $G(s)$ is the continuous-time plant model with parametric additive uncertainty $\Delta G_{P}(s)$ 
 \red{[this Delta term now refers to the continuous plant? this is not what has been discussed before, nor what is in some of the plots.]} 
 , $R(z)$ is the reference signal, $U(z)$ is the control signal, and $\hat{Y}(z)$ is the output signal affected by the noises and uncertainties in the closed-loop system.
 
@@ -1667,7 +1664,9 @@ $(\Delta N_G, \Delta D_G)$ represents $x$.
 The {\sc synthesise} phase uses a BMC-based verifier to 
 compute a solution ($N_c$,$D_C$). An important remark is that this 
 controller is synthesised in the $\mathbb{R}\langle I,F \rangle$
-domain.  
+domain.
+A second remark is that the synthesis and verification engines use fixed/floating point arithmetic,
+therefore we also need to examine the effect of discretization during these operations.
 \cdsay{integrate the following with Dario}
 Let $\tilde C(z)$ and $\tilde G(z)$ be the transfer functions represented
 using Fixed-Point bit vectors with integer size $I_b$ and fractional
