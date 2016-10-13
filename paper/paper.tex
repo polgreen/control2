@@ -1972,7 +1972,7 @@ This candidate solution is validated as the final solution by both stages
 
 \begin{figure*}
 \centering
-\resizebox{.7\textwidth}{!}{
+\resizebox{.8\textwidth}{!}{
  \begin{tikzpicture}[scale=0.3,->,>=stealth',shorten >=.2pt,auto, semithick, initial text=, ampersand replacement=\&,]
   \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center
 },
@@ -1980,17 +1980,17 @@ This candidate solution is validated as the final solution by both stages
    \coordinate (aux1);
    \& \coordinate (aux2);
    \&;\\
-   \node[fill=yellow!20] (synth) {{\sc Synthesise}};
+   \node[fill=gray!20] (synth) {{\sc Synthesise}};
    \&
    complexnode/.pic={ 
      \node[rectangle,draw,dashed,
 	minimum width=7cm,
 	minimum height=.8cm,
 	label={\sc Verify},] (verif) {};
-   \node[fill=yellow!20] (verif1) at ([xshift=-2cm]verif.center) {{\sc ~Uncertainty~~~~}};
-   \node[fill=yellow!20] (verif2) at ([xshift=2cm]verif.center) {{\sc ~~~~~Precision~~~}};
+   \node[fill=gray!20] (verif1) at ([xshift=-2cm]verif.center) {{\sc ~Uncertainty~~~~}};
+   \node[fill=gray!20] (verif2) at ([xshift=2cm]verif.center) {{\sc ~~~~~Precision~~~}};
    } 
-   \& \node[ellipse, fill=yellow!20] (done) {{\sc Done}};\\
+   \& \node[ellipse, fill=gray!20] (done) {{\sc Done}};\\
    %% \node[fill=yellow!20] (verif) {{\sc ~~~~~~Uncertainty~~~~~~}};
    %% \&
    %% \node[fill=yellow!20] (verif2) {{\sc ~~~~~~Precision~~~~~~~}};\\
@@ -2007,7 +2007,7 @@ This candidate solution is validated as the final solution by both stages
   };
 
    \path
-    ([yshift=2em]synth.east) edge node {Candidate solution} ([yshift=2em]verif1.west)
+    ([yshift=2em]synth.east) edge node[xshift=-0.5em] {Candidate solution} ([yshift=2em]verif1.west)
     ([yshift=-2em]verif1.west) edge node {Counterexample} ([yshift=-2em]synth.east)
     ([xshift=5em]verif1.south) edge node[align=center] {Candidate\\ $P$} ([xshift=5em]bmc.north)
     ([xshift=5em]verif2.south) edge node[align=center] {Candidate\\ $P$} ([xshift=5em]fp.north)
