@@ -2171,10 +2171,10 @@ continuous plant model, \textit{Benchmark} is the name of the employed benchmark
 stable controller, respectively, while \textit{Time} represents the total time 
 (in seconds) to synthesise a stable controller for the given plant.
 
-For the majority of our benchmarks the conjecture explained
+For the majority of our benchmarks, the conjecture explained
 in section~\ref{synthesis-elements}  holds and the inductive back-end is able to find a stable
 solution in less than one minute.  This is possible if the inductive solutions need to be refined
-with few counterexamples and fixed-point precision increases. However, two benchmarks in our set
+with few counterexamples and fixed-point precision increases. However, $2$ benchmarks in our set
 required too many counterexamples to refine their solution (marked with $^*$ in Table~\ref{tab:results}). 
 In these cases, the interval arithmetic back-end is able to complement the inductive approach
 and synthesise a solution instead, albeit with significantly larger runtimes.  This performance
@@ -2182,7 +2182,7 @@ difference is due to  the fact that the interval back-end does not take advantag
 conjecture inherent to CEGIS, but instead fully explores the counterexample space.  The result is
 a performance difference of at least two orders of magnitude in our experiments, leading to the
 interval back-end timing out on the majority of our benchmarks.  Table~\ref{tab:results} only
-lists the faster of the two back-ends for each benchmark, which in 12 out of 14 cases is the inductive
+lists the faster of the two back-ends for each benchmark, which in $12$ out of $14$ cases is the inductive
 back-end.
 
 \begin{table}[H]
