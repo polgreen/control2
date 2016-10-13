@@ -323,16 +323,14 @@ In summary, this paper makes the following original contributions.
 %}
 
 %------------------------------------
-\subsection{Sampling and Holding in Hybrid Systems}
+\subsection{Sampling and Holding in Closed-loop Systems}
 \label{ssec:SandH}
 %------------------------------------
 
 The digital controllers synthesised in this paper are typically used in
 closed loops with continuous (and physical) plants.  Thus, the proposed
 approach has to consider dynamics of continuous parts of system ({\it e.g.},
-plant) and discrete parts ({\it e.g.}, digital controller), {\it i.e.} the
-synthesised controller has to consider the issues related to the hybrid
-systems studies.
+plant) and discrete parts ({\it e.g.}, digital controller).
 
 For this purpose, the design procedure is based on a discretised model for a
 continuous plant.  Considering only transfer function models, we are
@@ -369,7 +367,7 @@ which can be computed using the following formula:
 %
 \begin{equation}
 \label{eq:pulsetf}
-G(z,T) = (1-z^{-1})\mathcal{Z}\left\lbrace{\mathcal{L}^{-1}\left\lbrace{\frac{G(s)}{s}}\right\rbrace_{t=kT}}\right\rbrace.
+G(z,T) = \mathcal{ZOH}\left\lbrace{G(s)}\right\rbrace =(1-z^{-1})\mathcal{Z}\left\lbrace{\mathcal{L}^{-1}\left\lbrace{\frac{G(s)}{s}}\right\rbrace_{t=kT}}\right\rbrace.
 \end{equation}
 %
 For the sake of brevity, we will use the notation $G(z)$ to represent the
@@ -402,7 +400,7 @@ a plant model given as
 \label{controller_plant_tf}
 C(z)&=\frac{C_n(z)}{C_d{z}}=\frac{\beta_{0}+\beta_{1}z^{-1}+...+\beta_{M_C}z^{-M_C}}{\alpha_{0}+\alpha_{1}z^{-1}+...+\alpha_{N_C}z^{-N_C}}, \\
 %\label{plant_tf}
-G(z)&=\frac{G_n(z)}{G_d{z}}=\frac{b_{0}+b_{1}z^{-1}+...+b_{M_G}z^{-M_G}}{a_{0}+a_{1}z^{-1}+...+a_{N_G}z^{-N_G}}.
+G(z)&=\frac{G_n(z)}{G_d(z)}=\frac{b_{0}+b_{1}z^{-1}+...+b_{M_G}z^{-M_G}}{a_{0}+a_{1}z^{-1}+...+a_{N_G}z^{-N_G}}.
 \end{align}
 %
 \noindent where $\vec{\beta}$ and $\vec{\alpha}$ are vectors containing the
@@ -473,7 +471,7 @@ respective uncertainties.\\
 %\label{eq:uncertainty}
 %\end{equation}
 
-A typical hybrid system, with a continuous plant and a discrete controller,
+A typical digital control system system, with a continuous plant and a discrete controller,
 is shown in Figure~\ref{fig:sampledsystem}, where the DAC and ADC converters
 introduce quantisation noises $\nu_{1}(z)$ and $\nu_{2}(z)$, $G(s)$ is the
 continuous-time plant model with parametric additive uncertainty $\Delta_p
@@ -580,20 +578,20 @@ represented by $\Delta_p \vec{G}$
 %
 and the entire effect of $\nu_{1}$ and $\nu_{2}$ in the output $Y(z)$ is
 represented as an additive (output) measurement noise $\nu(z)$, thus
-$\hat{Y}(z)=Y(z)+\nu(z)$.  The measurement noise $\nu(k)$ is enough for
-represent both quantization noises ($\nu_{1}$ and $\nu_{2}$) what can be
-obtained reorganizing the equations~\ref{eq:outputfunctions}:
-%
-\begin{equation}
-\label{eq:outputfunctions2}
-\hat{Y}(z)=H_{1}R(z)+H_{1}\nu_{1}(z)+H_{2}(z)\nu_{2}(z),
-\end{equation}
-%
-where $H_{1}R(z)$ is exactly equal to $Y(z)$ without quantization noise effects, thus:
-%
-\begin{equation}
-\nu(z)=H_{1}\nu_{1}(z)+H_{2}(z)\nu_{2}(z).
-\end{equation}
+%$\hat{Y}(z)=Y(z)+\nu(z)$.  The measurement noise $\nu(k)$ is enough for
+%represent both quantization noises ($\nu_{1}$ and $\nu_{2}$) what can be
+%obtained reorganizing the equations~\ref{eq:outputfunctions}:
+%%
+%\begin{equation}
+%\label{eq:outputfunctions2}
+%\hat{Y}(z)=H_{1}R(z)+H_{1}\nu_{1}(z)+H_{2}(z)\nu_{2}(z),
+%\end{equation}
+%%
+%where $H_{1}R(z)$ is exactly equal to $Y(z)$ without quantization noise effects, thus:
+%%
+%\begin{equation}
+%\nu(z)=H_{1}\nu_{1}(z)+H_{2}(z)\nu_{2}(z).
+%\end{equation}
 
 %The system in equation~\ref{controller_plant_tf} (disregarding the $\Delta{G}_{P}(z)$ may be represented by the following difference equation model:
 %\begin{equation}
@@ -630,8 +628,6 @@ where $H_{1}R(z)$ is exactly equal to $Y(z)$ without quantization noise effects,
 %
 %\end{equation}
 
-This noise $\nu(z)$ may represent exactly the same effects that $\nu_{1}(z)$
-and $\nu_{2}(z)$ represents together.
 
 \begin{figure}[ht]
 \centering
