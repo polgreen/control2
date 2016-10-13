@@ -228,9 +228,16 @@ In summary, this paper makes the following original contributions.
 %
 \begin{itemize}
 
-\item TODO 1
+\item We exploit a CEGIS-based approach, that uses inductive synthesis
+in conjunction with a formal verification algorithm, for synthesising 
+correct-by-design robust digital controllers for non-fragile closed-loop 
+stability.
 
-\item TODO 2
+\item Experiments obtained with our synthesiser show that the combination 
+of interval arithmetic to represent the controller coefficients and a two-stage 
+verification approach to continuously refine precision, we are able to compute 
+a parametric sound solution for $14$ out of $15$ digital stabilizing controllers 
+given a set of continuous and discrete plant with parametric uncertainties.
 
 \end{itemize}
 
@@ -2490,9 +2497,9 @@ representation of the continuous dynamics.
 \section{Conclusions}
 
 We have presented a CEGIS-based approach that uses inductive synthesis in
-conjunction with a robust algorithm for verifying closed-loop stability to
-compute a parametric solution for a digital controller given a continuous
-(or discrete) plant specification.  This enables us to automatically
+conjunction with an algorithm for verifying robust closed-loop stability, 
+in order to compute a parametric solution for a digital controller given 
+a continuous (or discrete) plant specification.  This enables us to automatically
 synthesize correct-by-construction digital controllers for a given model of
 their physical environment.  Our approach addresses the effects of the
 quantisers (A/D and D/A converters) as time discretisation elements with
