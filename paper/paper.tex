@@ -1830,7 +1830,7 @@ In the first {\sc verify} stage, the {\sc uncertainty}
 check finds the following counterexample:
 
 $$
-\Delta{\vec{p}} = [0.026506~ 1.000610~ 1.002838]^T
+\tilde G(z) = \frac{0.026506}{1.000610z+1.002838}
 $$
 
 
@@ -1868,7 +1868,7 @@ precision:
 %\end{array}
 %$$
 $$
-\Delta{\vec{p}} = [0.026314~ 0.999024~ {-}1.004785]^T
+\tilde G(z) = \frac{0.026314}{0.999024z{-}1.004785}
 $$
 
 %\blue{[Nice, now I'm in the groove. Next unfolds well.] }
@@ -1890,50 +1890,31 @@ This candidate solution is validated as the final solution by both stages
 {\sc uncertainty} and {\sc precision} in the
 {\sc verify} phase. %, which fails to find a new counterexample (i.e. returns UNSAT).
 
-\blue{
-For the same cruise control system, the synthesis may be done considering that the plant model have parametric uncertainties ($\Delta G_{P}(z)$). Thus, the synthesised controller must to stabilize for any parametric variation $\Delta p$ inside of a given region. Specially, in this example, was assumed that each coefficient of $G(z)$ may vary $\pm 0.5\%$.
-}
+% \blue{
+% For the same cruise control system, the synthesis may be done considering that the plant model have parametric uncertainties ($\Delta G_{P}(z)$). Thus, the synthesised controller must to stabilize for any parametric variation $\Delta p$ inside of a given region. Specially, in this example, was assumed that each coefficient of $G(z)$ may vary $\pm 0.5\%$.
+% }
 
-\blue{Initially, the controller denominator and numerator  ($D_{C}(z)$ and $N_{C}(z)$) are started with zero coefficients, as in previous example. Thus,  in the first {\sc verify} phase a counterexample is presented, that is added to {\sc inputs}, whis is usede in the first  {\sc synthesise} phase. The resulting controller is:
-}
-$$
-{
-\blue{
-C(z)=\frac{0.77516z^2{+}-0.71497z{+}0.03729}{0.25024z^2{-}0.01799z{+}0.00097}
-}}
-$$
+% \blue{Initially, the controller denominator and numerator  ($D_{C}(z)$ and $N_{C}(z)$) are started with zero coefficients, as in previous example. Thus,  in the first {\sc verify} phase a counterexample is presented, that is added to {\sc inputs}, whis is usede in the first  {\sc synthesise} phase. The resulting controller is:
+% }
+% $$
+% {
+% \blue{
+% C(z)=\frac{0.77516z^2{+}-0.71497z{+}0.03729}{0.25024z^2{-}0.01799z{+}0.00097}
+% }}
+% $$
 
-\blue{In the second {\sc verify} phase, the controller failed to stabilize the system for all the range of uncertainties, another counterexample was provided, and the following candidate controller is presented in another {\sc synthesise} phase:}
-$$
-{
-\blue{
-C(z)=\frac{0.68970z^2{+}0.36538z{+}0.30637}{0.06862z^2{+}0.00394z{+}0.00802}
-}}
-$$
+% \blue{In the second {\sc verify} phase, the controller failed to stabilize the system for all the range of uncertainties, another counterexample was provided, and the following candidate controller is presented in another {\sc synthesise} phase:}
+% $$
+% {
+% \blue{
+% C(z)=\frac{0.68970z^2{+}0.36538z{+}0.30637}{0.06862z^2{+}0.00394z{+}0.00802}
+% }}
+% $$
 
-\blue{
-This candidate solution is validated as the final solution by the next 
-{\sc verify} phase.
-}
-
-% Counterexample from first cruisecontrol02.c benchmark with uncertainty and
-% nondeterminism:
-% 1) { (0.02634525299072265625, 0.9979267120361328125, -0.99768829345703125) }
-
-% 2) { (0.02644824981689453125, 1.00053310394287109375, -1.0014629364013671875) }
-
-% <a>
-% <item>7.515781402587890625</item>
-% <item>-4.385616302490234375</item>
-% <item>4.142093658447265625</item>
-% </a>
-% <a_size>3</a_size>
-% <b>
-% <item>-3.52398681640625</item>
-% <item>-1.530254364013671875</item>
-% <item>7.58094024658203125</item>
-% </b>
-% <b_size>3</b_size>
+% \blue{
+% This candidate solution is validated as the final solution by the next 
+% {\sc verify} phase.
+% }
 
 \begin{figure*}
 \centering
