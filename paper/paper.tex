@@ -2165,7 +2165,13 @@ the experimental evaluation of the present approach aims to answer two research 
 %---------------------------------
 
 We outline the runtimes required to synthesise a stable controller for each
-benchmark in Table~\ref{tab:results}. For the majority of our benchmarks the conjecture explained
+benchmark in Table~\ref{tab:results}. Here, \textit{Plant} is the discrete or 
+continuous plant model, \textit{Benchmark} is the name of the employed benchmark,
+\textit{I} and \textit{F} represent the number of integer and fractional bits of the 
+stable controller, respectively, while \textit{Time} represents the total time 
+(in seconds) to synthesise a stable controller for the given plant.
+
+For the majority of our benchmarks the conjecture explained
 in section~\ref{synthesis-elements}  holds and the inductive back-end is able to find a stable
 solution in less than one minute.  This is possible if the inductive solutions need to be refined
 with few counterexamples and fixed-point precision increases. However, two benchmarks in our set
