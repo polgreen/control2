@@ -890,14 +890,13 @@ We shall denote the FWL domain of coefficients as $\mathbb{R}\langle I,F
 %
 and assume that there exists a function
 $\mathit{FWL}_n[\cdot]:\mathcal{P}^{n}\rightarrow \mathcal{P}^{n}\langle I,F \rangle$,
-which applies the FWL effects to a polynomial, with an equivalent $\mathit{FWL}_{n,m}[\cdot]:\mathcal{P}^{n,m}\rightarrow \mathcal{P}^{n,m}\langle I,F \rangle$ that apllies the same effect to a ratio of polynomials, where
+which applies the FWL effects to a polynomial, with an equivalent $\mathit{FWL}_{n,m}[\cdot]:\mathcal{P}^{n,m}\rightarrow \mathcal{P}^{n,m}\langle I,F \rangle$ that applies the same effect to a ratio of polynomials, where
 $\mathcal{P}^{n}$ is the
 space of polynomials of $n$-th order, $\mathcal{P}^{n}\langle I,F
 \rangle$ is is the space of polynomials with coefficients in
 $\mathbb{R}\langle I,F \rangle$, and $\mathcal{P}^{n,m}$,  $\mathcal{P}^{n,m}\langle I,F
 \rangle$ are their rational equivalent.
 
-\red{[above you introduced a notation for poly ratios, which now you do not use?]}
 Thus, the perturbed controller model $\hat{C}(z)$ may be obtained from the
 original model $C(z)=\frac{C_{n}(z)}{C_{d}(z)}$ as follows:
 %
@@ -1025,34 +1024,33 @@ proposition states necessary conditions for BIBO stability of the closed-loop sy
 in Figure~\ref{fig:sampledsystem}, since the exogenous signals $R(z)$,
 $\nu_{1}$, and $\nu_{2}$ are bounded.
 
-\red{[it's not a lemma, since it is not later used to prove a theorem. state it as a proposition (theorem would be a bit of an over-statement)]}
-
-\begin{mylemma}{\cite{Bessa16,fadali}}
-\label{lemma:eq_int_stab} 
+\begin{myprop}{\cite{Bessa16,fadali}}
+\label{prop:eq_int_stab} 
 %
 A feedback closed-loop control system as given in Figure~\ref{fig:sampledsystem},
-with a FWL implementation of the digital controller $\hat{C}(z) =
-\frac{\mathit{FWL}[N_{C}(z)]}{\mathit{FWL}[D_{C}(z)]}$ and uncertain
-discrete model of the plant $\vec{\hat{G}}=\vec{G}+\Delta_p \vec{G}+\Delta_q
-\vec{G}$, namely \red{[utter confusion between transfer functions and coefficients - you're next taking the ratio between two vectors of coefficient, which magically now are also a function of the z variable! WTF!  \ldots]} $\hat{G}(z)=\frac{\hat{N}_{G}(z)}{\hat{D}_{G}(z)}$, is
+with a FWL implementation of the digital controller $\hat{C}(z) =\mathit{FWL}_{M_C,N_C}[C(z)]$ and uncertain
+discrete model of the plant 
+$$\hat{G}(z) =\frac{\hat{G}_n(z)}{\hat{G}_d(z)}: \vec{\hat{G}}=\vec{G}+\Delta_p \vec{G}+\Delta_q
+\vec{G} \text{(from  \ref{eq:coefficients},\ref{eq:delta_coefficients})}$$ ,  
+$\hat{G}(z)$, is
 BIBO-stable if and only if:
 %
 \begin{itemize}
 \item  the roots of characteristic polynomial $S(z)$ are inside the open unit circle, where $S(z)$ is:
 \begin{equation}
 \label{eq:internal_stab_lemma}
-S(z)=\mathit{FWL}[N_{C}(z)]\hat{N}_{G}(z)+\mathit{FWL}[D_{C}(z)]\hat{D}_{G}(z);
+S(z)=\mathit{FWL}_{M_C}[C_n(z)]\hat{G}_n(z)+\mathit{FWL}_{N_C}[C_d(z)]\hat{G}_d(z);
 \end{equation}
-\item the direct loop product $\frac{\mathit{FWL}[N_{C}(z)]}{\mathit{FWL}[D_{C}(z)]}\cdot \frac{\hat{N}_{G}(z)}{\hat{D}_{G}(z)}$ has no pole-zero cancellation on or outside the unit circle.
+\item the direct loop product $\mathit{FWL}_{M_C,N_C}[C(z)]\cdot G(z)$ has no pole-zero cancellation on or outside the unit circle.
 \end{itemize}
-\end{mylemma}
+\end{myprop}
 
-Lemma~\ref{lemma:eq_int_stab} \red{not a lemma} provides the necessary conditions for the digital controller to stabilize the closed loop system, 
+Proposition~\ref{prop:eq_int_stab} provides the necessary conditions for the digital controller to stabilize the closed loop system, 
 considering plant parametric uncertainties (i.e., $\Delta_p \vec{G}$),
 quantisation noises ($\nu_{1}$ and $\nu_{2}$) and FWL effects in the control
 software.  
 Notice that the model for plant uncertainty due to quantisation noise (i.e., $\Delta_q \vec{G}$) may be disregarded if the conditions on
-Lemma~\ref{lemma:eq_int_stab} \red{not a lemma} are satisfied and if the quantisation noise is
+Proposition~\ref{prop:eq_int_stab} are satisfied and if the quantisation noise is
 bounded.  The boundedness of the quantisation noise comes from Assumption~\ref{whitenoise}.
 
 %\red{[first: lemmae precede theorems. ]}
@@ -1106,7 +1104,7 @@ general architecture followed by describing the parts specific to
 closed-loop control systems.  A high-level view of the synthesis process is
 given in Figure~\ref{DSSynth_process}.  Steps $1$ to $3$ are performed by
 the user and Steps~A to D are automatically performed by our tool for
-Digital Systems Synthsis, named \tool.
+Digital Systems Synthesis, named \tool.
 %
 %, which accepts the
 %digital controller transfer functions together with the plant model.  For
@@ -1142,7 +1140,7 @@ Finally, \tool builds an intermediate ANSI-C code for the digital system
 implementation, which is used as input for the CEGIS engine (Step~D).
 
 This intermediate ANSI-C code model contains a specification $\phi$ for the
-property of interst (i.e., robust stability) and is passed to the
+property of interest (i.e., robust stability) and is passed to the
 Counterexample-Guided Inductive Synthesis (CEGIS) module of
 CBMC~\cite{ClarkeKL04}, where the controller is marked as the input variable
 to synthesise.  The properties specified in the ANSI-C code model can only
@@ -1896,10 +1894,10 @@ However, given a real plant $\hat{G}(z)$, and a discretising function
 \small
 \label{FWL_tf}
 &f_b : \mathbb{R} \rightarrow  \mathbb{R}\langle I_b,F_b \rangle \triangleq \tilde x = f_b(x) : \tilde x=x-(x\mod\tilde x)\\
-&FWL_b[P \in \mathcal{P}] = \tilde P \in \mathcal{P}^{n}\langle I_b,F_b \rangle : c_i \in \vec{P} \wedge \tilde c_i \in \tilde \vec{P}=f_b(c_i)  \nonumber
+&\mathit{FWL}_n^b[P \in \mathcal{P}] = \tilde P \in \mathcal{P}^{n}\langle I_b,F_b \rangle : c_i \in \vec{P} \wedge \tilde c_i \in \tilde \vec{P}=f_b(c_i)  \nonumber
 \end{align}
 %
-we calculate $\tilde G(z)=FWL_b(\hat{G}(z))$
+we calculate $\tilde G(z)=FWL_{M_G,N_G}^b(\hat{G}(z))$
 %
 \begin{align}
 % \label{digital_controller_tf}
@@ -1915,7 +1913,7 @@ the rounding off effect.  We may encompass all the uncertainty as
 $\Delta{\vec{G}}=\Delta_p{\vec{G}}+\Delta_b{\vec{G}}$. 
 Since the complexity of SAT solvers is worst-case exponential in the size of
 the problem instance, our algorithm tries to solve the problem first for a
-low $I_b$, $F_b$, iteratively increasing the precision if it is insuficient.
+low $I_b$, $F_b$, iteratively increasing the precision if it is insufficient.
 
 \paragraph{Our synthesis problem}
 The synthesis problem we are trying to solve is the following:
