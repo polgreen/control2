@@ -569,7 +569,7 @@ noises and uncertainties in the closed-loop system.
    \& \node[rectangle,draw,
 	minimum width=1cm,
 	minimum height=1cm,
-        label=\textbf{Plant}] (gs) {{\sc $G(s) + \Delta_p G_s$}};
+        label=\textbf{Plant}] (gs) {{\sc $\hat{G}(s)$}};
    \node[draw=none] (ud) at ([xshift=-2cm,yshift=.15cm]gs)  {$U(s)$};
    \node[draw=none] (y) at ([xshift=2cm,yshift=.15cm]gs)  {$Y(s)$};
    \& complexnode/.pic={ 
@@ -706,7 +706,7 @@ represented as an additive output noise~$\nu(z)$.
    \& \node[rectangle,draw,
 	minimum width=1cm,
 	minimum height=1cm,
-        label=\textbf{Plant}] (gs) {{\sc $G(z) + \Delta_p \vec{G}$}};
+        label=\textbf{Plant}] (gs) {{\sc $\hat{G}(z)$}};
    \node[draw=none] (y) at ([xshift=2cm,yshift=.15cm]gs)  {$Y(z)$};
 
    \& \node[circle,add={}{+}{+}{}] (circle2) {};
@@ -737,7 +737,8 @@ represented as an additive output noise~$\nu(z)$.
   \path[->]  (aux3.north) edge (circle.south);
  \end{tikzpicture}
 }
-\caption{System equivalent to the system in Figure~\ref{fig:sampledsystem} \red{please do not add a vector and a transfer function! what does that even mean?}\label{fig:digsystem1}}
+\caption{System equivalent to the system in Figure~\ref{fig:sampledsystem} 
+\label{fig:digsystem1}}
 \end{figure*}
 
 %
@@ -1897,7 +1898,7 @@ However, given a real plant $\hat{G}(z)$, and a discretising function
 \begin{align}
 \small
 \label{FWL_tf}
-&f_b (x \in \mathbb{R}) \rightarrow \tilde x \in \mathbb{R}\langle I_b,F_b \rangle \triangleq \tilde x = x-(x\mod\tilde x) \\
+&f_b : \mathbb{R} \rightarrow  \mathbb{R}\langle I_b,F_b \rangle \triangleq \tilde x = f_b(x) : \tilde x=x-(x\mod\tilde x)\\
 &FWL_b[P \in \mathcal{P}] = \tilde P \in \mathcal{P}^{n}\langle I_b,F_b \rangle : c_i \in \vec{P} \wedge \tilde c_i \in \tilde \vec{P}=f_b(c_i)  \nonumber
 \end{align}
 %
@@ -1914,9 +1915,8 @@ we calculate $\tilde G(z)=FWL_b(\hat{G}(z))$
 where $\Delta_b\hat{c}_i=\hat{c}_i\mod \tilde{c}_i$
 and $\Delta_b{G}$ represents the plant uncertainty caused by
 the rounding off effect.  We may encompass all the uncertainty as
-$\Delta{\vec{G}}=\Delta_p{\vec{G}}+\Delta_b{\vec{G}}$.  % Since this value is
-% nondeterministic, the set of possible polynomial coefficients of $\tilde G(z)$ is
-% denoted by $\mathfrak{G}(z)$.
+$\Delta{\vec{G}}=\Delta_p{\vec{G}}+\Delta_b{\vec{G}}$. 
+Since the complexity of SAT solvers is worst case exponential with respect to the number of clauses (which are directly proportional to the size of the bit-vectors), our algorithm tries to solve the problem first for a low $I_b, F_b$ iteratively increasing the precision if it is insuficient.
 
 \paragraph{Our synthesis problem}
 The synthesis problem we are trying to solve is the following:
