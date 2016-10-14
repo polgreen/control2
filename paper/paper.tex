@@ -188,7 +188,7 @@ fixed-point arithmetic and the word length used~\cite{Bessa16}.  This work
 exploits advances in bit-accurate verification of C programs to obtain a
 verifier for software-implemented digital control.
 
-By contrast, we leverage very recent step-change in the scalability of
+By contrast, we leverage a very recent step-change in the scalability of
 \emph{program synthesis}.  Program synthesis engines use a program
 specification as the starting point, and subsequently generate a sequence of
 candidate programs.  The candidate programs are iteratively refined to match
@@ -216,7 +216,7 @@ the plant exhibits continuous behavior whereas the controller operates in
 discrete time and over a quantized domain.  
 Inspired by a classical approach \cite{astrom1997computer}, 
 we translate the problem into a single digital domain.  
-Given our primary interest in stability despite digitization effects, we have modelled
+Given our primary interest in stability despite digitization effects, we have modeled
 a digital equivalent of the plant by evaluating the effects of the
 quantizers (A/D and D/A converters) as time discretization elements with
 quantization noise.  The resulting closed-loop system is a program loop that
@@ -237,13 +237,13 @@ In summary, this paper makes the following original contributions.
   specific to embedded control systems, such as the effects of quantizers and
   FWL. In particular, we have found that a two-stage verification engine
   that continuously refines the precision of the fixed-point
-  representation is key to the performance of our approach yielding,
+  representation of the plant is key to the performance of our approach yielding,
   in most cases, a speed-up of at least two orders of magnitude over a
   conventional one-stage verification engine.
 
 \item We provide experimental results showing that \tool
-is able to synthesize stable controllers for a set of intricate benchmarks 
-taken from the literature efficiently: the median runtime for our benchmark 
+is able to efficiently synthesize stable controllers for a set of intricate benchmarks 
+taken from the literature: the median runtime for our benchmark 
 set is $197$s, i.e., half of the controllers can be synthesized in less than 
 five minutes.
 
@@ -416,7 +416,7 @@ pulse transfer function.
 %
 \end{mylemma}
 
-Lemma~\ref{eq:pulsetf} ensures the poles and zeros matching under the 
+Lemma~\ref{eq:pulsetf} ensures that the poles and zeros match under the 
 $\mathcal{Z}\left\lbrace{\mathcal{L}^{-1}\left\lbrace{\cdot}\right\rbrace_{t=kT}}\right\rbrace$
 operations, 
 and it includes the ZOH dynamics in the $(1-z^{-1})$ term, 
@@ -745,7 +745,7 @@ represented as an additive output noise~$\nu(z)$.
 \end{figure}
 
 %
-In Figure~\ref{fig:digsystem1}, two sources of uncertainties are
+In Figure~\ref{fig:digsystem1}, two sources of uncertainty are
 illustrated: parametric uncertainties related to modeling errors, and
 uncertainties introduced by quantizations in sampling and holding process,
 i.e., ADC and DAC conversions.  Assuming linearity and independence between
@@ -920,7 +920,7 @@ using FWL, $\hat{C}(z) \equiv C(z)$.
 %------------------------------------
 
 Correct synthesis of the digital controller requires consideration of the
-effect of FWL in controller and quantization noises in the closed loop
+effect of FWL on the controller and quantization noises in the closed loop
 system.  Let the quantizer $Q1$ be the source of a white noise $\nu_{1}$ and
 $Q2$ be the source of a white noise $\nu_{2}$.  The following equation
 models the system in Figure~\ref{fig:sampledsystem}, encompassing the
