@@ -1152,11 +1152,12 @@ refinement process which is explained in detail in
 section~\ref{synthesiser-general}.  A~successful synthesis result is
 reported if CEGIS generates a controller that is safe with respect to~$\phi$. 
 In particular, the ANSI-C code model guarantees that a synthesised solution
-is complete and sound with respect to stability property~$\phi$, since it
+is complete and sound with respect to the stability property~$\phi$, since it
 does not depend on system inputs and outputs.  In the case of stability, the
 specification~$\phi$ consists in a number of assumptions on the polynomial
 coefficients, following Jury's Criteria, as well as the restrictions set in
-the representation of these coefficients.
+the representation of these coefficients as discussed in more detail in 
+Section~\ref{synthesis-elements}.
 
 % by the function $f$ (cf.~Eq.~\eqref{FWL_tf})
 %In Step A, DSVerifier constructs a non-deterministic model to represent the
@@ -1966,7 +1967,7 @@ using this verification engine has poor performance and we
 %Given the high computational cost of this
 %approach, 
 therefore designed a second approach, which we describe below.
-Our experimental results described in Sec.~\ref{sec:experiments}, 
+Our experimental results described in Section~\ref{sec:experiments}, 
 %try both approaches and provide the time for the fastest. 
 show that the speedup yielded by the second approach 
 is in most cases of several orders of magnitude.
