@@ -2014,8 +2014,8 @@ considered.  However, a discrete plant model can also demonstrate some
 benefits of the present approach, which considers FWL effects in the
 digital controller implementation.  In particular, a classical cruise
 control example is extracted from the literature~\cite{Astrom08},
-where the discrete plant model (with time step of $0.2$s) is
-represented by the following z-expression:
+where the discrete plant model (with a time step of $0.2$s) is
+represented by the following $z$-expression:
 %
 \begin{equation}
 \label{Eq:running-example-plant}
@@ -2024,35 +2024,36 @@ G\left(z\right) := \frac{0.0264}{z-0.9998}.
 
 Using an optimisation tool, the work in~\cite{DBLP:conf/hybrid/WangGRJF16}
 has designed a high-performance controller, which is characterised by the
-following z-domain transfer function:
+following $z$-domain transfer function:
 %
 \begin{equation}
 \label{Eq:running-example-controller}
 C\left(z\right) := \frac{2.72z^2 - 4.153z + 1.896}{z^2 - 1.844z + 0.8496}.
 \end{equation}
 %
-The authors claim that this controller $C(z)$ (Eq.~\eqref{Eq:running-example-plant}) 
-stabilizes the closed-loop system for the discrete plant model $G(z)$ (Eq.~\ref{Eq:running-example-controller}).  
-However, if implementation aspects are considered during verification ({\it e.g.}, fixed-point
-arithmetic and word-length), then this closed-loop system becomes unstable.
+The authors claim that this controller $C(z)$
+(Eq.~\eqref{Eq:running-example-plant}) stabilizes the closed-loop system for
+the discrete plant model $G(z)$ (Eq.~\ref{Eq:running-example-controller}). 
+However, if implementation aspects are considered during verification (e.g.,
+fixed-point arithmetic and word-length), then this closed-loop system
+becomes unstable.
 %
-Indeed, the actual implementation of $C(z)$ using \param{4}{16}
-implementation format ({\it i.e.}, $4$ bits for the integer part and $16$
-bits for the fractional part) can be represented by the following
-expression:
+For instance, an implementation of $C(z)$ using \param{4}{16} fixed-point
+numbers (i.e., $4$ bits for the integer part and $16$ bits for the
+fractional part) can be modeled as follows:
 %
 \begin{equation}
 \label{Eq:running-example-controller-quantised}
 C_{q}\left(z\right) {:=} \frac{2.719986z^2{-}4.153000z
-{+}1.895996}{z^2{-}1.843994z+0.849594},
+{+}1.895996}{z^2{-}1.843994z+0.849594} \;.
 \end{equation} 
 %
-which makes the system unstable in closed-loop using fixed-point arithmetic
-and the typical series loop configuration, where $C_{q}\left(z\right)$ and
-$G\left(z\right)$ are in the forward path.
+The resulting system using the typical series loop configuration, where
+$C_{q}\left(z\right)$ and $G\left(z\right)$ are in the forward path, is
+unstable.
 
+\subsection{Program synthesis for the example}
 
-\subsubsection{Program synthesis for the illustrative example}
 We will illustrate our synthesis approach on the running example
 described in the previous section. 
 %in Sec.~\ref{sec:running-ex}.
@@ -2060,8 +2061,9 @@ We start with the candidate solution with all coefficients zero
 given below at $I_b=16,F_b=24$.
 Note that the digital controller is designed with typical control system
 techniques \cite{Kuo:2002:ACS:579453,Ogata:1987:DCS:26170}.
+%
 %\red{[Be more explicit, write out spurious candidate solution with zero coefficients. KISS - you don't want to lose the control audience here.]}.
-
+%
 %$$
 %\begin{array}{ll}
 %N_C(z) {=} 0z^2{+}0z{+}0\\
@@ -2074,11 +2076,10 @@ $$
 
 In the first {\sc verify} stage, the {\sc uncertainty} 
 check finds the following counterexample:
-
+%
 $$
 \tilde G(z) = \frac{0.026506}{1.000610z+1.002838}
 $$
-
 
 %$$
 %\begin{array}{ll}
@@ -2087,21 +2088,26 @@ $$
 %\end{array}
 %$$
 
-We add this counterexample to {\sc inputs} and initiate the {\sc synthesise} phase, where we get the following candidate solution: 
+We add this counterexample to {\sc inputs} and initiate the {\sc synthesise}
+phase, where we get the following candidate solution:
+%
 %\red{[ How is the order of the candidate solution chosen here?]}
 $$
 C(z)=\frac{12.402664z^2{-}11.439667z{+}0.596756}{4.003906z^2{-}0.287949z{+}0.015625}
 $$
 
-This time the {\sc uncertainty} check doesn't find any more counterexamples 
-and we pass the current candidate solution to the {\sc precision} verification stage.
+This time, the {\sc uncertainty} check does not find any more
+counterexamples and we pass the current candidate solution to the {\sc
+precision} verification stage.
+%
 % In the second {\sc verify} phase, we check whether the current candidate
 % solution above is the final solution. It is not and the verifier signals
 % that it is due to lack of precision.
-We obtain the result $false$, meaning that the current precision is insufficient.
-Consequently, we increase our precision to $I_b=20,F_b=28$.
 %
-Since the previous counterexamples were attained at lower precision, we
+We obtain the result $\mathit{false}$, meaning that the current precision is
+insufficient.  Consequently, we increase our precision to $I_b=20$, $F_b=28$.
+%
+Since the previous counterexamples were obtained at lower precision, we
 remove them from the counterexample set.  Back in the {\sc synthesise}
 phase, we re-start the process with a candidate solution with all
 coefficients $0$.  Next, the {\sc uncertainty} verification stage provides
@@ -2117,10 +2123,9 @@ $$
 \tilde G(z) = \frac{0.026314}{0.999024z{-}1.004785}
 $$
 
-%\blue{[Nice, now I'm in the groove. Next unfolds well.] }
-In the next {\sc synthesise} phase, we get a new candidate solution that holds for
-the new, higher precision counterexample:
-
+In the next {\sc synthesise} phase, we get a new candidate solution that
+eliminates the new, higher precision counterexample:
+%
 $$
 C(z)=\frac{11.035202z^2{+}5.846100z{+}4.901855}{1.097901z^2{+}0.063110z{+}0.128357}
 $$
