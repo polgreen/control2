@@ -2371,13 +2371,12 @@ two research questions:
 %
 \begin{enumerate}
 
-\item RQ1 \textbf{(sanity check)} which results does our CEGIS approach to
-FWL controller synthesis obtain upon synthesising/verifying benchmarks that
-compose the specified suite?
-
-\item RQ2 \textbf{(performance)} does the CEGIS approach provide a feasible
+\item RQ1 \textbf{(performance)} does the CEGIS approach provide a feasible
 solution in reasonable time considering robust stability of FWL digital
 controllers?
+
+\item RQ2 \textbf{(sanity check)} are the synthesised controllers sound
+and can their stability be confirmed outside of our model?
 
 \end{enumerate}
 
@@ -2446,8 +2445,8 @@ benchmarks is the two-stage one.
 The median runtime for our benchmark set is $197$\,s, implying that \tool
 can synthesise half of the controllers in less than $5$ minutes.  Overall,
 the average synthesis time amounts to approximately $30$ minutes.  With
-respect to RQ2 we consider these times short enough to be of practical use
-to control engineers.  Regarding RQ1 we further conclude that the approach
+respect to RQ1 we consider these times short enough to be of practical use
+to control engineers.  We further conclude that the approach
 using a two-stage verification engine is able to synthesise stable
 controllers in $12$ out of the $15$ benchmarks, and can be complemented
 using the one-stage engine for $2$ additional benchmarks, where the
@@ -2456,6 +2455,8 @@ controller synthesis for $14$ out of $15$ benchmarks.  For the $1$ remaining
 benchmark our approach failed to synthesise a stable controller in the
 requested time limits.  This can be addressed by either increasing the fixed
 point word widths considered or using floating point arithmetic instead. 
+The synthesised controllers were confirmed to be stable outside of our
+model representation using MATLAB, positively answering RQ2.
 A~link to the full experimental environment, including scripts to reproduce
 the results, all benchmarks and the \tool tool, is provided in the
 footnote.\footnote{\url{https://drive.google.com/file/d/0ByIexo3Z5N91QkhrMi1rdkZFTWc/view}}
