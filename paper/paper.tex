@@ -375,24 +375,26 @@ plant. We briefly recall the standard foundations of this step.
 We only consider transfer function models, and require a $z$-domain
 transfer function $G(z)$ that captures all aspects of the continuous plant (with a
 Laplace domain transfer function $G(s)$) and the sampling and hold process.
-Note that $G(z)$ is a discrete model of a physical, continuous
-plant, i.e., the continuous model of the plant must be discretised to obtain
-the discrete equivalent coefficients via ZOH discretisation.
+%Note that $G(z)$ is a discrete model of a physical, continuous
+%plant, i.e., 
+The continuous model of the plant must be discretised to obtain the corresponding 
+%discrete equivalent 
+coefficients of $G(z)$.
+%via ZOH discretisation.
 
 %\red{[why do we discuss the ZOH at this point?]}
 
-Although there are several discretisation methods available in the
+Amongst the several discretisation methods available in the
 literature~\cite{Franklin15}, the zero-order hold (ZOH) discretisation is
-more suitable for representing the sample and hold processes that are
-typically employed in complex systems~\cite{istepanian2012digital}, i.e.,
-the ZOH discretisation models the exact effect of sampling and DAC
-interpolation over the plant.
+considered to be suitable for representing the sample and hold processes that are
+typically employed in complex systems~\cite{istepanian2012digital}. 
+The ZOH discretisation models the exact effect of sampling and DAC interpolation over the plant.
 
 \begin{myassumption}
 %
-The Sample and Hold of the ADC and the ZOH of the DAC are synchronised,
+The sample and hold effects of the ADC and the ZOH of the DAC are synchronised,
 i.e., there is no delay between sampling the plant output at ADC and
-updating the DAC accordingly.  The DAC interpolator is an ideal ZOH.
+updating the DAC accordingly.  The DAC interpolator is an ideal ZOH. 
 %
 \end{myassumption}
 
