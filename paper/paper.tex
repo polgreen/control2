@@ -1085,12 +1085,14 @@ assumption~\ref{whitenoise}.
 \label{verification-flow}
 %------------------------------------
 
-%\red{[The following description can be made shorter, crisper?]}
-
-The synthesis process is illustrated in Fig.~\ref{DSVerifier_process}. 
-A~detailed description of DSVerifier tool can be found
-in~\cite{IsmailBCFF15}.  Steps $1$ to $3$ are performed by the
-user/synthesiser and Steps~A to D are automatically performed by DSVerifier.
+In order to synthesise closed-loop digital control systems, we use a program
+synthesis engine.  Our program synthesiser implements Counter-Example Guided
+Inductive Synthesis (CEGIS)~\cite{sketch}.  We start by presenting its
+general architecture followed by describing the parts specific to
+closed-loop control systems.  A high-level view of the synthesis process is
+given in Fig.~\ref{DSSynth_process}.  Steps $1$ to $3$ are performed by
+the user and Steps~A to D are automatically performed by our tool for
+Digital Systems Synthsis, named DSSynth.
 %
 %, which accepts the
 %digital controller transfer functions together with the plant model.  For
@@ -1101,7 +1103,7 @@ user/synthesiser and Steps~A to D are automatically performed by DSVerifier.
 \centering
 \includegraphics[width=\textwidth]{figures/verification-flow.png}
 \vspace{1ex}
-\caption{Overview of the synthesis process\label{DSVerifier_process}}
+\caption{Overview of the synthesis process\label{DSSynth_process}}
 \end{figure*}
 
 %In Step $1$, the user provides inputs $G(z)$ and $\Delta{G}(z)$
@@ -1118,29 +1120,29 @@ user/synthesiser and Steps~A to D are automatically performed by DSVerifier.
 %be used as an input for DSVerifier.
 
 Given a model for a plant for which to synthesise a controller, provided in
-an ANSI-C code input file (Steps 1-3), DSVerifier constructs a
-non-deterministic model to represent the plant family (Step A), and
-formulates a function (step B) using implementation details provided from
-Step $2$ and $3$ to calculate the parameters of the controller to be
-synthesised (step C).  Finally DSVerifier builds an intermediate ANSI-C code
-for the digital system implementation, which is used as input for the
-controller synthesiser (Step D).
+an ANSI-C input file (Steps 1--3), DSSynth constructs a non-deterministic
+model to represent the plant family (Step~A), and formulates a function
+(step~B) using implementation details provided in Steps~$2$ and $3$ to
+calculate the parameters of the controller to be synthesised (Step~C). 
+Finally, DSSynth builds an intermediate ANSI-C code for the digital system
+implementation, which is used as input for the CEGIS engine (Step~D).
 
 This intermediate ANSI-C code model contains a specification $\phi$ for the
-verification properties ({\it i.e.}, robust stability) and is provided to
+property of interst (i.e., robust stability) and is passed to
 CBMC's~\cite{ClarkeKL04} integrated Counterexample-Guided Inductive
 Synthesis (CEGIS) module, where the controller is marked as input variable
 to synthesise.  The properties specified in the ANSI-C code model can only
-be satisfied if CEGIS synthesises controller coefficients satisfying $\phi$. 
-CEGIS employs an iterative, counterexample-guided refinement process which
-is explained in detail in section~\ref{synthesiser-general}.  A successful
-synthesis result is reported if CEGIS generates a controller which is safe
-with respect to $\phi$.  In particular, the ANSI-C code model guarantees
-that a synthesised solution is complete and sound with respect to stability
-property $\phi$, since it does not depend on system inputs and outputs.  In
-the case of stability, the specification $\phi$ consists in a number of
-assumptions on the polynomial coefficients, following Jury's Criteria, as
-well as the restrictions set in the representation of these coefficients.
+be satisfied if CEGIS synthesises controller coefficients that
+satisfy~$\phi$.  CEGIS employs an iterative, counterexample-guided
+refinement process which is explained in detail in
+section~\ref{synthesiser-general}.  A successful synthesis result is
+reported if CEGIS generates a controllerthat is safe with respect to~$\phi$. 
+In particular, the ANSI-C code model guarantees that a synthesised solution
+is complete and sound with respect to stability property~$\phi$, since it
+does not depend on system inputs and outputs.  In the case of stability, the
+specification~$\phi$ consists in a number of assumptions on the polynomial
+coefficients, following Jury's Criteria, as well as the restrictions set in
+the representation of these coefficients.
 
 % by the function $f$ (cf.~Eq.~\eqref{FWL_tf})
 %In Step A, DSVerifier constructs a non-deterministic model to represent the
@@ -1682,14 +1684,6 @@ well as the restrictions set in the representation of these coefficients.
 %\red{[TO BE COMPLETED.]}
 % We use CounterExample-Guided Inductive Synthesis (CEGIS), as
 % illustrated in Fig~\ref{fig:CEGIS}.
-
-In order to synthesise closed-loop digital control systems, we use a program
-synthesis engine.  Nowadays, such engines are used increasingly often in
-program verification~\cite{DBLP:conf/lpar/DavidKL15, DBLP:conf/cav/0001A14}. 
-Our program synthesiser makes use of Counter-Example Guided Inductive
-Synthesis (CEGIS) \cite{sketch}.  We start by presenting its general
-architecture followed by describing the parts specific to closed-loop
-control systems.
 
 %specialised it for stream refactoring.  
 % adding JST for stream refactoring
