@@ -1023,21 +1023,23 @@ and DAC.
 
 %\red{[Add remark on bound (q/2) for signal. We need a bounded signal to be able to leverage BIBO stability results. ]}
 
-A discrete-time linear system is said to be Bounded-Input and Bounded-Output
+It is known that a discrete-time linear system is said to be Bounded-Input and Bounded-Output
 (BIBO) stable if and only if every pole of its transfer function lies inside
-the unit circle.  Analyzing Eq.~\eqref{eq:outputfunctions}, the following
-lemma states necessary conditions for BIBO stability of the closed-loop system
+the unit circle \cite{Astrom08}.  Analyzing Eq.~\eqref{eq:outputfunctions}, the following
+proposition states necessary conditions for BIBO stability of the closed-loop system
 in Figure~\ref{fig:sampledsystem}, since the exogenous signals $R(z)$,
 $\nu_{1}$, and $\nu_{2}$ are bounded.
+
+\red{[it's not a lemma, since it is not later used to prove a theorem. state it as a proposition (theorem would be a bit of an over-statement)]}
 
 \begin{mylemma}{\cite{Bessa16,fadali}}
 \label{lemma:eq_int_stab} 
 %
-A feedback hybrid control system as given in Figure~\ref{fig:sampledsystem},
+A feedback closed-loop control system as given in Figure~\ref{fig:sampledsystem},
 with a FWL implementation of the digital controller $\hat{C}(z) =
 \frac{\mathit{FWL}[N_{C}(z)]}{\mathit{FWL}[D_{C}(z)]}$ and uncertain
 discrete model of the plant $\vec{\hat{G}}=\vec{G}+\Delta_p \vec{G}+\Delta_q
-\vec{G} \Rightarrow \hat{G}(z)=\frac{\hat{N}_{G}(z)}{\hat{D}_{G}(z)}$, is
+\vec{G}$, namely \red{[utter confusion between transfer functions and coefficients - you're next taking the ratio between two vectors of coefficient, which magically now are also a function of the z variable! WTF!  \ldots]} $\hat{G}(z)=\frac{\hat{N}_{G}(z)}{\hat{D}_{G}(z)}$, is
 BIBO-stable if and only if:
 %
 \begin{itemize}
@@ -2013,9 +2015,9 @@ interval arithmetic.
 % \cdsay{end of integration}
 
 If the {\sc precision} verification returns $\mathit{false}$, then we
-increase the precision of \param{I_b}{F_b} and re-start the {\sc synthesise}
-phase with an empty {\sc inputs} set.  Otherwise, we found a full solution
-for our synthesis problem and we are done.
+increase the precision of \param{I_b}{F_b} and re-start the {\sc
+  synthesise} phase with an empty {\sc inputs} set.  Otherwise, we
+found a full sound solution for our synthesis problem and we are done.
 
 In the rest of the paper, we will refer to the two approaches 
 for the {\sc verify} phase as one-stage and two-stage, respectively.
@@ -2044,9 +2046,9 @@ $z$-domain transfer function:
 C\left(z\right) := \frac{2.72z^2 - 4.153z + 1.896}{z^2 - 1.844z + 0.8496}.
 \end{equation}
 %
-The authors claim that this controller $C(z)$
-(Eq.~\eqref{Eq:running-example-controller}) stabilizes the closed-loop
-system for the discrete plant model $G(z)$
+The authors of~\cite{DBLP:conf/hybrid/WangGRJF16} claim that this controller
+$C(z)$ (Eq.~\eqref{Eq:running-example-controller}) stabilizes the
+closed-loop system for the discrete plant model $G(z)$
 (Eq.~\ref{Eq:running-example-plant}).  However, if the effects of finite
 precision arithmetic are considered during verification (e.g., fixed-point
 arithmetic and word-length), then this closed-loop system becomes unstable.
@@ -2067,13 +2069,11 @@ unstable.
 
 \subsection{Program synthesis for the example}
 
-We will illustrate our synthesis approach on the running example
-described in the previous section. 
-%in Sec.~\ref{sec:running-ex}.
-We start with the candidate solution with all coefficients zero 
-given below at $I_b=16,F_b=24$.
-Note that the digital controller is designed with typical control system
-techniques \cite{Kuo:2002:ACS:579453,Ogata:1987:DCS:26170}.
+We now demonstrate how our approach solves the synthesis problem for the
+example given in the previous section.  We start with the candidate solution
+with all coefficients zero, as given below, and a precision of $I_b=16$,
+$F_b=24$.  The digital controller is designed with standard techniques for
+control systems~\cite{Kuo:2002:ACS:579453, Ogata:1987:DCS:26170}.
 %
 %\red{[Be more explicit, write out spurious candidate solution with zero coefficients. KISS - you don't want to lose the control audience here.]}.
 %
@@ -2083,16 +2083,12 @@ techniques \cite{Kuo:2002:ACS:579453,Ogata:1987:DCS:26170}.
 %D_C(z) {=} 0z^2{+}0z{+}0\\
 %\end{array}
 %$$
-$$
-C(z)=\frac{0z^2{+}0z{+}0}{0z^2{+}0z{+}0}
-$$
+$$ C(z)=\frac{0z^2{+}0z{+}0}{0z^2{+}0z{+}0} $$
 
 In the first {\sc verify} stage, the {\sc uncertainty} 
 check finds the following counterexample:
 %
-$$
-\tilde G(z) = \frac{0.026506}{1.000610z+1.002838}
-$$
+$$ \tilde G(z) = \frac{0.026506}{1.000610z+1.002838} $$
 
 %$$
 %\begin{array}{ll}
@@ -2102,15 +2098,15 @@ $$
 %$$
 
 We add this counterexample to {\sc inputs} and initiate the {\sc synthesise}
-phase, where we get the following candidate solution:
+phase, where we obtain the following candidate solution:
 %
 %\red{[ How is the order of the candidate solution chosen here?]}
 $$
 C(z)=\frac{12.402664z^2{-}11.439667z{+}0.596756}{4.003906z^2{-}0.287949z{+}0.015625}
 $$
 
-This time, the {\sc uncertainty} check does not find any more
-counterexamples and we pass the current candidate solution to the {\sc
+This time, the {\sc uncertainty} check does not find any
+counterexample and we pass the current candidate solution to the {\sc
 precision} verification stage.
 %
 % In the second {\sc verify} phase, we check whether the current candidate
@@ -2121,7 +2117,7 @@ We obtain the result $\mathit{false}$, meaning that the current precision is
 insufficient.  Consequently, we increase our precision to $I_b=20$, $F_b=28$.
 %
 Since the previous counterexamples were obtained at lower precision, we
-remove them from the counterexample set.  Back in the {\sc synthesise}
+remove them from the set of counterexamples.  Back in the {\sc synthesise}
 phase, we re-start the process with a candidate solution with all
 coefficients $0$.  Next, the {\sc uncertainty} verification stage provides
 the first counterexample at higher precision:
@@ -2132,16 +2128,12 @@ the first counterexample at higher precision:
 %\Delta D_G(z) {=} 0.999024z{-}1.004785
 %\end{array}
 %$$
-$$
-\tilde G(z) = \frac{0.026314}{0.999024z{-}1.004785}
-$$
+$$ \tilde G(z) = \frac{0.026314}{0.999024z{-}1.004785} $$
 
 In the next {\sc synthesise} phase, we get a new candidate solution that
 eliminates the new, higher precision counterexample:
 %
-$$
-C(z)=\frac{11.035202z^2{+}5.846100z{+}4.901855}{1.097901z^2{+}0.063110z{+}0.128357}
-$$
+$$ C(z)=\frac{11.035202z^2{+}5.846100z{+}4.901855}{1.097901z^2{+}0.063110z{+}0.128357} $$
 %
 %$$
 %\begin{array}{ll}
@@ -2150,9 +2142,10 @@ $$
 %\end{array}
 %$$
 
-This candidate solution is validated as the final solution by both stages 
-{\sc uncertainty} and {\sc precision} in the
-{\sc verify} phase. %, which fails to find a new counterexample (i.e. returns UNSAT).
+This candidate solution is validated as the final solution by both stages
+{\sc uncertainty} and {\sc precision} in the {\sc verify} phase.
+
+%, which fails to find a new counterexample (i.e. returns UNSAT).
 
 % \blue{
 % For the same cruise control system, the synthesis may be done considering that the plant model have parametric uncertainties ($\Delta G_{P}(z)$). Thus, the synthesised controller must to stabilize for any parametric variation $\Delta p$ inside of a given region. Specially, in this example, was assumed that each coefficient of $G(z)$ may vary $\pm 0.5\%$.
