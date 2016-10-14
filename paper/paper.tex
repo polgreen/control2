@@ -737,7 +737,7 @@ represented as an additive output noise~$\nu(z)$.
   \path[->]  (aux3.north) edge (circle.south);
  \end{tikzpicture}
 }
-\caption{System equivalent to the system in Figure~\ref{fig:sampledsystem}\label{fig:digsystem1}}
+\caption{System equivalent to the system in Figure~\ref{fig:sampledsystem} \red{please do not add a vector and a transfer function! what does that even mean?}\label{fig:digsystem1}}
 \end{figure*}
 
 %
@@ -1049,15 +1049,13 @@ S(z)=\mathit{FWL}[N_{C}(z)]\hat{N}_{G}(z)+\mathit{FWL}[D_{C}(z)]\hat{D}_{G}(z);
 \end{itemize}
 \end{mylemma}
 
-Lemma~\ref{lemma:eq_int_stab} provides the necessary conditions for the
-ability of a digital controller to stabilize the closed loop system,
+Lemma~\ref{lemma:eq_int_stab} \red{not a lemma} provides the necessary conditions for the digital controller to stabilize the closed loop system, 
 considering plant parametric uncertainties (i.e., $\Delta_p \vec{G}$),
 quantisation noises ($\nu_{1}$ and $\nu_{2}$) and FWL effects in the control
-software.  Based on it, the model for plant uncertainty due quantisation
-noise (i.e., $\Delta_q \vec{G}$) may be disregarded if the conditions on
-Lemma~\ref{lemma:eq_int_stab} are satisfied and if the quantisation noise is
-bounded.  The boundedness of the quantisation noise is
-assumption~\ref{whitenoise}.
+software.  
+Notice that the model for plant uncertainty due to quantisation noise (i.e., $\Delta_q \vec{G}$) may be disregarded if the conditions on
+Lemma~\ref{lemma:eq_int_stab} \red{not a lemma} are satisfied and if the quantisation noise is
+bounded.  The boundedness of the quantisation noise comes from Assumption~\ref{whitenoise}.
 
 %\red{[first: lemmae precede theorems. ]}
 
@@ -2238,7 +2236,7 @@ related to the application of CEGIS to the standard closed-loop control
 system benchmarks described in Section~\ref{experimental-setup}.
 
 %---------------------------------
-\subsection{Description of Benchmarks}
+\subsection{Description of the Benchmarks}
 \label{experimental-setup}
 %---------------------------------
 
@@ -2401,7 +2399,7 @@ for the given plant.
 For the majority of our benchmarks, the conjecture explained in
 Section~\ref{synthesis-elements} holds and the two-stage verification 
 engine %inductive back-end 
-is able to find a stable solution in less than one minute.  This is possible if the
+is able to find a stable solution in less than five minutes.  This is possible if the
 inductive solutions need to be refined with few counterexamples and
 fixed-point precision increases.  However, two benchmarks in our set
 required too many counterexamples to refine their solution (marked with $^*$
@@ -2453,7 +2451,7 @@ the average synthesis time amounts to approximately $30$ minutes.  With
 respect to RQ2 we consider these times short enough to be of practical use
 to control engineers.  Regarding RQ1 we further conclude that the approach
 using a two-stage verification engine is able to synthesise stable
-controllers in the $12$ out of $15$ benchmarks, and can be complemented
+controllers in $12$ out of the $15$ benchmarks, and can be complemented
 using the one-stage engine for $2$ additional benchmarks, where the
 inductive conjectures fail.  Both verification engines together enabled
 controller synthesis for $14$ out of $15$ benchmarks.  For the $1$ remaining
@@ -2569,7 +2567,7 @@ addresses the challenges presented here in the form of FWL effects and
 stability measures for LTI SISO controllers.  We take the former
 from~\cite{DBLP:conf/lpar/DavidKL15} and the latter from~\cite{daes20161}
 whilst enhancing the procedure by evaluating the quantisation effects of
-the Hardware interfaces (ADC/DAC) to obtain an accurate discrete time FWL
+the Hardware interfaces (ADC/DAC) to obtain an accurate discrete-time FWL
 representation of the continuous dynamics.
  
 %In \cite{DBLP:journals/corr/PakmehrWJVF13}, Pakmehr et al.  design a control software verification framework for gas turbine engines.
