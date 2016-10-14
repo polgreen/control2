@@ -2358,33 +2358,33 @@ the experimental evaluation of the present approach aims to answer two research 
 \label{experimental-results}
 %---------------------------------
 
-We outline the runtimes required to synthesise a stable controller for each
+We give the runtimes required to synthesise a stable controller for each
 benchmark in Table~\ref{tab:results}.  Here, \textit{Plant} is the discrete
 or continuous plant model, \textit{Benchmark} is the name of the employed
 benchmark, \textit{I} and \textit{F} represent the number of integer and
 fractional bits of the stable controller, respectively, while \textit{Time}
-represents the total time (in seconds) to synthesise a stable controller for
-the given plant.
+is the total time (in seconds) required to synthesise a stable controller
+for the given plant.
 
 For the majority of our benchmarks, the conjecture explained in
 Section~\ref{synthesis-elements} holds and the two-stage verification 
 engine %inductive back-end 
 is able to find a stable solution in less than one minute.  This is possible if the
 inductive solutions need to be refined with few counterexamples and
-fixed-point precision increases.  However, $2$ benchmarks in our set
+fixed-point precision increases.  However, two benchmarks in our set
 required too many counterexamples to refine their solution (marked with $^*$
 in Table~\ref{tab:results}).  In these cases, the one-stage engine 
 %interval arithmetic back-end 
-is able to complement the two-stage approach and synthesise a
-solution instead, albeit with significantly larger runtimes.  This
-performance difference is due to the fact that the one-stage verification engine does
+is able to complement the two-stage approach and synthesise a solution
+instead, albeit with significantly larger runtimes.  This performance
+difference is due to the fact that the one-stage verification engine does
 not take advantage of the inductive conjecture inherent to CEGIS, but
 instead fully explores the counterexample space.  The result is a
 performance difference of at least two orders of magnitude in our
 experiments, leading to the one-stage engine timing out on the majority of
 our benchmarks.  Table~\ref{tab:results} only lists the faster of the two
-verification engines for each benchmark, which in $12$ out of $15$ benchmarks is the
-two-stage one.
+verification engines for each benchmark, which in $12$ out of $15$
+benchmarks is the two-stage one.
 
 \begin{table}[H]
 \centering
@@ -2417,20 +2417,20 @@ two-stage one.
 
 The median runtime for our benchmark set is $197$\,s, implying that half of
 the controllers can be synthesised in less than $5$ minutes using our
-present approach.  Overall the average synthesis time amounts to
+present approach.  Overall, the average synthesis time amounts to
 approximately $30$ minutes.  With respect to RQ2 we consider these times
 short enough to be of practical use to control engineers.  Regarding RQ1 we
-further conclude that the approach using a 
-two-stage verification engine is able to synthesise stable
-controllers in the $12$ out of $15$ benchmarks, and can be complemented
-using the one-stage engine for $2$ additional benchmarks, where
-the inductive conjectures fail.  Both verification engines together enabled controller
-synthesis for $14$ out of $15$ benchmarks.  For the $1$ remaining benchmark
-our approach failed to synthesise a stable controller in the requested time
-limits.  This can be addressed by either increasing the fixed point word
-widths considered or using floating point arithmetic instead.  A link to the
-full experimental environment, including scripts to reproduce the
-experiment, all benchmarks and the CEGIS tool is provided in the
+further conclude that the approach using a two-stage verification engine is
+able to synthesise stable controllers in the $12$ out of $15$ benchmarks,
+and can be complemented using the one-stage engine for $2$ additional
+benchmarks, where the inductive conjectures fail.  Both verification engines
+together enabled controller synthesis for $14$ out of $15$ benchmarks.  For
+the $1$ remaining benchmark our approach failed to synthesise a stable
+controller in the requested time limits.  This can be addressed by either
+increasing the fixed point word widths considered or using floating point
+arithmetic instead.  A link to the full experimental environment, including
+scripts to reproduce the experiment, all benchmarks and the CEGIS tool is
+provided in the
 footnote.\footnote{\url{https://drive.google.com/file/d/0ByIexo3Z5N91QkhrMi1rdkZFTWc/view}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -2468,12 +2468,12 @@ controller.
 Researchers in formal verification of control systems have studied various
 effects of discretising the dynamics, including delayed
 response~\cite{Duggirala2015}, and Finite Word Length (FWL) constraints with
-the goal to either verify ({\it e.g.}, \cite{daes20161}) or optimise ({\it
-e.g.},~\cite{oudjida2014design}) implementations.  There are in fact two
+the goal to either verify (e.g.~\cite{daes20161}) or optimise
+(e.g.~\cite{oudjida2014design}) implementations.  There are in fact two
 different problems arising from FWL effects.  The first corresponds to the
 error in the dynamics caused by the inability of the hardware to represent
 the exact dynamics of the system whilst the second relates to rounding
-errors during computation.  In \cite{fialho1994stability} a stability
+errors during computation.  In~\cite{fialho1994stability} a stability
 measure based on the error of the digital dynamics ensures that the FWL
 errors do not make the digital system unstable.  A more recent
 approach~\cite{DBLP:journals/automatica/WuLCC09} uses $\mu$ calculus to
@@ -2482,13 +2482,13 @@ stable by design.  Most studies following this verification research field
 focus on finding a correct implementation of a known desired controller,
 looking for optimal parameter representations using FWL, but ignoring the
 effects of rounding errors due to issues of mathematical tractability.  The
-analyses in~\cite{DBLP:conf/hybrid/WangGRJF16,DBLP:conf/hybrid/RouxJG15}
+analyses in~\cite{DBLP:conf/hybrid/WangGRJF16, DBLP:conf/hybrid/RouxJG15}
 rely on an invariant computation on the discrete system dynamics using
 Semi-Definite Programming (SDP).  Whilst the former uses BIBO properties to
 determine stability, the latter uses Lyapunov-based quadratic invariants. 
 In both cases, the SDP solver uses floating-point arithmetic and soundness
-is checked by upper bounding the error.  An alternative approach is taken by
-\cite{park2016scalable}, where the verification of existing code is
+is checked by upper bounding the error.  An alternative approach is taken
+by~\cite{park2016scalable}, where the verification of existing code is
 performed against a known model by extracting an LTI model of the code
 through symbolic execution.  In order to account for rounding errors, an
 upper bound is introduced in the verification phase.  If the error of the
@@ -2513,7 +2513,7 @@ specifications.  Whilst this approach directly overcomes the challenges
 presented by the FWL problem, it still requires error-prone user
 intervention.  A different solution that looks at the other end of the scale
 is an approach that synthesises word lengths for known problems as developed
-in \cite{jha2013swati}; however, this provides neither an optimal word
+in~\cite{jha2013swati}; however, this provides neither an optimal word
 synthesis nor a comprehensive solution for the problem.  It is from this
 vacuum that we seek to explore a CEGIS approach to FWL controller synthesis.
 
