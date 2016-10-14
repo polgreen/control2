@@ -742,7 +742,7 @@ represented as an additive output noise~$\nu(z)$.
   \path[->]  (aux3.north) edge (circle.south);
  \end{tikzpicture}
 }
-\caption{System equivalent to the system in Figure~\ref{fig:sampledsystem}\label{fig:digsystem1}}
+\caption{System equivalent to the system in Figure~\ref{fig:sampledsystem} \red{please do not add a vector and a transfer function! what does that even mean?}\label{fig:digsystem1}}
 \end{figure*}
 
 %
@@ -1054,15 +1054,13 @@ S(z)=\mathit{FWL}[N_{C}(z)]\hat{N}_{G}(z)+\mathit{FWL}[D_{C}(z)]\hat{D}_{G}(z);
 \end{itemize}
 \end{mylemma}
 
-Lemma~\ref{lemma:eq_int_stab} provides the necessary conditions for the
-ability of a digital controller to stabilize the closed loop system,
+Lemma~\ref{lemma:eq_int_stab} \red{not a lemma} provides the necessary conditions for the digital controller to stabilize the closed loop system, 
 considering plant parametric uncertainties (i.e., $\Delta_p \vec{G}$),
 quantisation noises ($\nu_{1}$ and $\nu_{2}$) and FWL effects in the control
-software.  Based on it, the model for plant uncertainty due quantisation
-noise (i.e., $\Delta_q \vec{G}$) may be disregarded if the conditions on
-Lemma~\ref{lemma:eq_int_stab} are satisfied and if the quantisation noise is
-bounded.  The boundedness of the quantisation noise is
-assumption~\ref{whitenoise}.
+software.  
+Notice that the model for plant uncertainty due to quantisation noise (i.e., $\Delta_q \vec{G}$) may be disregarded if the conditions on
+Lemma~\ref{lemma:eq_int_stab} \red{not a lemma} are satisfied and if the quantisation noise is
+bounded.  The boundedness of the quantisation noise comes from Assumption~\ref{whitenoise}.
 
 %\red{[first: lemmae precede theorems. ]}
 
