@@ -214,7 +214,9 @@ models with known configurations and perform parametric synthesis of stabilising
 Our work addresses particularly challenging aspects of the control synthesis
 problem.  We perform digital control synthesis over a hybrid model, where
 the plant exhibits continuous behaviour whereas the controller operates in 
-discrete time and over a quantised domain.  Our approach translates the problem into a single digital domain.  
+discrete time and over a quantised domain.  
+Inspired by a classical approach \cite{astrom1997computer}, 
+we translate the problem into a single digital domain.  
 Given our primary interest in stability despite digitisation effects, we have modelled
 a digital equivalent of the plant by evaluating the effects of the
 quantisers (A/D and D/A converters) as time discretisation elements with
@@ -364,10 +366,10 @@ literature in Section~\ref{sec:related}.
 %------------------------------------
 
 The digital controllers synthesised using the algorithm we present in this
-paper are typically used in closed loops with continuous (and physical)
+paper are typically used in closed loops with continuous (physical)
 plants.  Thus, the proposed approach has to consider dynamics of continuous
 parts of the system (i.e., the plant) and the discrete parts (i.e., the
-digital controller).  To obtain a joint model, we discretise the continuous
+digital controller).  To obtain a joint model, we fully discretise the continuous
 plant. We briefly recall the standard foundations of this step.
 
 We only consider transfer function models, and require a $z$-domain
@@ -1021,7 +1023,7 @@ $\nu_{1}$, and $\nu_{2}$ are bounded.
 \begin{mylemma}{\cite{Bessa16,fadali}}
 \label{lemma:eq_int_stab} 
 %
-A feedback hybrid control system as given in Fig.~\ref{fig:sampledsystem},
+A feedback hybrid control system as given in Figure~\ref{fig:sampledsystem},
 with a FWL implementation of the digital controller $\hat{C}(z) =
 \frac{\mathit{FWL}[N_{C}(z)]}{\mathit{FWL}[D_{C}(z)]}$ and uncertain
 discrete model of the plant $\vec{\hat{G}}=\vec{G}+\Delta_p \vec{G}+\Delta_q
@@ -1097,7 +1099,7 @@ synthesis engine.  Our program synthesiser implements Counter-Example Guided
 Inductive Synthesis (CEGIS)~\cite{sketch}.  We start by presenting its
 general architecture followed by describing the parts specific to
 closed-loop control systems.  A high-level view of the synthesis process is
-given in Fig.~\ref{DSSynth_process}.  Steps $1$ to $3$ are performed by
+given in Figure~\ref{DSSynth_process}.  Steps $1$ to $3$ are performed by
 the user and Steps~A to D are automatically performed by our tool for
 Digital Systems Synthsis, named DSSynth.
 %
@@ -1707,7 +1709,7 @@ $\vec{P}$ ranges over functions, $\vec{x}$ ranges over ground terms and
 $\sigma$ is a quantifier-free formula.  We interpret the ground terms over
 some finite domain $\mathcal{D}$.
 
-The design of our synthesiser is given in Fig.~\ref{fig:CEGIS} and consists
+The design of our synthesiser is given in Figure~\ref{fig:CEGIS} and consists
 of two phases, {\sc Synthesise} and {\sc Verify}, which interact via a
 finite set of test vectors {\sc inputs} that is updated incrementally. 
 Given the aforementioned specification $\sigma$, the {\sc synth} procedure
@@ -1734,7 +1736,7 @@ If this is the case, then the algorithm terminates.  Otherwise, additional
 information is provided to the {\sc synthesise} phase in the form of a new
 counterexample that is added to the {\sc inputs} set and the loop iterates
 again (note that, for now, we ignore the second feedback signal ``Increase
-Precision'' provided by the {\sc Verify} phase in Fig.~\ref{fig:CEGIS} as it
+Precision'' provided by the {\sc Verify} phase in Figure~\ref{fig:CEGIS} as it
 is specific to control synthesis and will be described in the next section).
 
 %% the witness $\vec{x}$ denote an input on which the
@@ -1964,13 +1966,13 @@ Our experimental results described in Sec.~\ref{sec:experiments},
 show that the speedup yielded by the second approach 
 is in most cases of several orders of magnitude.
 
-The second approach is illustrated in Fig.~\ref{fig:CEGIS} and uses a
+The second approach is illustrated in Figure~\ref{fig:CEGIS} and uses a
 two-stage verification: the first stage performs potentially unsound
 fixed-point operations assuming a precision \param{I_b}{F_b}, and the
 second stage restores soundness by validating these operations
 using interval arithmetic on the synthesised controller.
 
-In more detail, in the first stage, denoted by {\sc Uncertainty} in Fig.~\ref{fig:CEGIS}, 
+In more detail, in the first stage, denoted by {\sc Uncertainty} in Figure~\ref{fig:CEGIS}, 
 assuming a precision \param{I_b}{F_b} 
 we check whether the system is unstable for the current candidate solution,
 {\it i.e.}, if $\neg \phi_{stability}$ is satisfiable for $S(z)$.
