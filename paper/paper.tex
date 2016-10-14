@@ -2136,6 +2136,13 @@ $$ C(z)=\frac{11.035202z^2{+}5.846100z{+}4.901855}{1.097901z^2{+}0.063110z{+}0.1
 
 This candidate solution is validated as the final solution by both stages
 {\sc uncertainty} and {\sc precision} in the {\sc verify} phase.
+In particular, Figure~\ref{fig:bode} shows the Bode diagram of the illustrative example 
+using the digital controller represented by Eq.~\eqref{Eq:running-example-controller} from~\cite{DBLP:conf/hybrid/WangGRJF16} 
+(Fig.~\ref{fig:original}) and the final candidate solution from our synthesiser (Fig.~\ref{fig:cegiscontroller}). 
+The phase margin is negative as shown in Figure~\ref{fig:original}, which means that the controller 
+represented by Eq.~\eqref{Eq:running-example-controller} is unstable, considering FWL effects. 
+However, the final solution from \tool is stable since it presents an infinite phase margin 
+and a gain margin of $17.8 dB$.
 
 %, which fails to find a new counterexample (i.e. returns UNSAT).
 
@@ -2221,24 +2228,16 @@ This candidate solution is validated as the final solution by both stages
  \caption{Counterexample-Guided Inductive Synthesis of Closed-loop System (Step~D)
 \label{fig:CEGIS}}
 \end{figure*}
-
-In particular, Figure~\ref{fig:bode} shows the Bode diagram of the illustrative example 
-using the digital controller represented by Eq.~\eqref{Eq:running-example-controller} from~\cite{DBLP:conf/hybrid/WangGRJF16} 
-(Fig.~\ref{fig:original}) and the final candidate solution from our synthesiser (Fig.~\ref{fig:cegiscontroller}). 
-The phase margin is negative as shown in Figure~\ref{fig:original}, which means that the controller 
-represented by Eq.~\eqref{Eq:running-example-controller} is unstable, considering FWL effects. 
-However, the final solution from \tool is stable since it presents an infinite phase margin 
-and a gain margin of $17.8 dB$.
-
-\begin{figure}
+%
+\begin{figure}[H]
     \centering
-    \begin{subfigure}[b]{0.45\textwidth}
+    \begin{subfigure}[b]{0.4\textwidth}
         \includegraphics[width=\textwidth]{figures/runningexample_bd0.pdf}
         \caption{Original controller~\cite{DBLP:conf/hybrid/WangGRJF16}.}
         \label{fig:original}
     \end{subfigure}
     ~
-    \begin{subfigure}[b]{0.45\textwidth}
+    \begin{subfigure}[b]{0.4\textwidth}
         \includegraphics[width=\textwidth]{figures/runningexample_bd2.pdf}
         \caption{Controller synthesised by \tool.}
         \label{fig:cegiscontroller}
@@ -2254,7 +2253,7 @@ However, Figure~\ref{fig:step1} shows that the first candidate controller is abl
 the closed-loop system without uncertainties, but it is rejected during the {\sc precision} phase by 
 \tool since this solution is not considered to be sound. Finally, Figure~\ref{fig:step2} 
 shows a stable behavior for the final (sound) solution, which presents a lower settling time.
-
+%
 \begin{figure*}
     \centering
     \begin{subfigure}[b]{0.3\textwidth}
