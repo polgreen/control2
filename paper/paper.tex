@@ -309,7 +309,8 @@ Section~\ref{sec:synthesis}: we present our CEGIS-based algorithm for
 generating stable controllers for a given plant model.  Our experimental
 setup and experimental results are given in Section~\ref{sec:experiments},
 and we discuss how we extend the state-of-the-art beyond the existing
-literature in Section~\ref{sec:related}.
+literature in Section~\ref{sec:related}. We conclude and describe future
+work in Section~\ref{sec:conclusions}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Preliminaries}\label{sec:preliminaries}
@@ -2026,23 +2027,21 @@ for the {\sc verify} phase as one-stage and two-stage, respectively.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Illustrative Example} \label{sec:running-ex}
 
-In order to exploit the full potential of the present approach, a
-dynamical plant that can present physical components must be
-considered.  However, a discrete plant model can also demonstrate some
-benefits of the present approach, which considers FWL effects in the
-digital controller implementation.  In particular, a classical cruise
-control example is extracted from the literature~\cite{Astrom08},
-where the discrete plant model (with a time step of $0.2$s) is
-represented by the following $z$-expression:
+We will illustrate our approach with a classical cruise control example,
+extracted from the literature~\cite{Astrom08}.  The example will allow us to
+highlight the challenges that arise when using finite precision arithmetic
+in digital control.  We are given a discrete plant model (with a time step
+of $0.2$s), which is represented by the following $z$-expression:
 %
 \begin{equation}
 \label{Eq:running-example-plant}
 G\left(z\right) := \frac{0.0264}{z-0.9998}.
 \end{equation}
 
-Using an optimisation tool, the work in~\cite{DBLP:conf/hybrid/WangGRJF16}
-has designed a high-performance controller, which is characterised by the
-following $z$-domain transfer function:
+Using an optimisation tool, the authors
+of~\cite{DBLP:conf/hybrid/WangGRJF16} have designed a high-performance
+controller for this plant, which is characterised by the following
+$z$-domain transfer function:
 %
 \begin{equation}
 \label{Eq:running-example-controller}
@@ -2050,11 +2049,11 @@ C\left(z\right) := \frac{2.72z^2 - 4.153z + 1.896}{z^2 - 1.844z + 0.8496}.
 \end{equation}
 %
 The authors claim that this controller $C(z)$
-(Eq.~\eqref{Eq:running-example-plant}) stabilizes the closed-loop system for
-the discrete plant model $G(z)$ (Eq.~\ref{Eq:running-example-controller}). 
-However, if implementation aspects are considered during verification (e.g.,
-fixed-point arithmetic and word-length), then this closed-loop system
-becomes unstable.
+(Eq.~\eqref{Eq:running-example-controller}) stabilizes the closed-loop
+system for the discrete plant model $G(z)$
+(Eq.~\ref{Eq:running-example-plant}).  However, if the effects of finite
+precision arithmetic are considered during verification (e.g., fixed-point
+arithmetic and word-length), then this closed-loop system becomes unstable.
 %
 For instance, an implementation of $C(z)$ using \param{4}{16} fixed-point
 numbers (i.e., $4$ bits for the integer part and $16$ bits for the
@@ -2590,7 +2589,7 @@ representation of the continuous dynamics.
 %In \cite{DBLP:journals/corr/PakmehrWJVF13}, Pakmehr et al.  design a control software verification framework for gas turbine engines.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Conclusions}
+\section{Conclusions} \label{sec:conclusions}
 
 We have presented a CEGIS-based approach that uses inductive synthesis in
 conjunction with an algorithm for verifying robust closed-loop stability, 
