@@ -458,7 +458,7 @@ plant's coefficients; and $N_{(\cdot)}$ and $M_{(\cdot)}$ denote the number
 of poles and zeros for the corresponding block.
 
 Uncertainties in $G(z)$ may appear due to uncertainties in $G(s)$
-(\emph{i.e.} $\Delta_p{G}_n(s),\Delta_p{G}_d(s)$ \red{, as defined later}), errors in the numeric
+(\emph{i.e.} $\Delta_p{G}_n(s),\Delta_p{G}_d(s)$ \red{, as defined later?}), errors in the numeric
 calculations, or roundoffs in the quantisation.  These uncertainties \red{may be [can be?, are?]} 
 parametrically expressed by additive terms, resulting in a uncertain model
 $\hat{G}(z)$, such that:
@@ -489,15 +489,17 @@ For a vector of coefficients
 \label{eq:coefficients}
 \end{equation}
 %
-with uncertainty
+and an uncertainty vector 
 %
 \begin{equation}
 \Delta{\vec{P}}=[\Delta{n}_{0}\ \Delta{n}_{1}\ \hdots \ \Delta{n}_{M}\ \Delta{d}_{0}\ \Delta{d}_{1}\ \hdots\ \Delta{d}_{N}\ ]^T \; 
 \end{equation}
 %
-we have $\vec{\hat{G}}=\vec{G}+\Delta{\vec{G}}$ \red{[uh, now the TF are vectors - confusing]}.  
+we write $\vec{\hat{G}}=\vec{G}+\Delta{\vec{G}}$.   
 In the following we will either represent the functions $G(z)$, $C(z)$, 
-or work over their respective coefficients in vector form.   
+or work over their respective coefficients $\vec{G}, \vec{C}$ in vector form.   
+
+\red{[I've tried to clean the notations above. BUT: you cannot later add a transfer function with a vector of coefficients! Heresy!]}
 
 %\begin{equation}
 %\Delta{\vec{p}}=\begin{bmatrix}
@@ -521,9 +523,9 @@ or work over their respective coefficients in vector form.
 
 A typical digital control system system with continuous plant and discrete
 controller is illustrated in Figure~\ref{fig:sampledsystem}.  The DAC and
-ADC converters introduce quantisation noises $\nu_{1}(z)$ and $\nu_{2}(z)$,
+ADC converters introduce quantisation noises $\nu_{1}(z)$ and $\nu_{2}(z)$ \red{[this is an assumption and as such must be stated.]},
 $G(s)$ is the continuous-time plant model with parametric additive
-uncertainty $\Delta_p \vec{G}_s$, $R(z)$ is the reference signal, $U(z)$ is
+uncertainty $\Delta_p \vec{G}_s$ \red{[above you used n, d subscripts, here s?]}, $R(z)$ is the reference signal, $U(z)$ is
 the control signal, and $\hat{Y}(z)$ is the output signal affected by the
 noises and uncertainties in the closed-loop system.
 
