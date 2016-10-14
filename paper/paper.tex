@@ -2285,7 +2285,7 @@ disturbance torques, is given by
 %
 \begin{equation}
 \label{eq:satelliteode}
-I\cdot \ddot{\theta} = \tau_{C},
+I\cdot \ddot{\theta} = \tau_{C}, 
 \end{equation}
 
 \noindent where $I$ is the inertia moment of satellite about its mass
@@ -2303,7 +2303,7 @@ G_{3}(s)=\frac{\theta(s)}{u(s)}=\frac{1}{s^2},
 the following $z$-domain model is obtained
 %
 \begin{equation}
-G_{3}(z)= \frac{T^{2}}{2} \frac{z+1}{(z+1)^{2}}.
+G_{3}(z)= \frac{T^{2}}{2} \frac{z+1}{(z+1)^{2}}. \nonumber
 \end{equation}
 
 %The discrete controllers $C_{4}$ and $C_{5}$ for the satellite plant $G_{3}$, discretized with sample time $1s$ and $2s$ respectively, 
@@ -2330,7 +2330,25 @@ G_{4}(s)=\frac{s-1}{s^{2}-s-2}
 %
 \noindent where $G_{4}(z)$ is obtained using the ZOH discretisation defined 
 in Eq.~\eqref{eq:pulsetf} with $3$ different sample times ($0.1$, $0.05$, and $0.03$ 
-seconds).
+seconds) respectively, as follows
+%
+\begin{equation}
+\label{exampleA-sampletime1}
+G_{4a}(s)=\frac{0.100342181002722z - 0.110876810062963}{1.0z^{2} - 2.12624017619613z + 1.10517091807565}, \nonumber
+\end{equation}
+%
+%
+\begin{equation}
+\label{exampleA-sampletime2}
+G_{4b}(s)=\frac{0.0500422033454653z - 0.0526068264456340}{1.0^{2} - 2.05640034257636z + 1.05127109637602}, \nonumber
+\end{equation}
+%
+%
+\begin{equation}
+\label{exampleA-sampletime3}
+G_{4c}(s)=\frac{0.0300090687252212z - 0.0309228417953966}{1.0^{2} - 2.03228208009387z + 1.03045453395352}. \nonumber
+\end{equation}
+
 
 All experiments were conducted on a 12-core 2.40\,GHz Intel Xeon E5-2440 with 96\,GB
 of RAM, and Linux OS.  All times given are wall clock time in seconds as measured
@@ -2389,22 +2407,22 @@ two-stage one.
 \begin{table}[H]
 \centering
 \begin{tabular}{c | c | l | r r | r l}
-\# & Plant & Benchmark                  & $I$ & $F$ & Time    & \\\cline{1-6}
-1  & $G_1$ & CruiseControl02            &   4 &  16 & 17\,s   & \\
-2  & $G_1$ & CruiseControl02$^\dagger$  &   4 &  16 & 46\,s   & \\
-3  & $G_2$ & SpringMassDamper           &  15 &  16 & 28\,s   & \\
-4  & $G_2$ & SpringMassDamper$^\dagger$ &  15 &  16 & \xmark  & \\
-5  & $G_3$ & SatelliteB2                &   3 &   7 & 7\,s    & \\
-6  & $G_3$ & SatelliteB2$^\dagger$      &   3 &   7 & 6601\,s & \tbmark\\
-7  & $G_3$ & SatelliteC2                &   3 &   5 & 2\,s    & \\
-8  & $G_3$ & SatelliteC2$^\dagger$      &   3 &   5 & 76\,s   & \tbmark\\
-9  & $G_4$ & a\_ST1\_IMPL1              &  16 &   4 & 2704\,s & \\
-10 & $G_4$ & a\_ST1\_IMPL2              &  16 &   8 & 538\,s  & \\
-11 & $G_4$ & a\_ST1\_IMPL3              &  16 &  12 & 12\,s   & \\
-12 & $G_4$ & a\_ST2\_IMPL1              &  16 &   4 & 318\,s  & \\
-13 & $G_4$ & a\_ST2\_IMPL2              &  16 &   8 & 967\,s  & \\
-14 & $G_4$ & a\_ST2\_IMPL3              &  16 &  12 & 9798\,s & \\
-15 & $G_4$ & a\_ST3\_IMPL1              &  16 &   4 & 6304\,s & \\
+\# & Plant  & Benchmark                  & $I$ & $F$ & Time    & \\\cline{1-6}
+1  & $G_1$  & CruiseControl02            &   4 &  16 & 17\,s   & \\
+2  & $G_1$  & CruiseControl02$^\dagger$  &   4 &  16 & 46\,s   & \\
+3  & $G_2$  & SpringMassDamper           &  15 &  16 & 28\,s   & \\
+4  & $G_2$  & SpringMassDamper$^\dagger$ &  15 &  16 & \xmark  & \\
+5  & $G_3$  & SatelliteB2                &   3 &   7 & 7\,s    & \\
+6  & $G_3$  & SatelliteB2$^\dagger$      &   3 &   7 & 6601\,s & \tbmark\\
+7  & $G_3$  & SatelliteC2                &   3 &   5 & 2\,s    & \\
+8  & $G_3$  & SatelliteC2$^\dagger$      &   3 &   5 & 76\,s   & \tbmark\\
+9  & $G_4a$ & a\_ST1\_IMPL1              &  16 &   4 & 2704\,s & \\
+10 & $G_4a$ & a\_ST1\_IMPL2              &  16 &   8 & 538\,s  & \\
+11 & $G_4a$ & a\_ST1\_IMPL3              &  16 &  12 & 12\,s   & \\
+12 & $G_4b$ & a\_ST2\_IMPL1              &  16 &   4 & 318\,s  & \\
+13 & $G_4b$ & a\_ST2\_IMPL2              &  16 &   8 & 967\,s  & \\
+14 & $G_4b$ & a\_ST2\_IMPL3              &  16 &  12 & 9798\,s & \\
+15 & $G_4c$ & a\_ST3\_IMPL1              &  16 &   4 & 6304\,s & \\
 \end{tabular}
 
 \vspace{0.5em}
