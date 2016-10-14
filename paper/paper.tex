@@ -301,8 +301,17 @@ minutes.
 % \caption{Closed-Loop System. \label{fig:closed-system}}
 %\end{figure}
 
+We cover preliminaries on plant discretisation, the verification of
+closed-loop control systems, and stability in
+Section~\ref{sec:preliminaries}.  Our core contribution is in
+Section~\ref{sec:synthesis}: we present our CEGIS-based algorithm for
+generating stable controllers for a given plant model.  Our experimental
+setup and experimental results are given in Section~\ref{sec:experiments},
+and we discuss how we extend the state-of-the-art beyond the existing
+literature in Section~\ref{sec:related}.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Preliminaries}
+\section{Preliminaries}\label{sec:preliminaries}
 
 %\blue{Please insert a figure clearly distinguishing between continuous and discretised/quantised plant - a template is in a picture sent out by Lucas late last week. Please introduced signals on the plot. 
 
@@ -480,7 +489,6 @@ with uncertainty
 %
 \begin{equation}
 \Delta{\vec{P}}=[\Delta{n}_{0}\ \Delta{n}_{1}\ \hdots \ \Delta{n}_{M}\ \Delta{d}_{0}\ \Delta{d}_{1}\ \hdots\ \Delta{d}_{N}\ ]^T \;.
-\label{eq:coefficients}
 \end{equation}
 %
 Then $\vec{\hat{G}}=\vec{G}+\Delta{\vec{G}}$.  In the following we may use
@@ -1016,7 +1024,7 @@ $\nu_{1}$, and $\nu_{2}$ are bounded.
 \begin{mylemma}{\cite{Bessa16,fadali}}
 \label{lemma:eq_int_stab} 
 %
-A feedback hybrid control system as shown in Fig.~\ref{fig:sampledsystem},
+A feedback hybrid control system as given in Fig.~\ref{fig:sampledsystem},
 with a FWL implementation of the digital controller $\hat{C}(z) =
 \frac{\mathit{FWL}[N_{C}(z)]}{\mathit{FWL}[D_{C}(z)]}$ and uncertain
 discrete model of the plant $\vec{\hat{G}}=\vec{G}+\Delta_p \vec{G}+\Delta_q
@@ -1079,7 +1087,8 @@ assumption~\ref{whitenoise}.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Automated Program Synthesis \\ for Digital Control}
+\section{Automated Program Synthesis \\ for Digital
+Control}\label{sec:synthesis}
 
 %------------------------------------
 \subsection{Overview of the Synthesis Process}
@@ -2220,8 +2229,9 @@ This candidate solution is validated as the final solution by both stages
  \caption{Counterexample-Guided Inductive Synthesis of Closed-loop System (Step~D)
 \label{fig:CEGIS}}
 \end{figure*}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Experimental Evaluation} \label{sec:experiments}
+\section{Experimental Evaluation}\label{sec:experiments}
 
 This section is split into three parts. Section~\ref{experimental-setup}
 discusses the experimental setup and the employed benchmarks, while
@@ -2453,7 +2463,7 @@ provided in the
 footnote.\footnote{\url{https://drive.google.com/file/d/0ByIexo3Z5N91QkhrMi1rdkZFTWc/view}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Related Work}
+\section{Related Work}\label{sec:related}
 
 \paragraph{Robust synthesis of Linear Systems} 
 
