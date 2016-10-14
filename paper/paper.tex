@@ -1770,7 +1770,7 @@ method~\cite{astrom1997computer}, due to its efficiency.
 We use this method to check the stability in the $z$-domain for the
 characteristic polynomial $S(z)$ defined
 in~\eqref{eq:internal_stab_lemma}.
-
+%
 % of the matrix $\left( \begin{array}{c} Y \\ U \end{array}\right)$, where $Y(z)$ is the closed-loop system output and U(z) is the controller output. 
 %% \red{[unclear: what matrix? We need to clarify the relationship
 %% between the char. poly. $S(z)$ and the later quantities $\Delta
@@ -1827,18 +1827,22 @@ $$
 where $k \in \mathbb{Z}$, such that $0 < k < N - 2$. 
 $S(z)$ is the
 characteristic polynomial of a stable system if and only if the following four conditions hold:
-\begin{itemize}
-\item $R_1: S(1) > 0$;
-\item $R_2: (−1)^N S(−1) > 0$;
-\item $R_3: |a_0| < a_N$;
-\item $R_4: m_{11} > 0 \wedge m_{31}>0 \wedge m_{51}>0 \wedge \cdots \wedge m_{(2N{-}3)(1)}>0$.
-\end{itemize}
+%\begin{itemize}
+%\item 
+$R_1: S(1) > 0$;
+%\item 
+$R_2: (−1)^N S(−1) > 0$;
+%\item 
+$R_3: |a_0| < a_N$;
+%\item 
+$R_4: m_{11} > 0 \wedge m_{31}>0 \wedge m_{51}>0 \wedge \cdots \wedge m_{(2N{-}3)(1)}>0$.
+%\end{itemize}
 
 The stability property is then encoded by creating a
 constraint of the form:
-$$
+$
 \phi_\mathit{stability} \equiv (R_1 \wedge R_2 \wedge R_3 \wedge R_4).
-$$
+$
 %\cdsay{figure out what is existentially quantified for the final $\sigma$.} 
 %% \red{[Yes, intuitively all clear, however for the sake of clarity I would like to see the explicit mapping between the above formula and the previously used specification 
 %% $\sigma(x, P)$, with clear elucidation of the relationship between the domain of $z$ and that of $x$.]}
@@ -2195,7 +2199,6 @@ and a gain margin of $17.8 dB$.
    %% \node[fill=yellow!20] (verif) {{\sc ~~~~~~Uncertainty~~~~~~}};
    %% \&
    %% \node[fill=yellow!20] (verif2) {{\sc ~~~~~~Precision~~~~~~~}};\\
-   \& \\
    \& \\
    \node (gp) {Closed-loop System Search};
    \&
