@@ -541,7 +541,7 @@ noises and uncertainties in the closed-loop system.
     }
  }
 
-\resizebox{.9\textwidth}{!}{
+\resizebox{1.0\textwidth}{!}{
  \begin{tikzpicture}[scale=0.6,-,>=stealth',shorten >=.2pt,auto,
      semithick, initial text=, ampersand replacement=\&,]
 
@@ -671,7 +671,7 @@ represented as an additive (output) measurement noise $\nu(z)$.
 %
 %\end{equation}
 
-\begin{figure}[ht]
+\begin{figure*}[ht]
 \centering
 
 \tikzset{add/.style n args={4}{
@@ -688,7 +688,7 @@ represented as an additive (output) measurement noise $\nu(z)$.
     }
  }
 
-\resizebox{.5\textwidth}{!}{
+\resizebox{.6\textwidth}{!}{
  \begin{tikzpicture}[scale=0.3,-,>=stealth',shorten >=.2pt,auto,
      semithick, initial text=, ampersand replacement=\&,]
 
@@ -737,7 +737,7 @@ represented as an additive (output) measurement noise $\nu(z)$.
  \end{tikzpicture}
 }
 \caption{System equivalent to the system in Figure~\ref{fig:sampledsystem}\label{fig:digsystem1}}
-\end{figure}
+\end{figure*}
 
 %
 In Figure~\ref{fig:digsystem1}, two sources of uncertainties are
@@ -1025,7 +1025,7 @@ $\nu_{1}$, and $\nu_{2}$ are bounded.
 \begin{mylemma}{\cite{Bessa16,fadali}}
 \label{lemma:eq_int_stab} 
 %
-A feedback hybrid control system as given in Fig.~\ref{fig:sampledsystem},
+A feedback hybrid control system as given in Figure~\ref{fig:sampledsystem},
 with a FWL implementation of the digital controller $\hat{C}(z) =
 \frac{\mathit{FWL}[N_{C}(z)]}{\mathit{FWL}[D_{C}(z)]}$ and uncertain
 discrete model of the plant $\vec{\hat{G}}=\vec{G}+\Delta_p \vec{G}+\Delta_q
@@ -1101,7 +1101,7 @@ synthesis engine.  Our program synthesiser implements Counter-Example Guided
 Inductive Synthesis (CEGIS)~\cite{sketch}.  We start by presenting its
 general architecture followed by describing the parts specific to
 closed-loop control systems.  A high-level view of the synthesis process is
-given in Fig.~\ref{DSSynth_process}.  Steps $1$ to $3$ are performed by
+given in Figure~\ref{DSSynth_process}.  Steps $1$ to $3$ are performed by
 the user and Steps~A to D are automatically performed by our tool for
 Digital Systems Synthsis, named DSSynth.
 %
@@ -1147,7 +1147,7 @@ be satisfied if CEGIS synthesises controller coefficients that
 satisfy~$\phi$.  CEGIS employs an iterative, counterexample-guided
 refinement process which is explained in detail in
 section~\ref{synthesiser-general}.  A~successful synthesis result is
-reported if CEGIS generates a controllerthat is safe with respect to~$\phi$. 
+reported if CEGIS generates a controller that is safe with respect to~$\phi$. 
 In particular, the ANSI-C code model guarantees that a synthesised solution
 is complete and sound with respect to stability property~$\phi$, since it
 does not depend on system inputs and outputs.  In the case of stability, the
@@ -1711,7 +1711,7 @@ $\vec{P}$ ranges over functions, $\vec{x}$ ranges over ground terms and
 $\sigma$ is a quantifier-free formula.  We interpret the ground terms over
 some finite domain $\mathcal{D}$.
 
-The design of our synthesiser is given in Fig.~\ref{fig:CEGIS} and consists
+The design of our synthesiser is given in Figure~\ref{fig:CEGIS} and consists
 of two phases, {\sc Synthesise} and {\sc Verify}, which interact via a
 finite set of test vectors {\sc inputs} that is updated incrementally. 
 Given the aforementioned specification $\sigma$, the {\sc synth} procedure
@@ -1738,7 +1738,7 @@ If this is the case, then the algorithm terminates.  Otherwise, additional
 information is provided to the {\sc synthesise} phase in the form of a new
 counterexample that is added to the {\sc inputs} set and the loop iterates
 again (note that, for now, we ignore the second feedback signal ``Increase
-Precision'' provided by the {\sc Verify} phase in Fig.~\ref{fig:CEGIS} as it
+Precision'' provided by the {\sc Verify} phase in Figure~\ref{fig:CEGIS} as it
 is specific to control synthesis and will be described in the next section).
 
 %% the witness $\vec{x}$ denote an input on which the
@@ -1968,13 +1968,13 @@ Our experimental results described in Sec.~\ref{sec:experiments},
 show that the speedup yielded by the second approach 
 is in most cases of several orders of magnitude.
 
-The second approach is illustrated in Fig.~\ref{fig:CEGIS} and uses a
+The second approach is illustrated in Figure~\ref{fig:CEGIS} and uses a
 two-stage verification: the first stage performs potentially unsound
 fixed-point operations assuming a precision \param{I_b}{F_b}, and the
 second stage restores soundness by validating these operations
 using interval arithmetic on the synthesised controller.
 
-In more detail, in the first stage, denoted by {\sc Uncertainty} in Fig.~\ref{fig:CEGIS}, 
+In more detail, in the first stage, denoted by {\sc Uncertainty} in Figure~\ref{fig:CEGIS}, 
 assuming a precision \param{I_b}{F_b} 
 we check whether the system is unstable for the current candidate solution,
 {\it i.e.}, if $\neg \phi_{stability}$ is satisfiable for $S(z)$.
@@ -2377,10 +2377,15 @@ Using the closed-loop control system benchmarks described in Section~\ref{experi
 the experimental evaluation of the present approach aims to answer two research questions:
 %
 \begin{enumerate}
-	\item RQ1 \textbf{(sanity check)} which results does our CEGIS approach to FWL controller synthesis 
-	obtain upon synthesising/verifying benchmarks that compose the specified suite?
-  \item RQ2 \textbf{(performance)} does the CEGIS approach provide a feasible solution in reasonable time
-	considering robust stability of FWL digital controllers?	
+
+\item RQ1 \textbf{(sanity check)} which results does our CEGIS approach to
+FWL controller synthesis obtain upon synthesising/verifying benchmarks that
+compose the specified suite?
+
+\item RQ2 \textbf{(performance)} does the CEGIS approach provide a feasible
+solution in reasonable time considering robust stability of FWL digital
+controllers?
+
 \end{enumerate}
 
 %---------------------------------
@@ -2416,7 +2421,7 @@ our benchmarks.  Table~\ref{tab:results} only lists the faster of the two
 verification engines for each benchmark, which in $12$ out of $15$
 benchmarks is the two-stage one.
 
-\begin{table}[H]
+\begin{table}
 \centering
 \begin{tabular}{c | c | l | r r | r l}
 \# & Plant  & Benchmark                  & $I$ & $F$ & Time    & \\\cline{1-6}
@@ -2441,7 +2446,7 @@ benchmarks is the two-stage one.
 \scriptsize{* = solved with the one-stage engine, $\dagger$ = with uncertainty}
 \vspace{0.5em}
 
-\caption{Experimental results. \label{tab:results}}
+\caption{Experimental results\label{tab:results}}
 \end{table}
 %---------------------------------
 
