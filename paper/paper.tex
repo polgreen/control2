@@ -1745,7 +1745,8 @@ can only iterate a finite number of times.
 \subsection{Synthesis for control}
 \label{synthesis-elements}
 
-\paragraph{Property specification}
+\paragraph{Specification of the stability property}
+
 Next, we describe the specific property that we pass to the program
 synthesiser as the specification $\sigma$.  There are two different
 algorithms in DSVerifier that can be used for stability
@@ -1833,14 +1834,15 @@ $$
 % \red{[clear elucidation of the mapping between this and the domains used 
 % in the general description of the synthesiser]}
 
-\paragraph{Use of fixed-point computation in the program synthesis engine}
-The program synthesis engine uses fixed-point arithmetic.
-Namely, we use the domain $\mathbb{R}\param{I}{F}$
-for the controller's coefficients and the domain 
-$\mathbb{R}\param{I_b}{F_b}$ for the plant's coefficients.
-Note that $I$ and $F$, as well as $I_b$ and $F_b$, 
-denote the integer and fractional size, respectively, with
-$\mathbb{R}\langle I_b,F_b \rangle \supseteq \mathbb{R}\langle I,F \rangle$.
+\paragraph{Fixed-point computation in program synthesis}
+
+The program synthesis engine uses fixed-point arithmetic.  Namely, we use
+the domain $\mathbb{R}\param{I}{F}$ for the controller's coefficients and
+the domain $\mathbb{R}\param{I_b}{F_b}$ for the plant's coefficients.  Note
+that $I$ and $F$, as well as $I_b$ and $F_b$, denote the integer and
+fractional size, respectively, with $\mathbb{R}\langle I_b,F_b \rangle
+\supseteq \mathbb{R}\langle I,F \rangle$.
+%
 %the coefficients for $C(z)$ 
 %$N_c$ and $D_c$ 
 %in the domain $\mathbb{R}\param{I}{F}$, 
