@@ -537,7 +537,7 @@ noises and uncertainties in the closed-loop system.
     }
  }
 
-\resizebox{.9\textwidth}{!}{
+\resizebox{1.0\textwidth}{!}{
  \begin{tikzpicture}[scale=0.6,-,>=stealth',shorten >=.2pt,auto,
      semithick, initial text=, ampersand replacement=\&,]
 
@@ -667,7 +667,7 @@ represented as an additive (output) measurement noise $\nu(z)$.
 %
 %\end{equation}
 
-\begin{figure}[ht]
+\begin{figure*}[ht]
 \centering
 
 \tikzset{add/.style n args={4}{
@@ -684,7 +684,7 @@ represented as an additive (output) measurement noise $\nu(z)$.
     }
  }
 
-\resizebox{.5\textwidth}{!}{
+\resizebox{.6\textwidth}{!}{
  \begin{tikzpicture}[scale=0.3,-,>=stealth',shorten >=.2pt,auto,
      semithick, initial text=, ampersand replacement=\&,]
 
@@ -733,7 +733,7 @@ represented as an additive (output) measurement noise $\nu(z)$.
  \end{tikzpicture}
 }
 \caption{System equivalent to the system in Figure~\ref{fig:sampledsystem}\label{fig:digsystem1}}
-\end{figure}
+\end{figure*}
 
 %
 In Figure~\ref{fig:digsystem1}, two sources of uncertainties are
@@ -2373,10 +2373,15 @@ Using the closed-loop control system benchmarks described in Section~\ref{experi
 the experimental evaluation of the present approach aims to answer two research questions:
 %
 \begin{enumerate}
-	\item RQ1 \textbf{(sanity check)} which results does our CEGIS approach to FWL controller synthesis 
-	obtain upon synthesising/verifying benchmarks that compose the specified suite?
-  \item RQ2 \textbf{(performance)} does the CEGIS approach provide a feasible solution in reasonable time
-	considering robust stability of FWL digital controllers?	
+
+\item RQ1 \textbf{(sanity check)} which results does our CEGIS approach to
+FWL controller synthesis obtain upon synthesising/verifying benchmarks that
+compose the specified suite?
+
+\item RQ2 \textbf{(performance)} does the CEGIS approach provide a feasible
+solution in reasonable time considering robust stability of FWL digital
+controllers?
+
 \end{enumerate}
 
 %---------------------------------
@@ -2412,7 +2417,7 @@ our benchmarks.  Table~\ref{tab:results} only lists the faster of the two
 verification engines for each benchmark, which in $12$ out of $15$
 benchmarks is the two-stage one.
 
-\begin{table}[H]
+\begin{table}
 \centering
 \begin{tabular}{c | c | l | r r | r l}
 \# & Plant  & Benchmark                  & $I$ & $F$ & Time    & \\\cline{1-6}
@@ -2437,7 +2442,7 @@ benchmarks is the two-stage one.
 \scriptsize{* = solved with the one-stage engine, $\dagger$ = with uncertainty}
 \vspace{0.5em}
 
-\caption{Experimental results. \label{tab:results}}
+\caption{Experimental results\label{tab:results}}
 \end{table}
 %---------------------------------
 
