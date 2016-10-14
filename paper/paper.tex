@@ -455,8 +455,8 @@ plant's coefficients; and $N_{(\cdot)}$ and $M_{(\cdot)}$ denote the number
 of poles and zeros for the corresponding block.
 
 Uncertainties in $G(z)$ may appear due to uncertainties in $G(s)$
-(\emph{i.e.} $\Delta_p{G}_n(s),\Delta_p{G}_d(s)$ \red{, as defined later?}), errors in the numeric
-calculations, or roundoffs in the quantisation.  These uncertainties \red{may be [can be?, are?]} 
+(\emph{i.e.} $\Delta_p{G}_n(s),\Delta_p{G}_d(s)$ which come from tolerances/imprecisions in the original model), errors in the numeric
+calculations, or roundoffs in the quantisation.  These uncertainties are 
 parametrically expressed by additive terms, resulting in a uncertain model
 $\hat{G}(z)$, such that:
 %
@@ -472,7 +472,7 @@ which will be represented by the following transfer function:
 %
 Due to the nature of the methods we use for the stability check, we require
 that the parametric errors in the plant have the same polynomial order as
-the plant itself (\red{other errors [which precisely? all others?]} are ensured to fulfil this property in our
+the plant itself (all other errors described in this paper are ensured to fulfil this property in our
 implementation).
 
 In order to simplify the presentation, we employ a notation based on the
@@ -490,13 +490,12 @@ and an uncertainty vector
 %
 \begin{equation}
 \Delta{\vec{P}}=[\Delta{n}_{0}\ \Delta{n}_{1}\ \hdots \ \Delta{n}_{M}\ \Delta{d}_{0}\ \Delta{d}_{1}\ \hdots\ \Delta{d}_{N}\ ]^T \; 
+\label{eq:delta_coefficients}
 \end{equation}
 %
 we write $\vec{\hat{G}}=\vec{G}+\Delta{\vec{G}}$.   
 In the following we will either represent the functions $G(z)$, $C(z)$, 
 or work over their respective coefficients $\vec{G}, \vec{C}$ in vector form.   
-
-\red{[I've tried to clean the notations above. BUT: you cannot later add a transfer function with a vector of coefficients! Heresy!]}
 
 %\begin{equation}
 %\Delta{\vec{p}}=\begin{bmatrix}
@@ -518,11 +517,11 @@ or work over their respective coefficients $\vec{G}, \vec{C}$ in vector form.
 %\label{eq:uncertainty}
 %\end{equation}
 
-A typical digital control system system with continuous plant and discrete
+A typical digital control system system with a continuous plant and a discrete
 controller is illustrated in Figure~\ref{fig:sampledsystem}.  The DAC and
-ADC converters introduce quantisation noises $\nu_{1}(z)$ and $\nu_{2}(z)$ \red{[this is an assumption and as such must be stated.]},
+ADC converters introduce quantisation errors which are modeled as noises $\nu_{1}(z)$ and $\nu_{2}(z)$,
 $G(s)$ is the continuous-time plant model with parametric additive
-uncertainty $\Delta_p \vec{G}_s$ \red{[above you used n, d subscripts, here s?]}, $R(z)$ is the reference signal, $U(z)$ is
+uncertainty $\Delta_p{G}_n(s)$ and $\Delta_p{G}_d(s)$, $R(z)$ is the reference signal, $U(z)$ is
 the control signal, and $\hat{Y}(z)$ is the output signal affected by the
 noises and uncertainties in the closed-loop system.
 
@@ -747,8 +746,7 @@ In Figure~\ref{fig:digsystem1}, two sources of uncertainties are
 illustrated: parametric uncertainties related to modelling errors, and
 uncertainties introduced by quantisations in sampling and holding process,
 i.e., ADC and DAC conversions.  Assuming linearity and independence between
-these sources, the uncertain model may be rewritten as 
-\red{[unclear whether this is over the s or z domain. further there is lack of proper subscripts (n,d,s), as per the notations introduced above.]}
+these sources, the uncertain model may be rewritten as a vector of coefficients in the z-domain using equations \ref{eq:coefficients} and \ref{eq:delta_coefficients}
 %
 \begin{equation}
 \label{eq:complete_unc_model}
@@ -891,22 +889,20 @@ We shall denote the FWL domain of coefficients as $\mathbb{R}\langle I,F
 %size $F$, we shall denote this domain as $\mathbb{R}\langle I,F \rangle$ 
 %
 and assume that there exists a function
-$\mathit{FWL}[\cdot]:\mathcal{P}^{n}\rightarrow \mathcal{P}^{n}\langle I,F \rangle$,
-which applies the FWL effects to a polynomial.  
-\red{above $\mathcal{P}$ was defined as a single polynomial, now it is a space of polynomials. actually space of polynomials form specific algebraic structures, called diods -- we should have used those ... }
+$\mathit{FWL}_n[\cdot]:\mathcal{P}^{n}\rightarrow \mathcal{P}^{n}\langle I,F \rangle$,
+which applies the FWL effects to a polynomial, with an equivalent $\mathit{FWL}_{n,m}[\cdot]:\mathcal{P}^{n,m}\rightarrow \mathcal{P}^{n,m}\langle I,F \rangle$ that apllies the same effect to a ratio of polynomials, where
 $\mathcal{P}^{n}$ is the
-space of polynomials of $n$-th order and $\mathcal{P}^{n}\langle I,F
+space of polynomials of $n$-th order, $\mathcal{P}^{n}\langle I,F
 \rangle$ is is the space of polynomials with coefficients in
-$\mathbb{R}\langle I,F \rangle$.
-%
-%, \red{[explain index n! why do you need to work on a Euclidean domain?]}. 
-%
+$\mathbb{R}\langle I,F \rangle$, and $\mathcal{P}^{n,m}$,  $\mathcal{P}^{n,m}\langle I,F
+\rangle$ are their rational equivalent.
+
 \red{[above you introduced a notation for poly ratios, which now you do not use?]}
 Thus, the perturbed controller model $\hat{C}(z)$ may be obtained from the
-original model $C(z)=\frac{N_{C}(z)}{D_{C}(z)}$ as follows:
+original model $C(z)=\frac{C_{n}(z)}{C_{d}(z)}$ as follows:
 %
 \begin{equation}
-\hat{C}(z)=\frac{\mathit{FWL}[N_{C}(z)]}{\mathit{FWL}[D_{C}(z)]}.
+\hat{C}(z)=\mathit{FWL}_{M_C,N_C}[C(z)]=\frac{\mathit{FWL}_{M_C}[C_n(z)]}{\mathit{FWL}_{N_C}[C_d(z)]}.
 \end{equation}
 %
 In the case of a synthesised controller, because the synthesis is performed
@@ -1917,7 +1913,9 @@ where $\Delta_b\hat{c}_i=\hat{c}_i\mod \tilde{c}_i$
 and $\Delta_b{G}$ represents the plant uncertainty caused by
 the rounding off effect.  We may encompass all the uncertainty as
 $\Delta{\vec{G}}=\Delta_p{\vec{G}}+\Delta_b{\vec{G}}$. 
-Since the complexity of SAT solvers is worst case exponential with respect to the number of clauses (which are directly proportional to the size of the bit-vectors), our algorithm tries to solve the problem first for a low $I_b, F_b$ iteratively increasing the precision if it is insuficient.
+Since the complexity of SAT solvers is worst-case exponential in the size of
+the problem instance, our algorithm tries to solve the problem first for a
+low $I_b$, $F_b$, iteratively increasing the precision if it is insuficient.
 
 \paragraph{Our synthesis problem}
 The synthesis problem we are trying to solve is the following:
@@ -2408,7 +2406,7 @@ All experiments were conducted on a 12-core 2.40\,GHz Intel Xeon E5-2440
 with 96\,GB of RAM and Linux OS.  All times given are wall clock time in
 seconds as measured by the UNIX date command.  For the approach using a
 two-stage verification engine we apply a timeout of 8 hours per benchmark,
-and 24 hours for the approach using an one-stage engine.
+and 24 hours for the approach using a one-stage engine.
 
 %---------------------------------
 \subsection{Objectives}
@@ -2421,13 +2419,12 @@ two research questions:
 %
 \begin{enumerate}
 
-\item RQ1 \textbf{(sanity check)} which results does our CEGIS approach to
-FWL controller synthesis obtain upon synthesising/verifying benchmarks that
-compose the specified suite?
-
-\item RQ2 \textbf{(performance)} does the CEGIS approach provide a feasible
+\item RQ1 \textbf{(performance)} does the CEGIS approach provide a feasible
 solution in reasonable time considering robust stability of FWL digital
 controllers?
+
+\item RQ2 \textbf{(sanity check)} are the synthesised controllers sound
+and can their stability be confirmed outside of our model?
 
 \end{enumerate}
 
@@ -2496,8 +2493,8 @@ benchmarks is the two-stage one.
 The median runtime for our benchmark set is $197$\,s, implying that \tool
 can synthesise half of the controllers in less than $5$ minutes.  Overall,
 the average synthesis time amounts to approximately $30$ minutes.  With
-respect to RQ2 we consider these times short enough to be of practical use
-to control engineers.  Regarding RQ1 we further conclude that the approach
+respect to RQ1 we consider these times short enough to be of practical use
+to control engineers.  We further conclude that the approach
 using a two-stage verification engine is able to synthesise stable
 controllers in $12$ out of the $15$ benchmarks, and can be complemented
 using the one-stage engine for $2$ additional benchmarks, where the
@@ -2506,24 +2503,35 @@ controller synthesis for $14$ out of $15$ benchmarks.  For the $1$ remaining
 benchmark our approach failed to synthesise a stable controller in the
 requested time limits.  This can be addressed by either increasing the fixed
 point word widths considered or using floating point arithmetic instead. 
+The synthesised controllers were confirmed to be stable outside of our
+model representation using MATLAB, positively answering RQ2.
 A~link to the full experimental environment, including scripts to reproduce
 the results, all benchmarks and the \tool tool, is provided in the
 footnote.\footnote{\url{https://drive.google.com/file/d/0ByIexo3Z5N91QkhrMi1rdkZFTWc/view}}
 
 \subsection{Threats to validity}
 
-The experimental evaluation in section~\ref{experimental-results} shows
-a very positive evaluation of \tool over a diverse set of real-world
-benchmarks. Nevertheless, the set of benchmarks is limited within the
+We report a faviourable assessment of \tool over a diverse set of real-world
+benchmarks. Nevertheless, this set of benchmarks is limited within the
 scope of this paper and \tool's performance may not generalise to other
-benchmark scenarios.
+benchmark scenarios. This can be addressed by expanding the benchmark set
+in future experiments.
 
 Furthermore, our algorithm to select suitable FWL word widths to model
 plant behaviour employs a heuristic based on user-provided controller
-word width specifications. Given the encouraging results of our benchmarks,
+word-width specifications.  Given the encouraging results of our benchmarks,
 this heuristic appears to be strong enough for the current benchmark set,
-but this may not hold in general. Further experiments towards determining
+but this may not generalise.  Further experiments towards determining
 suitable plant FWL configurations may thus be necessary in future work.
+
+Finally, the experimental results we obtained using \tool for stability
+properties may not generalise to other properties.  The inductive nature of
+the two-stage back-end of \tool increases performance significantly compared
+to the one-stage back-end, but this performance benefit introduced by CEGIS'
+inductive generalisations may not be observed for other controller
+properties.  Additional experiments are necessary to confirm that the
+performance of our inductive synthesis approach can be leveraged in those
+scenarios as well.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Related Work}\label{sec:related}
