@@ -208,7 +208,7 @@ verification.  Specifically, we synthesize controllers for hybrid
 closed-loop systems, i.e., software-implemented embedded controllers along
 with a model of their physical environment (the plant), that are
 \emph{stable}.  Due to the complexity of such systems, in this work we focus on linear
-models with known configurations and perform parametric synthesis of stabilising digital controllers.
+models with known configurations and perform parametric synthesis of stabilizing digital controllers.
 
 Our work addresses particularly challenging aspects of the control synthesis
 problem.  We perform digital control synthesis over a hybrid model, where
@@ -361,7 +361,7 @@ work in Section~\ref{sec:conclusions}
 %}
 
 %------------------------------------
-\subsection{Discretising the Plant}
+\subsection{Discretizing the Plant}
 \label{ssec:SandH}
 %------------------------------------
 
@@ -455,7 +455,7 @@ controller's coefficients; similarly $\vec{b}$ and $\vec{a}$ encompass the
 plant's coefficients; and $N_{(\cdot)}$ and $M_{(\cdot)}$ indicate the order of the polynomial of the corresponding block.
 
 Uncertainties in $G(z)$ may appear due to uncertainties in $G(s)$
-(\emph{i.e.} $\Delta_p{G}_n(s),\Delta_p{G}_d(s)$ which come from tolerances/imprecisions in the original model), errors in the numeric
+(\emph{i.e.} $\Delta_p{G}_n(s),\Delta_p{G}_d(s)$ which come from tolerances/imprecision in the original model), errors in the numeric
 calculations, or roundoffs in the quantization.  These uncertainties are 
 parametrically expressed by additive terms, resulting in a uncertain model
 $\hat{G}(z)$, such that:
@@ -472,7 +472,7 @@ which will be represented by the following transfer function:
 %
 Due to the nature of the methods we use for the stability check, we require
 that the parametric errors in the plant have the same polynomial order as
-the plant itself (all other errors described in this paper are ensured to fulfil this property in our
+the plant itself (all other errors described in this paper are ensured to fulfill this property in our
 implementation).
 
 In order to simplify the presentation, we employ a notation based on the
@@ -746,7 +746,7 @@ represented as an additive output noise~$\nu(z)$.
 
 %
 In Figure~\ref{fig:digsystem1}, two sources of uncertainties are
-illustrated: parametric uncertainties related to modelling errors, and
+illustrated: parametric uncertainties related to modeling errors, and
 uncertainties introduced by quantizations in sampling and holding process,
 i.e., ADC and DAC conversions.  Assuming linearity and independence between
 these sources, the uncertain model may be rewritten as a vector of coefficients in the z-domain using equations \ref{eq:coefficients} and \ref{eq:delta_coefficients}
@@ -1895,7 +1895,7 @@ domain,
 %
  $$\forall i \leq N_C, j \leq M_C\ \  \tilde \beta_{i} \equiv \beta_{i} \wedge \tilde \alpha_{j} \equiv \alpha_{j} \Leftrightarrow \tilde C(z) \equiv C(z)$$
 %
-However, given a real plant $\hat{G}(z)$, and a discretising function
+However, given a real plant $\hat{G}(z)$, and a discretizing function
 %
 \begin{align}
 \small
@@ -2345,7 +2345,7 @@ full capabilities of the present approach.  In particular, satellites often requ
 attitude (pose) control for proper orientation of antennas and sensors
 w.r.t.~earth.  The satellite attitude control is typically used for
 three-axis attitude tracking, but here only one axis at a time is
-considered.  The motion equation for the one-axis system, despising
+considered.  The motion equation for the one-axis system, disregarding
 disturbance torques, is given by
 %
 \begin{equation}
@@ -2578,7 +2578,7 @@ controller.
 \paragraph{Formal Verification of Linear Digital Controllers} 
 
 Researchers in formal verification of control systems have studied various
-effects of discretising the dynamics, including delayed
+effects of discretizing the dynamics, including delayed
 response~\cite{Duggirala2015}, and Finite Word Length (FWL) constraints with
 the goal to either verify (e.g.~\cite{daes20161}) or optimize
 (e.g.~\cite{oudjida2014design}) implementations.  There are in fact two
@@ -2676,7 +2676,7 @@ reasonable time frames fully automatically.
 Future work will be the extension of this CEGIS-based approach to further
 classes of systems, including state-space representation.  
 We will also consider performance requirements while
-synthesising the digital controller.
+synthesizing the digital controller.
 
 \bibliographystyle{abbrv}
 \bibliography{paper}  
