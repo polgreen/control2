@@ -459,7 +459,7 @@ plant's coefficients; and $N_{(\cdot)}$ and $M_{(\cdot)}$ denote the number
 of poles and zeros for the corresponding block.
 
 Uncertainties in $G(z)$ may appear due to uncertainties in $G(s)$
-(\emph{i.e.} $\Delta_p{G}_n(s),\Delta_p{G}_d(s)$ \red{, as defined later}), errors in the numeric
+(\emph{i.e.} $\Delta_p{G}_n(s),\Delta_p{G}_d(s)$ \red{, as defined later?}), errors in the numeric
 calculations, or roundoffs in the quantisation.  These uncertainties \red{may be [can be?, are?]} 
 parametrically expressed by additive terms, resulting in a uncertain model
 $\hat{G}(z)$, such that:
@@ -490,15 +490,17 @@ For a vector of coefficients
 \label{eq:coefficients}
 \end{equation}
 %
-with uncertainty
+and an uncertainty vector 
 %
 \begin{equation}
 \Delta{\vec{P}}=[\Delta{n}_{0}\ \Delta{n}_{1}\ \hdots \ \Delta{n}_{M}\ \Delta{d}_{0}\ \Delta{d}_{1}\ \hdots\ \Delta{d}_{N}\ ]^T \; 
 \end{equation}
 %
-we have $\vec{\hat{G}}=\vec{G}+\Delta{\vec{G}}$ \red{[uh, now the TF are vectors - confusing]}.  
+we write $\vec{\hat{G}}=\vec{G}+\Delta{\vec{G}}$.   
 In the following we will either represent the functions $G(z)$, $C(z)$, 
-or work over their respective coefficients in vector form.   
+or work over their respective coefficients $\vec{G}, \vec{C}$ in vector form.   
+
+\red{[I've tried to clean the notations above. BUT: you cannot later add a transfer function with a vector of coefficients! Heresy!]}
 
 %\begin{equation}
 %\Delta{\vec{p}}=\begin{bmatrix}
@@ -522,9 +524,9 @@ or work over their respective coefficients in vector form.
 
 A typical digital control system system with continuous plant and discrete
 controller is illustrated in Figure~\ref{fig:sampledsystem}.  The DAC and
-ADC converters introduce quantisation noises $\nu_{1}(z)$ and $\nu_{2}(z)$,
+ADC converters introduce quantisation noises $\nu_{1}(z)$ and $\nu_{2}(z)$ \red{[this is an assumption and as such must be stated.]},
 $G(s)$ is the continuous-time plant model with parametric additive
-uncertainty $\Delta_p \vec{G}_s$, $R(z)$ is the reference signal, $U(z)$ is
+uncertainty $\Delta_p \vec{G}_s$ \red{[above you used n, d subscripts, here s?]}, $R(z)$ is the reference signal, $U(z)$ is
 the control signal, and $\hat{Y}(z)$ is the output signal affected by the
 noises and uncertainties in the closed-loop system.
 
@@ -617,15 +619,15 @@ noises and uncertainties in the closed-loop system.
  \caption{Closed-loop digital control system\label{fig:sampledsystem}}
 \end{figure*}
 
-The ADC and DAC may be abstracted by transforming the hybrid system in
-Figure~\ref{fig:sampledsystem} into the digital system in
+The ADC and DAC may be abstracted by transforming the closed-loop system in
+Figure~\ref{fig:sampledsystem} into the digital system in 
 Figure~\ref{fig:digsystem1}, where the parametric uncertainties are
 represented by~$\Delta_p \vec{G}$
 %
 %=\mathcal{Z}\left\lbrace{G_{P}(s)}\right\rbrace$
 %
 and the entire effect of $\nu_{1}$ and $\nu_{2}$ in the output $Y(z)$ is
-represented as an additive (output) measurement noise~$\nu(z)$.
+represented as an additive output noise~$\nu(z)$. 
 %, thus
 %$\hat{Y}(z)=Y(z)+\nu(z)$.  The measurement noise $\nu(k)$ is enough for
 %represent both quantisation noises ($\nu_{1}$ and $\nu_{2}$) what can be
@@ -748,7 +750,8 @@ In Figure~\ref{fig:digsystem1}, two sources of uncertainties are
 illustrated: parametric uncertainties related to modelling errors, and
 uncertainties introduced by quantisations in sampling and holding process,
 i.e., ADC and DAC conversions.  Assuming linearity and independence between
-these sources, the uncertain model may be rewritten as
+these sources, the uncertain model may be rewritten as 
+\red{[unclear whether this is over the s or z domain. further there is lack of proper subscripts (n,d,s), as per the notations introduced above.]}
 %
 \begin{equation}
 \label{eq:complete_unc_model}
@@ -892,13 +895,16 @@ We shall denote the FWL domain of coefficients as $\mathbb{R}\langle I,F
 %
 and assume that there exists a function
 $\mathit{FWL}[\cdot]:\mathcal{P}^{n}\rightarrow \mathcal{P}^{n}\langle I,F \rangle$,
-which applies the FWL effects to a polynomial.  $\mathcal{P}^{n}$ is the
+which applies the FWL effects to a polynomial.  
+\red{above $\mathcal{P}$ was defined as a single polynomial, now it is a space of polynomials. actually space of polynomials form specific algebraic structures, called diods -- we should have used those ... }
+$\mathcal{P}^{n}$ is the
 space of polynomials of $n$-th order and $\mathcal{P}^{n}\langle I,F
 \rangle$ is is the space of polynomials with coefficients in
 $\mathbb{R}\langle I,F \rangle$.
 %
 %, \red{[explain index n! why do you need to work on a Euclidean domain?]}. 
 %
+\red{[above you introduced a notation for poly ratios, which now you do not use?]}
 Thus, the perturbed controller model $\hat{C}(z)$ may be obtained from the
 original model $C(z)=\frac{N_{C}(z)}{D_{C}(z)}$ as follows:
 %
@@ -1841,7 +1847,7 @@ characteristic polynomial of a stable system if and only if the following four c
 The stability property is then encoded by creating a
 constraint of the form:
 $$
-\phi_{stability} \equiv (R_1 \wedge R_2 \wedge R_3 \wedge R_4).
+\phi_\mathit{stability} \equiv (R_1 \wedge R_2 \wedge R_3 \wedge R_4).
 $$
 %\cdsay{figure out what is existentially quantified for the final $\sigma$.} 
 %% \red{[Yes, intuitively all clear, however for the sake of clarity I would like to see the explicit mapping between the above formula and the previously used specification 
@@ -1854,9 +1860,9 @@ $$
 
 The program synthesis engine uses fixed-point arithmetic.  Namely, we use
 the domain $\mathbb{R}\param{I}{F}$ for the controller's coefficients and
-the domain $\mathbb{R}\param{I_b}{F_b}$ for the plant's coefficients.  Note
-that $I$ and $F$, as well as $I_b$ and $F_b$, denote the integer and
-fractional size, respectively, with $\mathbb{R}\langle I_b,F_b \rangle
+the domain $\mathbb{R}\param{I_b}{F_b}$ for the plant's coefficients, 
+where $I$ and $F$, as well as $I_b$ and $F_b$, denote the integer and
+fractional size, respectively, and $\mathbb{R}\langle I_b,F_b \rangle
 \supseteq \mathbb{R}\langle I,F \rangle$.
 %
 %the coefficients for $C(z)$ 
@@ -1982,7 +1988,7 @@ using interval arithmetic on the synthesised controller.
 In more detail, in the first stage, denoted by {\sc Uncertainty} in Figure~\ref{fig:CEGIS}, 
 assuming a precision \param{I_b}{F_b} 
 we check whether the system is unstable for the current candidate solution,
-{\it i.e.}, if $\neg \phi_{stability}$ is satisfiable for $S(z)$.
+{\it i.e.}, if $\neg \phi_\mathit{stability}$ is satisfiable for $S(z)$.
 If this is the case, then we obtain a counterexample 
 $\tilde G(z)$, 
 %denoted by values for each coefficients of $\Delta N_{G}(z)$ and $\Delta D_{G}(z)$, 
@@ -2008,11 +2014,10 @@ interval arithmetic.
 % vouches for the use of CEGIS in most of our benchmarks.
 % \cdsay{end of integration}
 
-If the {\sc precision} verification returns $false$, then we 
-increase the precision of \param{I_b}{F_b} and re-start the {\sc synthesise} phase
-with an empty {\sc inputs} set.
-Otherwise, we found a full solution for our synthesis problem
-and we are done.
+If the {\sc precision} verification returns $\mathit{false}$, then we
+increase the precision of \param{I_b}{F_b} and re-start the {\sc synthesise}
+phase with an empty {\sc inputs} set.  Otherwise, we found a full solution
+for our synthesis problem and we are done.
 
 In the rest of the paper, we will refer to the two approaches 
 for the {\sc verify} phase as one-stage and two-stage, respectively.
@@ -2469,7 +2474,7 @@ the $1$ remaining benchmark our approach failed to synthesise a stable
 controller in the requested time limits.  This can be addressed by either
 increasing the fixed point word widths considered or using floating point
 arithmetic instead.  A link to the full experimental environment, including
-scripts to reproduce the experiment, all benchmarks and the DDSynth tool is
+scripts to reproduce the results, all benchmarks and the DDSynth tool, is
 provided in the
 footnote.\footnote{\url{https://drive.google.com/file/d/0ByIexo3Z5N91QkhrMi1rdkZFTWc/view}}
 
