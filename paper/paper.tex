@@ -1846,7 +1846,7 @@ characteristic polynomial of a stable system if and only if the following four c
 The stability property is then encoded by creating a
 constraint of the form:
 $$
-\phi_{stability} \equiv (R_1 \wedge R_2 \wedge R_3 \wedge R_4).
+\phi_\mathit{stability} \equiv (R_1 \wedge R_2 \wedge R_3 \wedge R_4).
 $$
 %\cdsay{figure out what is existentially quantified for the final $\sigma$.} 
 %% \red{[Yes, intuitively all clear, however for the sake of clarity I would like to see the explicit mapping between the above formula and the previously used specification 
@@ -1859,9 +1859,9 @@ $$
 
 The program synthesis engine uses fixed-point arithmetic.  Namely, we use
 the domain $\mathbb{R}\param{I}{F}$ for the controller's coefficients and
-the domain $\mathbb{R}\param{I_b}{F_b}$ for the plant's coefficients.  Note
-that $I$ and $F$, as well as $I_b$ and $F_b$, denote the integer and
-fractional size, respectively, with $\mathbb{R}\langle I_b,F_b \rangle
+the domain $\mathbb{R}\param{I_b}{F_b}$ for the plant's coefficients, 
+where $I$ and $F$, as well as $I_b$ and $F_b$, denote the integer and
+fractional size, respectively, and $\mathbb{R}\langle I_b,F_b \rangle
 \supseteq \mathbb{R}\langle I,F \rangle$.
 %
 %the coefficients for $C(z)$ 
@@ -1987,7 +1987,7 @@ using interval arithmetic on the synthesised controller.
 In more detail, in the first stage, denoted by {\sc Uncertainty} in Figure~\ref{fig:CEGIS}, 
 assuming a precision \param{I_b}{F_b} 
 we check whether the system is unstable for the current candidate solution,
-{\it i.e.}, if $\neg \phi_{stability}$ is satisfiable for $S(z)$.
+{\it i.e.}, if $\neg \phi_\mathit{stability}$ is satisfiable for $S(z)$.
 If this is the case, then we obtain a counterexample 
 $\tilde G(z)$, 
 %denoted by values for each coefficients of $\Delta N_{G}(z)$ and $\Delta D_{G}(z)$, 
@@ -2013,11 +2013,10 @@ interval arithmetic.
 % vouches for the use of CEGIS in most of our benchmarks.
 % \cdsay{end of integration}
 
-If the {\sc precision} verification returns $false$, then we 
-increase the precision of \param{I_b}{F_b} and re-start the {\sc synthesise} phase
-with an empty {\sc inputs} set.
-Otherwise, we found a full solution for our synthesis problem
-and we are done.
+If the {\sc precision} verification returns $\mathit{false}$, then we
+increase the precision of \param{I_b}{F_b} and re-start the {\sc synthesise}
+phase with an empty {\sc inputs} set.  Otherwise, we found a full solution
+for our synthesis problem and we are done.
 
 In the rest of the paper, we will refer to the two approaches 
 for the {\sc verify} phase as one-stage and two-stage, respectively.
@@ -2474,7 +2473,7 @@ the $1$ remaining benchmark our approach failed to synthesise a stable
 controller in the requested time limits.  This can be addressed by either
 increasing the fixed point word widths considered or using floating point
 arithmetic instead.  A link to the full experimental environment, including
-scripts to reproduce the experiment, all benchmarks and the DDSynth tool is
+scripts to reproduce the results, all benchmarks and the DDSynth tool, is
 provided in the
 footnote.\footnote{\url{https://drive.google.com/file/d/0ByIexo3Z5N91QkhrMi1rdkZFTWc/view}}
 
