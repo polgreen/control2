@@ -221,8 +221,10 @@ Given our primary interest in stability despite digitisation effects, we have mo
 a digital equivalent of the plant by evaluating the effects of the
 quantisers (A/D and D/A converters) as time discretisation elements with
 quantisation noise.  The resulting closed-loop system is a program loop that
-operates on bit-vectors encoded using fixed-point arithmetic with fixed word
-length (FWL). The deterministic effects of the FWL and
+operates on bit-vectors encoded using fixed-point arithmetic with fixed-word
+length (FWL). 
+\red{[acronym later defined as finite-word length - please unify use]} 
+The deterministic effects of the FWL and
 quantisation errors are incorporated into the model as an additive
 uncertainty, which is taken into account during the CEGIS-based synthesis of
 the control software for the plant.
@@ -401,9 +403,9 @@ updating the DAC accordingly.  The DAC interpolator is an ideal ZOH.
 \begin{mylemma}\cite{astrom1997computer}
 %
 Given a synchronised ZOH input and sample and hold output on the plant with
-a sample time $T$ satisfying Nyquist's sampling criteria, the discrete pulse
-transfer function $G(z,T)$ is an exact z-domain representation of $G(s)$
-which can be computed using the following formula:
+a sample time $T$ satisfying Nyquist criterion, the discrete pulse
+transfer function $G(z,T)$ is an exact z-domain representation of $G(s)$ 
+that can be computed using the following formula:
 %
 \begin{equation}
 \label{eq:pulsetf}
@@ -416,10 +418,11 @@ pulse transfer function.
 %
 \end{mylemma}
 
-Here, Lemma~\ref{eq:pulsetf} ensures the poles and zeros matching with
+Lemma~\ref{eq:pulsetf} ensures the poles and zeros matching under the 
 $\mathcal{Z}\left\lbrace{\mathcal{L}^{-1}\left\lbrace{\cdot}\right\rbrace_{t=kT}}\right\rbrace$
-operations and includes the ZOH dynamics in the $(1-z^{-1})$ term, that is
-sufficient for the stability studies over $G(s)$.
+operations, 
+and it includes the ZOH dynamics in the $(1-z^{-1})$ term, 
+which is sufficient for stability studies over $G(s)$.
 
 %------------------------------------
 \subsection{Verifying Closed-loop Control Systems}
@@ -455,8 +458,8 @@ plant's coefficients; and $N_{(\cdot)}$ and $M_{(\cdot)}$ denote the number
 of poles and zeros for the corresponding block.
 
 Uncertainties in $G(z)$ may appear due to uncertainties in $G(s)$
-(\emph{i.e.} $\Delta_p{G}_n(s),\Delta_p{G}_d(s)$), errors in the numeric
-calculations, or roundoffs in the quantisation.  These uncertainties may be
+(\emph{i.e.} $\Delta_p{G}_n(s),\Delta_p{G}_d(s)$ \red{, as defined later}), errors in the numeric
+calculations, or roundoffs in the quantisation.  These uncertainties \red{may be [can be?, are?]} 
 parametrically expressed by additive terms, resulting in a uncertain model
 $\hat{G}(z)$, such that:
 %
@@ -472,14 +475,14 @@ which will be represented by the following transfer function:
 %
 Due to the nature of the methods we use for the stability check, we require
 that the parametric errors in the plant have the same polynomial order as
-the plant itself (other errors are ensured to fulfil this property in our
+the plant itself (\red{other errors [which precisely? all others?]} are ensured to fulfil this property in our
 implementation).
 
-In order to simplify presentation, we will use notation based on the
+In order to simplify the presentation, we employ a notation based on the
 coefficients of the polynomials.  Let $\mathcal{P}^{N}$ be a polynomial
-domain of order $N$ Let $P \in \mathcal{P}^{M,N}$ be a rational polynomial
-$\frac{P_n}{P_d} : P_n \in \mathcal{P}^{M} \wedge P_d \in \mathcal{P}^{N}$. 
-There is a vector of coefficients
+domain of order $N$. Let $P \in \mathcal{P}^{M,N}$ be a rational polynomial
+$\frac{P_n}{P_d}$, where $P_n \in \mathcal{P}^{M}$ and $P_d \in \mathcal{P}^{N}$.  
+For a vector of coefficients
 %
 \begin{equation}
 \vec{P} \in \mathbb{R}^{N+M+2}=[n_{0}\ n_{1}\ \hdots \ n_{M}\ d_{0}\ d_{1}\ \hdots\ d_{N}\ ]^T
@@ -489,12 +492,12 @@ There is a vector of coefficients
 with uncertainty
 %
 \begin{equation}
-\Delta{\vec{P}}=[\Delta{n}_{0}\ \Delta{n}_{1}\ \hdots \ \Delta{n}_{M}\ \Delta{d}_{0}\ \Delta{d}_{1}\ \hdots\ \Delta{d}_{N}\ ]^T \;.
+\Delta{\vec{P}}=[\Delta{n}_{0}\ \Delta{n}_{1}\ \hdots \ \Delta{n}_{M}\ \Delta{d}_{0}\ \Delta{d}_{1}\ \hdots\ \Delta{d}_{N}\ ]^T \; 
 \end{equation}
 %
-Then $\vec{\hat{G}}=\vec{G}+\Delta{\vec{G}}$.  In the following we may use
-either notation to represent the functions $G(z)$, $C(z)$, and their
-respective uncertainties.\\
+we have $\vec{\hat{G}}=\vec{G}+\Delta{\vec{G}}$ \red{[uh, now the TF are vectors - confusing]}.  
+In the following we will either represent the functions $G(z)$, $C(z)$, 
+or work over their respective coefficients in vector form.   
 
 %\begin{equation}
 %\Delta{\vec{p}}=\begin{bmatrix}
