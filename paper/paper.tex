@@ -1131,15 +1131,15 @@ Digital Systems Synthsis, named DSSynth.
 Given a model for a plant for which to synthesise a controller, provided in
 an ANSI-C input file (Steps 1--3), DSSynth constructs a non-deterministic
 model to represent the plant family (Step~A), and formulates a function
-(step~B) using implementation details provided in Steps~$2$ and $3$ to
+(Step~B) using implementation details provided in Steps~$2$ and $3$ to
 calculate the parameters of the controller to be synthesised (Step~C). 
 Finally, DSSynth builds an intermediate ANSI-C code for the digital system
 implementation, which is used as input for the CEGIS engine (Step~D).
 
 This intermediate ANSI-C code model contains a specification $\phi$ for the
-property of interst (i.e., robust stability) and is passed to
-CBMC's~\cite{ClarkeKL04} integrated Counterexample-Guided Inductive
-Synthesis (CEGIS) module, where the controller is marked as input variable
+property of interst (i.e., robust stability) and is passed to the
+Counterexample-Guided Inductive Synthesis (CEGIS) module of
+CBMC~\cite{ClarkeKL04}, where the controller is marked as the input variable
 to synthesise.  The properties specified in the ANSI-C code model can only
 be satisfied if CEGIS synthesises controller coefficients that
 satisfy~$\phi$.  CEGIS employs an iterative, counterexample-guided
