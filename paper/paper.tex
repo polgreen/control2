@@ -451,8 +451,7 @@ G(z)&=\frac{G_n(z)}{G_d(z)}=\frac{b_{0}+b_{1}z^{-1}+...+b_{M_G}z^{-M_G}}{a_{0}+a
 %
 \noindent where $\vec{\beta}$ and $\vec{\alpha}$ are vectors containing the
 controller's coefficients; similarly $\vec{b}$ and $\vec{a}$ encompass the
-plant's coefficients; and $N_{(\cdot)}$ and $M_{(\cdot)}$ denote the number
-of poles and zeros for the corresponding block.
+plant's coefficients; and $N_{(\cdot)}$ and $M_{(\cdot)}$ indicate the order of the polynomial of the corresponding block.
 
 Uncertainties in $G(z)$ may appear due to uncertainties in $G(s)$
 (\emph{i.e.} $\Delta_p{G}_n(s),\Delta_p{G}_d(s)$ which come from tolerances/imprecisions in the original model), errors in the numeric
@@ -1056,8 +1055,8 @@ bounded.  The boundedness of the quantisation noise comes from Assumption~\ref{w
 %\red{[first: lemmae precede theorems. ]}
 
 % Let $\tilde C(z)$ and $\tilde G(z)$ be the transfer functions represented
-% using Fixed-Point bit vectors with integer size $I_b$ and fractional
-% size $F_b$, whose domain is $\mathbb{R}\langle I_b,F_b \rangle \supseteq \mathbb{R}\langle I,F \rangle$.
+% using Fixed-Point bit vectors with integer size $I_p$ and fractional
+% size $F_p$, whose domain is $\mathbb{R}\langle I_p,F_p \rangle \supseteq \mathbb{R}\langle I,F \rangle$.
 % %
 % \begin{align}
 % \small
@@ -1073,7 +1072,7 @@ bounded.  The boundedness of the quantisation noise comes from Assumption~\ref{w
 %  $$\forall i \leq N_C, j \leq M_C\ \  \tilde \beta_{i} \equiv \beta_{i} \wedge \tilde \alpha_{j} \equiv \alpha_{j} \Leftrightarrow \tilde C(z) \equiv C(z)$$
 
 % Two approaches have been taken to synthesise a stable controller based on this model.
-% The first uses interval arithmetic, representing the coefficients $[{c}_i-\Delta_p{c}_i-\Delta_b{c}_i\ ,\ {c}_i+\Delta_p{c}_i-\Delta_b{c}_i+(2^{-F_b})]$  
+% The first uses interval arithmetic, representing the coefficients $[{c}_i-\Delta_p{c}_i-\Delta_b{c}_i\ ,\ {c}_i+\Delta_p{c}_i-\Delta_b{c}_i+(2^{-F_p})]$  
 
 % \cdsay{Dario, what coefficients are these?}
 
@@ -1851,9 +1850,9 @@ $$
 
 The program synthesis engine uses fixed-point arithmetic.  Namely, we use
 the domain $\mathbb{R}\param{I}{F}$ for the controller's coefficients and
-the domain $\mathbb{R}\param{I_b}{F_b}$ for the plant's coefficients, 
-where $I$ and $F$, as well as $I_b$ and $F_b$, denote the integer and
-fractional size, respectively, and $\mathbb{R}\langle I_b,F_b \rangle
+the domain $\mathbb{R}\param{I_p}{F_p}$ for the plant's coefficients, 
+where $I$ and $F$, as well as $I_p$ and $F_p$, denote the integer and
+fractional size, respectively, and $\mathbb{R}\langle I_p,F_p \rangle
 \supseteq \mathbb{R}\langle I,F \rangle$.
 %
 %the coefficients for $C(z)$ 
@@ -1863,17 +1862,17 @@ fractional size, respectively, and $\mathbb{R}\langle I_b,F_b \rangle
 %where $n_C$ and $m_C$ denote the order of the corresponding polynomials
 %where $I$ and $F$ denote the integer and fractional size, respectively.
 %Regarding the plant, its coefficients are this is synthesised over the 
-%domain $\mathbb{R}^{n_G+m_G}\param{I_b}{F_b}$, where $n_G$ and $m_G$ 
+%domain $\mathbb{R}^{n_G+m_G}\param{I_p}{F_p}$, where $n_G$ and $m_G$ 
 %denote the order of the polynomials representing the 
 %numerator and denominator of the plant's transfer function, respectively. 
-%Again, $I_b$ and $F_b$ denote the integer and fractional size, respectively, with
-%$\mathbb{R}\langle I_b,F_b \rangle \supseteq \mathbb{R}\langle I,F \rangle$.
+%Again, $I_p$ and $F_p$ denote the integer and fractional size, respectively, with
+%$\mathbb{R}\langle I_p,F_p \rangle \supseteq \mathbb{R}\langle I,F \rangle$.
 
 Given the use of fixed-point arithmetic, 
 we need to examine the effect of discretisation during these operations.
 Let $\tilde C(z)$ and $\tilde G(z)$ be the transfer functions represented
-using fixed-point bit vectors.%  with integer size $I_b$ and fractional
-% size $F_b$, whose domain is $\mathbb{R}\langle I_b,F_b \rangle \supseteq \mathbb{R}\langle I,F \rangle$.
+using fixed-point bit vectors.%  with integer size $I_p$ and fractional
+% size $F_p$, whose domain is $\mathbb{R}\langle I_p,F_p \rangle \supseteq \mathbb{R}\langle I,F \rangle$.
 %
 \begin{align}
 \small
@@ -1893,11 +1892,11 @@ However, given a real plant $\hat{G}(z)$, and a discretising function
 \begin{align}
 \small
 \label{FWL_tf}
-&f_b : \mathbb{R} \rightarrow  \mathbb{R}\langle I_b,F_b \rangle \triangleq \tilde x = f_b(x) : \tilde x=x-(x\mod\tilde x)\\
-&\mathit{FWL}_n^b[P \in \mathcal{P}] = \tilde P \in \mathcal{P}^{n}\langle I_b,F_b \rangle : c_i \in \vec{P} \wedge \tilde c_i \in \tilde \vec{P}=f_b(c_i)  \nonumber
+&f^p : \mathbb{R} \rightarrow  \mathbb{R}\langle I_p,F_p \rangle \triangleq \tilde x = f^p(x) : \tilde x=x-(x\mod\tilde x)\\
+&\mathit{FWL}_n^p[P \in \mathcal{P}] = \tilde P \in \mathcal{P}^{n}\langle I_p,F_p \rangle : c_i \in \vec{P} \wedge \tilde c_i \in \tilde \vec{P}=f^p(c_i)  \nonumber
 \end{align}
 %
-we calculate $\tilde G(z)=FWL_{M_G,N_G}^b(\hat{G}(z))$
+we calculate $\tilde G(z)=FWL_{M_G,N_G}^p(\hat{G}(z))$
 %
 \begin{align}
 % \label{digital_controller_tf}
@@ -1913,7 +1912,7 @@ the rounding off effect.  We may encompass all the uncertainty as
 $\Delta{\vec{G}}=\Delta_p{\vec{G}}+\Delta_b{\vec{G}}$. 
 Since the complexity of SAT solvers is worst-case exponential in the size of
 the problem instance, our algorithm tries to solve the problem first for a
-low $I_b$, $F_b$, iteratively increasing the precision if it is insufficient.
+low $I_p$, $F_p$, iteratively increasing the precision if it is insufficient.
 
 \paragraph{Our synthesis problem}
 The synthesis problem we are trying to solve is the following:
@@ -1937,10 +1936,10 @@ in the domain $\mathbb{R}\param{I}{F}$,
 %and $\mathbb{R}^{m_C}\param{I}{F}$, respectively, 
 %where $n_C$ and $m_C$ denote the order of the corresponding polynomials
 and those for $\tilde G(z)$ in the domain
-$\mathbb{R}\langle I_b,F_b \rangle$.
+$\mathbb{R}\langle I_p,F_p \rangle$.
 While the controller's precision $\param{I}{F}$ is given, 
-we can vary $\param{I_b}{F_b}$ such that 
-$\mathbb{R}\langle I_b,F_b \rangle \supseteq \mathbb{R}\langle I,F \rangle$.
+we can vary $\param{I_p}{F_p}$ such that 
+$\mathbb{R}\langle I_p,F_p \rangle \supseteq \mathbb{R}\langle I,F \rangle$.
 
 \paragraph{The {\sc Synthesise} and {\sc Verify} phases}
 The {\sc synthesise} phase uses BMC to 
@@ -1953,7 +1952,7 @@ There are two approaches for the {\sc verify} phase.
 The first approach uses interval arithmetic \cite{moore1966interval}
 to represent the coefficients
 $[{c}_i-\Delta_p{c}_i-\Delta_b{c}_i\ ,\
-{c}_i+\Delta_p{c}_i-\Delta_b{c}_i+(2^{-F_b})]$ 
+{c}_i+\Delta_p{c}_i-\Delta_b{c}_i+(2^{-F_p})]$ 
 and rounds operations outwards during calculations. This effectively allows
 us to simultaneously evaluate the whole collection of plants $\mathfrak{G}$
 plus the effects of numeric calculations in the engine.
@@ -1973,12 +1972,12 @@ is in most cases of at least two orders of magnitude.
 
 The second approach is illustrated in Figure~\ref{fig:CEGIS} and uses a
 two-stage verification: the first stage performs potentially unsound
-fixed-point operations assuming a precision \param{I_b}{F_b}, and the
+fixed-point operations assuming a precision \param{I_p}{F_p}, and the
 second stage restores soundness by validating these operations
 using interval arithmetic on the synthesised controller.
 
 In more detail, in the first stage, denoted by {\sc Uncertainty} in Figure~\ref{fig:CEGIS}, 
-assuming a precision \param{I_b}{F_b} 
+assuming a precision \param{I_p}{F_p} 
 we check whether the system is unstable for the current candidate solution,
 {\it i.e.}, if $\neg \phi_\mathit{stability}$ is satisfiable for $S(z)$.
 If this is the case, then we obtain a counterexample 
@@ -2007,7 +2006,7 @@ interval arithmetic.
 % \cdsay{end of integration}
 
 If the {\sc precision} verification returns $\mathit{false}$, then we
-increase the precision of \param{I_b}{F_b} and re-start the {\sc
+increase the precision of \param{I_p}{F_p} and re-start the {\sc
   synthesise} phase with an empty {\sc inputs} set.  Otherwise, we
 found a full sound solution for our synthesis problem and we are done.
 
@@ -2063,8 +2062,8 @@ unstable.
 
 We now demonstrate how our approach solves the synthesis problem for the
 example given in the previous section.  We start with the candidate solution
-with all coefficients zero, as given below, and a precision of $I_b=16$,
-$F_b=24$.  The digital controller is designed with standard techniques for
+with all coefficients zero, as given below, and a precision of $I_p=16$,
+$F_p=24$.  The digital controller is designed with standard techniques for
 control systems~\cite{Kuo:2002:ACS:579453, Ogata:1987:DCS:26170}.
 %
 %\red{[Be more explicit, write out spurious candidate solution with zero coefficients. KISS - you don't want to lose the control audience here.]}.
@@ -2106,7 +2105,7 @@ precision} verification stage.
 % that it is due to lack of precision.
 %
 We obtain the result $\mathit{false}$, meaning that the current precision is
-insufficient.  Consequently, we increase our precision to $I_b=20$, $F_b=28$.
+insufficient.  Consequently, we increase our precision to $I_p=20$, $F_p=28$.
 %
 Since the previous counterexamples were obtained at lower precision, we
 remove them from the set of counterexamples.  Back in the {\sc synthesise}
