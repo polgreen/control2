@@ -569,7 +569,7 @@ noises and uncertainties in the closed-loop system.
    \& \node[rectangle,draw,
 	minimum width=1cm,
 	minimum height=1cm,
-        label=\textbf{Plant}] (gs) {{\sc $G(s) + \Delta_p G_s$}};
+        label=\textbf{Plant}] (gs) {{\sc $\hat{G}(s)$}};
    \node[draw=none] (ud) at ([xshift=-2cm,yshift=.15cm]gs)  {$U(s)$};
    \node[draw=none] (y) at ([xshift=2cm,yshift=.15cm]gs)  {$Y(s)$};
    \& complexnode/.pic={ 
@@ -706,7 +706,7 @@ represented as an additive output noise~$\nu(z)$.
    \& \node[rectangle,draw,
 	minimum width=1cm,
 	minimum height=1cm,
-        label=\textbf{Plant}] (gs) {{\sc $G(z) + \Delta_p \vec{G}$}};
+        label=\textbf{Plant}] (gs) {{\sc $\hat{G}(z)$}};
    \node[draw=none] (y) at ([xshift=2cm,yshift=.15cm]gs)  {$Y(z)$};
 
    \& \node[circle,add={}{+}{+}{}] (circle2) {};
@@ -737,7 +737,8 @@ represented as an additive output noise~$\nu(z)$.
   \path[->]  (aux3.north) edge (circle.south);
  \end{tikzpicture}
 }
-\caption{System equivalent to the system in Figure~\ref{fig:sampledsystem} \red{please do not add a vector and a transfer function! what does that even mean?}\label{fig:digsystem1}}
+\caption{System equivalent to the system in Figure~\ref{fig:sampledsystem} 
+\label{fig:digsystem1}}
 \end{figure*}
 
 %
@@ -1897,7 +1898,7 @@ However, given a real plant $\hat{G}(z)$, and a discretising function
 \begin{align}
 \small
 \label{FWL_tf}
-&f_b (x \in \mathbb{R}) \rightarrow \tilde x \in \mathbb{R}\langle I_b,F_b \rangle \triangleq \tilde x = x-(x\mod\tilde x) \\
+&f_b : \mathbb{R} \rightarrow  \mathbb{R}\langle I_b,F_b \rangle \triangleq \tilde x = f_b(x) : \tilde x=x-(x\mod\tilde x)\\
 &FWL_b[P \in \mathcal{P}] = \tilde P \in \mathcal{P}^{n}\langle I_b,F_b \rangle : c_i \in \vec{P} \wedge \tilde c_i \in \tilde \vec{P}=f_b(c_i)  \nonumber
 \end{align}
 %
@@ -1914,9 +1915,8 @@ we calculate $\tilde G(z)=FWL_b(\hat{G}(z))$
 where $\Delta_b\hat{c}_i=\hat{c}_i\mod \tilde{c}_i$
 and $\Delta_b{G}$ represents the plant uncertainty caused by
 the rounding off effect.  We may encompass all the uncertainty as
-$\Delta{\vec{G}}=\Delta_p{\vec{G}}+\Delta_b{\vec{G}}$.  % Since this value is
-% nondeterministic, the set of possible polynomial coefficients of $\tilde G(z)$ is
-% denoted by $\mathfrak{G}(z)$.
+$\Delta{\vec{G}}=\Delta_p{\vec{G}}+\Delta_b{\vec{G}}$. 
+Since the complexity of SAT solvers is worst case exponential with respect to the number of clauses (which are directly proportional to the size of the bit-vectors), our algorithm tries to solve the problem first for a low $I_b, F_b$ iteratively increasing the precision if it is insuficient.
 
 \paragraph{Our synthesis problem}
 The synthesis problem we are trying to solve is the following:
@@ -1972,7 +1972,7 @@ therefore designed a second approach, which we describe below.
 Our experimental results described in Section~\ref{sec:experiments}, 
 %try both approaches and provide the time for the fastest. 
 show that the speedup yielded by the second approach 
-is in most cases of several orders of magnitude.
+is in most cases of at least two orders of magnitude.
 
 The second approach is illustrated in Figure~\ref{fig:CEGIS} and uses a
 two-stage verification: the first stage performs potentially unsound
@@ -2283,7 +2283,7 @@ G_2(z)=\frac{5\times{10^{-5}}z + 5\times{10^{-5}}}{z^2 - 2z + 1.0001}. \nonumber
 
 A third set of benchmarks that consists of a physical plant for satellite
 applications is considered~\cite{Franklin15}, in order to evaluate the
-present approach full capabilities.  In particular, satellites often require
+full capabilities of the present approach.  In particular, satellites often require
 attitude (pose) control for proper orientation of antennas and sensors
 w.r.t.~earth.  The satellite attitude control is typically used for
 three-axis attitude tracking, but here only one axis at a time is
@@ -2360,7 +2360,7 @@ All experiments were conducted on a 12-core 2.40\,GHz Intel Xeon E5-2440
 with 96\,GB of RAM and Linux OS.  All times given are wall clock time in
 seconds as measured by the UNIX date command.  For the approach using a
 two-stage verification engine we apply a timeout of 8 hours per benchmark,
-and 24 hours for the approach using a one-stage engine.
+and 24 hours for the approach using an one-stage engine.
 
 %---------------------------------
 \subsection{Objectives}
@@ -2461,6 +2461,21 @@ point word widths considered or using floating point arithmetic instead.
 A~link to the full experimental environment, including scripts to reproduce
 the results, all benchmarks and the \tool tool, is provided in the
 footnote.\footnote{\url{https://drive.google.com/file/d/0ByIexo3Z5N91QkhrMi1rdkZFTWc/view}}
+
+\subsection{Threats to validity}
+
+The experimental evaluation in section~\ref{experimental-results} shows
+a very positive evaluation of \tool over a diverse set of real-world
+benchmarks. Nevertheless, the set of benchmarks is limited within the
+scope of this paper and \tool's performance may not generalise to other
+benchmark scenarios.
+
+Furthermore, our algorithm to select suitable FWL word widths to model
+plant behaviour employs a heuristic based on user-provided controller
+word width specifications. Given the encouraging results of our benchmarks,
+this heuristic appears to be strong enough for the current benchmark set,
+but this may not hold in general. Further experiments towards determining
+suitable plant FWL configurations may thus be necessary in future work.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Related Work}\label{sec:related}
