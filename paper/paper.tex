@@ -130,29 +130,26 @@ Sound and Automated Synthesis of Digital Stabilizing Controllers for Continuous 
 
 \author{Author names omitted for review}
 
+\newcommand\tool{{\sf DSSynth}\xspace}
+
 \maketitle
 
 \begin{abstract}
 %
-Modern control systems are by and large implemented via digital
-microcontrollers, which are designed to work in an embedded environment,
-within a dynamical plant that can present physical components.
+Modern control is implemented using digital microcontrollers, which are
+designed to work in an embedded environment, within a dynamical plant that
+can present physical components.
 %
-This poses a new dimension to the problem of controllers synthesis, which is
-classically studied in the digital control literature.
+We present a new algorithm based on Counter-Example Guided Inductive
+Synthesis that automates the design of digital controllers that are
+correct-by-construction.  The synthesis result is sound with respect to the
+complete range of approximations, including time discretisation,
+quantisation effects, and finite-precision arithmetic and their related
+rounding errors.
 %
-In this study, we plan to provide a principled approach to extend this
-literature in a number of directions: 
-%we are interested in quantitative tasks; 
-we focus on automated correct-by-construction synthesis algorithms, as
-opposed to verification (or validation) objectives over a designed architecture; 
-and we encompass the complete range of
-approximations, related to time discretisation, quantisation effects, and
-finite-precision representations (with related rounding errors).  To this
-end, we propose a CEGIS-based solution that uses inductive 
-synthesis in conjunction with a digital verification algorithm to find a
-parametric solution for a digital controller given a continuous 
-plant specification.
+We have implemented our new algorithm in a tool called \tool, and are able
+to automatically generate stable controllers for a set of intricate plant
+models taken from the literature within minutes.
 %
 \end{abstract}
 
@@ -1113,7 +1110,7 @@ general architecture followed by describing the parts specific to
 closed-loop control systems.  A high-level view of the synthesis process is
 given in Figure~\ref{DSSynth_process}.  Steps $1$ to $3$ are performed by
 the user and Steps~A to D are automatically performed by our tool for
-Digital Systems Synthsis, named DSSynth.
+Digital Systems Synthsis, named \tool.
 %
 %, which accepts the
 %digital controller transfer functions together with the plant model.  For
@@ -1141,11 +1138,11 @@ Digital Systems Synthsis, named DSSynth.
 %be used as an input for DSVerifier.
 
 Given a model for a plant for which to synthesise a controller, provided in
-an ANSI-C input file (Steps 1--3), DSSynth constructs a non-deterministic
+an ANSI-C input file (Steps 1--3), \tool constructs a non-deterministic
 model to represent the plant family (Step~A), and formulates a function
 (Step~B) using implementation details provided in Steps~$2$ and $3$ to
 calculate the parameters of the controller to be synthesised (Step~C). 
-Finally, DSSynth builds an intermediate ANSI-C code for the digital system
+Finally, \tool builds an intermediate ANSI-C code for the digital system
 implementation, which is used as input for the CEGIS engine (Step~D).
 
 This intermediate ANSI-C code model contains a specification $\phi$ for the
@@ -2245,9 +2242,9 @@ system benchmarks described in Section~\ref{experimental-setup}.
 \label{experimental-setup}
 %---------------------------------
 
-The first set of benchmarks considers the discrete plant of a cruise 
-control model for the car accounting for rolling friction, aerodynamic drag, 
-and gravitational disturbance force~\cite{Astrom08} as follows
+The first set of benchmarks uses the discrete plant of a cruise control
+model for the car accounting for rolling friction, aerodynamic drag, and
+gravitational disturbance force~\cite{Astrom08} as follows
 %
 \begin{equation}
 \label{cruise-control-c1}
@@ -2270,7 +2267,7 @@ G_1(z)=\frac{0.0264}{z-0.998}. \nonumber
 
 The second set of benchmarks considers a simple spring-mass 
 damper~\cite{DBLP:conf/hybrid/WangGRJF16}, where the discrete 
-plant dynamics is represented by the following z-expression
+plant dynamics is represented by the following $z$-expression
 %
 %where both discrete 
 %plant dynamics and controller are represented by the following 
