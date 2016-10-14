@@ -1903,7 +1903,7 @@ However, given a real plant $\hat{G}(z)$, and a discretizing function
 \small
 \label{FWL_tf}
 &f^p : \mathbb{R} \rightarrow  \mathbb{R}\langle I_p,F_p \rangle \triangleq \tilde x = f^p(x) : \tilde x=x-(x\mod\tilde x)\\
-&\mathit{FWL}_n^p[P \in \mathcal{P}] = \tilde P \in \mathcal{P}^{n}\langle I_p,F_p \rangle : c_i \in \vec{P} \wedge \tilde c_i \in \tilde \vec{P}=f^p(c_i)  \nonumber
+&\mathit{FWL}_n^p[P \in \mathcal{P}] = \tilde P \in \mathcal{P}^{n}\langle I_p,F_p \rangle : c_i \in \vec{P} \wedge \tilde c_i \in \vec{\tilde{P}}=f^p(c_i)  \nonumber
 \end{align}
 %
 we calculate $\tilde G(z)=FWL_{M_G,N_G}^p(\hat{G}(z))$
@@ -1982,7 +1982,7 @@ is in most cases of at least two orders of magnitude.
 
 The second approach is illustrated in Figure~\ref{fig:CEGIS} and uses a
 two-stage verification: the first stage performs potentially unsound
-fixed-point operations assuming a precision \param{I_p}{F_p}, and the
+fixed-point operations assuming a plant precision \param{I_p}{F_p}, and the
 second stage restores soundness by validating these operations
 using interval arithmetic on the synthesized controller.
 %
@@ -2091,7 +2091,7 @@ of $0.2$s), which is represented by the following $z$-expression:
 %
 \begin{equation}
 \label{Eq:running-example-plant}
-G\left(z\right) := \frac{0.0264}{z-0.9998}.
+G\left(z\right) = \frac{0.0264}{z-0.9998}.
 \end{equation}
 
 Using an optimization tool, the authors
@@ -2101,7 +2101,7 @@ $z$-domain transfer function:
 %
 \begin{equation}
 \label{Eq:running-example-controller}
-C\left(z\right) := \frac{2.72z^2 - 4.153z + 1.896}{z^2 - 1.844z + 0.8496}.
+C\left(z\right) = \frac{2.72z^2 - 4.153z + 1.896}{z^2 - 1.844z + 0.8496}.
 \end{equation}
 %
 The authors of~\cite{DBLP:conf/hybrid/WangGRJF16} claim that this controller
@@ -2204,7 +2204,7 @@ This candidate solution is validated as the final solution by both stages
 {\sc uncertainty} and {\sc precision} in the {\sc verify} phase.
 In particular, Figure~\ref{fig:bode} shows the Bode diagram of the illustrative example 
 using the digital controller represented by Eq.~\eqref{Eq:running-example-controller} from~\cite{DBLP:conf/hybrid/WangGRJF16} 
-(Fig.~\ref{fig:original}) and the final candidate solution from our synthesizer (Fig.~\ref{fig:cegiscontroller}). 
+(Figure~\ref{fig:original}) and the final candidate solution from our synthesizer (Figure~\ref{fig:cegiscontroller}). 
 The phase margin is negative as shown in Figure~\ref{fig:original}, which means that the controller 
 represented by Eq.~\eqref{Eq:running-example-controller} is unstable, considering FWL effects. 
 However, the final solution from \tool is stable since it presents an infinite phase margin 
@@ -2256,7 +2256,7 @@ and a gain margin of $17.8 dB$.
 %
 Figure~\ref{fig:step} shows the step responses of the closed-loop system 
 with the original controller represented by Eq.~\eqref{Eq:running-example-controller} (Figure~\ref{fig:step0}), 
-the first (Figure~\ref{fig:step1}) and final (Fig.~\ref{fig:step2}) candidate solutions provided by \tool. 
+the first (Figure~\ref{fig:step1}) and final (Figure~\ref{fig:step2}) candidate solutions provided by \tool. 
 The step response in Figure~\ref{fig:step0} confirms the stability loss if we consider FWL effects. 
 However, Figure~\ref{fig:step1} shows that the first candidate controller is able to stabilize 
 the closed-loop system without uncertainties, but it is rejected during the {\sc precision} phase by 
@@ -2346,8 +2346,8 @@ applications is considered~\cite{Franklin15}, in order to evaluate the
 full capabilities of the present approach.  In particular, satellites often require
 attitude (pose) control for proper orientation of antennas and sensors
 w.r.t.~earth.  The satellite attitude control is typically used for
-three-axis attitude tracking, but here only one axis at a time is
-considered.  The motion equation for the one-axis system, disregarding
+three-axis attitude tracking, but here we consider one axis at a time.
+The motion equation for the one-axis system, disregarding
 disturbance torques, is given by
 %
 \begin{equation}
@@ -2355,10 +2355,10 @@ disturbance torques, is given by
 I\cdot \ddot{\theta} = \tau_{C}, 
 \end{equation}
 
-\noindent where $I$ is the inertia moment of satellite about its mass
+\noindent where $I$ is the inertia moment of the satellite about its mass
 center, $\tau_{C}$ is the control torque applied by thrusters, and $\theta$
 is the controlled attitude angle.  Normalizing Eq.~\eqref{eq:satelliteode}
-by defining the control signal $u=\frac{\tau_{C}}{I}$ and taking Laplace
+by defining the control signal $u=\frac{\tau_{C}}{I}$ and taking the Laplace
 transform, the following $s$-domain transfer function $G(s)$ is obtained
 %
 \begin{equation}
