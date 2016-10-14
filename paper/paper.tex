@@ -10,7 +10,8 @@
 \usepackage{enumitem}      % adjust spacing in enums
 \usepackage[colorlinks=true,allcolors=blue,breaklinks,draft=false]{hyperref}   
 \usepackage{graphicx}
-\usepackage{float,subfig}
+\usepackage{float}
+\usepackage{subcaption}
 \usepackage{xspace,framed}
 \usepackage{colortbl}
 \usepackage{calc}
@@ -2223,6 +2224,53 @@ This candidate solution is validated as the final solution by both stages
 }
  \caption{Counterexample-Guided Inductive Synthesis of Closed-loop System (Step~D)
 \label{fig:CEGIS}}
+\end{figure*}
+
+Figure~\ref{fig:bode} shows the Bode diagram of the closed-loop system from~\cite{DBLP:conf/hybrid/WangGRJF16} 
+(Fig.~\ref{fig:original}) and from our synthesiser (Fig.~\ref{fig:cegiscontroller}). 
+The phase margin in Figure~\ref{fig:original} is negative, which means that the controller 
+from~\cite{DBLP:conf/hybrid/WangGRJF16} is unstable, considering FWL effects. 
+Note that the final solution from \tool is stable since it presents an infinite phase margin 
+and a gain margin of $17.8 dB$.
+%
+\begin{figure}
+    \centering
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{figures/runningexample_bd0.pdf}
+        \caption{Original controller~\cite{DBLP:conf/hybrid/WangGRJF16}.}
+        \label{fig:original}
+    \end{subfigure}
+    ~
+    \begin{subfigure}[b]{0.45\textwidth}
+        \includegraphics[width=\textwidth]{figures/runningexample_bd2.pdf}
+        \caption{Controller synthesised by \tool.}
+        \label{fig:cegiscontroller}
+    \end{subfigure}
+    \caption{Bode diagram for original~\cite{DBLP:conf/hybrid/WangGRJF16} and synthesised closed-loop systems.}\label{fig:bode}
+\end{figure}
+
+Figure~\ref{fig:step} shows the step responses of the closed-loop system with the original controller~\cite{DBLP:conf/hybrid/WangGRJF16} (Figure~\ref{fig:step0}), the first candidate solution (Figure~\ref{fig:step1}), and the final solution from \tool (Fig.~\ref{fig:step2}). The step response in Figure~\ref{fig:step0} confirms that the stability loss if we consider FWL effects. However, Figure~\ref{fig:step2} shows that the first candidate controller is able to stabilize the closed-loop system without uncertainties, but it is rejected by \tool since this solution is not considered to be sound. Finally, Figure~\ref{fig:step2} shows a stable behavior for the final (sound) solution, which presents a lower settling time.
+
+\begin{figure*}
+    \centering
+    \begin{subfigure}[b]{0.3\textwidth}
+        \includegraphics[width=\textwidth]{figures/runningexample_step0.pdf}
+        \caption{Orignal controller.}
+        \label{fig:step0}
+    \end{subfigure}
+    ~
+    \begin{subfigure}[b]{0.3\textwidth}
+        \includegraphics[width=\textwidth]{figures/runningexample_step1.pdf}
+        \caption{First candidate solution.}
+        \label{fig:step1}
+    \end{subfigure}
+    ~
+    \begin{subfigure}[b]{0.3\textwidth}
+        \includegraphics[width=\textwidth]{figures/runningexample_step2.pdf}
+        \caption{Final solution by \tool.}
+        \label{fig:step2}
+    \end{subfigure}
+    \caption{Step responses for original~\cite{DBLP:conf/hybrid/WangGRJF16} closed-loop system with FWL effects and for each {\sc synthesise} step of \tool.}\label{fig:step}
 \end{figure*}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
