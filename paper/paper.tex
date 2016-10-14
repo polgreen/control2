@@ -43,7 +43,7 @@
 \newtheorem{mylemma}{Lemma}
 \newtheorem{myprop}{Proposition}
 
-\renewcommand{\baselinestretch}{0.97}
+\renewcommand{\baselinestretch}{0.975}
 \include{macros}
 
 \begin{document}
@@ -497,34 +497,6 @@ we write $\vec{\hat{G}}=\vec{G}+\Delta{\vec{G}}$.
 In the following we will either represent the functions $G(z)$, $C(z)$, 
 or work over their respective coefficients $\vec{G}, \vec{C}$ in vector form.   
 
-%\begin{equation}
-%\Delta{\vec{p}}=\begin{bmatrix}
-%\hat{b_{0}} - b_{0}\\
-%\hat{b_{1}} - b_{1}\\
-%\vdots \\
-%\hat{b}_{M_G} - b_{M_{G}}\\
-%\hat{a_{0}} - a_{0}\\
-%\hat{a_{1}} - a_{1}\\
-%\vdots\\
-%\hat{a}_{N_G} - a_{N_{G}}\\
-%\end{bmatrix}=\begin{bmatrix}
-%\vec{\hat{b}}\\
-%\vec{\hat{a}}
-%\end{bmatrix}-\begin{bmatrix}
-%\vec{b}\\
-%\vec{a}
-%\end{bmatrix}
-%\label{eq:uncertainty}
-%\end{equation}
-
-A typical digital control system system with a continuous plant and a discrete
-controller is illustrated in Figure~\ref{fig:sampledsystem}.  The DAC and
-ADC converters introduce quantisation errors which are modeled as noises $\nu_{1}(z)$ and $\nu_{2}(z)$,
-$G(s)$ is the continuous-time plant model with parametric additive
-uncertainty $\Delta_p{G}_n(s)$ and $\Delta_p{G}_d(s)$, $R(z)$ is the reference signal, $U(z)$ is
-the control signal, and $\hat{Y}(z)$ is the output signal affected by the
-noises and uncertainties in the closed-loop system.
-
 \begin{figure*}[htb]
 \centering
 
@@ -614,6 +586,38 @@ noises and uncertainties in the closed-loop system.
  \caption{Closed-loop digital control system\label{fig:sampledsystem}}
 \end{figure*}
 
+%\begin{equation}
+%\Delta{\vec{p}}=\begin{bmatrix}
+%\hat{b_{0}} - b_{0}\\
+%\hat{b_{1}} - b_{1}\\
+%\vdots \\
+%\hat{b}_{M_G} - b_{M_{G}}\\
+%\hat{a_{0}} - a_{0}\\
+%\hat{a_{1}} - a_{1}\\
+%\vdots\\
+%\hat{a}_{N_G} - a_{N_{G}}\\
+%\end{bmatrix}=\begin{bmatrix}
+%\vec{\hat{b}}\\
+%\vec{\hat{a}}
+%\end{bmatrix}-\begin{bmatrix}
+%\vec{b}\\
+%\vec{a}
+%\end{bmatrix}
+%\label{eq:uncertainty}
+%\end{equation}
+
+
+
+A typical digital control system system with a continuous plant and a discrete
+controller is illustrated in Figure~\ref{fig:sampledsystem}.  The DAC and
+ADC converters introduce quantisation errors which are modeled as noises $\nu_{1}(z)$ and $\nu_{2}(z)$,
+$G(s)$ is the continuous-time plant model with parametric additive
+uncertainty $\Delta_p{G}_n(s)$ and $\Delta_p{G}_d(s)$, $R(z)$ is the reference signal, $U(z)$ is
+the control signal, and $\hat{Y}(z)$ is the output signal affected by the
+noises and uncertainties in the closed-loop system.
+%
+%
+%
 The ADC and DAC may be abstracted by transforming the closed-loop system in
 Figure~\ref{fig:sampledsystem} into the digital system in 
 Figure~\ref{fig:digsystem1}, where the parametric uncertainties are
@@ -1979,7 +1983,65 @@ two-stage verification: the first stage performs potentially unsound
 fixed-point operations assuming a precision \param{I_p}{F_p}, and the
 second stage restores soundness by validating these operations
 using interval arithmetic on the synthesised controller.
+%
+\begin{figure*}[htb]
+\centering
+\resizebox{.8\textwidth}{!}{
+ \begin{tikzpicture}[scale=0.3,->,>=stealth',shorten >=.2pt,auto, semithick, initial text=, ampersand replacement=\&,]
+  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center
+},
+          row sep=.6cm, column sep=1.5cm] {
+   \coordinate (aux1);
+   \& \coordinate (aux2);
+   \&;\\
+   \node[fill=gray!20] (synth) {{\sc Synthesise}};
+   \&
+   complexnode/.pic={ 
+     \node[rectangle,draw,dashed,
+	minimum width=7cm,
+	minimum height=.8cm,
+	label={\sc Verify},] (verif) {};
+   \node[fill=gray!20] (verif1) at ([xshift=-2cm]verif.center) {{\sc ~Uncertainty~~~~}};
+   \node[fill=gray!20] (verif2) at ([xshift=2cm]verif.center) {{\sc ~~~~~Precision~~~}};
+   } 
+   \& \node[ellipse, fill=gray!20] (done) {{\sc Done}};\\
+   %% \node[fill=yellow!20] (verif) {{\sc ~~~~~~Uncertainty~~~~~~}};
+   %% \&
+   %% \node[fill=yellow!20] (verif2) {{\sc ~~~~~~Precision~~~~~~~}};\\
+   \& \\
+   \node (gp) {Closed-loop System Search};
+   \&
+   complexnode/.pic={ 
+     \coordinate (aux);
+   \node (bmc) at ([xshift=-2cm]aux.center) {BMC-based Verifier};
+   \node (fp)  at ([xshift=2cm]aux.center) {Fixed-point \\Arithmetic Verifier};
+   }   
+    \\
+  };
 
+   \path
+    ([yshift=2em]synth.east) edge node[xshift=-0.5em] {Candidate solution} ([yshift=2em]verif1.west)
+    ([yshift=-2em]verif1.west) edge node {Counterexample} ([yshift=-2em]synth.east)
+    ([xshift=5em]verif1.south) edge node[align=center] {Candidate\\ $P$} ([xshift=5em]bmc.north)
+    ([xshift=5em]verif2.south) edge node[align=center] {Candidate\\ $P$} ([xshift=5em]fp.north)
+    ([xshift=-5em]bmc.north) edge node[align=center]  {UNSAT/\\model} ([xshift=-5em]verif1.south)
+    ([xshift=-5em]fp.north) edge node[align=center]  {True/\\False} ([xshift=-5em]verif2.south)
+    (verif2) edge node {} (done)
+    ([xshift=5em]synth.south) edge node[align=center] {Inputs} ([xshift=5em]gp.north)
+    ([xshift=-5em]gp.north) edge node[align=center] {UNSAT/\\candidate} ([xshift=-5em]synth.south)
+    (aux1) edge (synth.north);
+   \path[-]
+   (verif2.north) edge node[align=center] {} ([xshift=6.7cm]aux2)
+   ([xshift=6.7cm]aux2) edge node[align=center] {Increase Precision} (aux1);
+
+ \end{tikzpicture}
+}
+ \caption{Counterexample-Guided Inductive Synthesis of Closed-loop System (Step~D)
+\label{fig:CEGIS}}
+\end{figure*}
+%
+\subsection{Program synthesis for the example}
+%
 In more detail, in the first stage, denoted by {\sc Uncertainty} in Figure~\ref{fig:CEGIS}, 
 assuming a precision \param{I_p}{F_p} 
 we check whether the system is unstable for the current candidate solution,
@@ -2061,9 +2123,8 @@ C_{q}\left(z\right) {:=} \frac{2.719986z^2{-}4.153000z
 The resulting system using the typical series loop configuration, where
 $C_{q}\left(z\right)$ and $G\left(z\right)$ are in the forward path, is
 unstable.
-
-\subsection{Program synthesis for the example}
-
+%
+%
 We now demonstrate how our approach solves the synthesis problem for the
 example given in the previous section.  We start with the candidate solution
 with all coefficients zero, as given below, and a precision of $I_p=16$,
@@ -2174,64 +2235,8 @@ and a gain margin of $17.8 dB$.
 % This candidate solution is validated as the final solution by the next 
 % {\sc verify} phase.
 % }
-
-\begin{figure*}
-\centering
-\resizebox{.8\textwidth}{!}{
- \begin{tikzpicture}[scale=0.3,->,>=stealth',shorten >=.2pt,auto, semithick, initial text=, ampersand replacement=\&,]
-  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center
-},
-          row sep=.6cm, column sep=1.5cm] {
-   \coordinate (aux1);
-   \& \coordinate (aux2);
-   \&;\\
-   \node[fill=gray!20] (synth) {{\sc Synthesise}};
-   \&
-   complexnode/.pic={ 
-     \node[rectangle,draw,dashed,
-	minimum width=7cm,
-	minimum height=.8cm,
-	label={\sc Verify},] (verif) {};
-   \node[fill=gray!20] (verif1) at ([xshift=-2cm]verif.center) {{\sc ~Uncertainty~~~~}};
-   \node[fill=gray!20] (verif2) at ([xshift=2cm]verif.center) {{\sc ~~~~~Precision~~~}};
-   } 
-   \& \node[ellipse, fill=gray!20] (done) {{\sc Done}};\\
-   %% \node[fill=yellow!20] (verif) {{\sc ~~~~~~Uncertainty~~~~~~}};
-   %% \&
-   %% \node[fill=yellow!20] (verif2) {{\sc ~~~~~~Precision~~~~~~~}};\\
-   \& \\
-   \node (gp) {Closed-loop System Search};
-   \&
-   complexnode/.pic={ 
-     \coordinate (aux);
-   \node (bmc) at ([xshift=-2cm]aux.center) {BMC-based Verifier};
-   \node (fp)  at ([xshift=2cm]aux.center) {Fixed-point \\Arithmetic Verifier};
-   }   
-    \\
-  };
-
-   \path
-    ([yshift=2em]synth.east) edge node[xshift=-0.5em] {Candidate solution} ([yshift=2em]verif1.west)
-    ([yshift=-2em]verif1.west) edge node {Counterexample} ([yshift=-2em]synth.east)
-    ([xshift=5em]verif1.south) edge node[align=center] {Candidate\\ $P$} ([xshift=5em]bmc.north)
-    ([xshift=5em]verif2.south) edge node[align=center] {Candidate\\ $P$} ([xshift=5em]fp.north)
-    ([xshift=-5em]bmc.north) edge node[align=center]  {UNSAT/\\model} ([xshift=-5em]verif1.south)
-    ([xshift=-5em]fp.north) edge node[align=center]  {True/\\False} ([xshift=-5em]verif2.south)
-    (verif2) edge node {} (done)
-    ([xshift=5em]synth.south) edge node[align=center] {Inputs} ([xshift=5em]gp.north)
-    ([xshift=-5em]gp.north) edge node[align=center] {UNSAT/\\candidate} ([xshift=-5em]synth.south)
-    (aux1) edge (synth.north);
-   \path[-]
-   (verif2.north) edge node[align=center] {} ([xshift=6.7cm]aux2)
-   ([xshift=6.7cm]aux2) edge node[align=center] {Increase Precision} (aux1);
-
- \end{tikzpicture}
-}
- \caption{Counterexample-Guided Inductive Synthesis of Closed-loop System (Step~D)
-\label{fig:CEGIS}}
-\end{figure*}
 %
-\begin{figure}[H]
+\begin{figure}[htb]
     \centering
     \begin{subfigure}[b]{0.4\textwidth}
         \includegraphics[width=\textwidth]{figures/runningexample_bd0.pdf}
