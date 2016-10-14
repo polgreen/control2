@@ -2138,12 +2138,6 @@ $$ C(z)=\frac{11.035202z^2{+}5.846100z{+}4.901855}{1.097901z^2{+}0.063110z{+}0.1
 
 This candidate solution is validated as the final solution by both stages
 {\sc uncertainty} and {\sc precision} in the {\sc verify} phase.
-In particular, Figure~\ref{fig:bode} shows the Bode diagram of the illustrative example from~\cite{DBLP:conf/hybrid/WangGRJF16} 
-(Fig.~\ref{fig:original}) and from our synthesiser (Fig.~\ref{fig:cegiscontroller}). 
-The phase margin is negative as shown in Figure~\ref{fig:original}, which means that the controller 
-from~\cite{DBLP:conf/hybrid/WangGRJF16} is unstable, considering FWL effects. 
-However, the final solution from \tool is stable since it presents an infinite phase margin 
-and a gain margin of $17.8 dB$.
 
 %, which fails to find a new counterexample (i.e. returns UNSAT).
 
@@ -2230,6 +2224,14 @@ and a gain margin of $17.8 dB$.
 \label{fig:CEGIS}}
 \end{figure*}
 
+In particular, Figure~\ref{fig:bode} shows the Bode diagram of the illustrative example 
+using the digital controller represented by Eq.~\eqref{Eq:running-example-controller} from~\cite{DBLP:conf/hybrid/WangGRJF16} 
+(Fig.~\ref{fig:original}) and the final candidate solution from our synthesiser (Fig.~\ref{fig:cegiscontroller}). 
+The phase margin is negative as shown in Figure~\ref{fig:original}, which means that the controller 
+represented by Eq.~\eqref{Eq:running-example-controller} is unstable, considering FWL effects. 
+However, the final solution from \tool is stable since it presents an infinite phase margin 
+and a gain margin of $17.8 dB$.
+
 \begin{figure}
     \centering
     \begin{subfigure}[b]{0.45\textwidth}
@@ -2247,13 +2249,13 @@ and a gain margin of $17.8 dB$.
 \end{figure}
 
 Figure~\ref{fig:step} shows the step responses of the closed-loop system 
-with the original controller~\cite{DBLP:conf/hybrid/WangGRJF16} (Figure~\ref{fig:step0}), 
-the first candidate solution (Figure~\ref{fig:step1}), and the final solution from \tool (Fig.~\ref{fig:step2}). 
+with the original controller represented by Eq.~\eqref{Eq:running-example-controller} (Figure~\ref{fig:step0}), 
+the first (Figure~\ref{fig:step1}) and final (Fig.~\ref{fig:step2}) candidate solutions provided by \tool. 
 The step response in Figure~\ref{fig:step0} confirms the stability loss if we consider FWL effects. 
-However, Figure~\ref{fig:step2} shows that the first candidate controller is able to stabilize 
-the closed-loop system without uncertainties, but it is rejected by \tool since this solution 
-is not considered to be sound. Finally, Figure~\ref{fig:step2} shows a stable behavior 
-for the final (sound) solution, which presents a lower settling time.
+However, Figure~\ref{fig:step1} shows that the first candidate controller is able to stabilize 
+the closed-loop system without uncertainties, but it is rejected during the {\sc precision} phase by 
+\tool since this solution is not considered to be sound. Finally, Figure~\ref{fig:step2} 
+shows a stable behavior for the final (sound) solution, which presents a lower settling time.
 
 \begin{figure*}
     \centering
