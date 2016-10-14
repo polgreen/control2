@@ -1025,21 +1025,23 @@ and DAC.
 
 %\red{[Add remark on bound (q/2) for signal. We need a bounded signal to be able to leverage BIBO stability results. ]}
 
-A discrete-time linear system is said to be Bounded-Input and Bounded-Output
+It is known that a discrete-time linear system is said to be Bounded-Input and Bounded-Output
 (BIBO) stable if and only if every pole of its transfer function lies inside
-the unit circle.  Analyzing Eq.~\eqref{eq:outputfunctions}, the following
-lemma states necessary conditions for BIBO stability of the closed-loop system
+the unit circle \cite{Astrom08}.  Analyzing Eq.~\eqref{eq:outputfunctions}, the following
+proposition states necessary conditions for BIBO stability of the closed-loop system
 in Figure~\ref{fig:sampledsystem}, since the exogenous signals $R(z)$,
 $\nu_{1}$, and $\nu_{2}$ are bounded.
+
+\red{[it's not a lemma, since it is not later used to prove a theorem. state it as a proposition (theorem would be a bit of an over-statement)]}
 
 \begin{mylemma}{\cite{Bessa16,fadali}}
 \label{lemma:eq_int_stab} 
 %
-A feedback hybrid control system as given in Figure~\ref{fig:sampledsystem},
+A feedback closed-loop control system as given in Figure~\ref{fig:sampledsystem},
 with a FWL implementation of the digital controller $\hat{C}(z) =
 \frac{\mathit{FWL}[N_{C}(z)]}{\mathit{FWL}[D_{C}(z)]}$ and uncertain
 discrete model of the plant $\vec{\hat{G}}=\vec{G}+\Delta_p \vec{G}+\Delta_q
-\vec{G} \Rightarrow \hat{G}(z)=\frac{\hat{N}_{G}(z)}{\hat{D}_{G}(z)}$, is
+\vec{G}$, namely \red{[utter confusion between transfer functions and coefficients - you're next taking the ratio between two vectors of coefficient, which magically now are also a function of the z variable! WTF!  \ldots]} $\hat{G}(z)=\frac{\hat{N}_{G}(z)}{\hat{D}_{G}(z)}$, is
 BIBO-stable if and only if:
 %
 \begin{itemize}
