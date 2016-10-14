@@ -222,7 +222,7 @@ a digital equivalent of the plant by evaluating the effects of the
 quantisers (A/D and D/A converters) as time discretisation elements with
 quantisation noise.  The resulting closed-loop system is a program loop that
 operates on bit-vectors encoded using fixed-point arithmetic with fixed word
-length (FWL).  We calculate the deterministic effect of the FWL and
+length (FWL).  The deterministic effects of the FWL and
 quantisation errors are incorporated into the model as an additive
 uncertainty, which is taken into account during the CEGIS-based synthesis of
 the control software for the plant.
@@ -359,8 +359,8 @@ minutes.
 The digital controllers synthesised using the algorithm we present in this
 paper are typically used in closed loops with continuous (and physical)
 plants.  Thus, the proposed approach has to consider dynamics of continuous
-parts of the system (i.e., the plant) and the discrete parts (i.e., the
-digital controller).  To obtain a joint model, the discretise the continuous
+parts of the system (i.e., the plant) and the discreted parts (i.e., the
+digital controller).  To obtain a joint model, we discretise the continuous
 plant. We briefly recall the standard foundations of this step.
 
 We only consider transfer function models, and require a $z$-domain
