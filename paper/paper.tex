@@ -169,20 +169,21 @@ plant specification.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
 
-Modern implementations of embedded control have proliferated with the
+Modern implementations of embedded control systems have proliferated with the
 availability of low-cost devices that can perform highly non-trivial control
 tasks, with significant impact in numerous application areas such as
 environmental control and robotics~\cite{astrom1997computer, Franklin15}.
 
-Correct control is non-trivial, however. The problem is exacerbated by
-artefacts specific to digital control such as the effects of
+Correct and sound control is non-trivial, however. The problem is exacerbated by
+artefacts specific to digital control, such as the effects of
 finite-precision arithmetic, time discretisation, and quantisation noise
 introduced by A/D and D/A conversion.  Thus, the programming is a key
 barrier to broad adoption of digital control, and requires considerable
 expertise.
 
-There has been plenty of previous work that aims at \emph{verifying} a given
-controller designed by the engineer.  Recent work can show the of stability
+Beyond classical a-posteriori validation procedures in digital control, 
+there has been plenty of previous work aiming at \emph{verifying} a given
+controller designed by the engineer.  Recent work can show the stability of 
 digital controllers with considerations to implementation aspects, i.e.,
 fixed-point arithmetic and the word length used~\cite{Bessa16}.  This work
 exploits advances in bit-accurate verification of C programs to obtain a
@@ -201,28 +202,25 @@ reasoning~\cite{DBLP:conf/lpar/DavidKL15, DBLP:conf/cav/0001A14}.
 
 By applying a state-of-the-art CEGIS engine we are now able to present a
 tool that automatically \emph{generates} digital controllers for a given
-plant model that are correct by construction.  This approach promises to
+continuous plant model that are correct by construction.  This approach promises to
 reduce the cost and time of development of digital control dramatically, and
 requires considerably less expertise than methodologies driven by
 verification.  Specifically, we synthesise controllers for hybrid
 closed-loop systems, i.e., software-implemented embedded controllers along
 with a model of their physical environment (the plant), that are
-\emph{stable}.  Due to the complexity of such systems, we focus on linear
-models with known configurations to perform parametric synthesis of the
-controller dynamics.
+\emph{stable}.  Due to the complexity of such systems, in this work we focus on linear
+models with known configurations and perform parametric synthesis of stabilising digital controllers.
 
 Our work addresses particularly challenging aspects of the control synthesis
 problem.  We perform digital control synthesis over a hybrid model, where
-the plant exhibits continuous behaviour and the controller operates in both
-discrete time and discrete state space.  The key insight of our approach is
-that the problem can be translated into a \emph{single, joint domain}, which
-represents a bi-simulation of the original, hybrid dynamics.  Given our
-primary interest in stability despite digitisation effects, we have modelled
+the plant exhibits continuous behaviour whereas the controller operates in 
+discrete time and over a quantised domain.  Our approach translates the problem into a single digital domain.  
+Given our primary interest in stability despite digitisation effects, we have modelled
 a digital equivalent of the plant by evaluating the effects of the
 quantisers (A/D and D/A converters) as time discretisation elements with
 quantisation noise.  The resulting closed-loop system is a program loop that
 operates on bit-vectors encoded using fixed-point arithmetic with fixed word
-length (FWL).  The deterministic effects of the FWL and
+length (FWL). The deterministic effects of the FWL and
 quantisation errors are incorporated into the model as an additive
 uncertainty, which is taken into account during the CEGIS-based synthesis of
 the control software for the plant.
@@ -231,12 +229,12 @@ In summary, this paper makes the following original contributions.
 %
 \begin{itemize}
 
-\item We designed and implemented an automatic approach for generating
+\item We design and implement an automatic approach for generating
   {\em corect-by-construction} digital controllers that is based on
   state-of-the-art inductive synthesis techniques.  Our application of
   program synthesis is non-trivial and requires addressing challenges
-  specific to embedded control systems such as the effects of quantisers and
-  FWL. In particular, we found that a two-stage verification engine
+  specific to embedded control systems, such as the effects of quantisers and
+  FWL. In particular, we have found that a two-stage verification engine
   that continuously refines the precision of the fixed-point
   representation is key to the performance of our approach yielding,
   in most cases, to a speed-up of at least two orders of magnitude over a
