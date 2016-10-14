@@ -2575,15 +2575,15 @@ representation of the continuous dynamics.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusions} \label{sec:conclusions}
 
-We have presented a CEGIS-based approach that uses inductive synthesis in
-conjunction with an algorithm for verifying robust closed-loop stability, 
-in order to compute a parametric solution for a digital controller given 
-a continuous (or discrete) plant specification.  This enables us to automatically
-synthesise correct-by-construction digital controllers for a given model of
-their physical environment.  Our approach addresses the effects of the
-quantisers (A/D and D/A converters) as time discretisation elements with
-quantisation noise.  Our experimental results show that our CEGIS-based
-approach is able to synthesise stable controllers in most benchmarks within
+We have presented a CEGIS-based approach implemented in a tool called \tool, 
+which uses inductive synthesis in conjunction with an algorithm for verifying 
+robust closed-loop stability. In particular, \tool is able to compute a parametric solution 
+for a stabilizing digital controller given a continuous (or discrete) plant 
+specification.  This enables us to automatically synthesise correct-by-construction 
+digital controllers for a given model of their physical environment.  
+Our approach addresses the effects of the quantisers (A/D and D/A converters) 
+as time discretisation elements with quantisation noise.  Our experimental results 
+show that \tool is able to synthesise stable controllers in most benchmarks within
 reasonable time frames fully automatically.
 %
 % and can be 
@@ -2591,7 +2591,8 @@ reasonable time frames fully automatically.
 %Both back-ends enabled controller synthesis for all benchmarks within reasonable time frames.
 %
 Future work will be the extension of this CEGIS-based approach to further
-classes of systems.  We will also consider performance requirements while
+classes of systems, including state-space representation.  
+We will also consider performance requirements while
 synthesising the digital controller.
 
 \bibliographystyle{abbrv}
