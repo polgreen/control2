@@ -202,28 +202,27 @@ reasoning~\cite{DBLP:conf/lpar/DavidKL15, DBLP:conf/cav/0001A14}.
 
 By applying a state-of-the-art CEGIS engine we are now able to present a
 tool that automatically \emph{generates} digital controllers for a given
-plant model that are correct by construction.  This approach promises to
+continuous plant model that are correct by construction.  This approach promises to
 reduce the cost and time of development of digital control dramatically, and
 requires considerably less expertise than methodologies driven by
 verification.  Specifically, we synthesise controllers for hybrid
 closed-loop systems, i.e., software-implemented embedded controllers along
 with a model of their physical environment (the plant), that are
-\emph{stable}.  Due to the complexity of such systems, we focus on linear
-models with known configurations to perform parametric synthesis of the
-controller dynamics.
+\emph{stable}.  Due to the complexity of such systems, in this work we focus on linear
+models with known configurations and perform parametric synthesis of stabilising digital controllers.
 
 Our work addresses particularly challenging aspects of the control synthesis
 problem.  We perform digital control synthesis over a hybrid model, where
-the plant exhibits continuous behaviour and the controller operates in both
-discrete time and discrete state space.  The key insight of our approach is
-that the problem can be translated into a \emph{single, joint domain}, which
-represents a bi-simulation of the original, hybrid dynamics.  Given our
-primary interest in stability despite digitisation effects, we have modelled
+the plant exhibits continuous behaviour whereas the controller operates in 
+discrete time and over a quantised domain.  
+Inspired by a classical approach \cite{astrom1997computer}, 
+we translate the problem into a single digital domain.  
+Given our primary interest in stability despite digitisation effects, we have modelled
 a digital equivalent of the plant by evaluating the effects of the
 quantisers (A/D and D/A converters) as time discretisation elements with
 quantisation noise.  The resulting closed-loop system is a program loop that
 operates on bit-vectors encoded using fixed-point arithmetic with fixed word
-length (FWL).  The deterministic effects of the FWL and
+length (FWL). The deterministic effects of the FWL and
 quantisation errors are incorporated into the model as an additive
 uncertainty, which is taken into account during the CEGIS-based synthesis of
 the control software for the plant.
@@ -232,12 +231,12 @@ In summary, this paper makes the following original contributions.
 %
 \begin{itemize}
 
-\item We designed and implemented an automatic approach for generating
+\item We design and implement an automatic approach for generating
   {\em corect-by-construction} digital controllers that is based on
   state-of-the-art inductive synthesis techniques.  Our application of
   program synthesis is non-trivial and requires addressing challenges
-  specific to embedded control systems such as the effects of quantisers and
-  FWL. In particular, we found that a two-stage verification engine
+  specific to embedded control systems, such as the effects of quantisers and
+  FWL. In particular, we have found that a two-stage verification engine
   that continuously refines the precision of the fixed-point
   representation is key to the performance of our approach yielding,
   in most cases, to a speed-up of at least two orders of magnitude over a
@@ -367,10 +366,10 @@ literature in Section~\ref{sec:related}.
 %------------------------------------
 
 The digital controllers synthesised using the algorithm we present in this
-paper are typically used in closed loops with continuous (and physical)
+paper are typically used in closed loops with continuous (physical)
 plants.  Thus, the proposed approach has to consider dynamics of continuous
 parts of the system (i.e., the plant) and the discrete parts (i.e., the
-digital controller).  To obtain a joint model, we discretise the continuous
+digital controller).  To obtain a joint model, we fully discretise the continuous
 plant. We briefly recall the standard foundations of this step.
 
 We only consider transfer function models, and require a $z$-domain
@@ -1132,20 +1131,20 @@ Digital Systems Synthsis, named DSSynth.
 Given a model for a plant for which to synthesise a controller, provided in
 an ANSI-C input file (Steps 1--3), DSSynth constructs a non-deterministic
 model to represent the plant family (Step~A), and formulates a function
-(step~B) using implementation details provided in Steps~$2$ and $3$ to
+(Step~B) using implementation details provided in Steps~$2$ and $3$ to
 calculate the parameters of the controller to be synthesised (Step~C). 
 Finally, DSSynth builds an intermediate ANSI-C code for the digital system
 implementation, which is used as input for the CEGIS engine (Step~D).
 
 This intermediate ANSI-C code model contains a specification $\phi$ for the
-property of interst (i.e., robust stability) and is passed to
-CBMC's~\cite{ClarkeKL04} integrated Counterexample-Guided Inductive
-Synthesis (CEGIS) module, where the controller is marked as input variable
+property of interst (i.e., robust stability) and is passed to the
+Counterexample-Guided Inductive Synthesis (CEGIS) module of
+CBMC~\cite{ClarkeKL04}, where the controller is marked as the input variable
 to synthesise.  The properties specified in the ANSI-C code model can only
 be satisfied if CEGIS synthesises controller coefficients that
 satisfy~$\phi$.  CEGIS employs an iterative, counterexample-guided
 refinement process which is explained in detail in
-section~\ref{synthesiser-general}.  A successful synthesis result is
+section~\ref{synthesiser-general}.  A~successful synthesis result is
 reported if CEGIS generates a controllerthat is safe with respect to~$\phi$. 
 In particular, the ANSI-C code model guarantees that a synthesised solution
 is complete and sound with respect to stability property~$\phi$, since it
