@@ -2089,11 +2089,11 @@ We will illustrate our approach with a classical cruise control example,
 extracted from the literature~\cite{Astrom08}.  The example will allow us to
 highlight the challenges that arise when using finite precision arithmetic
 in digital control.  We are given a discrete plant model (with a time step
-of $0.2$s), which is represented by the following $z$-expression:
+of $0.2$\,s), which is represented by the following $z$-expression:
 %
 \begin{equation}
 \label{Eq:running-example-plant}
-G\left(z\right) = \frac{0.0264}{z-0.9998}.
+G(z) = \frac{0.0264}{z-0.9998}.
 \end{equation}
 
 Using an optimization tool, the authors
@@ -2103,7 +2103,7 @@ $z$-domain transfer function:
 %
 \begin{equation}
 \label{Eq:running-example-controller}
-C\left(z\right) = \frac{2.72z^2 - 4.153z + 1.896}{z^2 - 1.844z + 0.8496}.
+C(z) = \frac{2.72z^2 - 4.153z + 1.896}{z^2 - 1.844z + 0.8496}.
 \end{equation}
 %
 The authors of~\cite{DBLP:conf/hybrid/WangGRJF16} claim that this controller
@@ -2120,13 +2120,13 @@ fractional part) can be modeled as follows:
 \begin{equation}
 \label{Eq:running-example-controller-quantized}
 \resizebox{.47\textwidth}{!}{
-$C_{q}\left(z\right) {:=} \frac{2.7199859619140625z^2{-}4.1529998779296875z
+$C_{q}(z) {:=} \frac{2.7199859619140625z^2{-}4.1529998779296875z
 {+}1.89599609375}{z^2{-}1.843994140625z+0.8495941162109375}$
 }
 \end{equation} 
 %
 The resulting system using the typical series loop configuration, where
-$C_{q}\left(z\right)$ and $G\left(z\right)$ are in the forward path, is
+$C_{q}(z)$ and $G(z)$ are in the forward path, is
 unstable.
 %
 \subsection{Program synthesis for the example}
