@@ -2644,26 +2644,28 @@ vacuum that we seek to explore a CEGIS approach to FWL controller synthesis.
 
 \paragraph{CEGIS}
 
-In recent years the development of program synthesis has found many ways to
-obtain correct by design programs from high-level specifications.  One such
-approach~\cite{itzhaky2010simple} looks to inductively synthesize invariants
-to generate the desired programs.  Since these digital programs are already
-constrained by designed to factors such as FWL, these approaches are ideal
-for the synthesis of parametric controllers. 
-In~\cite{DBLP:conf/cdc/RavanbakhshS15}, the authors use CEGIS for the
-synthesis of switching controllers for stabilizing continuous-time plants
-with polynomial dynamics.  The work extends to its application on affine
-systems, finding its major challenge in the hardness of solving linear
-arithmetic on present SMT solvers.  Since this approach uses switching
-states instead of linear dynamics in the digital controller, it entirely
-circumvents the FWL problem.  It is also not suitable for the kind of
-control we seek to synthesize.  What is needed in this regard is the
+Program synthesis is the problem of computing correct-by-design programs
+from high-level specifications, and algorithms for this problem have made
+substantial progress in recent years.  One such
+approach~\cite{itzhaky2010simple} inductively synthesizes invariants to
+generate the desired programs.
+
+Program synthesisers are an ideal fit for synthesis of parametric
+controllers since the semantics of programs capture effects such as FWL
+precisely.  In~\cite{DBLP:conf/cdc/RavanbakhshS15}, the authors use CEGIS
+for the synthesis of switching controllers for stabilizing continuous-time
+plants with polynomial dynamics.  The work extends to its application on
+affine systems, finding its major challenge in the hardness of solving
+linear arithmetic with the state-of-the-art SMT solvers.  Since this
+approach uses switching states instead of linear dynamics in the digital
+controller, it entirely circumvents the FWL problem.  It is also not
+suitable for the kind of control we seek to synthesize.  We require a
 combination of a synthesis engine with a control verification tool that
 addresses the challenges presented here in the form of FWL effects and
 stability measures for LTI SISO controllers.  We take the former
 from~\cite{DBLP:conf/lpar/DavidKL15} and the latter from~\cite{daes20161}
-while enhancing the procedure by evaluating the quantization effects of
-the Hardware interfaces (ADC/DAC) to obtain an accurate discrete-time FWL
+while enhancing the procedure by evaluating the quantization effects of the
+Hardware interfaces (ADC/DAC) to obtain an accurate discrete-time FWL
 representation of the continuous dynamics.
  
 %In \cite{DBLP:journals/corr/PakmehrWJVF13}, Pakmehr et al.  design a control software verification framework for gas turbine engines.
@@ -2681,12 +2683,12 @@ given model of their physical environment.  Our approach addresses the
 effects of the quantizers (A/D and D/A converters) as time discretization
 elements with quantization noise.  Our experimental results show that \tool
 is able to synthesize stable controllers in most benchmarks within
-a reasonable time fully automatically.
+a reasonable amount of time fully automatically.
 %
 % and can be 
 %complemented using the interval arithmetic back-end, where the inductive conjectures fail. 
 %Both back-ends enabled controller synthesis for all benchmarks within reasonable time frames.
-%
+
 Future work will be the extension of this CEGIS-based approach to further
 classes of systems, including state-space representation.  We will also
 consider performance requirements while synthesizing the digital controller.
