@@ -1895,28 +1895,30 @@ using fixed-point bit vectors.%  with integer size $I_p$ and fractional
 Since the controller is synthesized in the $\mathbb{R}\langle I,F \rangle$
 domain,
 %
- $$\forall i \leq N_C, j \leq M_C\ \  \tilde \beta_{i} \equiv \beta_{i} \wedge \tilde \alpha_{j} \equiv \alpha_{j} \Leftrightarrow \tilde C(z) \equiv C(z)$$
+$$\forall i \leq N_C, j \leq M_C\ \  \tilde \beta_{i} \equiv \beta_{i} \wedge \tilde \alpha_{j} \equiv \alpha_{j} \Leftrightarrow \tilde C(z) \equiv C(z)$$
 %
 However, given a real plant $\hat{G}(z)$, and a discretizing function
 %
 \begin{align}
 \small
 \label{FWL_tf}
-&f^p : \mathbb{R} \rightarrow  \mathbb{R}\langle I_p,F_p \rangle \triangleq \tilde x = f^p(x) : \tilde x=x-(x\mod\tilde x)\\
+&f^p : \mathbb{R} \rightarrow  \mathbb{R}\langle I_p,F_p \rangle \triangleq \tilde x = f^p(x) : \tilde x=x-(x\bmod\tilde x)\\
 &\mathit{FWL}_n^p[P \in \mathcal{P}] = \tilde P \in \mathcal{P}^{n}\langle I_p,F_p \rangle : c_i \in \vec{P} \wedge \tilde c_i \in \vec{\tilde{P}}=f^p(c_i)  \nonumber
 \end{align}
 %
-we calculate $\tilde G(z)=FWL_{M_G,N_G}^p(\hat{G}(z))$
+we calculate $\tilde G(z)=\mathit{FWL}_{M_G,N_G}^p(\hat{G}(z))$
 %
 \begin{align}
 % \label{digital_controller_tf}
 % \tilde C(z)&=\frac{(\hat{\beta}_{0}+\Delta_q \hat{\beta}_{0}) +...+(\hat{\beta}_{M_C}+\Delta_b \hat{\beta}_{M_C})z^{-M_C}}{(\hat{\alpha}_{0}+\Delta_q \hat{\alpha}_{0})+...+(\hat{\alpha}_{N_C}+\Delta_q \hat{\alpha}_{N_C})z^{-N_G}} \nonumber \\
 % &= C(z) =\hat{C}(z) + \Delta{C}_b(z)\\
+%
 \label{digital_plant_tf}
 \tilde G(z)&=\frac{(\hat{b}_{0}+\Delta_b \hat{b}_{0}) +...+(\hat{b}_{M_G}+\Delta_b \hat{b}_{M_G})z^{-M_G}}{(\hat{a}_{0}+\Delta_b \hat{a}_{0})+...+(\hat{a}_{N_G}+\Delta_b \hat{a}_{N_G})z^{-N_G}} \nonumber \\
 &\Rightarrow \vec{\tilde G} =\vec{\hat{G}}+\Delta_b{\vec{G}}=\vec{G}+\Delta_p{\vec{G}}+\Delta_b{\vec{G}}.
 \end{align}
-where $\Delta_b\hat{c}_i=\hat{c}_i\mod \tilde{c}_i$
+%
+where $\Delta_b\hat{c}_i=\hat{c}_i\bmod \tilde{c}_i$
 and $\Delta_b{G}$ represents the plant uncertainty caused by
 the rounding off effect.  We may encompass all the uncertainty as
 $\Delta{\vec{G}}=\Delta_p{\vec{G}}+\Delta_b{\vec{G}}$. 
