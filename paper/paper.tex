@@ -144,11 +144,11 @@ $^{2}$\affaddr{Federal University of Amazonas, Manaus, Brazil}
 
 \begin{abstract}
 %
-Modern control is implemented using digital microcontrollers, which are
+Modern control is implemented with digital microcontrollers, which are
 designed to work in an embedded environment, within a dynamical plant that
 represents physical components.
 %
-We present a new algorithm based on counterexample guided inductive
+We present a new algorithm based on counter\-example guided inductive
 synthesis that automates the design of digital controllers that are
 correct by construction.  The synthesis result is sound with respect to the
 complete range of approximations, including time discretization,
@@ -186,13 +186,13 @@ introduced by A/D and D/A conversion.  Thus, the programming is a key
 barrier to broad adoption of digital control, and requires considerable
 expertise.
 
-Beyond classical a-posteriori validation procedures in digital control, 
+Beyond classical a-posteriori validation procedures in digital control,
 there has been plenty of previous work aiming at \emph{verifying} a given
-controller designed by the engineer.  Recent work can show the stability of 
-digital controllers with considerations to implementation aspects, i.e.,
-fixed-point arithmetic and the word length used~\cite{Bessa16}.  This work
-exploits advances in bit-accurate verification of C programs to obtain a
-verifier for software-implemented digital control.
+controller designed by the engineer.  Recent work can show the stability of
+digital controllers with consideration of implementation aspects, i.e.,
+fixed-point arithmetic and the word length used~\cite{Bessa16}.  The authors
+of~\cite{Bessa16} exploit advances in bit-accurate verification of C
+programs to obtain a verifier for software-implemented digital control.
 
 By contrast, we leverage a very recent step-change in the scalability of
 \emph{program synthesis}.  Program synthesis engines use a program
@@ -201,34 +201,34 @@ candidate programs.  The candidate programs are iteratively refined to match
 the specification more closely.  Program synthesizers that implement
 Counter-Example Guided Inductive Synthesis (CEGIS)~\cite{sketch} are now
 able to generate programs for highly non-trivial specifications with a very
-high degree of automation.  Modern CEGIS engines implement combinations of
-automated testing, genetic algorithms and SMT-based automated
+high degree of automation.  Modern CEGIS engines combine automated testing,
+genetic algorithms and SMT-based automated
 reasoning~\cite{DBLP:conf/lpar/DavidKL15, DBLP:conf/cav/0001A14}.
 
 By applying a state-of-the-art CEGIS engine we are now able to present a
 tool that automatically \emph{generates} digital controllers for a given
-continuous plant model that are correct by construction.  This approach promises to
-reduce the cost and time of development of digital control dramatically, and
-requires considerably less expertise than methodologies driven by
-verification.  Specifically, we synthesize controllers for hybrid
+continuous plant model that are correct by construction.  This approach
+promises to reduce the cost and time of development of digital control
+dramatically, and requires considerably less expertise than methodologies
+driven by verification.  Specifically, we synthesize controllers for hybrid
 closed-loop systems, i.e., software-implemented embedded controllers along
 with a model of their physical environment (the plant), that are
-\emph{stable}.  Due to the complexity of such systems, in this work we focus on linear
-models with known configurations and perform parametric synthesis of stabilizing digital controllers.
+\emph{stable}.  Due to the complexity of such systems, in this work we focus
+on linear models with known configurations and perform parametric synthesis
+of stabilizing digital controllers.
 
 Our work addresses particularly challenging aspects of the control synthesis
 problem.  We perform digital control synthesis over a hybrid model, where
-the plant exhibits continuous behavior whereas the controller operates in 
-discrete time and over a quantized domain.  
-Inspired by a classical approach \cite{astrom1997computer}, 
-we translate the problem into a single digital domain.  
-Given our primary interest in stability despite digitization effects, we have modeled
-a digital equivalent of the plant by evaluating the effects of the
-quantizers (A/D and D/A converters) as time discretization elements with
-quantization noise.  The resulting closed-loop system is a program loop that
-operates on bit-vectors encoded using fixed-point arithmetic with finite-word
-length (FWL). The deterministic effects of the FWL and
-quantization errors are incorporated into the model as an additive
+the plant exhibits continuous behavior whereas the controller operates in
+discrete time and over a quantized domain.  Inspired by a classical approach
+\cite{astrom1997computer}, we translate the problem into a single digital
+domain.  Given our primary interest in stability despite digitization
+effects, we have modeled a digital equivalent of the plant by evaluating the
+effects of the quantizers (A/D and D/A converters) as time discretization
+elements with quantization noise.  The resulting closed-loop system is a
+program loop that operates on bit-vectors encoded using fixed-point
+arithmetic with finite word length (FWL).  The deterministic effects of the
+FWL and quantization errors are incorporated into the model as an additive
 uncertainty, which is taken into account during the CEGIS-based synthesis of
 the control software for the plant.
 
@@ -237,34 +237,33 @@ In summary, this paper makes the following original contributions.
 \begin{itemize}
 
 \item We design and implement an automatic approach in a tool called \tool  
-  for generating {\em corect-by-construction} digital controllers that is based on
-  state-of-the-art inductive synthesis techniques.  Our application of
-  program synthesis is non-trivial and requires addressing challenges
-  specific to embedded control systems, such as the effects of quantizers and
-  FWL. In particular, we have found that a two-stage verification engine
-  that continuously refines the precision of the fixed-point
-  representation of the plant is key to the performance of our approach yielding,
-  in most cases, a speed-up of at least two orders of magnitude over a
-  conventional one-stage verification engine.
+  for generating {\em correct-by-construction} digital controllers that is
+  based on state-of-the-art inductive synthesis techniques.  Our application
+  of program synthesis is non-trivial and requires addressing challenges
+  specific to embedded control systems, such as the effects of quantizers
+  and FWL.  In particular, we have found that a two-stage verification
+  engine that continuously refines the precision of the fixed-point
+  representation of the plant is key to the performance of our approach
+  yielding, in most cases, a speed-up of at least two orders of magnitude
+  over a conventional one-stage verification engine.
 
-\item We provide experimental results showing that \tool
-is able to efficiently synthesize stable controllers for a set of intricate benchmarks 
-taken from the literature: the median runtime for our benchmark 
-set is $197$s, i.e., half of the controllers can be synthesized in less than 
-five minutes.
+\item We provide experimental results showing that \tool is able to
+  efficiently synthesize stable controllers for a set of intricate
+  benchmarks taken from the literature: the median runtime for our benchmark
+  set is $197$s, i.e., half of the controllers can be synthesized in less
+  than five minutes.
 
 %% \item We exploit a CEGIS-based approach that uses inductive synthesis
-%% together with a bit-precise formal verification algorithm for synthesising
+%% together with a bit-precise formal verification algorithm for synthesizing
 %% correct-by-design robust digital controllers for non-fragile closed-loop
 %% stability.
 
-%% \item Experimental results with our synthesiser show that the
+%% \item Experimental results with our synthesizer show that the
 %% combination of interval arithmetic to represent the controller coefficients
 %% and a two-stage verification approach to continuously refine precision
 %% enables us to compute a parametric, sound solution for $14$ out of $15$
 %% digital stabilizing controllers for a set of continuous and discrete plants
 %% with parametric uncertainties.
-
 
 \end{itemize}
 
@@ -863,7 +862,7 @@ quantization effects on the plant model.
 
 %\textcolor{blue}{[IB: I propose to exchange the following paragraphs by the previous blue]}
 
-%\textcolor{green}{DC: I believe Alessandro wanted to be more specific about the nature of the modelling error which is why I was trying to explain it. In this case I believe there are also two separate sources for $\Delta{G}_p(z)$. The first is $\Delta{G}_p(s)$ (which is basically a known tolerance that may come from G(t)), whilst the second is the error introduced by the calculations in the $\mathcal{Z}$ transform. Alessandro, do you want to address this second term (possibly as explained below) or just leave the blue section as is?}
+%\textcolor{green}{DC: I believe Alessandro wanted to be more specific about the nature of the modelling error which is why I was trying to explain it. In this case I believe there are also two separate sources for $\Delta{G}_p(z)$. The first is $\Delta{G}_p(s)$ (which is basically a known tolerance that may come from G(t)), while the second is the error introduced by the calculations in the $\mathcal{Z}$ transform. Alessandro, do you want to address this second term (possibly as explained below) or just leave the blue section as is?}
 
 
 %Since $G(z)$ is an approximation of $G(s)$ we introduce an error term caused during its calculation as $\Delta{G}_P$
@@ -876,7 +875,7 @@ quantization effects on the plant model.
 %&=G(z)+\Delta{G}_P(z).
 %\end{align}
 %%
-%Note that $\Delta{G}_P$ is undefined and upperbound by a user defined
+%Note that $\Delta{G}_P$ is undefined and upper bound by a user defined
 %value such that $\hat{G}(z)$ corresponds to the set of
 %possible polynomial forms of $G(z, T)$ that overapproximate $G(s)$.
 %This calculation is performed outside of the scope of this work since it depends on the nature of the tool used to obtain the $\mathcal{Z}$ form. The error comes from the bounded horizon and mathematical precision used to calculate the $\mathcal{Z}$ transform, which will be tool and user dependent.
@@ -972,7 +971,7 @@ and DAC.
 %\label{lemma:variance}
 %%
 %In particular, Widrow \cite{widrow1956} models the quantization noise as a
-%gaussian model in which the second moment (variance) of the probability
+%Gaussian model in which the second moment (variance) of the probability
 %density function (PDF) of the quantization noise is given by
 %%
 %\begin{equation}
@@ -2226,7 +2225,7 @@ and a gain margin of $17.8 dB$.
 % For the same cruise control system, the synthesis may be done considering that the plant model have parametric uncertainties ($\Delta G_{P}(z)$). Thus, the synthesised controller must to stabilize for any parametric variation $\Delta p$ inside of a given region. Specially, in this example, was assumed that each coefficient of $G(z)$ may vary $\pm 0.5\%$.
 % }
 
-% \blue{Initially, the controller denominator and numerator  ($D_{C}(z)$ and $N_{C}(z)$) are started with zero coefficients, as in previous example. Thus,  in the first {\sc verify} phase a counterexample is presented, that is added to {\sc inputs}, whis is usede in the first  {\sc synthesise} phase. The resulting controller is:
+% \blue{Initially, the controller denominator and numerator  ($D_{C}(z)$ and $N_{C}(z)$) are started with zero coefficients, as in previous example. Thus,  in the first {\sc verify} phase a counterexample is presented, that is added to {\sc inputs}, whis is used in the first  {\sc synthesise} phase. The resulting controller is:
 % }
 % $$
 % {
@@ -2277,7 +2276,7 @@ shows a stable behavior for the final (sound) solution, which presents a lower s
     \centering
     \begin{subfigure}[b]{0.3\textwidth}
         \includegraphics[width=\textwidth]{figures/runningexample_step0.pdf}
-        \caption{Orignal controller}
+        \caption{Original controller}
         \label{fig:step0}
     \end{subfigure}
     ~
@@ -2598,7 +2597,7 @@ the goal to either verify (e.g.~\cite{daes20161}) or optimize
 (e.g.~\cite{oudjida2014design}) implementations.  There are in fact two
 different problems arising from FWL effects.  The first corresponds to the
 error in the dynamics caused by the inability of the hardware to represent
-the exact dynamics of the system whilst the second relates to rounding
+the exact dynamics of the system while the second relates to rounding
 errors during computation.  In~\cite{fialho1994stability} a stability
 measure based on the error of the digital dynamics ensures that the FWL
 errors do not make the digital system unstable.  A more recent
@@ -2610,7 +2609,7 @@ looking for optimal parameter representations using FWL, but ignoring the
 effects of rounding errors due to issues of mathematical tractability.  The
 analyses in~\cite{DBLP:conf/hybrid/WangGRJF16, DBLP:conf/hybrid/RouxJG15}
 rely on an invariant computation on the discrete system dynamics using
-Semi-Definite Programming (SDP).  Whilst the former uses BIBO properties to
+Semi-Definite Programming (SDP).  While the former uses BIBO properties to
 determine stability, the latter uses Lyapunov-based quadratic invariants. 
 In both cases, the SDP solver uses floating-point arithmetic and soundness
 is checked by upper bounding the error.  An alternative approach is taken
@@ -2635,7 +2634,7 @@ stability problems, but they fail to explore the effects of FWL in their
 implementation.  In order to provide a correct by design digital controller,
 \cite{alur2016compositional} requires a user-defined finite state
 abstraction to synthesize a digital controller based on high level
-specifications.  Whilst this approach directly overcomes the challenges
+specifications.  While this approach directly overcomes the challenges
 presented by the FWL problem, it still requires error-prone user
 intervention.  A different solution that looks at the other end of the scale
 is an approach that synthesizes word lengths for known problems as developed
@@ -2663,7 +2662,7 @@ combination of a synthesis engine with a control verification tool that
 addresses the challenges presented here in the form of FWL effects and
 stability measures for LTI SISO controllers.  We take the former
 from~\cite{DBLP:conf/lpar/DavidKL15} and the latter from~\cite{daes20161}
-whilst enhancing the procedure by evaluating the quantization effects of
+while enhancing the procedure by evaluating the quantization effects of
 the Hardware interfaces (ADC/DAC) to obtain an accurate discrete-time FWL
 representation of the continuous dynamics.
  
