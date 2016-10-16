@@ -2566,8 +2566,8 @@ scenarios as well.
 The problem of parametric control synthesis based on stability measures for
 continuous Linear Time Invariant (LTI) Single Input-Single Output (SISO)
 systems has been researched for several decades.  On a theoretical level it
-is a solved problem~\cite{wonham1967pole} for which researches continuously
-seek better results based on a number of properties in addition to
+is a solved problem~\cite{wonham1967pole}, for which researchers
+continuously seek better results for a number of aspects in addition to
 stability.  A vast range of pole placement techniques such as Moore's
 algorithm for eigenstructure assignment~\cite{klein1977eigenvalue} or the
 more recent Linear Quadratic Regulator (LQR)~\cite{bemporad2002explicit}
@@ -2575,44 +2575,43 @@ have been used in several studies with increasing degrees of success to
 ensure stability.  The latter approach highlights the importance of
 conserving energy during the control process, which results in lower running
 costs.  Since real systems are subject to tolerance and noise as well as the
-need for economy, more recent studies focus on the problems of achieving
+need for economy, more recent studies focus on the problem of achieving
 robust stability with minimum gain~\cite{schmid2014unified,
-konigorski2012pole}.  However, when extending the problem to digital
-controller synthesis, many of these techniques lack the ability to produce
+konigorski2012pole}.  However, when applied with the aim of synthesising a
+digital controller, many of these techniques lack the ability to produce
 sound or stable results because they disregard the effects of quantization
 and rounding.  Recent papers on implementations/synthesis of LTI digital
-controllers~\cite{das2013lqr,ghosh2013fpga} focus on time discretization,
+controllers~\cite{das2013lqr, ghosh2013fpga} focus on time discretization,
 failing to account for these error-inducing effects and can therefore result
-in digitally unstable systems that have been proven to be robustly stable in
-a continuous space.  This situation demands the inclusion of formal methods
-to verify the effects of space discretization on the implementation of the
-controller.
+in digital systems that are unstable even though they have been proven to be
+robustly stable in a continuous space.  
 
 \paragraph{Formal Verification of Linear Digital Controllers} 
 
 Researchers in formal verification of control systems have studied various
 effects of discretizing the dynamics, including delayed
-response~\cite{Duggirala2015}, and Finite Word Length (FWL) constraints with
+response~\cite{Duggirala2015}, and Finite Word Length (FWL) semantics with
 the goal to either verify (e.g.~\cite{daes20161}) or optimize
-(e.g.~\cite{oudjida2014design}) implementations.  There are in fact two
-different problems arising from FWL effects.  The first corresponds to the
-error in the dynamics caused by the inability of the hardware to represent
-the exact dynamics of the system while the second relates to rounding
-errors during computation.  In~\cite{fialho1994stability} a stability
-measure based on the error of the digital dynamics ensures that the FWL
-errors do not make the digital system unstable.  A more recent
+(e.g.~\cite{oudjida2014design}) given implementations.
+
+There are two different problems that arise from FWL semantics.  The first
+is the error in the dynamics caused by the inability to represent the exact
+state of the physical system while the second relates to rounding errors
+during computation.  In~\cite{fialho1994stability}, a stability measure
+based on the error of the digital dynamics ensures that the deviation
+introduced by FWL does not make the digital system unstable.  A more recent
 approach~\cite{DBLP:journals/automatica/WuLCC09} uses $\mu$ calculus to
 directly model the digital controller so that the selected parameters are
-stable by design.  Most studies following this verification research field
-focus on finding a correct implementation of a known desired controller,
-looking for optimal parameter representations using FWL, but ignoring the
-effects of rounding errors due to issues of mathematical tractability.  The
-analyses in~\cite{DBLP:conf/hybrid/WangGRJF16, DBLP:conf/hybrid/RouxJG15}
-rely on an invariant computation on the discrete system dynamics using
-Semi-Definite Programming (SDP).  While the former uses BIBO properties to
-determine stability, the latter uses Lyapunov-based quadratic invariants. 
-In both cases, the SDP solver uses floating-point arithmetic and soundness
-is checked by upper bounding the error.  An alternative approach is taken
+stable by design.  Most work in verification focusses on finding a correct
+variant of a known controller, e.g., by looking for optimal parameter
+representations using FWL, but ignore the effects of rounding errors due to
+issues of mathematical tractability.  The analyses
+in~\cite{DBLP:conf/hybrid/WangGRJF16, DBLP:conf/hybrid/RouxJG15} rely on an
+invariant computation on the discrete system dynamics using Semi-Definite
+Programming (SDP).  While the former uses BIBO properties to determine
+stability, the latter uses Lyapunov-based quadratic invariants.  In both
+cases, the SDP solver uses floating-point arithmetic and soundness is
+checked by bounding the error.  An alternative approach is taken
 by~\cite{park2016scalable}, where the verification of existing code is
 performed against a known model by extracting an LTI model of the code
 through symbolic execution.  In order to account for rounding errors, an
@@ -2622,25 +2621,24 @@ successful.
 
 \paragraph{Robust Synthesis of FWL Digital Controllers}
 
-Given the current knowledge in control system's synthesis, there is no other
-existing study on the automatic synthesis of fixed-point digital controllers
-considering FWL effects.  Parameter synthesis tools such
-as~\cite{cimatti2013parameter} use bounded model checking and fixed-point
-computations to find parameters based on user defined specifications, but
-they often operate in the continuous domain and are ill-suited for robust
-analysis since they have no direct means of evaluating robustness.  Other
-tools such as~\cite{economakos2016automated} are directly aimed at robust
-stability problems, but they fail to explore the effects of FWL in their
-implementation.  In order to provide a correct by design digital controller,
-\cite{alur2016compositional} requires a user-defined finite state
-abstraction to synthesize a digital controller based on high level
-specifications.  While this approach directly overcomes the challenges
-presented by the FWL problem, it still requires error-prone user
-intervention.  A different solution that looks at the other end of the scale
-is an approach that synthesizes word lengths for known problems as developed
-in~\cite{jha2013swati}; however, this provides neither an optimal word
-synthesis nor a comprehensive solution for the problem.  It is from this
-vacuum that we seek to explore a CEGIS approach to FWL controller synthesis.
+There is no technique in the existing literature for automatic synthesis of
+fixed-point digital controllers that considers FWL effects.  Parameter
+synthesis tools such as~\cite{cimatti2013parameter} use bounded model
+checking and fixed-point computations to compute parameters based on
+user-defined specifications, but they often operate in the continuous domain
+and have no direct means of evaluating robustness.
+
+Other tools such as~\cite{economakos2016automated} are directly aimed at
+robust stability problems, but they fail to take the effects of FWL into
+account.  In order to provide a correct-by-design digital controller,
+\cite{alur2016compositional} requires a user-defined finite-state
+abstraction to synthesize a digital controller based on high-level
+specifications.  While this approach overcomes the challenges presented by
+the FWL problem, it still requires error-prone user intervention. 
+A~different solution that uses FWL as the starting point is an approach that
+synthesizes word lengths for known control problems~\cite{jha2013swati};
+however, this provides neither an optimal result nor a comprehensive
+solution for the problem.
 
 \paragraph{CEGIS}
 
