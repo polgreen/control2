@@ -25,6 +25,7 @@
 \usepackage{multirow}
 \usepackage{tikz}
 \usetikzlibrary{positioning, automata, shapes.arrows, calc, shapes, arrows}
+\usetikzlibrary{patterns}
 \usepackage[justification=centering]{caption}
 \usepackage{stmaryrd}
 \usepackage{hhline}
@@ -2008,9 +2009,10 @@ using interval arithmetic on the synthesized controller.
    \node[minimum width=2.5cm, minimum height=0.6cm, fill=gray!20] (synth) {{\sc Synthesize}};
    \&
    complexnode/.pic={ 
-     \node[rectangle,draw,dashed,
+     \node[rectangle,draw,dotted,
 	minimum width=7cm,
 	minimum height=1cm,
+        pattern=north west lines, pattern color=gray!20,
 	label={\sc Verify},] (verif) {};
      \node[minimum width=2.5cm, minimum height=0.6cm, fill=gray!20] (verif1) at ([xshift=-2cm]verif.center) {{\sc Uncertainty}};
      \node[minimum width=2.5cm, minimum height=0.6cm, fill=gray!20] (verif2) at ([xshift=2cm]verif.center) {{\sc Precision}};
