@@ -2312,8 +2312,9 @@ system benchmarks described in Section~\ref{experimental-setup}.
 %---------------------------------
 
 The first set of benchmarks uses the discrete plant of a cruise control
-model for the car accounting for rolling friction, aerodynamic drag, and
-gravitational disturbance force~\cite{Astrom08} as follows:
+model for a car, and accounts for rolling friction, aerodynamic drag, and
+the gravitational disturbance force~\cite{Astrom08}. The plant model is
+given as follows:
 %
 \begin{equation}
 \label{cruise-control-c1}
@@ -2352,14 +2353,12 @@ G_2(z)=\frac{5\times{10^{-5}}z + 5\times{10^{-5}}}{z^2 - 2z + 1.0001}. \nonumber
 %C_3(z)=\frac{1.28\times{10^{3}}z^2 - 1.354240\times{10^{3}}z + 0.074879\times{10^{3}}}{z^2 - 1.4990z + 0.4995}. \nonumber
 %\end{equation} 
 
-A third set of benchmarks that consists of a physical plant for satellite
-applications is considered~\cite{Franklin15}, in order to evaluate the full
-capabilities of the present approach.  In particular, satellites often
-require attitude (pose) control for proper orientation of antennas and
-sensors w.r.t.~earth.  The satellite attitude control is typically used for
-three-axis attitude tracking, but here we consider one axis at a time.  The
-motion equation for the one-axis system, disregarding disturbance torques,
-is given by
+A third set of benchmarks uses a physical plant for satellite
+applications~\cite{Franklin15}.  Satellites often require attitude (pose)
+control for proper orientation of antennas and sensors w.r.t.~earth.  The
+satellite attitude control is typically used for three-axis attitude
+tracking, but here we consider only one axis at a time.  The motion equation
+for the one-axis system, disregarding disturbance torques, is given by
 %
 \begin{equation}
 \label{eq:satelliteode}
@@ -2367,18 +2366,19 @@ I\cdot \ddot{\theta} = \tau_{C},
 \end{equation}
 %
 \noindent where $I$ is the inertia moment of the satellite about its mass
-center, $\tau_{C}$ is the control torque applied by thrusters, and $\theta$
-is the controlled attitude angle.  Normalizing Eq.~\eqref{eq:satelliteode}
-by defining the control signal $u=\frac{\tau_{C}}{I}$ and taking the Laplace
-transform, the following $s$-domain transfer function $G(s)$ is obtained
+center, $\tau_{C}$ is the control torque applied by the thrusters, and
+$\theta$ is the controlled attitude angle.  Normalizing
+Eq.~\eqref{eq:satelliteode} by defining the control signal
+$u=\frac{\tau_{C}}{I}$ and taking the Laplace transform, the following
+$s$-domain transfer function $G(s)$ is obtained:
 %
 \begin{equation}
 \label{eq:satellitetf}
 G_{3}(s)=\frac{\theta(s)}{u(s)}=\frac{1}{s^2},
 \end{equation}
-
-\noindent using the ZOH discretization defined in Eq.~\eqref{eq:pulsetf}, 
-the following $z$-domain model is obtained
+%
+\noindent Using the ZOH discretization defined in Eq.~\eqref{eq:pulsetf}, 
+we get the following $z$-domain model:
 %
 \begin{equation}
 G_{3}(z)= \frac{T^{2}}{2} \frac{z+1}{(z+1)^{2}}. \nonumber
@@ -2399,14 +2399,14 @@ G_{3}(z)= \frac{T^{2}}{2} \frac{z+1}{(z+1)^{2}}. \nonumber
 
 The fourth (and last) set of benchmarks considers the following description
 for the plant $G_{4}(s)$, which is typically used for evaluating stability
-margins~\cite{bhattacharyya97, keel_Bhattacharyya_examples}
+margins~\cite{bhattacharyya97, keel_Bhattacharyya_examples}:
 %
 \begin{equation}
 \label{exampleA}
 G_{4}(s)=\frac{s-1}{s^{2}-s-2},
 \end{equation}
 %
-\noindent where $G_{4}(z)$ is obtained using the ZOH discretization defined
+\noindent We can obtain $G_{4}(z)$ using the ZOH discretization defined
 in Eq.~\eqref{eq:pulsetf} with three different sample times ($0.1$, $0.05$,
 and $0.03$ seconds), respectively, as follows:
 %
@@ -2444,9 +2444,8 @@ two research questions:
 %
 \begin{enumerate}
 
-\item RQ1 \textbf{(performance)} does the CEGIS approach provide a feasible
-solution in reasonable time considering robust stability of FWL digital
-controllers?
+\item RQ1 \textbf{(performance)} does the CEGIS approach generate a 
+FWL digital controller in a reasonable amount of time?
 
 \item RQ2 \textbf{(sanity check)} are the synthesized controllers sound
 and can their stability be confirmed outside of our model?
@@ -2471,7 +2470,7 @@ Section~\ref{synthesis-elements} holds and the two-stage verification
 engine %inductive back-end 
 is able to find a stable solution in less than five minutes.  This is possible if the
 inductive solutions need to be refined with few counterexamples and
-fixed-point precision increases.  However, two benchmarks in our set
+increases of the fixed-point precision.  However, two benchmarks in our set
 required too many counterexamples to refine their solution (marked with $^*$
 in Table~\ref{tab:results}).  In these cases, the one-stage engine 
 %interval arithmetic back-end 
@@ -2517,21 +2516,21 @@ benchmarks is the two-stage one.
 
 The median runtime for our benchmark set is $197$\,s, implying that \tool
 can synthesize half of the controllers in less than $5$ minutes.  Overall,
-the average synthesis time amounts to approximately $30$ minutes.  With
-respect to RQ1 we consider these times short enough to be of practical use
-to control engineers.  We further conclude that the approach
-using a two-stage verification engine is able to synthesize stable
-controllers in $12$ out of the $15$ benchmarks, and can be complemented
-using the one-stage engine for $2$ additional benchmarks, where the
-inductive conjectures fail.  Both verification engines together enabled
-controller synthesis for $14$ out of $15$ benchmarks.  For the $1$ remaining
-benchmark our approach failed to synthesize a stable controller in the
-requested time limits.  This can be addressed by either increasing the fixed
-point word widths considered or using floating point arithmetic instead. 
-The synthesized controllers were confirmed to be stable outside of our
-model representation using MATLAB, positively answering RQ2.
-A~link to the full experimental environment, including scripts to reproduce
-the results, all benchmarks and the \tool tool, is provided in the
+the average synthesis time amounts to approximately $30$ minutes.  We
+consider these times short enough to be of practical use to control
+engineers, and thus affirm RQ1.  We further observe that the approach using
+the two-stage verification engine is able to synthesize stable controllers
+in $12$ out of the $15$ benchmarks, and can be complemented using the
+one-stage engine for two additional benchmarks, where the inductive
+conjectures fail.  Both verification engines together enable controller
+synthesis for $14$ out of $15$ benchmarks.  For the one remaining benchmark
+our approach failed to synthesize a stable controller within the time
+limits.  This can be addressed by either increasing the fixed-point word
+widths considered or using floating-point arithmetic instead.  The
+synthesized controllers were confirmed to be stable outside of our model
+representation using MATLAB, positively answering RQ2.  A~link to the full
+experimental environment, including scripts to reproduce the results, all
+benchmarks and the \tool tool, is provided in the
 footnote.\footnote{\url{https://drive.google.com/file/d/0ByIexo3Z5N91QkhrMi1rdkZFTWc/view}}
 
 \subsection{Threats to validity}
