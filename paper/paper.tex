@@ -1776,14 +1776,11 @@ can only iterate a finite number of times.
 Next, we describe the specific property that we pass to the program
 synthesizer as the specification $\sigma$.  There are two different
 algorithms in DSVerifier that can be used for stability
-verification~\cite{daes20161,Bessa16}, one based on
-Schur's decomposition and another one based on Jury's
-criteria~\cite{astrom1997computer}.  Here, we choose Jury's
-method~\cite{astrom1997computer}, due to its efficiency.
-
-We use this method to check the stability in the $z$-domain for the
-characteristic polynomial $S(z)$ defined
-in~\eqref{eq:internal_stab_lemma}.
+verification~\cite{daes20161, Bessa16}, one based on Schur's decomposition
+and another one based on Jury's criteria~\cite{astrom1997computer}.  Here,
+we choose Jury's method~\cite{astrom1997computer}, due to its efficiency,
+and we use this method to check the stability in the $z$-domain for the
+characteristic polynomial $S(z)$ defined in~\eqref{eq:internal_stab_lemma}.
 %
 % of the matrix $\left( \begin{array}{c} Y \\ U \end{array}\right)$, where $Y(z)$ is the closed-loop system output and U(z) is the controller output. 
 %% \red{[unclear: what matrix? We need to clarify the relationship
@@ -1791,7 +1788,7 @@ in~\eqref{eq:internal_stab_lemma}.
 %% N_{G}(z), \Delta D_{G}(z)$ and corresponding controller's
 %% structure.]}.
 %
-We consider the following form for $S(z)$:
+We~consider the following form for $S(z)$:
 %
 $$
 S(z) = a_0z^N+a_1z^{N-1}+\cdots+a_{N-1}z+a_N=0, a_0\neq0
@@ -1961,7 +1958,8 @@ While the controller's precision $\param{I}{F}$ is given,
 we can vary $\param{I_p}{F_p}$ such that 
 $\mathbb{R}\langle I_p,F_p \rangle \supseteq \mathbb{R}\langle I,F \rangle$.
 
-\paragraph{The {\sc Synthesize} and {\sc Verify} phases}
+\subsection{The {\sc Synthesize} and {\sc Verify} phases}
+
 The {\sc synthesize} phase uses BMC to 
 compute a solution $C(z)$. % An important remark is that this 
 % controller is synthesised in the $\mathbb{R}\langle I,F \rangle$
