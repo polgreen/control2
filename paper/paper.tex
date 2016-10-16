@@ -2131,9 +2131,13 @@ $C_{q}(z) {:=} \frac{2.7199859619140625z^2{-}4.1529998779296875z
 \end{equation} 
 %
 The resulting system using the typical series loop configuration, where
-$C_{q}(z)$ and $G(z)$ are in the forward path, is
-unstable.
-%
+$C_{q}(z)$ and $G(z)$ are in the forward path, is unstable. 
+Figure~\ref{fig:original} gives the Bode diagram for the digital controller
+represented by Eq.~\eqref{Eq:running-example-controller}.  The phase margin
+is negative, which means that the controller represented by
+Eq.~\eqref{Eq:running-example-controller} is unstable, considering FWL
+effects.
+
 \subsection{Program synthesis for the example}
 %
 We now demonstrate how our approach solves the synthesis problem for the
@@ -2210,14 +2214,14 @@ $$ C(z)=\frac{11.035202z^2{+}5.846100z{+}4.901855}{1.097901z^2{+}0.063110z{+}0.1
 %$$
 
 This candidate solution is validated as the final solution by both stages
-{\sc uncertainty} and {\sc precision} in the {\sc verify} phase.
-In particular, Figure~\ref{fig:bode} shows the Bode diagram of the illustrative example 
-using the digital controller represented by Eq.~\eqref{Eq:running-example-controller} from~\cite{DBLP:conf/hybrid/WangGRJF16} 
-(Figure~\ref{fig:original}) and the final candidate solution from our synthesizer (Figure~\ref{fig:cegiscontroller}). 
-The phase margin is negative as shown in Figure~\ref{fig:original}, which means that the controller 
-represented by Eq.~\eqref{Eq:running-example-controller} is unstable, considering FWL effects. 
-However, the final solution from \tool is stable since it presents an infinite phase margin 
-and a gain margin of $17.8$\,dB.
+{\sc uncertainty} and {\sc precision} in the {\sc verify} phase. 
+Figure~\ref{fig:bode} compares the Bode diagram of the illustrative example
+using the digital controller represented by
+Eq.~\eqref{Eq:running-example-controller}
+from~\cite{DBLP:conf/hybrid/WangGRJF16} (Figure~\ref{fig:original}) and the
+final candidate solution from our synthesizer
+(Figure~\ref{fig:cegiscontroller}).  The final solution from \tool is stable
+since it presents an infinite phase margin and a gain margin of $17.8$\,dB.
 
 %, which fails to find a new counterexample (i.e. returns UNSAT).
 
@@ -2262,16 +2266,20 @@ and a gain margin of $17.8$\,dB.
     \end{subfigure}
     \caption{Bode diagram for original~\cite{DBLP:conf/hybrid/WangGRJF16} and synthesized closed-loop systems.}\label{fig:bode}
 \end{figure}
-%
-Figure~\ref{fig:step} shows the step responses of the closed-loop system 
-with the original controller represented by Eq.~\eqref{Eq:running-example-controller} (Figure~\ref{fig:step0}), 
-the first (Figure~\ref{fig:step1}) and final (Figure~\ref{fig:step2}) candidate solutions provided by \tool. 
-The step response in Figure~\ref{fig:step0} confirms the stability loss if we consider FWL effects. 
-However, Figure~\ref{fig:step1} shows that the first candidate controller is able to stabilize 
-the closed-loop system without uncertainties, but it is rejected during the {\sc precision} phase by 
-\tool since this solution is not considered to be sound. Finally, Figure~\ref{fig:step2} 
-shows a stable behavior for the final (sound) solution, which presents a lower settling time.
-%
+
+Figure~\ref{fig:step} illustrates the step responses of the closed-loop
+system with the original controller represented by
+Eq.~\eqref{Eq:running-example-controller} (Figure~\ref{fig:step0}), the
+first (Figure~\ref{fig:step1}) and final (Figure~\ref{fig:step2}) candidate
+solutions provided by \tool.  The step response in Figure~\ref{fig:step0}
+confirms the stability loss if we consider FWL effects.  However,
+Figure~\ref{fig:step1} shows that the first candidate controller is able to
+stabilize the closed-loop system without uncertainties, but it is rejected
+during the {\sc precision} phase by \tool since this solution is not
+considered to be sound.  Finally, Figure~\ref{fig:step2} shows a stable
+behavior for the final (sound) solution, which presents a lower settling
+time.
+
 \begin{figure*}
     \centering
     \begin{subfigure}[b]{0.3\textwidth}
