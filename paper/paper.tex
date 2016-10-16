@@ -1734,10 +1734,10 @@ tries to find an existential witness $\vec{P}$ satisfying the specification
 $\sigma(\vec{x}, \vec{P})$ for all $\vec{x}$ in {\sc inputs} (as opposed to
 all $\vec{x} \in \mathcal{D}$).
 %
-If {\sc synthesize} succeeds in finding an witness $\vec{P}$, this witness
+If {\sc synthesize} succeeds in finding a witness~$\vec{P}$, this witness
 is a candidate solution to the full synthesis formula.  We pass this
 candidate solution to {\sc verify}, which checks whether it is a full
-solution ({\it i.e.}, $\vec{P}$ satisfies the specification $\sigma(\vec{x},
+solution (i.e., $\vec{P}$ satisfies the specification $\sigma(\vec{x},
 \vec{P})$ for all $\vec{x}\in\mathcal{D}$).
 %
 %determines whether
@@ -1762,7 +1762,7 @@ is specific to control synthesis and will be described in the next section).
 
 It is
 worth noting that each iteration of the loop adds a new input to the
-finite set $\text{\sc inputs}$ being used for synthesis.  Given that
+finite set $\text{\sc inputs}$ that is used for synthesis.  Given that
 the full set of inputs $\mathcal{D}$
 %\blue{[which by now should have a name, as suggested to be introduced above]} 
 is finite, this means that the refinement loop
