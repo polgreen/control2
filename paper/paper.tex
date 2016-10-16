@@ -374,11 +374,11 @@ work in Section~\ref{sec:conclusions}.
 %------------------------------------
 
 The digital controllers synthesized using the algorithm we present in this
-paper are typically used in closed loops with continuous (physical)
-plants.  Thus, the proposed approach has to consider dynamics of continuous
-parts of the system (i.e., the plant) and the discrete parts (i.e., the
-digital controller).  To obtain a joint model, we fully discretize the continuous
-plant. We briefly recall the standard foundations of this step.
+paper are typically used in closed loops with continuous (physical) plants. 
+Thus, the proposed approach has to consider dynamics of continuous parts of
+the system (i.e., the plant) and of discrete parts (i.e., the digital
+controller).  To obtain a joint model, we fully discretize the continuous
+plant.  We briefly recall the standard foundations of this step.
 
 We only consider transfer function models, and require a $z$-domain
 transfer function $G(z)$ that captures all aspects of the continuous plant (with a
@@ -392,11 +392,12 @@ coefficients of $G(z)$.
 
 %\red{[why do we discuss the ZOH at this point?]}
 
-Amongst the several discretization methods available in the
+Among the discretization methods available in the
 literature~\cite{Franklin15}, the zero-order hold (ZOH) discretization is
-considered to be suitable for representing the sample and hold processes that are
-typically employed in complex systems~\cite{istepanian2012digital}. 
-The ZOH discretization models the exact effect of sampling and DAC interpolation over the plant.
+considered suitable for representing the sample and hold processes that are
+typically employed in complex systems~\cite{istepanian2012digital}.  The ZOH
+discretization models the exact effect of sampling and DAC interpolation
+over the plant.
 
 \begin{myassumption}
 %
@@ -409,8 +410,8 @@ updating the DAC accordingly.  The DAC interpolator is an ideal ZOH.
 \begin{mylemma}\cite{astrom1997computer}
 %
 Given a synchronized ZOH input and sample and hold output on the plant with
-a sample time $T$ satisfying Nyquist criterion, the discrete pulse
-transfer function $G(z,T)$ is an exact z-domain representation of $G(s)$ 
+a sample time $T$ satisfying the Nyquist criterion, the discrete pulse
+transfer function $G(z,T)$ is an exact z-domain representation of $G(s)$
 that can be computed using the following formula:
 %
 \begin{equation}
@@ -419,16 +420,15 @@ G(z,T) = %\mathcal{ZOH}\left\lbrace{G(s)}\right\rbrace =
 (1-z^{-1})\mathcal{Z}\left\lbrace{\mathcal{L}^{-1}\left\lbrace{\frac{G(s)}{s}}\right\rbrace_{t=kT}}\right\rbrace.
 \end{equation}
 %
+\end{mylemma}
+%
 For the sake of brevity, we will use the notation $G(z)$ to represent the
 pulse transfer function.
-%
-\end{mylemma}
 
-Lemma~\ref{eq:pulsetf} ensures that the poles and zeros match under the 
+Lemma~\ref{eq:pulsetf} ensures that the poles and zeros match under the
 $\mathcal{Z}\left\lbrace{\mathcal{L}^{-1}\left\lbrace{\cdot}\right\rbrace_{t=kT}}\right\rbrace$
-operations, 
-and it includes the ZOH dynamics in the $(1-z^{-1})$ term, 
-which is sufficient for stability studies over $G(s)$.
+operations, and it includes the ZOH dynamics in the $(1-z^{-1})$ term, which
+is sufficient for stability studies over $G(s)$.
 
 %------------------------------------
 \subsection{Verifying Closed-loop Control Systems}
@@ -459,14 +459,15 @@ G(z)&=\frac{G_n(z)}{G_d(z)}=\frac{b_{0}+b_{1}z^{-1}+...+b_{M_G}z^{-M_G}}{a_{0}+a
 \end{align}
 %
 \noindent where $\vec{\beta}$ and $\vec{\alpha}$ are vectors containing the
-controller's coefficients; similarly $\vec{b}$ and $\vec{a}$ encompass the
-plant's coefficients; and $N_{(\cdot)}$ and $M_{(\cdot)}$ indicate the order of the polynomial of the corresponding block.
+controller's coefficients; similarly, $\vec{b}$ and $\vec{a}$ denote the
+plant's coefficients; and $N_{(\cdot)}$ and $M_{(\cdot)}$ indicate the order
+of the polynomial of the corresponding block.
 
-Uncertainties in $G(z)$ may appear due to uncertainties in $G(s)$
-(\emph{i.e.} $\Delta_p{G}_n(s),\Delta_p{G}_d(s)$ which come from tolerances/imprecision in the original model), errors in the numeric
-calculations, or roundoffs in the quantization.  These uncertainties are 
-parametrically expressed by additive terms, resulting in a uncertain model
-$\hat{G}(z)$, such that:
+Uncertainties in $G(z)$ may appear due to uncertainties in $G(s)$ (i.e.,
+$\Delta_p{G}_n(s),\Delta_p{G}_d(s)$, which arise from tolerances/imprecision
+in the original model), errors in the numeric calculations, or roundoffs in
+the quantization.  These uncertainties are parametrically expressed by
+additive terms, resulting in an uncertain model $\hat{G}(z)$, such that:
 %
 \begin{equation}
 \hat{G}(z)=\frac{G_n(z)+\Delta G_n(z)}{G_d(z)+\Delta G_d(z)},
@@ -480,8 +481,8 @@ which will be represented by the following transfer function:
 %
 Due to the nature of the methods we use for the stability check, we require
 that the parametric errors in the plant have the same polynomial order as
-the plant itself (all other errors described in this paper are ensured to fulfill this property in our
-implementation).
+the plant itself (all other errors described in this paper are ensured to
+fulfill this property in our implementation).
 
 In order to simplify the presentation, we employ a notation based on the
 coefficients of the polynomials.  Let $\mathcal{P}^{N}$ be a polynomial
@@ -501,9 +502,9 @@ and an uncertainty vector
 \label{eq:delta_coefficients}
 \end{equation}
 %
-we write $\vec{\hat{G}}=\vec{G}+\Delta{\vec{G}}$.   
-In the following we will either represent the functions $G(z)$, $C(z)$, 
-or work over their respective coefficients $\vec{G}, \vec{C}$ in vector form.   
+we write $\vec{\hat{G}}=\vec{G}+\Delta{\vec{G}}$.  In the following we will
+either use the functions $G(z)$, $C(z)$ directly, or work over their
+respective coefficients $\vec{G}$, $\vec{C}$ in vector form.
 
 \begin{figure*}[htb]
 \centering
@@ -753,11 +754,13 @@ represented as an additive output noise~$\nu(z)$.
 \end{figure}
 
 %
-In Figure~\ref{fig:digsystem1}, two sources of uncertainty are
-illustrated: parametric uncertainties related to modeling errors, and
-uncertainties introduced by quantizations in sampling and holding process,
-i.e., ADC and DAC conversions.  Assuming linearity and independence between
-these sources, the uncertain model may be rewritten as a vector of coefficients in the z-domain using equations \ref{eq:coefficients} and \ref{eq:delta_coefficients}
+In Figure~\ref{fig:digsystem1}, two sources of uncertainty are illustrated:
+parametric uncertainties related to modeling errors, and uncertainties
+introduced by quantizations in sampling and holding process, i.e., ADC and
+DAC conversions.  Assuming linearity and independence between these sources,
+the uncertain model may be rewritten as a vector of coefficients in the
+z-domain using equations (\ref{eq:coefficients}) and
+(\ref{eq:delta_coefficients})
 %
 \begin{equation}
 \label{eq:complete_unc_model}
@@ -1028,14 +1031,14 @@ and DAC.
 
 %\red{[Add remark on bound (q/2) for signal. We need a bounded signal to be able to leverage BIBO stability results. ]}
 
-It is known that a discrete-time linear system is said to be Bounded-Input and Bounded-Output
+A discrete-time linear system is said to be Bounded-Input and Bounded-Output
 (BIBO) stable if and only if every pole of its transfer function lies inside
-the unit circle \cite{Astrom08}.  Analyzing Eq.~\eqref{eq:outputfunctions}, the following
-proposition states necessary conditions for BIBO stability of the closed-loop system
-in Figure~\ref{fig:sampledsystem}, since the exogenous signals $R(z)$,
-$\nu_{1}$, and $\nu_{2}$ are bounded.
+the unit circle \cite{Astrom08}.  Analyzing Eq.~\eqref{eq:outputfunctions},
+the following proposition gives necessary conditions for BIBO stability of
+the closed-loop system in Figure~\ref{fig:sampledsystem}, since the
+exogenous signals $R(z)$, $\nu_{1}$, and $\nu_{2}$ are bounded.
 
-\begin{myprop}{\cite{Bessa16,fadali}}
+\begin{myprop}{\cite{fadali,Bessa16}}
 \label{prop:eq_int_stab} 
 %
 Consider a feedback closed-loop control system as given in
@@ -1058,13 +1061,15 @@ S(z)=\mathit{FWL}_{M_C}[C_n(z)]\hat{G}_n(z)+\mathit{FWL}_{N_C}[C_d(z)]\hat{G}_d(
 \end{itemize}
 \end{myprop}
 
-Proposition~\ref{prop:eq_int_stab} provides the necessary conditions for the digital controller to stabilize the closed loop system, 
-considering plant parametric uncertainties (i.e., $\Delta_p \vec{G}$),
-quantization noises ($\nu_{1}$ and $\nu_{2}$) and FWL effects in the control
-software.  
-Notice that the model for plant uncertainty due to quantization noise (i.e., $\Delta_q \vec{G}$) may be disregarded if the conditions on
-Proposition~\ref{prop:eq_int_stab} are satisfied and if the quantization noise is
-bounded.  The boundedness of the quantization noise comes from Assumption~\ref{whitenoise}.
+Proposition~\ref{prop:eq_int_stab} provides the necessary conditions for the
+digital controller to stabilize the closed-loop system, considering plant
+parametric uncertainties (i.e., $\Delta_p \vec{G}$), quantization noises
+($\nu_{1}$ and $\nu_{2}$) and FWL effects in the control software.  Notice
+that the model for plant uncertainty due to quantization noise (i.e.,
+$\Delta_q \vec{G}$) may be disregarded if the conditions on
+Proposition~\ref{prop:eq_int_stab} are satisfied and if the quantization
+noise is bounded.  The boundedness of the quantization noise comes from
+Assumption~\ref{whitenoise}.
 
 %\red{[first: lemmae precede theorems. ]}
 
@@ -1144,31 +1149,28 @@ Digital Systems Synthesis, named \tool.
 %user steps described in Steps $1$--$5$ result in an ANSI-C code that should
 %be used as an input for DSVerifier.
 
-Given a model for a plant for which to synthesize a controller, provided in
-an ANSI-C input file (Steps 1--3), \tool constructs a non-deterministic
-model to represent the plant family (Step~A), and formulates a function
-(Step~B) using implementation details provided in Steps~$2$ and $3$ to
-calculate the parameters of the controller to be synthesized (Step~C). 
-Finally, \tool builds an intermediate ANSI-C code for the digital system
-implementation, which is used as input for the CEGIS engine (Step~D).
+Given a model for a plant in ANSI-C syntax as input (Steps 1--3), \tool
+constructs a non-deterministic model to represent the plant family (Step~A),
+and formulates a function (Step~B) using implementation details provided in
+Steps~$2$ and $3$ to calculate the parameters of the controller to be
+synthesized (Step~C).  Finally, \tool builds an intermediate ANSI-C code for
+the digital system implementation, which is used as input for the CEGIS
+engine (Step~D).
 
 This intermediate ANSI-C code model contains a specification $\phi$ for the
 property of interest (i.e., robust stability) and is passed to the
 Counterexample-Guided Inductive Synthesis (CEGIS) module of
 CBMC~\cite{ClarkeKL04}, where the controller is marked as the input variable
-to synthesize.  The properties specified in the ANSI-C code model can only
-be satisfied if CEGIS synthesizes controller coefficients that
-satisfy~$\phi$.  CEGIS employs an iterative, counterexample-guided
-refinement process which is explained in detail in
-Section~\ref{synthesizer-general}.  A~successful synthesis result is
-reported if CEGIS generates a controller that is safe with respect to~$\phi$. 
-In particular, the ANSI-C code model guarantees that a synthesized solution
-is complete and sound with respect to the stability property~$\phi$, since it
-does not depend on system inputs and outputs.  In the case of stability, the
-specification~$\phi$ consists in a number of assumptions on the polynomial
-coefficients, following Jury's Criteria, as well as the restrictions set in
-the representation of these coefficients as discussed in more detail in 
-Section~\ref{synthesis-elements}.
+to synthesize.  CEGIS employs an iterative, counterexample-guided refinement
+process, which is explained in detail in Section~\ref{synthesizer-general}. 
+CEGIS reports a successful synthesis result if it generates a controller
+that is safe with respect to~$\phi$.  In particular, the ANSI-C code model
+guarantees that a synthesized solution is complete and sound with respect to
+the stability property~$\phi$, since it does not depend on system inputs and
+outputs.  In the case of stability, the specification~$\phi$ consists of a
+number of assumptions on the polynomial coefficients, following Jury's
+Criteria, as well as the restrictions on the representation of these
+coefficients as discussed in detail in Section~\ref{synthesis-elements}.
 
 % by the function $f$ (cf.~Eq.~\eqref{FWL_tf})
 %In Step A, DSVerifier constructs a non-deterministic model to represent the
@@ -1863,12 +1865,12 @@ $
 
 \paragraph{Fixed-point computation in program synthesis}
 
-The program synthesis engine uses fixed-point arithmetic.  Namely, we use
-the domain $\mathbb{R}\param{I}{F}$ for the controller's coefficients and
-the domain $\mathbb{R}\param{I_p}{F_p}$ for the plant's coefficients, 
-where $I$ and $F$, as well as $I_p$ and $F_p$, denote the integer and
-fractional size, respectively, and $\mathbb{R}\langle I_p,F_p \rangle
-\supseteq \mathbb{R}\langle I,F \rangle$.
+The program synthesis engine uses fixed-point arithmetic.  Specifically, we
+use the domain $\mathbb{R}\param{I}{F}$ for the controller's coefficients
+and the domain $\mathbb{R}\param{I_p}{F_p}$ for the plant's coefficients,
+where $I$ and $F$, as well as $I_p$ and $F_p$, denote the number of bits for
+the integer and fractional parts, respectively, and $\mathbb{R}\langle
+I_p,F_p \rangle \supseteq \mathbb{R}\langle I,F \rangle$.
 %
 %the coefficients for $C(z)$ 
 %$N_c$ and $D_c$ 
@@ -1983,7 +1985,7 @@ using this verification engine has poor performance and we
 %Given the high computational cost of this
 %approach, 
 therefore designed a second approach, which we describe below.
-Our experimental results described in Section~\ref{sec:experiments}, 
+Our experimental results described in Section~\ref{sec:experiments}
 %try both approaches and provide the time for the fastest. 
 show that the speedup yielded by the second approach 
 is in most cases of at least two orders of magnitude.
@@ -1991,8 +1993,8 @@ is in most cases of at least two orders of magnitude.
 The second approach is illustrated in Figure~\ref{fig:CEGIS} and uses a
 two-stage verification: the first stage performs potentially unsound
 fixed-point operations assuming a plant precision \param{I_p}{F_p}, and the
-second stage restores soundness by validating these operations
-using interval arithmetic on the synthesized controller.
+second stage restores soundness by validating these operations using
+interval arithmetic on the synthesized controller.
 %
 \begin{figure*}[htb]
 \centering
@@ -2053,20 +2055,20 @@ using interval arithmetic on the synthesized controller.
 \end{figure*}
 %
 %
-In more detail, in the first stage, denoted by {\sc Uncertainty} in Figure~\ref{fig:CEGIS}, 
-assuming a precision \param{I_p}{F_p} 
-we check whether the system is unstable for the current candidate solution,
-{\it i.e.}, if $\neg \phi_\mathit{stability}$ is satisfiable for $S(z)$.
-If this is the case, then we obtain a counterexample 
-$\tilde G(z)$, 
+In more detail, in the first stage, denoted by {\sc Uncertainty} in
+Figure~\ref{fig:CEGIS}, assuming a precision \param{I_p}{F_p} we check
+whether the system is unstable for the current candidate solution, i.e., if
+$\neg \phi_\mathit{stability}$ is satisfiable for $S(z)$.  If this is the
+case, then we obtain a counterexample $\tilde G(z)$,
+%
 %denoted by values for each coefficients of $\Delta N_{G}(z)$ and $\Delta D_{G}(z)$, 
 %\red{[see my comment above - these quantities pop up too abruptly.]},
-which makes the closed-loop system unstable. 
-This uncertainty is added to 
-the set {\sc inputs} such that, in the subsequent {\sc synthesize} phase, 
-we obtain a candidate solution consisting 
-of a controller $C(z)$, which makes the closed-loop 
-system stable for all the uncertainties accumulated in {\sc inputs}.
+%
+which makes the closed-loop system unstable.  This uncertainty is added to
+the set {\sc inputs} such that, in the subsequent {\sc synthesize} phase, we
+obtain a candidate solution consisting of a controller $C(z)$, which makes
+the closed-loop system stable for all the uncertainties accumulated in {\sc
+inputs}.
 
 If the {\sc Uncertainty} verification stage concludes that
 the system is stable for the current candidate solution,
@@ -2093,11 +2095,11 @@ for the {\sc verify} phase as one-stage and two-stage, respectively.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Illustrative Example} \label{sec:running-ex}
 
-We will illustrate our approach with a classical cruise control example,
-extracted from the literature~\cite{Astrom08}.  The example will allow us to
-highlight the challenges that arise when using finite precision arithmetic
-in digital control.  We are given a discrete plant model (with a time step
-of $0.2$\,s), which is represented by the following $z$-expression:
+We illustrate our approach with a classical cruise control example,
+extracted from the literature~\cite{Astrom08}.  The example highlights the
+challenges that arise when using finite-precision arithmetic in digital
+control.  We are given a discrete plant model (with a time step of
+$0.2$\,s), which is represented by the following $z$-expression:
 %
 \begin{equation}
 \label{Eq:running-example-plant}
@@ -2117,9 +2119,10 @@ C(z) = \frac{2.72z^2 - 4.153z + 1.896}{z^2 - 1.844z + 0.8496}.
 The authors of~\cite{DBLP:conf/hybrid/WangGRJF16} claim that this controller
 $C(z)$ (Eq.~\eqref{Eq:running-example-controller}) stabilizes the
 closed-loop system for the discrete plant model $G(z)$
-(Eq.~\ref{Eq:running-example-plant}).  However, if the effects of finite
-precision arithmetic are considered during verification (e.g., fixed-point
-arithmetic and word-length), then this closed-loop system becomes unstable.
+(Eq.~\ref{Eq:running-example-plant}).  However, if the effects of
+finite-precision arithmetic are considered during verification (e.g.,
+fixed-point arithmetic and word-length), then this closed-loop system
+becomes unstable.
 %
 For instance, an implementation of $C(z)$ using \param{4}{16} fixed-point
 numbers (i.e., $4$ bits for the integer part and $16$ bits for the
@@ -2311,11 +2314,10 @@ time.
 \section{Experimental Evaluation}\label{sec:experiments}
 
 This section is split into three parts. Section~\ref{experimental-setup}
-discusses the experimental setup and the employed benchmarks, while
+discusses the experimental setup and our benchmarks, while
 Section~\ref{experimental-objectives} describes the experimental objectives. 
-Section~\ref{experimental-results} describes the experimental results
-related to the application of CEGIS to the standard closed-loop control
-system benchmarks described in Section~\ref{experimental-setup}.
+Section~\ref{experimental-results} presents the experimental results
+obtained on the benchmarks with our tool \tool.
 
 %---------------------------------
 \subsection{Description of the Benchmarks}
@@ -2449,16 +2451,16 @@ and 24 hours for the approach using a one-stage engine.
 \label{experimental-objectives}
 %---------------------------------
 
-Using the closed-loop control system benchmarks described in
+Using the closed-loop control system benchmarks given in
 Section~\ref{experimental-setup}, our experimental evaluation aims to answer
 two research questions:
 %
 \begin{enumerate}
 
-\item RQ1 \textbf{(performance)} does the CEGIS approach generate a 
+\item[RQ1] \textbf{(performance)} does the CEGIS approach generate a 
 FWL digital controller in a reasonable amount of time?
 
-\item RQ2 \textbf{(sanity check)} are the synthesized controllers sound
+\item[RQ2] \textbf{(sanity check)} are the synthesized controllers sound
 and can their stability be confirmed outside of our model?
 
 \end{enumerate}
