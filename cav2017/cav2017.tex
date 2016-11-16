@@ -96,9 +96,23 @@ the abstract section}
 %-------------------------------
 \section{Introduction}
 %-------------------------------
-
+In this paper we formalise the notion of solution generalisation for CEGIS. 
+This technique allows the inductive generalisation engine to look for 
+candidate solutions in a reduced solution space.
 
 \section{Counter-Example Guided Inductive Synthesis with solution generalisation}
+
+This technique relies on parametrising the target language, which
+induces a lattice of progressively more expressive languages.  We
+start by attempting to synthesise a program at the lowest point on
+this lattice and increase the parameters of the language until we
+reach a point at which the synthesis succeeds. As well as giving us an
+automatic search procedure, this parametrisation greatly increases the
+efficiency of our system since languages low down the lattice are very
+easy to decide safety for (i.e. the validation oracle finds an answer
+fast). If a program can be synthesised in a low-complexity language,
+the whole procedure finishes much faster than if synthesis had been
+attempted in a high-complexity language.
 
 \begin{figure}
 \centering
