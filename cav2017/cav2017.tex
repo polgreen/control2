@@ -224,6 +224,30 @@ This means that reasoning about the statespace must consider the effects of this
 Since \eqref{eq:discretization} is a bisimulation of \eqref{eq:dynamical}, we may use the semantics in section \ref{sec:model_semantics} 
 to model continuous dynamical systems.
 
+\section{LTI representations of ARMAX models}
+
+Let us have a discrete time SISO system with an $n^{th},m{^th} : n\geq m$ order armax model
+$$y[k]=\sum_{i=1}^n a_iy[k-i]+\sum_{i=0}^m b_iu[k-i]$$
+where $y$ is the output of the system and $u$ its input.
+The equivalent LTI dynamics of such a model are:
+\begin{align}
+\vec{x}_k=&\vec{A}\vec{x}_{k-1}+\vec{B}u_k : \vec{x}_k=[y_{k-n}\ \hdots y_{k-1}\ y_{k}]^T\\
+y_k=&\vec{C}\vec{x}_k + b_0u_k\nonumber\\
+\vec{A}=&\left[
+\begin{array}{ccccc}
+0&1&0&\cdots&0\\
+0&0&1&\cdots&0\\
+\vdots&\vdots&\vdots&\ddots&\vdots\\
+0&0&0&\cdots&1\\
+-a_n&-a_{n-1}&-a_{n-2}&\cdots&-a_1
+\end{array}\right],
+\vec{B}=\left[
+\begin{array}{c}
+0\\0\\ \vdots\\ 0\\ 1
+\end{array}\right]\nonumber\\
+\vec{C}=&[b_n-a_nb_0\ b_{n-1}-a_{n-1}b_0 \cdots b_1-a_1b_0] : b_{i \in (m\ n]}=0\nonumber
+\end{align}
+
 \section{Related works}
 
 \paragraph{CEGIS}
