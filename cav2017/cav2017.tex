@@ -19,11 +19,13 @@
 \documentclass[runningheads,a4paper]{llncs}
 
 \usepackage{amssymb}
+\usepackage{amsmath}
 \setcounter{tocdepth}{3}
 \usepackage{graphicx}
 \usepackage{tikz}
 \usepackage{framed}
 \usepackage{listings}
+
 
 \usetikzlibrary{positioning, arrows, automata, shapes}
 
@@ -169,6 +171,58 @@ attempted in a high-complexity language.
 \end{tikzpicture}
 \caption{The CEGIS loop with solution generalisation\label{fig:CEGIS-multiple-verif}}
 \end{figure}
+
+\section{Discretising Continuous Space Dynamics}
+
+A dynamical system is a system in which a function describes the progression of a state over time. 
+In a continuous domain with linear dynamics, it is described by a first order Ordinary Differential Equation (ODE).
+\begin{equation}
+\dot{x}(t)=\vec{A}\vec{x}(t)+\vec{B}\vec{u}(t) +\vec{w}(t)
+\label{eq:dynamical}
+\end{equation}
+
+Where $\vec{w}$  is a continuous zero-mean white noise source with covariance $N ( 0 , Q )$
+Furthermore, a control system may have a derived output that is a linear combination of its states and inputs, 
+which may restricts the observability of the statespace from the output space.
+\begin{equation}
+\vec{y}(t)=\vec{C}\vec{x}(t)+\vec{D}\vec{u}(t)
+\end{equation}
+
+Discretization of an continuous dynamical system turns the ODE into a difference equation, assuming zero-order hold
+for the input $\vec{u}$ and continuous integration for the noise $\vec{w}$, to
+\begin{align}
+\label{eq:discretization}
+\vec{x}_{k+1} &= \vec{A}_d\vec{x}_k+\vec{B}_d\vec{u}_k + \vec{w}_k\\
+y_k &= \vec{C}_d \vec{x}_ k + \vec{D}_d \vec{u}_ k 
+\end{align}
+with covariance for $\vec{w}_k$, $N ( 0 , Q_d )$
+where
+\begin{align}
+\label{eq:discretize}
+\vec{A}_d &= e^{\vec{A} T_s} = \mathcal{L}^{-1} { ( s \vec{I} - \vec{A} )^{-1} }_{t = T_s}\\
+\vec{B}_d &= \int_{t = 0}^{T_s} e^{\vec{A} t} dt\ \vec{B} = \vec{A}^{-1} ( \vec{A}_d - \vec{I} ) \vec{B}\\
+\vec{C}_d &= \vec{C}\\
+\vec{D}_d &= \vec{D} \\
+Q_d &= \int_{t = 0}^{T_s} e^{\vec{A} t} Q e^{\vec{A}^T t} dt
+\end{align}
+and $T_s$ is the sample time. Then
+\begin{align*}
+x(kT)=x_k \wedge y(kT) = y_k, \forall k
+\end{align*}
+Similarly, we can now state that the Z-transform of the discrete-time equation g(k) and the Laplace transform of the continuous time
+equation g(t) are related.
+$$g(t) \rightarrow g(k) \Leftrightarrow G(S)=\mathcal{L}(g(t)) \rightarrow G(Z)=\mathcal{Z}(g(k))$$
+where the poles $\hat{\lambda}_i=e^{-\lambda_iT} : \hat{\lambda}_i \in G(Z) \wedge \lambda_i \in G(S)$ are derived from \eqref{eq:discretize}.
+Two remarks are worth mentioning regarding the above.
+\begin{remark} 
+The above statement is only valid if the sampling frequency is above the Nyquist criteria, since aliasing could cause 'phantom poles' to appear otherwise. 
+\end{remark}
+\begin{remark}
+The witnessed maximum amplitude of the discrete signals $x_k,y_k$ may be smaller to that of $x(t),y(t)$ due to synchronism at fraction-frequency sampling.
+This means that reasoning about the statespace must consider the effects of this possibility as well of the case of maximal inputs from the continuous specification.
+\end{remark}
+Since \eqref{eq:discretization} is a bisimulation of \eqref{eq:dynamical}, we may use the semantics in section \ref{sec:model_semantics} 
+to model continuous dynamical systems.
 
 \section{Related works}
 
