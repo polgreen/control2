@@ -213,8 +213,8 @@ x(kT)=x_k \wedge y(kT) = y_k, \forall k
 \end{align*}
 Similarly, we can now state that the Z-transform of the discrete-time equation g(k) and the Laplace transform of the continuous time
 equation g(t) are related.
-$$g(t) \rightarrow g(k) \Leftrightarrow G(S)=\mathcal{L}(g(t)) \rightarrow G(Z)=\mathcal{Z}(g(k))$$ \commentib{The notation is wrong. There is no implications ($\rightarrow$) between functions.}
-where the poles $\hat{\lambda}_i=e^{-\lambda_iT} : \hat{\lambda}_i \in G(Z) \wedge \lambda_i \in G(S)$ \commentib{This notation is wrong. G(s) (lowercase 's' and not S) is a function in the complex frequency domain, it is not a set. Consequently, the set membership notation $\in$ cannot be employed. } are derived from \eqref{eq:discretize}.
+$$g(t) \rightarrow g(k) \Leftrightarrow G(S)=\mathcal{L}(g(t)) \rightarrow G(Z)=\mathcal{Z}(g(k))$$ \commentib{The notation is wrong. There is no implications ($\rightarrow$) between functions. The discretization process is not a transition system. And this symbol is employed for transformation, but in respect to the domain and counterdomain.}
+where the poles $\hat{\lambda}_i=e^{-\lambda_iT} : \hat{\lambda}_i \in G(Z) \wedge \lambda_i \in G(S)$ \commentib{This notation is wrong. G(s) (lowercase 's' and not S) is a function in the complex frequency domain, it is not a set. Consequently, the set membership notation $\in$ cannot be employed. It is valid for G(z) too. } are derived from \eqref{eq:discretize}.
 Two remarks are worth mentioning regarding the above.
 \begin{remark} 
 The above statement is only valid if the sampling frequency is above the Nyquist criteria, since aliasing could cause 'phantom poles' to appear otherwise. 
