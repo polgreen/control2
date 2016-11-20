@@ -183,7 +183,7 @@ In a continuous domain with linear dynamics, it is described by a first order Or
 \label{eq:dynamical}
 \end{equation}
 
-Where \textcolor{red}{$\vec{w}$  is a continuous zero-mean white noise source with covariance $N ( 0 , Q )$} \commentib{$N(0,Q)$ is the notation for PDF (specifically a normal zero mean PDF with Q variance) and it is not a notation for covariance. All the above expression may be rewritten with "$\vec{w} \sim \mathcal{N}(0,Q)$"}.
+with $\vec{w} \sim \mathcal{N}(0,Q)$\\
 Furthermore, a control system may have a derived output that is a linear combination of its states and inputs, 
 which may restricts the observability of the statespace from the output space.
 \begin{equation}
@@ -197,8 +197,8 @@ for the input $\vec{u}$ and continuous integration for the noise $\vec{w}$, to
 \vec{x}_{k+1} &= \vec{A}_d\vec{x}_k+\vec{B}_d\vec{u}_k + \vec{w}_k\\
 y_k &= \vec{C}_d \vec{x}_ k + \vec{D}_d \vec{u}_ k 
 \end{align}
-with covariance for $\vec{w}_k$, $N ( 0 , Q_d )$
-where \commentib{Are the second parts of equations (5) and (6) really nedded?}
+with covariance for $\vec{w}_k \sim \mathcal{N}(0,Q_d)$
+where
 \begin{align}
 \label{eq:discretize}
 \vec{A}_d &= e^{\vec{A} T_s} = \mathcal{L}^{-1} { ( s \vec{I} - \vec{A} )^{-1} }_{t = T_s}\\
@@ -211,14 +211,17 @@ and $T_s$ is the sample time. Then
 \begin{align*}
 x(kT)=x_k \wedge y(kT) = y_k, \forall k
 \end{align*}
-Similarly, we can now state that the Z-transform of the discrete-time equation g(k) and the Laplace transform of the continuous time
-equation g(t) are related.
-$$g(t) \rightarrow g(k) \Leftrightarrow G(S)=\mathcal{L}(g(t)) \rightarrow G(Z)=\mathcal{Z}(g(k))$$ \commentib{The notation is wrong. There is no implications ($\rightarrow$) between functions. The discretization process is not a transition system. And this symbol is employed for transformation, but in respect to the domain and counterdomain.}
-where the poles $\hat{\lambda}_i=e^{-\lambda_iT} : \hat{\lambda}_i \in G(Z) \wedge \lambda_i \in G(S)$ \commentib{This notation is wrong. G(s) (lowercase 's' and not S) is a function in the complex frequency domain, it is not a set. Consequently, the set membership notation $\in$ cannot be employed. It is valid for G(z) too. } are derived from \eqref{eq:discretize}.
-Two remarks are worth mentioning regarding the above.
-\begin{remark} 
-The above statement is only valid if the sampling frequency is above the Nyquist criteria, since aliasing could cause 'phantom poles' to appear otherwise. 
-\end{remark}
+Let $g_d(k)=\mathcal{G}(t,g(t),T)$ be a function that performs the discretization described above, where $g(t)$
+represents the continuous dynamics and $g_d(k)$ the corresponding discrete dynamics. 
+Let $G(s)=\mathcal{L}(g(t))$ and $G_d(z)=\mathcal{Z}(g_(k))$ be the corresponding Laplace and Z-transforms
+of $g(t)$ and $g_d(k)$. Given this relation, we have 
+$$G_d(z)=G(z)|_{z=e^{sT}} : g_d(k)=\mathcal{G}(t,g(t),T) \wedge T < \frac{1}{.5f_s}$$
+Where $.5f_s$ is the Nyquist frequency of $g(t)$. This last restriction is introduced to avoid the effects of aliasing
+which could cause 'phantom poles' to appear otherwise. 
+The eigenvalues of $\vec{A}_d$ corresponding to the poles of $G_d(z)$, and those of $\vec{A}$ corresponding to the poles of $G(s)$ are similarly related.
+$\hat{\lambda}_i=e^{-\lambda_iT} : \hat{\lambda}_i \in \sigma(\vec{A}_d) \wedge \lambda_i \in \sigma(\vec{A})$
+where $\sigma{\cdot}$ is the spectrum of a matrix.
+The following remark is worth mentioning regarding the above.
 \begin{remark}
 The witnessed maximum amplitude of the discrete signals $x_k,y_k$ may be smaller to that of $x(t),y(t)$ due to synchronism at fraction-frequency sampling.
 This means that reasoning about the statespace must consider the effects of this possibility as well of the case of maximal inputs from the continuous specification.
@@ -226,10 +229,10 @@ This means that reasoning about the statespace must consider the effects of this
 Since \eqref{eq:discretization} is a bisimulation of \eqref{eq:dynamical}, we may use the semantics in section \ref{sec:model_semantics} 
 to model continuous dynamical systems.
 
-\section{LTI representations of ARMAX models}
+\section{LTI representations of ARMA models}
 
 Let us have a discrete time SISO system with an $n^{th},m{^th} : n\geq m$ order armax model
-$$y[k]=\sum_{i=1}^n a_iy[k-i]+\sum_{i=0}^m b_iu[k-i]$$ \commentib{It is not an armax model. There is not a moving average noise component. It is an ARX, there are only autoregressive and exogenous terms.}
+$$y[k]=\sum_{i=1}^n a_iy[k-i]+\sum_{i=0}^m b_iu[k-i]$$
 where $y$ is the output of the system and $u$ its input.
 The equivalent LTI dynamics of such a model are:
 \begin{align}
