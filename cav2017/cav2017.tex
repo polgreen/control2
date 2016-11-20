@@ -213,14 +213,14 @@ x(kT)=x_k \wedge y(kT) = y_k, \forall k
 \end{align*}
 Let $g_d(k)=\mathcal{G}(t,g(t),T)$ be a function that performs the discretization described above, where $g(t)$
 represents the continuous dynamics and $g_d(k)$ the corresponding discrete dynamics. 
-Let $G(s)=\mathcal{L}(g(t))$ and $G_d(z)=\mathcal{Z}(g_(k))$ be the corresponding Laplace and Z-transforms
+Let $G(s)=\mathcal{L}(g(t))$ and $G_d(z)=\mathcal{Z}(g_d(k))$ be the corresponding Laplace and Z-transforms
 of $g(t)$ and $g_d(k)$. Given this relation, we have 
 $$G_d(z)=G(z)|_{z=e^{sT}} : g_d(k)=\mathcal{G}(t,g(t),T) \wedge T < \frac{1}{.5f_s}$$
 Where $.5f_s$ is the Nyquist frequency of $g(t)$. This last restriction is introduced to avoid the effects of aliasing
 which could cause 'phantom poles' to appear otherwise. 
 The eigenvalues of $\vec{A}_d$ corresponding to the poles of $G_d(z)$, and those of $\vec{A}$ corresponding to the poles of $G(s)$ are similarly related.
 $\hat{\lambda}_i=e^{-\lambda_iT} : \hat{\lambda}_i \in \sigma(\vec{A}_d) \wedge \lambda_i \in \sigma(\vec{A})$
-where $\sigma{\cdot}$ is the spectrum of a matrix.
+where $\sigma(\cdot)$ is the spectrum of a matrix.
 The following remark is worth mentioning regarding the above.
 \begin{remark}
 The witnessed maximum amplitude of the discrete signals $x_k,y_k$ may be smaller to that of $x(t),y(t)$ due to synchronism at fraction-frequency sampling.
