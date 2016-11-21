@@ -118,6 +118,7 @@ fast). If a program can be synthesised in a low-complexity language,
 the whole procedure finishes much faster than if synthesis had been
 attempted in a high-complexity language.
 
+\textcolor{red}{LC: Cristina, may I ask you to expand further this section by connecting it to our control-synthesis work?}
 \begin{figure}
 \centering
 \hspace*{-1cm}
@@ -183,9 +184,9 @@ In a continuous domain with linear dynamics, it is described by a first order Or
 \label{eq:dynamical}
 \end{equation}
 
-with $\vec{w} \sim \mathcal{N}(0,Q)$\\
+\noindent with $\vec{w} \sim \mathcal{N}(0,Q)$.\\
 Furthermore, a control system may have a derived output that is a linear combination of its states and inputs, 
-which may restricts the observability of the statespace from the output space.
+which may restricts the observability of the state-space from the output space.
 \begin{equation}
 \vec{y}(t)=\vec{C}\vec{x}(t)+\vec{D}\vec{u}(t)
 \end{equation}
@@ -224,7 +225,7 @@ where $\sigma(\cdot)$ is the spectrum of a matrix.
 The following remark is worth mentioning regarding the above.
 \begin{remark}
 The witnessed maximum amplitude of the discrete signals $x_k,y_k$ may be smaller to that of $x(t),y(t)$ due to synchronism at fraction-frequency sampling.
-This means that reasoning about the statespace must consider the effects of this possibility as well of the case of maximal inputs from the continuous specification.
+This means that reasoning about the state-space must consider the effects of this possibility as well of the case of maximal inputs from the continuous specification.
 \end{remark}
 Since \eqref{eq:discretization} is a bisimulation of \eqref{eq:dynamical}, we may use the semantics in section \ref{sec:model_semantics} 
 to model continuous dynamical systems.
