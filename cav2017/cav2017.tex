@@ -269,6 +269,117 @@ y_k=&\vec{C}\vec{x}_k + b_0u_k\nonumber\\
 \subsection{Description of the Benchmarks}
 %-------------------------------
 
+A set of state-space models for different classes of systems were extracted from the literature and employed for validating our automated synthesis methodology. All the systems are SISO models of the following form:
+\begin{equation}
+\left\lbrace\begin{array}{c}
+\dot{\textbf{x}}(t)=\textbf{A}\textbf{x}(t)+\textbf{B}u(t)\\
+y(t)=\textbf{C}\textbf{x}(t)+\textbf{D}u(t)
+\end{array}\right.
+\end{equation}
+
+The first plant represents a DC motor position model from~\cite{CTMS}. It is a third order system and presents the following set of matrices $\textbf{A}$, $\textbf{B}$, $\textbf{C}$, $\textbf{D}$, and $\textbf{x}$:
+$$
+\textbf{A}=\left[\begin{array}{ccc}
+0		& 1 		& 0						\\
+0 		& -1.087	& 8587					\\
+0		& -9964		& -1.455\times 10^{6}	\\
+\end{array}\right],~~ \textbf{B} = \left[\begin{array}{c}
+0 \\ 0 \\ -1.455\times10^{6}
+\end{array}\right]
+$$
+%
+$$
+\textbf{C}=\left[\begin{array}{ccc}
+1 & 0 & 0\\
+\end{array}\right],~~ \textbf{D}= 0,~~ \textbf{x}=\left[\begin{array}{c}
+\theta \\ \dot{\theta} \\ i \\
+\end{array}\right],
+$$
+where the states $\theta$, $\dot{\theta}$, and $i$ are respectively the rotor angular position, rotor angular rate and the current of armature. The DC motor is stable in open loop.
+
+The second benchmark is an aircraft pitch dynamics model extracted from~\cite{CTMS}. It is a third order system and it presents the following set of matrices $\textbf{A}$, $\textbf{B}$, $\textbf{C}$, $\textbf{D}$, and $\textbf{x}$:
+$$
+\textbf{A}=\left[\begin{array}{ccc}
+-0.313	& 56.7 		& 0		\\
+-0.0139	& -0.426	& 0		\\
+0		& 56.7		& 0		\\
+\end{array}\right],~~ \textbf{B} = \left[\begin{array}{c}
+0.232 \\ 0.0203 \\ 0
+\end{array}\right]
+$$
+%
+$$
+\textbf{C}=\left[\begin{array}{ccc}
+0 & 0 & 1\\
+\end{array}\right],~~ \textbf{D}= 0,~~ \textbf{x}=\left[\begin{array}{c}
+\alpha \\ \dot{\theta} \\ \theta \\
+\end{array}\right],
+$$
+where the states $\alpha$, $\dot{\theta}$, and $\theta$ are respectively the aircraft attack angle, pitch rate and the pitch angle. The aircraft pitch dynamic is critically stable in open loop, with a pole in origin of $s$-plane.
+
+The third benchmark is an ball magnetic levitation model extracted from~\cite{maglev}. It is a third order system presents the following set of matrices $\textbf{A}$, $\textbf{B}$, $\textbf{C}$, $\textbf{D}$, and $\textbf{x}$:
+$$
+\textbf{A}=\left[\begin{array}{ccc}
+0		& 1 		& 0		\\
+1752	& 0			& -34.07\\
+0		& 0			& -38.27\\
+\end{array}\right],~~ \textbf{B} = \left[\begin{array}{c}
+0 \\ 0 \\ 1.923
+\end{array}\right]
+$$
+%
+$$
+\textbf{C}=\left[\begin{array}{ccc}
+1 & 0 & 0\\
+\end{array}\right],~~ \textbf{D}= 0,~~ \textbf{x}=\left[\begin{array}{c}
+z \\ \dot{z} \\ i \\
+\end{array}\right],
+$$
+where the states $z$, $\dot{z}$, and $i$ are respectively the vertical displacement of the ball, its rate and the coil current. This system  is unstable in open loop.
+
+The remaining of benchmarks represents classic DC-DC converters: buck, boost, and buck-boost. They are SISO second-order systems stable in open-loop, and their state vector is $\textbf{x}=\textbf{x}=\left[\begin{array}{c}
+i_{L} \\ v_{C}\\
+\end{array}\right]$, where $i_{L}$ is the current in the coil and $v_{c}$ is the voltage on the capacitor. The matrices $\textbf{A}$, $\textbf{B}$, $\textbf{C}$, and $\textbf{D}$ for the buck converter are:
+$$
+\textbf{A}=\left[\begin{array}{cc}
+0		& -500 \\
+4545	& -1515\\
+\end{array}\right],~ \textbf{B} = \left[\begin{array}{c}
+125 \\ 0 \\
+\end{array}\right]~
+\textbf{C}=\left[\begin{array}{cc}
+0 & 1\\
+\end{array}\right],~ \textbf{D}= 0.
+$$
+
+The matrices of the boost converter are:
+$$
+\textbf{A}=\left[\begin{array}{cc}
+0		& -375 \\
+3409	& -1515\\
+\end{array}\right],~ \textbf{B} = \left[\begin{array}{c}
+500 \\ 0 \\
+\end{array}\right]~
+\textbf{C}=\left[\begin{array}{cc}
+0 & 1\\
+\end{array}\right],~ \textbf{D}= 0.
+$$
+
+Finally, the matrices of the buck-boost converter are:
+$$
+\textbf{A}=\left[\begin{array}{cc}
+0		& 375 \\
+-3409	& -1515\\
+\end{array}\right],~ \textbf{B} = \left[\begin{array}{c}
+125 \\ 0 \\
+\end{array}\right]~
+\textbf{C}=\left[\begin{array}{cc}
+0 & 1\\
+\end{array}\right],~ \textbf{D}= 0.
+$$.
+
+
+
 %-------------------------------
 \subsection{Objectives}
 %-------------------------------
