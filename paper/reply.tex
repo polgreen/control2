@@ -132,7 +132,7 @@ H_{3}(z)=\frac{\hat{G}(z)\cdot \hat{C}(z)}{1+\hat{G}(z)\cdot \hat{C}(z)}
 
 4) Proposition 1, item 2, should it be $\hat G$ ?
 \begin{quote}
-\textcolor{blue}{\textbf{Response:} Authors' response (Iury).}
+\textcolor{blue}{\textbf{Response:} The typo was rectified.}
 \end{quote}
 
 5) Section 3.2, you say that the refinement loop terminates since the set INPUTS is finite. Please acknowledge that it is also huge and that we hope it will not be needed to explore all possible values.
@@ -168,7 +168,7 @@ This paper has several assumptions without justifications. For example:
 The authors should provide reasonable justifications for these assumptions.
 
 \begin{quote}
-\textcolor{blue}{\textbf{Response:} Authors' response (Iury).}
+\textcolor{blue}{\textbf{Response:} The parametric errors have same order as the plant because of limitations of DSSynth, further improvements may be done to make it flexible. In fact, we the modeling errors does not depend on sampling, holding and quantization errors, once it already appears in previous continuous time models and are only propagated in the discrete version. The reciprocal is true if the quantization noise is considered exogenous signals as proposed in figures 1 and 2. Although the parametric uncertainties and the sampling and holding process present nonlinearities, our linear approximation is enough to represent the majority of these effects and is usually employed in control systems literature.}
 \end{quote}
 
 Digital controllers are designed to run on specific processors, and the bit width of a processor is generally fixed and multiple of 8. Traditionally, the bit-width assignment problem is solved to decide the length of the fraction part while the overall lengths fixed. The goal is generally to avoid overflow in the integer part and maximize the precision. However, in this paper, the length of the integer part and the fraction part seems to be changed arbitrarily. For example, in Section 3.5 in the example, the precision of $I_p = 16$ and $F_p = 24$ does not make the precision verification step successful. And in the next step, precision is increased to $I_p = 20$ and $F_p = 28$. This increase in precision looks quite arbitrary. Moreover, it is surprising that with $I_p = 16$ the precision verification step does not succeed, in spite of the fact that the constants in C(z) are quite small.
