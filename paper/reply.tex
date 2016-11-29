@@ -77,16 +77,73 @@ The paper is fairly well written and easy to follow. The technical contribution 
 Some specific comments:
 1) In (8), $\Delta_{q} G$ accounts for quantization errors, but I thought it was already account for in the additive disturbance $\nu$.
 
+\begin{quote}
+\textcolor{blue}{\textbf{Response:} $\Delta_{q} G$ is a model that incorporates the effects of $\nu$ in $\vec{\hat{G}}$ to investigate the consequences in the stability of system, once our stability analysis is based on polynomial coefficients and not over signals.}
+\end{quote}
+
+
 2) Please provide the non-expert reader with characteristics of FWL in particular what are the practical meaning of I and F ?
 
+\begin{quote}
+\textcolor{blue}{\textbf{Response:} This work addresses the synthesis of digital controller to be embedded in fixed-point hardwares. The FWL implementation is a function of the number of integer bits $I$ and fractional bits $F$. The $I$ affects strongly the representation range and is set in order to avoid overflows, and $F$ affects the precision and the truncation process after the operations. These variables are chosen depending on hardware features, in general purpose processors and DSP's $I$ is minimized avoiding overflows and the remaining of bit representation available are employed in $F$. Other flexible hardware structures (\textit{e.g.} FPGA's) allow the design of $F$ and $I$, what affects directly the number of logic arrays utilized.}
+\end{quote}
+
 3) I believe equation (10) does not correspond to the system on Figure 1. Please check. If needed, correct (11), (12) and (13) and the rest of the paper accordingly.
+\begin{quote}
+\textcolor{blue}{\textbf{Response:}
+In fact, these equations are wrong. They have to be substituted by the following equations (1)-(5). This mistake does not affect the results and conclusions because the proposition 1 is still valid for this set of equations.
+%%
+%\begin{equation}
+%\hat{Y}(z)=\nu_{1}(z)+Y(z)
+%\end{equation}
+%%
+%\begin{equation}
+%Y(z)=\hat{G}(z)\cdot(U(z)+\nu_{2}(z))
+%\end{equation}
+%%
+%\begin{equation}
+%U(z)=C(z)\cdot e(z)=C(z)\cdot (R(z)-\hat{Y}(z))
+%\end{equation}
+%%
+%$$
+%\hat{Y}(z)=\nu_{1}(z)+\hat{G}(z)\cdot [\hat{C}(z)\cdot(R(z)-\hat{Y}(z))+\nu_{2}(z)]
+%$$
+%%
+\begin{equation}
+\hat{Y}(z)=\nu_{1}(z)+\hat{G}(z)\cdot C(z)\cdot R(z)+\hat{G}(z)\cdot\nu_{2}(z)-\hat{G}(z)\cdot \hat{C}(z)\cdot \hat{Y}(z)
+\end{equation}
+%
+\begin{equation}
+\hat{Y}(z)=H_{1}(z)\nu_{1}(z)+H_{2}(z)\cdot\nu_{2}(z)+H_{3}(z)\cdot R(z)
+\end{equation}
+%
+\begin{equation}
+H_{1}(z)=\frac{1}{1+\hat{G}(z)\cdot \hat{C}(z)}
+\end{equation}
+\begin{equation}
+H_{2}(z)=\frac{\hat{G}(z)}{1+\hat{G}(z)\cdot \hat{C}(z)}
+\end{equation}
+\begin{equation}
+H_{3}(z)=\frac{\hat{G}(z)\cdot \hat{C}(z)}{1+\hat{G}(z)\cdot \hat{C}(z)}
+\end{equation}
+}
+\end{quote}
+
 
 4) Proposition 1, item 2, should it be $\hat G$ ?
-
-5) Section 3.2, you say that the refinement loop terminates since the set INPUTS is finite. Please acknowledge that it is also huge and that we hope it will not be needed to explore all possible values.6) In (18), it is unclear to me how we can compute  $\Delta_b$ ?
-
 \begin{quote}
 \textcolor{blue}{\textbf{Response:} Authors' response (Iury).}
+\end{quote}
+
+5) Section 3.2, you say that the refinement loop terminates since the set INPUTS is finite. Please acknowledge that it is also huge and that we hope it will not be needed to explore all possible values.
+\begin{quote}
+\textcolor{blue}{\textbf{Response:} Authors' response (?).}
+\end{quote}
+
+
+6) In (18), it is unclear to me how we can compute  $\Delta_b$ ?
+\begin{quote}
+\textcolor{blue}{\textbf{Response:} The $\Delta_{b}$ of a coefficient $c$ (represented by $\Delta_{b}c$ represents the error in the fixed-point representation of $c$ that is the remainder of the division between the correct value of coefficient $c$ and its FWL format $\tilde{c}$, {\it i.e.} $\Delta_{b}c=c~ \texttt{mod}~\tilde{c}$.}
 \end{quote}
 
 
