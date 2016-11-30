@@ -49,12 +49,15 @@
 
 %-----------------------------------------------------------------
 
-\noindent [Novelty, \#1/\#2]
+\noindent \textbf{[Novelty, \#1/\#2]}
+
+\noindent \textbf{[Assumptions, \#2]}
+
+\noindent The parametric errors have the same order as that of the plant. Modeling errors do not depend on sampling, holding, and quantization errors, since they already appear in previous continuous time models and are only propagated in the discrete version. The reciprocal is true if the quantization noise is considered exogenous signals as proposed to Figures 1 and 2. Although the parametric uncertainties and the sampling/holding process present nonlinearities, our linear approximation is enough to represent most of those effects, which is typically employed in the control systems literature.
 
 \noindent \textbf{[FWL characteristics, \#1/\#2]}
 
-\noindent This work addresses the synthesis of digital controller to be embedded in fixed-point hardware. The FWL implementation is a function of the number of integer bits $I$ and fractional bits $F$. The $I$ affects strongly the representation range and is set in order to avoid overflows, and $F$ affects the precision and the truncation process after the operations. These variables are chosen depending on hardware features, in general purpose processors and DSP's $I$ is minimized avoiding overflows and the remaining of bit representation available are employed in $F$. Other flexible hardware structures (\textit{e.g.} FPGA's) allow the design of $F$ and $I$, which affects directly the number of logic arrays utilized.
-
+\noindent The FWL implementation is a function of the number of integer bits $I$ and fractional bits $F$; $I$ strongly affects the representation range and is set to avoid overflows, while $F$ affects the precision and the truncation process after the operations. These variables are chosen depending on hardware features. In general purpose processors and DSP's, $I$ is minimized to avoid overflows and $F$ is employed for the remaining bit representation. Other flexible hardware structures (\textit{e.g.}, FPGAs) allow the design of $F$ and $I$, which affects directly the number of logical gates. Note that in section 3.3 we explain that there are two fixed-point domains in our control synthesis problem. Whilst the first domain $\mathbb{R}\langle I,F \rangle$, is the actual controller domain, whereas $\mathbb{R}\langle I_p,F_p \rangle$ is the bitvector domain of the synthesiser, which is used to try and synthesise a real plant. In this section we explain the latter is started at a lower resolution for speed and the resolution increased when the rounding errors in the synthesis algorithm do not allow for correct synthesis. This is a tool optimization and does not relate to the problem statement. The reason for the $8$-bit steps is because the tool uses byte alignment.
 
 %-----------------------------------------------------------------
 
@@ -190,9 +193,7 @@ The authors should provide reasonable justifications for these assumptions.
 Digital controllers are designed to run on specific processors, and the bit width of a processor is generally fixed and multiple of 8. Traditionally, the bit-width assignment problem is solved to decide the length of the fraction part while the overall lengths fixed. The goal is generally to avoid overflow in the integer part and maximize the precision. However, in this paper, the length of the integer part and the fraction part seems to be changed arbitrarily. For example, in Section 3.5 in the example, the precision of $I_p = 16$ and $F_p = 24$ does not make the precision verification step successful. And in the next step, precision is increased to $I_p = 20$ and $F_p = 28$. This increase in precision looks quite arbitrary. Moreover, it is surprising that with $I_p = 16$ the precision verification step does not succeed, in spite of the fact that the constants in C(z) are quite small.
 
 \begin{quote}
-\textcolor{blue}{\textbf{Response:} Authors' response (Dario).
-In section 3.3 we explain that there are two Fixed point domains in the control synthesis problem. Whilst the first domain $\mathbb{R}\langle I,F \rangle$, is the actual domain of the controller, whereas $\mathbb{R}\langle I_p,F_p \rangle$ is the bitvector domain of the synthesiser which is used to try and synthesise a real plant. In this section we explain the latter is started at a lower resolution for speed and the resolution increased when the rounding errors in the synthesis algorithm do not allow for correct synthesis. \textcolor{red}{This is an optimization of the tool and does not relate to the problem statement.} The reason for the 8-bit steps is because the tool uses byte alignment.
-}
+\textcolor{blue}{\textbf{Response:} In section 3.3 we explain that there are two Fixed point domains in the control synthesis problem. Whilst the first domain $\mathbb{R}\langle I,F \rangle$, is the actual domain of the controller, whereas $\mathbb{R}\langle I_p,F_p \rangle$ is the bitvector domain of the synthesiser which is used to try and synthesise a real plant. In this section we explain the latter is started at a lower resolution for speed and the resolution increased when the rounding errors in the synthesis algorithm do not allow for correct synthesis. \textcolor{red}{This is an optimization of the tool and does not relate to the problem statement.} The reason for the 8-bit steps is because the tool uses byte alignment.}
 \end{quote}
 
 In the experimental results section, the authors have not compared their results with any existing work. 
