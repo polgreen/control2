@@ -42,14 +42,14 @@ Synthesis engine comparison (R2)
 
 The two-order of magnitude speed-up is between our two engines,
 i.e. one-stage and two-stage engines, where the one-stage engine timed
-out on the majority of the benchmarks after 8 hours. We only show the
-winning back-end for each benchmark in the current table, but we will
-provide the full data in a revised version. Since we didn't find any
-controller synthesis tools with comparable soundness guarantees over
-finite precision properties, we were only able to compare the two
-engines against each other. We also included a maximum plant precision
-of 64 bits in our benchmarks, but the missing benchmark timed out
-before reaching it.
+out on the majority of the benchmarks after 24 hours (as specified in
+the last paragraph of Sec 4.1).  We only show the winning back-end for
+each benchmark in the current table, but we will provide the full data
+in a revised version. Since we didn't find any controller synthesis
+tools with comparable soundness guarantees over finite precision
+properties, we were only able to compare the two engines against each
+other. We also included a maximum plant precision of 64 bits in our
+benchmarks, but the missing benchmark timed out before reaching it.
 
 Fixed-point representation (R1)
 
@@ -61,7 +61,7 @@ depending on hardware features. In general purpose processors and
 DSP's, $I$ is minimized to avoid overflows and $F$ is employed for the
 remaining bit representation. Other flexible hardware structures
 (e.g., FPGAs) allow the design of $F$ and $I$, which affects directly
-the number of logical gates.
+the number of logical gates. This is discussed in Sec 2.2.
 
 Experimental evaluation (R1,R2,R3)
 
