@@ -60,3 +60,16 @@ since the one-stage engine times out on the majority of
 benchmarks. Additionally, we did include an upper bound for both the
 bit width and execution time. Note that given an arbitrarily high precision and
 given unlimited execution time, the engine will always succeed.
+
+Preliminaries (R1)
+
+Since our stability analysis is based on polynomial coefficients
+and not over signals, in Equation (8) $\Delta_{q} G$ is a model that incorporates 
+the effects of $\nu$ in $\vec{\hat{G}}$, in order to investigate the system's 
+stability consequences.
+
+The $\Delta_{b}$ of a coefficient $c$ (represented by $\Delta_{b}c$) models 
+the error in the fixed-point representation of $c$, which is the division remainder 
+between the correct value of coefficient $c$ and its respective FWL format $\tilde{c}$, 
+i.e., $\Delta_{b}c=c~ \texttt{mod}~\tilde{c}$.
+
