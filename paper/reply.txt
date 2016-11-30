@@ -53,11 +53,14 @@ from the classical control literature [3,15,21,22,35]. Note that the
 used benchmarks are typically from existing work on control system
 verification. Larger benchmarks would strengthen our claims; however,
 related work on controller verification typically considers even
-smaller benchmarks (cf. 3.5 and 4.1). We only state the winning
-back-end in the results table, annotating where the one-stage engine
-was faster. The two order of magnitudes were measured empirically,
-since the one-stage engine times out on the majority of
-benchmarks. Additionally, we did include an upper bound for both the
-bit width and execution time. Given an arbitrarily high precision and
-given unlimited execution time, the engine will always succeed.
+smaller benchmarks (cf. 3.5 and 4.1).  Moreover, the two-order of
+magnitude speed-up is between our two engines, i.e. one-stage and
+two-stage engines, where the one-stage engine timed out on the majority 
+of the benchmarks after 8 hours. We only show the winning back-end for
+each benchmark in the current table, but we will provide the full data
+in a revised version. Since we didn't find any controller synthesis
+tools with comparable soundness guarantees over finite precision
+properties, we were only able to compare the two engines against each
+other. We also included a maximum plant precision of 64 bits in our
+benchmarks, but the missing benchmark timed out before reaching it.
 
