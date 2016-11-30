@@ -2,10 +2,15 @@ Novelty (R1,R2,R3)
 
 As far as we know, the present synthesis approach that addresses FWL
 uncertainties in digital controllers has not been described or
-evaluated in the literature.  This work is the first one to address
-FWL uncertainties based on CEGIS for synthesizing correct-by-design
-linear stabilizing digital controllers with fixed-point arithmetic for
-linear continuous-time plants.
+evaluated in the literature.  Moreover, this work is the first use of
+CEGIS that handles the effects of quantizers and FWL.  Note that doing
+this efficiently required adjusting the traditional CEGIS refinement
+loop to use a two-stage verification engine, where the first stage
+performs fast but potentially unsound fixed-point operations and the
+second stage restores soundness by validating the operations performed
+by the first stage by using interval arithmetic.  This architecture 
+enabled us to obtain candidate solutions fast, which is key to our 
+performance.
 
 Assumptions (R2)
 
