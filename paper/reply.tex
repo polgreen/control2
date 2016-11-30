@@ -187,7 +187,10 @@ In the experimental results section, the authors have not compared their results
 In the introduction, the authors claim that their approach achieves a speedup of at least two order of magnitude over conventional one stage verification engine. However, their experimental results do not provide any such evidence.
 
 \begin{quote}
-\textcolor{blue}{\textbf{Response:} Authors' response (Pascal).}
+\textcolor{blue}{\textbf{Response:} We only state the winning back-end in the
+results table, annotating where the one-stage engine was faster. The two order
+of magnitudes were measured empirically, since the one-stage engine times out
+on the majority of benchmarks.}
 \end{quote}
 
 In the experimental results section, the authors have not provided the information on the number of iteration of the CEGIS loop for each benchmark. Moreover, it will be useful if the authors provide the execution time for different components of their toolchain for synthesizing controller for different benchmarks. This will give us an idea on which component of the tool chain is the most computationally demanding and wold motivate us to optimize that component.
@@ -199,7 +202,9 @@ In the experimental results section, the authors have not provided the informati
 The approach presented in this paper did not succeed for one benchmark example. The authors mentioned that increasing the fixed-point word widths will help their tool to succeed for the benchmark. However, as I understood, in the synthesis process, the author have not kept any upper bound on the fixed-point bit width. The authors should revisit the benchmark and examine the reason of the failure carefully.
 
 \begin{quote}
-\textcolor{blue}{\textbf{Response:} Authors' response (Pascal).}
+\textcolor{blue}{\textbf{Response:} We did include an upper bound for both the
+bit width and execution time. Given an arbitrarily high precision and given
+unlimited execution time, the engine will always succeed.}
 \end{quote}
 
 The authors may consider placing Figure 5 at a more suitable position.
