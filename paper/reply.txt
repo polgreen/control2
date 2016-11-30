@@ -3,7 +3,7 @@ Novelty (R1,R2,R3)
 As far as we know, the present synthesis approach that addresses FWL
 uncertainties in digital controllers has not been described or
 evaluated in the literature.  Moreover, this work is the first use of
-CEGIS that handles the effects of quantizers and FWL.  Note that doing
+CEGIS that handles the effects of FWL.  Note that doing
 this efficiently required adjusting the traditional CEGIS refinement
 loop to use a two-stage verification engine, where the first stage
 performs fast, but potentially unsound fixed-point operations and the
@@ -16,13 +16,14 @@ Assumptions (R2)
 
 The parametric errors have the same order as that of the
 plant. Modeling errors do not depend on sampling, holding, and
-quantization errors, since they already appear in previous 
-continuous-time models and are only propagated in the discrete-time version. 
-The reciprocal is true if the quantization noise is considered exogenous
-signals as proposed to Figures 1 and 2. Although the parametric
-uncertainties and the sampling/holding process present nonlinearities,
-our linear approximation is enough to represent most of those effects,
-which is typically employed in the control systems literature.
+quantization errors, since they already appear in previous
+continuous-time models and are only propagated in the discrete-time
+version.  The reciprocal is true if the quantization noise is
+considered exogenous signals as proposed to Figures 1 and 2. Although
+the parametric uncertainties and the sampling/holding process present
+nonlinearities, our linear approximation is enough to represent most
+of those effects, which is typically employed in the control systems
+literature.
 
 FWL characteristics (R2)
 
