@@ -175,13 +175,17 @@ The authors should provide reasonable justifications for these assumptions.
 Digital controllers are designed to run on specific processors, and the bit width of a processor is generally fixed and multiple of 8. Traditionally, the bit-width assignment problem is solved to decide the length of the fraction part while the overall lengths fixed. The goal is generally to avoid overflow in the integer part and maximize the precision. However, in this paper, the length of the integer part and the fraction part seems to be changed arbitrarily. For example, in Section 3.5 in the example, the precision of $I_p = 16$ and $F_p = 24$ does not make the precision verification step successful. And in the next step, precision is increased to $I_p = 20$ and $F_p = 28$. This increase in precision looks quite arbitrary. Moreover, it is surprising that with $I_p = 16$ the precision verification step does not succeed, in spite of the fact that the constants in C(z) are quite small.
 
 \begin{quote}
-\textcolor{blue}{\textbf{Response:} Authors' response (Dario).}
+\textcolor{blue}{\textbf{Response:} Authors' response (Dario).
+In section 3.3 we explain that there are two Fixed point domains in the control synthesis problem. Whilst the first domain $\mathbb{R}\langle I,F \rangle$, is the actual domain of the controller, whereas $\mathbb{R}\langle I_p,F_p \rangle$ is the bitvector domain of the synthesiser which is used to try and synthesise a real plant. In this section we explain the latter is started at a lower resolution for speed and the resolution increased when the rounding errors in the synthesis algorithm do not allow for correct synthesis. \textcolor{red}{This is an optimization of the tool and does not relate to the problem statement.} The reason for the 8-bit steps is because the tool uses byte alignment.
+}
 \end{quote}
 
 In the experimental results section, the authors have not compared their results with any existing work. 
 
 \begin{quote}
-\textcolor{blue}{\textbf{Response:} Authors' response (Dario).}
+\textcolor{blue}{\textbf{Response:} Authors' response (Dario).
+The benchmarks used are from existing work on verification. There are no FWL synthesis papers that we are aware of that we can compare with (known synthesis tools do not account for the FWL effects), so we make the comparison between the direct (SAT) and CEGIS approach on known benchmarks which is as close as we can get to these comparisons. 
+}
 \end{quote}
 
 In the introduction, the authors claim that their approach achieves a speedup of at least two order of magnitude over conventional one stage verification engine. However, their experimental results do not provide any such evidence.
