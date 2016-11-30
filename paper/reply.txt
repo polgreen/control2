@@ -14,16 +14,21 @@ performance.
 
 Assumptions (R2)
 
-The parametric errors have the same order as that of the
-plant. Modeling errors do not depend on sampling, holding, and
-quantization errors, since they already appear in previous
-continuous-time models and are only propagated in the discrete-time
-version.  The reciprocal is true if the quantization noise is
-considered exogenous signals as proposed to Figures 1 and 2. Although
-the parametric uncertainties and the sampling/holding process present
-nonlinearities, our linear approximation is enough to represent most
-of those effects, which is typically employed in the control systems
-literature.
+Regarding the order of the parametric errors in the transfer fucntions,
+given a parametric LTI plant model of a certain order, it is
+reasonable to assume that the tolerances are only in the parameters,
+therefore of the same order of the model. Similarly, since quantization
+effects are on these parameters, they can only have at most the same 
+order as the model. 
+Although there may be nonlinearities in the ADC, these have been already
+abstracted into a linear model, and it is customary in the literature
+to assume once a model is selected that the model holds. Some explanation
+is given in section 2.3 about the effects on quatization that preserves the
+linearity and order of the model.
+The uncertainties are assumed to be nondeterministic and within a range,
+which is different from linear and independent. In fact, we explore all
+possible combinations of uncertainties, hence producing a more robust
+model than one describing dependencies.
 
 FWL characteristics (R2)
 
