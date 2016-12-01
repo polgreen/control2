@@ -31,17 +31,16 @@ hence producing a more robust model than one describing dependencies.
 
 FWL characteristics (R2)
 
-Note that in section 3.3 we explain that
-there are two fixed-point domains in our control synthesis
-problem. Whilst the first domain $\mathbb{R}<I,F>$, is the actual
-controller domain, whereas $\mathbb{R}<I_p,F_p>$ is the bitvector
+Note that in Section 3.3 we explain that there are two fixed-point domains 
+in our control synthesis problem. Whilst the first domain $\mathbb{R}<I,F>$, 
+is the actual controller domain, whereas $\mathbb{R}<I_p,F_p>$ is the bitvector
 domain of the synthesiser, which is used to try and synthesise a real
-plant. In this section we explain the latter is started at a lower
+plant. In this section, we explain the latter is started at a lower
 resolution for speed and the resolution increased when the rounding
 errors in the synthesis algorithm do not allow for correct
 synthesis. This is a tool optimization and does not relate to the
 problem statement. The reason for the 8-bit steps is because the tool
-uses byte alignment.
+uses byte alignment as described in reference [8].
 
 Synthesis engine comparison (R2)
 
