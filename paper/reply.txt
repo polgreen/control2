@@ -40,20 +40,21 @@ resolution for speed and the resolution increased when the rounding
 errors in the synthesis algorithm do not allow for correct
 synthesis. This is a tool optimization and does not relate to the
 problem statement. The reason for the 8-bit steps is because the tool
-uses byte alignment as described in reference [8].
+uses byte alignment [8].
 
 Comparison to related work (R2)
 
-The two-order of magnitude speed-up is between our two engines,
-i.e. one-stage and two-stage engines, where the one-stage engine timed
-out on the majority of the benchmarks after 24 hours (as specified in
-the last paragraph of Sec 4.1).  We only show the winning back-end for
-each benchmark in the current table, but we will provide the full data
-in a revised version. Since we didn't find any controller synthesis
-tools with comparable soundness guarantees over finite precision
-properties, we were only able to compare the two engines against each
-other. We also included a maximum plant precision of 64 bits in our
-benchmarks, but the missing benchmark timed out before reaching it.
+The two-order of magnitude speed-up that we state in Section 4.3 is 
+between our two engines, i.e., one-stage and two-stage engines, 
+where the one-stage engine timed out on the majority of the benchmarks 
+after 24 hours (as specified in the last paragraph of Sec 4.1).  
+We only show the winning back-end for each benchmark in the current table, 
+but we will provide the full data in a revised version. Since we did not 
+find any controller synthesis tools with comparable soundness guarantees 
+over finite precision properties, we were only able to compare our two 
+engines against each other. We also included a maximum plant precision 
+of 64 bits in our benchmarks, but the missing benchmark timed out before 
+reaching it.
 
 Fixed-point representation (R1)
 
