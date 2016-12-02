@@ -1,17 +1,19 @@
 Novelty (R1,R2,R3)
 
-The present synthesis approach that addresses all the plant
-interval variation set and FWL uncertainties in digital controllers 
-is novel in the control system literature (cf. Sections 1 and 2.2). 
-In particular, this work marks the first use of CEGIS that handles 
-a plant with an uncertain model and FWL effects in the digital controller.  
-Note that doing this efficiently required adjusting the traditional CEGIS 
-refinement loop to use a two-stage verification engine, where the first 
-stage performs fast, but potentially unsound fixed-point operations and 
+The present synthesis approach, which addresses plant variations as 
+interval sets as well as FWL uncertainties in digital controllers,  
+is novel in the control system literature (cf. Sections 1 and 2.2) in 
+that it puts forward a fully automated synthesis approach that 
+is algorithmically and numerically sound. 
+In particular, this work marks the first use of the CEGIS paradigm, which handles 
+plants with uncertain models and FWL effects over the digital controller.  
+Note that implementing this architecture efficiently requires adjusting the traditional CEGIS 
+refinement loop to the use of a two-stage verification engine: here the first 
+stage performs fast, but potentially unsound fixed-point operations, whereas  
 the second stage restores soundness by validating the operations performed 
-by the first stage by using interval arithmetic (cf. Sections 3.3 and 4.3).  
-This architecture enabled us to obtain candidate solutions fast, which is key 
-to our performance.
+by the first stage using interval arithmetic (cf. Sections 3.3 and 4.3).  
+This architecture has enabled us to obtain candidate solutions fast, which is key 
+to its performance. 
 
 Assumptions (R2)
 
