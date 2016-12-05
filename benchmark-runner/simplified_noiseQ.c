@@ -470,6 +470,7 @@ int main()
   call_closedloop_verification_task();
   result=verify_stability_closedloop_using_dslib();
 #ifdef __CPROVER
+  struct anonymous3 __trace_controller = controller;
   __DSVERIFIER_assert(0);
 #endif
   return result;
