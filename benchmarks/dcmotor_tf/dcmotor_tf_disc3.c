@@ -17,11 +17,11 @@ implementation impl = {
 };
 
 digital_system plant = {
-        .b = { 0.0973f, 1.8989E-4},
+        .b = { 0.0973f, 1.8989E-4 },
         .b_uncertainty = { 0.0, 0.0 },
         .b_size = 2,
-        .a = { 1.0f, -0.9493f},
-        .b_uncertainty = { 0.0, 0.0 },
+        .a = { 1.0f, -0.9493f },
+        .a_uncertainty = { 0.0, 0.0 },
         .a_size = 3,
 };
 

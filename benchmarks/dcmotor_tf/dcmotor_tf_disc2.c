@@ -2,8 +2,10 @@
 
 digital_system controller = {
         .b = { 0.2f, -0.18f },
+        .b_uncertainty = { 0.0, 0.0 },
         .b_size = 2,
         .a = { 1.0f, 0.3f },
+        .a_uncertainty = { 0.0, 0.0 },
         .a_size = 2,
         .sample_time = 2,
 };
@@ -17,11 +19,11 @@ implementation impl = {
 };
 
 digital_system plant = {
-        .b = { 7.3573e-5, 5.2845e-5},
+        .b = { 7.3573e-5, 5.2845e-5 },
         .b_uncertainty = { 0.0, 0.0 },
         .b_size = 2,
-        .a = { 1.0f, -1.3678f, 0.3678},
-        .b_uncertainty = { 0.0, 0.0, 0.0 },
+        .a = { 1.0f, -1.3678f, 0.3678 },
+        .a_uncertainty = { 0.0, 0.0, 0.0 },
         .a_size = 3,
 };
 
