@@ -5,7 +5,7 @@ digital_system controller = {
         .b_size = 2,
         .a = { 1.0f, 0.3f },
         .a_size = 2,
-        .sample_time = 2
+        .sample_time = 2,
 };
 
 implementation impl = {
@@ -13,13 +13,15 @@ implementation impl = {
         .frac_bits = 7,
         .max = 1.0,
         .min = -1.0,
-        .scale = 1
+        .scale = 1,
 };
 
 digital_system plant = {
         .b = { 1.8256f, -3.3694f, 2.0176f },
+        .b_uncertainty = { 0.0, 0.0, 0.0 },
         .b_size = 3,
         .a = { 1.0f, -2.9194f, 2.8396f, -0.9194f },
-        .a_size = 4
+        .a_uncertainty = { 0.0, 0.0, 0.0, 0.0 },
+        .a_size = 4,
 };
 
