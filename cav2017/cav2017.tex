@@ -136,11 +136,11 @@ attempted in a high-complexity language.
    \&
    complexnode/.pic={ 
      \node[rectangle,draw,dashed,
-	minimum width=7cm,
+	minimum width=6.7cm,
 	minimum height=.8cm,
 	label={\sc Validation oracles},] (verif) {};
    \node[fill=yellow!20] (verif1) at ([xshift=-2.1cm]verif.center) {{\sc Validate}};
-   \node[fill=yellow!20,align=center] (verif2) at ([xshift=1.9cm]verif.center) {{\sc validate general}};
+   \node[fill=yellow!20,align=center] (verif2) at ([xshift=1.7cm]verif.center) {{\sc validate general}};
    } 
    \& \node[ellipse, fill=yellow!20] (done) {{\sc Done}};\\
    %% \node[fill=yellow!20] (verif) {{\sc ~~~~~~Uncertainty~~~~~~}};
@@ -163,20 +163,22 @@ attempted in a high-complexity language.
     ([yshift=-2em]verif1.west) edge node[xshift=-0.7em] {New input} ([yshift=-2em]synth.east)
     (verif1) edge node {Generalise} (verif2)
     ([xshift=5em]verif1.south) edge node[align=center] {Candidate} ([xshift=5em]bmc.north)
-    ([xshift=5em]verif2.south) edge node[align=center] {Candidate} ([xshift=5em]fp.north)
+    ([xshift=5em]verif2.south) edge node[align=center] {Candidate} ([xshift=3.8em]fp.north)
     ([xshift=-5em]bmc.north) edge node[align=center]  {UNSAT/\\Model} ([xshift=-5em]verif1.south)
-    ([xshift=-5em]fp.north) edge node[align=center]  {UNSAT/\\Model} ([xshift=-5em]verif2.south)
+    ([xshift=-6.2em]fp.north) edge node[align=center]  {UNSAT/\\Model} ([xshift=-5em]verif2.south)
     (verif2) edge node {} (done)
     ([xshift=5em]synth.south) edge node[align=center] {{\sc Inputs}} ([xshift=5em]gp.north)
     ([xshift=-5em]gp.north) edge node[align=center] {No solution/\\Candidate} ([xshift=-5em]synth.south)
     (aux1) edge (synth.north);
    \path[-]
-   (verif2.north) edge node[align=center] {} ([xshift=6.5cm]aux2)
-   ([xshift=6.5cm]aux2) edge node[align=center] {Increase parameters} (aux1);
+   (verif2.north) edge node[align=center] {} ([xshift=5.6cm]aux2)
+   ([xshift=5.6cm]aux2) edge node[align=center] {Increase parameters} (aux1);
 
 \end{tikzpicture}
-\caption{The CEGIS loop with solution generalisation\label{fig:CEGIS-multiple-verif}. \textcolor{red}{LC: Cristina, can you please fix this figure? The text ``candidate'' overlaps with the dotted box.}}
+\caption{The CEGIS loop with solution generalisation\label{fig:CEGIS-multiple-verif}.}
 \end{figure}
+
+  %% \textcolor{red}{LC: Cristina, can you please fix this figure? The text ``candidate'' overlaps with the dotted box.}
 
 %-------------------------------
 \section{Discretising Continuous Space Dynamics}
