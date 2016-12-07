@@ -19,7 +19,7 @@ implementation impl = {
 };
 
 digital_system plant = {
-        .b = { 0.4795f, -0.9635f, 0.4916f },
+        .b = { 0.4801f, -0.9647f, 0.4922f },
         .b_uncertainty = { 0.0, 0.0, 0.0 },
         .b_size = 3,
         .a = { 1.0f, -2.9792f, 2.9585f, -0.9792f },
