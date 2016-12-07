@@ -1,10 +1,10 @@
 #include <dsverifier.h>
 
 digital_system controller = {
-        .b = { 0.2f, -0.18f },
+        .b = { 0.361328125f, 0.8056640625f },
         .b_uncertainty = { 0.0, 0.0 },
         .b_size = 2,
-        .a = { 1.0f, 0.3f },
+        .a = { 0.74609375f, 0.5f },
         .a_uncertainty = { 0.0, 0.0 },
         .a_size = 2,
         .sample_time = 2,
@@ -19,11 +19,11 @@ implementation impl = {
 };
 
 digital_system plant = {
-        .b = { 1.6218f },
-        .b_uncertainty = { 0.0 },
-        .b_size = 1,
-        .a = { 1.0f, -1.6487f },
-        .a_uncertainty = { 0.0, 0.0 },
-        .a_size = 2,
+        .b = { 0.03132f, 0.03132f },
+        .b_uncertainty = { 0.0, 0.0 },
+        .b_size = 2,
+        .a = { 1.0f, -2.025f, 1.0f },
+        .a_uncertainty = { 0.0, 0.0, 0.0 },
+        .a_size = 3,
 };
 
