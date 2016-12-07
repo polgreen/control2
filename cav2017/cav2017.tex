@@ -417,7 +417,15 @@ affine systems, finding its major challenge in the hardness of solving
 linear arithmetic with the state-of-the-art SMT solvers.  Since this
 approach uses switching states instead of linear dynamics in the digital
 controller, it entirely circumvents the FWL problem.  It is also not
-suitable for the kind of control we seek to synthesize.  We require a
+suitable for the kind of control we seek to synthesize.
+Moreover, in \cite{DBLP:conf/emsoft/RavanbakhshS16} the same authors 
+use a CEGIS-based approach for synthesizing continuous-time switching
+controllers that guarantee reach while stay properties of a closed
+loop system. The solution is based on synthesizing control Lyapunov
+functions for switched systems, that yield switching controllers with
+a guaranteed minimum dwell time in each mode.
+
+We require a
 combination of a synthesis engine with a control verification tool that
 addresses the challenges presented here in the form of FWL effects and
 stability measures for LTI SISO controllers.  We take the former
@@ -425,6 +433,9 @@ from~\cite{DBLP:conf/lpar/DavidKL15} and the latter from~\cite{daes20161},
 while enhancing the procedure by evaluating the quantization effects of the
 Hardware interfaces (ADC/DAC) to obtain an accurate discrete-time FWL
 representation of the continuous dynamics.
+
+
+
 
 \textcolor{red}{LC: Cristina and Dario, should we further expand this section with other initiatives to synthesise control systems?}
 
