@@ -32,6 +32,6 @@ display('USCG cutter Tampa Heading Angle - 8 benchmarks')
 magneticpointer
 display('Magnetic Pointer - 8 benchmarks')
 display('Done')
-display('Total of benchmarks: 100')
+display('Total of benchmarks: 92')
 display('The .mat file benchmark_tf.mat contains the transfer function models.')
 display('The .mat file benchmark_ss.mat contains the state space models.')
