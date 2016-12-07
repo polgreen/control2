@@ -181,11 +181,13 @@ int validation()
   for( i=0; i < __CONTROLLER_DEN_SIZE; i++)
   {
     const control_floatt value=controller.den[i];
-#ifdef __CPROVER 
+#ifdef __CPROVER
+    __DSVERIFIER_assume(value != 0.0); 
     __DSVERIFIER_assume(value <= _dbl_max);
     __DSVERIFIER_assume(value >= _dbl_min);
 #else
     printf("value=%f", value);
+    if(value == 0) return 10;
     if(value > _dbl_max) return 10;
     if(value < _dbl_min) return 10;
 #endif
@@ -194,9 +196,11 @@ int validation()
   {
     const control_floatt value=controller.num[i];
 #ifdef __CPROVER 
+    __DSVERIFIER_assume(value != 0.0);
     __DSVERIFIER_assume(value <= _dbl_max);
     __DSVERIFIER_assume(value >= _dbl_min);
 #else
+    if(value == 0) return 10;
     if (value > _dbl_max) return 10;
     if (value < _dbl_min) return 10;
 #endif
