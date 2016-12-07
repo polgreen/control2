@@ -7,7 +7,7 @@ digital_system controller = {
         .a = { 0.125f },
         .a_uncertainty = { 0.0 },
         .a_size = 1,
-        .sample_time = 2,
+        .sample_time = 1.5,
 };
 
 implementation impl = {
