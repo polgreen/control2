@@ -171,32 +171,42 @@ int validation()
 #else
   if (!((__CONTROLLER_DEN_SIZE == controller.den_size) && (__CONTROLLER_NUM_SIZE == controller.num_size) && (plant.num_size != 0) && (impl.int_bits != 0))) return 10;
 #endif
+  unsigned int zero_count = 0;
   for( i=0; i < __CONTROLLER_DEN_SIZE; i++)
   {
     const control_floatt value=controller.den[i];
+    if(value == 0.0) ++zero_count;
 #ifdef __CPROVER 
-    __DSVERIFIER_assume(value != 0.0);
     __DSVERIFIER_assume(value <= _dbl_max);
     __DSVERIFIER_assume(value >= _dbl_min);
 #else
-    if(value == 0.0) return 10;
     if(value > _dbl_max) return 10;
     if(value < _dbl_min) return 10;
 #endif
   }
+#ifdef __CPROVER
+  __DSVERIFIER_assume(zero_count < __CONTROLLER_DEN_SIZE);
+#else
+  if (zero_count == __CONTROLLER_DEN_SIZE) return 10;
+#endif
+  zero_count = 0;
   for(i = 0 ; i < __CONTROLLER_NUM_SIZE; i++)
   {
     const control_floatt value=controller.num[i];
-#ifdef __CPROVER
-    __DSVERIFIER_assume(value != 0.0); 
+    if(value == 0.0) ++zero_count;
+#ifdef __CPROVER 
     __DSVERIFIER_assume(value <= _dbl_max);
     __DSVERIFIER_assume(value >= _dbl_min);
 #else
-    if(value == 0.0) return 10;
     if (value > _dbl_max) return 10;
     if (value < _dbl_min) return 10;
 #endif
   }
+#ifdef __CPROVER
+  __DSVERIFIER_assume(zero_count < __CONTROLLER_DEN_SIZE);
+#else
+  if (zero_count == __CONTROLLER_DEN_SIZE) return 10;
+#endif
   return 0;
 }
 
