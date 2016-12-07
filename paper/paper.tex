@@ -2501,27 +2501,45 @@ benchmarks is the two-stage one.
 
 \begin{table}
 \centering
-\begin{tabular}{c | c | l | r r | r l}
-\# & Plant  & Benchmark                  & $I$ & $F$ & Time    & \\\cline{1-6}
-1  & $G_1$  & CruiseControl02            &   4 &  16 & 17\,s   & \\
-2  & $G_1$  & CruiseControl02$^\dagger$  &   4 &  16 & 46\,s   & \\
-3  & $G_2$  & SpringMassDamper           &  15 &  16 & 28\,s   & \\
-4  & $G_2$  & SpringMassDamper$^\dagger$ &  15 &  16 & \xmark  & \\
-5  & $G_3$  & SatelliteB2                &   3 &   7 & 7\,s    & \\
-6  & $G_3$  & SatelliteB2$^\dagger$      &   3 &   7 & 6601\,s & \tbmark\\
-7  & $G_3$  & SatelliteC2                &   3 &   5 & 2\,s    & \\
-8  & $G_3$  & SatelliteC2$^\dagger$      &   3 &   5 & 76\,s   & \tbmark\\
-9  & $G_4a$ & a\_ST1\_IMPL1              &  16 &   4 & 2704\,s & \\
-10 & $G_4a$ & a\_ST1\_IMPL2              &  16 &   8 & 538\,s  & \\
-11 & $G_4a$ & a\_ST1\_IMPL3              &  16 &  12 & 12\,s   & \\
-12 & $G_4b$ & a\_ST2\_IMPL1              &  16 &   4 & 318\,s  & \\
-13 & $G_4b$ & a\_ST2\_IMPL2              &  16 &   8 & 967\,s  & \\
-14 & $G_4b$ & a\_ST2\_IMPL3              &  16 &  12 & 9798\,s & \\
-15 & $G_4c$ & a\_ST3\_IMPL1              &  16 &   4 & 6304\,s & \\
+\begin{tabular}{ | c | c | l | r r || r | r | }
+\hline
+\# & Plant  & Benchmark                  & $I$ & $F$
+   & \multicolumn{1}{|c|}{1-step} & \multicolumn{1}{|c|}{2-step}
+    \\\hline\hline
+1  & $G_1$  & CrsControl02
+            &   4 &  16 & 17\,s   & \xmark     \\
+2  & $G_1$  & CrsControl02$^\dagger$
+            &   4 &  16 & 46\,s   & \xmark     \\
+3  & $G_2$  & SpgMsDamper
+            &  15 &  16 & 28\,s   & \xmark     \\
+4  & $G_2$  & SpgMsDamper$^\dagger$
+            &  15 &  16 & \xmark  & \xmark    \\
+5  & $G_3$  & SatelliteB2
+            &   3 &   7 & 7\,s    & \xmark     \\
+6  & $G_3$  & SatelliteB2$^\dagger$
+            &   3 &   7 & \xmark  & 6601\,s  \\
+7  & $G_3$  & SatelliteC2
+            &   3 &   5 & 2\,s    & \xmark    \\
+8  & $G_3$  & SatelliteC2$^\dagger$
+            &   3 &   5 & \xmark  & 76\,s    \\
+9  & $G_4a$ & a\_ST1\_IMPL1
+            &  16 &   4 & 2704\,s & \xmark   \\
+10 & $G_4a$ & a\_ST1\_IMPL2
+            &  16 &   8 & 538\,s  & \xmark   \\
+11 & $G_4a$ & a\_ST1\_IMPL3
+            &  16 &  12 & 12\,s   & \xmark   \\
+12 & $G_4b$ & a\_ST2\_IMPL1
+            &  16 &   4 & 318\,s  & \xmark   \\
+13 & $G_4b$ & a\_ST2\_IMPL2
+            &  16 &   8 & 967\,s  & \xmark    \\
+14 & $G_4b$ & a\_ST2\_IMPL3
+            &  16 &  12 & 9798\,s & \xmark   \\ 
+15 & $G_4c$ & a\_ST3\_IMPL1
+            &  16 &   4 & 6304\,s & \xmark   \\\hline
 \end{tabular}
 
 \vspace{0.5em}
-\scriptsize{* = solved with the one-stage engine, $\dagger$ = with uncertainty}
+\scriptsize{\xmark = time-out, $\dagger$ = with uncertainty}
 \vspace{0.5em}
 
 \caption{Experimental results obtained with \tool\label{tab:results}}
