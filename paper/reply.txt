@@ -1,0 +1,92 @@
+Novelty (R1,R2,R3)
+
+The present synthesis approach, which addresses plant variations as 
+interval sets as well as FWL uncertainties in digital controllers,  
+is novel in the control system literature (cf. Sections 1 and 2.2) in 
+that it puts forward a fully automated synthesis approach that 
+is algorithmically and numerically sound. 
+In particular, this work marks the first use of the CEGIS paradigm, which handles 
+plants with uncertain models and FWL effects over the digital controller.  
+Note that implementing this architecture efficiently requires adjusting the traditional CEGIS 
+refinement loop to the use of a two-stage verification engine: here the first 
+stage performs fast, but potentially unsound fixed-point operations, whereas  
+the second stage restores soundness by validating the operations performed 
+by the first stage using interval arithmetic (cf. Sections 3.3 and 4.3).  
+This architecture has enabled us to obtain candidate solutions fast, which is key 
+to its performance. 
+
+Assumptions (R2)
+
+Regarding the order of the parametric errors in the transfer functions,
+given a parametric LTI plant model of a certain order, it is 
+reasonable to assume that the tolerances are only in the parameters, and 
+therefore of the same order of the model. Similarly, since quantization
+effects are on these parameters, they can only have at most the same 
+order as the model. Although there may be nonlinearities in the ADC, 
+these have been already abstracted into a linear model, as customary 
+in the literature.  Some explanation is given in Section 2.3 about the 
+effects on quatization, which preserves the linearity and model order. 
+However, the uncertainties are assumed to be nondeterministic 
+and within a given range, which is different from assuming them to enter 
+linearly and independently. 
+
+FWL characteristics (R2)
+
+Note that in Section 3.3 we explain that there are two fixed-point domains 
+in our control synthesis problem. The first domain $\mathbb{R}<I,F>$  
+is the actual controller domain, whereas $\mathbb{R}<I_p,F_p>$ is the bitvector
+domain of the synthesiser, which is used to shape the closed-loop real 
+plant. In this section, we explain that the latter is started at a lower
+resolution for speed and the resolution is increased when the rounding
+errors in the synthesis algorithm do not allow for correct
+synthesis. This is a tool optimization and does not relate to the
+problem statement. The reason for the 8-bit steps is because the tool
+uses byte alignment [8].
+
+Comparison to related work (R2)
+
+The two-order of magnitude speed-up that we state in Section 4.3 is 
+between our two engines, i.e., the one-stage and two-stage engine, respectively.  
+The one-stage engine has timed out on the majority of the benchmarks 
+after 24 hours (as specified in the last paragraph of Sec 4.1).  
+We only show the winning back-end for each benchmark in the current table, 
+but we can easily provide the full data in a revised version of the article. 
+Since we did not find any controller synthesis tools with comparable soundness 
+guarantees over finite precision properties, we were only able to compare our two 
+engines against each other. We have also included a maximum plant precision 
+of 64 bits in our benchmarks, but the benchmark that we do not find a solution
+has timed out before reaching it. 
+
+Fixed-point representation (R1)
+
+The FWL implementation is a function of the number of integer bits $I$
+and fractional bits $F$; $I$ strongly affects the representation range
+and is set to avoid overflows, while $F$ affects the precision and the
+truncation process after the arithmetic operations. These variables are chosen
+depending on hardware features. In general-purpose processors and
+DSP's, $I$ is minimized to avoid overflows and $F$ is employed for the
+remaining bit representation. Other flexible hardware structures
+(e.g., FPGAs) allow the design of $F$ and $I$, which affects directly
+the number of logical gates. This is discussed in Section 2.2.
+
+Experimental evaluation (R1,R2,R3)
+
+We have evaluated our approach using intricate plant models taken from 
+modern control literature [3,15,21,22,35]. Note that those
+benchmarks are largely used in existing work on control system
+verification. A larger number of benchmarks would surely strengthen our claims: 
+however, related work on controller verification has typically considered  
+those (standard) benchmarks for experimental evaluation 
+(cf. 3.5 and 4.1).  
+
+Preliminaries (R1)
+
+Since our stability analysis is based on polynomial coefficients and
+not over signals, Equation (8) incorporates the effects of $\nu$ in
+$\vec{\hat{G}}$ (by means of $\Delta_{q} G$), in order to investigate
+the consequences on system's stability .
+
+The $\Delta_{b}$ of a coefficient $c$ (represented by $\Delta_{b}c$) models 
+the error in the fixed-point representation of $c$, which is the division remainder 
+between the correct value of coefficient $c$ and its respective FWL format $\tilde{c}$, 
+i.e., $\Delta_{b}c=c~ \texttt{mod}~\tilde{c}$.

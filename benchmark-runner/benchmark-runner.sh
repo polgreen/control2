@@ -72,7 +72,12 @@ mkdir -p ${working_directory_base} 2>/dev/null
 #benchmark='/users/pkesseli/documents/control-synthesis/benchmarks/CruiseControl/CruiseControl02.c'
 #benchmark_dir='/users/pkesseli/documents/control-synthesis/benchmarks/SpringMassDamper/'
 
-benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/CruiseControl/' '/users/pkesseli/documents/control-synthesis/benchmarks/Satellite/' '/users/pkesseli/documents/control-synthesis/benchmarks/SpringMassDamper/' '/users/pkesseli/documents/control-synthesis/benchmarks/example-a/' '/users/pkesseli/documents/control-synthesis/benchmarks/example-a_uncertainty/')
+if [ -z "$2" ]; then
+  benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/CruiseControl/' '/users/pkesseli/documents/control-synthesis/benchmarks/Satellite/' '/users/pkesseli/documents/control-synthesis/benchmarks/SpringMassDamper/' '/users/pkesseli/documents/control-synthesis/benchmarks/example-a/' '/users/pkesseli/documents/control-synthesis/benchmarks/example-a_uncertainty/')
+else
+   benchmark_dirs=("$2")
+fi
+
 #for benchmark_dir in /users/pkesseli/documents/control-synthesis/benchmarks/*/; do
 for benchmark_dir in ${benchmark_dirs[@]}; do
  for benchmark in ${benchmark_dir}*.c; do

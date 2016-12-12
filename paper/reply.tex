@@ -1,0 +1,259 @@
+\documentclass[11pt]{article}
+
+\usepackage[english]{babel}
+\usepackage[latin1]{inputenc}
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{url}
+%\usepackage{mathtools}
+\usepackage{enumerate}
+\usepackage[nodayofweek]{datetime}
+
+%\mathtoolsset{showonlyrefs}
+
+\usepackage{xcolor}
+%\input{rgbcolors}
+%\usepackage{color}
+\usepackage{natbib}
+% \usepackage[style=authoryear-comp,dashed=false]{biblatex}
+% \bibliography{piecewise_lyapunov}
+\newcommand{\Real}{\mathbb{R}}
+
+%\definecolor{DarkGreen}{rgb}{0.2, 0.4, 0.2}
+
+
+
+\textwidth 15cm
+\setlength{\textheight}{1.1\textheight}
+\newcommand\hi{\hspace*{\parindent}}
+\newcommand\vi{\vspace{\baselineskip}}
+\newcommand\lac{{\mbox{{\Huge\bf L}\hspace{-0.65em}
+\raisebox{-1.2ex}{\Huge\bf A}\hspace{-1.1em}
+\raisebox{-0.6ex}{\Huge\bf C~}}}}
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{Manuscript Reference Number: HSCC-2017}
+\rhead{Page \thepage\ of \pageref{LastPage}}
+\lfoot{}
+\rfoot{}
+
+%\pagestyle{headings}
+\pagenumbering{roman}
+\begin{document}
+\setcounter{page}{1}
+\thispagestyle{empty}
+
+\vspace*{1cm}
+
+
+%-----------------------------------------------------------------
+
+%--------------------------------------------------------------------
+
+\newpage
+
+\vi
+\subsection*{Reviewer \#1 comments followed by the authors' answers:}
+
+\begin{quote}
+
+{\bf Comments to the Authors}
+
+The paper presents an automated approach for synthesizing correct by design linear stabilizing digital controllers with fixed point arithmetics for linear continuous-time plants. 
+
+The approach is essentially as follows:
+
+1) Quantization errors of input/output signals are modeled as additive disturbances
+
+2) The plant is discretized in time, then approximated by a model in fixed point arithmetics, a parametric uncertainty is added to account for approximation error.
+
+3) Controller synthesis is handled using a CEGIS approach:
+    - Given a finite number of samples of the uncertain plant model, we synthesize a controller stabilizing all these samples. 
+    - We try to verify that this controller stabilizes all possible plant models. If successful then we are done, otherwise we obtain a counter-example, which is added to the set of samples. The authors propose two different approaches for the verification phase consisting of one or two stages, respectively.
+
+The approach is tested against several benchmarks, which shows that the approach seems to be effective in practice. 
+
+The paper is fairly well written and easy to follow. The technical contribution does not seem so strong to me: it mainly consists in gathering existing results and tools to solve the considered problem. However, the presented approach is potentially useful in applications and of interest to system designers. One limitation for practical applications, is that it currently adresses only stability specifications. Extending the approach to handle performance criteria would certainly be useful as well. 
+
+\begin{quote}
+\textcolor{blue}{\textbf{Response:} 
+We consider this extension for future work.}
+\end{quote}
+
+Some specific comments:
+
+1) In (8), $\Delta_{q} G$ accounts for quantization errors, but I thought it was already account for in the additive disturbance $\nu$.
+
+\begin{quote}
+\textcolor{blue}{\textbf{Response:} $\Delta_{q} G$ is a model that incorporates the effects of $\nu$ in $\vec{\hat{G}}$ to investigate the consequences in the stability of system, once our stability analysis is based on polynomial coefficients and not over signals.}
+\end{quote}
+
+
+2) Please provide the non-expert reader with characteristics of FWL in particular what are the practical meaning of I and F ?
+
+\begin{quote}
+\textcolor{blue}{\textbf{Response:} This work addresses the synthesis of digital controller to be embedded in fixed-point hardwares. The FWL implementation is a function of the number of integer bits $I$ and fractional bits $F$. The $I$ affects strongly the representation range and is set in order to avoid overflows, and $F$ affects the precision and the truncation process after the operations. These variables are chosen depending on hardware features, in general purpose processors and DSP's $I$ is minimized avoiding overflows and the remaining of bit representation available are employed in $F$. Other flexible hardware structures (\textit{e.g.} FPGA's) allow the design of $F$ and $I$, what affects directly the number of logic arrays utilized.}
+\end{quote}
+
+3) I believe equation (10) does not correspond to the system on Figure 1. Please check. If needed, correct (11), (12) and (13) and the rest of the paper accordingly.
+\begin{quote}
+\textcolor{blue}{\textbf{Response:}
+In fact, these equations are wrong. They have to be substituted by the following equations (1)-(5). This mistake does not affect the results and conclusions because the proposition 1 is still valid for this set of equations.
+%%
+\begin{equation}
+\hat{Y}(z)=\nu_{1}(z)+\hat{G}(z)\cdot C(z)\cdot R(z)+\hat{G}(z)\cdot\nu_{2}(z)-\hat{G}(z)\cdot \hat{C}(z)\cdot \hat{Y}(z)
+\end{equation}
+%
+\begin{equation}
+\hat{Y}(z)=H_{1}(z)\nu_{1}(z)+H_{2}(z)\cdot\nu_{2}(z)+H_{3}(z)\cdot R(z)
+\end{equation}
+%
+\begin{equation}
+H_{1}(z)=\frac{1}{1+\hat{G}(z)\cdot \hat{C}(z)}
+\end{equation}
+\begin{equation}
+H_{2}(z)=\frac{\hat{G}(z)}{1+\hat{G}(z)\cdot \hat{C}(z)}
+\end{equation}
+\begin{equation}
+H_{3}(z)=\frac{\hat{G}(z)\cdot \hat{C}(z)}{1+\hat{G}(z)\cdot \hat{C}(z)}
+\end{equation}
+}
+\end{quote}
+
+
+4) Proposition 1, item 2, should it be $\hat G$ ?
+\begin{quote}
+\textcolor{blue}{\textbf{Response:} The typo was rectified.}
+\end{quote}
+
+5) Section 3.2, you say that the refinement loop terminates since the set INPUTS is finite. Please acknowledge that it is also huge and that we hope it will not be needed to explore all possible values.
+\begin{quote}
+\textcolor{blue}{\textbf{Response:} Authors' response (?).}
+\end{quote}
+
+
+6) In (18), it is unclear to me how we can compute  $\Delta_b$ ?
+\begin{quote}
+\textcolor{blue}{\textbf{Response:} The $\Delta_{b}$ of a coefficient $c$ (represented by $\Delta_{b}c$ represents the error in the fixed-point representation of $c$ that is the remainder of the division between the correct value of coefficient $c$ and its FWL format $\tilde{c}$, {\it i.e.} $\Delta_{b}c=c~ \texttt{mod}~\tilde{c}$.}
+\end{quote}
+
+
+\end{quote}
+
+%--------------------------------------------------------------------
+
+\newpage
+
+\subsection*{Reviewer \#2 comments followed by the authors' answers:}
+\begin{quote}
+
+{\bf Comments to the Authors}
+
+This paper proposes a methodology for synthesizing digital stabilizing controllers for continuous plants. Several implementation effects such as finite-precision arithmetic, time discretization and quantization noise introduced by analog to digital converter and digital to analog converter make the controller synthesis problem complex. This paper leverages counter-example guided inductive synthesis methodology for synthesizing a valid program satisfying the stability specification.  
+
+This paper has several assumptions without justifications. For example:
+
+1. The parametric errors in the plant will have the same polynomial order as the plant itself.
+
+2. The sources of uncertainties are linear and independent.
+The authors should provide reasonable justifications for these assumptions.
+
+\begin{quote}
+\textcolor{blue}{\textbf{Response:} The parametric errors have same order as the plant because of limitations of DSSynth, further improvements may be done to make it flexible. In fact, we the modeling errors does not depend on sampling, holding and quantization errors, once it already appears in previous continuous time models and are only propagated in the discrete version. The reciprocal is true if the quantization noise is considered exogenous signals as proposed in figures 1 and 2. Although the parametric uncertainties and the sampling and holding process present nonlinearities, our linear approximation is enough to represent the majority of these effects and is usually employed in control systems literature.}
+\end{quote}
+
+Digital controllers are designed to run on specific processors, and the bit width of a processor is generally fixed and multiple of 8. Traditionally, the bit-width assignment problem is solved to decide the length of the fraction part while the overall lengths fixed. The goal is generally to avoid overflow in the integer part and maximize the precision. However, in this paper, the length of the integer part and the fraction part seems to be changed arbitrarily. For example, in Section 3.5 in the example, the precision of $I_p = 16$ and $F_p = 24$ does not make the precision verification step successful. And in the next step, precision is increased to $I_p = 20$ and $F_p = 28$. This increase in precision looks quite arbitrary. Moreover, it is surprising that with $I_p = 16$ the precision verification step does not succeed, in spite of the fact that the constants in C(z) are quite small.
+
+\begin{quote}
+\textcolor{blue}{\textbf{Response:} In section 3.3 we explain that there are two Fixed point domains in the control synthesis problem. Whilst the first domain $\mathbb{R}\langle I,F \rangle$, is the actual domain of the controller, whereas $\mathbb{R}\langle I_p,F_p \rangle$ is the bitvector domain of the synthesiser which is used to try and synthesise a real plant. In this section we explain the latter is started at a lower resolution for speed and the resolution increased when the rounding errors in the synthesis algorithm do not allow for correct synthesis. \textcolor{red}{This is an optimization of the tool and does not relate to the problem statement.} The reason for the 8-bit steps is because the tool uses byte alignment.}
+\end{quote}
+
+In the experimental results section, the authors have not compared their results with any existing work. 
+
+\begin{quote}
+\textcolor{blue}{\textbf{Response:} The benchmarks used are from existing work on verification. There are no FWL synthesis papers that we are aware of that we can compare with (known synthesis tools do not account for the FWL effects), so we make the comparison between the direct (SAT) and CEGIS approach on known benchmarks which is as close as we can get to these comparisons. }
+\end{quote}
+
+In the introduction, the authors claim that their approach achieves a speedup of at least two order of magnitude over conventional one stage verification engine. However, their experimental results do not provide any such evidence.
+
+\begin{quote}
+\textcolor{blue}{\textbf{Response:} We only state the winning back-end in the
+results table, annotating where the one-stage engine was faster. The two order
+of magnitudes were measured empirically, since the one-stage engine times out
+on the majority of benchmarks.}
+\end{quote}
+
+In the experimental results section, the authors have not provided the information on the number of iteration of the CEGIS loop for each benchmark. Moreover, it will be useful if the authors provide the execution time for different components of their toolchain for synthesizing controller for different benchmarks. This will give us an idea on which component of the tool chain is the most computationally demanding and wold motivate us to optimize that component.
+
+\begin{quote}
+\textcolor{blue}{\textbf{Response:} Number of remains within 1-2 per CEGIS step
+for benchmarks in which two-step engine succeeds. However, there are 3-5 plant
+precision increases using our current implementation. Our CEGIS implementation
+spends 95\% of its runtime in the synthesis phase, and only 5\% in the
+verification phase. Improvements in the  precision increase heuristic and the
+synthesis phase will thus benefit the runtime most.}
+\end{quote}
+
+The approach presented in this paper did not succeed for one benchmark example. The authors mentioned that increasing the fixed-point word widths will help their tool to succeed for the benchmark. However, as I understood, in the synthesis process, the author have not kept any upper bound on the fixed-point bit width. The authors should revisit the benchmark and examine the reason of the failure carefully.
+
+\begin{quote}
+\textcolor{blue}{\textbf{Response:} As stated in section 4.3, we did bound the
+runtime per benchmark in our experiment, which was the reason behind the failure
+to synthesise benchmark 4. We also limited our experiment to 64 bits word width,
+but as stated in 4.3 CBMC supports arbitrary precision fixed point types which,
+given sufficient runtime, can be used to synthesise the missing controller.}
+\end{quote}
+
+The authors may consider placing Figure 5 at a more suitable position.
+
+\end{quote}
+
+%-----------------------------------------------------------------
+
+%--------------------------------------------------------------------
+
+\newpage
+
+\subsection*{Reviewer \#3 comments followed by the authors' answers:}
+\begin{quote}
+
+{\bf Comments to the Authors}
+
+This work presents a new algorithm for synthesizing digital controllers based on counterexample guided inductive synthesis (CEGIS). In particular, the authors focuses on linear models with known configurations and perform parametric synthesis of stabilizing digital controllers. It first translates the hybrid model into digital domain by zero-order hold (ZOH) discretization, and then performs the synthesis followed by a validation phase. Quantization errors and uncertainties caused by finite-word length (FWL) encoding are addressed. A tool named DSSynth is implemented based on the proposed algorithms and a few experimental results are given.
+
+1) Novelty
+Controller synthesis is a popular topic. This work is new in the sense that it addresses FWL uncertainties, utilizes CEGIS in the synthesis phase and proposes a faster two-stage verification phase. It does provide more benefits compared to the current works, though not very significantly.
+
+2) Technical depth and soundness 
+I would say the technical depth is mediate considering that this idea is built on currently existing techniques and rather straight forward. The article is well written and easy to follow. The algorithm looks sound. 
+
+3) Potential impact and relevance
+The benchmark shows that half of the controllers can be synthesized in less than five minutes (although the experiments are performed on a powerful machine), which shows potential for practical usage.
+
+4) Experimental or numerical validation (if applicable) 
+The experiments are performed on the benchmarks taken from literature, which consists of 15 fairly simple examples from 4 different sets. They are fairly simple case studies, and I am curious how it works on larger examples. The authors also provided the link to the experimental environment.
+
+5) Literature review
+The authors have discussed a number of related works from different aspects and showed the novelty of their approach.
+
+6) Some noticed TYPOS
+
+- Page 2, formula (2), it should be $C_d(z)$ instead of $C_dz$
+
+- Page 2, Line 4 from right bottom, there is one redundant ``system''
+
+- Page 4, in Sect 3.3 the line below formula S(z)=$a_0$ $z^N$ + $...$, the rows and columns of Jury matrix M should be (2N-2)xN instead of (2N2)xN
+
+- Figure 5 is on the next page of Figure 6, which should be switched.
+
+\begin{quote}
+\textcolor{blue}{\textbf{Response:} We have evaluated our approach using standard benchmarks taken from the control literature [3,15,21,22,35]. Larger benchmarks would strengthen our claims; however, related work on controller synthesis typically considers even smaller benchmarks (cf. 3.5 and and 4.1). As far as we know, the CEGIS approach that addresses FWL uncertainties in digital controllers has not been described or evaluated in the literature.}
+\end{quote}
+
+\end{quote}
+
+\label{LastPage}
+
+\end{document} 
