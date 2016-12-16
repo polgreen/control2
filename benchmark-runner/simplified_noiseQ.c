@@ -31,6 +31,10 @@
   #endif
   typedef __CPROVER_fixedbv[_CONTROL_FLOAT_WIDTH][_CONTORL_RADIX_WIDTH] control_floatt;
   control_floatt _imp_max=(((1 <<(_CONTROL_FLOAT_WIDTH-1))-1)<<1)+1;
+  control_floatt one_lsb_error() {
+    const unsigned long int one = 1;
+    return *(const control_floatt *)&one;
+  }
 #endif
   typedef unsigned char cnttype;
 #else
@@ -234,11 +238,13 @@ void call_closedloop_verification_task()
     control_floatt value=plant.num[i]/_plant_norm;
     control_floatt factor=(value * plant.num_uncertainty[i]) / 100.0;
     factor = (factor < 0.0) ? -factor : factor;
+    factor += one_lsb_error();
     plant_cbmc.numBot[i]=value-factor;
     plant_cbmc.numTop[i]=-value-factor;
 #else
     control_floatt factor=(plant.num[i] * plant.num_uncertainty[i]) / 100.0;
     factor = (factor < 0.0) ? -factor : factor;
+    factor += one_lsb_error();
     plant_cbmc.numBot[i]=plant.num[i]-factor;
     plant_cbmc.numTop[i]=-plant.num[i]-factor;
 #endif
@@ -250,11 +256,13 @@ void call_closedloop_verification_task()
     control_floatt value=plant.den[i]/_plant_norm;
     control_floatt factor=(value * plant.den_uncertainty[i]) / 100.0;
     factor = (factor < 0.0) ? -factor : factor;
+    factor += one_lsb_error();
     plant_cbmc.denBot[i]=value-factor;
     plant_cbmc.denTop[i]=-value-factor;  
 #else
     control_floatt factor=(plant.den[i] * plant.den_uncertainty[i]) / 100.0;
     factor = (factor < 0.0) ? -factor : factor;
+    factor += one_lsb_error();
     plant_cbmc.denBot[i]=plant.den[i]-factor;
     plant_cbmc.denTop[i]=-plant.den[i]-factor;  
 #endif
@@ -476,6 +484,8 @@ int verify_stability_closedloop_using_dslib(void)
 // main
 int main()
 {
+  struct anonymous3 __trace_controller = controller;
+  struct anonymous3 __trace_plant = plant;
   initialization();
   int result=validation();
 #ifndef __CPROVER
@@ -484,7 +494,6 @@ int main()
   call_closedloop_verification_task();
   result=verify_stability_closedloop_using_dslib();
 #ifdef __CPROVER
-  struct anonymous3 __trace_controller = controller;
   __DSVERIFIER_assert(0);
 #endif
   return result;
