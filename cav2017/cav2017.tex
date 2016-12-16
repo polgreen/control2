@@ -339,7 +339,7 @@ z \\ \dot{z} \\ i \\
 $$
 where the states $z$, $\dot{z}$, and $i$ are respectively the vertical displacement of the ball, its rate and the coil current. This system  is unstable in open loop.
 
-The remaining of benchmarks represents classic DC-DC converters: buck, boost, and buck-boost. They are SISO second-order systems stable in open-loop, and their state vector is $\textbf{x}=\textbf{x}=\left[\begin{array}{c}
+There are three benchmarks representing classic DC-DC converters: buck, boost, and buck-boost. They are SISO second-order systems stable in open-loop, and their state vector is $\textbf{x}=\textbf{x}=\left[\begin{array}{c}
 i_{L} \\ v_{C}\\
 \end{array}\right]$, where $i_{L}$ is the current in the coil and $v_{c}$ is the voltage on the capacitor. The matrices $\textbf{A}$, $\textbf{B}$, $\textbf{C}$, and $\textbf{D}$ for the buck converter are:
 $$
@@ -379,6 +379,154 @@ $$
 0 & 1\\
 \end{array}\right],~ \textbf{D}= 0.
 $$.
+
+Additionally, various dynamic systems model were extracted from~\cite{Franklin15} and incorporated to our test suite. They are: 
+\begin{itemize}
+\item{\textbf{automotive cruise control system:} 
+$$
+\textbf{A}=-0.05,~ \textbf{B} = 0.03125~
+\textbf{C}=0.032,~ \textbf{D}= 0;
+$$
+}
+\item{\textbf{DC motor:} 
+$$
+\textbf{A}=\left[\begin{array}{cc}
+-1000		& -13 \\
+-8			& 0\\
+\end{array}\right],~ \textbf{B} = \left[\begin{array}{c}
+4 \\ 0 \\
+\end{array}\right]~
+\textbf{C}=\left[\begin{array}{cc}
+0 & 6.25\\
+\end{array}\right],~ \textbf{D}= 0;
+$$
+}
+\item{\textbf{helicopter longitudinal motion:} 
+$$
+\textbf{A}=\left[\begin{array}{ccc}
+-0.42		& 0.0168		& -0.396	\\
+0.5			& 0				& 0			\\
+0			& 0.5 			& 0			
+\end{array}\right],~ \textbf{B} = \left[\begin{array}{c}
+16 \\ 0 \\ 0
+\end{array}\right]~
+\textbf{C}=\left[\begin{array}{ccc}
+0.6125	& -0.6125	& 15.44 \\
+\end{array}\right],~ \textbf{D}= 0;
+$$
+}
+\item{\textbf{inverted pendulum cart position:} 
+$$
+\textbf{A}=\left[\begin{array}{cccc}
+0		& 1		& 0 	& 0	\\
+1		& 0		& 0		& 0	\\
+0		& 1 	& 0		& 0 \\
+0		& 0		& 1 	& 0 \\	
+\end{array}\right],~ \textbf{B} = \left[\begin{array}{c}
+1 \\ 0 \\ 0 \\ 0
+\end{array}\right]~
+\textbf{C}=\left[\begin{array}{cccc}
+0	& 0	& 1 & -0.75 \\
+\end{array}\right],~ \textbf{D}= 0;
+$$
+}
+\item{\textbf{inverted pendulum angle:} 
+$$
+\textbf{A}=\left[\begin{array}{cc}
+0		& 1	\\
+1		& 0	\\
+\end{array}\right],~ \textbf{B} = \left[\begin{array}{c}
+1 \\ 0 \\ 0 \\ 0
+\end{array}\right]~
+\textbf{C}=\left[\begin{array}{cc}
+ 0	& 1 \\
+\end{array}\right],~ \textbf{D}= 0;
+$$
+}
+\item{\textbf{magnetic pointer:} 
+$$
+\textbf{A}=\left[\begin{array}{ccc}
+-0.271		& -0.05336	& 0	\\
+0.03125		& 0			& 0	\\
+0			& 0.01562 	& 0	\\	
+\end{array}\right],~ \textbf{B} = \left[\begin{array}{c}
+1 \\ 0 \\ 0
+\end{array}\right]~
+\textbf{C}=\left[\begin{array}{ccc}
+0	& -0.5888	& -0.2562 \\
+\end{array}\right],~ \textbf{D}= 0;
+$$
+}
+\item{\textbf{magnetic suspension:} 
+$$
+\textbf{A}=\left[\begin{array}{cc}
+0		& 31.25	\\
+32		& 0		\\	
+\end{array}\right],~ \textbf{B} = \left[\begin{array}{c}
+8 \\ 0
+\end{array}\right]~
+\textbf{C}=\left[\begin{array}{cc}
+0	& 9.766 	\\
+\end{array}\right],~ \textbf{D}= 0;
+$$
+}
+\item{\textbf{pendulum:} 
+$$
+\textbf{A}=\left[\begin{array}{cc}
+0		& -2.453	\\
+4		& 0			\\	
+\end{array}\right],~ \textbf{B} = \left[\begin{array}{c}
+4 \\ 0
+\end{array}\right]~
+\textbf{C}=\left[\begin{array}{cc}
+-1.225	& -2.15 	\\
+\end{array}\right],~ \textbf{D}= 9.8;
+$$
+}
+\item{\textbf{1/4 car suspension:} 
+$$
+\textbf{A}=\left[\begin{array}{cccc}
+-516.1	& -222.1& -79.75& -33.06	\\
+256		& 0		& 0		& 0			\\
+0		& 64 	& 0		& 0 \\
+0		& 0		& 32 	& 0 \\	
+\end{array}\right],~ \textbf{B} = \left[\begin{array}{c}
+8 \\ 0 \\ 0 \\ 0
+\end{array}\right]~
+\textbf{C}=\left[\begin{array}{cccc}
+0	& 0	& 9.969 & 4.133 \\
+\end{array}\right],~ \textbf{D}= 0;
+$$
+}
+\item{\textbf{computer tape driver:} 
+$$
+\textbf{A}=\left[\begin{array}{ccc}
+-1760		& -976.6	& -457.8	\\
+1024		& 0			& 0			\\
+0			& 512 		& 0			\\	
+\end{array}\right],~ \textbf{B} = \left[\begin{array}{c}
+8 \\ 0 \\ 0
+\end{array}\right]~
+\textbf{C}=\left[\begin{array}{ccc}
+1.5	& 2.051	& 1.144 \\
+\end{array}\right],~ \textbf{D}= 0;
+$$
+}
+\item{\textbf{USCG cutter Tampa heading angle:} 
+$$
+\textbf{A}=\left[\begin{array}{ccc}
+-0.271		& -0.05336	& 0	\\
+0.03125		& 0			& 0			\\
+0			& 0.01562 	& 0			\\	
+\end{array}\right],~ \textbf{B} = \left[\begin{array}{c}
+1 \\ 0 \\ 0
+\end{array}\right]~
+\textbf{C}=\left[\begin{array}{ccc}
+0	& -0.5888	& -0.2562 \\
+\end{array}\right],~ \textbf{D}= 0;
+$$
+}
+\end{itemize}
 
 
 
