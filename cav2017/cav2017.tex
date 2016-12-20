@@ -292,14 +292,19 @@ k_n-a_n&k_{n-1}-a_{n-1}&k_{n-2}-a_{n-2}&\cdots&k_1-a_1
 \label{eq:cf_SISO_2}
 \end{align*}
 
-Careful examination of these matrices reveals that because the $\mat{A}_t$ is upper block diagonal, the spectrum of $\mat{A}_t$ is equal to the union of the spectrum of $\mat{A}_{tp}$ and $\mat{A}_{to}$ which can be calculated separately. Additionally, these correspond to the roots of the polynomials
+Careful examination of these matrices reveals that because the $\mat{A}_t$ is upper block diagonal, the spectrum of $\mat{A}_t$ is equal to the union of the spectrum of $\mat{A}_{tp}$ and $\mat{A}_{to}$ which can be calculated separately. Additionally, these correspond to the roots of the following polynomials:
 \begin{align*}
 \left(z^n+\sum_{i=1}^p{(a_i-k_i)z^{n-i}}\right) \left(z^n+\sum_{i=1}^p{(p_i-a_i)z^{n-i}}\right)
 \end{align*}
 
-For a stabilised closed loop, we need these roots to remain within the unit circle (left hand side of the plane for continuous time).
-Whilst this is not a sufficient condition for verifying safety properties, it is a necessary one, therefore we will review this verification process.
-The direct approach would be to calculate the roots of the polynomials (\emph{ie} the eigenvalues of the matrix), but this ends up being to costly, particularly in the case of synthesis, so we use an indirect method.
+For a stabilised closed loop, we need these roots to remain within the
+unit circle (left hand side of the plane for continuous time).  Whilst
+this is not a sufficient condition for verifying safety properties, it
+is a necessary one, therefore we will review this verification
+process.  The direct approach would be to calculate the roots of the
+polynomials (\emph{ie} the eigenvalues of the matrix), but this ends
+up being too costly, particularly in the case of synthesis, so we use
+an indirect method.
 
 Jury's criteria is a mathematical method used to verify whether the roots of the polynomial are within the unit circle by exploring solely the coefficients of the polynomial. In order to achieve this, we first create a matrix $\mat{M} \in \mathbb{R}^{(n+1) \times (n+1)}$ with zero-indexed coefficients $m_{i,j} : i,j \in [0,n],k=n-(i-1)$ in the following form:
 
