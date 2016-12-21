@@ -1,0 +1,152 @@
+
+
+Dear Daniel, 
+
+We are delighted to inform you that your paper 
+
+Sound and Automated Synthesis of Digital Stabilizing Controllers for Continuous Plants 
+
+has been accepted to appear as a regular paper in the the proceedings of HSCC 2017. Congratulations! 
+
+We received a large number of high-quality submissions and several worthy papers with positive score could not be included. The Program Committee and the sub-reviewers worked very hard to thoroughly review all the submitted papers. For some of the papers near the boundary, we solicited additional external reviews during the discussion period. All the comments are attached below. Please repay their efforts by taking into account these suggestions when you prepare the revised, final, version of your paper and your presentation. 
+
+
+Final version
+=============
+The deadline for submitting the final camera ready version of the paper is February 16th, 2017. The maximum length of the final version of regular papers is 10 pages.
+
+The ACM SIG formatting and preparation instructions for your submission will soon be posted on the HSCC website, http://hscc2017.ece.illinois.edu/.
+
+Expect two emails from ACM and Sheridan Communications
+=======================================================
+1. One email from ACM Rightsreview (rightsreview@acm.org) with a link to the electronic ACM copyright-permission form(s) to be completed. Upon completing the electronic form, you will receive a confirmation email. Contained within the confirmation email will be the ACM copyright-permission block text, conference data, and DOI string/url specific for your submission and mandatory to appear on the first page. See formatting help above on how to include this text and minimize the space impact on the first page.
+
+2. A second email from Sheridan Communications (acm@sheridanprinting.com). This email will contain your assigned submission id#, link to the formatting instructions (same as item  above), and a unique-link to submit your final publication ready version on or before the submission deadline.
+
+Supplementary material (optional)
+=================================
+This year in HSCC, we invite you to submit the final versions of any supplementary materials (e.g., data, appendices, videos) that you would like to make available with your paper through the ACM Digital Library.  
+
+Repeatability evaluation
+======================== 
+Instructions for the repeatability evaluation will follow in a subsequent email. 
+
+Once again, congratulations on your fine work. If you have any additional questions, please feel free to get in touch. 
+
+We look forward to seeing you in Pittsburgh in April!
+
+Best regards, 
+Goran and Sayan
+
+
+----------------------- REVIEW 1 ---------------------
+PAPER: 14
+TITLE: Sound and Automated Synthesis of Digital Stabilizing Controllers for Continuous Plants
+AUTHORS: Alessandro Abate, Iury Bessa, Dario Cattaruzza, Lucas Cordeiro, Cristina David, Pascal Kesseli and Daniel Kroening
+
+Overall evaluation: 1
+Originality: 3
+Repeatability Evaluation: yes
+Reviewer's confidence: 3
+
+----------- Overall evaluation -----------
+The paper presents an automated approach for synthesizing correct by design linear stabilizing digital controllers with fixed point arithmetics for linear continuous-time plants. 
+
+The approach is essentially as follows:
+1) Quantization errors of input/output signals are modeled as additive disturbances
+2) The plant is discretized in time, then approximated by a model in fixed point arithmetics, a parametric uncertainty is added to account for approximation error.
+3) Controller synthesis is handled using a CEGIS approach:
+    - Given a finite number of samples of the uncertain plant model, we synthesize a controller stabilizing all these samples. 
+    - We try to verify that this controller stabilizes all possible plant models. If successful then we are done, otherwise we obtain a counter-example, which is added to the set of samples. The authors propose two different approaches for the verification phase consisting of one or two stages, respectively.
+
+The approach is tested against several benchmarks, which shows that the approach seems to be effective in practice. 
+
+The paper is fairly well written and easy to follow. The technical contribution does not seem so strong to me: it mainly consists in gathering existing results and tools to solve the considered problem. However, the presented approach is potentially useful in applications and of interest to system designers. One limitation for practical applications, is that it currently adresses only stability specifications. Extending the approach to handle performance criteria would certainly be useful as well. 
+
+Some specific comments:
+1) In (8), $\Delta_q G$ accounts for quantization errors, but I thought it was already account for in the additive disturbance $\nu$.
+2) Please provide the non-expert reader with characteristics of FWL in particular what are the practical meaning of I and F ?
+3) I believe equation (10) does not correspond to the system on Figure 1. Please check. If needed, correct (11), (12) and (13) and the rest of the paper accordingly.
+4) Proposition 1, item 2, should it be $\hat G$ ?
+5) Section 3.2, you say that the refinement loop terminates since the set INPUTS is finite. Please acknowledge that it is also huge and that we hope it will not be needed to explore all possible values.6) In (18), it is unclear to me how we can compute  \Delta_b ?
+
+
+----------------------- REVIEW 2 ---------------------
+PAPER: 14
+TITLE: Sound and Automated Synthesis of Digital Stabilizing Controllers for Continuous Plants
+AUTHORS: Alessandro Abate, Iury Bessa, Dario Cattaruzza, Lucas Cordeiro, Cristina David, Pascal Kesseli and Daniel Kroening
+
+Overall evaluation: -2
+Originality: 2
+Repeatability Evaluation: yes
+Reviewer's confidence: 4
+
+----------- Overall evaluation -----------
+This paper proposes a methodology for synthesizing digital stabilizing controllers for continuous plants. Several implementation effects such as finite-precision arithmetic, time discretization and quantization noise introduced by analog to digital converter and digital to analog converter make the controller synthesis problem complex. This paper leverages counter-example guided inductive synthesis methodology for synthesizing a valid program satisfying the stability specification.  
+
+This paper has several assumptions without justifications. For example:
+1. The parametric errors in the plant will have the same polynomial order as the plant itself.
+2. The sources of uncertainties are linear and independent.
+The authors should provide reasonable justifications for these assumptions.
+
+Digital controllers are designed to run on specific processors, and the bit width of a processor is generally fixed and multiple of 8. Traditionally, the bit-width assignment problem is solved to decide the length of the fraction part while the overall lengths fixed. The goal is generally to avoid overflow in the integer part and maximize the precision. However, in this paper, the length of the integer part and the fraction part seems to be changed arbitrarily. For example, in Section 3.5 in the example, the precision of $I_p = 16$ and $F_p = 24$ does not make the precision verification step successful. And in the next step, precision is increased to $I_p = 20$ and $F_p = 28$. This increase in precision looks quite arbitrary. Moreover, it is surprising that with $I_p = 16$ the precision verification step does not succeed, in spite of the fact that the constants in C(z) are quite small.
+
+In the experimental results section, the authors have not compared their results with any existing work. In the introduction, the authors claim that their approach achieves a speedup of at least two order of magnitude over conventional one stage verification engine. However, their experimental results do not provide any such evidence.
+
+In the experimental results section, the authors have not provided the information on the number of iteration of the CEGIS loop for each benchmark. Moreover, it will be useful if the authors provide the execution time for different components of their toolchain for synthesizing controller for different benchmarks. This will give us an idea on which component of the tool chain is the most computationally demanding and wold motivate us to optimize that component.
+
+The approach presented in this paper did not succeed for one benchmark example. The authors mentioned that increasing the fixed-point word widths will help their tool to succeed for the benchmark. However, as I understood, in the synthesis process, the author have not kept any upper bound on the fixed-point bit width. The authors should revisit the benchmark and examine the reason of the failure carefully.
+
+The authors may consider placing Figure 5 at a more suitable position.
+
+
+----------------------- REVIEW 3 ---------------------
+PAPER: 14
+TITLE: Sound and Automated Synthesis of Digital Stabilizing Controllers for Continuous Plants
+AUTHORS: Alessandro Abate, Iury Bessa, Dario Cattaruzza, Lucas Cordeiro, Cristina David, Pascal Kesseli and Daniel Kroening
+
+Overall evaluation: 1
+Originality: 2
+Repeatability Evaluation: no
+Reviewer's confidence: 3
+
+----------- Overall evaluation -----------
+This work presents a new algorithm for synthesizing digital controllers based on counterexample guided inductive synthesis (CEGIS). In particular, the authors focuses on linear models with known configurations and perform parametric synthesis of stabilizing digital controllers. It first translates the hybrid model into digital domain by zero-order hold (ZOH) discretization, and then performs the synthesis followed by a validation phase. Quantization errors and uncertainties caused by finite-word length (FWL) encoding are addressed. A tool named DSSynth is implemented based on the proposed algorithms and a few experimental results are given.
+
+1) Novelty
+Controller synthesis is a popular topic. This work is new in the sense that it addresses FWL uncertainties, utilizes CEGIS in the synthesis phase and proposes a faster two-stage verification phase. It does provide more benefits compared to the current works, though not very significantly.
+
+2) Technical depth and soundness 
+I would say the technical depth is mediate considering that this idea is built on currently existing techniques and rather straight forward. The article is well written and easy to follow. The algorithm looks sound. 
+
+3) Potential impact and relevance
+The benchmark shows that half of the controllers can be synthesized in less than five minutes (although the experiments are performed on a powerful machine), which shows potential for practical usage.
+
+4) Experimental or numerical validation (if applicable) 
+The experiments are performed on the benchmarks taken from literature, which consists of 15 fairly simple examples from 4 different sets. They are fairly simple case studies, and I am curious how it works on larger examples. The authors also provided the link to the experimental environment.
+
+5) Literature review
+The authors have discussed a number of related works from different aspects and showed the novelty of their approach.
+
+6) Some noticed TYPOS
+- Page 2, formula (2), it should be C_d(z) instead of C_d z
+- Page 2, Line 4 from right bottom, there is one redundant “system”
+- Page 4, in Sect 3.3 the line below formula S(z)=a_0 z^N + …, the rows and columns of Jury matrix M should be (2N-2)xN instead of (2N2)xN
+- Figure 5 is on the next page of Figure 6, which should be switched.
+
+
+----------------------- REVIEW 4 ---------------------
+PAPER: 14
+TITLE: Sound and Automated Synthesis of Digital Stabilizing Controllers for Continuous Plants
+AUTHORS: Alessandro Abate, Iury Bessa, Dario Cattaruzza, Lucas Cordeiro, Cristina David, Pascal Kesseli and Daniel Kroening
+
+Overall evaluation: 1
+Originality: 3
+Repeatability Evaluation: yes
+Reviewer's confidence: 3
+
+----------- Overall evaluation -----------
+The paper presents a Counter-Example Guided Inductive Synthesis (CEGIS) approach for creating correct-by-construction digital controllers. The approach considers effects of finite precision arithmetic, time discretization, and quantization. The precision of the controller is considered as given. For the precision of the plant, the procedure starts with a low number of bits (at least the same as the controller) and increases it iteratively when necessary. The complexity of the verification step is worst-case exponential in the bits used in the representation, so scalability might be an issue.
+
+The proposed approach nicely connects program verification with feedback control. The actual synthesis step is carried out using the CEGIS functionality of a model checker for C programs, CBMC. The synthesized controller is then checked for stability w.r.t. uncertainty and fixed-point arithmetic, using the bounded model checking tool DSVerifier (itself built on the SMT solver Boolector). In essence, the paper presents connecting existing CEGIS and SMT tools together, coding stability in suitable way. The synthesis tool is publicly available, which may be beneficial for others from a practical point of view.
+
