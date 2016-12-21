@@ -150,15 +150,13 @@ in the form
 %
 \begin{align}
 \label{eq:ode}
-\dot{\vec{x}}(t)&=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)\\
-\vec{y}(t)&=\mat{C}\vec{x}+\mat{D}\vec{u},\nonumber
+\dot{\vec{x}}(t)&=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)\ \ :\ \ \vec{x} \in \mathbb{R}^{n}, \vec{u} \in \mathbb{R}^m, \mat{A} \in \mathbb{R}^{n \times n},\mat{B} \in \mathbb{R}^{n \times m}\\
+\vec{y}(t)&=\mat{C}\vec{x}(t)+\mat{D}\vec{u}(t)\ \ :\ \ \vec{y} \in \mathbb{R}^{o}, \mat{C} \in \mathbb{R}^{o \times n}, \mat{D}  \in \mathbb{R}^{o \times m}\nonumber
 \end{align}
 \noindent where $\dot{\vec{x}}(t)$ describes the state evolution equation; 
-$\vec{y}(t)$ represents an instantaneous output equation; and $\mat{A}$, 
-$\mat{B}$, $\mat{C}$, and $\mat{D}$ are matrices that fully specify 
-a digital system. Eq.~\ref{eq:ode} is soundly discretized 
-(as shown in the appendix) into 
-\textcolor{red}{Dario: Can you please describe all terms used in the equation?}
+$\vec{y}(t)$ represents an instantaneous output equation; and $\mat{A}$, $\mat{B}$, $\mat{C}$, and $\mat{D}$ are matrices that fully specify 
+a continuous plant. Eq.~\ref{eq:ode} is soundly discretized 
+(as shown in the appendix) into
 %
 \begin{align}
 \label{eq:plant}
@@ -170,7 +168,7 @@ and digital controllers in the form
 \textcolor{red}{Dario: Can you please describe all terms used in the equation?}
 %
 \begin{equation}
-\vec{u}_k=\mat{K}_d\vec{y}_k.
+\vec{u}_k=\mat{K}_d\vec{y}_k\ \ :\ \ \mat{K}_d \in \mathbb{R}^{m \times o}.
 \end{equation}
 %
 The output of the plant is being sampled by an ADC, and since the full state of the
@@ -181,7 +179,7 @@ described in the following form
 \textcolor{red}{Dario: Can you please describe all terms used in the equation?}
 %
 \begin{align*}
-\mat{A} \in \mathcal{G}_A=\mat{S}\mat{J}\mat{S}^{-1} : \mat{J} \in \mathcal{G}_J
+\mat{A} \in \mathcal{G}_A=\mat{S}\mat{J}\mat{S}^{-1} : \mat{J} \in \mathcal{G}_J \wedge
 \mat{B} \in \mathcal{G}_B.
 \end{align*}
 
@@ -485,8 +483,9 @@ Now that we have explained the verification process, we may proceed to describe 
 \begin{enumerate}
 \item Calculate $\mat{A}_o,\mat{B}_o,\mat{C}_o$ by rounding down the coefficients $*_{oij}=\mathcal{F}\langle I,F,E\rangle (*_{ij}) : *=\{a,b,c\}$
 \item Calculate $\mat{T}$ and $\mat{W}_o^{-1}\mat{W}_{of}$ using equations \eqref{eq:rncf}\eqref{eq:rcf}\eqref{eq:to_cf}\eqref{eq:wnof}\eqref{eq:wof}
-\item Extract the Plant's characteristic polynomial coefficients from the last row of $P_a=\mat{T}\mat{A}\mat{T}^-1$.
+\item Extract the Plant's characteristic polynomial coefficients from the last row of $P_a=(\mat{T}\mat{A}\mat{T}^-1)_{n*}$.
 \item Calculate the noise set $N$ from the quantizer resolutions and estimated round-off errors ($\frac{q_1}{2},\frac{q_2}{2},q_3$)
+\item Produce an initial abstraction which corresponds to an unconstrained solution space.
 \end{enumerate}
 \item Next we synthesise a candidate controller and observer. Let $\mathcal{J}\langle I,F,E \rangle (P,\mat{T})$ be a program describing Jury's method.
 \begin{enumerate}
@@ -505,10 +504,10 @@ $P_p=z^n+\sum_{i=1}^n p_i z^{n-i} : p_i \in \vec{P}= (\mat{W}_o^{-1}\mat{W}_{of}
 \end{enumerate} 
 \item If the candidate solution is not valid we refine the abstraction used by the synthesiser
 \begin{enumerate}
-\item Find the constraints that invalidate the property. These are the rows of $\mat{E} \in \Psi$ that intersect/segment $\hat{X}^\#$. Transforming these rows into the eigenspace of $\mat{A}_t$, and applying backward acceleration to obtain a set of counterexamples for the eigenvalues, which we define as $\Psi_{\lambda}$ .
-\item Transform the soft constraints on the eigenvalues defined in the counterexample into soft constraints on the coefficients of the characteristic polynomial. 
-$z^n+\sum_{i=1}^n[a_i-k_i]z^{n-i}=\prod_{i=1}^n (z-[\lambda_i]) : |[\lambda_i]|<1 \wedge [\lambda_i] \models \Psi_{\lambda}$.
-\item Pass the refined abstraction with the new contraints to the synthesiser and repeat the loop again. 
+\item Find the constraints that invalidate the property. These are the rows of $\mat{E} \in \Psi$ that intersect/segment $\hat{X}^\#$. Transforming these rows into the eigenspace of $\mat{A}_t$, and applying backward acceleration to obtain a set of counterexamples for the eigenvalues, which we define as $\Psi(\Lambda)$. This is a constraint in the spectrum (\emph{ie} frequency response transfer function) of the closed loop dynamics. 
+\item Transform the soft constraints on the spectrum into soft constraints on the coefficients of the characteristic polynomial. 
+$z^n+\sum_{i=1}^n[a_i-k_i]z^{n-i}=\prod_{i=1}^n (z-[\lambda_i]) : |[\lambda_i]|<1 \wedge [\lambda_i] \models \Psi_{\Lambda}$.
+\item Pass the refined abstraction with the new contraints to the synthesiser, as well as a counterexample plant coefficients ($P_a$) and repeat the loop again. We note that the Abstraction refinement is a soft constraint on the proposed model which can increase or decrease the parameter space at any time, whereas the concrete counterexample passed to the synthesiser is monotonically decreasing. The first one improves speed of the tool whereas the second ensures convergence.
 
 \end{enumerate} 
 \end{enumerate}
@@ -521,23 +520,23 @@ $z^n+\sum_{i=1}^n[a_i-k_i]z^{n-i}=\prod_{i=1}^n (z-[\lambda_i]) : |[\lambda_i]|<
    \coordinate (aux1);
    \& \coordinate (aux2);
    \& ;\\
-   \&\node[fill=yellow!20,align=center] (pre) {{\sc pre-}\\{\sc processing}};
-   \& \node[fill=yellow!20,align=center] (abstract) {\sc abstraction};
+   \&\node[fill=yellow!20,align=center] (pre) {{\sc 1. pre-}\\{\sc processing}};
+   \& \node[fill=yellow!20,align=center] (abstract) {\sc 4. abstraction};
         \node[draw=none] (FIK) at ([xshift=2.5cm,yshift=.3cm]abstract)  {\sc $\Psi (\mat{K})$};
    \& \node[fill=yellow!20,align=center] (counter) {\sc counterexample};\\
    \& 
-   \& \node[fill=yellow!20,align=center, minimum width=3cm] (synth) {\sc synthesiser};
+   \& \node[fill=yellow!20,align=center, minimum width=3cm] (synth) {\sc 2. synthesiser};
        \node[draw=none] (KL) at ([xshift=2.5cm,yshift=-.25cm]synth)  {\sc $\mat{K},\mat{L}$};
-       \node[draw=none] (NKL) at ([xshift=2cm,yshift=1.2cm]synth)  {\sc $\neg \mat{K}, \mat{L}, \mat{A}$};
-   \& \node[fill=yellow!20,align=center, minimum width=4cm] (verify) {\sc verifier ($\Psi$)};
+       \node[draw=none] (NKL) at ([xshift=2cm,yshift=1cm]synth)  {\sc $P_a$};
+   \& \node[fill=yellow!20,align=center, minimum width=4cm] (verify) {\sc 3. verifier ($\Psi$)};
        \node[draw=none] (VUNS) at ([xshift=.6cm,yshift=1cm]verify)  {\sc UNSAT};
        \node[draw=none] (SAT) at ([xshift=2.5cm,yshift=-.3cm]verify)  {\sc SAT};
    \& \node[ellipse, fill=yellow!20] (done) {{\sc Done}};\\
    \&
    \& complexnode/.pic={
      \coordinate (auxsynth);
-     \node[draw,rectangle,align=center] (KSAT) at ([xshift=-.8cm]auxsynth.center) {\sc SAT\\Solver};
-     \node[draw,rectangle,align=center] (LSAT) at ([xshift=.8cm]auxsynth.center) {\sc SAT\\Solver};
+     \node[draw,rectangle,align=center] (KSAT) at ([xshift=-.8cm]auxsynth.center) {\sc Prog.\\Search};
+     \node[draw,rectangle,align=center] (LSAT) at ([xshift=.8cm]auxsynth.center) {\sc Prog.\\Search};
      \node[draw=none] (SATK) at ([xshift=-.5cm,yshift=1.5cm]KSAT)  {$\mathcal{J}_K$};
      \node[draw=none] (K) at ([xshift=.4cm,yshift=1.5cm]KSAT)  {$\tilde{\mat{K}}$};
      \node[draw=none] (SATL) at ([xshift=-.5cm,yshift=1.5cm]LSAT)  {$\mathcal{J}_L$};
@@ -859,7 +858,7 @@ The table~\ref{table:State-space benchmarks} summarizes the list of benchmarks e
 %}
 %\end{itemize}
 
-\begin{table}[HTB]
+\begin{table}[htb]
 \centering
 \footnotesize
 \caption{Test suite for space-state synthesis}
