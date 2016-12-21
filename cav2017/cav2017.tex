@@ -153,7 +153,13 @@ in the form
 \dot{\vec{x}}(t)&=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)\\
 \vec{y}(t)&=\mat{C}\vec{x}+\mat{D}\vec{u},\nonumber
 \end{align}
-which are soundly discretized (as shown in the appendix) into 
+\noindent where $\dot{\vec{x}}(t)$ describes the state evolution equation; 
+$\vec{y}(t)$ represents an instantaneous output equation; and $\mat{A}$, 
+$\mat{B}$, $\mat{C}$, and $\mat{D}$ are matrices that fully specify 
+a digital system. Eq.~\ref{eq:ode} is soundly discretized 
+(as shown in the appendix) into 
+\textcolor{red}{Dario: Can you please describe all terms used in the equation?}
+%
 \begin{align}
 \label{eq:plant}
 \vec{x}_{k+1}&=\mat{A}_d\vec{x}_k+\mat{B}_d\vec{u}_k\\
@@ -161,6 +167,7 @@ which are soundly discretized (as shown in the appendix) into
 \end{align}
 %
 and digital controllers in the form
+\textcolor{red}{Dario: Can you please describe all terms used in the equation?}
 %
 \begin{equation}
 \vec{u}_k=\mat{K}_d\vec{y}_k.
@@ -171,6 +178,7 @@ plant cannot be witnessed directly, the controller software includes an observer
 estimates the state of the plant (see appendix for details on how such an observer
 is constructed). We further presume that there are small tolerances in the system 
 described in the following form
+\textcolor{red}{Dario: Can you please describe all terms used in the equation?}
 %
 \begin{align*}
 \mat{A} \in \mathcal{G}_A=\mat{S}\mat{J}\mat{S}^{-1} : \mat{J} \in \mathcal{G}_J
