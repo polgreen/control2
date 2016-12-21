@@ -144,36 +144,40 @@ by adding more details about our synthesis approach to control systems?}
 %-------------------------------
 \section{Preliminaries}
 %-------------------------------
-In this work we will focus on Linear Dynamical Cyberphisical Systems with
-continuous plants described by ODEs in the form
+In this study, we focus on Linear Dynamical Cyber-Physical Systems with
+continuous plants described by Ordinary Differential Equations (ODEs) 
+in the form
+%
 \begin{align}
 \label{eq:ode}
 \dot{\vec{x}}(t)&=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)\\
-\vec{y}(t)&=\mat{C}\vec{x}+\mat{D}\vec{u}\nonumber
+\vec{y}(t)&=\mat{C}\vec{x}+\mat{D}\vec{u},\nonumber
 \end{align}
 which are soundly discretized (as shown in the appendix) into 
 \begin{align}
 \label{eq:plant}
 \vec{x}_{k+1}&=\mat{A}_d\vec{x}_k+\mat{B}_d\vec{u}_k\\
-\vec{y}_k&=\mat{C}_d\vec{x}_k+\mat{D}_d\vec{u}_k\nonumber
+\vec{y}_k&=\mat{C}_d\vec{x}_k+\mat{D}_d\vec{u}_k,\nonumber
 \end{align}
-and Digital Controllers in the form
+%
+and digital controllers in the form
+%
 \begin{equation}
-\vec{u}_k=\mat{K}_d\vec{y}_k
+\vec{u}_k=\mat{K}_d\vec{y}_k.
 \end{equation}
+%
 The output of the plant is being sampled by an ADC, and since the full state of the
 plant cannot be witnessed directly, the controller software includes an observer that 
 estimates the state of the plant (see appendix for details on how such an observer
-is constructed).
-
-We further presume that there are small tolerances in the system described in the
-following form
+is constructed). We further presume that there are small tolerances in the system 
+described in the following form
+%
 \begin{align*}
 \mat{A} \in \mathcal{G}_A=\mat{S}\mat{J}\mat{S}^{-1} : \mat{J} \in \mathcal{G}_J
-\mat{B} \in \mathcal{G}_B
+\mat{B} \in \mathcal{G}_B.
 \end{align*}
 
-Finally, we also require a safety specification $\Psi(\vec{u},\vec{y})$ which is
+Finally, we also require a safety specification $\Psi(\vec{u},\vec{y})$, which is
 given as a set of linear constraints over the inputs and outputs.
 
 %-------------------------------
