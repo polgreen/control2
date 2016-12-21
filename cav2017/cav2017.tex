@@ -275,8 +275,12 @@ This is text is too generic...}
 \subsection{Verification of a Conrollable Observed System}\label{sec:cof_verification}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-Let us recall the formulas used for SISO systems in sections \ref{sec:reachable} and \ref{sec:observable}.
+Let us recall the formulas used for single-input and single-output (SISO) systems 
+in sections \ref{sec:reachable} and \ref{sec:observable}.
 A controllable and observable system will have the following dynamics:
+\textcolor{red}{Dario: Do we really need to describe all these equations here?
+Should we simply cite them from a given reference?}
+%
 \begin{align}
 \label{eq:observer_LTI_cf}
 \left [\begin{array}{c}\vec{x}\\ \hat{\vec{x}}_e \end{array}\right]_{k+1}
@@ -310,22 +314,30 @@ k_n-a_n&k_{n-1}-a_{n-1}&k_{n-2}-a_{n-2}&\cdots&k_1-a_1
 \label{eq:cf_SISO_2}
 \end{align*}
 
-Careful examination of these matrices reveals that because the $\mat{A}_t$ is upper block diagonal, the spectrum of $\mat{A}_t$ is equal to the union of the spectrum of $\mat{A}_{tp}$ and $\mat{A}_{to}$ which can be calculated separately. Additionally, these correspond to the roots of the following polynomials:
+Careful examination of these matrices reveals that because the $\mat{A}_t$ is 
+upper block diagonal, the spectrum of $\mat{A}_t$ is equal to the union of the 
+spectrum of $\mat{A}_{tp}$ and $\mat{A}_{to}$, which can be calculated separately. 
+Additionally, these correspond to the roots of the following polynomials:
+%
 \begin{align*}
 \left(z^n+\sum_{i=1}^p{(a_i-k_i)z^{n-i}}\right) \left(z^n+\sum_{i=1}^p{(p_i-a_i)z^{n-i}}\right)
 \end{align*}
 
-For a stabilised closed loop, we need these roots to remain within the
+For a stabilized closed-loop, we need these roots to remain within the
 unit circle (left hand side of the plane for continuous time).  Whilst
 this is not a sufficient condition for verifying safety properties, it
-is a necessary one, therefore we will review this verification
-process.  The direct approach would be to calculate the roots of the
-polynomials (\emph{ie} the eigenvalues of the matrix), but this ends
+is a necessary one; therefore, we review this verification process.  
+The direct approach would be to calculate the roots of the
+polynomials (\emph{i.e.}, the matrix eigenvalues), but this ends
 up being too costly, particularly in the case of synthesis, so we use
 an indirect method.
 
-Jury's criteria is a mathematical method used to verify whether the roots of the polynomial are within the unit circle by exploring solely the coefficients of the polynomial. In order to achieve this, we first create a matrix $\mat{M} \in \mathbb{R}^{(n+1) \times (n+1)}$ with zero-indexed coefficients $m_{i,j} : i,j \in [0,n],k=n-(i-1)$ in the following form:
-
+Jury's criteria is a mathematical method used to verify whether the roots 
+of the polynomial are within the unit circle by exploring solely the coefficients 
+of the polynomial. In order to achieve this, we first create a matrix 
+$\mat{M} \in \mathbb{R}^{(n+1) \times (n+1)}$ with zero-indexed coefficients 
+$m_{i,j} : i,j \in [0,n],k=n-(i-1)$ in the following form:
+%
 \begin{equation}
 \left[\begin{array}{ccccc}
 c_0&c_1&\hdots&c_{n-1}&c_n\\
@@ -336,7 +348,11 @@ m_{\scriptscriptstyle n-1,0}-m_{\scriptscriptstyle n-1,1-j}^*\frac{m_{n-1,1}^*}{
 \end{array}\right]
 \end{equation}
 
-The first row corresponds to the coefficients of the original polynomial. Notice also that every row has a polynomial one degree lower than the previous. The sufficient and necessary conditions for the polynomial in row 0 to have all of its roots inside the unit circle are~\cite{astrom1997computer}:
+The first row corresponds to the coefficients of the original polynomial. 
+Notice also that every row has a polynomial one degree lower than the previous. 
+The sufficient and necessary conditions for the polynomial in row $0$ 
+to have all of its roots inside the unit circle are~\cite{astrom1997computer}:
+%
 \begin{align}
 |c_n|<c_0&&
 \sum_{i=0}^n c_i > 0&&
@@ -345,17 +361,33 @@ m_{i,0}>0
 \end{align}
 
 Notice that in both our polynomials $c_0=1$ and we only use reals.
-Now that we have established convergence, we may examine the safety specification of the state space. In the case of SISO systems, this is given by a range of the input and a range of the output which are considered safe ($\vec{u}_k \in [\underline{u}\ \ \overline{u}] \wedge \vec{y}_k \in [\underline{y}\ \ \overline{y}]$). Whilst there are other properties we may include in the verification, we will solely focus on these for simplicity of the explanation.
-We will assume that we do not want saturation in our system, hence the control loop has only one mode. We have also identified the quantization noise as a bounded non-deterministic input.
-First we must translate the safety specification into the statespace. Replacing on the second part of equation \eqref{eq:observer_LTI_cf} we obtain
+Now that we have established convergence, we may examine the safety 
+specification of the state space. In the case of SISO systems, 
+this is given by a range of the input and a range of the output, 
+which are considered safe ($\vec{u}_k \in [\underline{u}\ \ \overline{u}] \wedge \vec{y}_k \in [\underline{y}\ \ \overline{y}]$). 
+Whilst there are other properties, we may include in the verification, 
+we will solely focus on these for simplicity of the explanation.
+We will assume that we do not want saturation in our system, 
+hence the control loop has only one mode. We have also identified 
+the quantization noise as a bounded non-deterministic input.
+First we must translate the safety specification into the state-space. 
+Replacing on the second part of equation \eqref{eq:observer_LTI_cf} we obtain
+%
 \begin{equation}
 \Psi := \underline{y}-\overline{\mat{B}\vec{u}}<\mat{C}_t\vec{x}_k<\overline{y}-\underline{\mat{B}\vec{u}}
 \label{eq:of_bounds}
 \end{equation}
-Note that we use the bounds of the input after the transformation by $\mat{B}$ since the matrix may reverse the bounds. Equation \eqref{eq:of_bounds} can be solved using linear programming as it describes a polyhedral region in $\mathbb{R}^n$.
-The second step is evaluating the progression of the system over time in order to calculate $\vec{x}_k$ to validte against this specification. For this step we require an initial set from which the system progresses. Obviously, this set $\vec{x}_0$ must satisfy the specification, otherwise the system will be unsafe to begin with.
-We will accept a specification in the form $\mat{E}\mat{T}\vec{x}_0<\mat{f}$. The presence of $\mat{T}$ is because this will typically be given in the original state-space.
-Accelerating \eqref{eq:observer_LTI_cf}, we obtain:
+Note that we use the bounds of the input after the transformation by $\mat{B}$ 
+since the matrix may reverse the bounds. Eq.~\eqref{eq:of_bounds} can be solved 
+using linear programming as it describes a polyhedral region in $\mathbb{R}^n$.
+The second step is evaluating the progression of the system over time to calculate 
+$\vec{x}_k$ to validate against this specification. For this step we require 
+an initial set from which the system progresses. Obviously, this set $\vec{x}_0$ 
+must satisfy the specification; otherwise, the system will be unsafe to begin with.
+We accept a specification in the form $\mat{E}\mat{T}\vec{x}_0<\mat{f}$. 
+The presence of $\mat{T}$ is because this will typically be given in the original 
+state-space. Accelerating \eqref{eq:observer_LTI_cf}, we obtain:
+%
 \begin{align}
 \label{eq:acc_observer_LTI_cf}
 \left [\begin{array}{c}\vec{x}\\ \hat{\vec{x}}_e \end{array}\right]_k
@@ -365,7 +397,9 @@ Accelerating \eqref{eq:observer_LTI_cf}, we obtain:
 +\sum_{i=0}^{k-1} \mat{A}_t^i \mat{B}_{tn}\left [\begin{array}{c}\vec{\nu}_2\\ \vec{\nu}_1\end{array}\right] :
  \left [\begin{array}{cc}\mat{E}\mat{T}&\mat{0}\end{array}\right] \left [\begin{array}{c}\vec{x}\\ \hat{\vec{x}}_e \end{array}\right]_0<\mat{f}
 \end{align}
-which would still require us to verify the system for every $k$ up to infinity. Instead we will use abstract acceleration~\cite{cattaruzza2015unbounded}, which translates the formula into
+which would still require us to verify the system for every $k$ up to infinity. 
+Instead we use abstract acceleration~\cite{cattaruzza2015unbounded}, which translates the formula into
+%
 \begin{align}
 \label{eq:aa_observer_LTI_cf}
 \hat{X}^\#
@@ -375,6 +409,7 @@ X_0 =&\left \{ \left[\begin{array}{c}\vec{x}\\ \hat{\vec{x}}_e \end{array}\right
  R =&\{r : \mat{E}_r < \vec{f}_r \}\nonumber\\
  N=&\left \{ \left[\begin{array}{c}\vec{\nu}_2\\ \vec{\nu}_1\end{array}\right] : \nu_1 \in \left[-\frac{q1}{2}\ \ \frac{q1}{2}\right] \wedge \nu_2 \in \left[-\frac{q2}{2}\ \ \frac{q2}{2}\right]  \right \}\nonumber
 \end{align}
+%
 where $\mathcal{A}_t=\bigcup_{k=1}^\infty \mat{A}^k, \mathcal{B}_{tp}=\bigcup_{k=1}^\infty \sum_{i=0}^k\mat{A}^i\mat{B}_{tp}, \mathcal{B}_{tn}=\bigcup_{k=1}^\infty \sum_{i=0}^k\mat{A}^i\mat{B}_{tn}$ are abstract matrices for the system in \eqref{eq:observer_LTI_cf}. It is worth noting that $r$ is a non-deterministic parametric input (\emph{ie} $\forall k>0, r_{k+1} =r_k$) whereas the set N is composed of non-deterministic variable inputs.
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
