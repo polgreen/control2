@@ -617,15 +617,14 @@ respective coefficients $\vec{G}$, $\vec{C}$ in vector form.
 %\label{eq:uncertainty}
 %\end{equation}
 
-
-
 A typical digital control system with a continuous plant and a discrete
 controller is illustrated in Figure~\ref{fig:sampledsystem}.  The DAC and
-ADC converters introduce quantization errors which are modeled as noises $\nu_{1}(z)$ and $\nu_{2}(z)$,
-$G(s)$ is the continuous-time plant model with parametric additive
-uncertainty $\Delta_p{G}_n(s)$ and $\Delta_p{G}_d(s)$, $R(z)$ is the reference signal, $U(z)$ is
-the control signal, and $\hat{Y}(z)$ is the output signal affected by the
-noises and uncertainties in the closed-loop system.
+ADC converters introduce quantization errors which are modeled as noises
+$\nu_{1}(z)$ and $\nu_{2}(z)$, $G(s)$ is the continuous-time plant model
+with parametric additive uncertainty $\Delta_p{G}_n(s)$ and
+$\Delta_p{G}_d(s)$, $R(z)$ is the reference signal, $U(z)$ is the control
+signal, and $\hat{Y}(z)$ is the output signal affected by the noises and
+uncertainties in the closed-loop system.
 %
 %
 %
@@ -1975,11 +1974,11 @@ The first approach uses interval arithmetic \cite{moore1966interval}
 to represent the coefficients
 $[{c}_i-\Delta_p{c}_i-\Delta_b{c}_i\ ,\
 {c}_i+\Delta_p{c}_i-\Delta_b{c}_i+(2^{-F_p})]$ 
-and rounds operations outwards during calculations. This effectively allows
+and rounds operations outwards during calculations.  This effectively allows
 us to simultaneously evaluate the whole collection of plants $\mathfrak{G}$
-plus the effects of numeric calculations in the engine.
-Synthesized controllers using this verifier will always
-be stable for all plants in the family.
+plus the effects of numeric calculations in the engine.  Synthesized
+controllers using this verifier will always be stable for all plants in the
+family.
 % and only generate counterexamples when the precision of the
 %engine is insufficient (\emph{ie} no stable plant could be found). 
 Our preliminary experiments showed that a synthesis approach
@@ -2072,12 +2071,11 @@ obtain a candidate solution consisting of a controller $C(z)$, which makes
 the closed-loop system stable for all the uncertainties accumulated in {\sc
 inputs}.
 
-If the {\sc Uncertainty} verification stage concludes that
-the system is stable for the current candidate solution,
-then we pass this solution to the second verification stage, {\sc Precision}, 
-which checks the propagation of the error in the fixed-point 
-calculations using a Fixed-point Arithmetic Verifier based on 
-interval arithmetic. 
+If the {\sc Uncertainty} verification stage concludes that the system is
+stable for the current candidate solution, then we pass this solution to the
+second verification stage, {\sc Precision}, which checks the propagation of
+the error in the fixed-point calculations using a Fixed-point Arithmetic
+Verifier based on interval arithmetic.
 %
 % To achieve this, we use a nondeterministic plant selected from $\mathfrak{G}(z)$ where the expected error of the bit vector calculations is assumed to be within the expected bounds and verified after synthesis using the interval version of the program. 
 %
