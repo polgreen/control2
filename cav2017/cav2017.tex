@@ -165,24 +165,30 @@ a continuous plant. Eq.~\ref{eq:ode} is soundly discretized
 \vec{y}_k&=\mat{C}_d\vec{x}_k+\mat{D}_d\vec{u}_k,\nonumber
 \end{align}
 %
-and digital controllers in the form
-\textcolor{red}{Dario: Can you please describe all terms used in the equation?}
+and digital controllers creating a feedback loop in the form
 %
 \begin{equation}
 \vec{u}_k=\mat{K}_d\vec{y}_k\ \ :\ \ \mat{K}_d \in \mathbb{R}^{m \times o}.
 \end{equation}
+%
+where $\mat{K}_d$ are the feedback coefficients.
 %
 The output of the plant is being sampled by an ADC, and since the full state of the
 plant cannot be witnessed directly, the controller software includes an observer that 
 estimates the state of the plant (see appendix for details on how such an observer
 is constructed). We further presume that there are small tolerances in the system 
 described in the following form
-\textcolor{red}{Dario: Can you please describe all terms used in the equation?}
 %
 \begin{align*}
-\mat{A} \in \mathcal{G}_A=\mat{S}\mat{J}\mat{S}^{-1} : \mat{J} \in \mathcal{G}_J \wedge
-\mat{B} \in \mathcal{G}_B.
+\mat{A} \in \mathcal{G}_A=\mat{S}\mat{J}\mat{S}^{-1} : \mat{J} \in \mathcal{G}_J
 \end{align*}
+
+Where $\mathcal{G}_J$ is a collection of eigenvalue ranges that define the frequency response of the system.
+We presume that the internal model of the plant is an ARMA model, modified by a
+state transform that has no tolerances. Tolerances in the eigenvectors will manifest themselves
+as tolerances in the canonical forms outside of the row/column of interests and complicate the 
+evaluation. Whilst it is possible to address these with this methodology, we will focus on the case
+above for simplicity.
 
 Finally, we also require a safety specification $\Psi(\vec{u},\vec{y})$, which is
 given as a set of linear constraints over the inputs and outputs.
