@@ -1151,12 +1151,15 @@ Digital Systems Synthesis, named \tool.
 %be used as an input for DSVerifier.
 
 Given a model for a plant in ANSI-C syntax as input (Steps 1--3), \tool
-constructs a non-deterministic model to represent the plant family (Step~A),
+constructs a non-deterministic model to represent the plant family,
+i.e., it addresses plant variations as interval sets (Step~A),
 and formulates a function (Step~B) using implementation details provided in
 Steps~$2$ and $3$ to calculate the parameters of the controller to be
-synthesized (Step~C).  Finally, \tool builds an intermediate ANSI-C code for
-the digital system implementation, which is used as input for the CEGIS
-engine (Step~D).
+synthesized (Step~C).  Note that \tool synthesizes the controller 
+coefficients for the given implementation aspects, i.e., numerical
+representation and realization form.  Finally, \tool builds an intermediate 
+ANSI-C code for the digital system implementation, which is used as input 
+for the CEGIS engine (Step~D).
 
 This intermediate ANSI-C code model contains a specification $\phi$ for the
 property of interest (i.e., robust stability) and is passed to the
