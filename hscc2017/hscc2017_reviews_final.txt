@@ -104,6 +104,7 @@ This paper has several assumptions without justifications. For example:
 2. The sources of uncertainties are linear and independent.
 
 The authors should provide reasonable justifications for these assumptions.
+[Dario] Can you Can you please take a look at this comment?
 
 Digital controllers are designed to run on specific processors, and the bit width of a processor is generally fixed and multiple of 8. Traditionally, the bit-width assignment problem is solved to decide the length of the fraction part while the overall lengths fixed. The goal is generally to avoid overflow in the integer part and maximize the precision. However, in this paper, the length of the integer part and the fraction part seems to be changed arbitrarily. For example, in Section 3.5 in the example, the precision of $I_p = 16$ and $F_p = 24$ does not make the precision verification step successful. And in the next step, precision is increased to $I_p = 20$ and $F_p = 28$. This increase in precision looks quite arbitrary. Moreover, it is surprising that with $I_p = 16$ the precision verification step does not succeed, in spite of the fact that the constants in C(z) are quite small.
 
