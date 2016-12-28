@@ -770,7 +770,10 @@ z-domain using equations (\ref{eq:coefficients}) and
 %
 where $\Delta_p \vec{G}$ is the term that corresponds to the parametric
 uncertainties and $\Delta_q \vec{G}$ is the term that reflects the
-quantization effects on the plant model.
+quantization effects on the plant model, {\it i.e.} $\Delta_q \vec{G}$ is 
+a model that incorporates the effects of $\nu$ in $\vec{\hat{G}}$ to 
+investigate the consequences in the stability of system, once our stability 
+analysis is based on polynomial coefficients and not over signals.
 
 %\red{[next figure is a bit unnecessary, does not ad much to the previous one.]} Figure~\ref{fig:digsystem2} shows the digital closed loop systems with $\Delta G_{P}(z)$ and $\Delta G_{Q}(z)$.
 
@@ -949,26 +952,33 @@ parametric uncertainties $\Delta \vec{G}$ and the FWL effects on
 the controller ($\hat{C}(z)$):
 %
 \begin{equation}
-\hat{Y}(z)=\hat{C}(z)\hat{G}(z)[R(z)+\nu_{1}(z)]+\nu_{2}(z)\hat{G}(z)-\hat{Y}(z)\hat{C}(z)\hat{G}(z),
+\hat{Y}(z)=\nu_{1}(z)+\hat{G}(z)\cdot C(z)\cdot R(z)+\hat{G}(z)\cdot\nu_{2}(z)-\hat{G}(z)\cdot \hat{C}(z)\cdot \hat{Y}(z)
 \end{equation}
+%
+%
+%
 %
 The above can be rewritten as follows:
 %
 \begin{equation}
 \label{eq:outputfunctions}
-\hat{Y}(z)=H_{1}[R(z)+\nu_{1}(z)]+H_{2}(z)\nu_{2}(z),
+\hat{Y}(z)=H_{1}(z)\nu_{1}(z)+H_{2}(z)\cdot\nu_{2}(z)+H_{3}(z)\cdot R(z)
 \end{equation}
 %
 where
 %
 \begin{equation}
-H_{1}=\frac{\hat{C}(z)\hat{G}(z)}{1+\hat{C}(z)\hat{G}(z)},
+H_{1}(z)=\frac{1}{1+\hat{G}(z)\cdot \hat{C}(z)}
+\end{equation}
+%
+\begin{equation}
+H_{2}(z)=\frac{\hat{G}(z)}{1+\hat{G}(z)\cdot \hat{C}(z)}
 \end{equation}
 %
 and
 %
 \begin{equation}
-H_{2}=\frac{\hat{G}(z)}{1+\hat{C}(z)\hat{G}(z)}.
+H_{3}(z)=\frac{\hat{G}(z)\cdot \hat{C}(z)}{1+\hat{G}(z)\cdot \hat{C}(z)}
 \end{equation}
 
 \begin{myassumption}
