@@ -193,84 +193,84 @@ above for simplicity.
 Finally, we also require a safety specification $\Psi(\vec{u},\vec{y})$, which is
 given as a set of linear constraints over the inputs and outputs.
 
-%-------------------------------
-\section{Counter-Example Guided Inductive Synthesis with solution generalisation}
-%-------------------------------
+%% %-------------------------------
+%% \section{Counter-Example Guided Inductive Synthesis with solution generalisation}
+%% %-------------------------------
 
-This technique relies on parametrising the target language, which
-induces a lattice of progressively more expressive languages 
-\textcolor{red}{Cristina: Citation?}.  We
-start by attempting to synthesise a program at the lowest point on
-this lattice and increase the parameters of the language until we
-reach a point at which the synthesis succeeds. As well as giving us an
-automatic search procedure, this parametrisation greatly increases the
-efficiency of our system since languages low down the lattice are very
-easy to decide safety for (i.e. the validation oracle finds an answer
-fast). If a program can be synthesised in a low-complexity language,
-the whole procedure finishes much faster than if synthesis had been
-attempted in a high-complexity language.
+%% This technique relies on parametrising the target language, which
+%% induces a lattice of progressively more expressive languages 
+%% \textcolor{red}{Cristina: Citation?}.  We
+%% start by attempting to synthesise a program at the lowest point on
+%% this lattice and increase the parameters of the language until we
+%% reach a point at which the synthesis succeeds. As well as giving us an
+%% automatic search procedure, this parametrisation greatly increases the
+%% efficiency of our system since languages low down the lattice are very
+%% easy to decide safety for (i.e. the validation oracle finds an answer
+%% fast). If a program can be synthesised in a low-complexity language,
+%% the whole procedure finishes much faster than if synthesis had been
+%% attempted in a high-complexity language.
 
-\textcolor{red}{Cristina: How does this section relate to our control-synthesis work? 
-This is text is too generic...}
+%% \textcolor{red}{Cristina: How does this section relate to our control-synthesis work? 
+%% This is text is too generic...}
 
-\begin{figure}
-\centering
-\hspace*{-1cm}
-\begin{tikzpicture}[scale=0.3,->,>=stealth',shorten >=.2pt,auto, semithick, initial text=, ampersand replacement=\&,]
-  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center
-},
-          row sep=1cm, column sep=1.5cm] {
-   \coordinate (aux1);
-   \& \coordinate (aux2);
-   \& ;\\
-   \node[fill=yellow!20,align=center] (synth) {{\sc inductive}\\{\sc generalisation}};
-   \&
-   complexnode/.pic={ 
-     \node[rectangle,draw,dashed,
-	minimum width=6.7cm,
-	minimum height=.8cm,
-	label={\sc Validation oracles},] (verif) {};
-   \node[fill=yellow!20] (verif1) at ([xshift=-2.1cm]verif.center) {{\sc Validate}};
-   \node[fill=yellow!20,align=center] (verif2) at ([xshift=1.7cm]verif.center) {{\sc validate general}};
-   } 
-   \& \node[ellipse, fill=yellow!20] (done) {{\sc Done}};\\
-   %% \node[fill=yellow!20] (verif) {{\sc ~~~~~~Uncertainty~~~~~~}};
-   %% \&
-   %% \node[fill=yellow!20] (verif2) {{\sc ~~~~~~Precision~~~~~~~}};\\
-   \& \\
-   \& \\
-   \node (gp) {Program Search};
-   \&
-   complexnode/.pic={ 
-     \coordinate (aux);
-   \node (bmc) at ([xshift=-2.1cm]aux.center) {SAT/SMT Solver};
-   \node (fp)  at ([xshift=1.9cm]aux.center) {SAT/SMT Solver};
-   }   
-    \\
-  };
+%% \begin{figure}
+%% \centering
+%% \hspace*{-1cm}
+%% \begin{tikzpicture}[scale=0.3,->,>=stealth',shorten >=.2pt,auto, semithick, initial text=, ampersand replacement=\&,]
+%%   \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center
+%% },
+%%           row sep=1cm, column sep=1.5cm] {
+%%    \coordinate (aux1);
+%%    \& \coordinate (aux2);
+%%    \& ;\\
+%%    \node[fill=yellow!20,align=center] (synth) {{\sc inductive}\\{\sc generalisation}};
+%%    \&
+%%    complexnode/.pic={ 
+%%      \node[rectangle,draw,dashed,
+%% 	minimum width=6.7cm,
+%% 	minimum height=.8cm,
+%% 	label={\sc Validation oracles},] (verif) {};
+%%    \node[fill=yellow!20] (verif1) at ([xshift=-2.1cm]verif.center) {{\sc Validate}};
+%%    \node[fill=yellow!20,align=center] (verif2) at ([xshift=1.7cm]verif.center) {{\sc validate general}};
+%%    } 
+%%    \& \node[ellipse, fill=yellow!20] (done) {{\sc Done}};\\
+%%    %% \node[fill=yellow!20] (verif) {{\sc ~~~~~~Uncertainty~~~~~~}};
+%%    %% \&
+%%    %% \node[fill=yellow!20] (verif2) {{\sc ~~~~~~Precision~~~~~~~}};\\
+%%    \& \\
+%%    \& \\
+%%    \node (gp) {Program Search};
+%%    \&
+%%    complexnode/.pic={ 
+%%      \coordinate (aux);
+%%    \node (bmc) at ([xshift=-2.1cm]aux.center) {SAT/SMT Solver};
+%%    \node (fp)  at ([xshift=1.9cm]aux.center) {SAT/SMT Solver};
+%%    }   
+%%     \\
+%%   };
 
-   \path
-    ([yshift=2em]synth.east) edge node[xshift=-0.7em] {Candidate} ([yshift=2em]verif1.west)
-    ([yshift=-2em]verif1.west) edge node[xshift=-0.7em] {New input} ([yshift=-2em]synth.east)
-    (verif1) edge node {Generalise} (verif2)
-    ([xshift=5em]verif1.south) edge node[align=center] {Candidate} ([xshift=5em]bmc.north)
-    ([xshift=5em]verif2.south) edge node[align=center] {Candidate} ([xshift=3.8em]fp.north)
-    ([xshift=-5em]bmc.north) edge node[align=center]  {UNSAT/\\Model} ([xshift=-5em]verif1.south)
-    ([xshift=-6.2em]fp.north) edge node[align=center]  {UNSAT/\\Model} ([xshift=-5em]verif2.south)
-    (verif2) edge node {} (done)
-    ([xshift=5em]synth.south) edge node[align=center] {{\sc Inputs}} ([xshift=5em]gp.north)
-    ([xshift=-5em]gp.north) edge node[align=center] {No solution/\\Candidate} ([xshift=-5em]synth.south)
-    (aux1) edge (synth.north);
-   \path[-]
-   (verif2.north) edge node[align=center] {} ([xshift=5.6cm]aux2)
-   ([xshift=5.6cm]aux2) edge node[align=center] {Increase parameters} (aux1);
+%%    \path
+%%     ([yshift=2em]synth.east) edge node[xshift=-0.7em] {Candidate} ([yshift=2em]verif1.west)
+%%     ([yshift=-2em]verif1.west) edge node[xshift=-0.7em] {New input} ([yshift=-2em]synth.east)
+%%     (verif1) edge node {Generalise} (verif2)
+%%     ([xshift=5em]verif1.south) edge node[align=center] {Candidate} ([xshift=5em]bmc.north)
+%%     ([xshift=5em]verif2.south) edge node[align=center] {Candidate} ([xshift=3.8em]fp.north)
+%%     ([xshift=-5em]bmc.north) edge node[align=center]  {UNSAT/\\Model} ([xshift=-5em]verif1.south)
+%%     ([xshift=-6.2em]fp.north) edge node[align=center]  {UNSAT/\\Model} ([xshift=-5em]verif2.south)
+%%     (verif2) edge node {} (done)
+%%     ([xshift=5em]synth.south) edge node[align=center] {{\sc Inputs}} ([xshift=5em]gp.north)
+%%     ([xshift=-5em]gp.north) edge node[align=center] {No solution/\\Candidate} ([xshift=-5em]synth.south)
+%%     (aux1) edge (synth.north);
+%%    \path[-]
+%%    (verif2.north) edge node[align=center] {} ([xshift=5.6cm]aux2)
+%%    ([xshift=5.6cm]aux2) edge node[align=center] {Increase parameters} (aux1);
 
-\end{tikzpicture}
-\caption{The CEGIS loop with solution generalisation\label{fig:CEGIS-multiple-verif}. 
-\textcolor{red}{Cristina: What is the difference of this figure to that in our HSCC paper?}}
-\end{figure}
+%% \end{tikzpicture}
+%% \caption{The CEGIS loop with solution generalisation\label{fig:CEGIS-multiple-verif}. 
+%% \textcolor{red}{Cristina: What is the difference of this figure to that in our HSCC paper?}}
+%% \end{figure}
 
-  %% \textcolor{red}{LC: Cristina, can you please fix this figure? The text ``candidate'' overlaps with the dotted box.}
+%%   %% \textcolor{red}{LC: Cristina, can you please fix this figure? The text ``candidate'' overlaps with the dotted box.}
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \section{Counterexample Guided Abstractly Refined Inductive Synthesis for LTI Cyberphysical Systems}\label{sec:CEGARIS}
@@ -484,6 +484,20 @@ The estimation of $\hat{\vec{x}}$ corresponds to the sum of three matrix-vector 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{Synthesisig the dynamics}\label{sec:cof_synth}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+\todo{Integrate this paragraph better (Cristina):}
+Out CEGIS technique with abstraction refinement
+relies on parametrising the target language, which
+induces a lattice of progressively more expressive languages.  We
+start by attempting to synthesise a program at the lowest point on
+this lattice and increase the parameters of the language until we
+reach a point at which the synthesis succeeds. As well as giving us an
+automatic search procedure, this parametrisation greatly increases the
+efficiency of our system since languages low down the lattice are very
+easy to decide safety for (i.e. the validation oracle finds an answer
+fast). If a program can be synthesised in a low-complexity language,
+the whole procedure finishes much faster than if synthesis had been
+attempted in a high-complexity language.
+
 Now that we have explained the verification process, we may proceed to describe the synthesis procedure, which is illustrated in figure \ref{fig:CEGARIS}.
 \begin{enumerate}
 \item We start by preprocessing the dynamics. This can be computationally intensive and we don't want it to be part of the CEGIS loop.
