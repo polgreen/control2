@@ -1,4 +1,4 @@
-
+﻿
 
 Dear Daniel, 
 
@@ -65,11 +65,23 @@ The paper is fairly well written and easy to follow. The technical contribution 
 
 Some specific comments:
 1) In (8), $\Delta_q G$ accounts for quantization errors, but I thought it was already account for in the additive disturbance $\nu$.
-2) Please provide the non-expert reader with characteristics of FWL in particular what are the practical meaning of I and F ?
-3) I believe equation (10) does not correspond to the system on Figure 1. Please check. If needed, correct (11), (12) and (13) and the rest of the paper accordingly.
-4) Proposition 1, item 2, should it be $\hat G$ ?
-5) Section 3.2, you say that the refinement loop terminates since the set INPUTS is finite. Please acknowledge that it is also huge and that we hope it will not be needed to explore all possible values.6) In (18), it is unclear to me how we can compute  \Delta_b ?
+[Dario and Iury] I would need your support to implement this comment.
 
+2) Please provide the non-expert reader with characteristics of FWL in particular what are the practical meaning of I and F?
+Ok.
+
+3) I believe equation (10) does not correspond to the system on Figure 1. Please check. If needed, correct (11), (12) and (13) and the rest of the paper accordingly.
+[Dario and Iury] I would need your support to implement this comment.
+
+4) Proposition 1, item 2, should it be $\hat G$ ?
+Ok.
+
+5) Section 3.2, you say that the refinement loop terminates since the set INPUTS is finite. 
+Please acknowledge that it is also huge and that we hope it will not be needed to explore all possible values.
+[Cristina] Can you please plae a look at this comment?
+
+6) In (18), it is unclear to me how we can compute  \Delta_b ?
+[Dario] Can you please take a look at this comment?
 
 ----------------------- REVIEW 2 ---------------------
 PAPER: 14
@@ -82,12 +94,17 @@ Repeatability Evaluation: yes
 Reviewer's confidence: 4
 
 ----------- Overall evaluation -----------
-This paper proposes a methodology for synthesizing digital stabilizing controllers for continuous plants. Several implementation effects such as finite-precision arithmetic, time discretization and quantization noise introduced by analog to digital converter and digital to analog converter make the controller synthesis problem complex. This paper leverages counter-example guided inductive synthesis methodology for synthesizing a valid program satisfying the stability specification.  
+This paper proposes a methodology for synthesizing digital stabilizing controllers for continuous plants. 
+Several implementation effects such as finite-precision arithmetic, time discretization and quantization noise 
+introduced by analog to digital converter and digital to analog converter make the controller synthesis problem complex. 
+This paper leverages counter-example guided inductive synthesis methodology for synthesizing a valid program satisfying the stability specification.  
 
 This paper has several assumptions without justifications. For example:
 1. The parametric errors in the plant will have the same polynomial order as the plant itself.
 2. The sources of uncertainties are linear and independent.
+
 The authors should provide reasonable justifications for these assumptions.
+[Dario] Can you Can you please take a look at this comment?
 
 Digital controllers are designed to run on specific processors, and the bit width of a processor is generally fixed and multiple of 8. Traditionally, the bit-width assignment problem is solved to decide the length of the fraction part while the overall lengths fixed. The goal is generally to avoid overflow in the integer part and maximize the precision. However, in this paper, the length of the integer part and the fraction part seems to be changed arbitrarily. For example, in Section 3.5 in the example, the precision of $I_p = 16$ and $F_p = 24$ does not make the precision verification step successful. And in the next step, precision is increased to $I_p = 20$ and $F_p = 28$. This increase in precision looks quite arbitrary. Moreover, it is surprising that with $I_p = 16$ the precision verification step does not succeed, in spite of the fact that the constants in C(z) are quite small.
 
@@ -130,10 +147,16 @@ The authors have discussed a number of related works from different aspects and 
 
 6) Some noticed TYPOS
 - Page 2, formula (2), it should be C_d(z) instead of C_d z
-- Page 2, Line 4 from right bottom, there is one redundant “system”
-- Page 4, in Sect 3.3 the line below formula S(z)=a_0 z^N + …, the rows and columns of Jury matrix M should be (2N-2)xN instead of (2N2)xN
-- Figure 5 is on the next page of Figure 6, which should be switched.
+Ok.
 
+- Page 2, Line 4 from right bottom, there is one redundant “system”
+Ok.
+
+- Page 4, in Sect 3.3 the line below formula S(z)=a_0 z^N + …, the rows and columns of Jury matrix M should be (2N-2)xN instead of (2N2)xN
+Ok.
+
+- Figure 5 is on the next page of Figure 6, which should be switched.
+[All] Does anybody know how to fix it?
 
 ----------------------- REVIEW 4 ---------------------
 PAPER: 14
@@ -146,7 +169,18 @@ Repeatability Evaluation: yes
 Reviewer's confidence: 3
 
 ----------- Overall evaluation -----------
-The paper presents a Counter-Example Guided Inductive Synthesis (CEGIS) approach for creating correct-by-construction digital controllers. The approach considers effects of finite precision arithmetic, time discretization, and quantization. The precision of the controller is considered as given. For the precision of the plant, the procedure starts with a low number of bits (at least the same as the controller) and increases it iteratively when necessary. The complexity of the verification step is worst-case exponential in the bits used in the representation, so scalability might be an issue.
+The paper presents a Counter-Example Guided Inductive Synthesis (CEGIS) approach for creating 
+correct-by-construction digital controllers. The approach considers effects of finite precision arithmetic, 
+time discretization, and quantization. The precision of the controller is considered as given. 
+For the precision of the plant, the procedure starts with a low number of bits (at least the same as the controller) 
+and increases it iteratively when necessary. The complexity of the verification step is worst-case exponential 
+in the bits used in the representation, so scalability might be an issue.
 
-The proposed approach nicely connects program verification with feedback control. The actual synthesis step is carried out using the CEGIS functionality of a model checker for C programs, CBMC. The synthesized controller is then checked for stability w.r.t. uncertainty and fixed-point arithmetic, using the bounded model checking tool DSVerifier (itself built on the SMT solver Boolector). In essence, the paper presents connecting existing CEGIS and SMT tools together, coding stability in suitable way. The synthesis tool is publicly available, which may be beneficial for others from a practical point of view.
+The proposed approach nicely connects program verification with feedback control. 
+The actual synthesis step is carried out using the CEGIS functionality of a model checker 
+for C programs, CBMC. The synthesized controller is then checked for stability w.r.t. 
+uncertainty and fixed-point arithmetic, using the bounded model checking tool DSVerifier 
+(itself built on the SMT solver Boolector). In essence, the paper presents connecting existing 
+CEGIS and SMT tools together, coding stability in suitable way. The synthesis tool is publicly 
+available, which may be beneficial for others from a practical point of view.
 

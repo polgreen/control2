@@ -770,7 +770,10 @@ z-domain using equations (\ref{eq:coefficients}) and
 %
 where $\Delta_p \vec{G}$ is the term that corresponds to the parametric
 uncertainties and $\Delta_q \vec{G}$ is the term that reflects the
-quantization effects on the plant model.
+quantization effects on the plant model, {\it i.e.} $\Delta_q \vec{G}$ is 
+a model that incorporates the effects of $\nu$ in $\vec{\hat{G}}$ to 
+investigate the consequences in the stability of system, once our stability 
+analysis is based on polynomial coefficients and not over signals.
 
 %\red{[next figure is a bit unnecessary, does not ad much to the previous one.]} Figure~\ref{fig:digsystem2} shows the digital closed loop systems with $\Delta G_{P}(z)$ and $\Delta G_{Q}(z)$.
 
@@ -891,11 +894,20 @@ quantization effects on the plant model.
 
 Since the controller is implemented using a FWL, $C(z)$ also suffers
 disturbances from the FWL effects, with roundoffs in coefficients that may
-change the closed-loop poles and zeros position, and consequently affect its
+change closed-loop poles and zeros position, and consequently affect its
 stability, as argued in~\cite{Bessa16}.
 
-Let $\hat{C}(z)$ be the transfer function of the digital controller
-represented using this FWL with integer size $I$ and fractional size~$F$. 
+Let $\hat{C}(z)$ be the digital controller transfer function
+represented using this FWL with integer size $I$ and fractional size~$F$;
+$I$ affects the representation range and is set to avoid overflows, 
+while $F$ affects the precision and the truncation process after the 
+arithmetic operations. These variables are chosen depending on 
+hardware features.  In general-purpose processors and
+DSP's, $I$ is minimized to avoid overflows and $F$ is employed for the
+remaining bit representation. Other flexible hardware structures
+(e.g., FPGAs) allow the design of $F$ and $I$, which affects directly
+the number of logical gates.
+
 We shall denote the FWL domain of coefficients as $\mathbb{R}\langle I,F
 \rangle$
 %
@@ -940,26 +952,33 @@ parametric uncertainties $\Delta \vec{G}$ and the FWL effects on
 the controller ($\hat{C}(z)$):
 %
 \begin{equation}
-\hat{Y}(z)=\hat{C}(z)\hat{G}(z)[R(z)+\nu_{1}(z)]+\nu_{2}(z)\hat{G}(z)-\hat{Y}(z)\hat{C}(z)\hat{G}(z),
+\hat{Y}(z)=\nu_{1}(z)+\hat{G}(z)\cdot C(z)\cdot R(z)+\hat{G}(z)\cdot\nu_{2}(z)-\hat{G}(z)\cdot \hat{C}(z)\cdot \hat{Y}(z)
 \end{equation}
+%
+%
+%
 %
 The above can be rewritten as follows:
 %
 \begin{equation}
 \label{eq:outputfunctions}
-\hat{Y}(z)=H_{1}[R(z)+\nu_{1}(z)]+H_{2}(z)\nu_{2}(z),
+\hat{Y}(z)=H_{1}(z)\nu_{1}(z)+H_{2}(z)\cdot\nu_{2}(z)+H_{3}(z)\cdot R(z),
 \end{equation}
 %
 where
 %
 \begin{equation}
-H_{1}=\frac{\hat{C}(z)\hat{G}(z)}{1+\hat{C}(z)\hat{G}(z)},
+H_{1}(z)=\frac{1}{1+\hat{G}(z)\cdot \hat{C}(z)}
+\end{equation}
+%
+\begin{equation}
+H_{2}(z)=\frac{\hat{G}(z)}{1+\hat{G}(z)\cdot \hat{C}(z)}
 \end{equation}
 %
 and
 %
 \begin{equation}
-H_{2}=\frac{\hat{G}(z)}{1+\hat{C}(z)\hat{G}(z)}.
+H_{3}(z)=\frac{\hat{G}(z)\cdot \hat{C}(z)}{1+\hat{G}(z)\cdot \hat{C}(z)}
 \end{equation}
 
 \begin{myassumption}
@@ -1132,7 +1151,7 @@ Digital Systems Synthesis, named \tool.
 
 \begin{figure*}[t]
 \centering
-\includegraphics[width=\textwidth]{figures/verification-flow.pdf}
+\includegraphics[width=\textwidth]{figures/verification-flow.png}
 \vspace{1ex}
 \caption{Overview of the synthesis process\label{DSSynth_process}}
 \end{figure*}
@@ -1151,12 +1170,15 @@ Digital Systems Synthesis, named \tool.
 %be used as an input for DSVerifier.
 
 Given a model for a plant in ANSI-C syntax as input (Steps 1--3), \tool
-constructs a non-deterministic model to represent the plant family (Step~A),
+constructs a non-deterministic model to represent the plant family,
+i.e., it addresses plant variations as interval sets (Step~A),
 and formulates a function (Step~B) using implementation details provided in
 Steps~$2$ and $3$ to calculate the parameters of the controller to be
-synthesized (Step~C).  Finally, \tool builds an intermediate ANSI-C code for
-the digital system implementation, which is used as input for the CEGIS
-engine (Step~D).
+synthesized (Step~C).  Note that \tool synthesizes the controller 
+coefficients for the given implementation aspects, i.e., numerical
+representation and realization form.  Finally, \tool builds an intermediate 
+ANSI-C code for the digital system implementation, which is used as input 
+for the CEGIS engine (Step~D).
 
 This intermediate ANSI-C code model contains a specification $\phi$ for the
 property of interest (i.e., robust stability) and is passed to the
@@ -2701,25 +2723,25 @@ representation of the continuous dynamics.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusions} \label{sec:conclusions}
 
-We have presented a CEGIS-based approach implemented in a tool called \tool,
-which uses inductive synthesis in conjunction with an algorithm for
-verifying robust closed-loop stability.  In particular, \tool is able to
-compute a parametric solution for a stabilizing digital controller given a
-continuous (or discrete) plant specification.  This enables us to
-automatically synthesize correct-by-construction digital controllers for a
-given model of their physical environment.  Our approach addresses the
-effects of the quantizers (A/D and D/A converters) as time discretization
-elements with quantization noise.  Our experimental results show that \tool
+We have presented a CEGIS-based approach implemented in a tool 
+called \tool, which uses inductive synthesis in conjunction with 
+an algorithm for verifying robust closed-loop stability that addresses 
+plant variations as interval sets as well as FWL uncertainties in digital 
+controllers. The present approach is novel in the control system 
+literature in that it puts forward a fully automated synthesis approach that 
+is algorithmically and numerically sound. In particular, \tool marks the first 
+use of the CEGIS paradigm, which handles plants with uncertain models and 
+FWL effects over the digital controller.  Note that implementing this architecture 
+efficiently requires adjusting the traditional CEGIS refinement loop to the use 
+of a two-stage verification engine: here the first stage performs fast, but potentially 
+unsound fixed-point operations, whereas the second stage restores soundness 
+by validating the operations performed by the first stage using interval 
+arithmetic. Our experimental results show that \tool
 is able to synthesize stable controllers in most benchmarks within
-a reasonable amount of time fully automatically.
-%
-% and can be 
-%complemented using the interval arithmetic back-end, where the inductive conjectures fail. 
-%Both back-ends enabled controller synthesis for all benchmarks within reasonable time frames.
-
-Future work will be the extension of this CEGIS-based approach to further
-classes of systems, including state-space representation.  We will also
-consider performance requirements while synthesizing the digital controller.
+a reasonable amount of time fully automatically.  Future work will be the 
+extension of this CEGIS-based approach to further classes of systems, 
+including state-space.  We will also consider performance 
+requirements while synthesizing the digital controller.
 
 \bibliographystyle{abbrv}
 \bibliography{paper}  
