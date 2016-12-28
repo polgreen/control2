@@ -523,21 +523,21 @@ $z^n+\sum_{i=1}^n[a_i-k_i]z^{n-i}=\prod_{i=1}^n (z-[\lambda_i]) : |[\lambda_i]|<
 \centering
 \hspace*{-1cm}
 \begin{tikzpicture}[scale=0.3,->,>=stealth',shorten >=.2pt,auto, semithick, ampersand replacement=\&,]
-  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center},row sep=.2cm, column sep=.2cm] {
+  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center},row sep=.8cm, column sep=.2cm] {
    \coordinate (aux1);
    \& \coordinate (aux2);
    \& ;\\
    \&\node[fill=yellow!20,align=center] (pre) {{\sc 1. pre-}\\{\sc processing}};
    \& \node[fill=yellow!20,align=center] (abstract) {\sc 4. abstraction};
-        \node[draw=none] (FIK) at ([xshift=2.5cm,yshift=.3cm]abstract)  {\sc $\Psi (\mat{K})$};
-   \& \node[fill=yellow!20,align=center] (counter) {\sc counterexample};\\
+       % \node[draw=none] (FIK) at ([xshift=2.5cm,yshift=.3cm]abstract)  {\sc $\Psi (\mat{K})$};
+   \& \coordinate (aux); \\ % \node[fill=yellow!20,align=center] (counter) {\sc counterexample};\\
    \& 
    \& \node[fill=yellow!20,align=center, minimum width=3cm] (synth) {\sc 2. synthesiser};
-       \node[draw=none] (KL) at ([xshift=2.5cm,yshift=-.25cm]synth)  {\sc $\mat{K},\mat{L}$};
-       \node[draw=none] (NKL) at ([xshift=2cm,yshift=1cm]synth)  {\sc $P_a$};
+       %\node[draw=none] (KL) at ([xshift=2.5cm,yshift=-.25cm]synth)  {\sc $\mat{K},\mat{L}$};
+       %\node[draw=none] (NKL) at ([xshift=2cm,yshift=1cm]synth)  {\sc $P_a$};
    \& \node[fill=yellow!20,align=center, minimum width=4cm] (verify) {\sc 3. verifier ($\Psi$)};
-       \node[draw=none] (VUNS) at ([xshift=.6cm,yshift=1cm]verify)  {\sc UNSAT};
-       \node[draw=none] (SAT) at ([xshift=2.5cm,yshift=-.3cm]verify)  {\sc SAT};
+       %\node[draw=none] (VUNS) at ([xshift=.6cm,yshift=1cm]verify)  {\sc SAT};
+       \node[draw=none] (SAT) at ([xshift=2.7cm,yshift=-.3cm]verify)  {\sc UNSAT};
    \& \node[ellipse, fill=yellow!20] (done) {{\sc Done}};\\
    \&
    \& complexnode/.pic={
@@ -570,7 +570,13 @@ $z^n+\sum_{i=1}^n[a_i-k_i]z^{n-i}=\prod_{i=1}^n (z-[\lambda_i]) : |[\lambda_i]|<
   \path
     (pre.east) edge (abstract.west)
     (abstract.south) edge (synth.north)
-    (synth.east) edge (verify.west)
+    %([yshift=2em]synth.east) edge node {Candidate} ([yshift=2em]verif.west)
+    %([yshift=-2em]verif.west) edge node {New input} ([yshift=-2em]synth.east)
+    %([yshift=2em]synth.east) edge node[xshift=-0.7em] {Candidate} ([yshift=2em]verif.west)
+    %([yshift=-2em]verif.west) edge node[xshift=-0.7em] {New input} ([yshift=-2em]synth.east)
+    ([yshift=1em]synth.east) edge node {$\mat{K},\mat{L}$} ([yshift=1em]verify.west)
+    ([yshift=-1em]verify.west) edge node {$P_a$} ([yshift=-1em]synth.east)
+    (aux) edge (abstract.east) 
     (verify.east) edge (done.west);
   \path
     ([xshift=+.6cm]KSAT.north) edge ([xshift=-2.1cm]synth.south) 
@@ -580,17 +586,18 @@ $z^n+\sum_{i=1}^n[a_i-k_i]z^{n-i}=\prod_{i=1}^n (z-[\lambda_i]) : |[\lambda_i]|<
     ([xshift=-4.9cm]verify.south) edge (AAI.north)
     (AAI.east) edge (AAV.west)
     (AAV.north) edge ([xshift=4.9cm]verify.south)
-    (verify.north) edge (counter.south)
-    (counter.west) edge (abstract.east)
-    (counter.south west) edge (synth.north east)
+    %(verify.north) edge (counter.south)
+    %(counter.west) edge (abstract.east)
+    %(counter.south west) edge (synth.north east)
     (FAIL.north) edge (done.south);
    \path[-] 
      (KSAT.south) edge (KUNSAT.north)
      (LSAT.south) edge (LUNSAT.north)
      (KUNSAT.east) edge (LUNSAT.west)
+     (verify.north) edge node {$\Psi (\mat{K})$} (aux)
      (LUNSAT.east) edge (FAIL.west);
 \end{tikzpicture}
-\caption{The CEGIS loop with CEGAR\label{fig:CEGARIS}.}
+\caption{The CEGIS loop with abstraction refinement\label{fig:CEGARIS}.}
 \end{figure}
 
 %-------------------------------
