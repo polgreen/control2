@@ -186,7 +186,6 @@ Modern implementations of embedded control systems have proliferated with the
 availability of low-cost devices that can perform highly non-trivial control
 tasks, with significant impact in numerous application areas such as
 environmental control and robotics~\cite{astrom1997computer, Franklin15}.
-
 Correct and sound control is non-trivial, however. The problem is exacerbated by
 artefacts specific to digital control, such as the effects of
 finite-precision arithmetic, time discretization, and quantization noise
@@ -225,14 +224,14 @@ with a model of their physical environment (the plant), that are
 on linear models with known configurations and perform parametric synthesis
 of stabilizing digital controllers.
 
-Our work addresses particularly challenging aspects of the control synthesis
+Our work addresses challenging aspects of the control synthesis
 problem.  We perform digital control synthesis over a hybrid model, where
 the plant exhibits continuous behavior whereas the controller operates in
 discrete time and over a quantized domain.  Inspired by a classical
 approach~\cite{astrom1997computer}, we translate the problem into a single
 digital domain.  Given our primary interest in stability despite
 digitization effects, we have modeled a digital equivalent of the plant by
-evaluating the effects of the quantizers (A/D and D/A converters) as time
+evaluating the quantizers effects (A/D and D/A converters) as time
 discretization elements with quantization noise.  The resulting closed-loop
 system is a program loop that operates on bit-vectors encoded using
 fixed-point arithmetic with finite word length (FWL).  The deterministic
@@ -380,7 +379,7 @@ work in Section~\ref{sec:conclusions}.
 
 The digital controllers synthesized using the algorithm we present in this
 paper are typically used in closed loops with continuous (physical) plants. 
-Thus, the proposed approach has to consider dynamics of continuous parts of
+Thus, the proposed approach considers dynamics of continuous parts of
 the system (i.e., the plant) and of discrete parts (i.e., the digital
 controller).  To obtain a joint model, we fully discretize the continuous
 plant.  We briefly recall the standard foundations of this step.
@@ -1154,7 +1153,7 @@ Digital Systems Synthesis, named \tool.
 
 \begin{figure*}[t]
 \centering
-\includegraphics[width=\textwidth]{figures/verification-flow.pdf}
+\includegraphics[width=0.9\textwidth]{figures/verification-flow.pdf}
 \vspace{0.1cm}
 \caption{Overview of the synthesis process\label{DSSynth_process}}
 \end{figure*}
@@ -2151,7 +2150,7 @@ becomes unstable.
 %
 For instance, an implementation of $C(z)$ using \param{4}{16} fixed-point
 numbers (i.e., $4$ bits for the integer part and $16$ bits for the
-fractional part) can be modeled as follows:
+fractional part) can be modeled as:
 %
 \begin{equation}
 \label{Eq:running-example-controller-quantized}
@@ -2611,7 +2610,7 @@ to the one-stage back-end, but this performance benefit introduced by CEGIS'
 inductive generalizations may not be observed for other controller
 properties.  Additional experiments are necessary to confirm that the
 performance of our inductive synthesis approach can be leveraged in those
-scenarios as well.
+scenarios.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Related Work}\label{sec:related}
@@ -2637,8 +2636,8 @@ digital controller, many of these techniques lack the ability to produce
 sound or stable results because they disregard the effects of quantization
 and rounding.  Recent papers on implementations/synthesis of LTI digital
 controllers~\cite{das2013lqr, ghosh2013fpga} focus on time discretization,
-failing to account for these error-inducing effects and can therefore result
-in digital systems that are unstable even though they have been proven to be
+failing to account for these error-inducing effects and can result in digital 
+systems that are unstable even though they have been proven to be
 robustly stable in a continuous space.  
 
 \paragraph{Formal Verification of Linear Digital Controllers} 
@@ -2683,8 +2682,8 @@ checking and fixed-point computations to compute parameters based on
 user-defined specifications, but they often operate in the continuous domain
 and have no direct means of evaluating robustness.
 
-Other tools such as~\cite{economakos2016automated} are directly aimed at
-robust stability problems, but they fail to take the effects of FWL into
+Other tools such as~\cite{economakos2016automated} are aimed at
+robust stability problems, but they fail to take the FWL effects into
 account.  In order to provide a correct-by-design digital controller,
 \cite{alur2016compositional} requires a user-defined finite-state
 abstraction to synthesize a digital controller based on high-level
