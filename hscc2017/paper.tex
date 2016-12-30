@@ -488,8 +488,8 @@ that the parametric errors in the plant have the same polynomial order as
 the plant itself (all other errors described in this paper are ensured to
 fulfill this property in our implementation).
 
-In order to simplify the presentation, we employ a notation based on the
-coefficients of the polynomials.  Let $\mathcal{P}^{N}$ be a polynomial
+We employ a notation based on the polynomials coefficients to simplify 
+the presentation.  Let $\mathcal{P}^{N}$ be a polynomial
 domain of order $N$. Let $P \in \mathcal{P}^{M,N}$ be a rational polynomial
 $\frac{P_n}{P_d}$, where $P_n \in \mathcal{P}^{M}$ and $P_d \in \mathcal{P}^{N}$.  
 For a vector of coefficients
@@ -1056,8 +1056,8 @@ and DAC.
 A discrete-time linear system is said to be Bounded-Input and Bounded-Output
 (BIBO) stable if and only if every pole of its transfer function lies inside
 the unit circle \cite{Astrom08}.  Analyzing Eq.~\eqref{eq:outputfunctions},
-the following proposition gives necessary conditions for BIBO stability of
-the closed-loop system in Figure~\ref{fig:sampledsystem}, since the
+the following proposition gives necessary conditions for the closed-loop system 
+BIBO stability in Figure~\ref{fig:sampledsystem}, since the
 exogenous signals $R(z)$, $\nu_{1}$, and $\nu_{2}$ are bounded.
 
 \begin{myprop}{\cite{fadali,Bessa16}}
@@ -1084,13 +1084,13 @@ S(z)=\mathit{FWL}_{M_C}[C_n(z)]\hat{G}_n(z)+\mathit{FWL}_{N_C}[C_d(z)]\hat{G}_d(
 \end{myprop}
 
 Proposition~\ref{prop:eq_int_stab} provides the necessary conditions for the
-digital controller to stabilize the closed-loop system, considering plant
+controller to stabilize the closed-loop system, considering plant
 parametric uncertainties (i.e., $\Delta_p \vec{G}$), quantization noises
-($\nu_{1}$ and $\nu_{2}$) and FWL effects in the control software.  Notice
+($\nu_{1}$ and $\nu_{2}$) and FWL effects in the control software.  Note
 that the model for plant uncertainty due to quantization noise (i.e.,
 $\Delta_q \vec{G}$) may be disregarded if the conditions on
 Proposition~\ref{prop:eq_int_stab} are satisfied and if the quantization
-noise is bounded.  The boundedness of the quantization noise comes from
+noise is bounded.  The quantization noise boundedness comes from
 Assumption~\ref{whitenoise}.
 
 %\red{[first: lemmae precede theorems. ]}
@@ -1171,11 +1171,11 @@ Digital Systems Synthesis, named \tool.
 %user steps described in Steps $1$--$5$ result in an ANSI-C code that should
 %be used as an input for DSVerifier.
 
-Given a model for a plant in ANSI-C syntax as input (Steps 1--3), \tool
+Given a plant model in ANSI-C syntax as input (Steps 1--3), \tool
 constructs a non-deterministic model to represent the plant family,
 i.e., it addresses plant variations as interval sets (Step~A),
 and formulates a function (Step~B) using implementation details provided in
-Steps~$2$ and $3$ to calculate the parameters of the controller to be
+Steps~$2$ and $3$ to calculate the controller parameters to be
 synthesized (Step~C).  Note that \tool synthesizes the controller 
 coefficients for the given implementation aspects, i.e., numerical
 representation and realization form.  Finally, \tool builds an intermediate 
@@ -1875,7 +1875,7 @@ $R_3: |a_0| < a_N$;
 %\item 
 $R_4: m_{11} > 0 \wedge m_{31}>0 \wedge m_{51}>0 \wedge \cdots \wedge m_{(2N{-}3)(1)}>0$.
 %\end{itemize}
-
+%
 The stability property is then encoded by creating a
 constraint of the form:
 $
@@ -1909,11 +1909,11 @@ I_p,F_p \rangle \supseteq \mathbb{R}\langle I,F \rangle$.
 %numerator and denominator of the plant's transfer function, respectively. 
 %Again, $I_p$ and $F_p$ denote the integer and fractional size, respectively, with
 %$\mathbb{R}\langle I_p,F_p \rangle \supseteq \mathbb{R}\langle I,F \rangle$.
-
-Given the use of fixed-point arithmetic, 
-we need to examine the effect of discretization during these operations.
-Let $\tilde C(z)$ and $\tilde G(z)$ be the transfer functions represented
-using fixed-point bit vectors.%  with integer size $I_p$ and fractional
+%
+Given the use of fixed-point arithmetic, we examine the discretization effect 
+during these operations. Let $\tilde C(z)$ and $\tilde G(z)$ be 
+transfer functions represented using fixed-point bit-vectors.
+%  with integer size $I_p$ and fractional
 % size $F_p$, whose domain is $\mathbb{R}\langle I_p,F_p \rangle \supseteq \mathbb{R}\langle I,F \rangle$.
 %
 \begin{align}
@@ -1951,10 +1951,10 @@ we calculate $\tilde G(z)=\mathit{FWL}_{M_G,N_G}^p(\hat{G}(z))$
 \end{align}
 %
 where $\Delta_b\hat{c}_i=\hat{c}_i\bmod \tilde{c}_i$
-and $\Delta_b{G}$ represents the plant uncertainty caused by
-the rounding off effect.  We may encompass all the uncertainty as
+and $\Delta_b{G}$ represent the plant uncertainty caused by
+the rounding off effect.  We encompass all the uncertainty as
 $\Delta{\vec{G}}=\Delta_p{\vec{G}}+\Delta_b{\vec{G}}$. 
-Since the complexity of SAT solvers is worst-case exponential in the size of
+Since the SAT solvers complexity is worst-case exponential in the size of
 the problem instance, our algorithm tries to solve the problem first for a
 low $I_p$, $F_p$, iteratively increasing the precision if it is insufficient.
 
@@ -1991,7 +1991,6 @@ The {\sc synthesize} phase uses BMC to
 compute a solution $C(z)$. % An important remark is that this 
 % controller is synthesised in the $\mathbb{R}\langle I,F \rangle$
 % domain.
-
 There are two approaches for the {\sc verify} phase.
 % based on the described model.  
 The first approach uses interval arithmetic \cite{moore1966interval}
@@ -2231,7 +2230,7 @@ the first counterexample at higher precision:
 %$$
 $$ \tilde G(z) = \frac{0.026314}{0.999024z{-}1.004785} $$
 
-In the next {\sc synthesize} phase, we get a new candidate solution that
+In the {\sc synthesize} phase, we get a new candidate solution that
 eliminates the new, higher precision counterexample:
 %
 $$ C(z)=\frac{11.035202z^2{+}5.846100z{+}4.901855}{1.097901z^2{+}0.063110z{+}0.128357} $$
@@ -2243,14 +2242,13 @@ $$ C(z)=\frac{11.035202z^2{+}5.846100z{+}4.901855}{1.097901z^2{+}0.063110z{+}0.1
 %\end{array}
 %$$
 
-This candidate solution is validated as the final solution by both stages
+This candidate solution is validated  as the final solution by both stages
 {\sc uncertainty} and {\sc precision} in the {\sc verify} phase. 
-Figure~\ref{fig:bode} compares the Bode diagram of the illustrative example
-using the digital controller represented by
-Eq.~\eqref{Eq:running-example-controller}
+Figure~\ref{fig:bode} compares the Bode diagram using the digital controller 
+represented by Eq.~\eqref{Eq:running-example-controller}
 from~\cite{DBLP:conf/hybrid/WangGRJF16} (Figure~\ref{fig:original}) and the
 final candidate solution from our synthesizer
-(Figure~\ref{fig:cegiscontroller}).  The final solution from \tool is stable
+(Figure~\ref{fig:cegiscontroller}).  The \tool final solution is stable
 since it presents an infinite phase margin and a gain margin of $17.8$\,dB.
 
 %, which fails to find a new counterexample (i.e. returns UNSAT).
@@ -2402,7 +2400,7 @@ one-axis system, disregarding disturbance torques, is given by
 I\cdot \ddot{\theta} = \tau_{C}, 
 \end{equation}
 %
-\noindent where $I$ is the inertia moment of the satellite about its mass
+\noindent where $I$ is the satellite inertia moment about its mass
 center, $\tau_{C}$ is the control torque applied by the thrusters, and
 $\theta$ is the controlled attitude angle.  Normalizing
 Eq.~\eqref{eq:satelliteode} by defining the control signal
@@ -2466,9 +2464,9 @@ G_{4c}(z)=\frac{0.0300090687252212z - 0.0309228417953966}{1.0^{2} - 2.0322820800
 
 All experiments were conducted on a 12-core 2.40\,GHz Intel Xeon E5-2440
 with 96\,GB of RAM and Linux OS.  All times given are wall clock time in
-seconds as measured by the UNIX date command.  For the approach using a
-two-stage verification engine we apply a timeout of 8 hours per benchmark,
-and 24 hours for the approach using a one-stage engine.
+seconds as measured by the UNIX date command.  For the two-stage verification 
+engine we apply a timeout of 8 hours per benchmark, and 24 hours for the approach 
+using a one-stage engine.
 
 %---------------------------------
 \subsection{Objectives}
