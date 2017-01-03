@@ -1,12 +1,12 @@
 #include <dsverifier.h>
 
 digital_system controller = {
-        .b = { 0.333984375f, 0.15625f },
+        .b = { 0.84375f, 0.84375f },
         .b_uncertainty = { 0.0, 0.0 },
         .b_size = 2,
-        .a = { 0.640625f, 0.2734375f },
-        .a_uncertainty = { 0.0, 0.0 },
-        .a_size = 2,
+        .a = { 0.2734375f, 0.2255859375f, 0.0f },
+        .a_uncertainty = { 0.0, 0.0, 0.0 },
+        .a_size = 3,
         .sample_time = 2,
 };
 
