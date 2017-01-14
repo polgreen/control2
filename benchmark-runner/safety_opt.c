@@ -76,7 +76,7 @@ typedef struct {
         {_controller.inputs[i] = _controller.ref[i] - result_double;}
   }
 
-  void outputs_equals_C_states_plus_D_inputs(void)
+  /*void outputs_equals_C_states_plus_D_inputs(void)
   {
     int i,j,k;
 
@@ -92,7 +92,7 @@ typedef struct {
            _controller.D[i][j]*_controller.inputs[j];}
 
      }
-  }
+  }*/
 
   void states_equals_A_states_plus_B_inputs(void)
   {
@@ -121,7 +121,7 @@ typedef struct {
 
               inputs_equal_ref_minus_k_times_states();
           /////output = C*states + D * inputs
-              outputs_equals_C_states_plus_D_inputs();
+             // outputs_equals_C_states_plus_D_inputs(); //we are using state feedback, we don't need the output
 
           /////states = A*states + B*inputs
               states_equals_A_states_plus_B_inputs();
@@ -149,14 +149,14 @@ typedef struct {
     for(k=0; k<NUMBERLOOPS; k++)
         {fxp_ss_closed_loop_quantization_error(); //one time step
         for(i=0; i<NSTATES; i++){
-         // __CPROVER_assert(_controller.states[i]<upper_bound && _controller.states[i]>lower_bound, "");
+          __CPROVER_assert(_controller.states[i]<upper_bound && _controller.states[i]>lower_bound, "");
           }
         }
 
 
 
-   printf("Final states %f %f\n",_controller.states[0], _controller.states[1]);
-  __CPROVER_assert(0, " Successful");
+   //printf("Final states %f %f\n",_controller.states[0], _controller.states[1]);
+  //__CPROVER_assert(0, " Successful");
 
   return 0;
   }
