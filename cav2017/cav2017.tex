@@ -207,15 +207,22 @@ A standard objective is to obtain stable closed-loop dynamics.
 \label{ssec:stability}
 %-------------------------------
 
-\todo{[Here discuss Jury criterium]}  
+\todo{[Here discuss Jury criterium for DISCRETE-TIME models - a simplified version of the first part of what is now in Section \ref{sec:cof_verification} (with no quantisation noises yet).]}  
 
-\bigskip
+%-------------------------------
+\subsection{Digital implementation of feedback controller}
+\label{ssec:quantizationerror}
+%-------------------------------
 
-\todo{[Unclear what the remainder of the section serves for. ]}
+\todo{HERE add a figure similar to Fig. \label{fig:observersystem} to explain digital features of controller.} 
+
+\todo{[The remainder of the section needs to be updated. ]}
 The output and measurable of the plant is being sampled by an ADC, and since the full state of the
 plant cannot be witnessed directly, the controller software includes an observer that 
 estimates the state of the plant (see appendix for details on how such an observer
-is constructed). In this work, we are assuming that all the states measurements are available for the state feedback purpose, and the state observer design may be disregarded.  We further presume that there are small tolerances in the system 
+is constructed). In this work, we are assuming that all the states measurements are available for the state feedback purpose, and the state observer design may be disregarded.  
+\todo{[Unclear what the remainder is for: ]}
+We further presume that there are small tolerances in the system 
 described in the following form
 %
 \begin{align*}
@@ -229,15 +236,6 @@ state transform that has no tolerances. Tolerances in the eigenvectors will mani
 as tolerances in the canonical forms outside of the row/column of interests and complicate the 
 evaluation. Whilst it is possible to address these with this methodology, we will focus on the case
 above for simplicity.
-
-%-------------------------------
-\subsection{Digital implementation of feedback controller}
-\label{ssec:quantizationerror}
-%-------------------------------
-
-\todo{HERE add a figure similar to Fig. \label{fig:observersystem} to explain digital features of controller.} 
-
-
 
 
 %-------------------------------
@@ -335,7 +333,8 @@ given as a set of linear constraints over the inputs and outputs.
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{Verification of a Controllable Observed System}\label{sec:cof_verification}
+\subsection{Verification of a Controllable Observed System}
+\label{sec:cof_verification}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 Let us recall the formulas used for single-input and single-output (SISO) systems 
