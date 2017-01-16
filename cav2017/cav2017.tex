@@ -237,6 +237,72 @@ as tolerances in the canonical forms outside of the row/column of interests and 
 evaluation. Whilst it is possible to address these with this methodology, we will focus on the case
 above for simplicity.
 
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+\subsection{Numeric Representations and Soundness} 
+\label{sec:numeric_rep}
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Let $\mathbb{R} \langle I,F \rangle$ be a fixed point domain with $I$ bits representing the integer part and $F$ bits
+representing the decimal part. We will extend this notation to $\mathbb{R} \langle I,F,E \rangle$ to add a number of
+leading or trailing bits when the domain requires prescaling (ie the maximum is smaller than $0.5$ or the minimum
+is greater than $2$)
+Let also $\mathbb{R}_* \langle M,E \rangle$ be a floating point domain with $M$ bits
+mantissa and $E$ bits exponent. This domain corresponds to 
+$$\mathbb{R}_* \langle M,E \rangle = \bigcup_i \mathbb{R} \langle 1,M-1,E_i \rangle : 2^{1-E} \leq E_i  \leq 2^{E-1}$$
+This means that the distance between any two numbers in the domain depends on the
+location of those numbers.
+Since we've shown that a floating point domain is a union of a number of fixed point domains, we will continue our
+reasoning on fixed point only. Our points will apply to the floating point domain by extension.
+The following approximation errors will arise:
+\begin{enumerate}
+\item Truncation\\
+Let $\mathcal{F}\langle I,F \rangle(\cdot) : \mathbb{R} \rightarrow \mathbb{R}\langle I,F \rangle, \tilde x=\mathcal{F}\langle I,F \rangle(x) = x-\delta : \delta=x\ \%_F\  c\tilde x$, where $\%_F$ is the modulus operation performed on the last bit of the representation ($2^{-F}$).\\
+The number $\delta$ corresponds to the truncation error of the representation and it will propagate across operations.
+\item Rounding\\
+Every time an operation is performed on a number in the $\mathbb{R} \langle I,F,E \rangle$ domain, an error may be
+introduced due to truncation of the result.
+Let us define $c\langle i,f,e \rangle \in \mathbb{R}\langle I,F,E\rangle$, where $i \in [-2^{I-1}\ 2^{I-1}],f \in [0 1),e \in [-2^{E-1}\ 2^{E-1}]$ are its assigned values. The smallest number that can be represented for any given exponent is $c_{min(e)}=c\langle 0,2^{-F},e\rangle$.
+The following errors appear in simple operations:
+\begin{enumerate}
+\item Addition/Substraction: $c\langle \cdot,e_1\rangle \pm c\langle \cdot,e_2\rangle=c\langle \cdot,max(e_1,e_2)\rangle + \delta_3 : |\delta_3| \leq (e_1==e_2) ? 0 : c_{min(max(e_2,e_1))}$ 
+\item Multiplication: $c\langle \cdot,e_1\rangle * c\langle \cdot,e_2\rangle=c\langle \cdot,e_1+e_2\rangle + \delta_3 : |\delta_3| \leq c_{min(e_2+e_1)}$
+\end{enumerate}
+The bounds obtained for division are left to the reader as it will not be applied in this paper.
+
+At this point it is worth mentioning that not all systems truncate equally. In the definition above $\delta$ may be positive
+or negative, and even this decision can be made dependent on the sign of $x$. Common cases in computer systems are:
+round downwards (\emph{ie} to $-\infty$), round upwards (\emph{ie} to $+\infty$), and round to zero.
+Rounding errors are cumulative which means the overall error will statistically increase with every operation, thus algorithms
+performing fewer operations can be more precise in this respect than iterative ones. 
+\item Overflow\\
+Another source of error introduced by Finite Word Length representations is that of overflow. The finite word length set a
+maximum representable number in the domain ($\pm 2^{I-1}+1-2^{-F}$), which means that any number outside this range
+cannot be accurately represented by the domain (\emph{eg} $\delta=x-2^{I-1}+1-2^{-F}$). In the case of floating point, a special
+case for infinity has been introduced, which addresses some of this issues, but once the error has gone to infinity, the numbers
+become meaningless. It is the responsibility of software designers and tools to account for overflows and either supply saturation
+functions to prevent them or raise alarms in their presence. In the case of verification, the latter is seen as a safety problem.
+\item Null/Zeno behaviour\\
+Whilst this work does not explore the effect of Zeno behaviours, it is worth noting that this effect may also be caused by rounding
+errors in floating point programs. The reason for this is that if an operation contains two numbers which belong to disjoint sub-domains
+(\emph{ie} neither number can be represented in the domain of its counterpart), the resulting operation may become a no-op/skip,
+subsequently destabilizing the program.
+\end{enumerate}
+
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+\subsection{Fixed Word Length Effects on Matrix Multiplications}
+\label{sec:cof_fwl}
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Thus far we have presented a verification procedure for a digitalized plant in a continuous space (\emph{ie} the
+range of the quatizers is still $\mathbb{R}$. The next step we must reaize is that the controller and the observer
+exist in a digital program, hence their domain is $\mathbb{R}\langle I,F,E\rangle$. This has two separate effects
+on the model. If we recall equation \eqref{eq:to_of}, the matrices of the observer and the controller  are not necessarily those of the plant.
+In fact we have $\mat{A},\mat{B},\mat{C} \in \mathbb{R}^*$, $\mat{A}_o,\mat{B}_o,\mat{C}_o, \mat{K}_d, \mat{L}_d \in \mathbb{R}\langle I,F,E\rangle^*$
+Where $*$ represents the appropriate dimension for each matrix.
+Unfortunately this means that although combined matrices such as $\mat{A}_t$ are in the reals, they suffer from
+the fixed word restrictions in their composing matrices.
+The second effect corresponds to the rounding errors in the calculation of $\hat{x}_{k+1}, u_k$. These will introduce a new source of quantiztion noise which we may denote $\vec{\nu}_3 \in [-q_3\ \ q_3]$.
+The estimation of $\hat{\vec{x}}$ corresponds to the sum of three matrix-vector multiplications (we assume $\mat{C}_o$ in Objective form). Each of these has a coefficient-wise error bound $c_{min(max(e_{j1}+e_{j2}))}$. Hence the overall $\overline{\delta}_{\hat{x}}=3nc_{min(max(e_{j1}+e_{j2}))}$. The error in $\vec{u}$ corresponds of the multiplication of $\mat{K}_d\hat{\vec{x}}$, hence $q_3=\overline{\delta}_u=nc_{min(max(e_{k1}+e_{k2}))}+\sum_{k=1}^nc_k\overline{\delta}_{\hat{x}})=3n|\mat{K}|_1c_{min(max(e_{j1}+e_{j2}))}+nc_{min(max(e_{k1}+e_{k2}))}$
+
 
 %-------------------------------
 \subsection{Safety specifications for Cyber-Physical Systems}
@@ -474,69 +540,6 @@ X_0 =&\left \{ \left[\begin{array}{c}\vec{x}\\ \hat{\vec{x}}_e \end{array}\right
 %
 where $\mathcal{A}_t=\bigcup_{k=1}^\infty \mat{A}^k, \mathcal{B}_{tp}=\bigcup_{k=1}^\infty \sum_{i=0}^k\mat{A}^i\mat{B}_{tp}, \mathcal{B}_{tn}=\bigcup_{k=1}^\infty \sum_{i=0}^k\mat{A}^i\mat{B}_{tn}$ are abstract matrices for the system in \eqref{eq:observer_LTI_cf}. It is worth noting that $r$ is a non-deterministic parametric input (\emph{ie} $\forall k>0, r_{k+1} =r_k$) whereas the set N is composed of non-deterministic variable inputs.
 
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{Numeric Representations and Soundness} \label{sec:numeric_rep}
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-Let $\mathbb{R} \langle I,F \rangle$ be a fixed point domain with $I$ bits representing the integer part and $F$ bits
-representing the decimal part. We will extend this notation to $\mathbb{R} \langle I,F,E \rangle$ to add a number of
-leading or trailing bits when the domain requires prescaling (ie the maximum is smaller than $0.5$ or the minimum
-is greater than $2$)
-Let also $\mathbb{R}_* \langle M,E \rangle$ be a floating point domain with $M$ bits
-mantissa and $E$ bits exponent. This domain corresponds to 
-$$\mathbb{R}_* \langle M,E \rangle = \bigcup_i \mathbb{R} \langle 1,M-1,E_i \rangle : 2^{1-E} \leq E_i  \leq 2^{E-1}$$
-This means that the distance between any two numbers in the domain depends on the
-location of those numbers.
-Since we've shown that a floating point domain is a union of a number of fixed point domains, we will continue our
-reasoning on fixed point only. Our points will apply to the floating point domain by extension.
-The following approximation errors will arise:
-\begin{enumerate}
-\item Truncation\\
-Let $\mathcal{F}\langle I,F \rangle(\cdot) : \mathbb{R} \rightarrow \mathbb{R}\langle I,F \rangle, \tilde x=\mathcal{F}\langle I,F \rangle(x) = x-\delta : \delta=x\ \%_F\  c\tilde x$, where $\%_F$ is the modulus operation performed on the last bit of the representation ($2^{-F}$).\\
-The number $\delta$ corresponds to the truncation error of the representation and it will propagate across operations.
-\item Rounding\\
-Every time an operation is performed on a number in the $\mathbb{R} \langle I,F,E \rangle$ domain, an error may be
-introduced due to truncation of the result.
-Let us define $c\langle i,f,e \rangle \in \mathbb{R}\langle I,F,E\rangle$, where $i \in [-2^{I-1}\ 2^{I-1}],f \in [0 1),e \in [-2^{E-1}\ 2^{E-1}]$ are its assigned values. The smallest number that can be represented for any given exponent is $c_{min(e)}=c\langle 0,2^{-F},e\rangle$.
-The following errors appear in simple operations:
-\begin{enumerate}
-\item Addition/Substraction: $c\langle \cdot,e_1\rangle \pm c\langle \cdot,e_2\rangle=c\langle \cdot,max(e_1,e_2)\rangle + \delta_3 : |\delta_3| \leq (e_1==e_2) ? 0 : c_{min(max(e_2,e_1))}$ 
-\item Multiplication: $c\langle \cdot,e_1\rangle * c\langle \cdot,e_2\rangle=c\langle \cdot,e_1+e_2\rangle + \delta_3 : |\delta_3| \leq c_{min(e_2+e_1)}$
-\end{enumerate}
-The bounds obtained for division are left to the reader as it will not be applied in this paper.
-
-At this point it is worth mentioning that not all systems truncate equally. In the definition above $\delta$ may be positive
-or negative, and even this decision can be made dependent on the sign of $x$. Common cases in computer systems are:
-round downwards (\emph{ie} to $-\infty$), round upwards (\emph{ie} to $+\infty$), and round to zero.
-Rounding errors are cumulative which means the overall error will statistically increase with every operation, thus algorithms
-performing fewer operations can be more precise in this respect than iterative ones. 
-\item Overflow\\
-Another source of error introduced by Finite Word Length representations is that of overflow. The finite word length set a
-maximum representable number in the domain ($\pm 2^{I-1}+1-2^{-F}$), which means that any number outside this range
-cannot be accurately represented by the domain (\emph{eg} $\delta=x-2^{I-1}+1-2^{-F}$). In the case of floating point, a special
-case for infinity has been introduced, which addresses some of this issues, but once the error has gone to infinity, the numbers
-become meaningless. It is the responsibility of software designers and tools to account for overflows and either supply saturation
-functions to prevent them or raise alarms in their presence. In the case of verification, the latter is seen as a safety problem.
-\item Null/Zeno behaviour\\
-Whilst this work does not explore the effect of Zeno behaviours, it is worth noting that this effect may also be caused by rounding
-errors in floating point programs. The reason for this is that if an operation contains two numbers which belong to disjoint sub-domains
-(\emph{ie} neither number can be represented in the domain of its counterpart), the resulting operation may become a no-op/skip,
-subsequently destabilizing the program.
-\end{enumerate}
-
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{Fixed Word Length Effects on Matrix Multiplications}\label{sec:cof_fwl}
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-Thus far we have presented a verification procedure for a digitalized plant in a continuous space (\emph{ie} the
-range of the quatizers is still $\mathbb{R}$. The next step we must reaize is that the controller and the observer
-exist in a digital program, hence their domain is $\mathbb{R}\langle I,F,E\rangle$. This has two separate effects
-on the model. If we recall equation \eqref{eq:to_of}, the matrices of the observer and the controller  are not necessarily those of the plant.
-In fact we have $\mat{A},\mat{B},\mat{C} \in \mathbb{R}^*$, $\mat{A}_o,\mat{B}_o,\mat{C}_o, \mat{K}_d, \mat{L}_d \in \mathbb{R}\langle I,F,E\rangle^*$
-Where $*$ represents the appropriate dimension for each matrix.
-Unfortunately this means that although combined matrices such as $\mat{A}_t$ are in the reals, they suffer from
-the fixed word restrictions in their composing matrices.
-The second effect corresponds to the rounding errors in the calculation of $\hat{x}_{k+1}, u_k$. These will introduce a new source of quantiztion noise which we may denote $\vec{\nu}_3 \in [-q_3\ \ q_3]$.
-The estimation of $\hat{\vec{x}}$ corresponds to the sum of three matrix-vector multiplications (we assume $\mat{C}_o$ in Objective form). Each of these has a coefficient-wise error bound $c_{min(max(e_{j1}+e_{j2}))}$. Hence the overall $\overline{\delta}_{\hat{x}}=3nc_{min(max(e_{j1}+e_{j2}))}$. The error in $\vec{u}$ corresponds of the multiplication of $\mat{K}_d\hat{\vec{x}}$, hence $q_3=\overline{\delta}_u=nc_{min(max(e_{k1}+e_{k2}))}+\sum_{k=1}^nc_k\overline{\delta}_{\hat{x}})=3n|\mat{K}|_1c_{min(max(e_{j1}+e_{j2}))}+nc_{min(max(e_{k1}+e_{k2}))}$
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{Synthesisig the dynamics}\label{sec:cof_synth}
