@@ -121,21 +121,23 @@ properties it explores.  Traditionally, this focuses mainly on the
 subject of stability %, working typically on continuous domains
 \cite{sadabadi2016static,DBLP:journals/corr/AbateBCCDKK16}, or using switched
 models~\cite{DBLP:conf/emsoft/RavanbakhshS16}.
-
 Reachability tools are
 also used when discretizing the state-space for both verification and
 parametric synthesis~\cite{cimatti2013parameter}.
-In this paper, however, we propose the synthesis of control algorithms for
+
+In this paper, we propose the synthesis of \emph{safe} control algorithms for
 cyberphysical systems taking into consideration the continuous domain
 of the plant, alongside the discrete domain of the controller and the
 hybrid elements that communicate them.
-
-In this paper, we synthesize controllers for hybrid
-closed-loop systems, i.e., software-implemented embedded controllers along
-with a model of their physical environment (the plant), that are
-\emph{safe}.  Due to the complexity of such systems, in this work we focus
+%
+%% In this paper, we synthesize controllers for hybrid
+%% closed-loop systems, i.e., software-implemented embedded controllers along
+%% with a model of their physical environment (the plant), that are
+%% \emph{safe}.
+Due to the complexity of such systems, in this work we focus
 on linear models with known configurations and perform parametric synthesis
 of safe digital controllers.
+
 To this end, we formalise the notion of solution generalisation for
 Counter-Example Guided Inductive Synthesis (CEGIS), which makes use 
 of abstraction refinement
@@ -147,15 +149,86 @@ to look for candidate solutions in a reduced solution space.  %% The
 %% allows simplification of the procedures over a sound abstraction of
 %% the verification model.
 
-\textcolor{red}{Cristina: Can you please further expand the introduction
-by adding more details about our synthesis approach to control systems?}
+%% \textcolor{red}{Cristina: Can you please further expand the introduction
+%% by adding more details about our synthesis approach to control systems?}
 
 %-------------------------------
 \subsection{Related Work}
 \label{sec:relw}
 %-------------------------------
 
-\todo{[Move material from \ref{sec:rw} here]}
+\paragraph{CEGIS}
+
+Program synthesis is the problem of computing correct-by-design programs
+from high-level specifications, and algorithms for this problem have made
+substantial progress in recent years.  One such
+approach~\cite{itzhaky2010simple} inductively synthesizes invariants to
+generate the desired programs.
+
+Program synthesisers are an ideal fit for synthesis of parametric
+controllers since the semantics of programs capture effects such as FWL
+precisely.  In~\cite{DBLP:conf/cdc/RavanbakhshS15}, the authors use CEGIS
+for the synthesis of switching controllers for stabilizing continuous-time
+plants with polynomial dynamics.  The work extends to its application on
+affine systems, finding its major challenge in the hardness of solving
+linear arithmetic with the state-of-the-art SMT solvers.  Since this
+approach uses switching states instead of linear dynamics in the digital
+controller, it entirely circumvents the FWL problem.  It is also not
+suitable for the kind of control we seek to synthesize.
+Moreover, in \cite{DBLP:conf/emsoft/RavanbakhshS16} the same authors 
+use a CEGIS-based approach for synthesizing continuous-time switching
+controllers that guarantee reach while stay properties of a closed
+loop system. The solution is based on synthesizing control Lyapunov
+functions for switched systems, that yield switching controllers with
+a guaranteed minimum dwell time in each mode.
+
+We require a
+combination of a synthesis engine with a control verification tool that
+addresses the challenges presented here in the form of FWL effects and
+stability measures for LTI SISO controllers.  We take the former
+from~\cite{DBLP:conf/lpar/DavidKL15} and the latter from~\cite{daes20161},
+while enhancing the procedure by evaluating the quantization effects of the
+Hardware interfaces (ADC/DAC) to obtain an accurate discrete-time FWL
+representation of the continuous dynamics.
+
+\paragraph{Discretization Effects}
+
+The classical approach to control synthesis has often disregarded
+quantization as a minimal effect, thus proving unsound in the case of digital control systems.
+Modern techniques focus on different elements of the discretization effect, including delayed
+response~\cite{Duggirala2015}, and Finite Word Length (FWL) semantics with
+the goal to either verify (e.g.~\cite{daes20161}) or optimize
+(e.g.~\cite{oudjida2014design}) given implementations.
+
+There are two different problems that arise from FWL semantics.  The first
+is the error in the dynamics caused by the inability to represent the exact
+state of the physical system while the second relates to rounding errors
+during computation.  In~\cite{fialho1994stability}, a stability measure
+based on the error of the digital dynamics ensures that the deviation
+introduced by FWL does not make the digital system unstable.  A more recent
+approach~\cite{DBLP:journals/automatica/WuLCC09} uses $\mu$ calculus to
+directly model the digital controller so that the selected parameters are
+stable by design.  The analyses
+in~\cite{DBLP:conf/hybrid/WangGRJF16,DBLP:conf/hybrid/RouxJG15} rely on an
+invariant computation on the discrete system dynamics using Semi-Definite
+Programming (SDP).  While the former uses BIBO properties to determine
+stability, the latter uses Lyapunov-based quadratic invariants.  In both
+cases, the SDP solver uses floating-point arithmetic and soundness is
+checked by bounding the error.  An alternative approach is taken
+by~\cite{park2016scalable}, where the verification of existing code is
+performed against a known model by extracting an LTI model of the code
+through symbolic execution.  In order to account for rounding errors, an
+upper bound is introduced in the verification phase.
+The work in \cite{picasso2002construction,picasso2003stabilization} introduces
+attractive invariant sets as a mechanism to bound the quantization error effect
+on stabilization as an invariant set that always converges toward the cotrollable
+set. In a similar fashion, \cite{liberzon2003hybrid} evaluates the dynamics of the
+quantization error and binds their trajectory to a known region over a finite
+period of time. This technique works for both linear and non-linear systems.
+This paper uses an approach that projects the maximum effect of the noise over
+an unbounded time and uses it as a `buffer' region for the safety specification.
+
+%\todo{[Move material from \ref{sec:rw} here]}
 
 %-------------------------------
 \section{Preliminaries}
@@ -1138,83 +1211,11 @@ Pendulum   & $\left[\begin{array}{cc}
 %-------------------------------
 
 
-%-------------------------------
-\section{Related Work}
-\label{sec:rw}
-%-------------------------------
+%% %-------------------------------
+%% \section{Related Work}
+%% \label{sec:rw}
+%% %-------------------------------
 
-\paragraph{CEGIS}
-
-Program synthesis is the problem of computing correct-by-design programs
-from high-level specifications, and algorithms for this problem have made
-substantial progress in recent years.  One such
-approach~\cite{itzhaky2010simple} inductively synthesizes invariants to
-generate the desired programs.
-
-Program synthesisers are an ideal fit for synthesis of parametric
-controllers since the semantics of programs capture effects such as FWL
-precisely.  In~\cite{DBLP:conf/cdc/RavanbakhshS15}, the authors use CEGIS
-for the synthesis of switching controllers for stabilizing continuous-time
-plants with polynomial dynamics.  The work extends to its application on
-affine systems, finding its major challenge in the hardness of solving
-linear arithmetic with the state-of-the-art SMT solvers.  Since this
-approach uses switching states instead of linear dynamics in the digital
-controller, it entirely circumvents the FWL problem.  It is also not
-suitable for the kind of control we seek to synthesize.
-Moreover, in \cite{DBLP:conf/emsoft/RavanbakhshS16} the same authors 
-use a CEGIS-based approach for synthesizing continuous-time switching
-controllers that guarantee reach while stay properties of a closed
-loop system. The solution is based on synthesizing control Lyapunov
-functions for switched systems, that yield switching controllers with
-a guaranteed minimum dwell time in each mode.
-
-We require a
-combination of a synthesis engine with a control verification tool that
-addresses the challenges presented here in the form of FWL effects and
-stability measures for LTI SISO controllers.  We take the former
-from~\cite{DBLP:conf/lpar/DavidKL15} and the latter from~\cite{daes20161},
-while enhancing the procedure by evaluating the quantization effects of the
-Hardware interfaces (ADC/DAC) to obtain an accurate discrete-time FWL
-representation of the continuous dynamics.
-
-\paragraph{Discretization Effects}
-
-The classical approach to control synthesis has often disregarded
-quantization as a minimal effect, thus proving unsound in the case of digital control systems.
-Modern techniques focus on different elements of the discretization effect, including delayed
-response~\cite{Duggirala2015}, and Finite Word Length (FWL) semantics with
-the goal to either verify (e.g.~\cite{daes20161}) or optimize
-(e.g.~\cite{oudjida2014design}) given implementations.
-
-There are two different problems that arise from FWL semantics.  The first
-is the error in the dynamics caused by the inability to represent the exact
-state of the physical system while the second relates to rounding errors
-during computation.  In~\cite{fialho1994stability}, a stability measure
-based on the error of the digital dynamics ensures that the deviation
-introduced by FWL does not make the digital system unstable.  A more recent
-approach~\cite{DBLP:journals/automatica/WuLCC09} uses $\mu$ calculus to
-directly model the digital controller so that the selected parameters are
-stable by design.  The analyses
-in~\cite{DBLP:conf/hybrid/WangGRJF16,DBLP:conf/hybrid/RouxJG15} rely on an
-invariant computation on the discrete system dynamics using Semi-Definite
-Programming (SDP).  While the former uses BIBO properties to determine
-stability, the latter uses Lyapunov-based quadratic invariants.  In both
-cases, the SDP solver uses floating-point arithmetic and soundness is
-checked by bounding the error.  An alternative approach is taken
-by~\cite{park2016scalable}, where the verification of existing code is
-performed against a known model by extracting an LTI model of the code
-through symbolic execution.  In order to account for rounding errors, an
-upper bound is introduced in the verification phase.
-The work in \cite{picasso2002construction,picasso2003stabilization} introduces
-attractive invariant sets as a mechanism to bound the quantization error effect
-on stabilization as an invariant set that always converges toward the cotrollable
-set. In a similar fashion, \cite{liberzon2003hybrid} evaluates the dynamics of the
-quantization error and binds their trajectory to a known region over a finite
-period of time. This technique works for both linear and non-linear systems.
-This paper uses an approach that projects the maximum effect of the noise over
-an unbounded time and uses it as a `buffer' region for the safety specification.
-
-\textcolor{red}{LC: Cristina and Dario, should we further expand this section with other initiatives to synthesise control systems?}
 
 %-------------------------------
 \section{Extensions}
