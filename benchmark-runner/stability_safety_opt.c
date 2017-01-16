@@ -259,6 +259,7 @@ int main(void) {
   __CPROVER_EIGEN_charpoly(); //get eigen values
   //__CPROVER_assert(check_stability(), "");
   __CPROVER_assume(check_stability() != 0);
+  __CPROVER_assume(check_safety() !=0);
   __CPROVER_EIGEN_fixedbvt __trace_K0 = _controller.K[0][0];
   __CPROVER_EIGEN_fixedbvt __trace_K1 = _controller.K[0][1];
   __CPROVER_EIGEN_fixedbvt __trace_K2 = _controller.K[0][2];
