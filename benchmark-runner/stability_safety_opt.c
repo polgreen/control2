@@ -1,17 +1,17 @@
 #include <stdio.h>
 
-typedef __CPROVER_fixedbv[24][12] __CPROVER_EIGEN_fixedbvt;
+typedef __CPROVER_fixedbv[32][16] __CPROVER_EIGEN_fixedbvt;
 
-#define NSTATES 3u
+#define NSTATES 4u
 #define NINPUTS 1u
 #define NOUTPUTS 1u
 #define INITIALSTATE_UPPERBOUND 1.0
 #define INITIALSTATE_LOWERBOUND 0.0
-#define NUMBERLOOPS 10 //number of timesteps to check safety spec over
-#define INT_BITS 2
+#define NUMBERLOOPS  15 //number of timesteps to check safety spec over
+#define INT_BITS 7
 #define FRAC_BITS 3
-#define SAFE_STATE_UPPERBOUND 100
-#define SAFE_STATE_LOWERBOUND -100
+#define SAFE_STATE_UPPERBOUND 10
+#define SAFE_STATE_LOWERBOUND -10
 
 typedef __CPROVER_fixedbv[INT_BITS+FRAC_BITS][FRAC_BITS] __CPROVER_fxp_t;
 __CPROVER_EIGEN_fixedbvt nondet_double(void);
@@ -34,6 +34,17 @@ typedef struct {
 __CPROVER_EIGEN_fixedbvt nondet_double(void);
 extern __CPROVER_fxp_t K_fxp[NINPUTS][NSTATES];
 
+/*const digital_system_state_space _controller=
+{
+    .A = { { 4.6764e-166,0.0,0.0}, { 5.1253e-144,0.0,0.0}, { 0,2.5627e-144,0.0} },
+    .B = { { 0.125},{0.0},{0.0} },
+    .C = { { 0.16,-5.9787e-32,0.0 } },
+    .D = { { 0.0 } },
+    .K = { { nondet_double(), nondet_double(), nondet_double() } },
+    //.K = { { 1072.1259765625, 1665.046875, -2047.998779296875 } },
+    .inputs = { { 1.0 } },
+};*/
+
 const digital_system_state_space _controller=
 {
     .A = { { 4.6764e-166,0.0,0.0}, { 5.1253e-144,0.0,0.0}, { 0,2.5627e-144,0.0} },
@@ -46,11 +57,10 @@ const digital_system_state_space _controller=
 };
 
 
-#define __CPROVER_EIGEN_MATRIX_SIZE 3u
-#define __CPROVER_EIGEN_POLY_SIZE (__CPROVER_EIGEN_MATRIX_SIZE + 1u)
+#define __CPROVER_EIGEN_POLY_SIZE (NSTATES + 1u)
 //const __CPROVER_EIGEN_fixedbvt __CPROVER_EIGEN_TEST_A[__CPROVER_EIGEN_MATRIX_SIZE][__CPROVER_EIGEN_MATRIX_SIZE] = { { 0.0, 1.0, 0.0 }, { 0.0, 0.0, 1.0 }, { 1.0, 0.0, 0.0 } };
 //extern const __CPROVER_EIGEN_fixedbvt __CPROVER_EIGEN_TEST_A[__CPROVER_EIGEN_MATRIX_SIZE][__CPROVER_EIGEN_MATRIX_SIZE];
-__CPROVER_EIGEN_fixedbvt __CPROVER_EIGEN_poly[__CPROVER_EIGEN_POLY_SIZE];
+__CPROVER_EIGEN_fixedbvt __CPROVER_EIGEN_poly[5];
 
 
 __CPROVER_EIGEN_fixedbvt internal_pow(__CPROVER_EIGEN_fixedbvt a, unsigned int b){
@@ -145,11 +155,22 @@ int check_stability(void){
    return 1;
 }
 
+#define __m _AminusBK
+void __CPROVER_EIGEN_charpoly_2(void) { //m00*m11 - m10*m11 - m00*x - m11*x + x^2
+
+
+  __CPROVER_EIGEN_poly[2] = __m[0][0]*__m[1][1] - __m[1][0]*__m[1][1];
+
+  __CPROVER_EIGEN_poly[1] = -__m[0][0] - __m[1][1];
+  // s^2
+  __CPROVER_EIGEN_poly[0] = 1.0;
+}
+
 
 // P(s)=(s-m11)*(s-m22)*(s-m33) - m13*m31*(s-m22) - m12*m21*(s-m33) - m23*m32*(s-m11) - m12*m23*m31 - m13*m21*m32
 // P(s)=s^3 + (-m_11 - m_22 - m_33) * s^2 +  (m_11*m_22 + m_11*m_33 - m_12*m_21 - m_13*m_31 + m_22*m_33 - m_23*m_32) * s - m_11*m_22*m_33 + m_11*m_23*m_32 + m_12*m_21*m_33 - m_12*m_23*m_31 - m_13*m_21*m_32 + m_13*m_22*m_31
-void __CPROVER_EIGEN_charpoly(void) {
-#define __m _AminusBK
+void __CPROVER_EIGEN_charpoly_3(void) {
+
   //                        m_11*m_22*m_33                    + m_11*m_23*m_32                    + m_12*m_21*m_33                    - m_12*m_23*m_31                    - m_13*m_21*m_32                    + m_13*m_22*m_31
   __CPROVER_EIGEN_poly[3] = __m[0][0] * __m[1][1] * __m[2][2] + __m[0][0] * __m[1][2] * __m[2][1] + __m[0][1] * __m[1][0] * __m[2][2] - __m[0][1] * __m[1][2] * __m[2][0] - __m[0][2] * __m[1][0] * __m[2][1] + __m[0][2] * __m[1][1] * __m[2][0];
   //                        (m_11*m_22            + m_11*m_33             - m_12*m_21             - m_13*m_31             + m_22*m_33             - m_23*m_32) * s
@@ -160,6 +181,39 @@ void __CPROVER_EIGEN_charpoly(void) {
   __CPROVER_EIGEN_poly[0] = 1.0;
 }
 
+
+void __CPROVER_EIGEN_charpoly_4(void) {
+
+ __CPROVER_EIGEN_poly[4] = __m[0][0]*__m[1][1]*__m[2][2]*__m[3][3] - __m[0][0]*__m[1][1]*__m[2][3]*__m[3][2] - __m[0][0]*__m[1][2]*__m[2][1]*__m[3][3] + __m[0][0]*__m[1][2]*__m[2][3]*__m[3][1] + __m[0][0]*__m[1][3]*__m[2][1]*__m[3][2] -
+    __m[0][0]*__m[1][3]*__m[2][2]*__m[3][1] - __m[0][1]*__m[1][0]*__m[2][2]*__m[3][3] + __m[0][1]*__m[1][0]*__m[2][3]*__m[3][2] + __m[0][1]*__m[1][2]*__m[2][0]*__m[3][3] - __m[0][1]*__m[1][2]*__m[2][3]*__m[3][0] -
+    __m[0][1]*__m[1][3]*__m[2][0]*__m[3][2] + __m[0][1]*__m[1][3]*__m[2][2]*__m[3][0] + __m[0][2]*__m[1][0]*__m[2][1]*__m[3][3] - __m[0][2]*__m[1][0]*__m[2][3]*__m[3][1] - __m[0][2]*__m[1][1]*__m[2][0]*__m[3][3] +
+    __m[0][2]*__m[1][1]*__m[2][3]*__m[3][0] + __m[0][2]*__m[1][3]*__m[2][0]*__m[3][1] - __m[0][2]*__m[1][3]*__m[2][1]*__m[3][0] - __m[0][3]*__m[1][0]*__m[2][1]*__m[3][2] + __m[0][3]*__m[1][0]*__m[2][2]*__m[3][1] +
+    __m[0][3]*__m[1][1]*__m[2][0]*__m[3][2] - __m[0][3]*__m[1][1]*__m[2][2]*__m[3][0] - __m[0][3]*__m[1][2]*__m[2][0]*__m[3][1] + __m[0][3]*__m[1][2]*__m[2][1]*__m[3][0];
+
+
+__CPROVER_EIGEN_poly[3] = - __m[0][0]*__m[1][1]*__m[2][2]  + __m[0][0]*__m[1][2]*__m[2][1]  + __m[0][1]*__m[1][0]*__m[2][2] -   __m[0][1]*__m[1][2]*__m[2][0]  -  __m[0][2]*__m[1][0]*__m[2][1]  + __m[0][2]*__m[1][1]*__m[2][0]
+    - __m[0][0]*__m[1][1]*__m[3][3]  + __m[0][0]*__m[1][3]*__m[3][1]  + __m[0][1]*__m[1][0]*__m[3][3] - __m[0][1]*__m[1][3]*__m[3][0] -  __m[0][3]*__m[1][0]*__m[3][1]  + __m[0][3]*__m[1][1]*__m[3][0]
+    - __m[0][0]*__m[2][2]*__m[3][3]  + __m[0][0]*__m[2][3]*__m[3][2]  + __m[0][2]*__m[2][0]*__m[3][3] - __m[0][2]*__m[2][3]*__m[3][0] - __m[0][3]*__m[2][0]*__m[3][2]  + __m[0][3]*__m[2][2]*__m[3][0]
+    - __m[1][1]*__m[2][2]*__m[3][3]  + __m[1][1]*__m[2][3]*__m[3][2]  + __m[1][2]*__m[2][1]*__m[3][3] - __m[1][2]*__m[2][3]*__m[3][1] -  __m[1][3]*__m[2][1]*__m[3][2]  + __m[1][3]*__m[2][2]*__m[3][1];
+
+
+  __CPROVER_EIGEN_poly[2] = + __m[0][0]*__m[1][1]  - __m[0][1]*__m[1][0]  +  __m[0][0]*__m[2][2]  - __m[0][2]*__m[2][0] +  __m[0][0]*__m[3][3]  - __m[0][3]*__m[3][0] + __m[1][1]*__m[2][2]  -
+   __m[1][2]*__m[2][1] +  __m[1][1]*__m[3][3] - __m[1][3]*__m[3][1] +  __m[2][2]*__m[3][3]  - __m[2][3]*__m[3][2];
+
+
+  __CPROVER_EIGEN_poly[1] = - __m[3][3] - __m[2][2] - __m[1][1] - __m[0][0];
+  __CPROVER_EIGEN_poly[0] = 1.0;
+}
+
+void __CPROVER_EIGEN_charpoly(void){
+
+  switch(NSTATES)
+  {
+    case 2: __CPROVER_EIGEN_charpoly_2(); break;
+    case 3: __CPROVER_EIGEN_charpoly_3(); break;
+    case 4: __CPROVER_EIGEN_charpoly_4(); break;
+  }
+}
 
 void A_minus_B_K()
 {
