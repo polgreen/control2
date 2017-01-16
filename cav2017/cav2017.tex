@@ -165,12 +165,13 @@ We consider physical models expressed as ordinary differential equations (ODEs) 
 \label{eq:ode}
 \dot{x}(t) = Ax(t)+ B u(t)\ \ :\ \ x \in \mathbb{R}^{n}, u \in \mathbb{R}^m, A \in \mathbb{R}^{n \times n}, B \in \mathbb{R}^{n \times m}
 \end{align}
-where $A$ and $B$ are matrices that fully specify the continuous plant. 
+where $A$ and $B$ are matrices that fully specify the continuous plant.  
+\todo{[specify initial conditions? specify input ranges already here? ]} 
 Eq.~\eqref{eq:ode} is soundly discretised (as shown in the Appendix \todo{[there we can present directly the full LTI case with outputs]}) into
 %
 \begin{align}
 \label{eq:plant}
-x_{k+1}&= A_d x_k+ B_d u_k. 
+x_{k+1} = A_d x_k+ B_d u_k. 
 \end{align}
 %
 The 
@@ -180,15 +181,32 @@ The
 \label{ssec:statefeedbackcontrol}
 %-------------------------------
 
-Feedback control is usually employed to modify and control the properties and behaviors of process and systems, 
-reduce the effect of parametric uncertainties and attenuate the effects of noise and disturbance. A well-known feedback control technique is the state feedback control where the control action $\vec{u}_k$ is computed by:
+Models \eqref{eq:ode} and \eqref{eq:plant} depend on external non-determinism in the form of input signals $u (t), u_k$, respectively. 
+Feedback can be employed to affect the properties and behaviours of the process. 
+%reduce the effect of parametric uncertainties and attenuate the effects of noise and disturbance. 
+The most basec feedback architecture is the state feedback, 
+where the control action $\vec{u}_k$ is computed by: 
 %
 \begin{equation}
-\vec{u}_k=\vec{r}_{k}-\mat{K}\vec{x}_k.
+u_k = r_{k} - K x_k, 
 \end{equation}
 %
-where $\mat{K} \in \mathbb{R}^{m \times o}$ is the state feedback gain matrix.
+where $K \in \mathbb{R}^{m \times n}$ is a feedback gain matrix, 
+and $r_{k}$ is a reference signal.   
 %
+The closed-loop model then takes the form 
+\begin{align}
+x_{k+1} = ( A_d - B_d K ) + B_d r_k. \nonumber
+\end{align}
+The gain matrix $K$ can be set so that the closed-loop dynamics are shaped as desired, 
+according to a desired goal or objective. 
+A standard objective is to obtain stable closed-loop dynamics. 
+
+\todo{[Here discuss Jury criterium]}  
+
+\bigskip
+
+\todo{[Unclear what the remainder of the section serves for. ]}
 The output and measurable of the plant is being sampled by an ADC, and since the full state of the
 plant cannot be witnessed directly, the controller software includes an observer that 
 estimates the state of the plant (see appendix for details on how such an observer
