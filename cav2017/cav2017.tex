@@ -46,7 +46,7 @@
 \mainmatter  % start of an individual contribution
 
 % first the title is needed
-\title{Automated Synthesis of State-Space Digital Systems}
+\title{Automated Formal Synthesis of Digital Controllers for State-Space Physical Plants} 
 
 % a short form should be given in case it is too long for the running head
 %\titlerunning{Lecture Notes in Computer Science: Authors' Instructions}
@@ -151,53 +151,86 @@ to look for candidate solutions in a reduced solution space.  %% The
 by adding more details about our synthesis approach to control systems?}
 
 %-------------------------------
+\subsection{Related Work}
+\label{sec:relw}
+%-------------------------------
+
+\todo{[Move material from \ref{sec:rw} here]}
+
+%-------------------------------
 \section{Preliminaries}
 \label{sec:preliminaries}
 %-------------------------------
 
 %-------------------------------
-\subsection{State-space representation of dynamical systems}
+\subsection{State-space representation of physical systems} 
 \label{ssec:ssrepresentation}
 %-------------------------------
 
-In this study, we focus on Cyber-Physical Systems with continuous 
-dynamical plants described by Ordinary Differential Equations (ODEs) 
-in the form
+We consider physical models expressed as ordinary differential equations (ODEs) with full state information:  
 %
 \begin{align}
 \label{eq:ode}
-\dot{\vec{x}}(t)&=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)\ \ :\ \ \vec{x} \in \mathbb{R}^{n}, \vec{u} \in \mathbb{R}^m, \mat{A} \in \mathbb{R}^{n \times n},\mat{B} \in \mathbb{R}^{n \times m}\\
-\vec{y}(t)&=\mat{C}\vec{x}(t)+\mat{D}\vec{u}(t)\ \ :\ \ \vec{y} \in \mathbb{R}^{o}, \mat{C} \in \mathbb{R}^{o \times n}, \mat{D}  \in \mathbb{R}^{o \times m}\nonumber
+\dot{x}(t) = Ax(t)+ B u(t)\ \ :\ \ x \in \mathbb{R}^{n}, u \in \mathbb{R}^m, A \in \mathbb{R}^{n \times n}, B \in \mathbb{R}^{n \times m}
 \end{align}
-\noindent where $\dot{\vec{x}}(t)$ describes the state evolution equation; 
-$\vec{y}(t)$ represents an instantaneous output equation; and $\mat{A}$, $\mat{B}$, $\mat{C}$, and $\mat{D}$ are matrices that fully specify 
-a continuous plant. Eq.~\eqref{eq:ode} is soundly discretized 
-(as shown in the appendix) into
+where $A$ and $B$ are matrices that fully specify the continuous plant.  
+\todo{[specify initial conditions? specify input ranges already here? ]} 
+Eq.~\eqref{eq:ode} is soundly discretised (as shown in the Appendix \todo{[there we can present directly the full LTI case with outputs]}) into
 %
 \begin{align}
 \label{eq:plant}
-\vec{x}_{k+1}&=\mat{A}_d\vec{x}_k+\mat{B}_d\vec{u}_k\\
-\vec{y}_k&=\mat{C}_d\vec{x}_k+\mat{D}_d\vec{u}_k .\nonumber
+x_{k+1} = A_d x_k+ B_d u_k. 
 \end{align}
 %
+The 
 
 %-------------------------------
-\subsection{State feedback control}
+\subsection{Controller synthesis via state feedback}
 \label{ssec:statefeedbackcontrol}
 %-------------------------------
 
-Feedback control is usually employed to modify and control the properties and behaviors of process and systems, reduce the effect of parametric uncertainties and attenuate the effects of noise and disturbance. A well-known feedback control technique is the state feedback control where the control action $\vec{u}_k$ is computed by:
+Models \eqref{eq:ode} and \eqref{eq:plant} depend on external non-determinism in the form of input signals $u (t), u_k$, respectively. 
+Feedback can be employed to affect the properties and behaviours of the process. 
+%reduce the effect of parametric uncertainties and attenuate the effects of noise and disturbance. 
+The most basec feedback architecture is the state feedback, 
+where the control action $\vec{u}_k$ is computed by: 
 %
 \begin{equation}
-\vec{u}_k=\vec{r}_{k}-\mat{K}\vec{x}_k.
+u_k = r_{k} - K x_k, 
 \end{equation}
 %
-where $\mat{K} \in \mathbb{R}^{m \times o}$ is the state feedback gain matrix.
+where $K \in \mathbb{R}^{m \times n}$ is a feedback gain matrix, 
+and $r_{k}$ is a reference signal.   
 %
+The closed-loop model then takes the form 
+\begin{align}
+x_{k+1} = ( A_d - B_d K ) + B_d r_k. \nonumber
+\end{align}
+The gain matrix $K$ can be set so that the closed-loop dynamics are shaped as desired, 
+according to a desired goal or objective. 
+A standard objective is to obtain stable closed-loop dynamics. 
+
+%-------------------------------
+\subsection{Stability of closed-loop systems}
+\label{ssec:stability}
+%-------------------------------
+
+\todo{[Here discuss Jury criterium for DISCRETE-TIME models - a simplified version of the first part of what is now in Section \ref{sec:cof_verification} (with no quantisation noises yet).]}  
+
+%-------------------------------
+\subsection{Digital implementation of feedback controller}
+\label{ssec:quantizationerror}
+%-------------------------------
+
+\todo{HERE add a figure similar to Fig. \label{fig:observersystem} to explain digital features of controller.} 
+
+\todo{[The remainder of the section needs to be updated. ]}
 The output and measurable of the plant is being sampled by an ADC, and since the full state of the
 plant cannot be witnessed directly, the controller software includes an observer that 
 estimates the state of the plant (see appendix for details on how such an observer
-is constructed). In this work, we are assuming that all the states measurements are available for the state feedback purpose, and the state observer design may be disregarded.  We further presume that there are small tolerances in the system 
+is constructed). In this work, we are assuming that all the states measurements are available for the state feedback purpose, and the state observer design may be disregarded.  
+\todo{[Unclear what the remainder is for: ]}
+We further presume that there are small tolerances in the system 
 described in the following form
 %
 \begin{align*}
@@ -212,20 +245,79 @@ as tolerances in the canonical forms outside of the row/column of interests and 
 evaluation. Whilst it is possible to address these with this methodology, we will focus on the case
 above for simplicity.
 
-%-------------------------------
-\subsection{Stability of closed-loop systems}
-\label{ssec:stability}
-%-------------------------------
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+\subsection{Numeric Representations and Soundness} 
+\label{sec:numeric_rep}
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-%-------------------------------
-\subsection{Quantization error in digital controllers of Cyber-Physical Systems}
-\label{ssec:quantizationerror}
-%-------------------------------
+Let $\mathbb{R} \langle I,F \rangle$ be a fixed point domain with $I$ bits representing the integer part and $F$ bits
+representing the decimal part. We will extend this notation to $\mathbb{R} \langle I,F,E \rangle$ to add a number of
+leading or trailing bits when the domain requires prescaling (ie the maximum is smaller than $0.5$ or the minimum
+is greater than $2$)
+Let also $\mathbb{R}_* \langle M,E \rangle$ be a floating point domain with $M$ bits
+mantissa and $E$ bits exponent. This domain corresponds to 
+$$\mathbb{R}_* \langle M,E \rangle = \bigcup_i \mathbb{R} \langle 1,M-1,E_i \rangle : 2^{1-E} \leq E_i  \leq 2^{E-1}$$
+This means that the distance between any two numbers in the domain depends on the
+location of those numbers.
+Since we've shown that a floating point domain is a union of a number of fixed point domains, we will continue our
+reasoning on fixed point only. Our points will apply to the floating point domain by extension.
+The following approximation errors will arise:
+\begin{enumerate}
+\item Truncation\\
+Let $\mathcal{F}\langle I,F \rangle(\cdot) : \mathbb{R} \rightarrow \mathbb{R}\langle I,F \rangle, \tilde x=\mathcal{F}\langle I,F \rangle(x) = x-\delta : \delta=x\ \%_F\  c\tilde x$, where $\%_F$ is the modulus operation performed on the last bit of the representation ($2^{-F}$).\\
+The number $\delta$ corresponds to the truncation error of the representation and it will propagate across operations.
+\item Rounding\\
+Every time an operation is performed on a number in the $\mathbb{R} \langle I,F,E \rangle$ domain, an error may be
+introduced due to truncation of the result.
+Let us define $c\langle i,f,e \rangle \in \mathbb{R}\langle I,F,E\rangle$, where $i \in [-2^{I-1}\ 2^{I-1}],f \in [0 1),e \in [-2^{E-1}\ 2^{E-1}]$ are its assigned values. The smallest number that can be represented for any given exponent is $c_{min(e)}=c\langle 0,2^{-F},e\rangle$.
+The following errors appear in simple operations:
+\begin{enumerate}
+\item Addition/Substraction: $c\langle \cdot,e_1\rangle \pm c\langle \cdot,e_2\rangle=c\langle \cdot,max(e_1,e_2)\rangle + \delta_3 : |\delta_3| \leq (e_1==e_2) ? 0 : c_{min(max(e_2,e_1))}$ 
+\item Multiplication: $c\langle \cdot,e_1\rangle * c\langle \cdot,e_2\rangle=c\langle \cdot,e_1+e_2\rangle + \delta_3 : |\delta_3| \leq c_{min(e_2+e_1)}$
+\end{enumerate}
+The bounds obtained for division are left to the reader as it will not be applied in this paper.
+
+At this point it is worth mentioning that not all systems truncate equally. In the definition above $\delta$ may be positive
+or negative, and even this decision can be made dependent on the sign of $x$. Common cases in computer systems are:
+round downwards (\emph{ie} to $-\infty$), round upwards (\emph{ie} to $+\infty$), and round to zero.
+Rounding errors are cumulative which means the overall error will statistically increase with every operation, thus algorithms
+performing fewer operations can be more precise in this respect than iterative ones. 
+\item Overflow\\
+Another source of error introduced by Finite Word Length representations is that of overflow. The finite word length set a
+maximum representable number in the domain ($\pm 2^{I-1}+1-2^{-F}$), which means that any number outside this range
+cannot be accurately represented by the domain (\emph{eg} $\delta=x-2^{I-1}+1-2^{-F}$). In the case of floating point, a special
+case for infinity has been introduced, which addresses some of this issues, but once the error has gone to infinity, the numbers
+become meaningless. It is the responsibility of software designers and tools to account for overflows and either supply saturation
+functions to prevent them or raise alarms in their presence. In the case of verification, the latter is seen as a safety problem.
+\item Null/Zeno behaviour\\
+Whilst this work does not explore the effect of Zeno behaviours, it is worth noting that this effect may also be caused by rounding
+errors in floating point programs. The reason for this is that if an operation contains two numbers which belong to disjoint sub-domains
+(\emph{ie} neither number can be represented in the domain of its counterpart), the resulting operation may become a no-op/skip,
+subsequently destabilizing the program.
+\end{enumerate}
+
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+\subsection{Fixed Word Length Effects on Matrix Multiplications}
+\label{sec:cof_fwl}
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Thus far we have presented a verification procedure for a digitalized plant in a continuous space (\emph{ie} the
+range of the quatizers is still $\mathbb{R}$. The next step we must reaize is that the controller and the observer
+exist in a digital program, hence their domain is $\mathbb{R}\langle I,F,E\rangle$. This has two separate effects
+on the model. If we recall equation \eqref{eq:to_of}, the matrices of the observer and the controller  are not necessarily those of the plant.
+In fact we have $\mat{A},\mat{B},\mat{C} \in \mathbb{R}^*$, $\mat{A}_o,\mat{B}_o,\mat{C}_o, \mat{K}_d, \mat{L}_d \in \mathbb{R}\langle I,F,E\rangle^*$
+Where $*$ represents the appropriate dimension for each matrix.
+Unfortunately this means that although combined matrices such as $\mat{A}_t$ are in the reals, they suffer from
+the fixed word restrictions in their composing matrices.
+The second effect corresponds to the rounding errors in the calculation of $\hat{x}_{k+1}, u_k$. These will introduce a new source of quantiztion noise which we may denote $\vec{\nu}_3 \in [-q_3\ \ q_3]$.
+The estimation of $\hat{\vec{x}}$ corresponds to the sum of three matrix-vector multiplications (we assume $\mat{C}_o$ in Objective form). Each of these has a coefficient-wise error bound $c_{min(max(e_{j1}+e_{j2}))}$. Hence the overall $\overline{\delta}_{\hat{x}}=3nc_{min(max(e_{j1}+e_{j2}))}$. The error in $\vec{u}$ corresponds of the multiplication of $\mat{K}_d\hat{\vec{x}}$, hence $q_3=\overline{\delta}_u=nc_{min(max(e_{k1}+e_{k2}))}+\sum_{k=1}^nc_k\overline{\delta}_{\hat{x}})=3n|\mat{K}|_1c_{min(max(e_{j1}+e_{j2}))}+nc_{min(max(e_{k1}+e_{k2}))}$
+
 
 %-------------------------------
 \subsection{Safety specifications for Cyber-Physical Systems}
 \label{ssec:safety}
 %-------------------------------
+
+\todo{The safety specification is defined over the state space, not the output. Further, please distinguish the spec from the input constraints. }
 
 Finally, we also require a safety specification $\Psi(\vec{u},\vec{y})$, which is
 given as a set of linear constraints over the inputs and outputs.
@@ -310,7 +402,8 @@ given as a set of linear constraints over the inputs and outputs.
 %%   %% \textcolor{red}{LC: Cristina, can you please fix this figure? The text ``candidate'' overlaps with the dotted box.}
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\section{Counterexample Guided Abstractly Refined Inductive Synthesis for LTI Cyberphysical Systems}\label{sec:CEGARIS}
+\section{Counterexample-Guided Abstractly-Refined Inductive Synthesis of Controllers for LTI Systems} 
+\label{sec:CEGARIS} 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 {\bf Assumption:} We consider the reference signal to be 0, whereas the initial states are non-deterministic.
@@ -318,7 +411,8 @@ given as a set of linear constraints over the inputs and outputs.
 \todo{Explain the implicaitions of this.}
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{Verification of a Conrollable Observed System}\label{sec:cof_verification}
+\subsection{Verification of a Controllable Observed System}
+\label{sec:cof_verification}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 Let us recall the formulas used for single-input and single-output (SISO) systems 
@@ -458,69 +552,6 @@ X_0 =&\left \{ \left[\begin{array}{c}\vec{x}\\ \hat{\vec{x}}_e \end{array}\right
 %
 where $\mathcal{A}_t=\bigcup_{k=1}^\infty \mat{A}^k, \mathcal{B}_{tp}=\bigcup_{k=1}^\infty \sum_{i=0}^k\mat{A}^i\mat{B}_{tp}, \mathcal{B}_{tn}=\bigcup_{k=1}^\infty \sum_{i=0}^k\mat{A}^i\mat{B}_{tn}$ are abstract matrices for the system in \eqref{eq:observer_LTI_cf}. It is worth noting that $r$ is a non-deterministic parametric input (\emph{ie} $\forall k>0, r_{k+1} =r_k$) whereas the set N is composed of non-deterministic variable inputs.
 
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{Numeric Representations and Soundness} \label{sec:numeric_rep}
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-Let $\mathbb{R} \langle I,F \rangle$ be a fixed point domain with $I$ bits representing the integer part and $F$ bits
-representing the decimal part. We will extend this notation to $\mathbb{R} \langle I,F,E \rangle$ to add a number of
-leading or trailing bits when the domain requires prescaling (ie the maximum is smaller than $0.5$ or the minimum
-is greater than $2$)
-Let also $\mathbb{R}_* \langle M,E \rangle$ be a floating point domain with $M$ bits
-mantissa and $E$ bits exponent. This domain corresponds to 
-$$\mathbb{R}_* \langle M,E \rangle = \bigcup_i \mathbb{R} \langle 1,M-1,E_i \rangle : 2^{1-E} \leq E_i  \leq 2^{E-1}$$
-This means that the distance between any two numbers in the domain depends on the
-location of those numbers.
-Since we've shown that a floating point domain is a union of a number of fixed point domains, we will continue our
-reasoning on fixed point only. Our points will apply to the floating point domain by extension.
-The following approximation errors will arise:
-\begin{enumerate}
-\item Truncation\\
-Let $\mathcal{F}\langle I,F \rangle(\cdot) : \mathbb{R} \rightarrow \mathbb{R}\langle I,F \rangle, \tilde x=\mathcal{F}\langle I,F \rangle(x) = x-\delta : \delta=x\ \%_F\  c\tilde x$, where $\%_F$ is the modulus operation performed on the last bit of the representation ($2^{-F}$).\\
-The number $\delta$ corresponds to the truncation error of the representation and it will propagate across operations.
-\item Rounding\\
-Every time an operation is performed on a number in the $\mathbb{R} \langle I,F,E \rangle$ domain, an error may be
-introduced due to truncation of the result.
-Let us define $c\langle i,f,e \rangle \in \mathbb{R}\langle I,F,E\rangle$, where $i \in [-2^{I-1}\ 2^{I-1}],f \in [0 1),e \in [-2^{E-1}\ 2^{E-1}]$ are its assigned values. The smallest number that can be represented for any given exponent is $c_{min(e)}=c\langle 0,2^{-F},e\rangle$.
-The following errors appear in simple operations:
-\begin{enumerate}
-\item Addition/Substraction: $c\langle \cdot,e_1\rangle \pm c\langle \cdot,e_2\rangle=c\langle \cdot,max(e_1,e_2)\rangle + \delta_3 : |\delta_3| \leq (e_1==e_2) ? 0 : c_{min(max(e_2,e_1))}$ 
-\item Multiplication: $c\langle \cdot,e_1\rangle * c\langle \cdot,e_2\rangle=c\langle \cdot,e_1+e_2\rangle + \delta_3 : |\delta_3| \leq c_{min(e_2+e_1)}$
-\end{enumerate}
-The bounds obtained for division are left to the reader as it will not be applied in this paper.
-
-At this point it is worth mentioning that not all systems truncate equally. In the definition above $\delta$ may be positive
-or negative, and even this decision can be made dependent on the sign of $x$. Common cases in computer systems are:
-round downwards (\emph{ie} to $-\infty$), round upwards (\emph{ie} to $+\infty$), and round to zero.
-Rounding errors are cumulative which means the overall error will statistically increase with every operation, thus algorithms
-performing fewer operations can be more precise in this respect than iterative ones. 
-\item Overflow\\
-Another source of error introduced by Finite Word Length representations is that of overflow. The finite word length set a
-maximum representable number in the domain ($\pm 2^{I-1}+1-2^{-F}$), which means that any number outside this range
-cannot be accurately represented by the domain (\emph{eg} $\delta=x-2^{I-1}+1-2^{-F}$). In the case of floating point, a special
-case for infinity has been introduced, which addresses some of this issues, but once the error has gone to infinity, the numbers
-become meaningless. It is the responsibility of software designers and tools to account for overflows and either supply saturation
-functions to prevent them or raise alarms in their presence. In the case of verification, the latter is seen as a safety problem.
-\item Null/Zeno behaviour\\
-Whilst this work does not explore the effect of Zeno behaviours, it is worth noting that this effect may also be caused by rounding
-errors in floating point programs. The reason for this is that if an operation contains two numbers which belong to disjoint sub-domains
-(\emph{ie} neither number can be represented in the domain of its counterpart), the resulting operation may become a no-op/skip,
-subsequently destabilizing the program.
-\end{enumerate}
-
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{Fixed Word Length Effects on Matrix Multiplications}\label{sec:cof_fwl}
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-Thus far we have presented a verification procedure for a digitalized plant in a continuous space (\emph{ie} the
-range of the quatizers is still $\mathbb{R}$. The next step we must reaize is that the controller and the observer
-exist in a digital program, hence their domain is $\mathbb{R}\langle I,F,E\rangle$. This has two separate effects
-on the model. If we recall equation \eqref{eq:to_of}, the matrices of the observer and the controller  are not necessarily those of the plant.
-In fact we have $\mat{A},\mat{B},\mat{C} \in \mathbb{R}^*$, $\mat{A}_o,\mat{B}_o,\mat{C}_o, \mat{K}_d, \mat{L}_d \in \mathbb{R}\langle I,F,E\rangle^*$
-Where $*$ represents the appropriate dimension for each matrix.
-Unfortunately this means that although combined matrices such as $\mat{A}_t$ are in the reals, they suffer from
-the fixed word restrictions in their composing matrices.
-The second effect corresponds to the rounding errors in the calculation of $\hat{x}_{k+1}, u_k$. These will introduce a new source of quantiztion noise which we may denote $\vec{\nu}_3 \in [-q_3\ \ q_3]$.
-The estimation of $\hat{\vec{x}}$ corresponds to the sum of three matrix-vector multiplications (we assume $\mat{C}_o$ in Objective form). Each of these has a coefficient-wise error bound $c_{min(max(e_{j1}+e_{j2}))}$. Hence the overall $\overline{\delta}_{\hat{x}}=3nc_{min(max(e_{j1}+e_{j2}))}$. The error in $\vec{u}$ corresponds of the multiplication of $\mat{K}_d\hat{\vec{x}}$, hence $q_3=\overline{\delta}_u=nc_{min(max(e_{k1}+e_{k2}))}+\sum_{k=1}^nc_k\overline{\delta}_{\hat{x}})=3n|\mat{K}|_1c_{min(max(e_{j1}+e_{j2}))}+nc_{min(max(e_{k1}+e_{k2}))}$
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{Synthesisig the dynamics}\label{sec:cof_synth}
@@ -1109,6 +1140,7 @@ Pendulum   & $\left[\begin{array}{cc}
 
 %-------------------------------
 \section{Related Work}
+\label{sec:rw}
 %-------------------------------
 
 \paragraph{CEGIS}
@@ -1183,6 +1215,36 @@ This paper uses an approach that projects the maximum effect of the noise over
 an unbounded time and uses it as a `buffer' region for the safety specification.
 
 \textcolor{red}{LC: Cristina and Dario, should we further expand this section with other initiatives to synthesise control systems?}
+
+%-------------------------------
+\section{Extensions}
+\label{sec:extensions}
+%-------------------------------
+
+%-------------------------------
+\subsection{LTI systems with output} 
+\label{ssec:LTI}
+%-------------------------------
+
+LTI models in the form: 
+%
+\begin{align}
+\label{eq:ode}
+\dot{\vec{x}}(t)&=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)\ \ :\ \ \vec{x} \in \mathbb{R}^{n}, \vec{u} \in \mathbb{R}^m, \mat{A} \in \mathbb{R}^{n \times n},\mat{B} \in \mathbb{R}^{n \times m}\\
+\vec{y}(t)&=\mat{C}\vec{x}(t)+\mat{D}\vec{u}(t)\ \ :\ \ \vec{y} \in \mathbb{R}^{o}, \mat{C} \in \mathbb{R}^{o \times n}, \mat{D}  \in \mathbb{R}^{o \times m}\nonumber
+\end{align}
+\noindent where $\dot{\vec{x}}(t)$ describes the state evolution equation; 
+$\vec{y}(t)$ represents an instantaneous output equation; and $\mat{A}$, $\mat{B}$, $\mat{C}$, and $\mat{D}$ are matrices that fully specify 
+a continuous plant. Eq.~\eqref{eq:ode} is soundly discretized 
+(as shown in the appendix) into
+%
+\begin{align}
+\label{eq:plant}
+\vec{x}_{k+1}&=\mat{A}_d\vec{x}_k+\mat{B}_d\vec{u}_k\\
+\vec{y}_k&=\mat{C}_d\vec{x}_k+\mat{D}_d\vec{u}_k .\nonumber
+\end{align}
+%
+
 
 \newpage
 

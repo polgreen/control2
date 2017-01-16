@@ -44,13 +44,12 @@ typedef struct {
       .ref = {{0.0}},
   };
 
-  extern __CPROVER_fxp_t K_fxp[NSTATES];
+  extern __CPROVER_fxp_t K_fxp[NINPUTS][NSTATES];
 
   void inputs_equal_ref_minus_k_times_states(void)
   {
     __CPROVER_fxp_t states_fxp[NSTATES];
     __CPROVER_fxp_t result_fxp[NINPUTS];
-    __CPROVER_EIGEN_fixedbvt result_double[NINPUTS];
 
     int k, i;
     for(k=0; k<NSTATES;k++)
@@ -64,12 +63,11 @@ typedef struct {
 
     for(i=0; i<NINPUTS; i++)
      {
-        result_double[i] = (__CPROVER_EIGEN_fixedbvt)result_fxp[i];
-        _controller.inputs[i] = _controller.ref[i] - result_double;
+        _controller.inputs[i] = _controller.ref[i] - (__CPROVER_EIGEN_fixedbvt)result_fxp[i];
      }
   }
 
-  /*void outputs_equals_C_states_plus_D_inputs(void)
+  /*void outputs_equals_C_states_plus_D_inputs(void) //this is not needed becuase our safety spec is bounds on the states.
   {
     int i,j,k;
 
@@ -125,8 +123,9 @@ typedef struct {
       __CPROVER_assume(_controller.states[j]<INITIALSTATE_UPPERBOUND & _controller.states[j]>INITIALSTATE_LOWERBOUND);
       }
 
-    for(i=0; i<NSTATES;i++){ //convert controller to fixed point
-            K_fxp[i]= (__CPROVER_fxp_t)_controller.K[i];
+    for(i=0; i<NINPUTS;i++){
+      for(j=0; j<NSTATES; j++)//convert controller to fixed point
+      { K_fxp[i][j]= (__CPROVER_fxp_t)_controller.K[i][j];}
     }
   
     for(k=0; k<NUMBERLOOPS; k++)
