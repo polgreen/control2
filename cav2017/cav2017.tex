@@ -118,9 +118,11 @@ and requires considerable expertise.
 Whilst there is a vast literature in validation of control systems,
 the subject of control synthesis has been somewhat restricted in the
 properties it explores.  Traditionally, this focuses mainly on the
-subject of stability, working typically on continuous domains
-\cite{sadabadi2016static}, or using switched
-models~\cite{DBLP:conf/emsoft/RavanbakhshS16}.  Reachability tools are
+subject of stability %, working typically on continuous domains
+\cite{sadabadi2016static, DBLP:journals/corr/AbateBCCDKK16}, or using switched
+models~\cite{DBLP:conf/emsoft/RavanbakhshS16}.
+
+Reachability tools are
 also used when discretizing the state-space for both verification and
 parametric synthesis~\cite{cimatti2013parameter}.
 In this paper, however, we propose the synthesis of control algorithms for
@@ -128,9 +130,15 @@ cyberphysical systems taking into consideration the continuous domain
 of the plant, alongside the discrete domain of the controller and the
 hybrid elements that communicate them.
 
+In this paper, we synthesize controllers for hybrid
+closed-loop systems, i.e., software-implemented embedded controllers along
+with a model of their physical environment (the plant), that are
+\emph{safe}.  Due to the complexity of such systems, in this work we focus
+on linear models with known configurations and perform parametric synthesis
+of safe digital controllers.
 To this end, we formalise the notion of solution generalisation for
 Counter-Example Guided Inductive Synthesis (CEGIS), which makes use 
-of Counter-Example Guided Abstraction Refinement (CEGAR),
+of abstraction refinement
 %on simplified abstractions of the system
 in order to achieve scalability.
 This strategy enables the inductive generalisation engine inside CEGIS
@@ -304,6 +312,10 @@ given as a set of linear constraints over the inputs and outputs.
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \section{Counterexample Guided Abstractly Refined Inductive Synthesis for LTI Cyberphysical Systems}\label{sec:CEGARIS}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+{\bf Assumption:} We consider the reference signal to be 0, whereas the initial states are non-deterministic.
+
+\todo{Explain the implicaitions of this.}
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{Verification of a Conrollable Observed System}\label{sec:cof_verification}
