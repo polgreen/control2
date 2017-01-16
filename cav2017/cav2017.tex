@@ -159,33 +159,29 @@ by adding more details about our synthesis approach to control systems?}
 \label{ssec:ssrepresentation}
 %-------------------------------
 
-In this study, we focus on Cyber-Physical Systems with continuous 
-dynamical plants described by Ordinary Differential Equations (ODEs) 
-in the form
+We consider physical models expressed as ordinary differential equations (ODEs) with full state information:  
 %
 \begin{align}
 \label{eq:ode}
-\dot{\vec{x}}(t)&=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)\ \ :\ \ \vec{x} \in \mathbb{R}^{n}, \vec{u} \in \mathbb{R}^m, \mat{A} \in \mathbb{R}^{n \times n},\mat{B} \in \mathbb{R}^{n \times m}\\
-\vec{y}(t)&=\mat{C}\vec{x}(t)+\mat{D}\vec{u}(t)\ \ :\ \ \vec{y} \in \mathbb{R}^{o}, \mat{C} \in \mathbb{R}^{o \times n}, \mat{D}  \in \mathbb{R}^{o \times m}\nonumber
+\dot{x}(t) = Ax(t)+ B u(t)\ \ :\ \ x \in \mathbb{R}^{n}, u \in \mathbb{R}^m, A \in \mathbb{R}^{n \times n}, B \in \mathbb{R}^{n \times m}
 \end{align}
-\noindent where $\dot{\vec{x}}(t)$ describes the state evolution equation; 
-$\vec{y}(t)$ represents an instantaneous output equation; and $\mat{A}$, $\mat{B}$, $\mat{C}$, and $\mat{D}$ are matrices that fully specify 
-a continuous plant. Eq.~\eqref{eq:ode} is soundly discretized 
-(as shown in the appendix) into
+where $A$ and $B$ are matrices that fully specify the continuous plant. 
+Eq.~\eqref{eq:ode} is soundly discretised (as shown in the Appendix \todo{[there we can present directly the full LTI case with outputs]}) into
 %
 \begin{align}
 \label{eq:plant}
-\vec{x}_{k+1}&=\mat{A}_d\vec{x}_k+\mat{B}_d\vec{u}_k\\
-\vec{y}_k&=\mat{C}_d\vec{x}_k+\mat{D}_d\vec{u}_k .\nonumber
+x_{k+1}&= A_d x_k+ B_d u_k. 
 \end{align}
 %
+The 
 
 %-------------------------------
 \subsection{Controller synthesis via state feedback}
 \label{ssec:statefeedbackcontrol}
 %-------------------------------
 
-Feedback control is usually employed to modify and control the properties and behaviors of process and systems, reduce the effect of parametric uncertainties and attenuate the effects of noise and disturbance. A well-known feedback control technique is the state feedback control where the control action $\vec{u}_k$ is computed by:
+Feedback control is usually employed to modify and control the properties and behaviors of process and systems, 
+reduce the effect of parametric uncertainties and attenuate the effects of noise and disturbance. A well-known feedback control technique is the state feedback control where the control action $\vec{u}_k$ is computed by:
 %
 \begin{equation}
 \vec{u}_k=\vec{r}_{k}-\mat{K}\vec{x}_k.
@@ -314,11 +310,12 @@ given as a set of linear constraints over the inputs and outputs.
 %%   %% \textcolor{red}{LC: Cristina, can you please fix this figure? The text ``candidate'' overlaps with the dotted box.}
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\section{Counterexample Guided Abstractly Refined Inductive Synthesis for LTI Cyberphysical Systems}\label{sec:CEGARIS}
+\section{Counterexample-Guided Abstractly-Refined Inductive Synthesis of Controllers for LTI Systems} 
+\label{sec:CEGARIS} 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{Verification of a Conrollable Observed System}\label{sec:cof_verification}
+\subsection{Verification of a Controllable Observed System}\label{sec:cof_verification}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 Let us recall the formulas used for single-input and single-output (SISO) systems 
@@ -1184,6 +1181,36 @@ This paper uses an approach that projects the maximum effect of the noise over
 an unbounded time and uses it as a `buffer' region for the safety specification.
 
 \textcolor{red}{LC: Cristina and Dario, should we further expand this section with other initiatives to synthesise control systems?}
+
+%-------------------------------
+\section{Extensions}
+\label{sec:extensions}
+%-------------------------------
+
+%-------------------------------
+\subsection{LTI systems with output} 
+\label{ssec:LTI}
+%-------------------------------
+
+LTI models in the form: 
+%
+\begin{align}
+\label{eq:ode}
+\dot{\vec{x}}(t)&=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)\ \ :\ \ \vec{x} \in \mathbb{R}^{n}, \vec{u} \in \mathbb{R}^m, \mat{A} \in \mathbb{R}^{n \times n},\mat{B} \in \mathbb{R}^{n \times m}\\
+\vec{y}(t)&=\mat{C}\vec{x}(t)+\mat{D}\vec{u}(t)\ \ :\ \ \vec{y} \in \mathbb{R}^{o}, \mat{C} \in \mathbb{R}^{o \times n}, \mat{D}  \in \mathbb{R}^{o \times m}\nonumber
+\end{align}
+\noindent where $\dot{\vec{x}}(t)$ describes the state evolution equation; 
+$\vec{y}(t)$ represents an instantaneous output equation; and $\mat{A}$, $\mat{B}$, $\mat{C}$, and $\mat{D}$ are matrices that fully specify 
+a continuous plant. Eq.~\eqref{eq:ode} is soundly discretized 
+(as shown in the appendix) into
+%
+\begin{align}
+\label{eq:plant}
+\vec{x}_{k+1}&=\mat{A}_d\vec{x}_k+\mat{B}_d\vec{u}_k\\
+\vec{y}_k&=\mat{C}_d\vec{x}_k+\mat{D}_d\vec{u}_k .\nonumber
+\end{align}
+%
+
 
 \newpage
 
