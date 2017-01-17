@@ -7,6 +7,8 @@ typedef __CPROVER_fixedbv[32][16] __CPROVER_EIGEN_fixedbvt;
 #define NOUTPUTS 1u
 #define INITIALSTATE_UPPERBOUND 1.0
 #define INITIALSTATE_LOWERBOUND 0.0
+#define INPUT_UPPERBOUND 1.0
+#define INPUT_LOWERBOUND 0.0
 #define NUMBERLOOPS  15 //number of timesteps to check safety spec over
 #define INT_BITS 7
 #define FRAC_BITS 3
@@ -257,6 +259,7 @@ void inputs_equal_ref_minus_k_times_states(void)
     for(i=0; i<NINPUTS; i++)
      {
         _controller.inputs[i] = _controller.ref[i] - (__CPROVER_EIGEN_fixedbvt)result_fxp[i];
+         __CPROVER_assume(_controller.inputs[i]<INPUT_UPPERBOUND & _controller.inputs[i]>INPUT_LOWERBOUND);
      }
   }
 
