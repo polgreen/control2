@@ -2,7 +2,7 @@
 
 typedef __CPROVER_fixedbv[32][16] __CPROVER_EIGEN_fixedbvt;
 
-#define NSTATES 4u
+#define NSTATES 3u
 #define NINPUTS 1u
 #define NOUTPUTS 1u
 #define INITIALSTATE_UPPERBOUND 1.0
@@ -60,7 +60,7 @@ const digital_system_state_space _controller=
 #define __CPROVER_EIGEN_POLY_SIZE (NSTATES + 1u)
 //const __CPROVER_EIGEN_fixedbvt __CPROVER_EIGEN_TEST_A[__CPROVER_EIGEN_MATRIX_SIZE][__CPROVER_EIGEN_MATRIX_SIZE] = { { 0.0, 1.0, 0.0 }, { 0.0, 0.0, 1.0 }, { 1.0, 0.0, 0.0 } };
 //extern const __CPROVER_EIGEN_fixedbvt __CPROVER_EIGEN_TEST_A[__CPROVER_EIGEN_MATRIX_SIZE][__CPROVER_EIGEN_MATRIX_SIZE];
-__CPROVER_EIGEN_fixedbvt __CPROVER_EIGEN_poly[5];
+__CPROVER_EIGEN_fixedbvt __CPROVER_EIGEN_poly[__CPROVER_EIGEN_POLY_SIZE];
 
 
 __CPROVER_EIGEN_fixedbvt internal_pow(__CPROVER_EIGEN_fixedbvt a, unsigned int b){
