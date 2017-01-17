@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
 #define NSTATES 3u
 #define NINPUTS 1u
 #define NOUTPUTS 1u
@@ -22,7 +23,6 @@ typedef int64_t fxp_t;
 
 __CPROVER_EIGEN_fixedbvt nondet_double(void);
 
-//extern __CPROVER_fxp_t K_fxp[NINPUTS][NSTATES];
 
 typedef struct {
    int int_bits;
@@ -50,8 +50,8 @@ continuous_time_system _controller=
     .D = { { 0.0 } },
     //.K = { { nondet_double(), nondet_double(), nondet_double() } },
     .K = { { 1072.1259765625, 1665.046875, -2047.998779296875 } },
-    .inputs = { { 1.0 } },
-    .ref = {{0.0}},
+    .inputs = {  1.0  },
+    .ref = {0.0},
 };
 
 const implementation impl = {
@@ -147,28 +147,28 @@ void fxp_matrix_multiplication( unsigned int i1, unsigned int j1, unsigned int i
     }
 }
 
-void inputs_equal_ref_minus_k_times_states(void)
+void inputs_equal_ref_minus_k_times_states(__CPROVER_fxp_t K_fxp[NINPUTS][NSTATES])
   {
- 	int i,j,k;
- 	__CPROVER_EIGEN_fixedbvt result1[NINPUTS];
-    fxp_t states_fxp[NSTATES];
-    fxp_t result_fxp[NINPUTS];
+      
+	__CPROVER_fxp_t states_fxp[NSTATES];
+    __CPROVER_fxp_t result_fxp[NINPUTS];
+
+    int k, i;
+    for(k=0; k<NSTATES;k++)
+      {states_fxp[k]= fxp_double_to_fxp(_controller.states[k]);}
+
+    for(i=0; i<NINPUTS; i++)
+    {
+      for(k=0; k<NSTATES; k++)
+        { result_fxp[i] = result_fxp[i] + (K_fxp[i][k] * states_fxp[k]);}
+    }
+
+    for(i=0; i<NINPUTS; i++)
+     {
+        _controller.inputs[i] = _controller.ref[i] - fxp_to_double(result_fxp[i]);
+     }
   
-	for(k=0; k<NSTATES;k++){
-        states_fxp[k]= fxp_double_to_fxp(_controller.states[k]);
-	}
-
-    fxp_matrix_multiplication(NOUTPUTS,NSTATES,NSTATES,1,K_fxp,states_fxp,result_fxp);
-
-    for(k=0; k < NOUTPUTS; k++){
-        result1[k]= fxp_to_double(result_fxp[k]);
-	}
-	
-	for(i=0; i<NINPUTS; i++){
-		_controller.inputs[i] = _controller.ref[i] - result1[i];
-	}
-    
-  }
+}
 
 void states_equals_A_states_plus_B_inputs(void)
  {
@@ -191,6 +191,7 @@ void states_equals_A_states_plus_B_inputs(void)
 int check_safety(void)
 {
   int i,j,k;
+	__CPROVER_fxp_t K_fxp[NINPUTS][NSTATES];
 
   for(j=0; j<NSTATES; j++)//set initial states and reference
   {
@@ -205,7 +206,7 @@ int check_safety(void)
 
   for(k=0; k<NUMBERLOOPS; k++)
   {
-    inputs_equal_ref_minus_k_times_states(); //update inputs one time step
+    inputs_equal_ref_minus_k_times_states(K_fxp); //update inputs one time step
     states_equals_A_states_plus_B_inputs(); //update states one time step
 
     for(i=0; i<NSTATES; i++)
@@ -219,7 +220,10 @@ int check_safety(void)
 
 int main()
 {
-	check_safety();
+	if(check_safety()==0)
+		printf("bollocks \n");
+	else
+		printf(" Yay \o/ \n");	
 return 0;
 }
 
