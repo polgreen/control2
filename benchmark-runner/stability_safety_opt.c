@@ -1,52 +1,45 @@
 #include <stdio.h>
 
-typedef __CPROVER_fixedbv[32][16] __CPROVER_EIGEN_fixedbvt;
+typedef __CPROVER_fixedbv[24][12] __CPROVER_EIGEN_fixedbvt;
 
 #define NSTATES 3u
 #define NINPUTS 1u
 #define NOUTPUTS 1u
-#define INITIALSTATE_UPPERBOUND 1.0
-#define INITIALSTATE_LOWERBOUND 0.0
+#define INITIALSTATE_UPPERBOUND 0.1
+#define INITIALSTATE_LOWERBOUND -0.1
 #define INPUT_UPPERBOUND 1.0
-#define INPUT_LOWERBOUND 0.0
-#define NUMBERLOOPS  15 //number of timesteps to check safety spec over
+#define INPUT_LOWERBOUND -1.0
+#define NUMBERLOOPS 50 //number of timesteps to check safety spec over
 #define INT_BITS 7
 #define FRAC_BITS 3
 #define SAFE_STATE_UPPERBOUND 10
 #define SAFE_STATE_LOWERBOUND -10
 
-typedef __CPROVER_fixedbv[INT_BITS+FRAC_BITS][FRAC_BITS] __CPROVER_fxp_t;
-__CPROVER_EIGEN_fixedbvt nondet_double(void);
-extern __CPROVER_fxp_t K_fxp[NINPUTS][NSTATES];
+//typedef __CPROVER_fixedbv[INT_BITS+FRAC_BITS][FRAC_BITS] __CPROVER_fxp_t;
+typedef __CPROVER_fixedbv[16][FRAC_BITS] __CPROVER_fxp_t;
+//__CPROVER_EIGEN_fixedbvt nondet_double(void);
+extern __CPROVER_fxp_t K_fxp[NSTATES];
 __CPROVER_EIGEN_fixedbvt _AminusBK[NSTATES][NSTATES];
 
-typedef struct {
-    __CPROVER_EIGEN_fixedbvt const A[NSTATES][NSTATES];
-    __CPROVER_EIGEN_fixedbvt const B[NSTATES][NINPUTS];
-    __CPROVER_EIGEN_fixedbvt const C[NOUTPUTS][NSTATES];
-    __CPROVER_EIGEN_fixedbvt const D[NOUTPUTS][NINPUTS];
 
-    __CPROVER_EIGEN_fixedbvt states[NSTATES];
-    __CPROVER_EIGEN_fixedbvt outputs[NOUTPUTS];
-    __CPROVER_EIGEN_fixedbvt inputs[NINPUTS];
-    __CPROVER_EIGEN_fixedbvt const K[NINPUTS][NSTATES];
-    __CPROVER_EIGEN_fixedbvt const ref[NINPUTS];
-} digital_system_state_space;
-
-__CPROVER_EIGEN_fixedbvt nondet_double(void);
-extern __CPROVER_fxp_t K_fxp[NINPUTS][NSTATES];
+const __CPROVER_EIGEN_fixedbvt _controller_A[NSTATES][NSTATES] = {{ 1.0009,-0.029331,0.0021569},{0.03125,0,0},{0,0.0039062,0 }};
+const __CPROVER_EIGEN_fixedbvt _controller_B[NSTATES] = { { 64.0 },{0.0},{0.0} };
+extern const __CPROVER_EIGEN_fixedbvt _controller_K[NSTATES];
+__CPROVER_EIGEN_fixedbvt _controller_inputs = 1.0;
+extern __CPROVER_EIGEN_fixedbvt _controller_states[NSTATES];
 
 /*const digital_system_state_space _controller=
 {
-    .A = { { 4.6764e-166,0.0,0.0}, { 5.1253e-144,0.0,0.0}, { 0,2.5627e-144,0.0} },
-    .B = { { 0.125},{0.0},{0.0} },
-    .C = { { 0.16,-5.9787e-32,0.0 } },
+
+    .A = {{ 1.0009,-0.029331,0.0021569},{0.03125,0,0},{0,0.0039062,0 }},
+    .B = { { 64},{0.0},{0.0} },
+    .C = { {0.0058044,0.37148,47.5494} },
     .D = { { 0.0 } },
     .K = { { nondet_double(), nondet_double(), nondet_double() } },
     //.K = { { 1072.1259765625, 1665.046875, -2047.998779296875 } },
     .inputs = { { 1.0 } },
 };*/
-
+/*
 const digital_system_state_space _controller=
 {
     .A = { { 4.6764e-166,0.0,0.0}, { 5.1253e-144,0.0,0.0}, { 0,2.5627e-144,0.0} },
@@ -57,12 +50,10 @@ const digital_system_state_space _controller=
     //.K = { { 1072.1259765625, 1665.046875, -2047.998779296875 } },
     .inputs = { { 1.0 } },
     .ref = {{0.0}},
-};
+};*/
 
 
 #define __CPROVER_EIGEN_POLY_SIZE (NSTATES + 1u)
-//const __CPROVER_EIGEN_fixedbvt __CPROVER_EIGEN_TEST_A[__CPROVER_EIGEN_MATRIX_SIZE][__CPROVER_EIGEN_MATRIX_SIZE] = { { 0.0, 1.0, 0.0 }, { 0.0, 0.0, 1.0 }, { 1.0, 0.0, 0.0 } };
-//extern const __CPROVER_EIGEN_fixedbvt __CPROVER_EIGEN_TEST_A[__CPROVER_EIGEN_MATRIX_SIZE][__CPROVER_EIGEN_MATRIX_SIZE];
 __CPROVER_EIGEN_fixedbvt __CPROVER_EIGEN_poly[__CPROVER_EIGEN_POLY_SIZE];
 
 
@@ -161,7 +152,6 @@ int check_stability(void){
 #define __m _AminusBK
 void __CPROVER_EIGEN_charpoly_2(void) { //m00*m11 - m10*m11 - m00*x - m11*x + x^2
 
-
   __CPROVER_EIGEN_poly[2] = __m[0][0]*__m[1][1] - __m[1][0]*__m[1][1];
 
   __CPROVER_EIGEN_poly[1] = -__m[0][0] - __m[1][1];
@@ -221,19 +211,18 @@ void __CPROVER_EIGEN_charpoly(void){
 void A_minus_B_K()
 {
   int i,j,k;
-  for(i=0; i<NSTATES; i++)
+  /*for(i=0; i<NSTATES; i++)
    {
     for(j=0; j<NSTATES; j++)
-      {_AminusBK[i][j] = _controller.A[i][j];}
-   }
+      {_AminusBK[i][j] = _controller_A[i][j];}
+   }*/
+  __CPROVER_array_copy(_AminusBK, _controller_A);
 
   for (i=0;i<NSTATES; i++) { //rows of B
       for (j=0; j<NSTATES; j++) { //columns of K
-          for (k=0; k<NINPUTS; k++) { //columns of B
-              _AminusBK[i][j] = _AminusBK[i][j] - (_controller.B[i][k] * _controller.K[k][j]);
+              _AminusBK[i][j] -= _controller_B[i] * _controller_K[j];
           }
       }
-  }
 }
 
 void closed_loop(void)
@@ -244,56 +233,68 @@ void closed_loop(void)
 void inputs_equal_ref_minus_k_times_states(void)
   {
     __CPROVER_fxp_t states_fxp[NSTATES];
-    __CPROVER_fxp_t result_fxp[NINPUTS];
+    //inputs_equal_ref_minus_k_times_states_result_fxp
+    //single input
+    __CPROVER_fxp_t result_fxp=0;
 
-    int k, i;
-    for(k=0; k<NSTATES;k++)
-      {states_fxp[k]= (__CPROVER_fxp_t)_controller.states[k];}
+  /*  for(k=0; k<NSTATES;k++)
+      {states_fxp[k]= (__CPROVER_fxp_t)_controller_states[k];}*/
 
-    for(i=0; i<NINPUTS; i++)
-    {
-      for(k=0; k<NSTATES; k++)
-        { result_fxp[i] = result_fxp[i] + (K_fxp[i][k] * states_fxp[k]);}
-    }
+      for(int k=0; k<NSTATES; k++)
+        { result_fxp += (K_fxp[k] * (__CPROVER_fxp_t)_controller_states[k]);}
 
-    for(i=0; i<NINPUTS; i++)
-     {
-        _controller.inputs[i] = _controller.ref[i] - (__CPROVER_EIGEN_fixedbvt)result_fxp[i];
-         __CPROVER_assume(_controller.inputs[i]<INPUT_UPPERBOUND & _controller.inputs[i]>INPUT_LOWERBOUND);
-     }
+        _controller_inputs = -(__CPROVER_EIGEN_fixedbvt)result_fxp;
+        __CPROVER_assume(_controller_inputs<INPUT_UPPERBOUND && _controller_inputs>INPUT_LOWERBOUND);
   }
+
+__CPROVER_EIGEN_fixedbvt states_equals_A_states_plus_B_inputs_result[NSTATES];
 
 void states_equals_A_states_plus_B_inputs(void)
  {
-   __CPROVER_EIGEN_fixedbvt result[NSTATES];
-   int i,k;
-   for(i=0; i<NSTATES; i++)
+   __CPROVER_array_set(states_equals_A_states_plus_B_inputs_result, (__CPROVER_EIGEN_fixedbvt)0.0);
+   //int i,k;
+   for(int i=0; i<NSTATES; i++)
    {
-    result[i]=0;
-    for(k=0; k<NSTATES; k++)
-         {result[i] = result[i] + _controller.A[i][k]*_controller.states[k];}
-    for(k=0; k<NSTATES; k++)
-         {result[i] = result[i] +_controller.B[i][k]*_controller.inputs[k];}
+     //states_equals_A_states_plus_B_inputs_result[i]=0;
+    for(int k=0; k<NSTATES; k++) {
+      states_equals_A_states_plus_B_inputs_result[i] += _controller_A[i][k]*_controller_states[k];
+      states_equals_A_states_plus_B_inputs_result[i] += _controller_B[i]*_controller_inputs;
+    }
+    /*for(k=0; k<NSTATES; k++)
+         {states_equals_A_states_plus_B_inputs_result[i] += _controller_B[i][k]*_controller_inputs[k];}*/
    }
-   for(i=0; i<NSTATES; i++)
-       {_controller.states[i] = result[i];}
+   __CPROVER_array_copy(_controller_states, states_equals_A_states_plus_B_inputs_result);
+   /*for(i=0; i<NSTATES; i++)
+       {_controller_states[i] = states_equals_A_states_plus_B_inputs_result[i];}*/
 
  }
+
+
 
 int check_safety(void)
 {
   int i,j,k;
 
+  /*_controller_upperbounds[0] = 1.3605;
+  _controller_lowerbounds[0] = -1.3605;
+  _controller_upperbounds[1] = 0.6803;
+  _controller_lowerbounds[1] = -0.6803;*/
+
   for(j=0; j<NSTATES; j++)//set initial states and reference
   {
-    _controller.states[j] = nondet_double();
-    __CPROVER_assume(_controller.states[j]<INITIALSTATE_UPPERBOUND & _controller.states[j]>INITIALSTATE_LOWERBOUND);
+    __CPROVER_EIGEN_fixedbvt __state0 = _controller_states[0];
+     __CPROVER_EIGEN_fixedbvt __state1 = _controller_states[1];
+     __CPROVER_EIGEN_fixedbvt __state2 = _controller_states[2];
+    __CPROVER_assume(_controller_states[j]<INITIALSTATE_UPPERBOUND && _controller_states[j]>INITIALSTATE_LOWERBOUND);
+    __CPROVER_assume(_controller_states[j]!=0.0);
   }
   
+
+ // __CPROVER_array_copy(K_fxp, (__CPROVER_fxp_t)_controller_K);
   for(i=0; i<NINPUTS;i++)
   {
     for(j=0; j<NSTATES; j++)//convert controller to fixed point
-      { K_fxp[i][j]= (__CPROVER_fxp_t)_controller.K[i][j];}
+      { K_fxp[j]= (__CPROVER_fxp_t)_controller_K[j];}
   }
 
   for(k=0; k<NUMBERLOOPS; k++)
@@ -303,7 +304,7 @@ int check_safety(void)
 
     for(i=0; i<NSTATES; i++)
     {
-      if(_controller.states[i]>SAFE_STATE_UPPERBOUND || _controller.states[i]<SAFE_STATE_LOWERBOUND)
+      if(_controller_states[i]>SAFE_STATE_UPPERBOUND || _controller_states[i]<SAFE_STATE_LOWERBOUND)
         {return 0;}
     }
   }
@@ -315,12 +316,13 @@ int main(void) {
   //init();
   closed_loop(); //calculate A - BK
   __CPROVER_EIGEN_charpoly(); //get eigen values
-  //__CPROVER_assert(check_stability(), "");
+  __CPROVER_assert(check_stability(), "");
   __CPROVER_assume(check_stability() != 0);
   __CPROVER_assume(check_safety() !=0);
-  __CPROVER_EIGEN_fixedbvt __trace_K0 = _controller.K[0][0];
-  __CPROVER_EIGEN_fixedbvt __trace_K1 = _controller.K[0][1];
-  __CPROVER_EIGEN_fixedbvt __trace_K2 = _controller.K[0][2];
+  __CPROVER_EIGEN_fixedbvt __trace_K0 = _controller_K[0];
+  __CPROVER_EIGEN_fixedbvt __trace_K1 = _controller_K[1];
+  __CPROVER_EIGEN_fixedbvt __trace_K2 = _controller_K[2];
+
   __CPROVER_assert(0 == 1, "");
   return 0;
 }
