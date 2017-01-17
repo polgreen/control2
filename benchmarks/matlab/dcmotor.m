@@ -22,6 +22,8 @@ L=1e-2;
 num=[Kt];
 den=[[conv([L,Ra],[Jm,b])]+[0,0,Kt*Ke]];
 dcmotor_tf_cont=tf(num,den);
+[A,B,C,D]=tf2ss(num,den);
+dcmotor_ss_cont=ss(A,B,C,D);
 
 %% Discretizing with Ts=1
 
