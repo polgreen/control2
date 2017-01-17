@@ -54,6 +54,7 @@ const digital_system_state_space _controller=
     .K = { { nondet_double(), nondet_double(), nondet_double() } },
     //.K = { { 1072.1259765625, 1665.046875, -2047.998779296875 } },
     .inputs = { { 1.0 } },
+    .ref = {{0.0}},
 };
 
 
@@ -282,7 +283,6 @@ int check_safety(void)
 
   for(j=0; j<NSTATES; j++)//set initial states and reference
   {
-  	_controller.ref[j] = 0;
     _controller.states[j] = nondet_double();
     __CPROVER_assume(_controller.states[j]<INITIALSTATE_UPPERBOUND & _controller.states[j]>INITIALSTATE_LOWERBOUND);
   }
