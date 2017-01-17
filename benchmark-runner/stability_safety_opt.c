@@ -280,12 +280,13 @@ int check_safety(void)
 {
   int i,j,k;
 
-  for(j=0; j<NSTATES; j++)//set initial states
+  for(j=0; j<NSTATES; j++)//set initial states and reference
   {
+  	_controller.ref[j] = 0;
     _controller.states[j] = nondet_double();
     __CPROVER_assume(_controller.states[j]<INITIALSTATE_UPPERBOUND & _controller.states[j]>INITIALSTATE_LOWERBOUND);
   }
-
+  
   for(i=0; i<NINPUTS;i++)
   {
     for(j=0; j<NSTATES; j++)//convert controller to fixed point
