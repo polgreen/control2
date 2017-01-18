@@ -326,7 +326,7 @@ In particular, Jury stability test is already explained in the control system
 literature ({\it e.g.}~\cite{fadali}). This study, however, limits itself to 
 explain the encoding of Jury's criterion for the formal synthesis purpose. 
 For the stability  test procedure, the following Jury matrix 
-$M=[m_{ij}]_{(2N-2)\times N}$ is built  from $S(z)$ coefficients:
+$M=[m_{ij}]_{(2N-2)\times N}$ is built  from $P(z)$ coefficients:
 $$
 M=\left[
 \begin{matrix}
@@ -350,12 +350,12 @@ v^{(k-1)}_{1j}-v^{(k-1)}_{2j}\cdot\frac{v^{(k-1)}_{11}}{v^{(k-1)}_{21}}, & \mbox
 v^{(k)}_{(1)(N-j+1)}, & \mbox{if } j\leq n-k \mbox{ and } i=2 \\
 \end{cases} \mbox{,}
 $$
-\noindent where $k\in\mathbb{Z}$, such that $0<k<N-2$. $S(z)$ is the 
+\noindent where $k\in\mathbb{Z}$, such that $0<k<N-2$. $P(z)$ is the 
 characteristic polynomial of a stable system if and only if the following 
 four propositions hold:
 \begin{itemize}
 \item $R_{1}$: $S(1)>0$;
-\item $R_{2}$: $(-1)^{N}S(-1)>0$;
+\item $R_{2}$: $(-1)^{N}P(-1)>0$;
 \item $R_{3}$: $\vert{a_{0}}\vert <a_{N}$;
 \item $R_{4}$: $m_{11}>0\iff m_{31}\wedge m_{51}\wedge \dots \wedge m_{(2N-3)(1)}$.
 \end{itemize}
@@ -468,6 +468,9 @@ The estimation of $\hat{\vec{x}}$ corresponds to the sum of three matrix-vector 
 %-------------------------------
 
 \todo{The safety specification is defined over the state space, not the output. Further, please distinguish the spec from the input constraints. }
+
+
+
 
 Finally, we also require a safety specification $\Psi(\vec{u},\vec{y})$, which is
 given as a set of linear constraints over the inputs and outputs.
