@@ -1,226 +1,318 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include "intervals.h"
+#include "benchmark.h" //benchmark header file
+#include "control_types.h" //include types
 
-#define NSTATES 3u
-#define NINPUTS 1u
-#define NOUTPUTS 1u
-#define INITIALSTATE_UPPERBOUND 0.1
-#define INITIALSTATE_LOWERBOUND -0.1
-#define INPUT_UPPERBOUND 0.5
-#define INPUT_LOWERBOUND -0.5
-#define NUMBERLOOPS  15 //number of timesteps to check safety spec over
-#define INT_BITS 7
-#define FRAC_BITS 3
-#define SAFE_STATE_UPPERBOUND 1
-#define SAFE_STATE_LOWERBOUND -1
+#define CPROVER
+#ifdef INTERVAL
+    #include "intervals.h"
+#else
+  #include "operators.h"
+#endif
 
+#define NUMBERLOOPS 5
+#define INITIALSTATE_UPPERBOUND (__plant_typet)0.5
+#define INITIALSTATE_LOWERBOUND (__plant_typet)-0.5
+#define SAFE_STATE_UPPERBOUND (__plant_typet)1
+#define SAFE_STATE_LOWERBOUND (__plant_typet)-1
 
+//other plant variables
+extern const __controller_typet K_fxp[NSTATES]; //nondet controller
+__plant_typet _controller_inputs;
+extern __plant_typet _controller_states[NSTATES]; //nondet initial states
 
-typedef struct {
-   int int_bits;
-   int frac_bits;
-} implementation;
+//matrices for stability calculation
+__plant_typet _AminusBK[NSTATES][NSTATES];
 
-typedef struct {
-    __CPROVER_EIGEN_fixedbvt const A[NSTATES][NSTATES];
-    __CPROVER_EIGEN_fixedbvt const B[NSTATES][NINPUTS];
-    __CPROVER_EIGEN_fixedbvt const C[NOUTPUTS][NSTATES];
-    __CPROVER_EIGEN_fixedbvt const D[NOUTPUTS][NINPUTS];
+__plant_typet __CPROVER_EIGEN_poly[NSTATES + 1u];
 
-    __CPROVER_EIGEN_fixedbvt states[NSTATES];
-    __CPROVER_EIGEN_fixedbvt outputs[NOUTPUTS];
-    __CPROVER_EIGEN_fixedbvt inputs [NINPUTS];
-    __CPROVER_EIGEN_fixedbvt const K[NINPUTS][NSTATES];
-    __CPROVER_EIGEN_fixedbvt const ref[NINPUTS];
-} continuous_time_system;
+//stablity calc
 
-continuous_time_system _controller=
-{
-    .A = { { 4.6764e-166,0.0,0.0}, { 5.1253e-144,0.0,0.0}, { 0,2.5627e-144,0.0} },
-    .B = { { 0.125},{0.0},{0.0} },
-    .C = { { 0.16,-5.9787e-32,0.0 } },
-    .D = { { 0.0 } },
-    //.K = { { nondet_double(), nondet_double(), nondet_double() } },
-    .K = { { 1072.1259765625, 1665.046875, -2047.998779296875 } },
-    .inputs = {  1.0  },
-    .ref = {0.0},
-};
+__plant_typet internal_pow(__plant_typet a, unsigned int b){
 
-const implementation impl = {
- .int_bits = 2,
- .frac_bits = 3
-};
-
-static const double scale_factor[31] = { 1.0, 2.0, 4.0, 8.0, 16.0, 32.0, 64.0,
-        128.0, 256.0, 512.0, 1024.0, 2048.0, 4096.0, 8192.0, 16384.0, 32768.0,
-        65536.0, 131072.0, 262144.0, 524288.0, 1048576.0, 2097152.0, 4194304.0,
-        8388608.0, 16777216.0, 33554432.0, 67108864.0, 134217728.0,
-        268435456.0, 536870912.0, 1073741824.0 };
-
-static const double scale_factor_inv[31] = { 1.0, 0.5, 0.25, 0.125, 0.0625,
-        0.03125, 0.015625, 0.0078125, 0.00390625, 0.001953125, 0.0009765625,
-        0.00048828125, 0.000244140625, 0.0001220703125, 0.00006103515625,
-        0.000030517578125, 0.000015258789063, 0.000007629394531,
-        0.000003814697266, 0.000001907348633, 0.000000953674316,
-        0.000000476837158, 0.000000238418579, 0.000000119209290,
-        0.000000059604645, 0.000000029802322, 0.000000014901161,
-        0.000000007450581, 0.000000003725290, 0.000000001862645,
-        0.000000000931323 };
-
-
-fxp_t fxp_double_to_fxp(__CPROVER_EIGEN_fixedbvt value) {
-    fxp_t tmp;
-    double ftemp = value * scale_factor[impl.frac_bits];
-    tmp = (fxp_t) ftemp;
-    return tmp;
+   __plant_typet acc = 1.0;
+   for (int i=0; i < b; i++){
+    acc = mult(acc,a);
+   }
+   return acc;
 }
 
-__CPROVER_EIGEN_fixedbvt fxp_to_double(fxp_t fxp) {
-  __CPROVER_EIGEN_fixedbvt f;
-    int f_int = (int) fxp;
-    f = f_int * scale_factor_inv[impl.frac_bits];
-    return f;
-}
+int check_stability(void){
+#define __a __CPROVER_EIGEN_poly
+#define __n NSTATES + 1u
+   int lines = 2 * __n - 1;
+   int columns = __n;
+   __plant_typet m[lines][__n];
+   int i,j;
 
-fxp_t fxp_quantize(fxp_t aquant) {
-    return (fxp_t) aquant;
-}
+   /* to put current values in stability counter-example
+    * look for current_stability (use: --no-slice) */
+   __plant_typet current_stability[__n];
+   for (i=0; i < __n; i++){
+     current_stability[i] = __a[i];
+   }
 
-fxp_t fxp_mult(fxp_t amult, fxp_t bmult) {
-    fxp_t tmpmult, tmpmultprec;
-    tmpmult = (fxp_t)((fxp_t)(amult)*(fxp_t)(bmult));
-    if (tmpmult >= 0) {
-        tmpmultprec = (tmpmult + ((tmpmult & 1 << (impl.frac_bits - 1)) << 1)) >> impl.frac_bits;
-    } else {
-        tmpmultprec = -(((-tmpmult) + (((-tmpmult) & 1 << (impl.frac_bits - 1)) << 1)) >> impl.frac_bits);
+   /* check the first constraint condition F(1) > 0 */
+   __plant_typet sum = 0;
+   for (i=0; i < __n; i++){
+     sum = add(sum, __a[i]);
+   }
+   if (lessthanequalto(sum, 0)){
+  printf("[DEBUG] the first constraint of Jury criteria failed: (F(1) > 0)");
+     return 0;
+   }
+
+   /* check the second constraint condition F(-1)*(-1)^n > 0 */
+   sum = 0;
+   for (i=0; i < __n; i++){
+    sum = add(sum, mult(__a[i] , internal_pow(-1, __n-1-i) ));
+   }
+   sum = mult(sum,internal_pow(-1, __n-1) );
+
+   if (lessthanequalto(sum, 0)){
+    printf("[DEBUG] the second constraint of Jury criteria failed: (F(-1)*(-1)^n > 0)");
+    return 0;
+   }
+
+   /* check the third constraint condition abs(a0 < an*(z^n)  */
+   if(greaterthan( abs(__a[__n-1]), __a[0])){
+  // if (abs(__a[__n-1]) > __a[0]){
+     printf("[DEBUG] the third constraint of Jury criteria failed: (abs(a0) < a_{n}*z^{n})");
+     return 0;
+   }
+
+   /* check the fourth constraint of condition (Jury Table) */
+   for (i=0; i < lines; i++){
+    for (j=0; j < columns; j++){
+     zero(m[i][j]);
     }
-    tmpmultprec = fxp_quantize(tmpmultprec);
-    return tmpmultprec;
-}
-
-
-fxp_t fxp_add(fxp_t aadd, fxp_t badd) {
-    fxp_t tmpadd;
-    tmpadd = ((fxp_t)(aadd) + (fxp_t)(badd));
-    tmpadd = fxp_quantize(tmpadd);
-    return tmpadd;
-}
-
-
-/* adds two matrices, fixed point version */
-void fxp_add_matrix( unsigned int lines,  unsigned int columns, fxp_t m1[4][4], fxp_t m2[4][4], fxp_t result[4][4]){
-    unsigned int i, j;
-    for (i = 0; i < lines; i++)
-        for (j = 0; j < columns; j++) {
-        result[i][j] = fxp_add(m1[i][j] , m2[i][j]);
-    }
-}
-
-/* multiplies two matrices, fixed point version */
-void fxp_matrix_multiplication( unsigned int i1, unsigned int j1, unsigned int i2, unsigned int j2, fxp_t m1[4][4], fxp_t m2[4][4], fxp_t m3[4][4]){
-    unsigned int i, j, k;
-    if (j1 == i2) { //Checking if the multiplication is possible
-        // Initialising Matrix 3
-        for (i=0; i<i1; i++) {
-            for (j=0; j<j2; j++) {
-                m3[i][j] = 0;
-            }
-        }
-        //Calculating multiplication result
-        for (i=0;i<i1; i++) {
-            for (j=0; j<j2; j++) {
-                for (k=0; k<j1; k++) {
-                    m3[i][j] = fxp_add( m3[i][j], fxp_mult(m1[i][k] , m2[k][j]));
-                }
-            }
-        }
-    } else {
-        printf("\nError! Operation invalid, please enter with valid matrices.\n");
-    }
-}
-
-void inputs_equal_ref_minus_k_times_states(__CPROVER_fxp_t K_fxp[NINPUTS][NSTATES])
-  {
-      
-	__CPROVER_fxp_t states_fxp[NSTATES];
-    __CPROVER_fxp_t result_fxp[NINPUTS];
-
-    int k, i;
-    for(k=0; k<NSTATES;k++)
-      {states_fxp[k]= fxp_double_to_fxp(_controller.states[k]);}
-
-    for(i=0; i<NINPUTS; i++)
-    {
-      for(k=0; k<NSTATES; k++)
-        { result_fxp[i] = result_fxp[i] + (K_fxp[i][k] * states_fxp[k]);}
-    }
-
-    for(i=0; i<NINPUTS; i++)
-     {
-        _controller.inputs[i] = _controller.ref[i] - fxp_to_double(result_fxp[i]);
+   }
+   for (i=0; i < lines; i++){
+    for (j=0; j < columns; j++){
+     if (i == 0){
+      m[i][j] = __a[j];
+      continue;
      }
-  
+     if (i % 2 != 0 ){
+       int x;
+       for(x=0; x<columns;x++){
+        m[i][x] = m[i-1][columns-x-1];
+       }
+       columns = columns - 1;
+      j = columns;
+     }else{
+      m[i][j] = sub(m[i-2][j] , mult( div(m[i-2][columns] , m[i-2][0]) , m[i-1][j]) );
+     }
+    }
+   }
+   int first_is_positive = lessthanequalto(0, m[0][0])? 1 : 0;
+  // int first_is_positive =  m[0][0] >= 0 ? 1 : 0;
+   for (i=0; i < lines; i++){
+    if (i % 2 == 0){
+      int line_is_positive = lessthanequalto(0, m[i][0])? 1 : 0;
+    // int line_is_positive = m[i][0] >= 0 ? 1 : 0;
+     if (first_is_positive != line_is_positive){
+      return 0;
+     }
+     continue;
+    }
+   }
+   return 1;
 }
+
+#define __m _AminusBK
+#if NSTATES==2
+void __CPROVER_EIGEN_charpoly_2(void) { //m00*m11 - m10*m11 - m00*x - m11*x + x^2
+
+  __CPROVER_EIGEN_poly[2] = sub ( mult(__m[0][0],__m[1][1]), mult(__m[1][0] , __m[1][1]) );
+
+  __CPROVER_EIGEN_poly[1] = sub (0, add (__m[0][0], __m[1][1]) ) ;
+  // s^2
+  __CPROVER_EIGEN_poly[0] = 1.0;
+}
+#endif
+
+#if NSTATES==3
+// P(s)=(s-m11)*(s-m22)*(s-m33) - m13*m31*(s-m22) - m12*m21*(s-m33) - m23*m32*(s-m11) - m12*m23*m31 - m13*m21*m32
+// P(s)=s^3 + (-m_11 - m_22 - m_33) * s^2 +  (m_11*m_22 + m_11*m_33 - m_12*m_21 - m_13*m_31 + m_22*m_33 - m_23*m_32) * s - m_11*m_22*m_33 + m_11*m_23*m_32 + m_12*m_21*m_33 - m_12*m_23*m_31 - m_13*m_21*m_32 + m_13*m_22*m_31
+void __CPROVER_EIGEN_charpoly_3(void) {
+
+  //                        m_11*m_22*m_33                    + m_11*m_23*m_32                    + m_12*m_21*m_33                    - m_12*m_23*m_31                    - m_13*m_21*m_32                    + m_13*m_22*m_31
+  __CPROVER_EIGEN_poly[3] = __m[0][0] * __m[1][1] * __m[2][2] + __m[0][0] * __m[1][2] * __m[2][1] + __m[0][1] * __m[1][0] * __m[2][2] - __m[0][1] * __m[1][2] * __m[2][0] - __m[0][2] * __m[1][0] * __m[2][1] + __m[0][2] * __m[1][1] * __m[2][0];
+  //                        (m_11*m_22            + m_11*m_33             - m_12*m_21             - m_13*m_31             + m_22*m_33             - m_23*m_32) * s
+  __CPROVER_EIGEN_poly[2] = __m[0][0] * __m[1][1] + __m[0][0] * __m[2][2] - __m[0][1] * __m[1][0] - __m[0][2] * __m[2][0] + __m[1][1] * __m[2][2] - __m[1][2] * __m[2][1];
+  //                        (-m_11     - m_22      - m_33) * s^2
+  __CPROVER_EIGEN_poly[1] = -__m[0][0] - __m[1][1] - __m[2][2];
+  // s^3
+  __CPROVER_EIGEN_poly[0] = 1.0;
+}
+#endif
+#if NSTATES==4
+void __CPROVER_EIGEN_charpoly_4(void) {
+
+ __CPROVER_EIGEN_poly[4] = __m[0][0]*__m[1][1]*__m[2][2]*__m[3][3] - __m[0][0]*__m[1][1]*__m[2][3]*__m[3][2] - __m[0][0]*__m[1][2]*__m[2][1]*__m[3][3] + __m[0][0]*__m[1][2]*__m[2][3]*__m[3][1] + __m[0][0]*__m[1][3]*__m[2][1]*__m[3][2] -
+    __m[0][0]*__m[1][3]*__m[2][2]*__m[3][1] - __m[0][1]*__m[1][0]*__m[2][2]*__m[3][3] + __m[0][1]*__m[1][0]*__m[2][3]*__m[3][2] + __m[0][1]*__m[1][2]*__m[2][0]*__m[3][3] - __m[0][1]*__m[1][2]*__m[2][3]*__m[3][0] -
+    __m[0][1]*__m[1][3]*__m[2][0]*__m[3][2] + __m[0][1]*__m[1][3]*__m[2][2]*__m[3][0] + __m[0][2]*__m[1][0]*__m[2][1]*__m[3][3] - __m[0][2]*__m[1][0]*__m[2][3]*__m[3][1] - __m[0][2]*__m[1][1]*__m[2][0]*__m[3][3] +
+    __m[0][2]*__m[1][1]*__m[2][3]*__m[3][0] + __m[0][2]*__m[1][3]*__m[2][0]*__m[3][1] - __m[0][2]*__m[1][3]*__m[2][1]*__m[3][0] - __m[0][3]*__m[1][0]*__m[2][1]*__m[3][2] + __m[0][3]*__m[1][0]*__m[2][2]*__m[3][1] +
+    __m[0][3]*__m[1][1]*__m[2][0]*__m[3][2] - __m[0][3]*__m[1][1]*__m[2][2]*__m[3][0] - __m[0][3]*__m[1][2]*__m[2][0]*__m[3][1] + __m[0][3]*__m[1][2]*__m[2][1]*__m[3][0];
+
+
+__CPROVER_EIGEN_poly[3] = - __m[0][0]*__m[1][1]*__m[2][2]  + __m[0][0]*__m[1][2]*__m[2][1]  + __m[0][1]*__m[1][0]*__m[2][2] -   __m[0][1]*__m[1][2]*__m[2][0]  -  __m[0][2]*__m[1][0]*__m[2][1]  + __m[0][2]*__m[1][1]*__m[2][0]
+    - __m[0][0]*__m[1][1]*__m[3][3]  + __m[0][0]*__m[1][3]*__m[3][1]  + __m[0][1]*__m[1][0]*__m[3][3] - __m[0][1]*__m[1][3]*__m[3][0] -  __m[0][3]*__m[1][0]*__m[3][1]  + __m[0][3]*__m[1][1]*__m[3][0]
+    - __m[0][0]*__m[2][2]*__m[3][3]  + __m[0][0]*__m[2][3]*__m[3][2]  + __m[0][2]*__m[2][0]*__m[3][3] - __m[0][2]*__m[2][3]*__m[3][0] - __m[0][3]*__m[2][0]*__m[3][2]  + __m[0][3]*__m[2][2]*__m[3][0]
+    - __m[1][1]*__m[2][2]*__m[3][3]  + __m[1][1]*__m[2][3]*__m[3][2]  + __m[1][2]*__m[2][1]*__m[3][3] - __m[1][2]*__m[2][3]*__m[3][1] -  __m[1][3]*__m[2][1]*__m[3][2]  + __m[1][3]*__m[2][2]*__m[3][1];
+
+
+  __CPROVER_EIGEN_poly[2] = + __m[0][0]*__m[1][1]  - __m[0][1]*__m[1][0]  +  __m[0][0]*__m[2][2]  - __m[0][2]*__m[2][0] +  __m[0][0]*__m[3][3]  - __m[0][3]*__m[3][0] + __m[1][1]*__m[2][2]  -
+   __m[1][2]*__m[2][1] +  __m[1][1]*__m[3][3] - __m[1][3]*__m[3][1] +  __m[2][2]*__m[3][3]  - __m[2][3]*__m[3][2];
+
+
+  __CPROVER_EIGEN_poly[1] = - __m[3][3] - __m[2][2] - __m[1][1] - __m[0][0];
+  __CPROVER_EIGEN_poly[0] = 1.0;
+}
+#endif
+
+void __CPROVER_EIGEN_charpoly(void){
+
+  #if NSTATES==2
+      __CPROVER_EIGEN_charpoly_2();
+  #elif NSTATES==3
+      __CPROVER_EIGEN_charpoly_3();
+  #elif NSTATES==4
+      __CPROVER_EIGEN_charpoly_4();
+  #endif
+}
+
+void A_minus_B_K()
+{
+
+#ifdef CPROVER
+  __CPROVER_array_copy(_AminusBK, _controller_A);
+#else
+  for(int i=0; i<NSTATES; i++)
+     {
+      for(int j=0; j<NSTATES; j++)
+        {_AminusBK[i][j] = _controller_A[i][j];}
+     }
+#endif
+
+  for (int i=0;i<NSTATES; i++) { //rows of B
+      for (int j=0; j<NSTATES; j++) { //columns of K
+      //  _AminusBK[i][j] -= _controller_B[i] * (__plant_typet)K_fxp[j];
+        _AminusBK[i][j] = sub( _AminusBK[i][j], mult(_controller_B[i] , plant_cast(K_fxp[j])));
+          }
+      }
+}
+
+void closed_loop(void)
+{
+  A_minus_B_K();
+}
+
+
+void inputs_equal_ref_minus_k_times_states(void)
+  {
+    __controller_typet states_fxp[NSTATES];
+    //single input
+    __controller_typet result_fxp=0;
+
+     for(int k=0; k<NSTATES; k++)
+     {  result_fxp = add (result_fxp, mult(K_fxp[k] , controller_cast(_controller_states[k])));
+       //{ result_fxp += (K_fxp[k] * (__controller_typet)_controller_states[k]);}
+
+        _controller_inputs = sub(0,plant_cast(result_fxp));
+      #ifdef CPROVER
+        __CPROVER_assume(_controller_inputs<INPUT_UPPERBOUND && _controller_inputs>INPUT_LOWERBOUND);
+      #endif
+  }
+ }
+
+__plant_typet states_equals_A_states_plus_B_inputs_result[NSTATES];
 
 void states_equals_A_states_plus_B_inputs(void)
- {
-   __CPROVER_EIGEN_fixedbvt result[NSTATES];
-   int i,k;
-   for(i=0; i<NSTATES; i++)
+{
+
+  #ifdef CPROVER
+      __CPROVER_array_set(states_equals_A_states_plus_B_inputs_result, (__plant_typet)0.0);
+  #else
+    for(int i=0; i<NSTATES; i++)
+      zero(states_equals_A_states_plus_B_inputs_result[i]);
+  #endif
+
+   for(int i=0; i<NSTATES; i++)
    {
-    result[i]=0;
-    for(k=0; k<NSTATES; k++)
-         {result[i] = result[i] + _controller.A[i][k]*_controller.states[k];}
-    for(k=0; k<NSTATES; k++)
-         {result[i] = result[i] +_controller.B[i][k]*_controller.inputs[k];}
+     //states_equals_A_states_plus_B_inputs_result[i]=0;
+    for(int k=0; k<NSTATES; k++) {
+      states_equals_A_states_plus_B_inputs_result[i] = add(states_equals_A_states_plus_B_inputs_result[i] , mult( _controller_A[i][k],_controller_states[k]));
+      states_equals_A_states_plus_B_inputs_result[i] = add(states_equals_A_states_plus_B_inputs_result[i] , mult( _controller_B[i],_controller_inputs));
+    }
    }
-   for(i=0; i<NSTATES; i++)
-       {_controller.states[i] = result[i];}
+#ifdef CPROVER
+   __CPROVER_array_copy(_controller_states, states_equals_A_states_plus_B_inputs_result);
+   /*for(i=0; i<NSTATES; i++)
+       {_controller_states[i] = states_equals_A_states_plus_B_inputs_result[i];}*/
+  __CPROVER_assert( _controller_states[0]<SAFE_STATE_UPPERBOUND && _controller_states[0]>SAFE_STATE_LOWERBOUND, "");
+  __CPROVER_assert( _controller_states[1]<SAFE_STATE_UPPERBOUND && _controller_states[1]>SAFE_STATE_LOWERBOUND,"");
+  #if NSTATES==3 || NSTATES==4
+      __CPROVER_assert( _controller_states[2]<SAFE_STATE_UPPERBOUND && _controller_states[2]>SAFE_STATE_LOWERBOUND, "");
+  #endif
+  #if NSTATES==4
+      __CPROVER_assert( _controller_states[3]<SAFE_STATE_UPPERBOUND && _controller_states[3]>SAFE_STATE_LOWERBOUND, "");
+  #endif
+
+#else
+  for(int i=0; i<NSTATES; i++)
+       {_controller_states[i] = states_equals_A_states_plus_B_inputs_result[i];
+       assert( _controller_states[i]<SAFE_STATE_UPPERBOUND && _controller_states[i]>SAFE_STATE_LOWERBOUND);
+       }
+#endif
 
  }
 
 
+
 int check_safety(void)
 {
-  int i,j,k;
-	__CPROVER_fxp_t K_fxp[NINPUTS][NSTATES];
 
-  for(j=0; j<NSTATES; j++)//set initial states and reference
+  for(int j=0; j<NSTATES; j++)//set initial states and reference
   {
-    _controller.states[j] = 0;
-  }
-  
-  for(i=0; i<NINPUTS;i++)
-  {
-    for(j=0; j<NSTATES; j++)//convert controller to fixed point
-      { K_fxp[i][j]= fxp_double_to_fxp(_controller.K[i][j]);}
+    #ifdef CPROVER
+     __plant_typet __state0 = _controller_states[0];
+     __plant_typet __state1 = _controller_states[1];
+     __plant_typet __state2 = _controller_states[2];
+    __CPROVER_assume(_controller_states[j]<INITIALSTATE_UPPERBOUND && _controller_states[j]>INITIALSTATE_LOWERBOUND);
+   // __CPROVER_assume(_controller_states[j]!=(__plant_typet)0.0);
+    #endif
   }
 
-  for(k=0; k<NUMBERLOOPS; k++)
+  for(int k=0; k<NUMBERLOOPS; k++)
   {
-    inputs_equal_ref_minus_k_times_states(K_fxp); //update inputs one time step
+    inputs_equal_ref_minus_k_times_states(); //update inputs one time step
     states_equals_A_states_plus_B_inputs(); //update states one time step
 
-    for(i=0; i<NSTATES; i++)
+    for(int i=0; i<NSTATES; i++)
     {
-      if(_controller.states[i]>SAFE_STATE_UPPERBOUND || _controller.states[i]<SAFE_STATE_LOWERBOUND)
-      {
-        printf("Failed discrete safety check, states %i is %f \n", i, _controller.states[i]);
-        return 0;
-      }
+      if(_controller_states[i]>SAFE_STATE_UPPERBOUND || _controller_states[i]<SAFE_STATE_LOWERBOUND)
+        {return 0;}
     }
   }
   return 1;
 }
 
-int main()
-{
-	if(check_safety()==0)
-		printf("UNSAFE \n");
-	else
-		printf("SAFE \n");
-return 0;
+
+int main(void) {
+  //init();
+  closed_loop(); //calculate A - BK
+  __CPROVER_EIGEN_charpoly(); //get eigen values
+ // __CPROVER_assert(check_stability(), "");
+  __CPROVER_assert(check_stability(), "");
+  __CPROVER_assert(check_safety(), "");
+ /* __plant_typet __trace_K0 = _controller_K[0];
+  __plant_typet __trace_K1 = _controller_K[1];
+  __plant_typet __trace_K2 = _controller_K[2];*/
+  __plant_typet __trace_fxpK0 = K_fxp[0];
+  __plant_typet __trace_fxpK1 = K_fxp[1];
+  __plant_typet __trace_fxpK2 = K_fxp[2];
+
+ // __CPROVER_assert(0 == 1, "");
+  return 0;
 }
-
-
