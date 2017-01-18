@@ -281,6 +281,7 @@ The most basic feedback architecture is the state feedback,
 where the control action $\vec{u}_k$ is computed by: 
 %
 \begin{equation}
+\label{eq:controlaction}
 u_k = r_{k} - K x_k, 
 \end{equation}
 %
@@ -471,8 +472,28 @@ The estimation of $\hat{\vec{x}}$ corresponds to the sum of three matrix-vector 
 
 
 
-Finally, we also require a safety specification $\Psi(\vec{u},\vec{y})$, which is
-given as a set of linear constraints over the inputs and outputs.
+
+Finally, we also require that the closed-loop systems meets safety specifications. A safety specification establish bounds for the states, such that he controller $K$ must maintain the states within these bounds for any initial state. 
+
+The safety property (represented by $\phi_{safety}$) is encoded as follows:
+\begin{equation}
+\label{eq:safetyliteral}
+\phi_{safety}\iff \forall k\geq 0, \bigwedge_{i=1}^{n}{x_{i}^{-} \leq x_{i,k} \leq x_{i}^{+}},
+\end{equation}
+where $x_{i}^{-}$ and $x_{i}^{+}$ are respectively the lower and upper bound of the $i$-th state $x_{i}$ at the $k$-th instant, i.e., the states will always be within the $n$-dimensional hyperbox defined by the safety specifications (bounds).
+
+The closed-loop state-space system have to be unrolled until a specific depth ($k_{bound}$) to ensure $\phi_{safety}$. The limit $k_{bound}$ is the number of iterations sufficient so that the rate of variation (derivative) of the states is negligible ensuring the boundaries will not be violated for any $k>k_{bound}$. \commentib{The k-bound estimative must be explained.}
+
+For any $k\leq k_{bound}$ the states must be computed considering the FWL effects in all operations related to the control action~\ref{eq:controlaction} and disregarding it in the state equation ~\eqref{eq:plant}. Thus, the states are computed using the following equations:
+\begin{equation}
+\label{eq:ssunroll}
+\left\lbrace
+\begin{array}{l}
+u_{k}=\mathcal{F}_{\langle I,F \rangle}(r_{k}-\mathcal{F}_{\langle I,F \rangle}(\mathcal{F}_{\langle I,F \rangle}(K)\cdot\mathcal{F}_{\langle I,F \rangle}(x_{k})))\\
+x_{k+1}=Ax_{k}+Bu_{k}
+\end{array}\right.
+\end{equation}
+
 
 %% %-------------------------------
 %% \section{Counter-Example Guided Inductive Synthesis with solution generalisation}
