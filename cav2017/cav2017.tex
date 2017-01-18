@@ -304,31 +304,30 @@ A standard objective is to obtain stable closed-loop dynamics.
 
 %\todo{[Here discuss Jury criterium for DISCRETE-TIME models - a simplified version of the first part of what is now in Section \ref{sec:cof_verification} (with no quantisation noises yet).]}  
 
-A discrete-time system is asymptotically stable if and only if all 
-characteristic polynomial roots (i.e., eigenvalues) are inside of 
-the unity circle, i.e., their absolute value are less than 
+A discrete-time system is asymptotically stable if and only if all the roots 
+of the characteristic polynomial ({\it i.e.}, the eigenvalues) are inside of 
+the unity circle, {\it i.e.}, their absolute value are less than 
 one~\cite{astrom1997computer}. For a closed-loop system as~\eqref{eq:closedloopss}, 
-the characteristic polynomial $P(z)$ can be computed as follows:
+the characteristic polynomial $P(z)$ should be computed as follows:
 \begin{equation}
 P(z)= \det( z I_{n} - A_d + B_d K ),
 \end{equation}
 where $I_{n}$ is the n-th order identity matrix. 
 
 Jury's criterion provides necessary and sufficient conditions for the eigenvalues 
-to be within the unit circle and, consequently, for the system to be stable.  Given a 
+to be within the unit circle and, consequently, the system is stable.  Given a 
 polynomial $P(z)$ of the form
 $$
 P(z) = a_{0}z^{N} + a_{1}z^{N-1} + ... a_{N-1}z + a_{N} = 0, a_{0}\neq 0,
 $$
 Jury's criterion explores solely the coefficients ($a_{0},a_{1},...,a_{N-1}$) 
-of $P(z)$ for checking the validity of the stability property (represented by 
-$\phi_{stability}$). 
+of $P(z)$ for checking the validity of the stability property $\phi_{stability}$. 
 
-Jury stability test is already explained in the control system 
-literature~\cite{fadali}. This study, however, limits itself to 
+In particular, Jury stability test is already explained in the control system 
+literature ({\it e.g.}~\cite{fadali}). This study, however, limits itself to 
 explain the encoding of Jury's criterion for the formal synthesis purpose. 
 For the stability  test procedure, the following Jury matrix 
-$M=[m_{ij}]_{(2N-2)\times N}$ is built from $P(z)$ coefficients:
+$M=[m_{ij}]_{(2N-2)\times N}$ is built  from $P(z)$ coefficients:
 $$
 M=\left[
 \begin{matrix}
@@ -366,6 +365,8 @@ The stability property $\phi_{stability}$ is then encoded as follows:
 $$
 \phi_{stability}\iff \ (R_{1} \wedge R_{2} \wedge R_{3} \wedge R_{4}).
 $$
+
+
 
 %-------------------------------
 \subsection{Digital implementation of feedback controller}
@@ -494,6 +495,7 @@ x_{k+1}=Ax_{k}+Bu_{k}
 \end{array}\right.
 \end{equation}
 
+The input sequence $u_{k}$ is non-deterministic with known bounds $u^{+}$ and $u^{-}$, such that ${u^{-} \leq u_{k} \leq u^{+}},\forall k\geq 0$. 
 
 %% %-------------------------------
 %% \section{Counter-Example Guided Inductive Synthesis with solution generalisation}
@@ -835,16 +837,9 @@ $z^n+\sum_{i=1}^n[a_i-k_i]z^{n-i}=\prod_{i=1}^n (z-[\lambda_i]) : |[\lambda_i]|<
 \section{Experimental Evaluation}
 %-------------------------------
 
-This section is split into four parts. Section~\ref{description-of-the-benchmarks} 
-discusses the experimental setup and our state-space control system benchmarks, 
-while Section~\ref{experimental-objectives} describes the experimental objectives. 
-Section~\ref{experimental-results} presents the experimental results obtained on the 
-benchmarks with our tool DSSynth, while Section~\ref{threats-to-validity} describes
-threats to the validity of our automated synthesis procedure for digital controllers.
 
 %-------------------------------
 \subsection{Description of the Benchmarks}
-\label{description-of-the-benchmarks}
 %-------------------------------
 
 \textcolor{red}{We will have to move this text to the beginning of the paper.}
@@ -861,6 +856,254 @@ y(t)=\textbf{C}\textbf{x}(t)+\textbf{D}u(t)
 
 The table~\ref{table:State-space benchmarks} summarizes the list of benchmarks extracted from literature~\cite{Franklin15,converters,maglev,CTMS} and adopted in our experiments.
 
+%The first plant represents a DC motor position model from~\cite{CTMS}. It is a third order system and presents the following set of matrices $\textbf{A}$, $\textbf{B}$, $\textbf{C}$, $\textbf{D}$, and $\textbf{x}$:
+%$$
+%\textbf{A}=\left[\begin{array}{ccc}
+%0		& 1 		& 0						\\
+%0 		& -1.087	& 8587					\\
+%0		& -9964		& -1.455\times 10^{6}	\\
+%\end{array}\right],~~ \textbf{B} = \left[\begin{array}{c}
+%0 \\ 0 \\ -1.455\times10^{6}
+%\end{array}\right]
+%$$
+%%
+%$$
+%\textbf{C}=\left[\begin{array}{ccc}
+%1 & 0 & 0\\
+%\end{array}\right],~~ \textbf{D}= 0,~~ \textbf{x}=\left[\begin{array}{c}
+%\theta \\ \dot{\theta} \\ i \\
+%\end{array}\right],
+%$$
+%where the states $\theta$, $\dot{\theta}$, and $i$ are respectively the rotor angular position, rotor angular rate and the current of armature. The DC motor is stable in open loop.
+%
+%The second benchmark is an aircraft pitch dynamics model extracted from~\cite{CTMS}. It is a third order system and it presents the following set of matrices $\textbf{A}$, $\textbf{B}$, $\textbf{C}$, $\textbf{D}$, and $\textbf{x}$:
+%$$
+%\textbf{A}=\left[\begin{array}{ccc}
+%-0.313	& 56.7 		& 0		\\
+%-0.0139	& -0.426	& 0		\\
+%0		& 56.7		& 0		\\
+%\end{array}\right],~~ \textbf{B} = \left[\begin{array}{c}
+%0.232 \\ 0.0203 \\ 0
+%\end{array}\right]
+%$$
+%%
+%$$
+%\textbf{C}=\left[\begin{array}{ccc}
+%0 & 0 & 1\\
+%\end{array}\right],~~ \textbf{D}= 0,~~ \textbf{x}=\left[\begin{array}{c}
+%\alpha \\ \dot{\theta} \\ \theta \\
+%\end{array}\right],
+%$$
+%where the states $\alpha$, $\dot{\theta}$, and $\theta$ are respectively the aircraft attack angle, pitch rate and the pitch angle. The aircraft pitch dynamic is critically stable in open loop, with a pole in origin of $s$-plane.
+%
+%The third benchmark is a ball magnetic levitation model extracted from~\cite{maglev}. It is a third order system presents the following set of matrices $\textbf{A}$, $\textbf{B}$, $\textbf{C}$, $\textbf{D}$, and $\textbf{x}$:
+%$$
+%\textbf{A}=\left[\begin{array}{ccc}
+%0		& 1 		& 0		\\
+%1752	& 0			& -34.07\\
+%0		& 0			& -38.27\\
+%\end{array}\right],~~ \textbf{B} = \left[\begin{array}{c}
+%0 \\ 0 \\ 1.923
+%\end{array}\right]
+%$$
+%%
+%$$
+%\textbf{C}=\left[\begin{array}{ccc}
+%1 & 0 & 0\\
+%\end{array}\right],~~ \textbf{D}= 0,~~ \textbf{x}=\left[\begin{array}{c}
+%z \\ \dot{z} \\ i \\
+%\end{array}\right],
+%$$
+%where the states $z$, $\dot{z}$, and $i$ are respectively the vertical displacement of the ball, its rate and the coil current. This system  is unstable in open loop.
+%
+%There are three benchmarks representing classic DC-DC converters: buck, boost, and buck-boost. They are SISO second-order systems stable in open-loop, and their state vector is $\textbf{x}=\textbf{x}=\left[\begin{array}{c}
+%i_{L} \\ v_{C}\\
+%\end{array}\right]$, where $i_{L}$ is the current in the coil and $v_{c}$ is the voltage on the capacitor. The matrices $\textbf{A}$, $\textbf{B}$, $\textbf{C}$, and $\textbf{D}$ for the buck converter are:
+%$$
+%\textbf{A}=\left[\begin{array}{cc}
+%0		& -500 \\
+%4545	& -1515\\
+%\end{array}\right],~ \textbf{B} = \left[\begin{array}{c}
+%125 \\ 0 \\
+%\end{array}\right]~
+%\textbf{C}=\left[\begin{array}{cc}
+%0 & 1\\
+%\end{array}\right],~ \textbf{D}= 0.
+%$$
+%
+%The matrices of the boost converter are:
+%$$
+%\textbf{A}=\left[\begin{array}{cc}
+%0		& -375 \\
+%3409	& -1515\\
+%\end{array}\right],~ \textbf{B} = \left[\begin{array}{c}
+%500 \\ 0 \\
+%\end{array}\right]~
+%\textbf{C}=\left[\begin{array}{cc}
+%0 & 1\\
+%\end{array}\right],~ \textbf{D}= 0.
+%$$
+%
+%Finally, the matrices of the buck-boost converter are:
+%$$
+%\textbf{A}=\left[\begin{array}{cc}
+%0		& 375 \\
+%-3409	& -1515\\
+%\end{array}\right],~ \textbf{B} = \left[\begin{array}{c}
+%125 \\ 0 \\
+%\end{array}\right]~
+%\textbf{C}=\left[\begin{array}{cc}
+%0 & 1\\
+%\end{array}\right],~ \textbf{D}= 0.
+%$$
+%
+%Additionally, various dynamic systems model were extracted from~\cite{Franklin15} and incorporated to our test suite. They are: 
+%\begin{itemize}
+%\item{\textbf{automotive cruise control system:} 
+%$$
+%\textbf{A}=-0.05,~ \textbf{B} = 0.03125~
+%\textbf{C}=0.032,~ \textbf{D}= 0;
+%$$
+%}
+%\item{\textbf{DC motor:} 
+%$$
+%\textbf{A}=\left[\begin{array}{cc}
+%-1000		& -13 \\
+%-8			& 0\\
+%\end{array}\right],~ \textbf{B} = \left[\begin{array}{c}
+%4 \\ 0 \\
+%\end{array}\right]~
+%\textbf{C}=\left[\begin{array}{cc}
+%0 & 6.25\\
+%\end{array}\right],~ \textbf{D}= 0;
+%$$
+%}
+%\item{\textbf{helicopter longitudinal motion:} 
+%$$
+%\textbf{A}=\left[\begin{array}{ccc}
+%-0.42		& 0.0168		& -0.396	\\
+%0.5			& 0				& 0			\\
+%0			& 0.5 			& 0			
+%\end{array}\right],~ \textbf{B} = \left[\begin{array}{c}
+%16 \\ 0 \\ 0
+%\end{array}\right]~
+%\textbf{C}=\left[\begin{array}{ccc}
+%0.6125	& -0.6125	& 15.44 \\
+%\end{array}\right],~ \textbf{D}= 0;
+%$$
+%}
+%\item{\textbf{inverted pendulum cart position:} 
+%$$
+%\textbf{A}=\left[\begin{array}{cccc}
+%0		& 1		& 0 	& 0	\\
+%1		& 0		& 0		& 0	\\
+%0		& 1 	& 0		& 0 \\
+%0		& 0		& 1 	& 0 \\	
+%\end{array}\right],~ \textbf{B} = \left[\begin{array}{c}
+%1 \\ 0 \\ 0 \\ 0
+%\end{array}\right]~
+%\textbf{C}=\left[\begin{array}{cccc}
+%0	& 0	& 1 & -0.75 \\
+%\end{array}\right],~ \textbf{D}= 0;
+%$$
+%}
+%\item{\textbf{inverted pendulum angle:} 
+%$$
+%\textbf{A}=\left[\begin{array}{cc}
+%0		& 1	\\
+%1		& 0	\\
+%\end{array}\right],~ \textbf{B} = \left[\begin{array}{c}
+%1 \\ 0 \\ 0 \\ 0
+%\end{array}\right]~
+%\textbf{C}=\left[\begin{array}{cc}
+% 0	& 1 \\
+%\end{array}\right],~ \textbf{D}= 0;
+%$$
+%}
+%\item{\textbf{magnetic pointer:} 
+%$$
+%\textbf{A}=\left[\begin{array}{ccc}
+%-0.271		& -0.05336	& 0	\\
+%0.03125		& 0			& 0	\\
+%0			& 0.01562 	& 0	\\	
+%\end{array}\right],~ \textbf{B} = \left[\begin{array}{c}
+%1 \\ 0 \\ 0
+%\end{array}\right]~
+%\textbf{C}=\left[\begin{array}{ccc}
+%0	& -0.5888	& -0.2562 \\
+%\end{array}\right],~ \textbf{D}= 0;
+%$$
+%}
+%\item{\textbf{magnetic suspension:} 
+%$$
+%\textbf{A}=\left[\begin{array}{cc}
+%0		& 31.25	\\
+%32		& 0		\\	
+%\end{array}\right],~ \textbf{B} = \left[\begin{array}{c}
+%8 \\ 0
+%\end{array}\right]~
+%\textbf{C}=\left[\begin{array}{cc}
+%0	& 9.766 	\\
+%\end{array}\right],~ \textbf{D}= 0;
+%$$
+%}
+%\item{\textbf{pendulum:} 
+%$$
+%\textbf{A}=\left[\begin{array}{cc}
+%0		& -2.453	\\
+%4		& 0			\\	
+%\end{array}\right],~ \textbf{B} = \left[\begin{array}{c}
+%4 \\ 0
+%\end{array}\right]~
+%\textbf{C}=\left[\begin{array}{cc}
+%-1.225	& -2.15 	\\
+%\end{array}\right],~ \textbf{D}= 9.8;
+%$$
+%}
+%\item{\textbf{1/4 car suspension:} 
+%$$
+%\textbf{A}=\left[\begin{array}{cccc}
+%-516.1	& -222.1& -79.75& -33.06	\\
+%256		& 0		& 0		& 0			\\
+%0		& 64 	& 0		& 0 \\
+%0		& 0		& 32 	& 0 \\	
+%\end{array}\right],~ \textbf{B} = \left[\begin{array}{c}
+%8 \\ 0 \\ 0 \\ 0
+%\end{array}\right]~
+%\textbf{C}=\left[\begin{array}{cccc}
+%0	& 0	& 9.969 & 4.133 \\
+%\end{array}\right],~ \textbf{D}= 0;
+%$$
+%}
+%\item{\textbf{computer tape driver:} 
+%$$
+%\textbf{A}=\left[\begin{array}{ccc}
+%-1760		& -976.6	& -457.8	\\
+%1024		& 0			& 0			\\
+%0			& 512 		& 0			\\	
+%\end{array}\right],~ \textbf{B} = \left[\begin{array}{c}
+%8 \\ 0 \\ 0
+%\end{array}\right]~
+%\textbf{C}=\left[\begin{array}{ccc}
+%1.5	& 2.051	& 1.144 \\
+%\end{array}\right],~ \textbf{D}= 0;
+%$$
+%}
+%\item{\textbf{USCG cutter Tampa heading angle:} 
+%$$
+%\textbf{A}=\left[\begin{array}{ccc}
+%-0.271		& -0.05336	& 0	\\
+%0.03125		& 0			& 0			\\
+%0			& 0.01562 	& 0			\\	
+%\end{array}\right],~ \textbf{B} = \left[\begin{array}{c}
+%1 \\ 0 \\ 0
+%\end{array}\right]~
+%\textbf{C}=\left[\begin{array}{ccc}
+%0	& -0.5888	& -0.2562 \\
+%\end{array}\right],~ \textbf{D}= 0;
+%$$
+%}
+%\end{itemize}
 
 \begin{table}[htb]
 \centering
@@ -1030,18 +1273,15 @@ Pendulum   & $\left[\begin{array}{cc}
 
 %-------------------------------
 \subsection{Objectives}
-\label{experimental-objectives}
 %-------------------------------
 
 %-------------------------------
 \subsection{Results}
-\label{experimental-results}
 %-------------------------------
 
 
 %-------------------------------
 \subsection{Threats to validity}
-\label{threats-to-validity}
 %-------------------------------
 
 
