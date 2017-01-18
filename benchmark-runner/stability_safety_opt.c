@@ -29,8 +29,8 @@ extern const __CPROVER_EIGEN_fixedbvt _controller_K[NSTATES];
 __CPROVER_EIGEN_fixedbvt _controller_inputs;
 extern __CPROVER_EIGEN_fixedbvt _controller_states[NSTATES]; */
 
-extern const __CPROVER_EIGEN_fixedbvt _controller_K[NSTATES];
-extern __CPROVER_fxp_t K_fxp[NSTATES];
+//extern const __CPROVER_EIGEN_fixedbvt _controller_K[NSTATES];
+extern const __CPROVER_fxp_t K_fxp[NSTATES];
 __CPROVER_EIGEN_fixedbvt _controller_inputs;
 extern __CPROVER_EIGEN_fixedbvt _controller_states[NSTATES];
 
@@ -200,7 +200,8 @@ void A_minus_B_K()
 
   for (int i=0;i<NSTATES; i++) { //rows of B
       for (int j=0; j<NSTATES; j++) { //columns of K
-              _AminusBK[i][j] -= _controller_B[i] * _controller_K[j];
+             // _AminusBK[i][j] -= _controller_B[i] * _controller_K[j];
+        _AminusBK[i][j] -= _controller_B[i] * (__CPROVER_EIGEN_fixedbvt)K_fxp[j];
           }
       }
 }
@@ -263,8 +264,8 @@ int check_safety(void)
   
    // __CPROVER_array_copy(K_fxp, (__CPROVER_fxp_t)_controller_K);
 
-   for(int j=0; j<NSTATES; j++)//convert controller to fixed point
-      { K_fxp[j]= (__CPROVER_fxp_t)_controller_K[j];}
+  // for(int j=0; j<NSTATES; j++)//convert controller to fixed point
+    //  { K_fxp[j]= (__CPROVER_fxp_t)_controller_K[j];}
 
 
   for(int k=0; k<NUMBERLOOPS; k++)
@@ -289,9 +290,9 @@ int main(void) {
  // __CPROVER_assert(check_stability(), "");
   __CPROVER_assume(check_stability() != 0);
   __CPROVER_assume(check_safety() !=0);
-  __CPROVER_EIGEN_fixedbvt __trace_K0 = _controller_K[0];
+ /* __CPROVER_EIGEN_fixedbvt __trace_K0 = _controller_K[0];
   __CPROVER_EIGEN_fixedbvt __trace_K1 = _controller_K[1];
-  __CPROVER_EIGEN_fixedbvt __trace_K2 = _controller_K[2];
+  __CPROVER_EIGEN_fixedbvt __trace_K2 = _controller_K[2];*/
   __CPROVER_EIGEN_fixedbvt __trace_fxpK0 = K_fxp[0];
   __CPROVER_EIGEN_fixedbvt __trace_fxpK1 = K_fxp[1];
   __CPROVER_EIGEN_fixedbvt __trace_fxpK2 = K_fxp[2];

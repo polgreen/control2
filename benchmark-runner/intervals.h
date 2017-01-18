@@ -1,6 +1,12 @@
 
-typedef double control_floatt; //added in by EP
-typedef double control_typet;  //added in by EP
+//typedef __CPROVER_fixedbv[32][16] __CPROVER_EIGEN_fixedbvt;
+typedef double __CPROVER_EIGEN_fixedbvt;
+//typedef __CPROVER_fixedbv[INT_BITS+FRAC_BITS][FRAC_BITS] __CPROVER_fxp_t;
+typedef int64_t __CPROVER_fxp_t;
+typedef int64_t fxp_t;
+
+typedef __CPROVER_EIGEN_fixedbvt control_floatt; //added in by EP
+typedef __CPROVER_EIGEN_fixedbvt control_typet;  //added in by EP
 control_typet _zero = 0; //added in by EP
 
 struct intervalt
@@ -17,7 +23,7 @@ inline struct intervalt mult(struct intervalt x,struct intervalt y)
 {
   struct intervalt z;
   z.low=x.low*y.low;
-//  z.high=first;
+  z.high=z.low;
   control_floatt second=x.low*y.high;
   control_floatt third=x.high*y.low;
   control_floatt fourth=x.high*y.high;

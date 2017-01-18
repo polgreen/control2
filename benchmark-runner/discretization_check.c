@@ -5,23 +5,16 @@
 #define NSTATES 3u
 #define NINPUTS 1u
 #define NOUTPUTS 1u
-#define INITIALSTATE_UPPERBOUND 1.0
-#define INITIALSTATE_LOWERBOUND 0.0
+#define INITIALSTATE_UPPERBOUND 0.1
+#define INITIALSTATE_LOWERBOUND -0.1
 #define INPUT_UPPERBOUND 0.5
 #define INPUT_LOWERBOUND -0.5
 #define NUMBERLOOPS  15 //number of timesteps to check safety spec over
 #define INT_BITS 7
 #define FRAC_BITS 3
-#define SAFE_STATE_UPPERBOUND 1000
-#define SAFE_STATE_LOWERBOUND -1000
+#define SAFE_STATE_UPPERBOUND 1
+#define SAFE_STATE_LOWERBOUND -1
 
-//typedef __CPROVER_fixedbv[32][16] __CPROVER_EIGEN_fixedbvt;
-typedef double __CPROVER_EIGEN_fixedbvt;
-//typedef __CPROVER_fixedbv[INT_BITS+FRAC_BITS][FRAC_BITS] __CPROVER_fxp_t;
-typedef int64_t __CPROVER_fxp_t;
-typedef int64_t fxp_t;
-
-__CPROVER_EIGEN_fixedbvt nondet_double(void);
 
 
 typedef struct {
