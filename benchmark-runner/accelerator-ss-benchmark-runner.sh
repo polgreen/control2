@@ -2,6 +2,13 @@
 export PATH=${PATH//cbmc-5190/cbmc-trunk-diffblue-control-synthesis}
 export PATH=${PATH}:/users/pkesseli/software/cpp/cbmc/cbmc-trunk-diffblue-control-synthesis/src/cegis:/users/pkesseli/software/cpp/cbmc/cbmc-trunk-diffblue-control-synthesis-analyzer/src/goto-analyzer:/users/pkesseli/software/cpp/z3/trunk/target/i686-linux/bin
 
+status_output_file='output.txt'
+synthesis_file='FWL_LTI.c'
+width_check_file='width_LTI.c'
+working_directory_base_suffix='-dkr10'
+working_directory_base="/tmp/control_synthesis-ss${working_directory_base_suffix}"
+spec_header_file='spec.h'
+
 function setup_benchmark_directory {
  mkdir -p "$1" 2>/dev/null
  # TODO: cp source files and headers, and benchmark headers
@@ -35,15 +42,35 @@ function extract_frac_bits {
  echo $1 | sed "s/.*implementation *< *[^,]*,\([^> ]*\) *>.*/\1/"
 }
 
-status_output_file='output.txt'
-synthesis_file='FWL_LTI.c'
-width_check_file='width_LTI.c'
-working_directory_base_suffix='-dkr10'
-working_directory_base="/tmp/control_synthesis-ss${working_directory_base_suffix}"
+function extract_input_lower_bound {
+ echo $1 | sed "s/.*inputs *= *\[ *\([^,]*\) *,.*/\1/"
+}
+
+function extract_input_upper_bound {
+ echo $1 | sed "s/.*inputs *= *\[ *[^,]*,\([^]]*\).*/\1/"
+}
+
+function write_spec_header {
+ echo "#define NSTATES ${num_states}" >${spec_header_file}
+ echo "#define NINPUTS ${num_inputs}" >>${spec_header_file}
+ echo "#define NOUTPUTS ${num_outputs}" >>${spec_header_file}
+ controller_fixedbv_type_width=$((impl_int_bits+impl_frac_bits))
+ width_offset=$((controller_fixedbv_type_width%8))
+ [ ${width_offset} -ne 0 ] && impl_int_bits=$((impl_int_bits+8-width_offset))
+ echo "#define INT_BITS ${impl_int_bits}" >>${spec_header_file}
+ echo "#define FRAC_BITS ${impl_frac_bits}" >>${spec_header_file}
+ A_value=$(echo $1 | sed -r 's/;/ }, { /g')
+ echo "const __CPROVER_EIGEN_fixedbvt _controller_A[NSTATES][NSTATES] = { { ${A_value} } };" >>${spec_header_file}
+ B_value=$(echo $2 | sed -r 's/;/, /g')
+ echo "const __CPROVER_EIGEN_fixedbvt _controller_B[NSTATES] = { ${B_value} };" >>${spec_header_file}
+ echo "#define INPUT_LOWERBOUND (__CPROVER_EIGEN_fixedbvt)$3" >>${spec_header_file}
+ echo "#define INPUT_UPPERBOUND (__CPROVER_EIGEN_fixedbvt)$4" >>${spec_header_file}
+}
+
 mkdir -p ${working_directory_base} 2>/dev/null
 
 if [ -z "$1" ]; then
- benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/dcmotor_ss/')
+ benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/dcmotor_ss/')
 else
  benchmark_dirs=("$1")
 fi
@@ -64,9 +91,9 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
   num_outputs=$(extract_spec_scalar "${spec_content}" 'outputs')
   A=$(extract_spec_matrix "${spec_content}" 'A')
   B=$(extract_spec_matrix "${spec_content}" 'B')
-  C=$(extract_spec_matrix "${spec_content}" 'C')
-  D=$(extract_spec_matrix "${spec_content}" 'D')
-  inputs=$(extract_spec_matrix "${spec_content}" 'inputs')
+  input_lower_bound=$(extract_input_lower_bound "${spec_content}")
+  input_upper_bound=$(extract_input_upper_bound "${spec_content}")
+  write_spec_header "$A" "$B" "$input_lower_bound" "$input_upper_bound"
   exit 3
 
   working_directory="${working_directory_base}/accelerator-ss"
