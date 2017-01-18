@@ -1,19 +1,19 @@
 #include <stdio.h>
 #include <stdlib.h>
-
+#include "intervals.h"
 
 #define NSTATES 3u
 #define NINPUTS 1u
 #define NOUTPUTS 1u
 #define INITIALSTATE_UPPERBOUND 1.0
 #define INITIALSTATE_LOWERBOUND 0.0
-#define INPUT_UPPERBOUND 10.0
-#define INPUT_LOWERBOUND 0.0
+#define INPUT_UPPERBOUND 0.5
+#define INPUT_LOWERBOUND -0.5
 #define NUMBERLOOPS  15 //number of timesteps to check safety spec over
 #define INT_BITS 7
 #define FRAC_BITS 3
-#define SAFE_STATE_UPPERBOUND 10
-#define SAFE_STATE_LOWERBOUND -10
+#define SAFE_STATE_UPPERBOUND 1000
+#define SAFE_STATE_LOWERBOUND -1000
 
 //typedef __CPROVER_fixedbv[32][16] __CPROVER_EIGEN_fixedbvt;
 typedef double __CPROVER_EIGEN_fixedbvt;
@@ -212,7 +212,10 @@ int check_safety(void)
     for(i=0; i<NSTATES; i++)
     {
       if(_controller.states[i]>SAFE_STATE_UPPERBOUND || _controller.states[i]<SAFE_STATE_LOWERBOUND)
-        {return 0;}
+      {
+        printf("Failed discrete safety check, states %i is %f \n", i, _controller.states[i]);
+        return 0;
+      }
     }
   }
   return 1;
@@ -221,9 +224,9 @@ int check_safety(void)
 int main()
 {
 	if(check_safety()==0)
-		printf("bollocks \n");
+		printf("UNSAFE \n");
 	else
-		printf(" Yay \o/ \n");	
+		printf("SAFE \n");
 return 0;
 }
 
