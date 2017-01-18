@@ -13,11 +13,11 @@ typedef __CPROVER_fixedbv[24][12] __CPROVER_EIGEN_fixedbvt;
 #define NSTATES 3u
 #define NINPUTS 1u
 #define NOUTPUTS 1u
-#define INITIALSTATE_UPPERBOUND (__CPROVER_fixedbv[24][12])0.1
-#define INITIALSTATE_LOWERBOUND (__CPROVER_fixedbv[24][12])-0.1
+#define INITIALSTATE_UPPERBOUND (__CPROVER_fixedbv[24][12])0.5
+#define INITIALSTATE_LOWERBOUND (__CPROVER_fixedbv[24][12])-0.5
 #define INPUT_UPPERBOUND (__CPROVER_fixedbv[24][12])1
 #define INPUT_LOWERBOUND (__CPROVER_fixedbv[24][12])-1
-#define NUMBERLOOPS 10 //number of timesteps to check safety spec over
+#define NUMBERLOOPS 5 //number of timesteps to check safety spec over
 #define INT_BITS 8
 #define FRAC_BITS 8
 #define SAFE_STATE_UPPERBOUND (__CPROVER_fixedbv[24][12])1
