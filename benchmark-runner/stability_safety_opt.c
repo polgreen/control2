@@ -5,10 +5,10 @@ typedef __CPROVER_fixedbv[24][12] __CPROVER_EIGEN_fixedbvt;
 #define NSTATES 3u
 #define NINPUTS 1u
 #define NOUTPUTS 1u
-#define INITIALSTATE_UPPERBOUND 0.1
-#define INITIALSTATE_LOWERBOUND -0.1
-#define INPUT_UPPERBOUND 1.0
-#define INPUT_LOWERBOUND -1.0
+#define INITIALSTATE_UPPERBOUND (__CPROVER_fixedbv[24][12])0.1
+#define INITIALSTATE_LOWERBOUND (__CPROVER_fixedbv[24][12])-0.1
+#define INPUT_UPPERBOUND 1
+#define INPUT_LOWERBOUND -1
 #define NUMBERLOOPS 50 //number of timesteps to check safety spec over
 #define INT_BITS 7
 #define FRAC_BITS 3
@@ -16,13 +16,13 @@ typedef __CPROVER_fixedbv[24][12] __CPROVER_EIGEN_fixedbvt;
 #define SAFE_STATE_LOWERBOUND -10
 
 //typedef __CPROVER_fixedbv[INT_BITS+FRAC_BITS][FRAC_BITS] __CPROVER_fxp_t;
-typedef __CPROVER_fixedbv[16][FRAC_BITS] __CPROVER_fxp_t;
+typedef __CPROVER_fixedbv[16][8] __CPROVER_fxp_t;
 //__CPROVER_EIGEN_fixedbvt nondet_double(void);
 extern __CPROVER_fxp_t K_fxp[NSTATES];
 __CPROVER_EIGEN_fixedbvt _AminusBK[NSTATES][NSTATES];
 
 
-const __CPROVER_EIGEN_fixedbvt _controller_A[NSTATES][NSTATES] = {{ 1.0009,-0.029331,0.0021569},{0.03125,0,0},{0,0.0039062,0 }};
+const __CPROVER_EIGEN_fixedbvt _controller_A[NSTATES][NSTATES] = {{ 1.0009,-0.029331,0.0021569},{0.03125,0.0,0.0},{0.0,0.0039062,0.0 }};
 const __CPROVER_EIGEN_fixedbvt _controller_B[NSTATES] = { { 64.0 },{0.0},{0.0} };
 extern const __CPROVER_EIGEN_fixedbvt _controller_K[NSTATES];
 __CPROVER_EIGEN_fixedbvt _controller_inputs = 1.0;
@@ -58,9 +58,9 @@ __CPROVER_EIGEN_fixedbvt __CPROVER_EIGEN_poly[__CPROVER_EIGEN_POLY_SIZE];
 
 
 __CPROVER_EIGEN_fixedbvt internal_pow(__CPROVER_EIGEN_fixedbvt a, unsigned int b){
-   unsigned int i;
+
    __CPROVER_EIGEN_fixedbvt acc = 1.0;
-   for (i=0; i < b; i++){
+   for (int i=0; i < b; i++){
     acc = acc*a;
    }
    return acc;
@@ -210,7 +210,6 @@ void __CPROVER_EIGEN_charpoly(void){
 
 void A_minus_B_K()
 {
-  int i,j,k;
   /*for(i=0; i<NSTATES; i++)
    {
     for(j=0; j<NSTATES; j++)
@@ -218,8 +217,8 @@ void A_minus_B_K()
    }*/
   __CPROVER_array_copy(_AminusBK, _controller_A);
 
-  for (i=0;i<NSTATES; i++) { //rows of B
-      for (j=0; j<NSTATES; j++) { //columns of K
+  for (int i=0;i<NSTATES; i++) { //rows of B
+      for (int j=0; j<NSTATES; j++) { //columns of K
               _AminusBK[i][j] -= _controller_B[i] * _controller_K[j];
           }
       }
@@ -273,36 +272,34 @@ void states_equals_A_states_plus_B_inputs(void)
 
 int check_safety(void)
 {
-  int i,j,k;
 
   /*_controller_upperbounds[0] = 1.3605;
   _controller_lowerbounds[0] = -1.3605;
   _controller_upperbounds[1] = 0.6803;
   _controller_lowerbounds[1] = -0.6803;*/
 
-  for(j=0; j<NSTATES; j++)//set initial states and reference
+  for(int j=0; j<NSTATES; j++)//set initial states and reference
   {
     __CPROVER_EIGEN_fixedbvt __state0 = _controller_states[0];
      __CPROVER_EIGEN_fixedbvt __state1 = _controller_states[1];
      __CPROVER_EIGEN_fixedbvt __state2 = _controller_states[2];
     __CPROVER_assume(_controller_states[j]<INITIALSTATE_UPPERBOUND && _controller_states[j]>INITIALSTATE_LOWERBOUND);
-    __CPROVER_assume(_controller_states[j]!=0.0);
+    __CPROVER_assume(_controller_states[j]!=(__CPROVER_fixedbv[24][12])0.0);
   }
   
 
  // __CPROVER_array_copy(K_fxp, (__CPROVER_fxp_t)_controller_K);
-  for(i=0; i<NINPUTS;i++)
-  {
-    for(j=0; j<NSTATES; j++)//convert controller to fixed point
-      { K_fxp[j]= (__CPROVER_fxp_t)_controller_K[j];}
-  }
 
-  for(k=0; k<NUMBERLOOPS; k++)
+   for(int j=0; j<NSTATES; j++)//convert controller to fixed point
+      { K_fxp[j]= (__CPROVER_fxp_t)_controller_K[j];}
+
+
+  for(int k=0; k<NUMBERLOOPS; k++)
   {
     inputs_equal_ref_minus_k_times_states(); //update inputs one time step
     states_equals_A_states_plus_B_inputs(); //update states one time step
 
-    for(i=0; i<NSTATES; i++)
+    for(int i=0; i<NSTATES; i++)
     {
       if(_controller_states[i]>SAFE_STATE_UPPERBOUND || _controller_states[i]<SAFE_STATE_LOWERBOUND)
         {return 0;}
@@ -316,7 +313,7 @@ int main(void) {
   //init();
   closed_loop(); //calculate A - BK
   __CPROVER_EIGEN_charpoly(); //get eigen values
-  __CPROVER_assert(check_stability(), "");
+ // __CPROVER_assert(check_stability(), "");
   __CPROVER_assume(check_stability() != 0);
   __CPROVER_assume(check_safety() !=0);
   __CPROVER_EIGEN_fixedbvt __trace_K0 = _controller_K[0];
