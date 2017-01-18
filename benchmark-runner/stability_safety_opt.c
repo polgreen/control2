@@ -258,7 +258,7 @@ int check_safety(void)
      __CPROVER_EIGEN_fixedbvt __state1 = _controller_states[1];
      __CPROVER_EIGEN_fixedbvt __state2 = _controller_states[2];
     __CPROVER_assume(_controller_states[j]<INITIALSTATE_UPPERBOUND && _controller_states[j]>INITIALSTATE_LOWERBOUND);
-    __CPROVER_assume(_controller_states[j]!=(__CPROVER_fixedbv[24][12])0.0);
+    __CPROVER_assume(_controller_states[j]!=(__CPROVER_EIGEN_fixedbvt)0.0);
 
   }
   
