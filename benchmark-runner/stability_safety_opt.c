@@ -1,6 +1,7 @@
 #include <stdio.h>
+#include "dcmotor_ss_disc1.h"
 
-typedef __CPROVER_fixedbv[24][12] __CPROVER_EIGEN_fixedbvt;
+/*typedef __CPROVER_fixedbv[24][12] __CPROVER_EIGEN_fixedbvt;
 
 #define NSTATES 3u
 #define NINPUTS 1u
@@ -26,32 +27,12 @@ const __CPROVER_EIGEN_fixedbvt _controller_A[NSTATES][NSTATES] = {{ 1.0009,-0.02
 const __CPROVER_EIGEN_fixedbvt _controller_B[NSTATES] = { { 64.0 },{0.0},{0.0} };
 extern const __CPROVER_EIGEN_fixedbvt _controller_K[NSTATES];
 __CPROVER_EIGEN_fixedbvt _controller_inputs;
+extern __CPROVER_EIGEN_fixedbvt _controller_states[NSTATES]; */
+
+extern const __CPROVER_EIGEN_fixedbvt _controller_K[NSTATES];
+extern __CPROVER_fxp_t K_fxp[NSTATES];
+__CPROVER_EIGEN_fixedbvt _controller_inputs;
 extern __CPROVER_EIGEN_fixedbvt _controller_states[NSTATES];
-
-/*const digital_system_state_space _controller=
-{
-
-    .A = {{ 1.0009,-0.029331,0.0021569},{0.03125,0,0},{0,0.0039062,0 }},
-    .B = { { 64},{0.0},{0.0} },
-    .C = { {0.0058044,0.37148,47.5494} },
-    .D = { { 0.0 } },
-    .K = { { nondet_double(), nondet_double(), nondet_double() } },
-    //.K = { { 1072.1259765625, 1665.046875, -2047.998779296875 } },
-    .inputs = { { 1.0 } },
-};*/
-/*
-const digital_system_state_space _controller=
-{
-    .A = { { 4.6764e-166,0.0,0.0}, { 5.1253e-144,0.0,0.0}, { 0,2.5627e-144,0.0} },
-    .B = { { 0.125},{0.0},{0.0} },
-    .C = { { 0.16,-5.9787e-32,0.0 } },
-    .D = { { 0.0 } },
-    .K = { { nondet_double(), nondet_double(), nondet_double() } },
-    //.K = { { 1072.1259765625, 1665.046875, -2047.998779296875 } },
-    .inputs = { { 1.0 } },
-    .ref = {{0.0}},
-};*/
-
 
 #define __CPROVER_EIGEN_POLY_SIZE (NSTATES + 1u)
 __CPROVER_EIGEN_fixedbvt __CPROVER_EIGEN_poly[__CPROVER_EIGEN_POLY_SIZE];
@@ -280,8 +261,7 @@ int check_safety(void)
 
   }
   
-
- // __CPROVER_array_copy(K_fxp, (__CPROVER_fxp_t)_controller_K);
+   // __CPROVER_array_copy(K_fxp, (__CPROVER_fxp_t)_controller_K);
 
    for(int j=0; j<NSTATES; j++)//convert controller to fixed point
       { K_fxp[j]= (__CPROVER_fxp_t)_controller_K[j];}
