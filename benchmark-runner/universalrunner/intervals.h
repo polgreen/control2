@@ -1,22 +1,29 @@
+#include "dcmotor_ss_disc1.h"
+#include "types.h"
 
-//typedef __CPROVER_fixedbv[32][16] __CPROVER_EIGEN_fixedbvt;
-typedef double __CPROVER_EIGEN_fixedbvt;
-//typedef __CPROVER_fixedbv[INT_BITS+FRAC_BITS][FRAC_BITS] __CPROVER_fxp_t;
-typedef int64_t __CPROVER_fxp_t;
-typedef int64_t fxp_t;
+
 
 typedef __CPROVER_EIGEN_fixedbvt control_floatt; //added in by EP
 typedef __CPROVER_EIGEN_fixedbvt control_typet;  //added in by EP
 control_typet _zero = 0; //added in by EP
 
-struct intervalt
+struct plant_intervalt
 {
   control_typet low;
   control_typet high;
 };
 
-#define add(z,x,y) z.low=x.low+y.low;z.high=x.high+y.high
-#define sub(z,x,y) z.low=x.low-y.high;z.high=x.high-y.low
+
+#define cast_fxp_to_double(x) = (struct intervalt) {.low=x,\
+                                       .high = x};
+
+#define add(x,y) = (struct intervalt) {.low=x.low+y.low,\
+                                      .high = x.high+y.high};
+//#define minusequals(x,y) = (struct intervalt) z{.
+
+#define sub(x,y)  = (struct intervalt) {.low=x.low-y.high, \
+                                          .high=x.high-y.low};
+
 
 inline struct intervalt mult(struct intervalt x,struct intervalt y)
 //inline void mult(intervalt z,intervalt x,intervalt y)
