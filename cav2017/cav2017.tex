@@ -289,7 +289,8 @@ and $r_{k}$ is a reference signal.
 %
 The closed-loop model then takes the form 
 \begin{align}
-x_{k+1} = ( A_d - B_d K ) + B_d r_k. \nonumber
+\label{eq:closedloopss}
+x_{k+1} = ( A_d - B_d K ) + B_d r_k.
 \end{align}
 The gain matrix $K$ can be set so that the closed-loop dynamics are shaped as desired, 
 according to a desired goal or objective. 
@@ -302,33 +303,67 @@ A standard objective is to obtain stable closed-loop dynamics.
 
 %\todo{[Here discuss Jury criterium for DISCRETE-TIME models - a simplified version of the first part of what is now in Section \ref{sec:cof_verification} (with no quantisation noises yet).]}  
 
-Jury's criterion is a mathematical method used to verify whether the roots 
-of a characteristic polynomial are within the unit circle by exploring solely the coefficients 
-of the polynomial. The first step is to create a matrix 
-$\mat{M} \in \mathbb{R}^{(n+1) \times (n+1)}$ with the first row elements 
-$m_{0,j}=c_j$, where $j \in [0,n]$, $k=n-(i-1)$ and 
-$c_j$ are the coefficients of the original polynomial. 
-%
+A discrete-time system is asymptotically stable if and only if all the roots 
+of the characteristic polynomial ({\it i.e.}, the eigenvalues) are inside of 
+the unity circle, {\it i.e.}, their absolute value are less than 
+one~\cite{astrom1997computer}. For a closed-loop system as~\eqref{eq:closedloopss}, 
+the characteristic polynomial $P(z)$ should be computed as follows:
 \begin{equation}
-\left[\begin{array}{ccccc}
-c_0&c_1&\hdots&c_{n-1}&c_n\\
-m_{\scriptscriptstyle 0,0}-m_{\scriptscriptstyle 0,n}^*\frac{m_{0,n}^*}{m_{0,0}}&m_{\scriptscriptstyle 0,1}-m_{\scriptscriptstyle 0,n-1}^*\frac{m_{0,n}^*}{m_{0,0}}&\hdots&m_{\scriptscriptstyle 0,n-1}-m_{\scriptscriptstyle 0,1}^*\frac{m_{0,n}^*}{m_{0,0}}&0\\
-\vdots&\vdots&\vdots&\vdots&\vdots\\
-m_{\scriptscriptstyle i-1,0}-m_{\scriptscriptstyle i-1,k-j}^*\frac{m_{i-1,k}^*}{m_{i-1,0}}&m_{\scriptscriptstyle i-1,1}-m_{\scriptscriptstyle i-1,k-j}^*\frac{m_{i-1,k}^*}{m_{i-1,0}}&\hdots&0&0\\
-m_{\scriptscriptstyle n-1,0}-m_{\scriptscriptstyle n-1,1-j}^*\frac{m_{n-1,1}^*}{m_{n-1,0}}&0&\hdots&0&0\\
-\end{array}\right]
+P(z)= \det( z I_{n} - A_d + B_d K ),
 \end{equation}
+where $I_{n}$ is the n-th order identity matrix. 
 
-Notice that every row has a polynomial one degree lower than the previous. 
-The sufficient and necessary conditions for the polynomial in row $0$ 
-to have all of its roots inside the unit circle are~(\cite{astrom1997computer}):
-%
-\begin{align}
-|c_n|<c_0&&
-\sum_{i=0}^n c_i > 0&&
-(-1)^n\sum_{i=0}^n c_i (-1)^{n-i}> 0&&
-m_{i,0}>0
-\end{align}
+Jury's criterion provides necessary and sufficient conditions for the eigenvalues 
+to be within the unit circle and, consequently, the system is stable.  Given a 
+polynomial $P(z)$ of the form
+$$
+P(z) = a_{0}z^{N} + a_{1}z^{N-1} + ... a_{N-1}z + a_{N} = 0, a_{0}\neq 0,
+$$
+Jury's criterion explores solely the coefficients ($a_{0},a_{1},...,a_{N-1}$) 
+of $P(z)$ for checking the validity of the stability property $\phi_{stability}$. 
+
+In particular, Jury stability test is already explained in the control system 
+literature ({\it e.g.}~\cite{fadali}). This study, however, limits itself to 
+explain the encoding of Jury's criterion for the formal synthesis purpose. 
+For the stability  test procedure, the following Jury matrix 
+$M=[m_{ij}]_{(2N-2)\times N}$ is built  from $S(z)$ coefficients:
+$$
+M=\left[
+\begin{matrix}
+  V^{(0)} \\
+  V^{(1)} \\
+  \vdots \\
+  V^{(N-2)}
+ \end{matrix}
+\right]\mbox{,}
+$$
+\noindent where $V^{(k)}=[v^{(k)}_{ij}]_{2\times N}$ such that
+$$
+v^{(0)}_{ij}=\begin{cases} 
+a_{j-1}, & \mbox{if } i=1 \\   v^{(0)}_{(1)(N-j+1)}, & \mbox{if } i=2 
+\end{cases}\mbox{, and} 
+$$
+$$
+v^{(k)}_{ij}=\begin{cases} 
+0, & \mbox{if } j>n-k\\
+v^{(k-1)}_{1j}-v^{(k-1)}_{2j}\cdot\frac{v^{(k-1)}_{11}}{v^{(k-1)}_{21}}, & \mbox{if } j\leq n-k  \mbox{ and } i=1 \\
+v^{(k)}_{(1)(N-j+1)}, & \mbox{if } j\leq n-k \mbox{ and } i=2 \\
+\end{cases} \mbox{,}
+$$
+\noindent where $k\in\mathbb{Z}$, such that $0<k<N-2$. $S(z)$ is the 
+characteristic polynomial of a stable system if and only if the following 
+four propositions hold:
+\begin{itemize}
+\item $R_{1}$: $S(1)>0$;
+\item $R_{2}$: $(-1)^{N}S(-1)>0$;
+\item $R_{3}$: $\vert{a_{0}}\vert <a_{N}$;
+\item $R_{4}$: $m_{11}>0\iff m_{31}\wedge m_{51}\wedge \dots \wedge m_{(2N-3)(1)}$.
+\end{itemize}
+
+The stability property $\phi_{stability}$ is then encoded as follows:
+$$
+\phi_{stability}\iff \ (R_{1} \wedge R_{2} \wedge R_{3} \wedge R_{4}).
+$$
 
 
 
