@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include "dcmotor_ss_disc1.h"
 
+
+
 #define INITIALSTATE_UPPERBOUND (__CPROVER_EIGEN_fixedbvt)0.5
 #define INITIALSTATE_LOWERBOUND (__CPROVER_EIGEN_fixedbvt)-0.5
 #define SAFE_STATE_UPPERBOUND (__CPROVER_EIGEN_fixedbvt)1
@@ -228,6 +230,21 @@ void states_equals_A_states_plus_B_inputs(void)
   __CPROVER_assume( _controller_states[2]<SAFE_STATE_UPPERBOUND && _controller_states[2]>SAFE_STATE_LOWERBOUND);
  }
 
+#ifdef CHECKGAP
+
+__CPROVER_EIGEN_fixedbvt exp_max_eigen_norm = 0.01;
+
+int check_gap()
+{ //upper bound is e ^ max lamba * t, t is 1 time step
+  for(int i=0; i<NSTATES; i++)
+  {
+    if( exp_max_eigen_norm - _controller_states[i]< SAFE_STATE_LOWERBOUND ||
+        exp_max_eigen_norm + _controller_states[i] > SAFE_STATE_UPPERBOUND)
+      return 0;
+  }
+  return 1;
+}
+#endif
 
 
 int check_safety(void)
@@ -242,12 +259,6 @@ int check_safety(void)
     __CPROVER_assume(_controller_states[j]!=(__CPROVER_EIGEN_fixedbvt)0.0);
 
   }
-  
-   // __CPROVER_array_copy(K_fxp, (__CPROVER_fxp_t)_controller_K);
-
-  // for(int j=0; j<NSTATES; j++)//convert controller to fixed point
-    //  { K_fxp[j]= (__CPROVER_fxp_t)_controller_K[j];}
-
 
   for(int k=0; k<NUMBERLOOPS; k++)
   {
@@ -258,6 +269,13 @@ int check_safety(void)
     {
       if(_controller_states[i]>SAFE_STATE_UPPERBOUND || _controller_states[i]<SAFE_STATE_LOWERBOUND)
         {return 0;}
+#ifdef CHECKGAP
+      else
+      {
+        if(check_gap()==0)
+          return 0;
+      }
+#endif
     }
   }
   return 1;

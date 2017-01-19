@@ -32,5 +32,9 @@ int main()
   printf("x/x=[%f,%f]\n",z.low,z.high);
   fxp_interval_check(&x);
   printf("fxp_x=[%f,%f]\n",x.low,x.high);
+  z=mult(x,x);
+  printf("x*x=[%f,%f]\n",z.low,z.high);
+  z=fxp_mult(x,x);
+  printf("fxp_x*fxp_x=[%f,%f]\n",z.low,z.high);
   return 0;
 }

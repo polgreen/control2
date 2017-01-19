@@ -113,7 +113,6 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
   start_time=`date +%s`
   eval "./axelerator $options -control \"[0,0,0]\""
   while [ $((integer_width+radix_width)) -le ${max_length} ]; do
-   exit 3
    echo_log "int: ${integer_width}, radix: ${radix_width}"
    solution_found = false
    synthesis_in_progress = true
