@@ -866,24 +866,25 @@ $z^n+\sum_{i=1}^n[a_i-k_i]z^{n-i}=\prod_{i=1}^n (z-[\lambda_i]) : |[\lambda_i]|<
 
 \begin{figure}
 \centering
+{\scriptsize
 \hspace*{-1cm}
 \begin{tikzpicture}[scale=0.3,->,>=stealth',shorten >=.2pt,auto, semithick, ampersand replacement=\&,]
   \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center},row sep=.8cm, column sep=.2cm] {
    \coordinate (aux1);
    \& \coordinate (aux2);
    \& ;\\
-   \&\node[fill=yellow!20,align=center] (pre) {{\sc 1. pre-}\\{\sc processing}};
-   \& \node[fill=yellow!20,align=center] (abstract) {\sc 4. abstraction};
+   \&\node[fill=gray!20,align=center] (pre) {{\sc 1. pre-}\\{\sc processing}};
+   \& \node[fill=gray!20,align=center] (abstract) {\sc 4. abstraction};
        % \node[draw=none] (FIK) at ([xshift=2.5cm,yshift=.3cm]abstract)  {\sc $\Psi (\mat{K})$};
    \& \coordinate (aux); \\ % \node[fill=yellow!20,align=center] (counter) {\sc counterexample};\\
    \& 
-   \& \node[fill=yellow!20,align=center, minimum width=3cm] (synth) {\sc 2. synthesiser};
+   \& \node[fill=gray!20,align=center, minimum width=3cm] (synth) {\sc 2. synthesise};
        %\node[draw=none] (KL) at ([xshift=2.5cm,yshift=-.25cm]synth)  {\sc $\mat{K},\mat{L}$};
        %\node[draw=none] (NKL) at ([xshift=2cm,yshift=1cm]synth)  {\sc $P_a$};
-   \& \node[fill=yellow!20,align=center, minimum width=4cm] (verify) {\sc 3. verifier ($\Psi$)};
+   \& \node[fill=gray!20,align=center, minimum width=4cm] (verify) {\sc 3. verify ($\Psi$)};
        %\node[draw=none] (VUNS) at ([xshift=.6cm,yshift=1cm]verify)  {\sc SAT};
        \node[draw=none] (SAT) at ([xshift=2.7cm,yshift=-.3cm]verify)  {\sc UNSAT};
-   \& \node[ellipse, fill=yellow!20] (done) {{\sc Done}};\\
+   \& \node[ellipse, fill=gray!20] (done) {{\sc Done}};\\
    \&
    \& complexnode/.pic={
      \coordinate (auxsynth);
@@ -942,6 +943,7 @@ $z^n+\sum_{i=1}^n[a_i-k_i]z^{n-i}=\prod_{i=1}^n (z-[\lambda_i]) : |[\lambda_i]|<
      (verify.north) edge node {$\Psi (\mat{K})$} (aux)
      (LUNSAT.east) edge (FAIL.west);
 \end{tikzpicture}
+}
 \caption{The CEGIS loop with abstraction refinement\label{fig:CEGARIS}.}
 \end{figure}
 
