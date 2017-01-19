@@ -205,11 +205,13 @@ functions for switched systems, that yield switching controllers with
 a guaranteed minimum dwell time in each mode.
 
 In \cite{DBLP:journals/corr/AbateBCCDKK16}, Abate et al.  focus on
-synthesising stabilizing controllers for continuous plants.  While
-they also make use of a CEGIS-based technique, their approach is
+synthesising stabilizing controllers for continuous plants
+by exploiting advantage in bit-accurate verification of C programs 
+to obtain a verifier for software-implemented digital control~\cite{Bessa16}.  
+While they also make use of a CEGIS-based technique, their approach is
 restricted to synthesising controllers for hybrid closed-loop systems
 that are stable and only consider transfer function models.  In contrast,
-in the current paper we consider a state-space
+in the current paper, we consider a state-space
 representation of the physical system and synthesise controllers that
 make the closed-loop system safe.  Moreover, 
 a key aspect of our approach
@@ -242,7 +244,7 @@ introduced by FWL does not make the digital system unstable.  A more recent
 approach~\cite{DBLP:journals/automatica/WuLCC09} uses $\mu$ calculus to
 directly model the digital controller so that the selected parameters are
 stable by design.  The analyses
-in~\cite{DBLP:conf/hybrid/WangGRJF16,DBLP:conf/hybrid/RouxJG15} rely on an
+in~\cite{DBLP:conf/hybrid/RouxJG15,DBLP:conf/hybrid/WangGRJF16} rely on an
 invariant computation on the discrete system dynamics using Semi-Definite
 Programming (SDP).  While the former uses BIBO properties to determine
 stability, the latter uses Lyapunov-based quadratic invariants.  In both
@@ -252,7 +254,7 @@ by~\cite{park2016scalable}, where the verification of existing code is
 performed against a known model by extracting an LTI model of the code
 through symbolic execution.  In order to account for rounding errors, an
 upper bound is introduced in the verification phase.
-The work in \cite{picasso2002construction,picasso2003stabilization} introduces
+The work in \cite{picasso2003stabilization,picasso2002construction} introduces
 attractive invariant sets as a mechanism to bound the quantization error effect
 on stabilization as an invariant set that always converges toward the cotrollable
 set. In a similar fashion, \cite{liberzon2003hybrid} evaluates the dynamics of the
