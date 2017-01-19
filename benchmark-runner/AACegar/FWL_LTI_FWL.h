@@ -132,7 +132,7 @@ int validation()
     mult_bits++;
     max_int>>=1;
   }
-  //fxp_check_coeffs(controller);
-  //boundController();
+  fxp_check_coeffs(controller);
+  boundController();
   return check_bits()+check_vector_bounds(controller);  
 }
