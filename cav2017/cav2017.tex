@@ -27,7 +27,7 @@
 \usepackage{framed}
 \usepackage{listings}
 
-\usetikzlibrary{positioning, automata, shapes.arrows, calc, shapes, arrows}
+\usetikzlibrary{positioning, automata, shapes.arrows, calc, shapes, arrows, patterns}
 
 \newcommand{\todo}[1]{{\color{red} TODO: #1}}
 \newcommand{\commentib}[1]{{\color{blue} [IB: #1]}}
@@ -641,6 +641,62 @@ enables abstraction refinement inside the CEGIS loop.
 unroll the corresponding loop $k$ times. For this approach the generalisation step is given as an incremental
 increase of precision and sampling rate.
 \end{itemize}
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+\subsection{Architecture of the program synthesizer}
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+\label{synthesizer-general}
+%
+%% \red{[I would recommend to clarify the domain of definition of $\sigma$, particularly over the set where $x$ ranges over. 
+%% (Be cognisant that control audience might be unfamiliar with the cegis architecture.) ]}
+% 
+The input specification provided to the program synthesizer is of the form
+$\exists \vec{P} .  \forall \vec{x}.  \sigma(\vec{x}, \vec{P})$ where
+$\vec{P}$ ranges over functions, $\vec{x}$ ranges over ground terms and
+$\sigma$ is a quantifier-free formula.  We interpret the ground terms over
+some finite domain $\mathcal{D}$.
+
+The design of our synthesizer 
+%is given in Figure~\ref{fig:CEGIS} and 
+consists of two phases, an inductive synthesis phase and a validation phase,
+%{\sc Synthesize} and {\sc Verify}, 
+which interact via a finite set of test vectors {\sc inputs} that is updated incrementally. 
+Given the aforementioned specification $\sigma$, the inductive synthesis
+procedure
+tries to find an existential witness $\vec{P}$ satisfying the specification
+$\sigma(\vec{x}, \vec{P})$ for all $\vec{x}$ in {\sc inputs} (as opposed to
+all $\vec{x} \in \mathcal{D}$).
+%
+If the synthesis phase succeeds in finding a witness~$\vec{P}$, this witness
+is a candidate solution to the full synthesis formula.  We pass this
+candidate solution to the validation phase, which checks whether it is a full
+solution (i.e., $\vec{P}$ satisfies the specification $\sigma(\vec{x},
+\vec{P})$ for all $\vec{x}\in\mathcal{D}$).
+%
+%determines whether
+%it does satisfy the specification on all inputs by checking
+%satisfiability of the following verification formula:
+%
+%$\exists \vec{x} . \lnot \sigma(\vec{x}, \vec{P})$
+%If this formula is unsatisfiable, 
+%% the candidate solution is in fact a 
+%% full solution.
+%
+If this is the case, then the algorithm terminates.  Otherwise, additional
+information is provided to the inductive synthesis phase in the form of a new
+counterexample that is added to the {\sc inputs} set and the loop iterates
+again.
+%% the witness $\vec{x}$ denote an input on which the
+%% candidate solution fails to meet the specification.  Thus, $\vec{x}$ is
+%% added to the {\sc inputs} set, and the loop iterates again.  
+
+It is
+worth noting that each iteration of the loop adds a new input to the
+finite set $\text{\sc inputs}$ that is used for synthesis.  Given that
+the full set of inputs $\mathcal{D}$
+%\blue{[which by now should have a name, as suggested to be introduced above]} 
+is finite, this means that the refinement loop
+can only iterate a finite number of times.
+
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{CEGIS with Abstraction Refinement}
@@ -883,6 +939,65 @@ $z^n+\sum_{i=1}^n[a_i-k_i]z^{n-i}=\prod_{i=1}^n (z-[\lambda_i]) : |[\lambda_i]|<
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{CEGIS with Precision and Sampling Rate Incrementation}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+% \begin{figure*}[htb]
+% \centering
+% %\resizebox{1\textwidth}{!}
+% {
+%  \begin{tikzpicture}[scale=0.3,->,>=stealth',shorten >=.2pt,auto, semithick, initial text=, ampersand replacement=\&,]
+%   \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center
+% },
+%           row sep=.6cm, column sep=2cm] {
+%    \coordinate (aux1);
+%    \& \coordinate (aux2);
+%    \&;\\
+%    \node[minimum width=2.5cm, minimum height=0.6cm, fill=gray!20] (synth) {{\sc Synthesize}};
+%    \&
+%    complexnode/.pic={ 
+%      \node[rectangle,draw,dotted,
+% 	minimum width=7cm,
+% 	minimum height=1cm,
+%         pattern=north west lines, pattern color=gray!20,
+% 	label={\sc Verify},] (verif) {};
+%      \node[minimum width=2.5cm, minimum height=0.6cm, fill=gray!20] (verif1) at ([xshift=-2cm]verif.center) {{\sc Uncertainty}};
+%      \node[minimum width=2.5cm, minimum height=0.6cm, fill=gray!20] (verif2) at ([xshift=2cm]verif.center) {{\sc Precision}};
+%    } 
+%    \& \node[ellipse, fill=gray!20] (done) {{\sc Done}};\\
+%    %% \node[fill=yellow!20] (verif) {{\sc ~~~~~~Uncertainty~~~~~~}};
+%    %% \&
+%    %% \node[fill=yellow!20] (verif2) {{\sc ~~~~~~Precision~~~~~~~}};\\
+%    \& \\
+%    \node[minimum height=0.5cm] (gp) {\sf Closed-loop System Search};
+%    \&
+%    complexnode/.pic={ 
+%      \coordinate (aux);
+%    \node[minimum height=0.5cm] (bmc) at ([xshift=-2cm]aux.center) {\sf BMC-based Verifier};
+%    \node[minimum height=0.5cm] (fp)  at ([xshift=2cm]aux.center) {\sf Fixed-point Arithmetic Verifier};
+%    }   
+%     \\
+%   };
+
+%    \path
+%     ([yshift=2em]synth.east) edge node[xshift=-0.5em] {Candidate solution} ([yshift=2em]verif1.west)
+%     ([yshift=-2em]verif1.west) edge node {Counterexample} ([yshift=-2em]synth.east)
+%     ([xshift=5em]verif1.south) edge node[align=center] {Candidate\\ $P$} ([xshift=5em]bmc.north)
+%     ([xshift=5em]verif2.south) edge node[align=center] {Candidate\\ $P$} ([xshift=5em]fp.north)
+%     ([xshift=-5em]bmc.north) edge node[align=center]  {UNSAT/\\model} ([xshift=-5em]verif1.south)
+%     ([xshift=-5em]fp.north) edge node[align=center]  {True/\\False} ([xshift=-5em]verif2.south)
+%     (verif2) edge node {} (done)
+%     ([xshift=5em]synth.south) edge node[align=center] {Inputs} ([xshift=5em]gp.north)
+%     ([xshift=-5em]gp.north) edge node[align=center] {UNSAT/\\candidate} ([xshift=-5em]synth.south)
+%     (aux1) edge (synth.north);
+%    \path[-]
+%    (verif2.north) edge node[align=center] {} ([xshift=6.7cm]aux2)
+%    ([xshift=6.7cm]aux2) edge node[align=center] {Increase Precision} (aux1);
+
+%  \end{tikzpicture}
+% }
+% \caption{The CEGIS loop with precision and sampling rate incrementation}
+% \label{fig:CEGIS}}
+% \end{figure*}
+
 
 
 %-------------------------------
