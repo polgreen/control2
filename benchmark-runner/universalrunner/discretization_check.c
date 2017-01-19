@@ -2,14 +2,16 @@
 #include "benchmark.h" //benchmark header file
 //#include "control_types.h" //include types
 
-#define CPROVER
+//#define CPROVER
 #ifdef INTERVAL
     #include "intervals.h"
 #else
   #include "operators.h"
 #endif
 
-#define NUMBERLOOPS 5
+#define __DSVERIFIER_assert(x) __CPROVER_assume(x)
+
+#define NUMBERLOOPS 20
 #define INITIALSTATE_UPPERBOUND (__plant_typet)0.5
 #define INITIALSTATE_LOWERBOUND (__plant_typet)-0.5
 #define SAFE_STATE_UPPERBOUND (__plant_typet)1
@@ -17,6 +19,7 @@
 
 //other plant variables
 extern const __controller_typet K_fxp[NSTATES]; //nondet controller
+//const __controller_typet K_fxp[NSTATES] = { 0.07421875, 0.05078125, 0.0078125 }; //nondet controller
 __plant_typet _controller_inputs;
 extern __plant_typet _controller_states[NSTATES]; //nondet initial states
 
@@ -250,19 +253,19 @@ void states_equals_A_states_plus_B_inputs(void)
    __CPROVER_array_copy(_controller_states, states_equals_A_states_plus_B_inputs_result);
    /*for(i=0; i<NSTATES; i++)
        {_controller_states[i] = states_equals_A_states_plus_B_inputs_result[i];}*/
-  __CPROVER_assert( _controller_states[0]<SAFE_STATE_UPPERBOUND && _controller_states[0]>SAFE_STATE_LOWERBOUND, "");
-  __CPROVER_assert( _controller_states[1]<SAFE_STATE_UPPERBOUND && _controller_states[1]>SAFE_STATE_LOWERBOUND,"");
+  __DSVERIFIER_assert( _controller_states[0]<SAFE_STATE_UPPERBOUND && _controller_states[0]>SAFE_STATE_LOWERBOUND);
+  __DSVERIFIER_assert( _controller_states[1]<SAFE_STATE_UPPERBOUND && _controller_states[1]>SAFE_STATE_LOWERBOUND);
   #if NSTATES==3 || NSTATES==4
-      __CPROVER_assert( _controller_states[2]<SAFE_STATE_UPPERBOUND && _controller_states[2]>SAFE_STATE_LOWERBOUND, "");
+      __DSVERIFIER_assert( _controller_states[2]<SAFE_STATE_UPPERBOUND && _controller_states[2]>SAFE_STATE_LOWERBOUND);
   #endif
   #if NSTATES==4
-      __CPROVER_assert( _controller_states[3]<SAFE_STATE_UPPERBOUND && _controller_states[3]>SAFE_STATE_LOWERBOUND, "");
+      __DSVERIFIER_assert( _controller_states[3]<SAFE_STATE_UPPERBOUND && _controller_states[3]>SAFE_STATE_LOWERBOUND);
   #endif
 
 #else
   for(int i=0; i<NSTATES; i++)
        {_controller_states[i] = states_equals_A_states_plus_B_inputs_result[i];
-       assert( _controller_states[i]<SAFE_STATE_UPPERBOUND && _controller_states[i]>SAFE_STATE_LOWERBOUND);
+       __DSVERIFIER_assert( _controller_states[i]<SAFE_STATE_UPPERBOUND && _controller_states[i]>SAFE_STATE_LOWERBOUND);
        }
 #endif
 
@@ -280,7 +283,7 @@ int check_safety(void)
      __plant_typet __state1 = _controller_states[1];
      __plant_typet __state2 = _controller_states[2];
     __CPROVER_assume(_controller_states[j]<INITIALSTATE_UPPERBOUND && _controller_states[j]>INITIALSTATE_LOWERBOUND);
-   // __CPROVER_assume(_controller_states[j]!=(__plant_typet)0.0);
+    __CPROVER_assume(_controller_states[j]!=(__plant_typet)0.0);
     #endif
   }
 
@@ -303,9 +306,8 @@ int main(void) {
   //init();
   closed_loop(); //calculate A - BK
   __CPROVER_EIGEN_charpoly(); //get eigen values
- // __CPROVER_assert(check_stability(), "");
-  __CPROVER_assert(check_stability(), "");
-  __CPROVER_assert(check_safety(), "");
+  __DSVERIFIER_assert(check_stability());
+  __DSVERIFIER_assert(check_safety());
  /* __plant_typet __trace_K0 = _controller_K[0];
   __plant_typet __trace_K1 = _controller_K[1];
   __plant_typet __trace_K2 = _controller_K[2];*/
@@ -313,6 +315,6 @@ int main(void) {
   __plant_typet __trace_fxpK1 = K_fxp[1];
   __plant_typet __trace_fxpK2 = K_fxp[2];
 
- // __CPROVER_assert(0 == 1, "");
+  __CPROVER_assert(0 == 1, "");
   return 0;
 }
