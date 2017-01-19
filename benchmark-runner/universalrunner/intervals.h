@@ -112,6 +112,46 @@ inline struct intervalt mult(struct intervalt x,struct intervalt y)
   return z;
 }
 
+inline struct intervalt fxp_mult(struct intervalt x,struct intervalt y)
+{
+  long long int xlow=x.low*_fxp_one;
+  long long int xhigh=x.high*_fxp_one;
+  long long int ylow=y.low*_fxp_one;
+  long long int yhigh=y.high*_fxp_one;
+  
+  struct intervalt z;
+  long long int zlow=xlow*ylow;
+  long long int zhigh=(-xlow)*ylow;
+  zhigh=-zhigh;
+  long long int second=xlow*yhigh;
+  long long int third=xhigh*ylow;
+  long long int fourth=xhigh*yhigh;
+
+  if (second<zlow) zlow=second;
+  else if (second>=zhigh)
+  {  
+    zhigh=(-xlow)*yhigh;
+    zhigh=-zhigh;
+  }
+  if (third<zlow) zlow=third;
+  else if (third>=zhigh) 
+  {
+    zhigh=(-xhigh)*ylow;
+    zhigh=-zhigh;
+  }
+  if (fourth<zlow) zlow=fourth;
+  else if (fourth>=zhigh) 
+  {
+    zhigh=(-xhigh)*yhigh;
+    zhigh=-zhigh;
+  }
+  z.low=(zlow/_fxp_one);
+  z.low/=_fxp_one;
+  z.high=(zhigh/_fxp_one+1);
+  z.high/=_fxp_one;
+  return z;
+}
+
 inline struct intervalt posDiv(struct intervalt x, struct intervalt y)
 {
   struct intervalt z;
