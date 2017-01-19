@@ -1,16 +1,20 @@
 //Warning! this file assumes rounding to -\infty
-#include "dcmotor_ss_disc1.h"
-#include "types.h"
 
+//typedef __CPROVER_fixedbv[32][16] __CPROVER_EIGEN_fixedbvt;
+typedef double __CPROVER_EIGEN_fixedbvt;
+//typedef __CPROVER_fixedbv[INT_BITS+FRAC_BITS][FRAC_BITS] __CPROVER_fxp_t;
+
+#ifdef __CPROVER
+typedef int64_t __CPROVER_fxp_t;
+typedef int64_t fxp_t;
 #endif
-
 
 typedef __CPROVER_EIGEN_fixedbvt control_floatt; //added in by EP
 typedef __CPROVER_EIGEN_fixedbvt control_typet;  //added in by EP
 control_typet _zero = 0; //added in by EP
 control_typet _one = 1;
 
-struct plant_intervalt
+struct intervalt
 {
   control_typet low;
   control_typet high;
@@ -70,18 +74,10 @@ void fxp_interval_check(struct intervalt *value)
   value->high+=_dbl_lsb;
 }
 
-#define cast_fxp_to_double(x) = (struct intervalt) {.low=x,\
-                                       .high = x};
+#define add(z,x,y) z.low=x.low+y.low;z.high=x.high+y.high
+#define sub(z,x,y) z.low=x.low-y.high;z.high=x.high-y.low
 
-#define add(x,y) = (struct intervalt) {.low=x.low+y.low,\
-                                      .high = x.high+y.high};
-//#define minusequals(x,y) = (struct intervalt) z{.
-
-#define sub(x,y)  = (struct intervalt) {.low=x.low-y.high, \
-                                          .high=x.high-y.low};
-
-
-inline struct intervalt mult(struct intervalt x,struct intervalt y)
+/*inline */struct intervalt mult(struct intervalt x,struct intervalt y)
 {
   struct intervalt z;
   z.low=x.low*y.low;
@@ -112,7 +108,7 @@ inline struct intervalt mult(struct intervalt x,struct intervalt y)
   return z;
 }
 
-inline struct intervalt fxp_mult(struct intervalt x,struct intervalt y)
+/*inline */struct intervalt fxp_mult(struct intervalt x,struct intervalt y)
 {
   long long int xlow=x.low*_fxp_one;
   long long int xhigh=x.high*_fxp_one;
@@ -152,7 +148,7 @@ inline struct intervalt fxp_mult(struct intervalt x,struct intervalt y)
   return z;
 }
 
-inline struct intervalt posDiv(struct intervalt x, struct intervalt y)
+/*inline */struct intervalt posDiv(struct intervalt x, struct intervalt y)
 {
   struct intervalt z;
   if (x.high<=_zero)

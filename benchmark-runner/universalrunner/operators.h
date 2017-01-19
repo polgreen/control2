@@ -8,6 +8,7 @@
 #ifndef OPERATORS_H_
 #define OPERATORS_H_
 
+#define controller_mult(x,y) ((x) *(y))
 #define mult(x,y) ( (x) * (y))
 #define mult3(x,y,z) ((x) * (y) * (z))
 

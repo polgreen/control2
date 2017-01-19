@@ -219,7 +219,7 @@ void inputs_equal_ref_minus_k_times_states(void)
     __controller_typet result_fxp=0;
 
      for(int k=0; k<NSTATES; k++)
-     {  result_fxp = add (result_fxp, mult(K_fxp[k] , controller_cast(_controller_states[k])));
+     {  result_fxp = add (result_fxp, controller_mult(K_fxp[k] , controller_cast(_controller_states[k])));
        //{ result_fxp += (K_fxp[k] * (__controller_typet)_controller_states[k]);}
 
         _controller_inputs = sub(0,plant_cast(result_fxp));

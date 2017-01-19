@@ -1,5 +1,5 @@
-#define __CPROVER
-#define _FIXEDBV
+//#define __CPROVER
+//#define _FIXEDBV
 #ifdef __CPROVER
 #ifndef _FIXEDBV
   #ifndef _EXPONENT_WIDTH
