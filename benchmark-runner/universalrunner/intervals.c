@@ -22,9 +22,9 @@ int main()
   printf("y=[%f,%f]\n",y.low,y.high);
   z=mult(x,x);
   printf("x*x=[%f,%f]\n",z.low,z.high);
-  z=add(x,x);
+  add(z,x,x);
   printf("x+x=[%f,%f]\n",z.low,z.high);
-  z=sub(x,y);
+  sub(z,x,y);
   printf("x-y=[%f,%f]\n",z.low,z.high);
   z=mult(x,y);
   printf("x*y=[%f,%f]\n",z.low,z.high);
