@@ -470,22 +470,36 @@ The estimation of $\hat{\vec{x}}$ corresponds to the sum of three matrix-vector 
 
 \todo{The safety specification is defined over the state space, not the output. Further, please distinguish the spec from the input constraints. }
 
+We require that the closed-loop system meets safety specifications. 
+A safety specification establishes bounds for the states, such that 
+the controller $K$ must maintain the states within a given lower and upper 
+bound for any initial state. 
 
-
-
-
-Finally, we also require that the closed-loop systems meets safety specifications. A safety specification establish bounds for the states, such that he controller $K$ must maintain the states within these bounds for any initial state. 
-
-The safety property (represented by $\phi_{safety}$) is encoded as follows:
+The safety property represented by $\phi_{safety}$ is encoded as follows:
+%
 \begin{equation}
 \label{eq:safetyliteral}
 \phi_{safety}\iff \forall k\geq 0, \bigwedge_{i=1}^{n}{x_{i}^{-} \leq x_{i,k} \leq x_{i}^{+}},
 \end{equation}
-where $x_{i}^{-}$ and $x_{i}^{+}$ are respectively the lower and upper bound of the $i$-th state $x_{i}$ at the $k$-th instant, i.e., the states will always be within the $n$-dimensional hyperbox defined by the safety specifications (bounds).
+%
+where $x_{i}^{-}$ and $x_{i}^{+}$ are the lower and upper bound 
+of the $i$-th state $x_{i}$ at the $k$-th instant, respectively.
+This means that the states will always be within the $n$-dimensional 
+hyper-box, which is typically defined by the safety specification.
 
-The closed-loop state-space system have to be unrolled until a specific depth ($k_{bound}$) to ensure $\phi_{safety}$. The limit $k_{bound}$ is the number of iterations sufficient so that the rate of variation (derivative) of the states is negligible ensuring the boundaries will not be violated for any $k>k_{bound}$. \commentib{The k-bound estimative must be explained.}
+The closed-loop state-space system has to be unwound up to a given 
+depth $k_{bound}$ to ensure that $\phi_{safety}$ holds. 
+Here, $k_{bound}$ represents the number of iterations 
+to sufficiently unwind the closed-loop state-space system 
+so that the variation rate (derivative) of the states is negligible, 
+ensuring that the boundaries are not be violated for any $k>k_{bound}$. 
+\commentib{The k-bound estimation must be explained.}
 
-For any $k\leq k_{bound}$ the states must be computed considering the FWL effects in all operations related to the control action~\eqref{eq:controlaction} and disregarding it in the state equation ~\eqref{eq:plant}. Thus, the states are computed using the following equations:
+For any $k\leq k_{bound}$, the states must be computed considering 
+the FWL effects in all operations related to the control action~\eqref{eq:controlaction} 
+and disregarding it in the state equation~\eqref{eq:plant}. 
+Thus, the states are computed using the following equations:
+%
 \begin{equation}
 \label{eq:ssunroll}
 \left\lbrace
