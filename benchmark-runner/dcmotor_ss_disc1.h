@@ -15,7 +15,7 @@ typedef __CPROVER_fixedbv[24][12] __CPROVER_EIGEN_fixedbvt;
 #define NOUTPUTS 1u
 #define INPUT_UPPERBOUND (__CPROVER_EIGEN_fixedbvt)1
 #define INPUT_LOWERBOUND (__CPROVER_EIGEN_fixedbvt)-1
-#define NUMBERLOOPS 5 //number of timesteps to check safety spec over
+#define NUMBERLOOPS 20 //number of timesteps to check safety spec over
 #define INT_BITS 8
 #define FRAC_BITS 8
 
