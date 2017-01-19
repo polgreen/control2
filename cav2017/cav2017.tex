@@ -27,7 +27,8 @@
 \usepackage{framed}
 \usepackage{listings}
 
-\usetikzlibrary{positioning, automata, shapes.arrows, calc, shapes, arrows, patterns}
+\usetikzlibrary{positioning, automata, shapes.arrows, calc, shapes, arrows}
+\usetikzlibrary{patterns}
 
 \newcommand{\todo}[1]{{\color{red} TODO: #1}}
 \newcommand{\commentib}[1]{{\color{blue} [IB: #1]}}
@@ -951,63 +952,79 @@ $z^n+\sum_{i=1}^n[a_i-k_i]z^{n-i}=\prod_{i=1}^n (z-[\lambda_i]) : |[\lambda_i]|<
 \label{sec:CEGIS-precision-incrementation}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-% \begin{figure*}[htb]
-% \centering
-% %\resizebox{1\textwidth}{!}
-% {
-%  \begin{tikzpicture}[scale=0.3,->,>=stealth',shorten >=.2pt,auto, semithick, initial text=, ampersand replacement=\&,]
-%   \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center
-% },
-%           row sep=.6cm, column sep=2cm] {
-%    \coordinate (aux1);
-%    \& \coordinate (aux2);
-%    \&;\\
-%    \node[minimum width=2.5cm, minimum height=0.6cm, fill=gray!20] (synth) {{\sc Synthesize}};
-%    \&
-%    complexnode/.pic={ 
-%      \node[rectangle,draw,dotted,
-% 	minimum width=7cm,
-% 	minimum height=1cm,
-%         pattern=north west lines, pattern color=gray!20,
-% 	label={\sc Verify},] (verif) {};
-%      \node[minimum width=2.5cm, minimum height=0.6cm, fill=gray!20] (verif1) at ([xshift=-2cm]verif.center) {{\sc Uncertainty}};
-%      \node[minimum width=2.5cm, minimum height=0.6cm, fill=gray!20] (verif2) at ([xshift=2cm]verif.center) {{\sc Precision}};
-%    } 
-%    \& \node[ellipse, fill=gray!20] (done) {{\sc Done}};\\
-%    %% \node[fill=yellow!20] (verif) {{\sc ~~~~~~Uncertainty~~~~~~}};
-%    %% \&
-%    %% \node[fill=yellow!20] (verif2) {{\sc ~~~~~~Precision~~~~~~~}};\\
-%    \& \\
-%    \node[minimum height=0.5cm] (gp) {\sf Closed-loop System Search};
-%    \&
-%    complexnode/.pic={ 
-%      \coordinate (aux);
-%    \node[minimum height=0.5cm] (bmc) at ([xshift=-2cm]aux.center) {\sf BMC-based Verifier};
-%    \node[minimum height=0.5cm] (fp)  at ([xshift=2cm]aux.center) {\sf Fixed-point Arithmetic Verifier};
-%    }   
-%     \\
-%   };
+\begin{figure}[htb]
+{\scriptsize
+\centering
+%\resizebox{.8\textwidth}{!}
+{
+ \begin{tikzpicture}[scale=0.3,->,>=stealth',shorten >=.2pt,auto, semithick, initial text=, ampersand replacement=\&,]
+  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center
+},
+          row sep=.6cm, column sep=.9cm] {
+   \coordinate (aux1);
+   \& \coordinate (aux2);
+   \&;\\
+   \coordinate (aux3);
+   \& \coordinate (aux4);
+   \&;\\
+   \coordinate (aux5);
+   \& \coordinate (aux6);
+   \&;\\
+   \node[minimum width=1.5cm, minimum height=0.6cm, fill=gray!20] (synth) {{\sc Synthesize}};
+   \&
+   complexnode/.pic={ 
+     \node[rectangle,draw,dotted,
+	minimum width=8cm,
+	minimum height=1cm,
+        pattern=north west lines, pattern color=gray!20,
+	label={\sc Verify},] (verif) {};
+     \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif1) at ([xshift=-2.9cm]verif.center) {{\sc Uncertainty}};
+     \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif2) at ([xshift=-0.8cm]verif.center) {{\sc Precision}};
+     \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif3) at ([xshift=1.2cm]verif.center) {{\sc Sampling}};
+     \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif4) at ([xshift=3.1cm]verif.center) {{\sc Complete}};
+   } 
+   \& \node[ellipse, fill=gray!20] (done) {{\sc Done}};\\
+   \& \\
+   \node[minimum height=0cm] (gp) {\sf Closed-loop \\ System Search};
+   \&
+   complexnode/.pic={ 
+     \coordinate (aux);
+   \node (bmc) at ([xshift=-2.9cm]aux.center) {\sf BMC-based \\Verifier};
+   \node (fp)  at ([xshift=-.8cm]aux.center) {\sf Fixed-point \\ Arithmetic\\Verifier};
+   \node (sv)  at ([xshift=1.2cm]aux.center) {\sf Sampling\\Verifier};
+   \node (cv)  at ([xshift=3.1cm]aux.center) {\sf Completeness\\Verifier};
+   }   
+    \\
+  };
 
-%    \path
-%     ([yshift=2em]synth.east) edge node[xshift=-0.5em] {Candidate solution} ([yshift=2em]verif1.west)
-%     ([yshift=-2em]verif1.west) edge node {Counterexample} ([yshift=-2em]synth.east)
-%     ([xshift=5em]verif1.south) edge node[align=center] {Candidate\\ $P$} ([xshift=5em]bmc.north)
-%     ([xshift=5em]verif2.south) edge node[align=center] {Candidate\\ $P$} ([xshift=5em]fp.north)
-%     ([xshift=-5em]bmc.north) edge node[align=center]  {UNSAT/\\model} ([xshift=-5em]verif1.south)
-%     ([xshift=-5em]fp.north) edge node[align=center]  {True/\\False} ([xshift=-5em]verif2.south)
-%     (verif2) edge node {} (done)
-%     ([xshift=5em]synth.south) edge node[align=center] {Inputs} ([xshift=5em]gp.north)
-%     ([xshift=-5em]gp.north) edge node[align=center] {UNSAT/\\candidate} ([xshift=-5em]synth.south)
-%     (aux1) edge (synth.north);
-%    \path[-]
-%    (verif2.north) edge node[align=center] {} ([xshift=6.7cm]aux2)
-%    ([xshift=6.7cm]aux2) edge node[align=center] {Increase Precision} (aux1);
+   \path
+    ([yshift=2em]synth.east) edge node[xshift=-0.5em,align=center] {$P$} ([yshift=2em]verif1.west)
+    ([yshift=-2em]verif1.west) edge node {C-ex} ([yshift=-2em]synth.east)
+    ([xshift=-5em]fp.north) edge node[align=center]  {T/F} ([xshift=-5em]verif2.south)
+    ([xshift=-5em]sv.north) edge node[align=center]  {T/F} ([xshift=-5em]verif3.south)
+    ([xshift=-5em]cv.north) edge node[align=center]  {T/F} ([xshift=-5em]verif4.south)
+    ([xshift=5em]verif1.south) edge node[align=center] {$P$} ([xshift=5em]bmc.north)
+    ([xshift=5em]verif2.south) edge node[align=center] {$P$} ([xshift=5em]fp.north)
+    ([xshift=5em]verif3.south) edge node[align=center] {$P$} ([xshift=5em]sv.north)
+    ([xshift=5em]verif4.south) edge node[align=center] {$P$} ([xshift=5em]cv.north)
+    ([xshift=-5em]bmc.north) edge node[align=center]  {UNSAT/\\model} ([xshift=-5em]verif1.south)
+    (verif) edge node {} (done)
+    ([xshift=5em]synth.south) edge node[align=center] {Inputs} ([xshift=5em]gp.north)
+    ([xshift=-5em]gp.north) edge node[align=center] {UNSAT/\\$P$} ([xshift=-5em]synth.south)
+    (aux1) edge (synth.north);
+   \path[-]
+   (verif2.north) edge node[align=center] {} ([xshift=-2.7cm]aux6)
+   ([xshift=-2.7cm]aux6) edge node[align=center] {Increase Precision} (aux5)
+   (verif3.north) edge node[align=center] {} ([xshift=4cm]aux4)
+   ([xshift=4cm]aux4) edge node[align=center] {Increase Sampling Rate} (aux3)
+   (verif4.north) edge node[align=center] {} ([xshift=10.5cm]aux2)
+   ([xshift=10.5cm]aux2) edge node[align=center] {Increase Completeness Threshold} (aux1);
 
-%  \end{tikzpicture}
-% }
-% \caption{The CEGIS loop with precision and sampling rate incrementation}
-% \label{fig:CEGIS}}
-% \end{figure*}
+ \end{tikzpicture}
+}}
+\caption{The CEGIS loop with precision and sampling rate incrementation}
+\label{fig:CEGIS}
+\end{figure}
 
 
 
