@@ -1,7 +1,7 @@
 #if (_DIMENSION==2)
-  #include "2inverse.h"
+  #include "2Inverse.h"
 #else
-  #include "3inverse.h"
+  #include "3Inverse.h"
 #endif
 
 void multiply(matrixt result,matrixt transform)

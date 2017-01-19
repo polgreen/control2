@@ -8,11 +8,13 @@ synthesis_file='FWL_LTI.c'
 width_check_file='width_LTI.c'
 working_directory_base_suffix='-dkr10'
 working_directory_base="/tmp/control_synthesis-ss${working_directory_base_suffix}"
+script_base_directory=`pwd`
 spec_header_file='spec.h'
+cbmc_log_file='cbmc-tmp.log'
 
 function setup_benchmark_directory {
  mkdir -p "$1" 2>/dev/null
- cp ./AACegar/* ${working_directory}/
+ cp ${script_base_directory}/AACegar/* ${working_directory}/
  # TODO: cp source files and headers, and benchmark headers
 }
 
@@ -71,7 +73,7 @@ mkdir -p ${working_directory_base} 2>/dev/null
 
 if [ -z "$1" ]; then
  #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/dcmotor_ss/'
- benchmark_dirs=('../benchmarks/state-space/dcmotor_ss/')
+ benchmark_dirs=("${script_base_directory}/../benchmarks/state-space/dcmotor_ss/")
 else
  benchmark_dirs=("$1")
 fi
@@ -101,6 +103,7 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
 
   working_directory="${working_directory_base}/accelerator-ss"
   setup_benchmark_directory ${working_directory}
+  cd ${working_directory}
   write_spec_header "$A" "$B" "$input_lower_bound" "$input_upper_bound"
 
   max_length=64
@@ -114,26 +117,29 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
   eval "./axelerator $options -control \"[0,0,0]\""
   while [ $((integer_width+radix_width)) -le ${max_length} ]; do
    echo_log "int: ${integer_width}, radix: ${radix_width}"
-   solution_found = false
-   synthesis_in_progress = true
+   solution_found=false
+   synthesis_in_progress=true
    while [ "${synthesis_in_progress}" = true ]; do
-    #TODO: timeout --preserve-status --kill-after=${kill_time} ${timeout_time} cbmc "${working_directory}/${synthesis_file}" >>${log_file} 2>&1
+    timeout --preserve-status --kill-after=${kill_time} ${timeout_time} cbmc -D __CPROVER -D _FIXEDBV -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTORL_RADIX_WIDTH=${radix_width} "${working_directory}/${synthesis_file}" --stop-on-fail >${working_directory}/${cbmc_log_file}
     if [ $? -eq 10 ]; then
-     #TODO: grep controller from CBMC output
-     candidate_solution="{ 1.0, 0.0, 0.5 }"
-     #TODO: timeout --preserve-status --kill-after=${kill_time} ${timeout_time} accelerator-ss ${candidate_solution} >>${log_file} 2>&1
+     controller=$(grep 'controller_cbmc=' ${working_directory}/${cbmc_log_file} | sed 's/.*controller_cbmc={ *\([^}]*\) *}.*/\1/')
+     eval "./axelerator $options -control \"[${contoller}]\""
      if grep --quiet 'SUCCESS' "${working_directory}/${status_output_file}"; then
-      $(echo_success_message ${start_time})
-      solution_found = true
-      synthesis_in_progress = false
+      echo_success_message ${start_time}
+      echo_log "<controller>${controller}</controller>"
+      solution_found=true
+      synthesis_in_progress=false
      else
+      echo_log 'Refining abstraction...'
       #TODO: timeout --preserve-status --kill-after=${kill_time} ${timeout_time} cbmc "${working_directory}/${width_check_file}" >>${log_file} 2>&1
-      if [ $? -eq 10 ]; then
-       continue
-      else
-       synthesis_in_progress = false
-      fi
+      #if [ $? -eq 10 ]; then
+      # continue
+      #else
+      # synthesis_in_progress=false
+      #fi
      fi
+    else
+     synthesis_in_progress=false
     fi
    done
    if [ "${solution_found}" = true ]; then
@@ -142,7 +148,7 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
    integer_width=$((integer_width+4))
    radix_width=$((radix_width+4))
   done
+  # All files are the same benchmark with increased sample frequency. Exit after first.
+  break
  done
- # All files are the same benchmark with increased sample frequency. Exit after first.
- exit 0
 done
