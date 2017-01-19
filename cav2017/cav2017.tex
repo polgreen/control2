@@ -176,7 +176,7 @@ to look for candidate solutions in a reduced solution space.  %% The
 \todo{We should briefly describe both approaches that we have implemented.}
 
 %-------------------------------
-\subsection{Related Work}
+\subsection{Related work}
 \label{sec:relw}
 %-------------------------------
 
@@ -420,7 +420,7 @@ evaluation. Whilst it is possible to address these with this methodology, we wil
 above for simplicity.
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{Numeric Representations and Soundness} 
+\subsection{Numeric representations and soundness} 
 \label{sec:numeric_rep}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -471,7 +471,7 @@ subsequently destabilizing the program.
 \end{enumerate}
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{Fixed Word Length Effects on Matrix Multiplications}
+\subsection{Fixed word length effects on matrix multiplications}
 \label{sec:cof_fwl}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 Thus far we have presented a verification procedure for a digitalized plant in a continuous space (\emph{ie} the
@@ -487,7 +487,7 @@ The estimation of $\hat{\vec{x}}$ corresponds to the sum of three matrix-vector 
 
 
 %-------------------------------
-\subsection{Safety specifications for Cyber-Physical Systems}
+\subsection{Safety specifications for cyber-physical systems}
 \label{ssec:safety}
 %-------------------------------
 
@@ -649,7 +649,7 @@ unroll the corresponding loop $k$ times. For this approach the generalisation st
 increase of precision and sampling rate.
 \end{itemize}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{General Architecture of the program synthesizer}
+\subsection{General architecture of the program synthesizer}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \label{synthesizer-general}
 %
@@ -709,12 +709,12 @@ Sec.~\ref{sec:CEGIS-precision-incrementation}, we explain how we
 specialise the general CEGIS approach in order to perform solution generalisation.
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{CEGIS with Abstraction Refinement}
+\subsection{CEGIS with abstraction refinement}
 \label{sec:CEGIS-abstraction-refinement}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsubsection{Verification of a Controllable Observed System}
+\subsubsection{Verification of a controllable observed system}
 \label{sec:cof_verification}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -950,7 +950,7 @@ $z^n+\sum_{i=1}^n[a_i-k_i]z^{n-i}=\prod_{i=1}^n (z-[\lambda_i]) : |[\lambda_i]|<
 \end{figure}
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{CEGIS with Precision and Sampling Rate Incrementation}
+\subsection{CEGIS with precision and sampling rate incrementation}
 \label{sec:CEGIS-precision-incrementation}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -1036,7 +1036,7 @@ $z^n+\sum_{i=1}^n[a_i-k_i]z^{n-i}=\prod_{i=1}^n (z-[\lambda_i]) : |[\lambda_i]|<
 
 
 %-------------------------------
-\subsection{Description of the Benchmarks}
+\subsection{Description of the benchmarks}
 %-------------------------------
 
 \textcolor{red}{We will have to move this text to the beginning of the paper.}
@@ -1532,7 +1532,7 @@ a continuous plant. Eq.~\eqref{eq:ode} is soundly discretized
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{Discretising Continuous Space Dynamics}
+\subsection{Discretising continuous space dynamics}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 A dynamical system is a system in which a function describes the progression of a state over time. 
@@ -1588,7 +1588,7 @@ This means that reasoning about the state-space must consider the effects of thi
  Since \eqref{eq:discretization} is a bisimulation of \eqref{eq:ode}, we may use the semantics in section \ref{sec:model_semantics} to model continuous dynamical systems.
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{Modelling Quantization as noise}
+\subsection{Modelling quantization as noise}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 During any given ADC conversion, the continuous signal will be sampled in the real domain and transformed into a $\mathbb{R}\langle I_{adc},F_{adc} \rangle$ value. this sampling uses a threshold which is defined by the less significant bit ($q_{adc}=2^{-F_{adc}}$) of the adc and some nonlinearities of the circuitry. The overall conversion is
@@ -1615,7 +1615,7 @@ y_k &= \vec{C}_d \vec{x}_ k + \vec{D}_d \vec{u}_ k+{\vec{\nu}_1}_k.
 \end{align}
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{Controllable Canonical Form} \label{sec:reachable}
+\subsection{Controllable canonical form} \label{sec:reachable}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 Let us have a discrete time SISO system with an $n^{th},m^{th} : n\geq m$ order armax model
@@ -1702,7 +1702,7 @@ the reachability matrix of the canonical form. Then
 \end{equation}
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{Observable Canonical Form} \label{sec:observable}
+\subsection{Observable canonical form} \label{sec:observable}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 The Controllable Canonical Form is ideal when we have access to the state space. However, in most cyberphisical
 systems, only the outputs of the plant can be observed, hence we require an Observable Canonical Form.
