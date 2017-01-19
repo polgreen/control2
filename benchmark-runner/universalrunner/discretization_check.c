@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include "benchmark.h" //benchmark header file
-#include "control_types.h" //include types
+//#include "control_types.h" //include types
 
 #define CPROVER
 #ifdef INTERVAL

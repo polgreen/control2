@@ -7,13 +7,14 @@
 
 #ifndef BENCHMARK_H_
 #define BENCHMARK_H_
+
+#define INT_BITS 13
+#define FRAC_BITS 3
 #include "control_types.h"
 
 #define NSTATES 3
 #define NINPUTS 1
 #define NOUTPUTS 1
-#define INT_BITS 13
-#define FRAC_BITS 3
 #define INPUT_UPPERBOUND (__controller_typet)1
 #define INPUT_LOWERBOUND (__controller_typet)-1
 const __plant_typet _controller_A[NSTATES][NSTATES] = {{ 0.9905,0.075687,0.021033 }, { 0.125,0,0 }, { 0,0.015625,0 }};
