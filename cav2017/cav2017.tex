@@ -642,7 +642,7 @@ unroll the corresponding loop $k$ times. For this approach the generalisation st
 increase of precision and sampling rate.
 \end{itemize}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{Architecture of the program synthesizer}
+\subsection{General Architecture of the program synthesizer}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \label{synthesizer-general}
 %
@@ -697,9 +697,13 @@ the full set of inputs $\mathcal{D}$
 is finite, this means that the refinement loop
 can only iterate a finite number of times.
 
+In Sec.~\ref{sec:CEGIS-abstraction-refinement} and 
+Sec.~\ref{sec:CEGIS-precision-incrementation}, we explain how we 
+specialise the general CEGIS approach in order to perform solution generalisation.
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{CEGIS with Abstraction Refinement}
+\label{sec:CEGIS-abstraction-refinement}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -938,6 +942,7 @@ $z^n+\sum_{i=1}^n[a_i-k_i]z^{n-i}=\prod_{i=1}^n (z-[\lambda_i]) : |[\lambda_i]|<
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{CEGIS with Precision and Sampling Rate Incrementation}
+\label{sec:CEGIS-precision-incrementation}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 % \begin{figure*}[htb]
