@@ -512,15 +512,7 @@ of the $i$-th state $x_{i}$ at the $k$-th instant, respectively.
 This means that the states will always be within the $n$-dimensional 
 hyper-box, which is typically defined by the safety specification.
 
-The closed-loop state-space system has to be unwound up to a given 
-depth $k_{bound}$ to ensure that $\phi_{safety}$ holds. 
-Here, $k_{bound}$ represents the number of iterations 
-to sufficiently unwind the closed-loop state-space system 
-so that the variation rate (derivative) of the states is negligible, 
-ensuring that the boundaries are not be violated for any $k>k_{bound}$. 
-\commentib{The k-bound estimation must be explained.}
-
-For any $k\leq k_{bound}$, the states must be computed considering 
+The states must be computed considering 
 the FWL effects in all operations related to the control action~\eqref{eq:controlaction} 
 and disregarding it in the state equation~\eqref{eq:plant}. 
 Thus, the states are computed using the following equations:
@@ -713,6 +705,9 @@ specialise the general CEGIS approach in order to perform solution generalisatio
 \label{sec:CEGIS-abstraction-refinement}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+\subsubsection{Computing the set of reachable states}
+\todo{explain the use of abstract acceleration}
+
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsubsection{Verification of a controllable observed system}
 \label{sec:cof_verification}
@@ -829,7 +824,7 @@ where $\mathcal{A}_t=\bigcup_{k=1}^\infty \mat{A}^k, \mathcal{B}_{tp}=\bigcup_{k
 
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsubsection{Synthesising the dynamics}\label{sec:cof_synth}
+\subsubsection{Controller synthesis}\label{sec:cof_synth}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 Now that we have explained the verification process, we may proceed to describe the synthesis procedure, which is illustrated in figure \ref{fig:CEGARIS}.
 \begin{enumerate}
@@ -1025,10 +1020,25 @@ $z^n+\sum_{i=1}^n[a_i-k_i]z^{n-i}=\prod_{i=1}^n (z-[\lambda_i]) : |[\lambda_i]|<
  \end{tikzpicture}
 }}
 \caption{The CEGIS loop with precision and sampling rate incrementation}
-\label{fig:CEGIS}
+\label{fig:CEGIS-precision-increment}
 \end{figure}
 
+\subsubsection{Computing the reachable states}
 
+In order to compute the set of reachable states we find 
+a completeness threshold $k_{bound}$.
+Essentially, $k_{bound}$ represents the number of iterations 
+to sufficiently unwind the closed-loop state-space system 
+so that the variation rate (derivative) of the states is negligible, 
+ensuring that the boundaries are not be violated for any $k>k_{bound}$. 
+The closed-loop state-space system has to be unwound up to a given 
+depth $k_{bound}$ to ensure that $\phi_{safety}$ holds. 
+
+\todo{discuss the completeness threshold computation}
+
+\subsubsection{Controller synthesis}
+
+\todo{Describe each step in Fig~\ref{fig:CEGIS-precision-increment}.}
 
 %-------------------------------
 \section{Experimental Evaluation}
