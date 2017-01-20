@@ -977,16 +977,10 @@ Next, we describe the different phases in Fig.~\ref{fig:CEGIS-precision-incremen
 (blocks 1 to 5):
 
 1. The inductive synthesis phase (i.e. {\sc synthesize}) uses BMC to
-compute a candidate solution $K$ that satisfies the stability criteria described in 
-\todo{SECTION STABILITY CRITERIA}, i.e., that the eigenvalues of the dynamics fall within 
-the unit circle, and the safety specification described in \todo{SECTION:SAFETY SPEC}, i.e.,
-that the state values do not violate the safe state upper and lower bounds within $k$ steps. 
-It does this by assuming some 
-precision $<I_p,F_p>$ for the plant, a $k$ and a sampling rate. 
-
-The checks that
-these assumptions are sound are performed by the subsequent {\sc
-  verify} stages.
+compute a candidate solution $K$. For this purpose, it assumes some
+precision $<I_p,F_p>$ for the plant, a $k$ and a sampling rate.  The
+checks that these assumptions are sound are performed by subsequent
+{\sc verify} stages.
 
 2. The first {\sc verify} stage, {\sc safety}, checks that the candidate
 solution $K$ is safe for all possible initial states, i.e., does not reach an unsafe
