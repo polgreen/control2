@@ -292,8 +292,7 @@ Eq.~\eqref{eq:ode} is soundly discretised (as shown in the Appendix) into
 %
 \begin{align}
 \label{eq:plant}
-x_{k+1} = A_d x_k+ B_d u_k 
-y_{k} = C_d x_k+ D_d u_k,
+x_{k+1} = A_d x_k+ B_d u_k. 
 \end{align}
 with initial state $x_{0}=x(0)$.
 
@@ -426,22 +425,22 @@ $$
 %%evaluation. Whilst it is possible to address these with this methodology, we will focus on the case
 %%above for simplicity.
 
+\todo{HERE add a figure similar to Fig. \label{fig:observersystem} to explain digital features of controller.} 
+
+\todo{[The remainder of the section needs to be updated. ]}
+The output and measurable of the plant is being sampled by an ADC, and since the full state of the
+plant cannot be witnessed directly, the controller software includes an observer that 
+estimates the state of the plant (see appendix for details on how such an observer
+is constructed). In this work, we are assuming that all the states measurements are available for the state feedback purpose, and the state observer design may be disregarded.  
+\todo{[Unclear what the remainder is for: ]}
+
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{Numeric representations and soundness} 
 \label{sec:numeric_rep}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 Let $\mathbb{R} \langle I,F \rangle$ be a fixed point domain with $I$ bits representing the integer part and $F$ bits
-representing the decimal part. We will extend this notation to $\mathbb{R} \langle I,F,E \rangle$ to add a number of
-leading or trailing bits when the domain requires prescaling (ie the maximum is smaller than $0.5$ or the minimum
-is greater than $2$).
-Let also $\mathbb{R}_* \langle M,E \rangle$ be a floating point domain with $M$ bits
-mantissa and $E$ bits exponent. This domain corresponds to 
-$$\mathbb{R}_* \langle M,E \rangle = \bigcup_i \mathbb{R} \langle 1,M-1,E_i \rangle : 2^{1-E} \leq E_i  \leq 2^{E-1}$$
-This means that the distance between any two numbers in the domain depends on the
-location of those numbers.
-Since we've shown that a floating point domain is a union of a number of fixed point domains, we will continue our
-reasoning on fixed point only. Our reasoning will apply to the floating point domain by extension.
+representing the decimal part. 
 The following approximation errors will arise:
 \begin{enumerate}
 \item {\bf Truncation:}
@@ -450,11 +449,11 @@ The number $\delta$ corresponds to the truncation error of the representation an
 \item {\bf Rounding:}
 %% Every time an operation is performed on a number in the $\mathbb{R} \langle I,F,E \rangle$ domain, an error may be
 %% introduced due to truncation of the result.
-Let us define $c\langle i,f,e \rangle \in \mathbb{R}\langle I,F,E\rangle$, where $i \in [-2^{I-1}\ 2^{I-1}],f \in [0 1),e \in [-2^{E-1}\ 2^{E-1}]$ are its assigned values. The smallest number that can be represented for any given exponent is $c_{min(e)}=c\langle 0,2^{-F},e\rangle$.
+Let us define $c\langle i,f \rangle \in \mathbb{R}\langle I,F\rangle$, where $i \in [-2^{I-1}\ 2^{I-1}],f \in [0 1)$ are its assigned values. The smallest number that can be represented for any given exponent is $c_{min}=2^{-F}$.
 The following errors appear in simple operations:
 \begin{enumerate}
-\item Addition/Substraction: $c\langle \cdot,e_1\rangle \pm c\langle \cdot,e_2\rangle=c\langle \cdot,max(e_1,e_2)\rangle + \delta_3 : |\delta_3| \leq (e_1==e_2) ? 0 : c_{min(max(e_2,e_1))}$ 
-\item Multiplication: $c\langle \cdot,e_1\rangle * c\langle \cdot,e_2\rangle=c\langle \cdot,e_1+e_2\rangle + \delta_3 : |\delta_3| \leq c_{min(e_2+e_1)}$
+\item Addition/Substraction: in the case of fixed point arithmetic of numbers with the same domain, there are no rounding errors, otherwise the maximum error is given by the domain of the result $c\langle \cdot, F_1\rangle \pm c\langle \cdot , F_2\rangle= c\langle \cdot , F_3\rangle + \delta_3 :|\delta_3| \leq 2^{-F_3} \wedge F_3 \leq F_1,F_2$ 
+\item Multiplication: $c\langle \cdot, F_1\rangle * c\langle \cdot,F_2\rangle=c\langle \cdot,F_3\rangle + \delta_3 : |\delta_3| \leq 2^{-F_3} \wedge F_3 \leq F_1,F_2$ 
 \end{enumerate}
 The bounds obtained for division are left to the reader as it will not be applied in this paper.
 
@@ -471,11 +470,6 @@ cannot be accurately represented by the domain (\emph{eg} $\delta=x-2^{I-1}+1-2^
 case for infinity has been introduced, which addresses some of this issues, but once the error has gone to infinity, the numbers
 become meaningless. It is the responsibility of software designers and tools to account for overflows and either supply saturation
 functions to prevent them or raise alarms in their presence. In the case of verification, the latter is seen as a safety problem.
-\item {\bf Null/Zeno behaviour:}
-Whilst this work does not explore the effect of Zeno behaviours, it is worth noting that this effect may also be caused by rounding
-errors in floating point programs. The reason for this is that if an operation contains two numbers which belong to disjoint sub-domains
-(\emph{ie} neither number can be represented in the domain of its counterpart), the resulting operation may become a no-op/skip,
-subsequently destabilizing the program.
 \end{enumerate}
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -484,22 +478,20 @@ subsequently destabilizing the program.
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 Thus far we have presented a verification procedure for a digitalized plant in a continuous space (\emph{ie} the
 range of the quatizers is still $\mathbb{R}$. The next step we must reaize is that the controller and the observer
-exist in a digital program, hence their domain is $\mathbb{R}\langle I,F,E\rangle$. This has two separate effects
+exist in a digital program, hence their domain is $\mathbb{R}\langle I,F\rangle$. This has two separate effects
 on the model. If we recall equation \eqref{eq:to_of}, the matrices of the observer and the controller  are not necessarily those of the plant.
-In fact we have $\mat{A},\mat{B},\mat{C} \in \mathbb{R}^*$, $\mat{A}_o,\mat{B}_o,\mat{C}_o, \mat{K}_d, \mat{L}_d \in \mathbb{R}\langle I,F,E\rangle^*$
+In fact we have $\mat{A},\mat{B} \in \mathbb{R}^*$, $\mat{A}_o,\mat{B}_o,\mat{K}_d, \mat{L}_d \in \mathbb{R}\langle I,F\rangle^*$
 Where $*$ represents the appropriate dimension for each matrix.
 Unfortunately this means that although combined matrices such as $\mat{A}_t$ are in the reals, they suffer from
 the fixed word restrictions in their composing matrices.
 The second effect corresponds to the rounding errors in the calculation of $\hat{x}_{k+1}, u_k$. These will introduce a new source of quantiztion noise which we may denote $\vec{\nu}_3 \in [-q_3\ \ q_3]$.
-The estimation of $\hat{\vec{x}}$ corresponds to the sum of three matrix-vector multiplications (we assume $\mat{C}_o$ in Objective form). Each of these has a coefficient-wise error bound $c_{min(max(e_{j1}+e_{j2}))}$. Hence the overall $\overline{\delta}_{\hat{x}}=3nc_{min(max(e_{j1}+e_{j2}))}$. The error in $\vec{u}$ corresponds of the multiplication of $\mat{K}_d\hat{\vec{x}}$, hence $q_3=\overline{\delta}_u=nc_{min(max(e_{k1}+e_{k2}))}+\sum_{k=1}^nc_k\overline{\delta}_{\hat{x}})=3n|\mat{K}|_1c_{min(max(e_{j1}+e_{j2}))}+nc_{min(max(e_{k1}+e_{k2}))}$
+The estimation of $\hat{\vec{x}}$ corresponds to the sum of three matrix-vector multiplications. Each of these has a coefficient-wise error bound $c_{min}$. Hence the overall $\overline{\delta}_{\hat{x}}=3nc_{min}$. The error in $\vec{u}$ corresponds of the multiplication of $\mat{K}_d\hat{\vec{x}}$, hence $q_3=\overline{\delta}_u=nc_{min}+\sum_{k=1}^nc_k\overline{\delta}_{\hat{x}}=(3|\mat{K}|_1+1)n2^{-F}$
 
 
 %-------------------------------
 \subsection{Safety specifications for cyber-physical systems}
 \label{ssec:safety}
 %-------------------------------
-
-%\todo{The safety specification is defined over the state space, not the output. Further, please distinguish the spec from the input constraints. }
 
 We require that the closed-loop system meets safety specifications. 
 A safety specification establishes bounds for the states, such that 
@@ -717,28 +709,17 @@ Merge the rest in Sec~\ref{sec:cof_synth}.}
 Let us recall the formulas used for single-input and single-output (SISO) systems 
 in sections \ref{sec:reachable} and \ref{sec:observable}.
 A controllable and observable system will have the following dynamics:
-\textcolor{red}{Dario: Do we really need to describe all these equations here?
-Should we simply cite them from a given reference?}
+
 %
 \begin{align}
 \label{eq:observer_LTI_cf}
-\left [\begin{array}{c}\vec{x}\\ \hat{\vec{x}}_e \end{array}\right]_{k+1}
-=&\left [\begin{array}{cc}\mat{A}_{tp}&\mat{B}_{to}\\ \mat{0}&\mat{A}_{to}\end{array}\right]
-\left [\begin{array}{c}\vec{x}\\ \hat{\vec{x}}_e \end{array}\right]_k
-+\mat{B}_{tp} \vec{r}_k
-+\mat{B}_{tn}\left [\begin{array}{c}\vec{\nu}_2\\ \vec{\nu}_1\end{array}\right]\\
-\vec{y}_k=&\mat{C}_{t}\vec{x}_k + \mat{D}_{d}\vec{u}_k\nonumber
+\vec{x}_{k+1}=&\mat{A}_{t}\vec{x}_k+\mat{B}_{tp} \vec{r}_k+\mat{B}_{tn}\left [\begin{array}{c}\vec{\nu}_2\\ \vec{\nu}_1\end{array}\right]
 \end{align}
 \begin{align*}
-\mat{A}_{tp}=&\mat{T}\mat{A}_d\mat{T}^{-1}-\mat{T}\mat{B}_d\mat{K}_d\mat{T}^{-1}&
-\mat{A}_{to}=&\mat{T}\mat{A}_d\mat{T}^{-1}-\mat{L}_d\mat{C}_d\mat{T}&
-\mat{A}_t=&\left [\begin{array}{cc}\mat{A}_{tp}&\mat{B}_{to}\\ \mat{0}&\mat{A}_{to}\end{array}\right]\\
-\mat{B}_{to}=&\mat{T}\mat{B}_d\mat{K}_d\mat{T}^{-1}&
-\mat{B}_{tp}=&\left[\begin{array}{c}\mat{T}\mat{B}_d\mat{k}_r\\\mat{0}\end{array}\right]&
-\mat{B}_{tn}=&\left[\begin{array}{cc}\mat{T}\mat{B}_d\mat{k}_r&\mat{0}\\\mat{0}&-\mat{L}_d\end{array}\right]\\
+\mat{A}_{t}=&\mat{T}\mat{A}_d\mat{T}^{-1}&
+\mat{B}_{tp}=&\mat{T}\mat{B}_d&
+\mat{B}_{tn}=&\mat{T}\mat{B}_d&
 \mat{T}=&\mat{R}_{cf}\mat{R}^{-1}&
-\mat{L}=&\mat{W}_o^{-1}\mat{W}_{of} \left[ \begin{array}{c}p_1-a_1\\p_2-a_2\\p_n-a_n\end{array}\right]&
-\mat{C}_t=&\mat{C}_d\mat{T}
 \end{align*}
 
 \begin{align*}
@@ -759,7 +740,7 @@ spectrum of $\mat{A}_{tp}$ and $\mat{A}_{to}$, which can be calculated separatel
 Additionally, these correspond to the roots of the following polynomials:
 %
 \begin{align*}
-\left(z^n+\sum_{i=1}^p{(a_i-k_i)z^{n-i}}\right) \left(z^n+\sum_{i=1}^p{(p_i-a_i)z^{n-i}}\right)
+\left(z^n+\sum_{i=1}^p{(a_i-k_i)z^{n-i}}\right)
 \end{align*}
 
 For a stabilized closed-loop, we need these roots to remain within the
@@ -801,12 +782,9 @@ state-space. Accelerating \eqref{eq:observer_LTI_cf}, we obtain:
 %
 \begin{align}
 \label{eq:acc_observer_LTI_cf}
-\left [\begin{array}{c}\vec{x}\\ \hat{\vec{x}}_e \end{array}\right]_k
-=&\mat{A}_t^k
-\left [\begin{array}{c}\vec{x}\\ \hat{\vec{x}}_e \end{array}\right]_0
+\vec{x}=&\mat{A}_t^k\vec{x}_0
 +\sum_{i=0}^{k-1} \mat{A}_t^i \mat{B}_{tp} \vec{r}_i
-+\sum_{i=0}^{k-1} \mat{A}_t^i \mat{B}_{tn}\left [\begin{array}{c}\vec{\nu}_2\\ \vec{\nu}_1\end{array}\right] :
- \left [\begin{array}{cc}\mat{E}\mat{T}&\mat{0}\end{array}\right] \left [\begin{array}{c}\vec{x}\\ \hat{\vec{x}}_e \end{array}\right]_0<\mat{f}
++\sum_{i=0}^{k-1} \mat{A}_t^i \mat{B}_{tn}\left [\begin{array}{c}\vec{\nu}_2\\ \vec{\nu}_1\end{array}\right] : \mat{E}\mat{T} \vec{x}_0<\mat{f}
 \end{align}
 which would still require us to verify the system for every $k$ up to infinity. 
 Instead we use abstract acceleration~\cite{cattaruzza2015unbounded}, which translates the formula into
@@ -815,8 +793,7 @@ Instead we use abstract acceleration~\cite{cattaruzza2015unbounded}, which trans
 \label{eq:aa_observer_LTI_cf}
 \hat{X}^\#
 =&\mathcal{A}_t X_0+\mathcal{B}_{tp} R + \mathcal{B}_{tn} N\\
-X_0 =&\left \{ \left[\begin{array}{c}\vec{x}\\ \hat{\vec{x}}_e \end{array}\right] :
- \left [\begin{array}{cc}\mat{E}\mat{T}&\mat{0}\end{array}\right] \left [\begin{array}{c}\vec{x}\\ \hat{\vec{x}}_e \end{array}\right]_0<\mat{f} \right\}\nonumber\\
+X_0 =&\left \{\vec{x} : \mat{E}\mat{T} \vec{x}_0<\mat{f} \right\}\nonumber\\
  R =&\{r : \mat{E}_r < \vec{f}_r \}\nonumber\\
  N=&\left \{ \left[\begin{array}{c}\vec{\nu}_2\\ \vec{\nu}_1\end{array}\right] : \nu_1 \in \left[-\frac{q1}{2}\ \ \frac{q1}{2}\right] \wedge \nu_2 \in \left[-\frac{q2}{2}\ \ \frac{q2}{2}\right]  \right \}\nonumber
 \end{align}
@@ -837,14 +814,9 @@ Now that we have explained the verification process, we may proceed to describe 
 \item Calculate the noise set $N$ from the quantizer resolutions and estimated round-off errors ($\frac{q_1}{2},\frac{q_2}{2},q_3$)
 \item Produce an initial abstraction which corresponds to an unconstrained solution space.
 \end{enumerate}
-\item Next we synthesise a candidate controller and observer. Let $\mathcal{J}\langle I,F,E \rangle (P,\mat{T})$ be a program describing Jury's method.
+\item Next we synthesise a candidate controller and observer. Let $\mathcal{J}\langle I,F \rangle (P,\mat{T})$ be a program describing Jury's method.
 \begin{enumerate}
-\item Select a controller $\tilde{\mat{K}} \in \mathbb{R}\langle I,F,E\rangle^n$. This is achieved by solving a SAT formula $\mathcal{J}_K=\mathcal{J}\langle I,F,E \rangle (P_{a-k},\mat{T})$ that satisfies Jury's criteria for $P_{a-k}=z^n+\sum_{i=1}^n (a_i-k_i) z^{n-i} : k_i \in \mat{K} \wedge \mat{K}=\tilde{\mat{K}}\mat{T}$.
-\item Select the observer error characteristic polynomial $\tilde{\mat{L}} \in \mathbb{R}\langle I,F,E\rangle^n$. 
-This is achieved by solving a SAT formula $\mathcal{J}_L=\mathcal{J}\langle I,F,E \rangle (P_p,\mat{W}_o^{-1}\mat{W}_{of})$ 
-that satisfies Jury's criteria for 
-$P_p=z^n+\sum_{i=1}^n p_i z^{n-i} : p_i \in \vec{P}= (\mat{W}_o^{-1}\mat{W}_{of})^-1 \tilde{\mat{L}} 
-+ [\begin{array}{cccc}a_1&a_2&\hdots&a_n\end{array}]^T$.
+\item Select a controller $\tilde{\mat{K}} \in \mathbb{R}\langle I,F\rangle^n$. This is achieved by solving a SAT formula $\mathcal{J}_K=\mathcal{J}\langle I,F,E \rangle (P_{a-k},\mat{T})$ that satisfies Jury's criteria for $P_{a-k}=z^n+\sum_{i=1}^n (a_i-k_i) z^{n-i} : k_i \in \mat{K} \wedge \mat{K}=\tilde{\mat{K}}\mat{T}$.
 \item If there is no candidate solution we return UNSAT and exit the loop.
 \end{enumerate}
 \item Once we have a candidate solution, we perform a safety verification using abstract acceleration.
