@@ -102,12 +102,13 @@ in two main parts, brought together by a counter-example guided inductive
 synthesis (CEGIS) loop, as follows. First, we devise a static feedback controller 
 that stabilises the system; then, we verify its potential safety by means of either 
 of the following approaches: forward reachability analysis via unfolding of the dynamics, 
-or invariance generation;  if the above step fails, we loop back and invoke a CEGIS call 
+or invariant set generation via abstract acceleration;  
+further, if the above step fails, we loop back and invoke a CEGIS call 
 to seek alternative stabilising feedbacks, benefitting from the obtained counter-examples 
 to safety. 
-\textcolor{red}{[Mention GA and Abstract Acceleration here?] 
-The approach is proven sound by accounting for errors due to \ldots }
-The proposed synthesis approaches and respective tool are evaluated considering
+\textcolor{red}{[Mention GA and Abstract Acceleration here?]}  
+The approach is proven sound by accounting for errors due to the digitalisation of signals that are manipulated by the controller block.  
+The proposed synthesis approaches and a developed tool are evaluated considering 
 a set of intricate physical plant models taken from the digital control literature.
 \keywords{
 State-space dynamical models of physical systems; 
@@ -126,18 +127,19 @@ safety requirements.
 \section{Introduction}
 %-------------------------------
 
-Linear Time Invariant (LTI) control systems represent a sizeable portion of
-modern embedded software, performing highly non-trivial control tasks,
+Linear Time Invariant (LTI) control models represent a broad class of dynamical systems
+%modern embedded software, performing highly non-trivial control tasks,
 with significant impact in numerous application areas such as
-environmental control, navigation, and 
-robotics~\cite{astrom1997computer,Franklin15}.
-Correct and sound control system verification is a challenging task. 
-In particular, the verification problem is exacerbated by artifacts specific 
-to digital control, such as the effects of finite-precision arithmetic, 
-time discretization, and quantization noise, which are typically introduced 
+the life sciences, robotics, and engineering~\cite{astrom1997computer,Franklin15}.
+Control synthesis for LTI is a broadly investigated, 
+however the presence of digital control architectures is exacerbated by specific artefacts,  
+%specific to digital control, 
+such as the effects of finite-precision arithmetic, time discretisation, and quantisation noise, which are typically introduced 
 by Analog-to-Digital (A/D) and Digital-to-Analog (D/A) conversion.  
-Thus, the programming is a key barrier to broad adoption of digital control, 
-and requires considerable expertise.
+Whilst the research on digital control is well developed [Astrom book on digital control], 
+automated and sound control synthesis is a challenging task. 
+%Thus, the programming is a key barrier to broad adoption of digital control, 
+%and requires considerable expertise.
 
 Whilst there is a vast literature in validation of control systems,
 the subject of control synthesis has been somewhat restricted in the
@@ -146,20 +148,18 @@ subject of stability %, working typically on continuous domains
 \cite{DBLP:journals/corr/AbateBCCDKK16,sadabadi2016static}, or using switched
 models~\cite{DBLP:conf/emsoft/RavanbakhshS16}.
 Reachability tools are
-also used when discretizing the state-space for both verification and
+also used when discretising the state-space for both verification and
 parametric synthesis~\cite{cimatti2013parameter}.
 
-In this paper, however, we propose the synthesis of \emph{safe} control algorithms for
-cyberphysical systems taking into consideration the continuous domain
-of the plant, alongside the discrete domain of the controller and the
-hybrid elements that communicate them.
-%
+In this work, we propose the synthesis of \emph{safe} control algorithms for
+LTI models taking into consideration the continuous domain of the plant, 
+alongside the discrete domain of the controller and the hybrid elements that relate them.  
 %% In this paper, we synthesize controllers for hybrid
 %% closed-loop systems, i.e., software-implemented embedded controllers along
 %% with a model of their physical environment (the plant), that are
 %% \emph{safe}.
 Due to the complexity of such systems, in this particular work we focus
-on linear models with known configurations and perform parametric synthesis
+on linear models \todo{[clarify next] with known configurations} and perform parametric synthesis
 of safe digital controllers.
 
 We describe and evaluate two approaches for synthesizing digital controllers 
