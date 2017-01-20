@@ -946,7 +946,7 @@ $z^n+\sum_{i=1}^n[a_i-k_i]z^{n-i}=\prod_{i=1}^n (z-[\lambda_i]) : |[\lambda_i]|<
 \end{figure}
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{CEGIS with precision and sampling rate incrementation}
+\subsection{CEGIS with incremental precision, completeness threshold and sampling rate}
 \label{sec:CEGIS-precision-incrementation}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -1020,7 +1020,8 @@ $z^n+\sum_{i=1}^n[a_i-k_i]z^{n-i}=\prod_{i=1}^n (z-[\lambda_i]) : |[\lambda_i]|<
 
  \end{tikzpicture}
 }}
-\caption{The CEGIS loop with precision and sampling rate incrementation}
+\caption{The CEGIS loop with incremental precision, 
+completeness threshold and sampling rate.}
 \label{fig:CEGIS-precision-increment}
 \end{figure}
 
@@ -1041,14 +1042,16 @@ Next, we describe the five stages from Fig.~\ref{fig:CEGIS-precision-increment}:
 
 1. The inductive synthesis phase (i.e. {\sc synthesize}) uses BMC to 
 compute a candidate solution $K$. It does this by assuming 
-a $k$ and a sampling rate. The check that this assumptions were sound 
+a plan't precision $<I_p,F_p>$, a $k$ and a sampling rate. 
+The check that these assumptions are sound 
 is performed later by the {\sc complete} and {\sc sampling} 
 validation stages.
 
 2. The validation phase consists of four stages 
 (blocks 2-5 in Fig.~\ref{fig:CEGIS-precision-increment}), where the first one
-performs potentially unsound operations assuming a plant's precision $<I_p,F_p>$, 
-current $k$ and sampling rate, whereas the subsequent three stages are used to 
+performs potentially unsound operations considering the currently assumed 
+plant's precision $<I_p,F_p>$, 
+$k$ and sampling rate, whereas the subsequent three stages are used to 
 restore soundness. 
 
 3. This stage restores soundness with respect to the plant precision
