@@ -287,14 +287,16 @@ We consider physical models expressed as ordinary differential equations (ODEs) 
 \label{eq:ode}
 \dot{x}(t) = Ax(t)+ B u(t)\ \ :\ \ x \in \mathbb{R}^{n}, u \in \mathbb{R}^m, A \in \mathbb{R}^{n \times n}, B \in \mathbb{R}^{n \times m}
 \end{align}
-where $A$ and $B$ are matrices that fully specify the continuous plant.  
-\todo{[specify initial conditions? specify input ranges already here? ]} 
-Eq.~\eqref{eq:ode} is soundly discretised (as shown in the Appendix \todo{[there we can present directly the full LTI case with outputs]}) into
+where $A$ and $B$ are matrices that fully specify the continuous plant with the initial states $x(0)$. 
+Eq.~\eqref{eq:ode} is soundly discretised (as shown in the Appendix) into
 %
 \begin{align}
 \label{eq:plant}
-x_{k+1} = A_d x_k+ B_d u_k. 
+x_{k+1} = A_d x_k+ B_d u_k 
+y_{k} = C_d x_k+ D_d u_k,
 \end{align}
+with initial state $x_{0}=x(0)$.
+
 %
 
 %-------------------------------
