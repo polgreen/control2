@@ -497,7 +497,7 @@ The estimation of $\hat{\vec{x}}$ corresponds to the sum of three matrix-vector 
 \label{ssec:safety}
 %-------------------------------
 
-\todo{The safety specification is defined over the state space, not the output. Further, please distinguish the spec from the input constraints. }
+%\todo{The safety specification is defined over the state space, not the output. Further, please distinguish the spec from the input constraints. }
 
 We require that the closed-loop system meets safety specifications. 
 A safety specification establishes bounds for the states, such that 
@@ -511,8 +511,7 @@ The safety property represented by $\phi_{safety}$ is encoded as follows:
 \phi_{safety}\iff \forall k\geq 0, \bigwedge_{i=1}^{n}{x_{i}^{-} \leq x_{i,k} \leq x_{i}^{+}},
 \end{equation}
 %
-\todo{We consider $x_{i}^{-}$ and $x_{i}^{+}$ to be -1 and 1, respectively.}
-
+%\todo{We consider $x_{i}^{-}$ and $x_{i}^{+}$ to be -1 and 1, respectively.}
 where $x_{i}^{-}$ and $x_{i}^{+}$ are the lower and upper bound 
 of the $i$-th state $x_{i}$ at the $k$-th instant, respectively.
 This means that the states will always be within the $n$-dimensional 
@@ -1109,7 +1108,9 @@ y(t)=\textbf{C}\textbf{x}(t)+\textbf{D}u(t)
 \end{array}\right.
 \end{equation}
 
-Table~\ref{table:State-space benchmarks} summarizes the list of benchmarks extracted from the literature~\cite{Franklin15,maglev,converters,CTMS}. \textit{DC Motor Position} plant provides the rotary motion that coupled with wheels and cables provides translational motion. \textit{Aircraft Pitch Dynamics} plant represents the air vehicle orientation and control based on the pitch dimension only. \textit{Ball Magnetic Levitation} plant describes the magnetic field that keeps a metal ball hanged in air.
+Table~\ref{table:State-space benchmarks} summarizes the list of benchmarks extracted from the literature~\cite{Franklin15,maglev,converters,CTMS}. \textit{DC Motor Position} plant provides the rotary motion that coupled with wheels and cables provides translational motion. \textit{Aircraft Pitch Dynamics} plant represents the air vehicle orientation and control based on the pitch dimension only. \textit{Ball Magnetic Levitation} plant describes the magnetic field that keeps a metal ball hanged in air. 
+
+These benchmarks were discretized with different sample times using the approach described in Appendix ~\ref{sec:appendix}. All the experiments were performed considering $x_{i}^{-}=-1$ and $x_{i}^{+}=1$ and the inputs $u_{k}=0, \forall k>0$.
 
 \begin{table}[htb]
 \centering
