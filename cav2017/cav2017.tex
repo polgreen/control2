@@ -651,13 +651,22 @@ language.
 We investigate two different approaches of integrating solution generalisation 
 with CEGIS:
 \begin{itemize}
-\item[1.] The first approach uses abstract acceleration to compute the set of reachable states, which enables it to perform abstraction refinement inside the CEGIS loop (see Sec~\ref{sec:CEGIS-abstraction-refinement}). 
-\item[2.] The second approach relies on computing a 
-completeness threshold $k$ for each loop such that it is sufficient to 
-unroll the corresponding loop $k$ times. For this approach the 
-generalisation step is given as an incremental
-increase of precision and sampling rate (see Sec.~\ref{sec:CEGIS-precision-incrementation}).
+\item[1.] The first approach uses abstract acceleration to compute the set of reachable states,
+  which enables it to perform abstraction refinement inside the CEGIS loop (see Sec~\ref{sec:CEGIS-abstraction-refinement}). 
+\todo{Dario, can you briefly explain solution generalisation for your approach?}
+\item[2.] The second approach uses a multi-staged validation phase
+  and performes solution generalisation based on
+the plant's precision, the number of loop unrollongs
+and the sampling rate (see Sec.~\ref{sec:CEGIS-precision-incrementation}).
+%%   relies on computing a 
+%% completeness threshold $k$ for each loop such that it is sufficient to 
+%% unroll the corresponding loop $k$ times. For this approach the 
+%% generalisation step is given as an incremental
+%% increase of precision and sampling rate 
 \end{itemize}
+
+\todo{Can we come up with some sort of figure that makes it easier to visualise
+the generalisation step in each approach?}
 
 % In Sec.~\ref{sec:CEGIS-abstraction-refinement} and 
 % Sec.~\ref{sec:CEGIS-precision-incrementation}, we explain how we 
