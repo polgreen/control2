@@ -144,21 +144,23 @@ void __CPROVER_EIGEN_charpoly_2(void) { //m00*m11 - m10*m11 - m00*x - m11*x + x^
 #endif
 
 #if NSTATES==3
+
 // P(s)=(s-m11)*(s-m22)*(s-m33) - m13*m31*(s-m22) - m12*m21*(s-m33) - m23*m32*(s-m11) - m12*m23*m31 - m13*m21*m32
 // P(s)=s^3 + (-m_11 - m_22 - m_33) * s^2 +  (m_11*m_22 + m_11*m_33 - m_12*m_21 - m_13*m_31 + m_22*m_33 - m_23*m_32) * s - m_11*m_22*m_33 + m_11*m_23*m_32 + m_12*m_21*m_33 - m_12*m_23*m_31 - m_13*m_21*m_32 + m_13*m_22*m_31
+
 void __CPROVER_EIGEN_charpoly_3(void) {
+//                        m_11*m_22*m_33                    + m_11*m_23*m_32                    + m_12*m_21*m_33                    - m_12*m_23*m_31                    - m_13*m_21*m_32                    + m_13*m_22*m_31
+__CPROVER_EIGEN_poly[3] = add(sub(sub(add(add(mult(__m[0][0],mult( __m[1][1], __m[2][2])), mult( __m[0][0] ,mult( __m[1][2] , __m[2][1]))),
+                mult(__m[0][1],mult( __m[1][0], __m[2][2]))), mult(__m[0][1],mult( __m[1][2], __m[2][0]) )), mult(__m[0][2] ,mult(__m[1][0], __m[2][1]))),
+                    mult( __m[0][2], mult(__m[1][1],__m[2][0])));
+//                        (m_11*m_22            + m_11*m_33             - m_12*m_21             - m_13*m_31             + m_22*m_33             - m_23*m_32) * s
+__CPROVER_EIGEN_poly[2] = sub(add(sub(sub(mult(__m[0][0], mult( __m[1][1], mult( __m[0][0], __m[2][2]))), mult(__m[0][1],  __m[1][0])),
+                            mult(__m[0][2],__m[2][0])), mult(__m[1][1], __m[2][2])),mult(__m[1][2], __m[2][1]));
+//                        (-m_11     - m_22      - m_33) * s^2
+__CPROVER_EIGEN_poly[1] = sub(sub(sub(0,__m[0][0]), __m[1][1]), __m[2][2]);
+// s^3
+__CPROVER_EIGEN_poly[0] = one_type;
 
-  //                        m_11*m_22*m_33                    + m_11*m_23*m_32                    + m_12*m_21*m_33                    - m_12*m_23*m_31                    - m_13*m_21*m_32                    + m_13*m_22*m_31
-  __CPROVER_EIGEN_poly[3] = add(add(add( mult(__m[0][0], mult( __m[1][1], __m[2][2])), mult(__m[0][0] , mult( __m[1][2], __m[2][1]))),
-                                sub(mult(__m[0][1],mult( __m[1][0] , __m[2][2])) , mult(__m[0][1] , mult( __m[1][2] , __m[2][0])))),
-                              sub(mult(__m[0][2] , mult( __m[1][1] , __m[2][0])), mult(__m[0][2] , mult( __m[1][0] , __m[2][1]))));
-
-  //                        (m_11*m_22            + m_11*m_33             - m_12*m_21             - m_13*m_31             + m_22*m_33             - m_23*m_32) * s
-  __CPROVER_EIGEN_poly[2] = sub(add(sub(sub(mult(__m[0][0] , mult( __m[1][1] , mult(__m[0][0], __m[2][2]))), mult(__m[0][1] , __m[1][0])) , mult(__m[0][2], __m[2][0])), mult(__m[1][1], __m[2][2])), mult(__m[1][2], __m[2][1]));
-  //                        (-m_11     - m_22      - m_33) * s^2
-  __CPROVER_EIGEN_poly[1] = sub(zero_type,add(__m[0][0], add(__m[1][1], __m[2][2])));
-  // s^3
-  __CPROVER_EIGEN_poly[0] = one_type;
 }
 #endif
 #if NSTATES==4
@@ -355,17 +357,18 @@ int check_safety(void)
 int main(void) {
   //init();
   closed_loop(); //calculate A - BK
-  __plant_typet __trace_A = _AminusBK[0][0];
+  __CPROVER_EIGEN_charpoly();
+  __DSVERIFIER_assert(check_stability());
+  __DSVERIFIER_assert(check_safety());
   __plant_typet __trace_controllerA = _controller_A[0][0];
-  __CPROVER_assert(0 == 1, "");
-  //__CPROVER_EIGEN_charpoly(); //get eigen values
-  //__DSVERIFIER_assert(check_stability());
-  //__DSVERIFIER_assert(check_safety());
-
   __controller_typet __trace_fxpK0 = K_fxp[0];
   __controller_typet __trace_fxpK1 = K_fxp[1];
   __controller_typet __trace_fxpK2 = K_fxp[2];
-
   __CPROVER_assert(0 == 1, "");
+
+  //get eigen values
+  //__DSVERIFIER_assert(check_stability());
+  //__DSVERIFIER_assert(check_safety());
+
   return 0;
 }
