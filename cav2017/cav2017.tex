@@ -30,6 +30,7 @@
 \usetikzlibrary{positioning, automata, shapes.arrows, calc, shapes, arrows}
 \usetikzlibrary{patterns}
 
+
 \newcommand{\todo}[1]{{\color{red} TODO: #1}}
 \newcommand{\commentib}[1]{{\color{blue} [IB: #1]}}
 \newcommand{\mat}[1]{\boldsymbol{#1}}
@@ -439,6 +440,13 @@ is constructed). In this work, we are assuming that all the states measurements 
 \label{sec:numeric_rep}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+There are two sources of error due to numeric representation; the numeric error introduced by 
+the fixed point numbers used to model our plant, i.e, the plant dynamics $A_d$, $B_d$ and the states; 
+and the numeric error introduced by the digital controller, which uses an analogue-to-digital converter to read
+the states as a fixed-point number. In this section we formally outline the errors introduced by
+fixed point representation of numbers; in further sections we will differentiate between these
+two errors by referring to them as the \emph{plant error} and the \emph{digital controller error}.
+
 Let $\mathbb{R} \langle I,F \rangle$ be a fixed point domain with $I$ bits representing the integer part and $F$ bits
 representing the decimal part. 
 The following approximation errors will arise:
@@ -511,21 +519,28 @@ of the $i$-th state $x_{i}$ at the $k$-th instant, respectively.
 This means that the states will always be within the $n$-dimensional 
 hyper-box, which is typically defined by the safety specification.
 
-The states must be computed considering 
-the FWL effects in all operations related to the control action~\eqref{eq:controlaction} 
-and disregarding it in the state equation~\eqref{eq:plant}. 
-Thus, the states are computed using the following equations:
+The states values must be computed considering the digital controller error, i.e., the error introduced by the ADC and
+digital controller, and the digital reference signal. In this paper, we consider systems with
+a reference signal equal to zero. 
+%the FWL effects in all operations related to the control action~\eqref{eq:controlaction} 
+%and disregarding it in the state equation~\eqref{eq:plant}.
+Thus, the states are computed using the following equations. We use $\mathcal{F}_{\langle I_c,F_c \rangle}$
+to denote numbers represented with the precision of the digital controller. All other numbers
+are represented with the precision of our plant model:
 %
-\begin{equation}
-\label{eq:ssunroll}
-\left\lbrace
-\begin{array}{l}
-u_{k}=\mathcal{F}_{\langle I,F \rangle}(r_{k}-\mathcal{F}_{\langle I,F \rangle}(\mathcal{F}_{\langle I,F \rangle}(K)\cdot\mathcal{F}_{\langle I,F \rangle}(x_{k})))\\
-x_{k+1}=Ax_{k}+Bu_{k}
-\end{array}\right.
-\end{equation}
+\begin{align*}
+u_{k}&=-(\mathcal{F}_{\langle I_c,F_c \rangle}(K)\cdot\mathcal{F}_{\langle I_c,F_c \rangle}(x_{k})) \\
+x_{k+1}&=Ax_{k}+Bu_{k}
+\end{align*}
+%\left\lbrace
+%\begin{array}{l}
+%u_{k}=\mathcal{F}_{\langle I,F \rangle}(r_{k}-\mathcal{F}_{\langle I,F \rangle}(\mathcal{F}_{\langle I,F \rangle}(K)\cdot\mathcal{F}_{\langle I,F \rangle}(x_{k})))\\
+%x_{k+1}=Ax_{k}+Bu_{k}
+%\end{array}\right.
+%\end{equation}
 
-The input sequence $u_{k}$ is non-deterministic with known bounds $u^{+}$ and $u^{-}$, such that ${u^{-} \leq u_{k} \leq u^{+}},\forall k\geq 0$. 
+The input sequence $u_{k}$ is non-deterministic with known bounds $u^{+}$ and $u^{-}$, 
+such that ${u^{-} \leq u_{k} \leq u^{+}},\forall k\geq 0$. 
 
 %% %-------------------------------
 %% \section{Counter-Example Guided Inductive Synthesis with solution generalisation}
