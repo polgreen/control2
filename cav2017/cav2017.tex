@@ -971,7 +971,7 @@ a controller over $k$ time steps. We then compute a completeness threshold, $\ov
 for this controller, and verify the controller's correctness to $\overline{k}$ time steps.
 Essentially, $\overline{k}$ represents the number of iterations 
 required to sufficiently unwind the closed-loop state-space system 
-such that the boundaries are not violated for any $k>\overline{k}$
+such that the boundaries are not violated for any $k{>}\overline{k}$
 (i.e. it's sufficient to unwound the closed-loop state-space system up to  
 $\overline{k}$ in order to ensure that $\phi_{safety}$ holds). 
 
@@ -988,7 +988,7 @@ checks that these assumptions are sound are performed by subsequent
 solution $K$ is safe for all possible initial states, i.e., does not reach an unsafe
 state within $k$ steps. 
 This check is potentially unsound because we consider the currently
-assumed $<I_p,F_p>$, $k$ and sampling rate. 
+assumed $\langle I_p,F_p\rangle$, $k$ and sampling rate. 
 
 3. The second {\sc verify} stage, {\sc precision}, 
  restores soundness with respect to the plant's precision
@@ -997,7 +997,7 @@ operations performed by the previous stage.
 
 4. The third {\sc verify} stage, {\sc complete}, checks that the
 current $k$ is large enough to ensure that the boundaries are not
-violated for any $k'>k$.  For this purpose, we compute the
+violated for any $k'{>}k$.  For this purpose, we compute the
 completeness threshold $\overline{k}$ for the current candidate $K$
 and check that $k{\leq}\overline{k}$. 
 
