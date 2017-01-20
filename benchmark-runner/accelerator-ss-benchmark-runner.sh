@@ -123,7 +123,7 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
     timeout --preserve-status --kill-after=${kill_time} ${timeout_time} cbmc -D __CPROVER -D _FIXEDBV -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTORL_RADIX_WIDTH=${radix_width} "${working_directory}/${synthesis_file}" --stop-on-fail >${working_directory}/${cbmc_log_file}
     if [ $? -eq 10 ]; then
      controller=$(grep 'controller_cbmc=' ${working_directory}/${cbmc_log_file} | sed 's/.*controller_cbmc={ *\([^}]*\) *}.*/\1/')
-     eval "./axelerator $options -control \"[${contoller}]\""
+     eval "./axelerator $options -control \"[${controller}]\""
      if grep --quiet 'SUCCESS' "${working_directory}/${status_output_file}"; then
       echo_success_message ${start_time}
       echo_log "<controller>${controller}</controller>"
