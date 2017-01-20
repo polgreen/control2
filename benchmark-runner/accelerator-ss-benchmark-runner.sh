@@ -1,7 +1,7 @@
 #!/bin/bash
-#export PATH=${PATH//cbmc-5190/cbmc-trunk-diffblue-control-synthesis}
-export PATH=${PATH}:/media/sf_Documents/GitHub/cbmc-master/src/cbmc
-#export PATH=${PATH}:/users/pkesseli/software/cpp/cbmc/cbmc-trunk-diffblue-control-synthesis/src/cegis:/users/pkesseli/software/cpp/cbmc/cbmc-trunk-diffblue-control-synthesis-analyzer/src/goto-analyzer:/users/pkesseli/software/cpp/z3/trunk/target/i686-linux/bin
+#export PATH=${PATH}:/media/sf_Documents/GitHub/cbmc-master/src/cbmc
+export PATH=${PATH//cbmc-5190/cbmc-trunk-diffblue-control-synthesis}
+export PATH=${PATH}:/users/pkesseli/software/cpp/cbmc/cbmc-trunk-diffblue-control-synthesis/src/cegis:/users/pkesseli/software/cpp/cbmc/cbmc-trunk-diffblue-control-synthesis-analyzer/src/goto-analyzer:/users/pkesseli/software/cpp/z3/trunk/target/i686-linux/bin
 
 status_output_file='output.txt'
 synthesis_file='FWL_LTI.c'
@@ -15,7 +15,7 @@ cbmc_log_file='cbmc-tmp.log'
 function setup_benchmark_directory {
  mkdir -p "$1" 2>/dev/null
  cp ${script_base_directory}/AACegar/* ${working_directory}/
- # TODO: cp source files and headers, and benchmark headers
+ chmod +x ${working_directory}/axelerator
 }
 
 function echo_log {
@@ -72,8 +72,8 @@ function write_spec_header {
 mkdir -p ${working_directory_base} 2>/dev/null
 
 if [ -z "$1" ]; then
- #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/dcmotor_ss/'
- benchmark_dirs=("${script_base_directory}/../benchmarks/state-space/dcmotor_ss/")
+ benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/dcmotor_ss/')
+ #benchmark_dirs=("${script_base_directory}/../benchmarks/state-space/dcmotor_ss/")
 else
  benchmark_dirs=("$1")
 fi
@@ -120,7 +120,7 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
    solution_found=false
    synthesis_in_progress=true
    while [ "${synthesis_in_progress}" = true ]; do
-    timeout --preserve-status --kill-after=${kill_time} ${timeout_time} cbmc -D __CPROVER -D _FIXEDBV -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTORL_RADIX_WIDTH=${radix_width} "${working_directory}/${synthesis_file}" --stop-on-fail >${working_directory}/${cbmc_log_file}
+    timeout --preserve-status --kill-after=${kill_time} ${timeout_time} cbmc -D __CPROVER -D _FIXEDBV -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTORL_RADIX_WIDTH=${radix_width} "${working_directory}/${synthesis_file}" --stop-on-fail >${working_directory}/${cbmc_log_file} 2>&1
     if [ $? -eq 10 ]; then
      controller=$(grep 'controller_cbmc=' ${working_directory}/${cbmc_log_file} | sed 's/.*controller_cbmc={ *\([^}]*\) *}.*/\1/')
      eval "./axelerator $options -control \"[${controller}]\""
