@@ -82,12 +82,6 @@ int main()
 #ifdef _NUM_ITERATIONS
   if (result>0) checkIterations(loop_cbmc);
 #endif
-/*  for (i=0;i<_DIMENSION;i++) 
-  {
-    cnttype j;
-    for (j=0;j<_DIMENSION;j++) dynamics[i][j]=loop_cbmc[i][j];
-  }*/
-  //for (i=0;i<_DIMENSION;i++) controller_cbmc[i]=controller[i];
 #ifdef __CPROVER
   __CPROVER_array_copy(controller_cbmc, controller);
   verify_assert(0);
