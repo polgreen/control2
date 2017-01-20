@@ -1015,29 +1015,30 @@ Next, we describe the different phases in Fig.~\ref{fig:CEGIS-precision-incremen
 (blocks 1 to 5):
 
 1. The inductive synthesis phase (i.e. {\sc synthesize}) uses BMC to
-compute a candidate solution $K$. It does this by assuming a plan't
-precision $<I_p,F_p>$, a $k$ and a sampling rate.  The checks that
+compute a candidate solution $K$. It does this by assuming some 
+precision $<I_p,F_p>$ for the plant, a $k$ and a sampling rate.  The checks that
 these assumptions are sound are performed by the subsequent {\sc
   verify} stages.
 
-2. The validation phase consists of four stages (blocks 2-5 in
-Fig.~\ref{fig:CEGIS-precision-increment}), where the first one
-performs potentially unsound operations considering the currently
-assumed plant's precision $<I_p,F_p>$, $k$ and sampling rate, whereas
-the subsequent three stages are used to restore soundness.
+2. The first {\sc verify} stage, {\sc safety}, 
+performs potentially unsound operations by considering the currently
+assumed $<I_p,F_p>$, $k$ and sampling rate. % The soundness is to be 
+% restored by the subsequent three validation stages.
 
-3. This stage restores soundness with respect to the plant precision
+3. The second {\sc verify} stage, {\sc precision}, 
+ restores soundness with respect to the plant's precision
 by using interval arithmetic \cite{moore1966interval} to validate the 
 operations performed by the previous stage.
 
-4. This stage checks that the current  $k$ 
-is large enough to ensure that the boundaries are not violated for any $k'>k$.
-In order to verify this, we compute the 
-completeness threshold $\overline{k}$ for the current candidate $K$ 
-and check that $k{\leq}\overline{k}$. 
-\todo{discuss the computation of the completeness threshold}
+4. The third {\sc verify} stage, {\sc complete}, checks that the
+current $k$ is large enough to ensure that the boundaries are not
+violated for any $k'>k$.  For this purpose, we compute the
+completeness threshold $\overline{k}$ for the current candidate $K$
+and check that $k{\leq}\overline{k}$.  \todo{discuss the computation
+  of the completeness threshold}
 
-5. The last stage ensures that the current sampling rate is large enough by using an 
+5. The last {\sc verify} stage, {\sc sampling}, 
+ensures that the current sampling rate is large enough by using an 
 external checker (\todo{add more details here once we have them}).
 
 
