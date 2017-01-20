@@ -167,7 +167,7 @@ __CPROVER_EIGEN_poly[3] = add(sub(sub(add(add(mult(__m[0][0],mult( __m[1][1], __
 __CPROVER_EIGEN_poly[2] = sub(add(sub(sub(mult(__m[0][0], mult( __m[1][1], mult( __m[0][0], __m[2][2]))), mult(__m[0][1],  __m[1][0])),
                             mult(__m[0][2],__m[2][0])), mult(__m[1][1], __m[2][2])),mult(__m[1][2], __m[2][1]));
 //                        (-m_11     - m_22      - m_33) * s^2
-__CPROVER_EIGEN_poly[1] = sub(sub(sub(0,__m[0][0]), __m[1][1]), __m[2][2]);
+__CPROVER_EIGEN_poly[1] = sub(sub(sub(zero_type,__m[0][0]), __m[1][1]), __m[2][2]);
 // s^3
 __CPROVER_EIGEN_poly[0] = one_type;
 
