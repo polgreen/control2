@@ -1,11 +1,12 @@
 #include <stdio.h>
 #include "benchmark.h" //benchmark header file
-//#include "control_types.h" //include types
 
-//#define CPROVER
-#ifdef INTERVAL
-    #include "intervals.h"
-#endif
+//#include "control_types.h" //included by benchmark header file
+
+//#ifdef INTERVAL
+  //  #include "intervals.h" //included via control_types.h
+//#endif
+
 #include "operators.h"
 
 
@@ -18,8 +19,10 @@
 #define SAFE_STATE_LOWERBOUND (__plant_precisiont)-1
 
 //other plant variables
-extern const __controller_typet K_fxp[NSTATES]; //nondet controller
-//const __controller_typet K_fxp[NSTATES] = { 0.07421875, 0.05078125, 0.0078125 }; //nondet controller
+
+//extern const __controller_typet K_fxp[NSTATES]; //nondet controller
+const __controller_typet K_fxp[NSTATES] = {interval(0.0234375),interval(-0.1328125), interval(0.00390625)};
+
 __plant_typet _controller_inputs;
 extern __plant_typet _controller_states[NSTATES]; //nondet initial states
 
@@ -29,14 +32,6 @@ __plant_typet _AminusBK[NSTATES][NSTATES];
 __plant_typet __CPROVER_EIGEN_poly[NSTATES + 1u];
 
 //stablity calc
-
-/*__plant_typet internal_pow(__plant_typet a, unsigned int b){
-   __plant_typet acc=a;
-   for (int i=0; i < b-1; i++){
-    acc = mult(acc,a);
-   }
-   return acc;
-}*/
 
 __plant_typet internal_pow(__plant_typet a, unsigned int b){
 
@@ -154,10 +149,6 @@ void __CPROVER_EIGEN_charpoly_2(void) { //m00*m11 - m10*m11 - m00*x - m11*x + x^
 #endif
 
 #if NSTATES==3
-
-// P(s)=(s-m11)*(s-m22)*(s-m33) - m13*m31*(s-m22) - m12*m21*(s-m33) - m23*m32*(s-m11) - m12*m23*m31 - m13*m21*m32
-// P(s)=s^3 + (-m_11 - m_22 - m_33) * s^2 +  (m_11*m_22 + m_11*m_33 - m_12*m_21 - m_13*m_31 + m_22*m_33 - m_23*m_32) * s - m_11*m_22*m_33 + m_11*m_23*m_32 + m_12*m_21*m_33 - m_12*m_23*m_31 - m_13*m_21*m_32 + m_13*m_22*m_31
-
 void __CPROVER_EIGEN_charpoly_3(void) {
 //                        m_11*m_22*m_33                    + m_11*m_23*m_32                    + m_12*m_21*m_33                    - m_12*m_23*m_31                    - m_13*m_21*m_32                    + m_13*m_22*m_31
 __CPROVER_EIGEN_poly[3] = add(sub(sub(add(add(mult(__m[0][0],mult( __m[1][1], __m[2][2])), mult( __m[0][0] ,mult( __m[1][2] , __m[2][1]))),
@@ -269,7 +260,7 @@ void states_equals_A_states_plus_B_inputs(void)
       __CPROVER_array_set(states_equals_A_states_plus_B_inputs_result, zero_type);
   #else
     for(int i=0; i<NSTATES; i++)
-      zero(states_equals_A_states_plus_B_inputs_result[i]);
+      states_equals_A_states_plus_B_inputs_result[i] = zero_type;
   #endif
 
    for(int i=0; i<NSTATES; i++)
@@ -368,21 +359,28 @@ int check_safety(void)
 
 int main(void) {
   //init();
+<<<<<<< 5a1a0cb98c71167c587f6314442d807f0c1a5f6e
+=======
+#ifdef INTERVAL
+  get_bounds(); //get interval bounds
+#endif
+>>>>>>> changing order of header files and defines
   closed_loop(); //calculate A - BK
   __CPROVER_EIGEN_charpoly();
   __DSVERIFIER_assert(check_stability());
 #if NSTATES != 1
   __DSVERIFIER_assert(check_safety());
 #endif
+
+#ifdef CPROVER
   __plant_typet __trace_controllerA = _controller_A[0][0];
   __controller_typet __trace_fxpK0 = K_fxp[0];
   __controller_typet __trace_fxpK1 = K_fxp[1];
   __controller_typet __trace_fxpK2 = K_fxp[2];
   __CPROVER_assert(0 == 1, "");
+#endif
 
-  //get eigen values
-  //__DSVERIFIER_assert(check_stability());
-  //__DSVERIFIER_assert(check_safety());
+
 
   return 0;
 }
