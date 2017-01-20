@@ -398,33 +398,33 @@ $$
 
 
 
-%-------------------------------
-\subsection{Digital implementation of feedback controller}
-\label{ssec:quantizationerror}
-%-------------------------------
-
-\todo{HERE add a figure similar to Fig. \label{fig:observersystem} to explain digital features of controller.} 
-
-\todo{[The remainder of the section needs to be updated. ]}
-The output and measurable of the plant is being sampled by an ADC, and since the full state of the
-plant cannot be witnessed directly, the controller software includes an observer that 
-estimates the state of the plant (see appendix for details on how such an observer
-is constructed). In this work, we are assuming that all the states measurements are available for the state feedback purpose, and the state observer design may be disregarded.  
-\todo{[Unclear what the remainder is for: ]}
-We further presume that there are small tolerances in the system 
-described in the following form
-%
-\begin{align*}
-\mat{A} \in \mathcal{G}_A=\mat{S}\mat{J}\mat{S}^{-1} : \mat{J} \in \mathcal{G}_J
-\end{align*}
-\commentib{What is S?}
-
-Where $\mathcal{G}_J$ is a collection of eigenvalue ranges that define the frequency response of the system.
-We presume that the internal model of the plant is an ARMA model, modified by a
-state transform that has no tolerances. Tolerances in the eigenvectors will manifest themselves
-as tolerances in the canonical forms outside of the row/column of interests and complicate the 
-evaluation. Whilst it is possible to address these with this methodology, we will focus on the case
-above for simplicity.
+%%%-------------------------------
+%%\subsection{Digital implementation of feedback controller}
+%%\label{ssec:quantizationerror}
+%%%-------------------------------
+%%
+%%\todo{HERE add a figure similar to Fig. \label{fig:observersystem} to explain digital features of controller.} 
+%%
+%%\todo{[The remainder of the section needs to be updated. ]}
+%%The output and measurable of the plant is being sampled by an ADC, and since the full state of the
+%%plant cannot be witnessed directly, the controller software includes an observer that 
+%%estimates the state of the plant (see appendix for details on how such an observer
+%%is constructed). In this work, we are assuming that all the states measurements are available for the state feedback purpose, and the state observer design may be disregarded.  
+%%\todo{[Unclear what the remainder is for: ]}
+%%We further presume that there are small tolerances in the system 
+%%described in the following form
+%%%
+%%\begin{align*}
+%%\mat{A} \in \mathcal{G}_A=\mat{S}\mat{J}\mat{S}^{-1} : \mat{J} \in \mathcal{G}_J
+%%\end{align*}
+%%\commentib{What is S?}
+%%
+%%Where $\mathcal{G}_J$ is a collection of eigenvalue ranges that define the frequency response of the system.
+%%We presume that the internal model of the plant is an ARMA model, modified by a
+%%state transform that has no tolerances. Tolerances in the eigenvectors will manifest themselves
+%%as tolerances in the canonical forms outside of the row/column of interests and complicate the 
+%%evaluation. Whilst it is possible to address these with this methodology, we will focus on the case
+%%above for simplicity.
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{Numeric representations and soundness} 
