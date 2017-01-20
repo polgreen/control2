@@ -49,6 +49,16 @@ __plant_typet internal_pow(__plant_typet a, unsigned int b){
 
 
 int check_stability(void){
+
+
+  #if NSTATES==1
+  if(greaterthan(_AminusBK[0][0], 1) || lessthan( _AminusBK[0][0] ,-1))
+    {return 0;}
+  else
+    {return 1;}
+#endif
+
+
 #define __a __CPROVER_EIGEN_poly
 #define __n NSTATES + 1u
    int lines = 2 * __n - 1;
@@ -190,7 +200,9 @@ __CPROVER_EIGEN_poly[3] = - __m[0][0]*__m[1][1]*__m[2][2]  + __m[0][0]*__m[1][2]
 
 void __CPROVER_EIGEN_charpoly(void){
 
-  #if NSTATES==2
+  #if NSTATES==1
+  //do nothing
+  #elif NSTATES==2
       __CPROVER_EIGEN_charpoly_2();
   #elif NSTATES==3
       __CPROVER_EIGEN_charpoly_3();

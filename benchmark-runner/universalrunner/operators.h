@@ -15,6 +15,7 @@
   #define _abs(a) ( (a) < 0 ? -(a) : (a))
   #define add(x,y) ( (x) + (y))
 
+  #define lessthan(x,y) ((x) )< (y))
   #define greaterthan(x,y) ((x)>(y))
   #define lessthanzero(x) ((x) < 0)
   #define lessthan_equaltozero(x) ((x) <= 0)
@@ -31,6 +32,8 @@
   #define mult(x,y) ( interval_mult((x),(y)))
 
   #define _abs(a) ( abs_interval(a))
+
+  #define lessthan(x,y) (interval_lessthan(x,y))
   #define greaterthan(x,y) (interval_greaterthan((x),(y)))
   #define add(x,y) (interval_add((x),(y)))
   #define lessthanzero(x) (interval_lessthanzero(x))

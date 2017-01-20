@@ -82,7 +82,7 @@ struct intervalt fxp_interval_check(struct intervalt value)
   value.high+=_dbl_lsb;
   return value;
 }
-
+#define interval_lessthan(x,y) ((x.high) )< (y.low))
 #define interval_lessthanzero(x) (x.high<0)
 #define interval_lessthan_equal_to_zero(x) (x.high <= 0)
 #define interval_greaterthan(x,y) (x.low > y.high)
