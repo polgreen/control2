@@ -6,9 +6,6 @@
 
 #include "control_types.h"
 
-#define FRAC_BITS 8
-#define INT_BITS 8
-
 typedef  __plant_precisiont control_typet;
 
 control_typet _zero = 0.0; //added in by EP
