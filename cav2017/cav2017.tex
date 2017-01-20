@@ -1098,11 +1098,8 @@ external checker (\todo{add more details here once we have them}).
 \subsection{Description of the benchmarks}
 %-------------------------------
 
-\textcolor{red}{We will have to move this text to the beginning of the paper.}
-
-
-
 A set of state-space models for different classes of systems were extracted from the literature and employed for validating our automated synthesis methodology. All the systems are SISO models of the following form:
+%
 \begin{equation}
 \left\lbrace\begin{array}{c}
 \dot{\textbf{x}}(t)=\textbf{A}\textbf{x}(t)+\textbf{B}u(t)\\
@@ -1110,9 +1107,9 @@ y(t)=\textbf{C}\textbf{x}(t)+\textbf{D}u(t)
 \end{array}\right.
 \end{equation}
 
-Table~\ref{table:State-space benchmarks} summarizes the list of benchmarks extracted from the literature~\cite{Franklin15,maglev,converters,CTMS}. \textit{DC Motor Position} plant describes the rotary motion that coupled with wheels and cables provides translational motion. \textit{Aircraft Pitch Dynamics} plant represents the air vehicle orientation and control based on the pitch dimension. \textit{Ball Magnetic Levitation} plant describes the magnetic field to keep a metal ball hanged in air. \textit{Buck Converter} plant represents a power converter that steps down voltage from the supply to the load while stepping up current. \textit{Boost Converter} plant also represents a power converter, but here it steps up voltage from the supply to the load while stepping down current. \textit{Buck-boost Converter} plant is a particular type of converter that has an output voltage magnitude that is either greater than or less than the input voltage magnitude. \textit{Automotive Cruise System} plant describes a system's model that represents the speed of a motor vehicle.
+Table~\ref{table:State-space benchmarks} summarizes the list of benchmarks extracted from the literature~\cite{Franklin15,maglev,converters,CTMS}. \textit{DC Motor Position} plant describes the rotary motion that coupled with wheels and cables provides translational motion. \textit{Aircraft Pitch Dynamics} plant represents the air vehicle orientation and control based on the pitch dimension. \textit{Ball Magnetic Levitation} plant describes the magnetic field to keep a metal ball hanged in air. \textit{Buck Converter} plant represents a power converter that steps down voltage from the supply to the load while stepping up current. \textit{Boost Converter} plant also represents a power converter, but here it steps up voltage from the supply to the load while stepping down current. \textit{Buck-boost Converter} plant represents the model of a converter that has an output voltage magnitude, which is either greater than or less than the input voltage magnitude. \textit{Automotive Cruise System} plant describes a system's model that represents the speed of a motor vehicle. \textcolor{red}{\textit{DC Motor Rate} plant describes...}. \textit{Helicopter Longitudinal Motion} plant provides the longitudinal motion model of a helicopter. \textit{Inverted Pendulum} plant describes the model of a pendulum with its center of mass above its pivot point. \textit{Magnetic Suspension} plant provides the model for which a given object is suspended via a magnetic field. 
 
-These benchmarks were discretized with different sample times using the approach described in the Appendix~\ref{sec:appendix}. All experiments were performed considering $x_{i}^{-}=-1$ and $x_{i}^{+}=1$ and the inputs $u_{k}=0, \forall k>0$.
+All benchmarks were discretized with different sample times using the approach described in the Appendix~\ref{sec:appendix}. All experiments were performed considering $x_{i}^{-}=-1$ and $x_{i}^{+}=1$ and the inputs $u_{k}=0, \forall k>0$.
 
 \begin{table}[htb]
 \centering
