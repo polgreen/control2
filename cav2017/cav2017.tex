@@ -656,20 +656,23 @@ the refinement loop can only iterate a finite number of times.
 \subsection{Solution generalisation} 
 Given the large soloution space to be searched during the inductive
 synthesis phase, we parametrise the target language, which induces a
-lattice of progressively more expressive languages.  This enables us 
-to start by attempting to synthesise a program at the lowest point on this lattice
-and increase the parameters of the language until we reach a point at
-which the synthesis succeeds. Whenever we manage to synthesise
-a candidate solution at some lower point on the lattice, 
-we apply generalisation to obtain a full solution.
+lattice of progressively more expressive languages.  This enables us
+to start by attempting to synthesise a program at the lowest point on
+this lattice and increase the parameters of the language until we
+reach a point at which the synthesis succeeds. Whenever we manage to
+synthesise a candidate solution at some lower point on the lattice, we
+must apply some form of solution generalisation to obtain a full
+solution (i.e. a solution in the original search space).
 
-As well as giving us an automatic search
-procedure, this parametrisation greatly increases the efficiency of
-our system since languages low down the lattice are very easy to
-decide safety for (i.e. the validation oracle finds an answer
-fast). If a program can be synthesised in a low-complexity language,
-the whole procedure finishes much faster than if synthesis had been
-attempted in a high-complexity language.
+As well as giving us an automatic search procedure, this
+parametrisation greatly increases the efficiency of our system since
+languages low down the lattice are very easy to decide safety for
+(i.e. the validation oracle finds an answer fast). If a program can be
+synthesised in a low-complexity language, the whole procedure finishes
+much faster than if synthesis had been attempted in a high-complexity
+language.
+
+
 
 We investigate two different approaches of integrating solution generalisation 
 with CEGIS:
@@ -1037,21 +1040,20 @@ ensuring that the boundaries are not violated for any $k>\overline{k}$.
 Then, it is sufficient to unwound the closed-loop state-space system up to  
 $\overline{k}$ in order to ensure that $\phi_{safety}$ holds. 
 
-Next, we describe the five stages from Fig.~\ref{fig:CEGIS-precision-increment}:
+Next, we describe the different phases in Fig.~\ref{fig:CEGIS-precision-increment}
+(blocks 1 to 5):
 
-1. The inductive synthesis phase (i.e. {\sc synthesize}) uses BMC to 
-compute a candidate solution $K$. It does this by assuming 
-a plan't precision $<I_p,F_p>$, a $k$ and a sampling rate. 
-The check that these assumptions are sound 
-is performed later by the {\sc complete} and {\sc sampling} 
-validation stages.
+1. The inductive synthesis phase (i.e. {\sc synthesize}) uses BMC to
+compute a candidate solution $K$. It does this by assuming a plan't
+precision $<I_p,F_p>$, a $k$ and a sampling rate.  The checks that
+these assumptions are sound are performed by the subsequent {\sc
+  verify} stages.
 
-2. The validation phase consists of four stages 
-(blocks 2-5 in Fig.~\ref{fig:CEGIS-precision-increment}), where the first one
-performs potentially unsound operations considering the currently assumed 
-plant's precision $<I_p,F_p>$, 
-$k$ and sampling rate, whereas the subsequent three stages are used to 
-restore soundness. 
+2. The validation phase consists of four stages (blocks 2-5 in
+Fig.~\ref{fig:CEGIS-precision-increment}), where the first one
+performs potentially unsound operations considering the currently
+assumed plant's precision $<I_p,F_p>$, $k$ and sampling rate, whereas
+the subsequent three stages are used to restore soundness.
 
 3. This stage restores soundness with respect to the plant precision
 by using interval arithmetic \cite{moore1966interval} to validate the 
