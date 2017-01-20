@@ -371,7 +371,9 @@ int main(void) {
   closed_loop(); //calculate A - BK
   __CPROVER_EIGEN_charpoly();
   __DSVERIFIER_assert(check_stability());
+#if NSTATES !=1
   __DSVERIFIER_assert(check_safety());
+#endif
   __plant_typet __trace_controllerA = _controller_A[0][0];
   __controller_typet __trace_fxpK0 = K_fxp[0];
   __controller_typet __trace_fxpK1 = K_fxp[1];
