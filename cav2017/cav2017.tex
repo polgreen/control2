@@ -647,7 +647,6 @@ much faster than if synthesis had been attempted in a high-complexity
 language.
 
 
-
 We investigate two different approaches of integrating solution generalisation 
 with CEGIS:
 \begin{itemize}
@@ -657,15 +656,17 @@ the plant's precision, the number of loop unrollings
 and the sampling rate (see Sec.~\ref{sec:CEGIS-precision-incrementation}).
 \item[2.] The second approach uses abstract acceleration to compute the set of reachable states,
   which enables it to perform abstraction refinement inside the CEGIS loop (see Sec~\ref{sec:CEGIS-abstraction-refinement}). 
-  
-The advantage of the second approcah are that whereas in the first case we use concrete traces from non-deterministic simulations
-and generalize over continuous sets into an unbounded time, 
-the abstract acceleration synthesis analyses the system over a generalized state-space (ie it looks at all the states simultaneously), requiring the CEGIS loop to generalize only over the time horizon of the system.
 
-Hence, aproach one finds a controller for an individual initial state and input with a bounded time horizon and generalizes to all states, inputs and time horizons (with a final verification loop that verifies the continuous system behaviour against the previously verified discrete system bisimulation).
-Approach two finds a controller for a continuous initial state-space and input sets over an abstraction of the continuous dynamics which conforms to witness proofs at specific times k, and generalizes the solution for all times by refining the number of witnesses.
- 
 \end{itemize}
+
+\todo{Revise: }
+The first aproach finds a controller for an individual initial state and input with a bounded time horizon and generalizes to all states, inputs and time horizons (with a final verification loop that verifies the continuous system behaviour against the previously verified discrete system bisimulation).
+The second approach finds a controller for a continuous initial state-space and input sets over an abstraction of the continuous dynamics which conforms to witness proofs at specific times k, and generalizes the solution for all times by refining the number of witnesses.
+
+%% The advantage of the second approcah are that whereas in the first case we use concrete traces from non-deterministic simulations
+%% and generalize over continuous sets into an unbounded time, 
+%% the abstract acceleration synthesis analyses the system over a generalized state-space (ie it looks at all the states simultaneously), requiring the CEGIS loop to generalize only over the time horizon of the system.
+
 
 \todo{Can we come up with some sort of figure that makes it easier to visualise
 the generalisation step in each approach?}
