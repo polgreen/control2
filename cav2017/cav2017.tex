@@ -606,7 +606,26 @@ the finite set $\text{\sc inputs}$ that is used for synthesis.  Given
 that the full set of inputs $\mathcal{D}$ is finite, this means that
 the refinement loop can only iterate a finite number of times.
 
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+\subsection{Our synthesis problem}
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+The synthesis problem we are trying to solve is the following:
+find a digital controller $K$ (see Eq.~\ref{eq:controlaction})
+that makes the closed-loop system safe for 
+initial state $x_0$, reference signal $r_k$ and input $u_k$
+as defined in Sec.~\ref{ssec:safety}. 
+We consider non-deterministic initial states within a specified range
+and the reference signal to be 0 (\todo{refer to wherever this is explained initially}).
+Then, when mapping back to the notation used for describing the general architecture 
+of the program synthesizer, the controller $K$ denotes $P$ and 
+$(x_0, u_k)$ represents $x$. 
+While the controller's precision $\langle I,F\rangle$ is given, 
+we can vary the plant's precision $\langle I_p,F_p\rangle$ such that 
+$\mathbb{R}\langle I_p,F_p \rangle \supseteq \mathbb{R}\langle I,F \rangle$.
+
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{Solution generalisation} 
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 Given the large soloution space to be searched during the inductive
 synthesis phase, we parametrise the target language, which induces a
 lattice of progressively more expressive languages.  This enables us
@@ -642,22 +661,6 @@ increase of precision and sampling rate (see Sec.~\ref{sec:CEGIS-precision-incre
 % Sec.~\ref{sec:CEGIS-precision-incrementation}, we explain how we 
 % specialise the general CEGIS approach in order to perform solution generalisation.
 
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{Our synthesis problem}
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-The synthesis problem we are trying to solve is the following:
-find a digital controller $K$ (see Eq.~\ref{eq:controlaction})
-that makes the closed-loop system safe for 
-initial state $x_0$, reference signal $r_k$ and input $u_k$
-as defined in Sec.~\ref{ssec:safety}. 
-We consider non-deterministic initial states within a specified range
-and the reference signal to be 0 (\todo{refer to wherever this is explained initially}).
-Then, when mapping back to the notation used for describing the general architecture 
-of the program synthesizer, the controller $K$ denotes $P$ and 
-$(x_0, u_k)$ represents $x$. 
-While the controller's precision $\langle I,F\rangle$ is given, 
-we can vary the plant's precision $\langle I_p,F_p\rangle$ such that 
-$\mathbb{R}\langle I_p,F_p \rangle \supseteq \mathbb{R}\langle I,F \rangle$.
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{CEGIS with abstraction refinement}
