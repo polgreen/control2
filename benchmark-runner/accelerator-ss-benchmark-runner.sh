@@ -99,7 +99,7 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
   B=$(extract_spec_matrix "${spec_content}" 'B')
   input_lower_bound=$(extract_input_lower_bound "${spec_content}")
   input_upper_bound=$(extract_input_upper_bound "${spec_content}")
-  options="-u -p -ii -mpi 256 -synth CEGIS -params \"p=${num_states},q=${num_inputs},f=1,m=256:$((impl_int_bits+impl_frac_bits)):${impl_frac_bits}\" -dynamics \"[${A}]\" -init \"[1,0,0<1;-1,0,0<1;0,1,0<1;0,-1,0<1;0,0,1<1;0,0,-1<1]\" -isense \"[${B}]\" -inputs \"[1>${input_lower_bound};1<${input_upper_bound}]\" -sguard \"[1,0,0<2;-1,0,0<2;0,1,0<2;0,-1,0<2;0,0,1<2;0,0,-1<2]\""
+  options="-u -p -ii -mpi 256 -synth CEGIS -params \"p=${num_states},q=${num_inputs},f=1,m=256:$((impl_int_bits+impl_frac_bits)):${impl_int_bits}\" -dynamics \"[${A}]\" -init \"[1,0,0<1;-1,0,0<1;0,1,0<1;0,-1,0<1;0,0,1<1;0,0,-1<1]\" -isense \"[${B}]\" -inputs \"[1>${input_lower_bound};1<${input_upper_bound}]\" -sguard \"[1,0,0<2;-1,0,0<2;0,1,0<2;0,-1,0<2;0,0,1<2;0,0,-1<2]\""
 
   working_directory="${working_directory_base}/accelerator-ss"
   setup_benchmark_directory ${working_directory}
@@ -130,6 +130,7 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
       solution_found=true
       synthesis_in_progress=false
      else
+      echo_log "<controller>${controller}</controller>"      
       echo_log 'Refining abstraction...'
       #TODO: timeout --preserve-status --kill-after=${kill_time} ${timeout_time} cbmc "${working_directory}/${width_check_file}" >>${log_file} 2>&1
       #if [ $? -eq 10 ]; then

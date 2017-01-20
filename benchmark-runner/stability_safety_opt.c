@@ -35,6 +35,14 @@ __CPROVER_EIGEN_fixedbvt internal_abs(__CPROVER_EIGEN_fixedbvt a){
 }
 
 int check_stability(void){
+
+#if NSTATES==1
+  if(_AminusBK[0][0] > 1 || _AminusBK[0][0] < -1)
+    {return 0;}
+  else
+    {return 1;}
+#endif
+
 #define __a __CPROVER_EIGEN_poly
 #define __n __CPROVER_EIGEN_POLY_SIZE
    int lines = 2 * __n - 1;
@@ -163,13 +171,15 @@ __CPROVER_EIGEN_poly[3] = - __m[0][0]*__m[1][1]*__m[2][2]  + __m[0][0]*__m[1][2]
 }
 
 void __CPROVER_EIGEN_charpoly(void){
-
-  switch(NSTATES)
-  {
-    case 2: __CPROVER_EIGEN_charpoly_2(); break;
-    case 3: __CPROVER_EIGEN_charpoly_3(); break;
-    case 4: __CPROVER_EIGEN_charpoly_4(); break;
-  }
+#if NSTATES==1
+  __CPROVER_assume(_AminusBK[0][0] < 1 && _AminusBK[0][0] > -1);
+#elif  NSTATES==2
+  __CPROVER_EIGEN_charpoly_2();
+#elif  NSTATES==3
+  __CPROVER_EIGEN_charpoly_3();
+#elif  NSTATES==4
+  __CPROVER_EIGEN_charpoly_4();
+#endif
 }
 
 void A_minus_B_K()
@@ -230,21 +240,7 @@ void states_equals_A_states_plus_B_inputs(void)
   __CPROVER_assume( _controller_states[2]<SAFE_STATE_UPPERBOUND && _controller_states[2]>SAFE_STATE_LOWERBOUND);
  }
 
-#ifdef CHECKGAP
 
-__CPROVER_EIGEN_fixedbvt exp_max_eigen_norm = 0.01;
-
-int check_gap()
-{ //upper bound is e ^ max lamba * t, t is 1 time step
-  for(int i=0; i<NSTATES; i++)
-  {
-    if( exp_max_eigen_norm - _controller_states[i]< SAFE_STATE_LOWERBOUND ||
-        exp_max_eigen_norm + _controller_states[i] > SAFE_STATE_UPPERBOUND)
-      return 0;
-  }
-  return 1;
-}
-#endif
 
 
 int check_safety(void)
@@ -269,13 +265,6 @@ int check_safety(void)
     {
       if(_controller_states[i]>SAFE_STATE_UPPERBOUND || _controller_states[i]<SAFE_STATE_LOWERBOUND)
         {return 0;}
-#ifdef CHECKGAP
-      else
-      {
-        if(check_gap()==0)
-          return 0;
-      }
-#endif
     }
   }
   return 1;
@@ -286,7 +275,6 @@ int main(void) {
   //init();
   closed_loop(); //calculate A - BK
   __CPROVER_EIGEN_charpoly(); //get eigen values
- // __CPROVER_assert(check_stability(), "");
   __CPROVER_assume(check_stability() != 0);
   __CPROVER_assume(check_safety() !=0);
  /* __CPROVER_EIGEN_fixedbvt __trace_K0 = _controller_K[0];

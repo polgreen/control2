@@ -1,16 +1,24 @@
 //Warning! this file assumes rounding to -\infty
+#ifndef INTERVALS_H_
+#define INTERVALS_H_
 
-//typedef __CPROVER_fixedbv[32][16] __CPROVER_EIGEN_fixedbvt;
-typedef double __CPROVER_EIGEN_fixedbvt;
-//typedef __CPROVER_fixedbv[INT_BITS+FRAC_BITS][FRAC_BITS] __CPROVER_fxp_t;
 
-#ifdef __CPROVER
-typedef int64_t __CPROVER_fxp_t;
-typedef int64_t fxp_t;
-#endif
 
-typedef __CPROVER_EIGEN_fixedbvt control_floatt; //added in by EP
-typedef __CPROVER_EIGEN_fixedbvt control_typet;  //added in by EP
+#include "control_types.h"
+
+typedef struct {
+   int int_bits;
+   int frac_bits;
+} implementation;
+
+const implementation impl = {
+ .int_bits = 8,
+ .frac_bits = 8,
+};
+
+typedef  __CPROVER_fixedbv[24][12] control_typet;
+typedef  __CPROVER_fixedbv[24][12] control_floatt;
+
 control_typet _zero = 0; //added in by EP
 control_typet _one = 1;
 
@@ -67,17 +75,53 @@ void fxp_check(control_typet *value)
 #endif
 }
 
-void fxp_interval_check(struct intervalt *value)
+struct intervalt fxp_interval_check(struct intervalt value)
 {
-  fxp_check(&(value->low));
-  fxp_check(&(value->high));
-  value->high+=_dbl_lsb;
+  fxp_check(&(value.low));
+  fxp_check(&(value.high));
+  value.high+=_dbl_lsb;
+  return value;
+}
+#define interval_lessthan(x,y) ((x.high) )< (y.low))
+#define interval_lessthanzero(x) (x.high<0)
+#define interval_lessthan_equal_to_zero(x) (x.high <= 0)
+#define interval_greaterthan(x,y) (x.low > y.high)
+
+#define zero_interval (struct intervalt) {.low=_zero, .high=_zero}
+#define one_interval (struct intervalt) {.low=1.0, .high=1.0}
+#define minusone_interval (struct intervalt) {.low=-1.0, .high=-1.0}
+#define interval_add(x,y) (struct intervalt){.low=x.low+y.low, .high=x.high+y.high}
+#define interval_sub(x,y) (struct intervalt) {.low=x.low-y.high, .high=x.high-y.low}
+
+struct intervalt abs_interval(struct intervalt x)
+{
+    struct intervalt z;
+
+    if(x.high < _zero)
+    {
+      z.high = -x.low;
+      z.low = -x.high;
+      return z;
+    }
+     else if(x.low < _zero && x.high >= _zero)
+     {
+       z.low = -x.low;
+       if(z.low > x.high)
+       {
+         z.high = z.low;
+         z.low = x.high;
+       }
+       else
+       {
+         z.high = x.high;
+       }
+       return z;
+     }
+
+  return x;
 }
 
-#define add(z,x,y) z.low=x.low+y.low;z.high=x.high+y.high
-#define sub(z,x,y) z.low=x.low-y.high;z.high=x.high-y.low
-
-/*inline */struct intervalt mult(struct intervalt x,struct intervalt y)
+/*inline */struct intervalt interval_mult(struct intervalt x,struct intervalt y)
 {
   struct intervalt z;
   z.low=x.low*y.low;
@@ -108,7 +152,7 @@ void fxp_interval_check(struct intervalt *value)
   return z;
 }
 
-/*inline */struct intervalt fxp_mult(struct intervalt x,struct intervalt y)
+/*inline */struct intervalt interval_fxp_mult(struct intervalt x,struct intervalt y)
 {
   long long int xlow=x.low*_fxp_one;
   long long int xhigh=x.high*_fxp_one;
@@ -148,7 +192,7 @@ void fxp_interval_check(struct intervalt *value)
   return z;
 }
 
-/*inline */struct intervalt posDiv(struct intervalt x, struct intervalt y)
+/*inline */struct intervalt interval_posDiv(struct intervalt x, struct intervalt y)
 {
   struct intervalt z;
   if (x.high<=_zero)
@@ -171,3 +215,5 @@ void fxp_interval_check(struct intervalt *value)
   }
   return z;
 }
+
+#endif /*INTERVALS_H_*/

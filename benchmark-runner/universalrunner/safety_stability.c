@@ -5,17 +5,17 @@
 //#define CPROVER
 #ifdef INTERVAL
     #include "intervals.h"
-#else
-  #include "operators.h"
 #endif
+#include "operators.h"
+
 
 #define __DSVERIFIER_assert(x) __CPROVER_assume(x)
 
-#define NUMBERLOOPS 20
-#define INITIALSTATE_UPPERBOUND (__plant_typet)0.5
-#define INITIALSTATE_LOWERBOUND (__plant_typet)-0.5
-#define SAFE_STATE_UPPERBOUND (__plant_typet)1
-#define SAFE_STATE_LOWERBOUND (__plant_typet)-1
+#define NUMBERLOOPS 5
+#define INITIALSTATE_UPPERBOUND (__plant_precisiont)0.5
+#define INITIALSTATE_LOWERBOUND (__plant_precisiont)-0.5
+#define SAFE_STATE_UPPERBOUND (__plant_precisiont)1
+#define SAFE_STATE_LOWERBOUND (__plant_precisiont)-1
 
 //other plant variables
 extern const __controller_typet K_fxp[NSTATES]; //nondet controller
@@ -30,16 +30,35 @@ __plant_typet __CPROVER_EIGEN_poly[NSTATES + 1u];
 
 //stablity calc
 
+/*__plant_typet internal_pow(__plant_typet a, unsigned int b){
+   __plant_typet acc=a;
+   for (int i=0; i < b-1; i++){
+    acc = mult(acc,a);
+   }
+   return acc;
+}*/
+
 __plant_typet internal_pow(__plant_typet a, unsigned int b){
 
-   __plant_typet acc = 1.0;
+   __plant_typet acc = one_type;
    for (int i=0; i < b; i++){
     acc = mult(acc,a);
    }
    return acc;
 }
 
+
 int check_stability(void){
+
+
+  #if NSTATES==1
+  if(greaterthan(_AminusBK[0][0], 1) || lessthan( _AminusBK[0][0] ,-1))
+    {return 0;}
+  else
+    {return 1;}
+#endif
+
+
 #define __a __CPROVER_EIGEN_poly
 #define __n NSTATES + 1u
    int lines = 2 * __n - 1;
@@ -55,29 +74,29 @@ int check_stability(void){
    }
 
    /* check the first constraint condition F(1) > 0 */
-   __plant_typet sum = 0;
+   __plant_typet sum = zero_type;
    for (i=0; i < __n; i++){
      sum = add(sum, __a[i]);
    }
-   if (lessthanequalto(sum, 0)){
+   if (lessthan_equaltozero(sum)){
   printf("[DEBUG] the first constraint of Jury criteria failed: (F(1) > 0)");
      return 0;
    }
 
    /* check the second constraint condition F(-1)*(-1)^n > 0 */
-   sum = 0;
+   sum = zero_type;
    for (i=0; i < __n; i++){
-    sum = add(sum, mult(__a[i] , internal_pow(-1, __n-1-i) ));
+    sum = add(sum, mult(__a[i] , internal_pow(minusone, NSTATES-i) ));
    }
-   sum = mult(sum,internal_pow(-1, __n-1) );
+   sum = mult(sum,internal_pow(minusone, NSTATES) );
 
-   if (lessthanequalto(sum, 0)){
+   if (lessthan_equaltozero(sum)){
     printf("[DEBUG] the second constraint of Jury criteria failed: (F(-1)*(-1)^n > 0)");
     return 0;
    }
 
    /* check the third constraint condition abs(a0 < an*(z^n)  */
-   if(greaterthan( abs(__a[__n-1]), __a[0])){
+   if(greaterthan( _abs(__a[__n-1]), __a[0])){
   // if (abs(__a[__n-1]) > __a[0]){
      printf("[DEBUG] the third constraint of Jury criteria failed: (abs(a0) < a_{n}*z^{n})");
      return 0;
@@ -86,7 +105,7 @@ int check_stability(void){
    /* check the fourth constraint of condition (Jury Table) */
    for (i=0; i < lines; i++){
     for (j=0; j < columns; j++){
-     zero(m[i][j]);
+      m[i][j] = zero_type;
     }
    }
    for (i=0; i < lines; i++){
@@ -107,11 +126,11 @@ int check_stability(void){
      }
     }
    }
-   int first_is_positive = lessthanequalto(0, m[0][0])? 1 : 0;
+   int first_is_positive = lessthanzero( m[0][0])? 0 : 1;
   // int first_is_positive =  m[0][0] >= 0 ? 1 : 0;
    for (i=0; i < lines; i++){
     if (i % 2 == 0){
-      int line_is_positive = lessthanequalto(0, m[i][0])? 1 : 0;
+      int line_is_positive = lessthanzero(m[i][0])? 0 : 1;
     // int line_is_positive = m[i][0] >= 0 ? 1 : 0;
      if (first_is_positive != line_is_positive){
       return 0;
@@ -128,25 +147,30 @@ void __CPROVER_EIGEN_charpoly_2(void) { //m00*m11 - m10*m11 - m00*x - m11*x + x^
 
   __CPROVER_EIGEN_poly[2] = sub ( mult(__m[0][0],__m[1][1]), mult(__m[1][0] , __m[1][1]) );
 
-  __CPROVER_EIGEN_poly[1] = sub (0, add (__m[0][0], __m[1][1]) ) ;
+  __CPROVER_EIGEN_poly[1] = sub (zero_type, add (__m[0][0], __m[1][1]) ) ;
   // s^2
-  __CPROVER_EIGEN_poly[0] = 1.0;
+  __CPROVER_EIGEN_poly[0] = one_type;
 }
 #endif
 
 #if NSTATES==3
+
 // P(s)=(s-m11)*(s-m22)*(s-m33) - m13*m31*(s-m22) - m12*m21*(s-m33) - m23*m32*(s-m11) - m12*m23*m31 - m13*m21*m32
 // P(s)=s^3 + (-m_11 - m_22 - m_33) * s^2 +  (m_11*m_22 + m_11*m_33 - m_12*m_21 - m_13*m_31 + m_22*m_33 - m_23*m_32) * s - m_11*m_22*m_33 + m_11*m_23*m_32 + m_12*m_21*m_33 - m_12*m_23*m_31 - m_13*m_21*m_32 + m_13*m_22*m_31
-void __CPROVER_EIGEN_charpoly_3(void) {
 
-  //                        m_11*m_22*m_33                    + m_11*m_23*m_32                    + m_12*m_21*m_33                    - m_12*m_23*m_31                    - m_13*m_21*m_32                    + m_13*m_22*m_31
-  __CPROVER_EIGEN_poly[3] = __m[0][0] * __m[1][1] * __m[2][2] + __m[0][0] * __m[1][2] * __m[2][1] + __m[0][1] * __m[1][0] * __m[2][2] - __m[0][1] * __m[1][2] * __m[2][0] - __m[0][2] * __m[1][0] * __m[2][1] + __m[0][2] * __m[1][1] * __m[2][0];
-  //                        (m_11*m_22            + m_11*m_33             - m_12*m_21             - m_13*m_31             + m_22*m_33             - m_23*m_32) * s
-  __CPROVER_EIGEN_poly[2] = __m[0][0] * __m[1][1] + __m[0][0] * __m[2][2] - __m[0][1] * __m[1][0] - __m[0][2] * __m[2][0] + __m[1][1] * __m[2][2] - __m[1][2] * __m[2][1];
-  //                        (-m_11     - m_22      - m_33) * s^2
-  __CPROVER_EIGEN_poly[1] = -__m[0][0] - __m[1][1] - __m[2][2];
-  // s^3
-  __CPROVER_EIGEN_poly[0] = 1.0;
+void __CPROVER_EIGEN_charpoly_3(void) {
+//                        m_11*m_22*m_33                    + m_11*m_23*m_32                    + m_12*m_21*m_33                    - m_12*m_23*m_31                    - m_13*m_21*m_32                    + m_13*m_22*m_31
+__CPROVER_EIGEN_poly[3] = add(sub(sub(add(add(mult(__m[0][0],mult( __m[1][1], __m[2][2])), mult( __m[0][0] ,mult( __m[1][2] , __m[2][1]))),
+                mult(__m[0][1],mult( __m[1][0], __m[2][2]))), mult(__m[0][1],mult( __m[1][2], __m[2][0]) )), mult(__m[0][2] ,mult(__m[1][0], __m[2][1]))),
+                    mult( __m[0][2], mult(__m[1][1],__m[2][0])));
+//                        (m_11*m_22            + m_11*m_33             - m_12*m_21             - m_13*m_31             + m_22*m_33             - m_23*m_32) * s
+__CPROVER_EIGEN_poly[2] = sub(add(sub(sub(mult(__m[0][0], mult( __m[1][1], mult( __m[0][0], __m[2][2]))), mult(__m[0][1],  __m[1][0])),
+                            mult(__m[0][2],__m[2][0])), mult(__m[1][1], __m[2][2])),mult(__m[1][2], __m[2][1]));
+//                        (-m_11     - m_22      - m_33) * s^2
+__CPROVER_EIGEN_poly[1] = sub(sub(sub(zero_type,__m[0][0]), __m[1][1]), __m[2][2]);
+// s^3
+__CPROVER_EIGEN_poly[0] = one_type;
+
 }
 #endif
 #if NSTATES==4
@@ -176,7 +200,9 @@ __CPROVER_EIGEN_poly[3] = - __m[0][0]*__m[1][1]*__m[2][2]  + __m[0][0]*__m[1][2]
 
 void __CPROVER_EIGEN_charpoly(void){
 
-  #if NSTATES==2
+  #if NSTATES==1
+  //do nothing
+  #elif NSTATES==2
       __CPROVER_EIGEN_charpoly_2();
   #elif NSTATES==3
       __CPROVER_EIGEN_charpoly_3();
@@ -201,7 +227,7 @@ void A_minus_B_K()
   for (int i=0;i<NSTATES; i++) { //rows of B
       for (int j=0; j<NSTATES; j++) { //columns of K
       //  _AminusBK[i][j] -= _controller_B[i] * (__plant_typet)K_fxp[j];
-        _AminusBK[i][j] = sub( _AminusBK[i][j], mult(_controller_B[i] , plant_cast(K_fxp[j])));
+        _AminusBK[i][j] = sub( _AminusBK[i][j], mult(_controller_B[i] , plant_cast(K_fxp[j])  ));
           }
       }
 }
@@ -216,16 +242,21 @@ void inputs_equal_ref_minus_k_times_states(void)
   {
     __controller_typet states_fxp[NSTATES];
     //single input
-    __controller_typet result_fxp=0;
+    __controller_typet result_fxp=zero_type;
 
      for(int k=0; k<NSTATES; k++)
-     {  result_fxp = add (result_fxp, controller_mult(K_fxp[k] , controller_cast(_controller_states[k])));
+     {  result_fxp = add (result_fxp, mult(K_fxp[k] , controller_cast(_controller_states[k])));
        //{ result_fxp += (K_fxp[k] * (__controller_typet)_controller_states[k]);}
 
-        _controller_inputs = sub(0,plant_cast(result_fxp));
+        _controller_inputs = sub(zero_type, plant_cast(result_fxp));
       #ifdef CPROVER
-        __CPROVER_assume(_controller_inputs<INPUT_UPPERBOUND && _controller_inputs>INPUT_LOWERBOUND);
+          #ifdef INTERVAL
+          __CPROVER_assume(_controller_inputs.high<INPUT_UPPERBOUND && _controller_inputs.low >INPUT_LOWERBOUND);
+          #else
+          __CPROVER_assume(_controller_inputs < INPUT_UPPERBOUND && _controller_inputs > INPUT_LOWERBOUND);
+          #endif
       #endif
+
   }
  }
 
@@ -235,7 +266,7 @@ void states_equals_A_states_plus_B_inputs(void)
 {
 
   #ifdef CPROVER
-      __CPROVER_array_set(states_equals_A_states_plus_B_inputs_result, (__plant_typet)0.0);
+      __CPROVER_array_set(states_equals_A_states_plus_B_inputs_result, zero_type);
   #else
     for(int i=0; i<NSTATES; i++)
       zero(states_equals_A_states_plus_B_inputs_result[i]);
@@ -249,6 +280,8 @@ void states_equals_A_states_plus_B_inputs(void)
       states_equals_A_states_plus_B_inputs_result[i] = add(states_equals_A_states_plus_B_inputs_result[i] , mult( _controller_B[i],_controller_inputs));
     }
    }
+
+#ifndef INTERVAL
 #ifdef CPROVER
    __CPROVER_array_copy(_controller_states, states_equals_A_states_plus_B_inputs_result);
    /*for(i=0; i<NSTATES; i++)
@@ -261,13 +294,34 @@ void states_equals_A_states_plus_B_inputs(void)
   #if NSTATES==4
       __DSVERIFIER_assert( _controller_states[3]<SAFE_STATE_UPPERBOUND && _controller_states[3]>SAFE_STATE_LOWERBOUND);
   #endif
-
 #else
   for(int i=0; i<NSTATES; i++)
        {_controller_states[i] = states_equals_A_states_plus_B_inputs_result[i];
        __DSVERIFIER_assert( _controller_states[i]<SAFE_STATE_UPPERBOUND && _controller_states[i]>SAFE_STATE_LOWERBOUND);
        }
 #endif
+#else
+#ifdef CPROVER
+   __CPROVER_array_copy(_controller_states, states_equals_A_states_plus_B_inputs_result);
+   /*for(i=0; i<NSTATES; i++)
+       {_controller_states[i] = states_equals_A_states_plus_B_inputs_result[i];}*/
+  __DSVERIFIER_assert( _controller_states[0].high<SAFE_STATE_UPPERBOUND && _controller_states[0].low>SAFE_STATE_LOWERBOUND);
+  __DSVERIFIER_assert( _controller_states[1].high<SAFE_STATE_UPPERBOUND && _controller_states[1].low>SAFE_STATE_LOWERBOUND);
+  #if NSTATES==3 || NSTATES==4
+      __DSVERIFIER_assert( _controller_states[2].high<SAFE_STATE_UPPERBOUND && _controller_states[2].low>SAFE_STATE_LOWERBOUND);
+  #endif
+  #if NSTATES==4
+      __DSVERIFIER_assert( _controller_states[3].high<SAFE_STATE_UPPERBOUND && _controller_states[3].low>SAFE_STATE_LOWERBOUND);
+  #endif
+#else
+  for(int i=0; i<NSTATES; i++)
+       {_controller_states[i] = states_equals_A_states_plus_B_inputs_result[i];
+       __DSVERIFIER_assert( _controller_states[i].high<SAFE_STATE_UPPERBOUND && _controller_states[i].low>SAFE_STATE_LOWERBOUND);
+       }
+#endif
+#endif
+
+
 
  }
 
@@ -282,8 +336,13 @@ int check_safety(void)
      __plant_typet __state0 = _controller_states[0];
      __plant_typet __state1 = _controller_states[1];
      __plant_typet __state2 = _controller_states[2];
+    #ifdef INTERVAL
+    __CPROVER_assume(_controller_states[j].high<INITIALSTATE_UPPERBOUND && _controller_states[j].low>INITIALSTATE_LOWERBOUND);
+    __CPROVER_assume(_controller_states[j]!=zero_type);
+    #else
     __CPROVER_assume(_controller_states[j]<INITIALSTATE_UPPERBOUND && _controller_states[j]>INITIALSTATE_LOWERBOUND);
-    __CPROVER_assume(_controller_states[j]!=(__plant_typet)0.0);
+    __CPROVER_assume(_controller_states[j]!=zero_type);
+    #endif
     #endif
   }
 
@@ -294,8 +353,13 @@ int check_safety(void)
 
     for(int i=0; i<NSTATES; i++)
     {
+      #ifdef INTERVAL
+      if(_controller_states[i].low>SAFE_STATE_UPPERBOUND || _controller_states[i].high<SAFE_STATE_LOWERBOUND)
+        {return 0;}
+      #else
       if(_controller_states[i]>SAFE_STATE_UPPERBOUND || _controller_states[i]<SAFE_STATE_LOWERBOUND)
         {return 0;}
+      #endif
     }
   }
   return 1;
@@ -305,16 +369,20 @@ int check_safety(void)
 int main(void) {
   //init();
   closed_loop(); //calculate A - BK
-  __CPROVER_EIGEN_charpoly(); //get eigen values
+  __CPROVER_EIGEN_charpoly();
   __DSVERIFIER_assert(check_stability());
+#if NSTATES != 1
   __DSVERIFIER_assert(check_safety());
- /* __plant_typet __trace_K0 = _controller_K[0];
-  __plant_typet __trace_K1 = _controller_K[1];
-  __plant_typet __trace_K2 = _controller_K[2];*/
-  __plant_typet __trace_fxpK0 = K_fxp[0];
-  __plant_typet __trace_fxpK1 = K_fxp[1];
-  __plant_typet __trace_fxpK2 = K_fxp[2];
-
+#endif
+  __plant_typet __trace_controllerA = _controller_A[0][0];
+  __controller_typet __trace_fxpK0 = K_fxp[0];
+  __controller_typet __trace_fxpK1 = K_fxp[1];
+  __controller_typet __trace_fxpK2 = K_fxp[2];
   __CPROVER_assert(0 == 1, "");
+
+  //get eigen values
+  //__DSVERIFIER_assert(check_stability());
+  //__DSVERIFIER_assert(check_safety());
+
   return 0;
 }

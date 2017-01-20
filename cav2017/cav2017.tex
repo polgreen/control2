@@ -92,17 +92,22 @@
 
 
 \begin{abstract}
-This work presents a sound and automated approach to synthesise digital feedback control architectures for physical plants represented as linear, time invariant models. 
-Models are encompassed by dynamical equations with inputs, evolving over a continuous state space describing the evolution of the physical variables of the system.  
-The approach is divided in two main part, brought together by a counter-example guided inductive synthesis (CEGIS) loop, as follows.   
-First, we devise a static feedback controller that stabilises the system;  
-then, we verify its potential safety by means of either of the following approaches: 
-forward reachability analysis via unfolding of the dynamics, or invariance generation;  
-if the above step fails, we loop back and invoke a CEGIS call to seek alternative stabilising feedbacks, 
-benefitting from the obtained counter-examples to safety. 
-[Mention GA and Abstract Acceleration here?] 
-The approach is proven sound by accounting for errors due to \ldots 
-We test the procedure on a gazillion benchmarks, excruciatingly encoded manually by Iury and Lucas. 
+This work presents a sound and automated approach to synthesise 
+digital feedback control architectures for physical plants represented 
+as linear, time invariant models. Models are encompassed by dynamical 
+equations with inputs, evolving over a continuous state space describing 
+the evolution of the physical variables of the system.  The approach is divided 
+in two main parts, brought together by a counter-example guided inductive 
+synthesis (CEGIS) loop, as follows. First, we devise a static feedback controller 
+that stabilises the system; then, we verify its potential safety by means of either 
+of the following approaches: forward reachability analysis via unfolding of the dynamics, 
+or invariance generation;  if the above step fails, we loop back and invoke a CEGIS call 
+to seek alternative stabilising feedbacks, benefitting from the obtained counter-examples 
+to safety. 
+\textcolor{red}{[Mention GA and Abstract Acceleration here?] 
+The approach is proven sound by accounting for errors due to \ldots }
+The proposed synthesis approaches and respective tool are evaluated considering
+a set of intricate physical plant models taken from the digital control literature.
 \keywords{
 State-space dynamical models of physical systems; 
 Digital controllers; 
@@ -426,22 +431,22 @@ above for simplicity.
 Let $\mathbb{R} \langle I,F \rangle$ be a fixed point domain with $I$ bits representing the integer part and $F$ bits
 representing the decimal part. We will extend this notation to $\mathbb{R} \langle I,F,E \rangle$ to add a number of
 leading or trailing bits when the domain requires prescaling (ie the maximum is smaller than $0.5$ or the minimum
-is greater than $2$)
+is greater than $2$).
 Let also $\mathbb{R}_* \langle M,E \rangle$ be a floating point domain with $M$ bits
 mantissa and $E$ bits exponent. This domain corresponds to 
 $$\mathbb{R}_* \langle M,E \rangle = \bigcup_i \mathbb{R} \langle 1,M-1,E_i \rangle : 2^{1-E} \leq E_i  \leq 2^{E-1}$$
 This means that the distance between any two numbers in the domain depends on the
 location of those numbers.
 Since we've shown that a floating point domain is a union of a number of fixed point domains, we will continue our
-reasoning on fixed point only. Our points will apply to the floating point domain by extension.
+reasoning on fixed point only. Our reasoning will apply to the floating point domain by extension.
 The following approximation errors will arise:
 \begin{enumerate}
-\item Truncation\\
-Let $\mathcal{F}\langle I,F \rangle(\cdot) : \mathbb{R} \rightarrow \mathbb{R}\langle I,F \rangle, \tilde x=\mathcal{F}\langle I,F \rangle(x) = x-\delta : \delta=x\ \%_F\  c\tilde x$, where $\%_F$ is the modulus operation performed on the last bit of the representation ($2^{-F}$).\\
+\item {\bf Truncation:}
+Let $\mathcal{F}\langle I,F \rangle(\cdot) : \mathbb{R} \rightarrow \mathbb{R}\langle I,F \rangle, \tilde x=\mathcal{F}\langle I,F \rangle(x) = x-\delta : \delta=x\ \%_F\  c\tilde x$, where $\%_F$ is the modulus operation performed on the last bit of the representation ($2^{-F}$).
 The number $\delta$ corresponds to the truncation error of the representation and it will propagate across operations.
-\item Rounding\\
-Every time an operation is performed on a number in the $\mathbb{R} \langle I,F,E \rangle$ domain, an error may be
-introduced due to truncation of the result.
+\item {\bf Rounding:}
+%% Every time an operation is performed on a number in the $\mathbb{R} \langle I,F,E \rangle$ domain, an error may be
+%% introduced due to truncation of the result.
 Let us define $c\langle i,f,e \rangle \in \mathbb{R}\langle I,F,E\rangle$, where $i \in [-2^{I-1}\ 2^{I-1}],f \in [0 1),e \in [-2^{E-1}\ 2^{E-1}]$ are its assigned values. The smallest number that can be represented for any given exponent is $c_{min(e)}=c\langle 0,2^{-F},e\rangle$.
 The following errors appear in simple operations:
 \begin{enumerate}
@@ -455,14 +460,15 @@ or negative, and even this decision can be made dependent on the sign of $x$. Co
 round downwards (\emph{ie} to $-\infty$), round upwards (\emph{ie} to $+\infty$), and round to zero.
 Rounding errors are cumulative which means the overall error will statistically increase with every operation, thus algorithms
 performing fewer operations can be more precise in this respect than iterative ones. 
-\item Overflow\\
-Another source of error introduced by Finite Word Length representations is that of overflow. The finite word length set a
+\item {\bf Overflow:}
+  %Another source of error introduced by Finite Word Length representations is that of overflow.
+  The finite word length set a
 maximum representable number in the domain ($\pm 2^{I-1}+1-2^{-F}$), which means that any number outside this range
 cannot be accurately represented by the domain (\emph{eg} $\delta=x-2^{I-1}+1-2^{-F}$). In the case of floating point, a special
 case for infinity has been introduced, which addresses some of this issues, but once the error has gone to infinity, the numbers
 become meaningless. It is the responsibility of software designers and tools to account for overflows and either supply saturation
 functions to prevent them or raise alarms in their presence. In the case of verification, the latter is seen as a safety problem.
-\item Null/Zeno behaviour\\
+\item {\bf Null/Zeno behaviour:}
 Whilst this work does not explore the effect of Zeno behaviours, it is worth noting that this effect may also be caused by rounding
 errors in floating point programs. The reason for this is that if an operation contains two numbers which belong to disjoint sub-domains
 (\emph{ie} neither number can be represented in the domain of its counterpart), the resulting operation may become a no-op/skip,
@@ -1570,7 +1576,7 @@ In a continuous domain with linear dynamics, it is described by a first order Or
 
 \noindent with $\vec{w} \sim \mathcal{N}(0,Q)$.\\
 Furthermore, a control system may have a derived output that is a linear combination of its states and inputs, 
-which may restricts the observability of the state-space from the output space.
+which may restrict the observability of the state-space from the output space.
 \begin{equation}
 \vec{y}(t)=\vec{C}\vec{x}(t)+\vec{D}\vec{u}(t).
 \end{equation}
