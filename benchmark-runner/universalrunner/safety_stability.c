@@ -14,15 +14,15 @@
   #define __DSVERIFIER_assert(x) assert(x)
 #endif
 
-#define NUMBERLOOPS 5
+//#define NUMBERLOOPS 5 // Defined by benchmark script
 #define INITIALSTATE_UPPERBOUND (__plant_precisiont)0.5
 #define INITIALSTATE_LOWERBOUND (__plant_precisiont)-0.5
 #define SAFE_STATE_UPPERBOUND (__plant_precisiont)1.0
 #define SAFE_STATE_LOWERBOUND (__plant_precisiont)-1.0
 
 //other plant variables
-//extern const __controller_typet K_fxp[NSTATES]; //nondet controller
-const __controller_typet K_fxp[NSTATES] = {interval(0.0234375),interval(-0.1328125), interval(0.00390625)};
+extern const __controller_typet K_fxp[NSTATES]; //nondet controller
+//const __controller_typet K_fxp[NSTATES] = {interval(0.0234375),interval(-0.1328125), interval(0.00390625)};
 __plant_typet _controller_inputs;
 extern __plant_typet _controller_states[NSTATES]; //nondet initial states
 
@@ -328,10 +328,10 @@ int check_safety(void)
      __plant_typet __state1 = _controller_states[1];
      __plant_typet __state2 = _controller_states[2];
     #ifdef INTERVAL
-    __CPROVER_assume(_controller_states[j].high<INITIALSTATE_UPPERBOUND && _controller_states[j].low>INITIALSTATE_LOWERBOUND);
+    __CPROVER_assume(_controller_states[j].high<=INITIALSTATE_UPPERBOUND && _controller_states[j].low>=INITIALSTATE_LOWERBOUND);
     __CPROVER_assume(_controller_states[j]!=zero_type);
     #else
-    __CPROVER_assume(_controller_states[j]<INITIALSTATE_UPPERBOUND && _controller_states[j]>INITIALSTATE_LOWERBOUND);
+    __CPROVER_assume(_controller_states[j]<=INITIALSTATE_UPPERBOUND && _controller_states[j]>=INITIALSTATE_LOWERBOUND);
     __CPROVER_assume(_controller_states[j]!=zero_type);
     #endif
     #endif
@@ -359,38 +359,38 @@ int check_safety(void)
 #ifdef CPROVER
 void assume_corner_cases_for_states(void) {
   #if NSTATES == 1
-  __CPROVER_assume(_controller_states[0] == SAFE_STATE_UPPERBOUND || _controller_states[0] == SAFE_STATE_LOWERBOUND);
+  __CPROVER_assume(_controller_states[0] == INITIALSTATE_UPPERBOUND || _controller_states[0] == INITIALSTATE_LOWERBOUND);
   #elif NSTATES == 2
-  __CPROVER_assume(_controller_states[0] == SAFE_STATE_UPPERBOUND && _controller_states[1] == SAFE_STATE_UPPERBOUND
-                || _controller_states[0] == SAFE_STATE_UPPERBOUND && _controller_states[1] == SAFE_STATE_LOWERBOUND
-                || _controller_states[0] == SAFE_STATE_LOWERBOUND && _controller_states[1] == SAFE_STATE_UPPERBOUND
-                || _controller_states[0] == SAFE_STATE_LOWERBOUND && _controller_states[1] == SAFE_STATE_LOWERBOUND);
+  __CPROVER_assume(_controller_states[0] == INITIALSTATE_UPPERBOUND && _controller_states[1] == INITIALSTATE_UPPERBOUND
+                || _controller_states[0] == INITIALSTATE_UPPERBOUND && _controller_states[1] == INITIALSTATE_LOWERBOUND
+                || _controller_states[0] == INITIALSTATE_LOWERBOUND && _controller_states[1] == INITIALSTATE_UPPERBOUND
+                || _controller_states[0] == INITIALSTATE_LOWERBOUND && _controller_states[1] == INITIALSTATE_LOWERBOUND);
   #elif NSTATES == 3
-  __CPROVER_assume(_controller_states[0] == SAFE_STATE_UPPERBOUND && _controller_states[1] == SAFE_STATE_UPPERBOUND && _controller_states[2] == SAFE_STATE_UPPERBOUND
-                || _controller_states[0] == SAFE_STATE_UPPERBOUND && _controller_states[1] == SAFE_STATE_UPPERBOUND && _controller_states[2] == SAFE_STATE_LOWERBOUND
-                || _controller_states[0] == SAFE_STATE_UPPERBOUND && _controller_states[1] == SAFE_STATE_LOWERBOUND && _controller_states[2] == SAFE_STATE_UPPERBOUND
-                || _controller_states[0] == SAFE_STATE_UPPERBOUND && _controller_states[1] == SAFE_STATE_LOWERBOUND && _controller_states[2] == SAFE_STATE_LOWERBOUND
-                || _controller_states[0] == SAFE_STATE_LOWERBOUND && _controller_states[1] == SAFE_STATE_UPPERBOUND && _controller_states[2] == SAFE_STATE_UPPERBOUND
-                || _controller_states[0] == SAFE_STATE_LOWERBOUND && _controller_states[1] == SAFE_STATE_UPPERBOUND && _controller_states[2] == SAFE_STATE_LOWERBOUND
-                || _controller_states[0] == SAFE_STATE_LOWERBOUND && _controller_states[1] == SAFE_STATE_LOWERBOUND && _controller_states[2] == SAFE_STATE_UPPERBOUND
-                || _controller_states[0] == SAFE_STATE_LOWERBOUND && _controller_states[1] == SAFE_STATE_LOWERBOUND && _controller_states[2] == SAFE_STATE_LOWERBOUND);
+  __CPROVER_assume(_controller_states[0] == INITIALSTATE_UPPERBOUND && _controller_states[1] == INITIALSTATE_UPPERBOUND && _controller_states[2] == INITIALSTATE_UPPERBOUND
+                || _controller_states[0] == INITIALSTATE_UPPERBOUND && _controller_states[1] == INITIALSTATE_UPPERBOUND && _controller_states[2] == INITIALSTATE_LOWERBOUND
+                || _controller_states[0] == INITIALSTATE_UPPERBOUND && _controller_states[1] == INITIALSTATE_LOWERBOUND && _controller_states[2] == INITIALSTATE_UPPERBOUND
+                || _controller_states[0] == INITIALSTATE_UPPERBOUND && _controller_states[1] == INITIALSTATE_LOWERBOUND && _controller_states[2] == INITIALSTATE_LOWERBOUND
+                || _controller_states[0] == INITIALSTATE_LOWERBOUND && _controller_states[1] == INITIALSTATE_UPPERBOUND && _controller_states[2] == INITIALSTATE_UPPERBOUND
+                || _controller_states[0] == INITIALSTATE_LOWERBOUND && _controller_states[1] == INITIALSTATE_UPPERBOUND && _controller_states[2] == INITIALSTATE_LOWERBOUND
+                || _controller_states[0] == INITIALSTATE_LOWERBOUND && _controller_states[1] == INITIALSTATE_LOWERBOUND && _controller_states[2] == INITIALSTATE_UPPERBOUND
+                || _controller_states[0] == INITIALSTATE_LOWERBOUND && _controller_states[1] == INITIALSTATE_LOWERBOUND && _controller_states[2] == INITIALSTATE_LOWERBOUND);
   #elif NSTATES == 4
-  __CPROVER_assume(_controller_states[0] == SAFE_STATE_UPPERBOUND && _controller_states[1] == SAFE_STATE_UPPERBOUND && _controller_states[2] == SAFE_STATE_UPPERBOUND && _controller_states[3] == SAFE_STATE_UPPERBOUND
-                || _controller_states[0] == SAFE_STATE_UPPERBOUND && _controller_states[1] == SAFE_STATE_UPPERBOUND && _controller_states[2] == SAFE_STATE_UPPERBOUND && _controller_states[3] == SAFE_STATE_LOWERBOUND
-                || _controller_states[0] == SAFE_STATE_UPPERBOUND && _controller_states[1] == SAFE_STATE_UPPERBOUND && _controller_states[2] == SAFE_STATE_LOWERBOUND && _controller_states[3] == SAFE_STATE_UPPERBOUND
-                || _controller_states[0] == SAFE_STATE_UPPERBOUND && _controller_states[1] == SAFE_STATE_UPPERBOUND && _controller_states[2] == SAFE_STATE_LOWERBOUND && _controller_states[3] == SAFE_STATE_LOWERBOUND
-                || _controller_states[0] == SAFE_STATE_UPPERBOUND && _controller_states[1] == SAFE_STATE_LOWERBOUND && _controller_states[2] == SAFE_STATE_UPPERBOUND && _controller_states[3] == SAFE_STATE_UPPERBOUND
-                || _controller_states[0] == SAFE_STATE_UPPERBOUND && _controller_states[1] == SAFE_STATE_LOWERBOUND && _controller_states[2] == SAFE_STATE_UPPERBOUND && _controller_states[3] == SAFE_STATE_LOWERBOUND
-                || _controller_states[0] == SAFE_STATE_UPPERBOUND && _controller_states[1] == SAFE_STATE_LOWERBOUND && _controller_states[2] == SAFE_STATE_LOWERBOUND && _controller_states[3] == SAFE_STATE_UPPERBOUND
-                || _controller_states[0] == SAFE_STATE_UPPERBOUND && _controller_states[1] == SAFE_STATE_LOWERBOUND && _controller_states[2] == SAFE_STATE_LOWERBOUND && _controller_states[3] == SAFE_STATE_LOWERBOUND
-                || _controller_states[0] == SAFE_STATE_LOWERBOUND && _controller_states[1] == SAFE_STATE_UPPERBOUND && _controller_states[2] == SAFE_STATE_UPPERBOUND && _controller_states[3] == SAFE_STATE_UPPERBOUND
-                || _controller_states[0] == SAFE_STATE_LOWERBOUND && _controller_states[1] == SAFE_STATE_UPPERBOUND && _controller_states[2] == SAFE_STATE_UPPERBOUND && _controller_states[3] == SAFE_STATE_LOWERBOUND
-                || _controller_states[0] == SAFE_STATE_LOWERBOUND && _controller_states[1] == SAFE_STATE_UPPERBOUND && _controller_states[2] == SAFE_STATE_LOWERBOUND && _controller_states[3] == SAFE_STATE_UPPERBOUND
-                || _controller_states[0] == SAFE_STATE_LOWERBOUND && _controller_states[1] == SAFE_STATE_UPPERBOUND && _controller_states[2] == SAFE_STATE_LOWERBOUND && _controller_states[3] == SAFE_STATE_LOWERBOUND
-                || _controller_states[0] == SAFE_STATE_LOWERBOUND && _controller_states[1] == SAFE_STATE_LOWERBOUND && _controller_states[2] == SAFE_STATE_UPPERBOUND && _controller_states[3] == SAFE_STATE_UPPERBOUND
-                || _controller_states[0] == SAFE_STATE_LOWERBOUND && _controller_states[1] == SAFE_STATE_LOWERBOUND && _controller_states[2] == SAFE_STATE_UPPERBOUND && _controller_states[3] == SAFE_STATE_LOWERBOUND
-                || _controller_states[0] == SAFE_STATE_LOWERBOUND && _controller_states[1] == SAFE_STATE_LOWERBOUND && _controller_states[2] == SAFE_STATE_LOWERBOUND && _controller_states[3] == SAFE_STATE_UPPERBOUND
-                || _controller_states[0] == SAFE_STATE_LOWERBOUND && _controller_states[1] == SAFE_STATE_LOWERBOUND && _controller_states[2] == SAFE_STATE_LOWERBOUND && _controller_states[3] == SAFE_STATE_LOWERBOUND);
+  __CPROVER_assume(_controller_states[0] == INITIALSTATE_UPPERBOUND && _controller_states[1] == INITIALSTATE_UPPERBOUND && _controller_states[2] == INITIALSTATE_UPPERBOUND && _controller_states[3] == INITIALSTATE_UPPERBOUND
+                || _controller_states[0] == INITIALSTATE_UPPERBOUND && _controller_states[1] == INITIALSTATE_UPPERBOUND && _controller_states[2] == INITIALSTATE_UPPERBOUND && _controller_states[3] == INITIALSTATE_LOWERBOUND
+                || _controller_states[0] == INITIALSTATE_UPPERBOUND && _controller_states[1] == INITIALSTATE_UPPERBOUND && _controller_states[2] == INITIALSTATE_LOWERBOUND && _controller_states[3] == INITIALSTATE_UPPERBOUND
+                || _controller_states[0] == INITIALSTATE_UPPERBOUND && _controller_states[1] == INITIALSTATE_UPPERBOUND && _controller_states[2] == INITIALSTATE_LOWERBOUND && _controller_states[3] == INITIALSTATE_LOWERBOUND
+                || _controller_states[0] == INITIALSTATE_UPPERBOUND && _controller_states[1] == INITIALSTATE_LOWERBOUND && _controller_states[2] == INITIALSTATE_UPPERBOUND && _controller_states[3] == INITIALSTATE_UPPERBOUND
+                || _controller_states[0] == INITIALSTATE_UPPERBOUND && _controller_states[1] == INITIALSTATE_LOWERBOUND && _controller_states[2] == INITIALSTATE_UPPERBOUND && _controller_states[3] == INITIALSTATE_LOWERBOUND
+                || _controller_states[0] == INITIALSTATE_UPPERBOUND && _controller_states[1] == INITIALSTATE_LOWERBOUND && _controller_states[2] == INITIALSTATE_LOWERBOUND && _controller_states[3] == INITIALSTATE_UPPERBOUND
+                || _controller_states[0] == INITIALSTATE_UPPERBOUND && _controller_states[1] == INITIALSTATE_LOWERBOUND && _controller_states[2] == INITIALSTATE_LOWERBOUND && _controller_states[3] == INITIALSTATE_LOWERBOUND
+                || _controller_states[0] == INITIALSTATE_LOWERBOUND && _controller_states[1] == INITIALSTATE_UPPERBOUND && _controller_states[2] == INITIALSTATE_UPPERBOUND && _controller_states[3] == INITIALSTATE_UPPERBOUND
+                || _controller_states[0] == INITIALSTATE_LOWERBOUND && _controller_states[1] == INITIALSTATE_UPPERBOUND && _controller_states[2] == INITIALSTATE_UPPERBOUND && _controller_states[3] == INITIALSTATE_LOWERBOUND
+                || _controller_states[0] == INITIALSTATE_LOWERBOUND && _controller_states[1] == INITIALSTATE_UPPERBOUND && _controller_states[2] == INITIALSTATE_LOWERBOUND && _controller_states[3] == INITIALSTATE_UPPERBOUND
+                || _controller_states[0] == INITIALSTATE_LOWERBOUND && _controller_states[1] == INITIALSTATE_UPPERBOUND && _controller_states[2] == INITIALSTATE_LOWERBOUND && _controller_states[3] == INITIALSTATE_LOWERBOUND
+                || _controller_states[0] == INITIALSTATE_LOWERBOUND && _controller_states[1] == INITIALSTATE_LOWERBOUND && _controller_states[2] == INITIALSTATE_UPPERBOUND && _controller_states[3] == INITIALSTATE_UPPERBOUND
+                || _controller_states[0] == INITIALSTATE_LOWERBOUND && _controller_states[1] == INITIALSTATE_LOWERBOUND && _controller_states[2] == INITIALSTATE_UPPERBOUND && _controller_states[3] == INITIALSTATE_LOWERBOUND
+                || _controller_states[0] == INITIALSTATE_LOWERBOUND && _controller_states[1] == INITIALSTATE_LOWERBOUND && _controller_states[2] == INITIALSTATE_LOWERBOUND && _controller_states[3] == INITIALSTATE_UPPERBOUND
+                || _controller_states[0] == INITIALSTATE_LOWERBOUND && _controller_states[1] == INITIALSTATE_LOWERBOUND && _controller_states[2] == INITIALSTATE_LOWERBOUND && _controller_states[3] == INITIALSTATE_LOWERBOUND);
   #else
   #error Unsupported NSTATES
   #endif
@@ -398,44 +398,44 @@ void assume_corner_cases_for_states(void) {
 #else
   #if NSTATES == 1
   #define NPOLES = 2
-  const __plant_typet _state_poles[NPOLES][NSTATES] = { { SAFE_STATE_UPPERBOUND }, { SAFE_STATE_LOWERBOUND } };
+  const __plant_typet _state_poles[NPOLES][NSTATES] = { { INITIALSTATE_UPPERBOUND }, { INITIALSTATE_LOWERBOUND } };
   #elif NSTATES == 2
   #define NPOLES = 4
   const __plant_typet _state_poles[NPOLES][NSTATES] = 
-    { { SAFE_STATE_UPPERBOUND, SAFE_STATE_UPPERBOUND },
-      { SAFE_STATE_UPPERBOUND, SAFE_STATE_LOWERBOUND },
-      { SAFE_STATE_LOWERBOUND, SAFE_STATE_UPPERBOUND },
-      { SAFE_STATE_LOWERBOUND, SAFE_STATE_LOWERBOUND } };
+    { { INITIALSTATE_UPPERBOUND, INITIALSTATE_UPPERBOUND },
+      { INITIALSTATE_UPPERBOUND, INITIALSTATE_LOWERBOUND },
+      { INITIALSTATE_LOWERBOUND, INITIALSTATE_UPPERBOUND },
+      { INITIALSTATE_LOWERBOUND, INITIALSTATE_LOWERBOUND } };
   #elif NSTATES == 3
   #define NPOLES = 8
   const __plant_typet _state_poles[NPOLES][NSTATES] = 
-    { { SAFE_STATE_UPPERBOUND, SAFE_STATE_UPPERBOUND, SAFE_STATE_UPPERBOUND },
-      { SAFE_STATE_UPPERBOUND, SAFE_STATE_UPPERBOUND, SAFE_STATE_LOWERBOUND },
-      { SAFE_STATE_UPPERBOUND, SAFE_STATE_LOWERBOUND, SAFE_STATE_UPPERBOUND },
-      { SAFE_STATE_UPPERBOUND, SAFE_STATE_LOWERBOUND, SAFE_STATE_LOWERBOUND },
-      { SAFE_STATE_LOWERBOUND, SAFE_STATE_UPPERBOUND, SAFE_STATE_UPPERBOUND },
-      { SAFE_STATE_LOWERBOUND, SAFE_STATE_UPPERBOUND, SAFE_STATE_LOWERBOUND },
-      { SAFE_STATE_LOWERBOUND, SAFE_STATE_LOWERBOUND, SAFE_STATE_UPPERBOUND },
-      { SAFE_STATE_LOWERBOUND, SAFE_STATE_LOWERBOUND, SAFE_STATE_LOWERBOUND } };
+    { { INITIALSTATE_UPPERBOUND, INITIALSTATE_UPPERBOUND, INITIALSTATE_UPPERBOUND },
+      { INITIALSTATE_UPPERBOUND, INITIALSTATE_UPPERBOUND, INITIALSTATE_LOWERBOUND },
+      { INITIALSTATE_UPPERBOUND, INITIALSTATE_LOWERBOUND, INITIALSTATE_UPPERBOUND },
+      { INITIALSTATE_UPPERBOUND, INITIALSTATE_LOWERBOUND, INITIALSTATE_LOWERBOUND },
+      { INITIALSTATE_LOWERBOUND, INITIALSTATE_UPPERBOUND, INITIALSTATE_UPPERBOUND },
+      { INITIALSTATE_LOWERBOUND, INITIALSTATE_UPPERBOUND, INITIALSTATE_LOWERBOUND },
+      { INITIALSTATE_LOWERBOUND, INITIALSTATE_LOWERBOUND, INITIALSTATE_UPPERBOUND },
+      { INITIALSTATE_LOWERBOUND, INITIALSTATE_LOWERBOUND, INITIALSTATE_LOWERBOUND } };
   #elif NSTATES == 4
   #define NPOLES = 16
   const __plant_typet _state_poles[NPOLES][NSTATES] = 
-    { { SAFE_STATE_UPPERBOUND, SAFE_STATE_UPPERBOUND, SAFE_STATE_UPPERBOUND, SAFE_STATE_UPPERBOUND },
-      { SAFE_STATE_UPPERBOUND, SAFE_STATE_UPPERBOUND, SAFE_STATE_UPPERBOUND, SAFE_STATE_LOWERBOUND },
-      { SAFE_STATE_UPPERBOUND, SAFE_STATE_UPPERBOUND, SAFE_STATE_LOWERBOUND, SAFE_STATE_UPPERBOUND },
-      { SAFE_STATE_UPPERBOUND, SAFE_STATE_UPPERBOUND, SAFE_STATE_LOWERBOUND, SAFE_STATE_LOWERBOUND },
-      { SAFE_STATE_UPPERBOUND, SAFE_STATE_LOWERBOUND, SAFE_STATE_UPPERBOUND, SAFE_STATE_UPPERBOUND },
-      { SAFE_STATE_UPPERBOUND, SAFE_STATE_LOWERBOUND, SAFE_STATE_UPPERBOUND, SAFE_STATE_LOWERBOUND },
-      { SAFE_STATE_UPPERBOUND, SAFE_STATE_LOWERBOUND, SAFE_STATE_LOWERBOUND, SAFE_STATE_UPPERBOUND },
-      { SAFE_STATE_UPPERBOUND, SAFE_STATE_LOWERBOUND, SAFE_STATE_LOWERBOUND, SAFE_STATE_LOWERBOUND },
-      { SAFE_STATE_LOWERBOUND, SAFE_STATE_UPPERBOUND, SAFE_STATE_UPPERBOUND, SAFE_STATE_UPPERBOUND },
-      { SAFE_STATE_LOWERBOUND, SAFE_STATE_UPPERBOUND, SAFE_STATE_UPPERBOUND, SAFE_STATE_LOWERBOUND },
-      { SAFE_STATE_LOWERBOUND, SAFE_STATE_UPPERBOUND, SAFE_STATE_LOWERBOUND, SAFE_STATE_UPPERBOUND },
-      { SAFE_STATE_LOWERBOUND, SAFE_STATE_UPPERBOUND, SAFE_STATE_LOWERBOUND, SAFE_STATE_LOWERBOUND },
-      { SAFE_STATE_LOWERBOUND, SAFE_STATE_LOWERBOUND, SAFE_STATE_UPPERBOUND, SAFE_STATE_UPPERBOUND },
-      { SAFE_STATE_LOWERBOUND, SAFE_STATE_LOWERBOUND, SAFE_STATE_UPPERBOUND, SAFE_STATE_LOWERBOUND },
-      { SAFE_STATE_LOWERBOUND, SAFE_STATE_LOWERBOUND, SAFE_STATE_LOWERBOUND, SAFE_STATE_UPPERBOUND },
-      { SAFE_STATE_LOWERBOUND, SAFE_STATE_LOWERBOUND, SAFE_STATE_LOWERBOUND, SAFE_STATE_LOWERBOUND } };
+    { { INITIALSTATE_UPPERBOUND, INITIALSTATE_UPPERBOUND, INITIALSTATE_UPPERBOUND, INITIALSTATE_UPPERBOUND },
+      { INITIALSTATE_UPPERBOUND, INITIALSTATE_UPPERBOUND, INITIALSTATE_UPPERBOUND, INITIALSTATE_LOWERBOUND },
+      { INITIALSTATE_UPPERBOUND, INITIALSTATE_UPPERBOUND, INITIALSTATE_LOWERBOUND, INITIALSTATE_UPPERBOUND },
+      { INITIALSTATE_UPPERBOUND, INITIALSTATE_UPPERBOUND, INITIALSTATE_LOWERBOUND, INITIALSTATE_LOWERBOUND },
+      { INITIALSTATE_UPPERBOUND, INITIALSTATE_LOWERBOUND, INITIALSTATE_UPPERBOUND, INITIALSTATE_UPPERBOUND },
+      { INITIALSTATE_UPPERBOUND, INITIALSTATE_LOWERBOUND, INITIALSTATE_UPPERBOUND, INITIALSTATE_LOWERBOUND },
+      { INITIALSTATE_UPPERBOUND, INITIALSTATE_LOWERBOUND, INITIALSTATE_LOWERBOUND, INITIALSTATE_UPPERBOUND },
+      { INITIALSTATE_UPPERBOUND, INITIALSTATE_LOWERBOUND, INITIALSTATE_LOWERBOUND, INITIALSTATE_LOWERBOUND },
+      { INITIALSTATE_LOWERBOUND, INITIALSTATE_UPPERBOUND, INITIALSTATE_UPPERBOUND, INITIALSTATE_UPPERBOUND },
+      { INITIALSTATE_LOWERBOUND, INITIALSTATE_UPPERBOUND, INITIALSTATE_UPPERBOUND, INITIALSTATE_LOWERBOUND },
+      { INITIALSTATE_LOWERBOUND, INITIALSTATE_UPPERBOUND, INITIALSTATE_LOWERBOUND, INITIALSTATE_UPPERBOUND },
+      { INITIALSTATE_LOWERBOUND, INITIALSTATE_UPPERBOUND, INITIALSTATE_LOWERBOUND, INITIALSTATE_LOWERBOUND },
+      { INITIALSTATE_LOWERBOUND, INITIALSTATE_LOWERBOUND, INITIALSTATE_UPPERBOUND, INITIALSTATE_UPPERBOUND },
+      { INITIALSTATE_LOWERBOUND, INITIALSTATE_LOWERBOUND, INITIALSTATE_UPPERBOUND, INITIALSTATE_LOWERBOUND },
+      { INITIALSTATE_LOWERBOUND, INITIALSTATE_LOWERBOUND, INITIALSTATE_LOWERBOUND, INITIALSTATE_UPPERBOUND },
+      { INITIALSTATE_LOWERBOUND, INITIALSTATE_LOWERBOUND, INITIALSTATE_LOWERBOUND, INITIALSTATE_LOWERBOUND } };
   #else
   #error Unsupported NSTATES
   #endif
@@ -453,10 +453,8 @@ int safety_stability(void) {
 #endif
 
 #ifdef CPROVER
-  __plant_typet __trace_controllerA = _controller_A[0][0];
-  __controller_typet __trace_fxpK0 = K_fxp[0];
-  __controller_typet __trace_fxpK1 = K_fxp[1];
-  __controller_typet __trace_fxpK2 = K_fxp[2];
+  __controller_typet K_fxp_trace[NSTATES];
+  __CPROVER_array_copy(K_fxp_trace, K_fxp);
   __CPROVER_assert(0 == 1, "");
 #endif
 

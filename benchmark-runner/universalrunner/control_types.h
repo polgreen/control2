@@ -8,17 +8,16 @@
 #ifndef CONTROL_TYPES_H_
 #define CONTROL_TYPES_H_
 
-
 #ifdef CPROVER
     #ifdef INTERVAL
-      typedef   __CPROVER_fixedbv[24][12] __plant_precisiont;
+      typedef   __CPROVER_fixedbv[_CONTROL_FLOAT_WIDTH][_CONTORL_RADIX_WIDTH] __plant_precisiont;
       #include "intervals.h"
       typedef   struct intervalt __plant_typet;
-      typedef   __CPROVER_fixedbv[24][12] __controller_precisiont;
+      typedef   __CPROVER_fixedbv[_CONTROL_FLOAT_WIDTH][_CONTORL_RADIX_WIDTH] __controller_precisiont;
       typedef   struct intervalt __controller_typet;
       #define interval(x) interval_cast(x);
     #else
-      typedef __CPROVER_fixedbv[24][12] __plant_precisiont;
+      typedef __CPROVER_fixedbv[_CONTROL_FLOAT_WIDTH][_CONTORL_RADIX_WIDTH] __plant_precisiont;
       typedef __plant_precisiont __plant_typet;
       typedef __CPROVER_fixedbv[INT_BITS+FRAC_BITS][FRAC_BITS] __controller_precisiont;
       typedef  __controller_precisiont __controller_typet;
