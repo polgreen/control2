@@ -1000,8 +1000,8 @@ $z^n+\sum_{i=1}^n[a_i-k_i]z^{n-i}=\prod_{i=1}^n (z-[\lambda_i]) : |[\lambda_i]|<
 	label={\sc Verify},] (verif) {};
      \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif1) at ([xshift=-2.9cm]verif.center) {{\sc Uncertainty}};
      \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif2) at ([xshift=-0.8cm]verif.center) {{\sc Precision}};
-     \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif3) at ([xshift=1.2cm]verif.center) {{\sc Sampling}};
-     \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif4) at ([xshift=3.1cm]verif.center) {{\sc Complete}};
+     \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif3) at ([xshift=1.2cm]verif.center) {{\sc Complete}};
+     \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif4) at ([xshift=3.1cm]verif.center) {{\sc Sampling}};
    } 
    \& \node[ellipse, fill=gray!20] (done) {{\sc Done}};\\
    \& \\
@@ -1011,8 +1011,8 @@ $z^n+\sum_{i=1}^n[a_i-k_i]z^{n-i}=\prod_{i=1}^n (z-[\lambda_i]) : |[\lambda_i]|<
      \coordinate (aux);
    \node (bmc) at ([xshift=-2.9cm]aux.center) {\sf BMC-based \\Verifier};
    \node (fp)  at ([xshift=-.8cm]aux.center) {\sf Fixed-point \\ Arithmetic\\Verifier};
-   \node (sv)  at ([xshift=1.2cm]aux.center) {\sf Sampling\\Verifier};
-   \node (cv)  at ([xshift=3.1cm]aux.center) {\sf Completeness\\Verifier};
+   \node (sv)  at ([xshift=1.2cm]aux.center) {\sf Completeness\\Verifier};
+   \node (cv)  at ([xshift=3.1cm]aux.center) {\sf Sampling\\Verifier};
    }   
     \\
   };
@@ -1036,9 +1036,9 @@ $z^n+\sum_{i=1}^n[a_i-k_i]z^{n-i}=\prod_{i=1}^n (z-[\lambda_i]) : |[\lambda_i]|<
    (verif2.north) edge node[align=center] {} ([xshift=-2.7cm]aux6)
    ([xshift=-2.7cm]aux6) edge node[align=center] {Increase Precision} (aux5)
    (verif3.north) edge node[align=center] {} ([xshift=4cm]aux4)
-   ([xshift=4cm]aux4) edge node[align=center] {Increase Sampling Rate} (aux3)
+   ([xshift=4cm]aux4) edge node[align=center] {Increase Completeness Threshold} (aux3)
    (verif4.north) edge node[align=center] {} ([xshift=10.5cm]aux2)
-   ([xshift=10.5cm]aux2) edge node[align=center] {Increase Completeness Threshold} (aux1);
+   ([xshift=10.5cm]aux2) edge node[align=center] {Increase Sampling Rate} (aux1);
 
  \end{tikzpicture}
 }}
