@@ -34,7 +34,6 @@
 \newcommand{\commentib}[1]{{\color{blue} [IB: #1]}}
 \newcommand{\mat}[1]{\boldsymbol{#1}}
 
-
 \usepackage{url}
 %\urldef{\mailsa}\path|{alfred.hofmann, ursula.barth, ingrid.haas, frank.holzwarth,|
 %\urldef{\mailsb}\path|anna.kramer, leonie.kunz, christine.reiss, nicole.sator,|
@@ -699,6 +698,23 @@ can only iterate a finite number of times.
 In Sec.~\ref{sec:CEGIS-abstraction-refinement} and 
 Sec.~\ref{sec:CEGIS-precision-incrementation}, we explain how we 
 specialise the general CEGIS approach in order to perform solution generalisation.
+
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+\subsection{Our synthesis problem}
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+The synthesis problem we are trying to solve is the following:
+find a digital controller $K$ (see Eq.~\ref{eq:controlaction})
+that makes the closed-loop system safe for 
+initial state $x_0$, reference signal $r_k$ and input $u_k$
+as defined in Sec.~\ref{ssec:safety}. Note that, 
+as mentioned at the beginning of the section, 
+we consider the reference signal to be 0.
+When mapping back to the notation used for describing the general architecture 
+of the program synthesizer, the controller $K$ denotes $P$ and 
+$x_0$ and $u_k$ and  represents $x$. 
+
+We compute the coefficients for $K$ 
+in the domain $\mathbb{R}<I,F>$.
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{CEGIS with abstraction refinement}
