@@ -1006,11 +1006,10 @@ One important observation is that, for this approach,
 we compute the set of reachable states by finding 
 a completeness threshold $\overline{k}$.
 Essentially, $\overline{k}$ represents the number of iterations 
-to sufficiently unwind the closed-loop state-space system 
-so that the variation rate (derivative) of the states is negligible, 
-ensuring that the boundaries are not violated for any $k>\overline{k}$. 
-Then, it is sufficient to unwound the closed-loop state-space system up to  
-$\overline{k}$ in order to ensure that $\phi_{safety}$ holds. 
+required to sufficiently unwind the closed-loop state-space system 
+such that the boundaries are not violated for any $k>\overline{k}$
+(i.e. it's sufficient to unwound the closed-loop state-space system up to  
+$\overline{k}$ in order to ensure that $\phi_{safety}$ holds). 
 
 Next, we describe the different phases in Fig.~\ref{fig:CEGIS-precision-increment}
 (blocks 1 to 5):
