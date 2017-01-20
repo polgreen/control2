@@ -17,8 +17,10 @@
 #define NOUTPUTS 1
 #define INPUT_UPPERBOUND (__plant_precisiont)1
 #define INPUT_LOWERBOUND (__plant_precisiont)-1
-const __plant_typet _controller_A[NSTATES][NSTATES] = {{ 0.9905,0.075687,0.021033 }, { 0.125,0,0 }, { 0,0.015625,0 }};
-const __plant_typet _controller_B[NSTATES] = { 16, 0, 0 };
+const __plant_typet _controller_A[NSTATES][NSTATES] = {{ interval(0.9905),interval(0.075687),interval(0.021033) },
+                                                        {interval (0.125),interval(0),interval(0) },
+                                                        { interval(0),(0.015625),(0) }};
+const __plant_typet _controller_B[NSTATES] = { interval(16), interval(0),interval( 0) };
 
 
 

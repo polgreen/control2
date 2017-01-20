@@ -6,27 +6,21 @@
 
 #include "control_types.h"
 
-typedef struct {
-   int int_bits;
-   int frac_bits;
-} implementation;
+#define FRAC_BITS 8
+#define INT_BITS 8
 
-const implementation impl = {
- .int_bits = 8,
- .frac_bits = 8,
-};
+typedef  __plant_precisiont control_typet;
 
-typedef  __CPROVER_fixedbv[24][12] control_typet;
-typedef  __CPROVER_fixedbv[24][12] control_floatt;
-
-control_typet _zero = 0; //added in by EP
-control_typet _one = 1;
+control_typet _zero = 0.0; //added in by EP
+control_typet _one = 1.0;
 
 struct intervalt
 {
   control_typet low;
   control_typet high;
 };
+
+
 
 control_typet _dbl_max;
 control_typet _dbl_min;
@@ -37,19 +31,19 @@ control_typet _dbl_lsb;
 
 void get_bounds()
 {
-  if(impl.frac_bits >= 31)
+  if(FRAC_BITS >= 31)
     _fxp_one = 2147483647l;
   else
-    _fxp_one = (1 << impl.frac_bits);
-  _dbl_lsb=_one/(1 << impl.frac_bits);
-  _fxp_min = -(1 << (impl.frac_bits + impl.int_bits -1));
-  _fxp_max = (1 << (impl.frac_bits + impl.int_bits-1))-1;
-  _dbl_max = (1 << (impl.int_bits-1))-1;//Integer part
+   _fxp_one = (1 << FRAC_BITS);
+  _dbl_lsb=_one/(1 << FRAC_BITS);
+  _fxp_min = -(1 << (FRAC_BITS + INT_BITS -1));
+  _fxp_max = (1 << (FRAC_BITS + INT_BITS-1))-1;
+  _dbl_max = (1 << (INT_BITS-1))-1;//Integer part
   _dbl_max += (_one-_dbl_lsb);//Fractional part
   _dbl_min = -_dbl_max;
 }
 
-signed long int fxp_control_floatt_to_fxp(control_typet value)
+signed long int fxp_control_typet_to_fxp(control_typet value)
 {
   signed long int tmp;
   control_typet ftemp=value * _fxp_one;
@@ -70,7 +64,7 @@ void fxp_check(control_typet *value)
   if (tmp_value < _zero) tmp_value=-tmp_value;
   verify_assume((~_dbl_max&tmp_value)==0);
 #else
-  *value=fxp_control_floatt_to_fxp(*value);
+  *value=fxp_control_typet_to_fxp(*value);
   *value/=_fxp_one;
 #endif
 }
@@ -82,6 +76,8 @@ struct intervalt fxp_interval_check(struct intervalt value)
   value.high+=_dbl_lsb;
   return value;
 }
+
+#define interval_cast(x) (struct intervalt) {.low=x, .high=x}
 #define interval_lessthan(x,y) ((x.high) )< (y.low))
 #define interval_lessthanzero(x) (x.high<0)
 #define interval_lessthan_equal_to_zero(x) (x.high <= 0)
@@ -127,9 +123,9 @@ struct intervalt abs_interval(struct intervalt x)
   z.low=x.low*y.low;
   z.high=(-x.low)*y.low;
   z.high=-z.high;
-  control_floatt second=x.low*y.high;
-  control_floatt third=x.high*y.low;
-  control_floatt fourth=x.high*y.high;
+  control_typet second=x.low*y.high;
+  control_typet third=x.high*y.low;
+  control_typet fourth=x.high*y.high;
 
   if (second<z.low) z.low=second;
   else if (second>=z.high)
