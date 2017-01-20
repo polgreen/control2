@@ -147,9 +147,9 @@ void __CPROVER_EIGEN_charpoly_2(void) { //m00*m11 - m10*m11 - m00*x - m11*x + x^
 
   __CPROVER_EIGEN_poly[2] = sub ( mult(__m[0][0],__m[1][1]), mult(__m[1][0] , __m[1][1]) );
 
-  __CPROVER_EIGEN_poly[1] = sub (0, add (__m[0][0], __m[1][1]) ) ;
+  __CPROVER_EIGEN_poly[1] = sub (zero_type, add (__m[0][0], __m[1][1]) ) ;
   // s^2
-  __CPROVER_EIGEN_poly[0] = 1.0;
+  __CPROVER_EIGEN_poly[0] = one_type;
 }
 #endif
 
@@ -371,7 +371,7 @@ int main(void) {
   closed_loop(); //calculate A - BK
   __CPROVER_EIGEN_charpoly();
   __DSVERIFIER_assert(check_stability());
-#if NSTATES !=1
+#if NSTATES != 1
   __DSVERIFIER_assert(check_safety());
 #endif
   __plant_typet __trace_controllerA = _controller_A[0][0];
