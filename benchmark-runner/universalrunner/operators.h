@@ -26,7 +26,9 @@
   #define sub(x,y) ( (x) - (y))
   #define set(x,y) (x)=(y)
 
-#elif INTERVAL
+
+#endif
+#ifdef INTERVAL
 
   #define controller_mult(x,y) (interval_fxp_mult((x),(y)))
   #define mult(x,y) ( interval_mult((x),(y)))
@@ -48,6 +50,7 @@
   #define controller_cast(x) (fxp_interval_check(x))
   #define plant_cast(x) x
   #define set(x,y) (x.low=y, x.high=y)
+
 
 #endif
 

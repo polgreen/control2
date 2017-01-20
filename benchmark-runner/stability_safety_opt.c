@@ -172,7 +172,7 @@ __CPROVER_EIGEN_poly[3] = - __m[0][0]*__m[1][1]*__m[2][2]  + __m[0][0]*__m[1][2]
 
 void __CPROVER_EIGEN_charpoly(void){
 #if NSTATES==1
-  __CPROVER_assume(_AminusBK[0][0] < 1 && _AminusBK[0][0] > -1);
+
 #elif  NSTATES==2
   __CPROVER_EIGEN_charpoly_2();
 #elif  NSTATES==3
