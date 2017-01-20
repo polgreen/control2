@@ -727,8 +727,9 @@ We compute the coefficients for $K$ in the domain $\mathbb{R}<I,F>$.
 \label{sec:CEGIS-abstraction-refinement}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-\subsubsection{Computing the set of reachable states}
-\todo{explain the use of abstract acceleration}
+\todo{Move as much as possible from Sec~\ref{sec:cof_verification}
+to the appendix (e.g. discussion on abstract acceleration). 
+Merge the rest in Sec~\ref{sec:cof_synth}.}
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsubsection{Verification of a controllable observed system}
@@ -1063,7 +1064,7 @@ Next, we describe the five stages from Fig.~\ref{fig:CEGIS-precision-increment}:
 1. The inductive synthesis phase (i.e. {\sc synthesize}) uses BMC to 
 compute a candidate solution $K$. It does this by assuming 
 a $k$ and a sampling rate. The check that this assumptions were sound 
-will be performed later by the {\sc complete} and {\sc sampling} 
+is performed later by the {\sc complete} and {\sc sampling} 
 validation stages.
 
 2. The validation phase consists of four stages 
