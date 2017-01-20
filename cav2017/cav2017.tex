@@ -497,7 +497,7 @@ The estimation of $\hat{\vec{x}}$ corresponds to the sum of three matrix-vector 
 \label{ssec:safety}
 %-------------------------------
 
-\todo{The safety specification is defined over the state space, not the output. Further, please distinguish the spec from the input constraints. }
+%\todo{The safety specification is defined over the state space, not the output. Further, please distinguish the spec from the input constraints. }
 
 We require that the closed-loop system meets safety specifications. 
 A safety specification establishes bounds for the states, such that 
@@ -511,8 +511,7 @@ The safety property represented by $\phi_{safety}$ is encoded as follows:
 \phi_{safety}\iff \forall k\geq 0, \bigwedge_{i=1}^{n}{x_{i}^{-} \leq x_{i,k} \leq x_{i}^{+}},
 \end{equation}
 %
-\todo{We consider $x_{i}^{-}$ and $x_{i}^{+}$ to be -1 and 1, respectively.}
-
+%\todo{We consider $x_{i}^{-}$ and $x_{i}^{+}$ to be -1 and 1, respectively.}
 where $x_{i}^{-}$ and $x_{i}^{+}$ are the lower and upper bound 
 of the $i$-th state $x_{i}$ at the $k$-th instant, respectively.
 This means that the states will always be within the $n$-dimensional 
@@ -638,13 +637,14 @@ the whole procedure finishes much faster than if synthesis had been
 attempted in a high-complexity language.
 
 We investigate two different approaches of integrating solution generalisation 
-into CEGIS:
+with CEGIS:
 \begin{itemize}
-\item[1.] The first approach uses abstract acceleration to compute the set of reachable states, which 
-enables abstraction refinement inside the CEGIS loop. 
-\item[2.] The second approach relies on computing a completeness threshold $k$ for each loop such that it is sufficient to 
-unroll the corresponding loop $k$ times. For this approach the generalisation step is given as an incremental
-increase of precision and sampling rate.
+\item[1.] The first approach uses abstract acceleration to compute the set of reachable states, which enables it to perform abstraction refinement inside the CEGIS loop (see Sec~\ref{sec:CEGIS-abstraction-refinement}). 
+\item[2.] The second approach relies on computing a 
+completeness threshold $k$ for each loop such that it is sufficient to 
+unroll the corresponding loop $k$ times. For this approach the 
+generalisation step is given as an incremental
+increase of precision and sampling rate (see Sec.~\ref{sec:CEGIS-precision-incrementation}).
 \end{itemize}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{General architecture of the program synthesizer}
@@ -719,17 +719,16 @@ we consider the reference signal to be 0.
 Then, when mapping back to the notation used for describing the general architecture 
 of the program synthesizer, the controller $K$ denotes $P$ and 
 $(x_0, u_k)$ represents $x$. 
-
-We compute the coefficients for $K$ 
-in the domain $\mathbb{R}<I,F>$.
+We compute the coefficients for $K$ in the domain $\mathbb{R}<I,F>$.
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{CEGIS with abstraction refinement}
 \label{sec:CEGIS-abstraction-refinement}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-\subsubsection{Computing the set of reachable states}
-\todo{explain the use of abstract acceleration}
+\todo{Move as much as possible from Sec~\ref{sec:cof_verification}
+to the appendix (e.g. discussion on abstract acceleration). 
+Merge the rest in Sec~\ref{sec:cof_synth}.}
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsubsection{Verification of a controllable observed system}
@@ -898,7 +897,7 @@ $z^n+\sum_{i=1}^n[a_i-k_i]z^{n-i}=\prod_{i=1}^n (z-[\lambda_i]) : |[\lambda_i]|<
        % \node[draw=none] (FIK) at ([xshift=2.5cm,yshift=.3cm]abstract)  {\sc $\Psi (\mat{K})$};
    \& \coordinate (aux); \\ % \node[fill=yellow!20,align=center] (counter) {\sc counterexample};\\
    \& 
-   \& \node[fill=gray!20,align=center, minimum width=3cm] (synth) {\sc 2. synthesise};
+   \& \node[fill=gray!20,align=center, minimum width=3cm] (synth) {\sc 2. synthesize};
        %\node[draw=none] (KL) at ([xshift=2.5cm,yshift=-.25cm]synth)  {\sc $\mat{K},\mat{L}$};
        %\node[draw=none] (NKL) at ([xshift=2cm,yshift=1cm]synth)  {\sc $P_a$};
    \& \node[fill=gray!20,align=center, minimum width=4cm] (verify) {\sc 3. verify ($\Psi$)};
@@ -990,7 +989,7 @@ $z^n+\sum_{i=1}^n[a_i-k_i]z^{n-i}=\prod_{i=1}^n (z-[\lambda_i]) : |[\lambda_i]|<
    \coordinate (aux5);
    \& \coordinate (aux6);
    \&;\\
-   \node[minimum width=1.5cm, minimum height=0.6cm, fill=gray!20] (synth) {{\sc Synthesize}};
+   \node[minimum width=1.5cm, minimum height=0.6cm, fill=gray!20] (synth) {{\sc 1.Synthesize}};
    \&
    complexnode/.pic={ 
      \node[rectangle,draw,dotted,
@@ -998,10 +997,10 @@ $z^n+\sum_{i=1}^n[a_i-k_i]z^{n-i}=\prod_{i=1}^n (z-[\lambda_i]) : |[\lambda_i]|<
 	minimum height=1cm,
         pattern=north west lines, pattern color=gray!20,
 	label={\sc Verify},] (verif) {};
-     \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif1) at ([xshift=-2.9cm]verif.center) {{\sc Uncertainty}};
-     \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif2) at ([xshift=-0.8cm]verif.center) {{\sc Precision}};
-     \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif3) at ([xshift=1.2cm]verif.center) {{\sc Complete}};
-     \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif4) at ([xshift=3.1cm]verif.center) {{\sc Sampling}};
+     \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif1) at ([xshift=-2.9cm]verif.center) {{\sc 2.Safety}};
+     \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif2) at ([xshift=-0.8cm]verif.center) {{\sc 3.Precision}};
+     \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif3) at ([xshift=1.2cm]verif.center) {{\sc 4.Complete}};
+     \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif4) at ([xshift=3.1cm]verif.center) {{\sc 5.Sampling}};
    } 
    \& \node[ellipse, fill=gray!20] (done) {{\sc Done}};\\
    \& \\
@@ -1046,22 +1045,47 @@ $z^n+\sum_{i=1}^n[a_i-k_i]z^{n-i}=\prod_{i=1}^n (z-[\lambda_i]) : |[\lambda_i]|<
 \label{fig:CEGIS-precision-increment}
 \end{figure}
 
-\subsubsection{Computing the reachable states}
+%\subsubsection{Controller synthesis}
 
-In order to compute the set of reachable states we find 
-a completeness threshold $k_{bound}$.
-Essentially, $k_{bound}$ represents the number of iterations 
+The controller synthesis is described in Fig.~\ref{fig:CEGIS-precision-increment}.
+One important observation is that, for this approach,
+we compute the set of reachable states by finding 
+a completeness threshold $\overline{k}$.
+Essentially, $\overline{k}$ represents the number of iterations 
 to sufficiently unwind the closed-loop state-space system 
 so that the variation rate (derivative) of the states is negligible, 
-ensuring that the boundaries are not be violated for any $k>k_{bound}$. 
-The closed-loop state-space system has to be unwound up to a given 
-depth $k_{bound}$ to ensure that $\phi_{safety}$ holds. 
+ensuring that the boundaries are not be violated for any $k>\overline{k}$. 
+Then, it is sufficient to unwound the closed-loop state-space system up to  
+$\overline{k}$ in order to ensure that $\phi_{safety}$ holds. 
 
-\todo{discuss the completeness threshold computation}
+Next, we describe the five stages from Fig.~\ref{fig:CEGIS-precision-increment}:
 
-\subsubsection{Controller synthesis}
+1. The inductive synthesis phase (i.e. {\sc synthesize}) uses BMC to 
+compute a candidate solution $K$. It does this by assuming 
+a $k$ and a sampling rate. The check that this assumptions were sound 
+is performed later by the {\sc complete} and {\sc sampling} 
+validation stages.
 
-\todo{Describe each step in Fig~\ref{fig:CEGIS-precision-increment}.}
+2. The validation phase consists of four stages 
+(blocks 2-5 in Fig.~\ref{fig:CEGIS-precision-increment}), where the first one
+performs potentially unsound operations assuming a plant's precision $<I_p,F_p>$, 
+current $k$ and sampling rate, whereas the subsequent three stages are used to 
+restore soundness. 
+
+3. This stage restores soundness with respect to the plant precision
+by using interval arithmetic \cite{moore1966interval} to validate the 
+operations performed by the previous stage.
+
+4. This stage checks that the current  $k$ 
+is large enough to ensure that the boundaries are not be violated for any $k'>k$.
+In order to verify this, we compute the 
+completeness threshold $\overline{k}$ for the current candidate $K$ 
+and check that $k{\leq}\overline{k}$. 
+\todo{discuss the computation of the completeness threshold}
+
+5. The last stage ensures that the current sampling rate is large enough by using an 
+external checker (\todo{add more details here once we have them}).
+
 
 %-------------------------------
 \section{Experimental Evaluation}
@@ -1085,6 +1109,8 @@ y(t)=\textbf{C}\textbf{x}(t)+\textbf{D}u(t)
 \end{equation}
 
 Table~\ref{table:State-space benchmarks} summarizes the list of benchmarks extracted from the literature~\cite{Franklin15,maglev,converters,CTMS}. \textit{DC Motor Position} plant describes the rotary motion that coupled with wheels and cables provides translational motion. \textit{Aircraft Pitch Dynamics} plant represents the air vehicle orientation and control based on the pitch dimension. \textit{Ball Magnetic Levitation} plant describes the magnetic field to keep a metal ball hanged in air. \textit{Buck Converter} plant represents a power converter that steps down voltage from the supply to the load while stepping up current. \textit{Boost Converter} plant also represents a power converter, but here it steps up voltage from the supply to the load while stepping down current. \textit{Buck-boost Converter} plant is a particular type of converter that has an output voltage magnitude that is either greater than or less than the input voltage magnitude. \textit{Automotive Cruise System} plant describes a system's model that represents the speed of a motor vehicle.
+
+These benchmarks were discretized with different sample times using the approach described in the Appendix~\ref{sec:appendix}. All experiments were performed considering $x_{i}^{-}=-1$ and $x_{i}^{+}=1$ and the inputs $u_{k}=0, \forall k>0$.
 
 \begin{table}[htb]
 \centering
