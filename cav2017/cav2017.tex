@@ -964,9 +964,9 @@ $z^n+\sum_{i=1}^n[a_i-k_i]z^{n-i}=\prod_{i=1}^n (z-[\lambda_i]) : |[\lambda_i]|<
 %\subsubsection{Controller synthesis}
 
 The controller synthesis is described in Fig.~\ref{fig:CEGIS-precision-increment}.
-One important observation is that, for this approach,
-we compute the set of reachable states by finding 
-a completeness threshold $\overline{k}$.
+One important observation is that, for this approach, we verify and synthesise 
+a controller over $k$ time steps. We then compute a completeness threshold, $\overline{k}$,
+for this controller, and verify the controller's correctness to $\overline{k}$ time steps.
 Essentially, $\overline{k}$ represents the number of iterations 
 required to sufficiently unwind the closed-loop state-space system 
 such that the boundaries are not violated for any $k>\overline{k}$
@@ -977,14 +977,25 @@ Next, we describe the different phases in Fig.~\ref{fig:CEGIS-precision-incremen
 (blocks 1 to 5):
 
 1. The inductive synthesis phase (i.e. {\sc synthesize}) uses BMC to
-compute a candidate solution $K$. It does this by assuming some 
-precision $<I_p,F_p>$ for the plant, a $k$ and a sampling rate.  The checks that
+compute a candidate solution $K$ that satisfies the stability criteria described in 
+\todo{SECTION STABILITY CRITERIA}, i.e., that the eigenvalues of the dynamics fall within 
+the unit circle, and the safety specification described in \todo{SECTION:SAFETY SPEC}, i.e.,
+that the state values do not violate the safe state upper and lower bounds within $k$ steps. 
+It does this by assuming some 
+precision $<I_p,F_p>$ for the plant, a $k$ and a sampling rate. 
+
+The checks that
 these assumptions are sound are performed by the subsequent {\sc
   verify} stages.
 
-2. The first {\sc verify} stage, {\sc safety}, 
-performs potentially unsound operations by considering the currently
-assumed $<I_p,F_p>$, $k$ and sampling rate. % The soundness is to be 
+2. The first {\sc verify} stage, {\sc safety}, checks that the candidate
+solution $K$ is safe for all possible initial states, i.e., does not reach an unsafe
+state within $k$ steps. 
+This check is potentially unsound because we considering the currently
+assumed $<I_p,F_p>$, $k$ and sampling rate. 
+
+
+% The soundness is to be 
 % restored by the subsequent three validation stages.
 
 3. The second {\sc verify} stage, {\sc precision}, 
@@ -996,7 +1007,14 @@ operations performed by the previous stage.
 current $k$ is large enough to ensure that the boundaries are not
 violated for any $k'>k$.  For this purpose, we compute the
 completeness threshold $\overline{k}$ for the current candidate $K$
-and check that $k{\leq}\overline{k}$.  \todo{discuss the computation
+and check that $k{\leq}\overline{k}$. 
+
+A stable control system is known to have converging dynamics, i.e., the
+distance from the reference (in this case the origin) decreases over time. 
+
+
+
+ \todo{discuss the computation
   of the completeness threshold}
 
 5. The last {\sc verify} stage, {\sc sampling}, 
