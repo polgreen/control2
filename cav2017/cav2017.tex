@@ -651,18 +651,20 @@ language.
 We investigate two different approaches of integrating solution generalisation 
 with CEGIS:
 \begin{itemize}
-\item[1.] The first approach uses abstract acceleration to compute the set of reachable states,
-  which enables it to perform abstraction refinement inside the CEGIS loop (see Sec~\ref{sec:CEGIS-abstraction-refinement}). 
-\todo{Dario, can you briefly explain solution generalisation for your approach?}
-\item[2.] The second approach uses a multi-staged validation phase
+\item[1.] The first approach uses a multi-staged validation phase
   and performes solution generalisation based on
 the plant's precision, the number of loop unrollings
 and the sampling rate (see Sec.~\ref{sec:CEGIS-precision-incrementation}).
-%%   relies on computing a 
-%% completeness threshold $k$ for each loop such that it is sufficient to 
-%% unroll the corresponding loop $k$ times. For this approach the 
-%% generalisation step is given as an incremental
-%% increase of precision and sampling rate 
+\item[2.] The second approach uses abstract acceleration to compute the set of reachable states,
+  which enables it to perform abstraction refinement inside the CEGIS loop (see Sec~\ref{sec:CEGIS-abstraction-refinement}). 
+  
+The advantage of the second approcah are that whereas in the first case we use concrete traces from non-deterministic simulations
+and generalize over continuous sets into an unbounded time, 
+the abstract acceleration synthesis analyses the system over a generalized state-space (ie it looks at all the states simultaneously), requiring the CEGIS loop to generalize only over the time horizon of the system.
+
+Hence, aproach one finds a controller for an individual initial state and input with a bounded time horizon and generalizes to all states, inputs and time horizons (with a final verification loop that verifies the continuous system behaviour against the previously verified discrete system bisimulation).
+Approach two finds a controller for a continuous initial state-space and input sets over an abstraction of the continuous dynamics which conforms to witness proofs at specific times k, and generalizes the solution for all times by refining the number of witnesses.
+ 
 \end{itemize}
 
 \todo{Can we come up with some sort of figure that makes it easier to visualise
@@ -678,18 +680,30 @@ the generalisation step in each approach?}
 \label{sec:CEGIS-abstraction-refinement}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+The verification of a hybrid continuous/discrete time/space system over an unbounded time, requires the
+non-deterministic simulation of an infinite set of states, which is undecidable. Our initial approach creates an
+abstraction of this system by establishing bounds on the error between such a system and a discrete-time/space model.
+This model is still however, quite complex, hard to verify, and many of the states involved are inconsequential to
+the safety specification.
+Our second model, rather than look at a direct bisimulation in discrete time, explores a much higher abstraction,
+evaluating the unbounded time-continuous space reach tube as a set of inequalities that represent only the safety specifcation.
+We begin with a minimum set of linear inequalities describing the constraints caused by the input and the initial state during a
+single iteration, in addition to a stability specification defined by Jury's criteria, and try to synthesise a controller that meets these specs.
+A second abstraction that encompasses the accelerated continuous reach-tube over an unbounded time is used to verify that the controller meets the full safety specification. If this step fails, we find a counterexmple iteration that causes the selected system to fail and create a new constraint to refine our abstraction.
+The advantage of this model is that it starts with a very simple description regardless of the complexity of the overall dynamics, and only expands to more complex models when a solution cannot be found.
+
 \todo{Move as much as possible from Sec~\ref{sec:cof_verification}
 to the appendix (e.g. discussion on abstract acceleration). 
 Merge the rest in Sec~\ref{sec:cof_synth}.}
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsubsection{Verification of a controllable observed system}
+\subsubsection{Verification of a controllable system}
 \label{sec:cof_verification}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 Let us recall the formulas used for single-input and single-output (SISO) systems 
 in sections \ref{sec:reachable} and \ref{sec:observable}.
-A controllable and observable system will have the following dynamics:
+A controllable system with quantization will have the following dynamics:
 
 %
 \begin{align}
@@ -704,7 +718,7 @@ A controllable and observable system will have the following dynamics:
 \end{align*}
 
 \begin{align*}
-\mat{A}_{tp}=&\left[
+\mat{A}_{t}=\mat{T}\mat{A}_d\mat{T}^{-1}&\left[
 \begin{array}{ccccc}
 0&1&0&\cdots&0\\
 0&0&1&\cdots&0\\
@@ -715,13 +729,10 @@ k_n-a_n&k_{n-1}-a_{n-1}&k_{n-2}-a_{n-2}&\cdots&k_1-a_1
 \label{eq:cf_SISO_2}
 \end{align*}
 
-Careful examination of these matrices reveals that because the $\mat{A}_t$ is 
-upper block diagonal, the spectrum of $\mat{A}_t$ is equal to the union of the 
-spectrum of $\mat{A}_{tp}$ and $\mat{A}_{to}$, which can be calculated separately. 
-Additionally, these correspond to the roots of the following polynomials:
+The characteristic polynomial of the above matix is:
 %
 \begin{align*}
-\left(z^n+\sum_{i=1}^p{(a_i-k_i)z^{n-i}}\right)
+z^n+\sum_{i=1}^p{(a_i-k_i)z^{n-i}}
 \end{align*}
 
 For a stabilized closed-loop, we need these roots to remain within the
@@ -789,15 +800,14 @@ Now that we have explained the verification process, we may proceed to describe 
 \begin{enumerate}
 \item We start by preprocessing the dynamics. This can be computationally intensive and we don't want it to be part of the CEGIS loop.
 \begin{enumerate}
-\item Calculate $\mat{A}_o,\mat{B}_o,\mat{C}_o$ by rounding down the coefficients $*_{oij}=\mathcal{F}\langle I,F,E\rangle (*_{ij}) : *=\{a,b,c\}$
-\item Calculate $\mat{T}$ and $\mat{W}_o^{-1}\mat{W}_{of}$ using equations \eqref{eq:rncf}\eqref{eq:rcf}\eqref{eq:to_cf}\eqref{eq:wnof}\eqref{eq:wof}
+\item Calculate $\mat{T}$ using equations \eqref{eq:rncf}\eqref{eq:rcf}\eqref{eq:to_cf}
 \item Extract the Plant's characteristic polynomial coefficients from the last row of $P_a=(\mat{T}\mat{A}\mat{T}^-1)_{n*}$.
 \item Calculate the noise set $N$ from the quantizer resolutions and estimated round-off errors ($\frac{q_1}{2},\frac{q_2}{2},q_3$)
-\item Produce an initial abstraction which corresponds to an unconstrained solution space.
+\item Calculate a set of initial bounds on K based on the input constraints. $$\phi_{input} \Leftrightarrow u_k=r-Kx_k : x \in X^\# \wedge u_k \in [\underline{u}\ \ \overline{u}]$$
 \end{enumerate}
-\item Next we synthesise a candidate controller and observer. Let $\mathcal{J}\langle I,F \rangle (P,\mat{T})$ be a program describing Jury's method.
+\item Next we synthesise a candidate controller. Let $\mathcal{J}\langle I,F \rangle (P,\mat{T})$ be a program describing Jury's method.
 \begin{enumerate}
-\item Select a controller $\tilde{\mat{K}} \in \mathbb{R}\langle I,F\rangle^n$. This is achieved by solving a SAT formula $\mathcal{J}_K=\mathcal{J}\langle I,F,E \rangle (P_{a-k},\mat{T})$ that satisfies Jury's criteria for $P_{a-k}=z^n+\sum_{i=1}^n (a_i-k_i) z^{n-i} : k_i \in \mat{K} \wedge \mat{K}=\tilde{\mat{K}}\mat{T}$.
+\item Select a controller $\tilde{\mat{K}} \in \mathbb{R}\langle I,F\rangle^n$. This is achieved by solving a SAT formula $\mathcal{J}_K=\mathcal{J}\langle I,F \rangle (P_{a-k},\mat{T})\wedge \phi_{input}$ that satisfies the input constraint and Jury's criteria for $P_{a-k}=z^n+\sum_{i=1}^n (a_i-k_i) z^{n-i} : k_i \in \mat{K} \wedge \mat{K}=\tilde{\mat{K}}\mat{T}$.
 \item If there is no candidate solution we return UNSAT and exit the loop.
 \end{enumerate}
 \item Once we have a candidate solution, we perform a safety verification using abstract acceleration.
