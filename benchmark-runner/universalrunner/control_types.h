@@ -22,8 +22,9 @@
       typedef __plant_precisiont __plant_typet;
       typedef __CPROVER_fixedbv[INT_BITS+FRAC_BITS][FRAC_BITS] __controller_precisiont;
       typedef  __controller_precisiont __controller_typet;
-        #define plant_cast(x) ((__plant_typet)x)
-        #define controller_cast(x) ((__controller_typet)x)
+      #define plant_cast(x) ((__plant_typet)x)
+      #define controller_cast(x) ((__controller_typet)x)
+      #define interval(x) x
     #endif
 #else
      #ifndef INTERVAL

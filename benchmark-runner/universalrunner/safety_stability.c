@@ -1,16 +1,18 @@
 #include <stdio.h>
 #include "benchmark.h" //benchmark header file
-
-//#include "control_types.h" //included by benchmark header file
-
+//#include "control_types.h" //included via benchmark.h
+//#define CPROVER
 //#ifdef INTERVAL
   //  #include "intervals.h" //included via control_types.h
 //#endif
-
 #include "operators.h"
 
-
-#define __DSVERIFIER_assert(x) __CPROVER_assume(x)
+#ifdef CPROVER
+  #define __DSVERIFIER_assert(x) __CPROVER_assume(x)
+#else
+  #include <assert.h>
+  #define __DSVERIFIER_assert(x) assert(x)
+#endif
 
 #define NUMBERLOOPS 5
 #define INITIALSTATE_UPPERBOUND (__plant_precisiont)0.5
@@ -19,10 +21,8 @@
 #define SAFE_STATE_LOWERBOUND (__plant_precisiont)-1
 
 //other plant variables
-
 //extern const __controller_typet K_fxp[NSTATES]; //nondet controller
 const __controller_typet K_fxp[NSTATES] = {interval(0.0234375),interval(-0.1328125), interval(0.00390625)};
-
 __plant_typet _controller_inputs;
 extern __plant_typet _controller_states[NSTATES]; //nondet initial states
 
@@ -357,14 +357,12 @@ int check_safety(void)
 }
 
 
+
 int main(void) {
   //init();
-<<<<<<< 5a1a0cb98c71167c587f6314442d807f0c1a5f6e
-=======
 #ifdef INTERVAL
   get_bounds(); //get interval bounds
 #endif
->>>>>>> changing order of header files and defines
   closed_loop(); //calculate A - BK
   __CPROVER_EIGEN_charpoly();
   __DSVERIFIER_assert(check_stability());
