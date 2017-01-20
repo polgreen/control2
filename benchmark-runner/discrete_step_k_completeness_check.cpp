@@ -4,6 +4,7 @@
 #include <iostream>
 
 typedef mpfr::mpreal realt;
+typedef std::complex<realt> complext;
 typedef realt __CPROVER_EIGEN_fixedbvt;
 #include "spec.h"
 
@@ -12,6 +13,7 @@ using namespace std;
 using namespace mpfr;
 
 #define EXIT_INCREASE_K 2
+#define EXIT_INCREASE_SAMPLE_RATE 3
 #define PRECISION 256
 #define K_SIZE_ARG_INDEX 1u
 
@@ -20,6 +22,13 @@ typedef Matrix<realt, NSTATES, NSTATES> matrixt;
 // TODO: Read actual K
 //const realt _controller_K[] = { 0.0234375,-0.1328125, 0.00390625 };
 const realt _controller_K[] = { 0.0234375,0.1328125, 0.00390625 };
+
+bool is_imaginary(const realt &imaginary_offset, const complext &complex) {
+  const realt imag_value = std::imag(complex);
+  cout << "imag_value: " << imag_value << endl;
+  cout << "imaginary_offset: " << imaginary_offset << endl;
+  return abs(imag_value) > imaginary_offset;
+}
 
 int main(const int argc, const char * const argv[]) {
   const realt two = "2.0";
@@ -42,6 +51,8 @@ int main(const int argc, const char * const argv[]) {
   for (size_t i = 0; i < NSTATES; ++i) {
     K[i] = _controller_K[i];
   }
+
+  // Check K_SIZE
   matrixt result = A - B * K;
   EigenSolver<matrixt> eigenSpace(result);
   if (Success != eigenSpace.info())
@@ -50,10 +61,7 @@ int main(const int argc, const char * const argv[]) {
   cout << "num_eigenvalues: " << eigenvalues.size() << endl;
   for (size_t i=0; i < eigenvalues.size(); ++i) {
     cout << "eigenvalue: " << eigenvalues[i] << endl;
-    const realt imag_value = std::imag(eigenvalues[i]);
-    cout << "imag_value: " << imag_value << endl;
-    cout << "imaginary_offset: " << imaginary_offset << endl;
-    if (abs(imag_value) <= imaginary_offset) continue;
+    if (!is_imaginary(imaginary_offset, eigenvalues[i])) continue;
     const realt angle = std::arg(eigenvalues[i]);
     const realt expected = abs(two_pi / angle);
     cout << "expected_k_size=" << expected << endl;
@@ -61,5 +69,27 @@ int main(const int argc, const char * const argv[]) {
     if (expected > K_SIZE)
       return EXIT_INCREASE_K;
   }
+
+  // Check sample rate
+  /*Matrix<realt, Dynamic, Dynamic> vertices(Matrix<realt, Dynamic, Dynamic>::Ones(NSTATES, ::pow(2, NSTATES)));
+  int step = 1;
+  for (size_t row = 0; row < vertices.rows(); ++row) {
+    for (size_t col = 1; col < vertices.cols(); ++col) {
+      vertices.coeffRef(row, col) = vertices.coeffRef(row, col - 1);
+      if (col % step == 0) vertices.coeffRef(row, col) = -vertices.coeffRef(row, col);
+    }
+    step <<= 1;
+  }
+  const Matrix<complext, NSTATES, NSTATES> eigenvectors(eigenSpace.eigenvectors());
+  cout << "eigenvectors: " << endl << eigenvectors << endl;
+  matrixt pseudo_eigenvectors(eigenvectors.real());
+  for (size_t i=0; i < NSTATES - 1; ++i) {
+    if (!is_imaginary(imaginary_offset, eigenvalues[i])) continue;
+    pseudo_eigenvectors.col(i + 1) = eigenvectors.col(i).imag();
+    ++i;
+  }
+  cout << "pseudo_eigenvectors: " << endl << pseudo_eigenvectors << endl;
+  vertices *= pseudo_eigenvectors.transpose();*/
+
   return EXIT_SUCCESS;
 }
