@@ -620,20 +620,53 @@ The input sequence $u_{k}$ is non-deterministic with known bounds $u^{+}$ and $u
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 %Abstractly-Refined
 
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+\subsection{General architecture of the program synthesizer}
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+\label{synthesizer-general}
+The input specification provided to the program synthesizer is of the form
+$\exists \vec{P} .  \forall \vec{x}.  \sigma(\vec{x}, \vec{P})$ where
+$\vec{P}$ ranges over functions, $\vec{x}$ ranges over ground terms and
+$\sigma$ is a quantifier-free formula.  We interpret the ground terms over
+some finite domain $\mathcal{D}$.
 
-{\bf Assumption:} We consider the reference signal to be 0, whereas the initial states are non-deterministic.
-\todo{Explain all the assumptions.}
+The design of our synthesizer consists of two phases, an inductive
+synthesis phase and a validation phase, which interact via a finite
+set of test vectors {\sc inputs} that is updated incrementally.  Given
+the aforementioned specification $\sigma$, the inductive synthesis
+procedure tries to find an existential witness $\vec{P}$ satisfying
+the specification $\sigma(\vec{x}, \vec{P})$ for all $\vec{x}$ in {\sc
+  inputs} (as opposed to all $\vec{x} \in \mathcal{D}$).
+%
+If the synthesis phase succeeds in finding a witness~$\vec{P}$, this
+witness is a candidate solution to the full synthesis formula.  We
+pass this candidate solution to the validation phase, which checks
+whether it is a full solution (i.e., $\vec{P}$ satisfies the
+specification $\sigma(\vec{x}, \vec{P})$ for all
+$\vec{x}\in\mathcal{D}$).  If this is the case, then the algorithm
+terminates.  Otherwise, additional information is provided to the
+inductive synthesis phase in the form of a new counterexample that is
+added to the {\sc inputs} set and the loop iterates again.
 
-%\todo{Integrate this paragraph better (Cristina):}
-Our CEGIS technique with generalisation %abstraction refinement
-relies on parametrising the target language, which
-induces a lattice of progressively more expressive languages.  We
-start by attempting to synthesise a program at the lowest point on
-this lattice and increase the parameters of the language until we
-reach a point at which the synthesis succeeds. As well as giving us an
-automatic search procedure, this parametrisation greatly increases the
-efficiency of our system since languages low down the lattice are very
-easy to decide safety for (i.e. the validation oracle finds an answer
+It is worth noting that each iteration of the loop adds a new input to
+the finite set $\text{\sc inputs}$ that is used for synthesis.  Given
+that the full set of inputs $\mathcal{D}$ is finite, this means that
+the refinement loop can only iterate a finite number of times.
+
+\subsection{Solution generalisation} 
+Given the large soloution space to be searched during the inductive
+synthesis phase, we parametrise the target language, which induces a
+lattice of progressively more expressive languages.  This enables us 
+to start by attempting to synthesise a program at the lowest point on this lattice
+and increase the parameters of the language until we reach a point at
+which the synthesis succeeds. Whenever we manage to synthesise
+a candidate solution at some lower point on the lattice, 
+we apply generalisation to obtain a full solution.
+
+As well as giving us an automatic search
+procedure, this parametrisation greatly increases the efficiency of
+our system since languages low down the lattice are very easy to
+decide safety for (i.e. the validation oracle finds an answer
 fast). If a program can be synthesised in a low-complexity language,
 the whole procedure finishes much faster than if synthesis had been
 attempted in a high-complexity language.
@@ -648,65 +681,10 @@ unroll the corresponding loop $k$ times. For this approach the
 generalisation step is given as an incremental
 increase of precision and sampling rate (see Sec.~\ref{sec:CEGIS-precision-incrementation}).
 \end{itemize}
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{General architecture of the program synthesizer}
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\label{synthesizer-general}
-%
-%% \red{[I would recommend to clarify the domain of definition of $\sigma$, particularly over the set where $x$ ranges over. 
-%% (Be cognisant that control audience might be unfamiliar with the cegis architecture.) ]}
-% 
-The input specification provided to the program synthesizer is of the form
-$\exists \vec{P} .  \forall \vec{x}.  \sigma(\vec{x}, \vec{P})$ where
-$\vec{P}$ ranges over functions, $\vec{x}$ ranges over ground terms and
-$\sigma$ is a quantifier-free formula.  We interpret the ground terms over
-some finite domain $\mathcal{D}$.
 
-The design of our synthesizer 
-%is given in Figure~\ref{fig:CEGIS} and 
-consists of two phases, an inductive synthesis phase and a validation phase,
-%{\sc Synthesize} and {\sc Verify}, 
-which interact via a finite set of test vectors {\sc inputs} that is updated incrementally. 
-Given the aforementioned specification $\sigma$, the inductive synthesis
-procedure
-tries to find an existential witness $\vec{P}$ satisfying the specification
-$\sigma(\vec{x}, \vec{P})$ for all $\vec{x}$ in {\sc inputs} (as opposed to
-all $\vec{x} \in \mathcal{D}$).
-%
-If the synthesis phase succeeds in finding a witness~$\vec{P}$, this witness
-is a candidate solution to the full synthesis formula.  We pass this
-candidate solution to the validation phase, which checks whether it is a full
-solution (i.e., $\vec{P}$ satisfies the specification $\sigma(\vec{x},
-\vec{P})$ for all $\vec{x}\in\mathcal{D}$).
-%
-%determines whether
-%it does satisfy the specification on all inputs by checking
-%satisfiability of the following verification formula:
-%
-%$\exists \vec{x} . \lnot \sigma(\vec{x}, \vec{P})$
-%If this formula is unsatisfiable, 
-%% the candidate solution is in fact a 
-%% full solution.
-%
-If this is the case, then the algorithm terminates.  Otherwise, additional
-information is provided to the inductive synthesis phase in the form of a new
-counterexample that is added to the {\sc inputs} set and the loop iterates
-again.
-%% the witness $\vec{x}$ denote an input on which the
-%% candidate solution fails to meet the specification.  Thus, $\vec{x}$ is
-%% added to the {\sc inputs} set, and the loop iterates again.  
-
-It is
-worth noting that each iteration of the loop adds a new input to the
-finite set $\text{\sc inputs}$ that is used for synthesis.  Given that
-the full set of inputs $\mathcal{D}$
-%\blue{[which by now should have a name, as suggested to be introduced above]} 
-is finite, this means that the refinement loop
-can only iterate a finite number of times.
-
-In Sec.~\ref{sec:CEGIS-abstraction-refinement} and 
-Sec.~\ref{sec:CEGIS-precision-incrementation}, we explain how we 
-specialise the general CEGIS approach in order to perform solution generalisation.
+% In Sec.~\ref{sec:CEGIS-abstraction-refinement} and 
+% Sec.~\ref{sec:CEGIS-precision-incrementation}, we explain how we 
+% specialise the general CEGIS approach in order to perform solution generalisation.
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{Our synthesis problem}
@@ -716,8 +694,7 @@ find a digital controller $K$ (see Eq.~\ref{eq:controlaction})
 that makes the closed-loop system safe for 
 initial state $x_0$, reference signal $r_k$ and input $u_k$
 as defined in Sec.~\ref{ssec:safety}. Note that, 
-as mentioned at the beginning of the section, 
-we consider the reference signal to be 0.
+we consider the reference signal to be 0 (\todo{refer to wherever this is explained initially}).
 Then, when mapping back to the notation used for describing the general architecture 
 of the program synthesizer, the controller $K$ denotes $P$ and 
 $(x_0, u_k)$ represents $x$. 
@@ -965,11 +942,11 @@ $z^n+\sum_{i=1}^n[a_i-k_i]z^{n-i}=\prod_{i=1}^n (z-[\lambda_i]) : |[\lambda_i]|<
      (LUNSAT.east) edge (FAIL.west);
 \end{tikzpicture}
 }
-\caption{The CEGIS loop with abstraction refinement\label{fig:CEGARIS}.}
+\caption{CEGIS with abstraction refinement\label{fig:CEGARIS}.}
 \end{figure}
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{CEGIS with precision and sampling rate incrementation}
+\subsection{CEGIS with multi-staged verification}
 \label{sec:CEGIS-precision-incrementation}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -1043,7 +1020,7 @@ $z^n+\sum_{i=1}^n[a_i-k_i]z^{n-i}=\prod_{i=1}^n (z-[\lambda_i]) : |[\lambda_i]|<
 
  \end{tikzpicture}
 }}
-\caption{The CEGIS loop with precision and sampling rate incrementation}
+\caption{CEGIS with multi-staged verification.}
 \label{fig:CEGIS-precision-increment}
 \end{figure}
 
@@ -1056,7 +1033,7 @@ a completeness threshold $\overline{k}$.
 Essentially, $\overline{k}$ represents the number of iterations 
 to sufficiently unwind the closed-loop state-space system 
 so that the variation rate (derivative) of the states is negligible, 
-ensuring that the boundaries are not be violated for any $k>\overline{k}$. 
+ensuring that the boundaries are not violated for any $k>\overline{k}$. 
 Then, it is sufficient to unwound the closed-loop state-space system up to  
 $\overline{k}$ in order to ensure that $\phi_{safety}$ holds. 
 
@@ -1064,14 +1041,16 @@ Next, we describe the five stages from Fig.~\ref{fig:CEGIS-precision-increment}:
 
 1. The inductive synthesis phase (i.e. {\sc synthesize}) uses BMC to 
 compute a candidate solution $K$. It does this by assuming 
-a $k$ and a sampling rate. The check that this assumptions were sound 
+a plan't precision $<I_p,F_p>$, a $k$ and a sampling rate. 
+The check that these assumptions are sound 
 is performed later by the {\sc complete} and {\sc sampling} 
 validation stages.
 
 2. The validation phase consists of four stages 
 (blocks 2-5 in Fig.~\ref{fig:CEGIS-precision-increment}), where the first one
-performs potentially unsound operations assuming a plant's precision $<I_p,F_p>$, 
-current $k$ and sampling rate, whereas the subsequent three stages are used to 
+performs potentially unsound operations considering the currently assumed 
+plant's precision $<I_p,F_p>$, 
+$k$ and sampling rate, whereas the subsequent three stages are used to 
 restore soundness. 
 
 3. This stage restores soundness with respect to the plant precision
@@ -1079,7 +1058,7 @@ by using interval arithmetic \cite{moore1966interval} to validate the
 operations performed by the previous stage.
 
 4. This stage checks that the current  $k$ 
-is large enough to ensure that the boundaries are not be violated for any $k'>k$.
+is large enough to ensure that the boundaries are not violated for any $k'>k$.
 In order to verify this, we compute the 
 completeness threshold $\overline{k}$ for the current candidate $K$ 
 and check that $k{\leq}\overline{k}$. 
