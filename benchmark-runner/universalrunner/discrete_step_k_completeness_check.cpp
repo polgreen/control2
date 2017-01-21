@@ -5,8 +5,10 @@
 
 typedef mpfr::mpreal realt;
 typedef std::complex<realt> complext;
-typedef realt __CPROVER_EIGEN_fixedbvt;
-#include "spec.h"
+typedef realt __plant_typet;
+#define CONTROL_TYPES_H_
+#define interval(x) x
+#include "benchmark.h"
 
 using namespace Eigen;
 using namespace std;
@@ -15,13 +17,16 @@ using namespace mpfr;
 #define EXIT_INCREASE_K 2
 #define EXIT_INCREASE_SAMPLE_RATE 3
 #define PRECISION 256
+#define NUM_PROG_ARGS 2 + NSTATES
 #define K_SIZE_ARG_INDEX 1u
+#define K_ARG_OFFSET 2u
 
 typedef Matrix<realt, NSTATES, NSTATES> matrixt;
 
 // TODO: Read actual K
 //const realt _controller_K[] = { 0.0234375,-0.1328125, 0.00390625 };
-const realt _controller_K[] = { 0.0234375,0.1328125, 0.00390625 };
+//const realt _controller_K[] = { 0.0234375,0.1328125, 0.00390625 };
+realt _controller_K[NSTATES];
 
 bool is_imaginary(const realt &imaginary_offset, const complext &complex) {
   const realt imag_value = std::imag(complex);
@@ -34,9 +39,12 @@ int main(const int argc, const char * const argv[]) {
   const realt two = "2.0";
   const realt two_pi = const_pi() * two;
   const realt imaginary_offset = pow(two, -PRECISION/4);
-  if (argc < 2) return EXIT_FAILURE;
+  if (argc != NUM_PROG_ARGS) return EXIT_FAILURE;
   mpreal::set_default_prec(PRECISION);
   const realt K_SIZE = argv[K_SIZE_ARG_INDEX];
+  for (size_t i=0; i < NSTATES; ++i)
+    _controller_K[i]=argv[i + K_ARG_OFFSET];
+
   Matrix<realt, NSTATES, NSTATES> A;
   for (size_t i = 0; i < NSTATES; ++i) {
     for (size_t j = 0; j < NSTATES; ++j) {
