@@ -1074,9 +1074,9 @@ Now that we have explained the verification process, we may proceed to describe 
 \end{enumerate} 
 \item If the candidate solution is not valid we refine the abstraction used by the synthesiser
 \begin{enumerate}
-\item Find the constraints that invalidate the property. These are the rows of $\mat{E} \in \Psi$ that intersect/segment $\hat{X}^\#$. Transforming these rows into the eigenspace of $\mat{A}_t$, and applying backward acceleration to obtain a set of counterexamples for the eigenvalues, which we define as $\Psi(\Lambda)$. This is a constraint in the spectrum (\emph{ie} frequency response transfer function) of the closed loop dynamics. 
+\item Find the constraints that invalidate the property. These are the rows of $\mat{E} \in \Psi$ that intersect/segment $\hat{X}^\#$. Transforming these rows into the eigenspace of $\mat{A}_t$, and applying backward acceleration to obtain a set of counterexamples for the eigenvalues, which we define as $\phi(\Lambda)$. This is a constraint in the spectrum (\emph{ie} frequency response transfer function) of the closed loop dynamics. 
 \item Transform the soft constraints on the spectrum into soft constraints on the coefficients of the characteristic polynomial. 
-$z^n+\sum_{i=1}^n[a_i-k_i]z^{n-i}=\prod_{i=1}^n (z-[\lambda_i]) : |[\lambda_i]|<1 \wedge [\lambda_i] \models \Psi_{\Lambda}$.
+$z^n+\sum_{i=1}^n[a_i-k_i]z^{n-i}=\prod_{i=1}^n (z-[\lambda_i]) : |[\lambda_i]|<1 \wedge [\lambda_i] \models \phi_{\Lambda}$.
 \item Pass the refined abstraction with the new contraints to the synthesiser, as well as a counterexample plant coefficients ($P_a$) and repeat the loop again. We note that the Abstraction refinement is a soft constraint on the proposed model which can increase or decrease the parameter space at any time, whereas the concrete counterexample passed to the synthesiser is monotonically decreasing. The first one improves speed of the tool whereas the second ensures convergence.
 
 \end{enumerate} 
@@ -1107,11 +1107,8 @@ $z^n+\sum_{i=1}^n[a_i-k_i]z^{n-i}=\prod_{i=1}^n (z-[\lambda_i]) : |[\lambda_i]|<
    \& complexnode/.pic={
      \coordinate (auxsynth);
      \node[draw,rectangle,align=center] (KSAT) at ([xshift=-.8cm]auxsynth.center) {\sc Prog.\\Search};
-     \node[draw,rectangle,align=center] (LSAT) at ([xshift=.8cm]auxsynth.center) {\sc Prog.\\Search};
      \node[draw=none] (SATK) at ([xshift=-.5cm,yshift=1.5cm]KSAT)  {$\mathcal{J}_K$};
      \node[draw=none] (K) at ([xshift=.4cm,yshift=1.5cm]KSAT)  {$\tilde{\mat{K}}$};
-     \node[draw=none] (SATL) at ([xshift=-.5cm,yshift=1.5cm]LSAT)  {$\mathcal{J}_L$};
-     \node[draw=none] (L) at ([xshift=.4cm,yshift=1.5cm]LSAT)  {$\tilde{\mat{L}}$};
     }
    \& complexnode/.pic={
      \coordinate (AA);
@@ -1126,7 +1123,6 @@ $z^n+\sum_{i=1}^n[a_i-k_i]z^{n-i}=\prod_{i=1}^n (z-[\lambda_i]) : |[\lambda_i]|<
    \& complexnode/.pic={
      \coordinate (UNSAT);
      \coordinate (KUNSAT)  at ([xshift=-.8cm]UNSAT.center);
-     \coordinate (LUNSAT) at ([xshift=.8cm]UNSAT.center);
      \node[draw=none] (UNSATB) at ([xshift=1.6cm,yshift=.3cm]UNSAT)  {\sc UNSAT};
   }
   \& \& \coordinate (FAIL);\\
@@ -1145,8 +1141,6 @@ $z^n+\sum_{i=1}^n[a_i-k_i]z^{n-i}=\prod_{i=1}^n (z-[\lambda_i]) : |[\lambda_i]|<
   \path
     ([xshift=+.6cm]KSAT.north) edge ([xshift=-2.1cm]synth.south) 
     ([xshift=-3.3cm]synth.south) edge ([xshift=-.6cm]KSAT.north)
-    ([xshift=.6cm]LSAT.north) edge ([xshift=3.3cm]synth.south)
-    ([xshift=+2.1cm]synth.south) edge ([xshift=-.6cm]LSAT.north)
     ([xshift=-4.9cm]verify.south) edge (AAI.north)
     (AAI.east) edge (AAV.west)
     (AAV.north) edge ([xshift=4.9cm]verify.south)
@@ -1156,10 +1150,8 @@ $z^n+\sum_{i=1}^n[a_i-k_i]z^{n-i}=\prod_{i=1}^n (z-[\lambda_i]) : |[\lambda_i]|<
     (FAIL.north) edge (done.south);
    \path[-] 
      (KSAT.south) edge (KUNSAT.north)
-     (LSAT.south) edge (LUNSAT.north)
-     (KUNSAT.east) edge (LUNSAT.west)
-     (verify.north) edge node {$\Psi (\mat{K})$} (aux)
-     (LUNSAT.east) edge (FAIL.west);
+     (KUNSAT.east) edge (FAIL.west)
+     (verify.north) edge node {$\Psi (\mat{K})$} (aux);
 \end{tikzpicture}
 }
 \caption{CEGIS with abstraction refinement\label{fig:CEGARIS}.}
