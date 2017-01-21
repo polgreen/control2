@@ -435,7 +435,7 @@ such that ${\underline{u} \leq u_{k} \leq \overline{u}},\forall k\geq 0$.
 \label{sec:numeric_rep}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-There are two sources of error due to numeric representation; the numeric error introduced by 
+The systems and models we consider have two sources of error due to numeric representation; the numeric error introduced by 
 the fixed point numbers used to model our plant, i.e, the plant dynamics $A_d$, $B_d$ and the states; 
 and the numeric error introduced by the digital controller, which uses an analogue-to-digital converter to read
 the states as a fixed-point number and performs operations in this domain. In this section we formally outline the errors introduced by
@@ -470,8 +470,9 @@ function and verifies that no state overflows.
 \subsection{Fixed word length effects on matrix multiplications}
 \label{sec:cof_fwl}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+\todo{this section is unclear and probably needs to move somewhere else as it is only relevant for the acceleration back end}
 Thus far we have presented a verification procedure for a digitalized plant in a continuous space (\emph{ie} the
-range of the quatizers is still $\mathbb{R}$. The next step we must reaize is that the controller 
+range of the quantizers is still $\mathbb{R}$. The next step we must realize is that the controller 
 exists in a digital program, hence its domain is $\mathbb{R}\langle I,F\rangle$. We have $\mat{A},\mat{B},\vec{x} \in \mathbb{R}^*$, $\mat{K}_d,\vec{u},\hat{\vec{x}}=\mathcal{F}\langle I,F \rangle(\vec{x}) \in \mathbb{R}\langle I,F\rangle^*$
 Where $*$ represents the appropriate dimension for each matrix/vector.
 Unfortunately this means that although the closed loop dynamics are in the reals, they suffer from
