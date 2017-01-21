@@ -26,6 +26,7 @@
 \usepackage{pgfplots}
 \usepackage{framed}
 \usepackage{listings}
+\usepackage{algorithm,algpseudocode}
 
 \usepackage{todonotes}
 \usetikzlibrary{positioning, automata, shapes.arrows, calc, shapes, arrows}
@@ -868,11 +869,30 @@ The stability criteria are satisfied if the characteristic polynomial of $A_d - 
 independent of the initial states. 
 In order to synthesise a controller for satisfaction of the safety specification, we unwind the transition system
 $k$ steps, and pick a controller $K$ and an initial state such that the states at each step do not violate the safety criteria. 
+The unwinding calculation includes the conversion from plant precision to the fixed point controller precision. 
 
 We assumes some
 precision $\langle I_p,F_p\rangle$ for the plant, a $k$ and a sampling rate.  The
 checks that these assumptions are sound are performed by subsequent
 {\sc verify} stages.
+
+
+
+\begin{algorithm}[]
+\begin{algorithmic}[1]
+\Function{$safetyCheck()$}{}
+	\State assert($ \underline{u}  \leq u \leq \overline{u}$)
+	\While{$i=0; i< k; i++$}
+		%\State $u = (\langle I_p,F_p\rangle)((\langle I_c,F_c\rangle)K * (\langle I_c,F_c\rangle) x)$
+		\State $u = (plant\_typet)((controller\_typet)K * (controller\_typet) x)$
+		\State $x = A * x + B * u$
+		\State assert($\underline{x} \leq x \leq \overline{x}$ )
+  	\EndWhile
+  %\State Return $K$
+\EndFunction
+\end{algorithmic}
+\label{alg:safetycheck}
+\end{algorithm}
 
 2. The first {\sc verify} stage, {\sc safety}, checks that the candidate
 solution $K$ is safe for all possible initial states, i.e., does not reach an unsafe
@@ -887,7 +907,10 @@ However, we can show that, if the controller is safe for each of the corner case
 it is safe for any initial state in the hypercube. Thus we only need to check $2^N$ initial states, where $N$ is the number 
 of states. 
 
-\todo[inline]{ALESSANDRO: please write out proof that checking only the corner cases is valid for the safety verification}
+\todo[inline]{Alessandro: please write out proof that checking only the corner cases is valid for the safety verification}
+
+
+
 
 This check is potentially unsound because we consider the currently
 assumed $\langle I_p,F_p\rangle$, $k$ and sampling rate. 
@@ -895,7 +918,7 @@ assumed $\langle I_p,F_p\rangle$, $k$ and sampling rate.
 3. The second {\sc verify} stage, {\sc precision}, 
  restores soundness with respect to the plant's precision
 by using interval arithmetic \cite{moore1966interval} to validate the 
-operations performed by the previous stage.
+operations performed by the previous stage. 
 
 4. The third {\sc verify} stage, {\sc complete}, checks that the
 current $k$ is large enough to ensure that the boundaries are not
@@ -906,15 +929,17 @@ and check that $k{\leq}\overline{k}$.
 A stable control system is known to have converging dynamics, i.e., the
 distance from the reference (in this case the origin) decreases over time. 
 
+\todo[inline]{Alessandro: please can we have the proof for the completeness threshold here}
+\missingfigure{picture for completeness threshold}
 
 
-
- \addtodo{discuss the computation
-  of the completeness threshold}
 
 5. The last {\sc verify} stage, {\sc sampling}, 
 ensures that the current sampling rate is large enough by using an 
 external checker (\addtodo{add more details here once we have them}).
+
+
+
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{CEGIS with abstraction refinement}
