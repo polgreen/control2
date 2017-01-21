@@ -567,7 +567,8 @@ The error in $\vec{u}$ corresponds of the multiplication of $\mat{K}_d\hat{\vec{
 \label{sec:CEGARIS} 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 %Abstractly-Refined
-
+In this section we outline the general architecture of the progam synthesizer used 
+in both approaches. We then detail the 2 methods of solution generalisation that we compare.
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{General architecture of the program synthesizer}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -669,6 +670,137 @@ the generalisation step in each approach?}
 % specialise the general CEGIS approach in order to perform solution generalisation.
 
 
+
+
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+\subsection{CEGIS with multi-staged verification}
+\label{sec:CEGIS-precision-incrementation}
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+\begin{figure}[htb]
+{\scriptsize
+\centering
+%\resizebox{.8\textwidth}{!}
+{
+ \begin{tikzpicture}[scale=0.3,->,>=stealth',shorten >=.2pt,auto, semithick, initial text=, ampersand replacement=\&,]
+  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center
+},
+          row sep=.6cm, column sep=.9cm] {
+   \coordinate (aux1);
+   \& \coordinate (aux2);
+   \&;\\
+   \coordinate (aux3);
+   \& \coordinate (aux4);
+   \&;\\
+   \coordinate (aux5);
+   \& \coordinate (aux6);
+   \&;\\
+   \node[minimum width=1.5cm, minimum height=0.6cm, fill=gray!20] (synth) {{\sc 1.Synthesize}};
+   \&
+   complexnode/.pic={ 
+     \node[rectangle,draw,dotted,
+	minimum width=8cm,
+	minimum height=1cm,
+        pattern=north west lines, pattern color=gray!20,
+	label={\sc Verify},] (verif) {};
+     \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif1) at ([xshift=-2.9cm]verif.center) {{\sc 2.Safety}};
+     \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif2) at ([xshift=-0.8cm]verif.center) {{\sc 3.Precision}};
+     \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif3) at ([xshift=1.2cm]verif.center) {{\sc 4.Complete}};
+     \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif4) at ([xshift=3.1cm]verif.center) {{\sc 5.Sampling}};
+   } 
+   \& \node[ellipse, fill=gray!20] (done) {{\sc Done}};\\
+   \& \\
+   \node[minimum height=0cm] (gp) {\sf Closed-loop \\ System Search};
+   \&
+   complexnode/.pic={ 
+     \coordinate (aux);
+   \node (bmc) at ([xshift=-2.9cm]aux.center) {\sf BMC-based \\Verifier};
+   \node (fp)  at ([xshift=-.8cm]aux.center) {\sf Fixed-point \\ Arithmetic\\Verifier};
+   \node (sv)  at ([xshift=1.2cm]aux.center) {\sf Completeness\\Verifier};
+   \node (cv)  at ([xshift=3.1cm]aux.center) {\sf Sampling\\Verifier};
+   }   
+    \\
+  };
+
+   \path
+    ([yshift=2em]synth.east) edge node[xshift=-0.5em,align=center] {$P$} ([yshift=2em]verif1.west)
+    ([yshift=-2em]verif1.west) edge node {C-ex} ([yshift=-2em]synth.east)
+    ([xshift=-5em]fp.north) edge node[align=center]  {T/F} ([xshift=-5em]verif2.south)
+    ([xshift=-5em]sv.north) edge node[align=center]  {T/F} ([xshift=-5em]verif3.south)
+    ([xshift=-5em]cv.north) edge node[align=center]  {T/F} ([xshift=-5em]verif4.south)
+    ([xshift=5em]verif1.south) edge node[align=center] {$P$} ([xshift=5em]bmc.north)
+    ([xshift=5em]verif2.south) edge node[align=center] {$P$} ([xshift=5em]fp.north)
+    ([xshift=5em]verif3.south) edge node[align=center] {$P$} ([xshift=5em]sv.north)
+    ([xshift=5em]verif4.south) edge node[align=center] {$P$} ([xshift=5em]cv.north)
+    ([xshift=-5em]bmc.north) edge node[align=center]  {UNSAT/\\model} ([xshift=-5em]verif1.south)
+    (verif) edge node {} (done)
+    ([xshift=5em]synth.south) edge node[align=center] {Inputs} ([xshift=5em]gp.north)
+    ([xshift=-5em]gp.north) edge node[align=center] {UNSAT/\\$P$} ([xshift=-5em]synth.south)
+    (aux1) edge (synth.north);
+   \path[-]
+   (verif2.north) edge node[align=center] {} ([xshift=-2.7cm]aux6)
+   ([xshift=-2.7cm]aux6) edge node[align=center] {Increase Precision} (aux5)
+   (verif3.north) edge node[align=center] {} ([xshift=4cm]aux4)
+   ([xshift=4cm]aux4) edge node[align=center] {Increase Completeness Threshold} (aux3)
+   (verif4.north) edge node[align=center] {} ([xshift=10.5cm]aux2)
+   ([xshift=10.5cm]aux2) edge node[align=center] {Increase Sampling Rate} (aux1);
+
+ \end{tikzpicture}
+}}
+\caption{CEGIS with multi-staged verification.}
+\label{fig:CEGIS-precision-increment}
+\end{figure}
+
+%\subsubsection{Controller synthesis}
+
+The controller synthesis is described in Fig.~\ref{fig:CEGIS-precision-increment}.
+One important observation is that, for this approach, we verify and synthesise 
+a controller over $k$ time steps. We then compute a completeness threshold, $\overline{k}$,
+for this controller, and verify the controller's correctness to $\overline{k}$ time steps.
+Essentially, $\overline{k}$ represents the number of iterations 
+required to sufficiently unwind the closed-loop state-space system 
+such that the boundaries are not violated for any $k{>}\overline{k}$
+(i.e. it's sufficient to unwound the closed-loop state-space system up to  
+$\overline{k}$ in order to ensure that $\phi_{safety}$ holds). 
+
+Next, we describe the different phases in Fig.~\ref{fig:CEGIS-precision-increment}
+(blocks 1 to 5):
+
+1. The inductive synthesis phase (i.e. {\sc synthesize}) uses BMC to
+compute a candidate solution $K$. For this purpose, it assumes some
+precision $\langle I_p,F_p\rangle$ for the plant, a $k$ and a sampling rate.  The
+checks that these assumptions are sound are performed by subsequent
+{\sc verify} stages.
+
+2. The first {\sc verify} stage, {\sc safety}, checks that the candidate
+solution $K$ is safe for all possible initial states, i.e., does not reach an unsafe
+state within $k$ steps. 
+This check is potentially unsound because we consider the currently
+assumed $\langle I_p,F_p\rangle$, $k$ and sampling rate. 
+
+3. The second {\sc verify} stage, {\sc precision}, 
+ restores soundness with respect to the plant's precision
+by using interval arithmetic \cite{moore1966interval} to validate the 
+operations performed by the previous stage.
+
+4. The third {\sc verify} stage, {\sc complete}, checks that the
+current $k$ is large enough to ensure that the boundaries are not
+violated for any $k'{>}k$.  For this purpose, we compute the
+completeness threshold $\overline{k}$ for the current candidate $K$
+and check that $k{\leq}\overline{k}$. 
+
+A stable control system is known to have converging dynamics, i.e., the
+distance from the reference (in this case the origin) decreases over time. 
+
+
+
+ \addtodo{discuss the computation
+  of the completeness threshold}
+
+5. The last {\sc verify} stage, {\sc sampling}, 
+ensures that the current sampling rate is large enough by using an 
+external checker (\addtodo{add more details here once we have them}).
+
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{CEGIS with abstraction refinement}
 \label{sec:CEGIS-abstraction-refinement}
@@ -679,7 +811,7 @@ non-deterministic simulation of an infinite set of states, which is undecidable.
 abstraction of this system by establishing bounds on the error between such a system and a discrete-time/space model.
 This model is still however, quite complex, hard to verify, and many of the states involved are inconsequential to
 the safety specification.
-Our second model, rather than look at a direct bisimulation in discrete time, explores a much higher abstraction,
+Our second approach, rather than look at a direct bisimulation in discrete time, explores a much higher abstraction,
 evaluating the unbounded time-continuous space reach tube as a set of inequalities that represent only the safety specifcation.
 We begin with a minimum set of linear inequalities describing the constraints caused by the input and the initial state during a
 single iteration, in addition to a stability specification defined by Jury's criteria, and try to synthesise a controller that meets these specs.
@@ -901,136 +1033,6 @@ $z^n+\sum_{i=1}^n[a_i-k_i]z^{n-i}=\prod_{i=1}^n (z-[\lambda_i]) : |[\lambda_i]|<
 }
 \caption{CEGIS with abstraction refinement\label{fig:CEGARIS}.}
 \end{figure}
-
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{CEGIS with multi-staged verification}
-\label{sec:CEGIS-precision-incrementation}
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-\begin{figure}[htb]
-{\scriptsize
-\centering
-%\resizebox{.8\textwidth}{!}
-{
- \begin{tikzpicture}[scale=0.3,->,>=stealth',shorten >=.2pt,auto, semithick, initial text=, ampersand replacement=\&,]
-  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center
-},
-          row sep=.6cm, column sep=.9cm] {
-   \coordinate (aux1);
-   \& \coordinate (aux2);
-   \&;\\
-   \coordinate (aux3);
-   \& \coordinate (aux4);
-   \&;\\
-   \coordinate (aux5);
-   \& \coordinate (aux6);
-   \&;\\
-   \node[minimum width=1.5cm, minimum height=0.6cm, fill=gray!20] (synth) {{\sc 1.Synthesize}};
-   \&
-   complexnode/.pic={ 
-     \node[rectangle,draw,dotted,
-	minimum width=8cm,
-	minimum height=1cm,
-        pattern=north west lines, pattern color=gray!20,
-	label={\sc Verify},] (verif) {};
-     \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif1) at ([xshift=-2.9cm]verif.center) {{\sc 2.Safety}};
-     \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif2) at ([xshift=-0.8cm]verif.center) {{\sc 3.Precision}};
-     \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif3) at ([xshift=1.2cm]verif.center) {{\sc 4.Complete}};
-     \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif4) at ([xshift=3.1cm]verif.center) {{\sc 5.Sampling}};
-   } 
-   \& \node[ellipse, fill=gray!20] (done) {{\sc Done}};\\
-   \& \\
-   \node[minimum height=0cm] (gp) {\sf Closed-loop \\ System Search};
-   \&
-   complexnode/.pic={ 
-     \coordinate (aux);
-   \node (bmc) at ([xshift=-2.9cm]aux.center) {\sf BMC-based \\Verifier};
-   \node (fp)  at ([xshift=-.8cm]aux.center) {\sf Fixed-point \\ Arithmetic\\Verifier};
-   \node (sv)  at ([xshift=1.2cm]aux.center) {\sf Completeness\\Verifier};
-   \node (cv)  at ([xshift=3.1cm]aux.center) {\sf Sampling\\Verifier};
-   }   
-    \\
-  };
-
-   \path
-    ([yshift=2em]synth.east) edge node[xshift=-0.5em,align=center] {$P$} ([yshift=2em]verif1.west)
-    ([yshift=-2em]verif1.west) edge node {C-ex} ([yshift=-2em]synth.east)
-    ([xshift=-5em]fp.north) edge node[align=center]  {T/F} ([xshift=-5em]verif2.south)
-    ([xshift=-5em]sv.north) edge node[align=center]  {T/F} ([xshift=-5em]verif3.south)
-    ([xshift=-5em]cv.north) edge node[align=center]  {T/F} ([xshift=-5em]verif4.south)
-    ([xshift=5em]verif1.south) edge node[align=center] {$P$} ([xshift=5em]bmc.north)
-    ([xshift=5em]verif2.south) edge node[align=center] {$P$} ([xshift=5em]fp.north)
-    ([xshift=5em]verif3.south) edge node[align=center] {$P$} ([xshift=5em]sv.north)
-    ([xshift=5em]verif4.south) edge node[align=center] {$P$} ([xshift=5em]cv.north)
-    ([xshift=-5em]bmc.north) edge node[align=center]  {UNSAT/\\model} ([xshift=-5em]verif1.south)
-    (verif) edge node {} (done)
-    ([xshift=5em]synth.south) edge node[align=center] {Inputs} ([xshift=5em]gp.north)
-    ([xshift=-5em]gp.north) edge node[align=center] {UNSAT/\\$P$} ([xshift=-5em]synth.south)
-    (aux1) edge (synth.north);
-   \path[-]
-   (verif2.north) edge node[align=center] {} ([xshift=-2.7cm]aux6)
-   ([xshift=-2.7cm]aux6) edge node[align=center] {Increase Precision} (aux5)
-   (verif3.north) edge node[align=center] {} ([xshift=4cm]aux4)
-   ([xshift=4cm]aux4) edge node[align=center] {Increase Completeness Threshold} (aux3)
-   (verif4.north) edge node[align=center] {} ([xshift=10.5cm]aux2)
-   ([xshift=10.5cm]aux2) edge node[align=center] {Increase Sampling Rate} (aux1);
-
- \end{tikzpicture}
-}}
-\caption{CEGIS with multi-staged verification.}
-\label{fig:CEGIS-precision-increment}
-\end{figure}
-
-%\subsubsection{Controller synthesis}
-
-The controller synthesis is described in Fig.~\ref{fig:CEGIS-precision-increment}.
-One important observation is that, for this approach, we verify and synthesise 
-a controller over $k$ time steps. We then compute a completeness threshold, $\overline{k}$,
-for this controller, and verify the controller's correctness to $\overline{k}$ time steps.
-Essentially, $\overline{k}$ represents the number of iterations 
-required to sufficiently unwind the closed-loop state-space system 
-such that the boundaries are not violated for any $k{>}\overline{k}$
-(i.e. it's sufficient to unwound the closed-loop state-space system up to  
-$\overline{k}$ in order to ensure that $\phi_{safety}$ holds). 
-
-Next, we describe the different phases in Fig.~\ref{fig:CEGIS-precision-increment}
-(blocks 1 to 5):
-
-1. The inductive synthesis phase (i.e. {\sc synthesize}) uses BMC to
-compute a candidate solution $K$. For this purpose, it assumes some
-precision $\langle I_p,F_p\rangle$ for the plant, a $k$ and a sampling rate.  The
-checks that these assumptions are sound are performed by subsequent
-{\sc verify} stages.
-
-2. The first {\sc verify} stage, {\sc safety}, checks that the candidate
-solution $K$ is safe for all possible initial states, i.e., does not reach an unsafe
-state within $k$ steps. 
-This check is potentially unsound because we consider the currently
-assumed $\langle I_p,F_p\rangle$, $k$ and sampling rate. 
-
-3. The second {\sc verify} stage, {\sc precision}, 
- restores soundness with respect to the plant's precision
-by using interval arithmetic \cite{moore1966interval} to validate the 
-operations performed by the previous stage.
-
-4. The third {\sc verify} stage, {\sc complete}, checks that the
-current $k$ is large enough to ensure that the boundaries are not
-violated for any $k'{>}k$.  For this purpose, we compute the
-completeness threshold $\overline{k}$ for the current candidate $K$
-and check that $k{\leq}\overline{k}$. 
-
-A stable control system is known to have converging dynamics, i.e., the
-distance from the reference (in this case the origin) decreases over time. 
-
-
-
- \addtodo{discuss the computation
-  of the completeness threshold}
-
-5. The last {\sc verify} stage, {\sc sampling}, 
-ensures that the current sampling rate is large enough by using an 
-external checker (\addtodo{add more details here once we have them}).
-
 
 %-------------------------------
 \section{Experimental Evaluation}
