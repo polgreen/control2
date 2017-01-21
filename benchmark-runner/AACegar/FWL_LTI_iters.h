@@ -130,14 +130,22 @@ void checkIterations(matrixt transform)
   accelerateInputs();
   #ifndef __CPROVER
     for (i=0;i<_NUM_INPUT_VERTICES;i++) print_vector("input",accel_vertices[i]);
-  #endif  
+  #endif
   for (k=0;k<_NUM_INPUT_VERTICES;k++)
   {
     for (i=0;i<_NUM_VERTICES;i++)
     {
-  #ifndef __CPROVER
-      print_vector("init",vertices[i]);
-  #endif  
+      #ifndef __CPROVER
+        print_vector("init",vertices[i]);
+      #endif
+      #ifdef POINTS_PER_ITER
+        bool skip=true;
+        for (j=0;j<_NUM_ITERATIONS;j++)
+        {
+           if ((iter_vertices[j][0]==i) && (iter_vertices[j][1]==k)) skip=false;
+        }
+        if (skip) continue;
+      #endif  
       for (j=0;j<_DIMENSION;j++) reach_vertices[k][i][j]=vertices[i][j]-accel_vertices[k][j];
       checkIteration(reach_vertices[k][i],transform,k);
     }
@@ -149,6 +157,14 @@ void checkIterations(matrixt transform)
   #endif
   for (i=0;i<_NUM_VERTICES;i++)
   {
+    #ifdef POINTS_PER_ITER
+      bool skip=true;
+      for (j=0;j<_NUM_ITERATIONS;j++)
+      {
+         if (iter_vertices[j][0]==i) skip=false;
+      }
+      if (skip) continue;
+    #endif  
     for (j=0;j<_DIMENSION;j++) reach_vertices[0][i][j]=vertices[i][j];
     checkIteration(reach_vertices[0][i],transform,0);
   }
@@ -162,17 +178,27 @@ void checkIterations(matrixt transform)
   {
     powerMatrix(temp,transform,iterations[i]-lastIteration);
     multiply(matrix,temp);
-#ifndef __CPROVER
-    printf("iter %d\n",iterations[i]);
-    print_matrix("matrix",matrix);
-#endif
-    for (j=0;j<_NUM_VERTICES;j++) checkIteration(reach_vertices[0][j],matrix,0);
-#if (_NUM_INPUT_VERTICES>1)
-    for (k=1;k<_NUM_INPUT_VERTICES;k++)
-    {
-      for (j=0;j<_NUM_VERTICES;j++) checkIteration(reach_vertices[k][j],matrix,k);
-    }
-#endif
+    #ifndef __CPROVER
+      printf("iter %d\n",iterations[i]);
+      print_matrix("matrix",matrix);
+    #endif
+    #if (_NUM_INPUT_VERTICES>1)
+      for (k=0;k<_NUM_INPUT_VERTICES;k++)
+      {
+        #ifdef POINTS_PER_ITER
+          if (iter_vertices[i][1]!=k) continue;
+        #endif
+        for (j=0;j<_NUM_VERTICES;j++) 
+        {
+          #ifdef POINTS_PER_ITER
+            if (iter_vertices[i][0]!=k) continue;
+          #endif
+          checkIteration(reach_vertices[k][j],matrix,k);
+        }
+      }
+    #else
+      for (j=0;j<_NUM_VERTICES;j++) checkIteration(reach_vertices[0][j],matrix,0);      
+    #endif
     lastIteration=iterations[i];
   }
 #ifndef __CPROVER
