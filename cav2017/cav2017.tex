@@ -390,7 +390,7 @@ specification can be found in the Appendix~\ref{sec:appendix-stability}.
 There are two sources of error due to numeric representation; the numeric error introduced by 
 the fixed point numbers used to model our plant, i.e, the plant dynamics $A_d$, $B_d$ and the states; 
 and the numeric error introduced by the digital controller, which uses an analogue-to-digital converter to read
-the states as a fixed-point number. In this section we formally outline the errors introduced by
+the states as a fixed-point number and performs operations in this domain. In this section we formally outline the errors introduced by
 fixed point representation of numbers; in further sections we will differentiate between these
 two errors by referring to them as the \emph{plant error} and the \emph{digital controller error}.
 
@@ -410,21 +410,14 @@ The following errors appear in simple operations:
 \item Addition/Substraction: in the case of fixed point arithmetic of numbers with the same domain, there are no rounding errors, otherwise the maximum error is given by the domain of the result $c\langle \cdot, F_1\rangle \pm c\langle \cdot , F_2\rangle= c\langle \cdot , F_3\rangle + \delta_3 :|\delta_3| \leq 2^{-F_3} \wedge F_3 \leq F_1,F_2$ 
 \item Multiplication: $c\langle \cdot, F_1\rangle * c\langle \cdot,F_2\rangle=c\langle \cdot,F_3\rangle + \delta_3 : |\delta_3| \leq 2^{-F_3} \wedge F_3 \leq F_1,F_2$ 
 \end{enumerate}
-The bounds obtained for division are left to the reader as it will not be applied in this paper.
+The bounds obtained for division are left to the reader as they will not be applied in this paper.
 
-At this point it is worth mentioning that not all systems truncate equally. In the definition above $\delta$ may be positive
-or negative, and even this decision can be made dependent on the sign of $x$. Common cases in computer systems are:
-round downwards (\emph{ie} to $-\infty$), round upwards (\emph{ie} to $+\infty$), and round to zero.
-Rounding errors are cumulative which means the overall error will statistically increase with every operation, thus algorithms
-performing fewer operations can be more precise in this respect than iterative ones. 
 \item {\bf Overflow:}
   %Another source of error introduced by Finite Word Length representations is that of overflow.
   The finite word length set a
 maximum representable number in the domain ($\pm 2^{I-1}+1-2^{-F}$), which means that any number outside this range
-cannot be accurately represented by the domain (\emph{eg} $\delta=x-2^{I-1}+1-2^{-F}$). In the case of floating point, a special
-case for infinity has been introduced, which addresses some of this issues, but once the error has gone to infinity, the numbers
-become meaningless. It is the responsibility of software designers and tools to account for overflows and either supply saturation
-functions to prevent them or raise alarms in their presence. In the case of verification, the latter is seen as a safety problem.
+cannot be represented by the domain (\emph{eg} $\delta=x-2^{I-1}+1-2^{-F}$). Our tool currently assumes no saturation
+function and verifies that no state overflows.
 \end{enumerate}
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -435,8 +428,8 @@ Thus far we have presented a verification procedure for a digitalized plant in a
 range of the quatizers is still $\mathbb{R}$. The next step we must reaize is that the controller and the observer
 exist in a digital program, hence their domain is $\mathbb{R}\langle I,F\rangle$. This has two separate effects
 on the model. If we recall equation \eqref{eq:to_of}, the matrices of the observer and the controller  are not necessarily those of the plant.
-In fact we have $\mat{A},\mat{B} \in \mathbb{R}^*$, $\mat{A}_o,\mat{B}_o,\mat{K}_d, \mat{L}_d \in \mathbb{R}\langle I,F\rangle^*$
-Where $*$ represents the appropriate dimension for each matrix.
+In fact we have $\mat{A},\mat{B},\vec{x} \in \mathbb{R}^*$, $\mat{K}_d,\vec{u} \in \mathbb{R}\langle I,F\rangle^*$
+Where $*$ represents the appropriate dimension for each matrix/vector.
 Unfortunately this means that although combined matrices such as $\mat{A}_t$ are in the reals, they suffer from
 the fixed word restrictions in their composing matrices.
 The second effect corresponds to the rounding errors in the calculation of $\hat{x}_{k+1}, u_k$. These will introduce a new source of quantiztion noise which we may denote $\vec{\nu}_3 \in [-q_3\ \ q_3]$.
