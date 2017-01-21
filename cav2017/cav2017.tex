@@ -425,7 +425,7 @@ A standard objective is to obtain stable closed-loop dynamics.
 
 %-------------------------------
 \subsection{Stability of closed-loop systems}
-\label{sec:stability}
+\label{ssec:stability}
 %-------------------------------
 
 %\addtodo{[Here discuss Jury criterium for DISCRETE-TIME models - a simplified version of the first part of what is now in Section \ref{sec:cof_verification} (with no quantisation noises yet).]}  
@@ -861,19 +861,18 @@ Next, we describe the different phases in Fig.~\ref{fig:CEGIS-precision-incremen
 (blocks 1 to 5):
 
 1. The inductive synthesis phase (i.e. {\sc synthesize}) uses BMC to
-compute a candidate solution $K$. 
-
-We compute a candidate $K$, with the required controller precision $\langle I_c,F_c\rangle$, that satisfies both the stability criteria detailed in 
-section \todo{ref stability section}, and the safety specification in section \todo{ref for safety}.
-The stability criteria are satisfied if the characteristic polynomial of $A_d - B_d * K_d$ meets Jury's criteria. This is 
-independent of the initial states. 
-In order to synthesise a controller for satisfaction of the safety specification, we unwind the transition system
-$k$ steps, and pick a controller $K$ and an initial state such that the states at each step do not violate the safety criteria. 
-The unwinding calculation includes the conversion from plant precision to the fixed point controller precision. 
-
-We assumes some
-precision $\langle I_p,F_p\rangle$ for the plant, a $k$ and a sampling rate.  The
-checks that these assumptions are sound are performed by subsequent
+compute a candidate solution $K$
+that satisfies both the stability criteria detailed in 
+Sec.~\ref{ssec:stability} and the safety specification in Sec.~\ref{ssec:safety}.
+%% The stability criteria are satisfied if the characteristic polynomial of $A_d - B_d * K_d$ meets Jury's criteria. This is 
+%% independent of the initial states. 
+Regarding the latter, we synthesise a safe controller by unwinding the transition system
+$k$ steps and picking a controller $K$ and an initial state such that the states at each step do
+not violate the safety criteria. This is sound if the current $k$ is below the
+completeness threshold, which we assume to be true in the {\sc synthesize} phase.
+We also assume some
+precision $\langle I_p,F_p\rangle$ for the plant and a sampling rate.  The
+checks that all these assumptions are sound are performed by subsequent
 {\sc verify} stages.
 
 
@@ -896,24 +895,22 @@ checks that these assumptions are sound are performed by subsequent
 
 2. The first {\sc verify} stage, {\sc safety}, checks that the candidate
 solution $K$ is safe for all possible initial states, i.e., does not reach an unsafe
-state within $k$ steps. 
+state within $k$ steps where again we assume $k$ to be under the completeness threshold. 
+%The safety criteria here must be valid for all possible allowed initial states, and so we
+After unwinding the transition system corresponding to the previously synthesised controller
+$k$ steps, we check that the safety specification holds for any initial state. 
 
-The safety criteria here must be valid for all possible allowed initial states, and so we 
-unwind the transition system $k$ steps, using the previously synthesised $K$, and check that
-the state values at each step do not violate the safety bounds for any initial state. 
-
-This is relatively computationally expensive if the bounds on the allowed initial states are large. 
-However, we can show that, if the controller is safe for each of the corner cases of our hypercube of allowed initial states, 
-it is safe for any initial state in the hypercube. Thus we only need to check $2^N$ initial states, where $N$ is the number 
-of states. 
+This is relatively computationally expensive if the bounds on the
+allowed initial states are large.  However, we can show that, if the
+controller is safe for each of the corner cases of our hypercube of
+allowed initial states, it is safe for any initial state in the
+hypercube. Thus we only need to check $2^N$ initial states, where $N$
+is the number of states.
 
 \todo[inline]{Alessandro: please write out proof that checking only the corner cases is valid for the safety verification}
 
 
 
-
-This check is potentially unsound because we consider the currently
-assumed $\langle I_p,F_p\rangle$, $k$ and sampling rate. 
 
 3. The second {\sc verify} stage, {\sc precision}, 
  restores soundness with respect to the plant's precision
