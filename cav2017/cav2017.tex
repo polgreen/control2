@@ -411,8 +411,8 @@ $c_1\pm c_2= c_3 + \delta_3 :|\delta_3| \leq |\delta_{T1}| + |\delta_{T2}|$
 \item {\bf Overflow:}
   %Another source of error introduced by Finite Word Length representations is that of overflow.
   The finite word length set a
-maximum representable number in the domain ($\pm 2^{I-1}+1-2^{-F}$), which means that any number outside this range
-cannot be represented by the domain (\emph{eg} $\delta=x-2^{I-1}+1-2^{-F}$). Our tool currently assumes no saturation
+maximum representable number in the domain ($\pm (2^{I-1}+1-2^{-F})$), which means that any number outside this range
+cannot be represented by the domain. Our tool currently assumes no saturation
 function and verifies that no state overflows.
 \end{enumerate}
 
@@ -422,12 +422,12 @@ function and verifies that no state overflows.
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 Thus far we have presented a verification procedure for a digitalized plant in a continuous space (\emph{ie} the
 range of the quatizers is still $\mathbb{R}$. The next step we must reaize is that the controller 
-exists in a digital program, hence its domain is $\mathbb{R}\langle I,F\rangle$. We have $\mat{A},\mat{B},\vec{x} \in \mathbb{R}^*$, $\mat{K}_d,\vec{u} \in \mathbb{R}\langle I,F\rangle^*$
+exists in a digital program, hence its domain is $\mathbb{R}\langle I,F\rangle$. We have $\mat{A},\mat{B},\vec{x} \in \mathbb{R}^*$, $\mat{K}_d,\vec{u},\hat{\vec{x}}=\mathcal{F}\langle I,F \rangle(\vec{x}) \in \mathbb{R}\langle I,F\rangle^*$
 Where $*$ represents the appropriate dimension for each matrix/vector.
-Unfortunately this means that although combined matrices such as $\mat{A}_t$ are in the reals, they suffer from
-the fixed word restrictions in their composing matrices.
-The second effect corresponds to the rounding errors in the calculation of $\hat{x}_{k+1}, u_k$. These will introduce a new source of quantiztion noise which we may denote $\vec{\nu}_3 \in [-q_3\ \ q_3]$.
-The estimation of $\hat{\vec{x}}$ corresponds to the sum of three matrix-vector multiplications. Each of these has a coefficient-wise error bound $c_{min}$. Hence the overall $\overline{\delta}_{\hat{x}}=3nc_{min}$. The error in $\vec{u}$ corresponds of the multiplication of $\mat{K}_d\hat{\vec{x}}$, hence $q_3=\overline{\delta}_u=nc_{min}+\sum_{k=1}^nc_k\overline{\delta}_{\hat{x}}=(3|\mat{K}|_1+1)n2^{-F}$
+Unfortunately this means that although the closed loop dynamics are in the reals, they suffer from
+the fixed word restrictions in their composing elements.
+Apart from the quantization errors $q_1,q_2$ there are rounding errors in the calculation of $u_k$. These will introduce a new source of quantization noise which we may denote $\vec{\nu}_3 \in [-q_3\ \ q_3]$.
+The error in $\vec{u}$ corresponds of the multiplication of $\mat{K}_d\hat{\vec{x}}$, hence $q_3=\overline{\delta}_u=(|\mat{K}|_1+1)c_m$
 
 
 %-------------------------------
