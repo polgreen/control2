@@ -806,16 +806,16 @@ external checker (\addtodo{add more details here once we have them}).
 \label{sec:CEGIS-abstraction-refinement}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-The verification of a hybrid continuous/discrete time/space system over an unbounded time, requires the
+The verification of a hybrid continuous/discrete system over an unbounded time, requires the
 non-deterministic simulation of an infinite set of states, which is undecidable. Our initial approach creates an
-abstraction of this system by establishing bounds on the error between such a system and a discrete-time/space model.
+abstraction of this system by establishing bounds on the error between such a system and a discrete-time/continuous-space model.
 This model is still however, quite complex, hard to verify, and many of the states involved are inconsequential to
 the safety specification.
-Our second approach, rather than look at a direct bi-simulation in discrete time, explores a much higher abstraction,
-evaluating the unbounded time-continuous space reach tube as a set of inequalities that represent only the safety specification.
+Our second model, rather than look at a bisimulation in discrete time, explores a much higher abstraction,
+evaluating the unbounded time-continuous space reach tube as a set of inequalities that represent only the safety specifcation.
 We begin with a minimum set of linear inequalities describing the constraints caused by the input and the initial state during a
-single iteration, in addition to a stability specification defined by Jury's criteria, and try to synthesise a controller that meets these specifications.
-A second abstraction that encompasses the accelerated continuous reach-tube over an unbounded time is used to verify that the controller meets the full safety specification. If this step fails, we find a counterexample iteration that causes the selected system to fail and create a new constraint to refine our abstraction.
+single iteration, in addition to a stability specification defined by Jury's criteria, and try to synthesise a controller that meets these specs.
+A second abstraction that encompasses the accelerated continuous reach-tube over an unbounded time is used to verify that the controller meets the full safety specification. If this step fails, we find a counterexample iteration and initial state and create a new constraint to refine our abstraction.
 The advantage of this model is that it starts with a very simple description regardless of the complexity of the overall dynamics, and only expands to more complex models when a solution cannot be found.
 
 \addtodo{Move as much as possible from Sec~\ref{sec:cof_verification}
@@ -834,7 +834,7 @@ A controllable system with quantization will have the following dynamics:
 %
 \begin{align}
 \label{eq:observer_LTI_cf}
-\vec{x}_{k+1}=&\mat{A}_{t}\vec{x}_k+\mat{B}_{tp} \vec{r}_k+\mat{B}_{tn}\left [\begin{array}{c}\vec{\nu}_2\\ \vec{\nu}_1\end{array}\right]
+\vec{x}_{k+1}=&\mat{A}_{t}\vec{x}_k+\mat{B}_{tp} \vec{r}_k+\mat{B}_{tn} (\vec{\nu}_1 + \vec{\nu}_2 + \vec{\nu}_3)
 \end{align}
 \begin{align*}
 \mat{A}_{t}=&\mat{T}\mat{A}_d\mat{T}^{-1}&
@@ -844,7 +844,7 @@ A controllable system with quantization will have the following dynamics:
 \end{align*}
 
 \begin{align*}
-\mat{A}_{t}=\mat{T}\mat{A}_d\mat{T}^{-1}&\left[
+\mat{A}_{t}=\mat{T}\mat{A}_d\mat{T}^{-1}=&\left[
 \begin{array}{ccccc}
 0&1&0&\cdots&0\\
 0&0&1&\cdots&0\\
@@ -861,37 +861,25 @@ The characteristic polynomial of the above matrix is:
 z^n+\sum_{i=1}^p{(a_i-k_i)z^{n-i}}
 \end{align*}
 
-For a stabilized closed-loop, we need these roots to remain within the
-unit circle (left hand side of the plane for continuous time).  Whilst
-this is not a sufficient condition for verifying safety properties, it
-is a necessary one; therefore, we review this verification process.  
-The direct approach would be to calculate the roots of the
-polynomials (\emph{i.e.}, the matrix eigenvalues), but this ends
-up being too costly, particularly in the case of synthesis, so we use
-an indirect method.
+For a stabilized closed-loop, which is necessary for our safety property, we need
+these roots to remain within the unit circle, which we verify using Jury's criteria.
+Notice that in our polynomials $c_0=1$ and we only use reals.
 
-Notice that in both our polynomials $c_0=1$ and we only use reals.
-Now that we have established convergence, we may examine the safety 
-specification of the state space. In the case of SISO systems, 
-this is given by a range of the input and a range of the output, 
-which are considered safe ($\vec{u}_k \in [\underline{u}\ \ \overline{u}] \wedge \vec{y}_k \in [\underline{y}\ \ \overline{y}]$). 
+Once we have established convergence, we may examine the 
+specification of the state and input spaces ($\phi_{safety} \wedge \phi_{input}$).
 Whilst there are other properties, we may include in the verification, 
 we will solely focus on these for simplicity of the explanation.
-We will assume that we do not want saturation in our system, 
+We assume that we do not want saturation in our system, 
 hence the control loop has only one mode. We have also identified 
 the quantization noise as a bounded non-deterministic input.
-First we must translate the safety specification into the state-space. 
-Replacing on the second part of equation \eqref{eq:observer_LTI_cf} we obtain
 %
+The first step constraints
 \begin{equation}
-\Psi := \underline{y}-\overline{\mat{B}\vec{u}}<\mat{C}_t\vec{x}_k<\overline{y}-\underline{\mat{B}\vec{u}}
+\mat{K} \models \vec{u}_k=-\mat{K}\vec{x}_k : \phi_{safety} \wedge \phi_{input}
 \label{eq:of_bounds}
 \end{equation}
-Note that we use the bounds of the input after the transformation by $\mat{B}$ 
-since the matrix may reverse the bounds. Eq.~\eqref{eq:of_bounds} can be solved 
-using linear programming as it describes a polyhedral region in $\mathbb{R}^n$.
-The second step is evaluating the progression of the system over time to calculate 
-$\vec{x}_k$ to validate against this specification. For this step we require 
+The second step is evaluating the progression of the system over time to evaluate 
+$\vec{x}_{k+1} \models \phi_{safety}$. For this step we require 
 an initial set from which the system progresses. Obviously, this set $\vec{x}_0$ 
 must satisfy the specification; otherwise, the system will be unsafe to begin with.
 We accept a specification in the form $\mat{E}\mat{T}\vec{x}_0<\mat{f}$. 
@@ -902,7 +890,7 @@ state-space. Accelerating \eqref{eq:observer_LTI_cf}, we obtain:
 \label{eq:acc_observer_LTI_cf}
 \vec{x}=&\mat{A}_t^k\vec{x}_0
 +\sum_{i=0}^{k-1} \mat{A}_t^i \mat{B}_{tp} \vec{r}_i
-+\sum_{i=0}^{k-1} \mat{A}_t^i \mat{B}_{tn}\left [\begin{array}{c}\vec{\nu}_2\\ \vec{\nu}_1\end{array}\right] : \mat{E}\mat{T} \vec{x}_0<\mat{f}
++\sum_{i=0}^{k-1} \mat{A}_t^i \mat{B}_{tn}(\vec{\nu}_1+\vec{\nu}_2+\vec{\nu}_3) : \vec{x}_0 \models \phi_{init}
 \end{align}
 which would still require us to verify the system for every $k$ up to infinity. 
 Instead we use abstract acceleration~\cite{cattaruzza2015unbounded}, which translates the formula into
@@ -911,12 +899,12 @@ Instead we use abstract acceleration~\cite{cattaruzza2015unbounded}, which trans
 \label{eq:aa_observer_LTI_cf}
 \hat{X}^\#
 =&\mathcal{A}_t X_0+\mathcal{B}_{tp} R + \mathcal{B}_{tn} N\\
-X_0 =&\left \{\vec{x} : \mat{E}\mat{T} \vec{x}_0<\mat{f} \right\}\nonumber\\
+X_0 =&\left \{\vec{x} : \vec{x} \models \phi_{init} \right\}\nonumber\\
  R =&\{r : \mat{E}_r < \vec{f}_r \}\nonumber\\
- N=&\left \{ \left[\begin{array}{c}\vec{\nu}_2\\ \vec{\nu}_1\end{array}\right] : \nu_1 \in \left[-\frac{q1}{2}\ \ \frac{q1}{2}\right] \wedge \nu_2 \in \left[-\frac{q2}{2}\ \ \frac{q2}{2}\right]  \right \}\nonumber
+ N=&\left \{ \vec{\nu}_1+\vec{\nu}_2+ \vec{\nu}_3 : \nu_1 \in \left[-\frac{q1}{2}\ \ \frac{q1}{2}\right] \wedge \nu_2 \in \left[-\frac{q2}{2}\ \ \frac{q2}{2}\right]  \wedge \nu_3 \in \left[-q3\ \ q3\right]  \right \}\nonumber
 \end{align}
 %
-where $\mathcal{A}_t=\bigcup_{k=1}^\infty \mat{A}^k, \mathcal{B}_{tp}=\bigcup_{k=1}^\infty \sum_{i=0}^k\mat{A}^i\mat{B}_{tp}, \mathcal{B}_{tn}=\bigcup_{k=1}^\infty \sum_{i=0}^k\mat{A}^i\mat{B}_{tn}$ are abstract matrices for the system in \eqref{eq:observer_LTI_cf}. It is worth noting that $r$ is a non-deterministic parametric input (\emph{ie} $\forall k>0, r_{k+1} =r_k$) whereas the set N is composed of non-deterministic variable inputs.
+where $\mathcal{A}_t=\bigcup_{k=1}^\infty \mat{A}^k, \mathcal{B}_{tp}=\bigcup_{k=1}^\infty \sum_{i=0}^k\mat{A}^i\mat{B}_{tp}, \mathcal{B}_{tn}=\bigcup_{k=1}^\infty \sum_{i=0}^k\mat{A}^i\mat{B}_{tn}$ are abstract matrices for the system in \eqref{eq:observer_LTI_cf} and $r$ is a non-deterministic parametric input (\emph{ie} $\forall k>0, r_{k+1} =r_k$) whereas the set N is composed of non-deterministic variable inputs.
 
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
