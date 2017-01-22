@@ -15,7 +15,7 @@
   #define _abs(a) ( (a) < 0 ? -(a) : (a))
   #define add(x,y) ( (x) + (y))
 
-  #define lessthan(x,y) ((x) )< (y))
+  #define lessthan(x,y) ((x)<(y))
   #define greaterthan(x,y) ((x)>(y))
   #define lessthanzero(x) ((x) < 0)
   #define lessthan_equaltozero(x) ((x) <= 0)

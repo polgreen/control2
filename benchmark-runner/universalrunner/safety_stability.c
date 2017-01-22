@@ -48,7 +48,7 @@ int check_stability(void){
 
 
   #if NSTATES==1
-  if(greaterthan(_AminusBK[0][0], 1) || lessthan( _AminusBK[0][0] ,-1))
+  if(greaterthan(_AminusBK[0][0], 1) || lessthan(_AminusBK[0][0], -1))
     {return 0;}
   else
     {return 1;}

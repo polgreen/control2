@@ -56,23 +56,34 @@ function extract_input_upper_bound {
 
 function write_spec_header {
  header_file="${working_directory}/${spec_header_file}"
+ echo "#define INT_BITS ${impl_int_bits}" >>${header_file}
+ echo "#define FRAC_BITS ${impl_frac_bits}" >>${header_file}
+ echo '#include "control_types.h"' >>${header_file}
+ echo '' >>${header_file}
  echo "#define NSTATES ${num_states}" >${header_file}
  echo "#define NINPUTS ${num_inputs}" >>${header_file}
  echo "#define NOUTPUTS ${num_outputs}" >>${header_file}
- echo "#define INT_BITS ${impl_int_bits}" >>${header_file}
- echo "#define FRAC_BITS ${impl_frac_bits}" >>${header_file}
+ echo "#define INPUT_LOWERBOUND (__CPROVER_EIGEN_fixedbvt)$3" >>${header_file}
+ echo "#define INPUT_UPPERBOUND (__CPROVER_EIGEN_fixedbvt)$4" >>${header_file}
  A_value=$(echo $1 | sed -r 's/;/ }, { /g')
  echo "const __CPROVER_EIGEN_fixedbvt _controller_A[NSTATES][NSTATES] = { { ${A_value} } };" >>${header_file}
  B_value=$(echo $2 | sed -r 's/;/, /g')
  echo "const __CPROVER_EIGEN_fixedbvt _controller_B[NSTATES] = { ${B_value} };" >>${header_file}
- echo "#define INPUT_LOWERBOUND (__CPROVER_EIGEN_fixedbvt)$3" >>${header_file}
- echo "#define INPUT_UPPERBOUND (__CPROVER_EIGEN_fixedbvt)$4" >>${header_file}
 }
 
 mkdir -p ${working_directory_base} 2>/dev/null
 
 if [ -z "$1" ]; then
- benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/dcmotor_ss/')
+ benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/cruise_ss/') #eigen assertion violation
+ #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/dcmotor_ss/') #ok
+ #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/helicopter_ss/') #same controller loop
+ #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/invpendulum_cartpos_ss/') #initial controller unsat
+ #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/invpendulum_pendang_ss/') #initial controller unsat
+ #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/magsuspension_ss/') #initial controller unsat
+ #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/pendulum_ss/') #boost interval exception
+ #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/suspension_ss/') #boost interval exception
+ #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/tapedriver_ss/') #same controller loop
+ #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/cruise_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/dcmotor_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/helicopter_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/invpendulum_cartpos_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/invpendulum_pendang_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/magsuspension_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/pendulum_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/suspension_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/tapedriver_ss/')
  #benchmark_dirs=("${script_base_directory}/../benchmarks/state-space/dcmotor_ss/")
 else
  benchmark_dirs=("$1")
@@ -80,8 +91,8 @@ fi
 
 for benchmark_dir in ${benchmark_dirs[@]}; do
  for benchmark in ${benchmark_dir}*.ss; do
+  start_time=`date +%s`
   log_file="${benchmark%.ss}_accelerator-ss.log"
-  echo "log_file: $log_file"
   truncate -s 0 ${log_file}
   echo_log ${benchmark}
   echo_log 'accelerator-ss'
@@ -104,25 +115,29 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
   working_directory="${working_directory_base}/accelerator-ss"
   setup_benchmark_directory ${working_directory}
   cd ${working_directory}
-  write_spec_header "$A" "$B" "$input_lower_bound" "$input_upper_bound"
+  #write_spec_header "$A" "$B" "$input_lower_bound" "$input_upper_bound"
 
   max_length=64
-  integer_width=8
-  radix_width=$((impl_int_bits+impl_frac_bits))
+  #integer_width=8
+  integer_width=$((2*impl_int_bits))
+  radix_width=$((2*impl_frac_bits))
+  #radix_width=$((impl_int_bits+impl_frac_bits))
   min_size_offset=$(((integer_width+radix_width)%8))
   [ ${min_size_offset} -ne 0 ] && integer_width=$((integer_width+8-min_size_offset))
   timeout_time=3600
   kill_time=3780
-  start_time=`date +%s`
+  echo_log "./axelerator $options -control \"[0,0,0]\""
   eval "./axelerator $options -control \"[0,0,0]\""
   while [ $((integer_width+radix_width)) -le ${max_length} ]; do
    echo_log "int: ${integer_width}, radix: ${radix_width}"
    solution_found=false
    synthesis_in_progress=true
    while [ "${synthesis_in_progress}" = true ]; do
+    echo_log "cbmc -D __CPROVER -D _FIXEDBV -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTORL_RADIX_WIDTH=${radix_width} \"${working_directory}/${synthesis_file}\" --stop-on-fail >${working_directory}/${cbmc_log_file}"
     timeout --preserve-status --kill-after=${kill_time} ${timeout_time} cbmc -D __CPROVER -D _FIXEDBV -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTORL_RADIX_WIDTH=${radix_width} "${working_directory}/${synthesis_file}" --stop-on-fail >${working_directory}/${cbmc_log_file} 2>&1
     if [ $? -eq 10 ]; then
      controller=$(grep 'controller_cbmc=' ${working_directory}/${cbmc_log_file} | sed 's/.*controller_cbmc={ *\([^}]*\) *}.*/\1/')
+     echo_log "./axelerator $options -control \"[${controller}]\""
      eval "./axelerator $options -control \"[${controller}]\""
      if grep --quiet 'SUCCESS' "${working_directory}/${status_output_file}"; then
       echo_success_message ${start_time}
