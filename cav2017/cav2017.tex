@@ -440,6 +440,7 @@ Asymptotic stability boils down to Lyapunov stability and convergence to an equi
 Lyapunov stability requires that model trajectories remain in a neighbourhood of the equilibrium point. 
 In the case of closed-loop LTI models as in \eqref{eq:closedloopss}, 
 the equilibrium point is the origin (if the reference is equal to zero), or an offset thereof.  
+In this paper, we consider systems with a reference signal equal to zero. 
 
 A discrete-time system as \eqref{eq:closedloopss} is asymptotically stable if and only if all the roots 
 of the characteristic polynomial ({\it i.e.}, the eigenvalues of the closed-loop matrix $A_d - B_d K$) are inside the unity circle in the complex plane, 
@@ -486,27 +487,6 @@ such that ${\underline{u} \leq u_{k} \leq \overline{u}},\forall k\geq 0$.
 In practice, 
 this means that the control input saturates in view of physical constraints. 
 
-The states values must be computed considering the digital controller error, i.e., the error introduced by the ADC and
-digital controller, and the digital reference signal. In this paper, we consider systems with
-a reference signal equal to zero. 
-%the FWL effects in all operations related to the control action~\eqref{eq:controlaction} 
-%and disregarding it in the state equation~\eqref{eq:plant}.
-Thus, the states are computed using the following equations. We use $\mathcal{F}_{\langle I_c,F_c \rangle}$ to 
-to denote numbers represented with the precision of the digital controller. All other numbers
-are represented with the precision of our plant model:
-%
-\begin{align*}
-u_{k}&=-(\mathcal{F}_{\langle I_c,F_c \rangle}(K)\cdot\mathcal{F}_{\langle I_c,F_c \rangle}(x_{k})) \\
-x_{k+1}&=Ax_{k}+Bu_{k}
-\end{align*}
-%\left\lbrace
-%\begin{array}{l}
-%u_{k}=\mathcal{F}_{\langle I,F \rangle}(r_{k}-\mathcal{F}_{\langle I,F \rangle}(\mathcal{F}_{\langle I,F \rangle}(K)\cdot\mathcal{F}_{\langle I,F \rangle}(x_{k})))\\
-%x_{k+1}=Ax_{k}+Bu_{k}
-%\end{array}\right.
-%\end{equation}
-
-
 
 %%%-------------------------------
 %%\subsection{Digital implementation of feedback controller}
@@ -550,14 +530,42 @@ x_{k+1}&=Ax_{k}+Bu_{k}
 \label{sec:numeric_rep}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-The systems and models we consider have two sources of error due to numeric representation; the numeric error introduced by 
-the fixed point numbers used to model our plant, i.e, the plant dynamics $A_d$, $B_d$ and the states; 
-and the numeric error introduced by the digital controller, which uses an analogue-to-digital converter to read
-the states as a fixed-point number and performs operations in this domain. In this section we formally outline the errors introduced by
-fixed point representation of numbers; in further sections we will differentiate between these
-two errors by referring to them as the \emph{plant error} and the \emph{digital controller error}.
+\todo{I've moved the following paragraph to this section, from that on safety specs.}
+The states values must be computed considering the digital controller error, i.e., the error introduced by the ADC and the digital controller. 
+%, and the digital reference signal. 
+%In this paper, we consider systems with a reference signal equal to zero. 
+%the FWL effects in all operations related to the control action~\eqref{eq:controlaction} 
+%and disregarding it in the state equation~\eqref{eq:plant}.
+Thus, the states are computed using the following equations. We use $\mathcal{F}_{\langle I_c,F_c \rangle}$ \todo{explain and clarify notation.}
+to to denote numbers represented with the precision of the digital controller. All other numbers
+are represented with the precision of our plant model:
+%
+\begin{align*}
+u_{k}&=-(\mathcal{F}_{\langle I_c,F_c \rangle}(K)\cdot\mathcal{F}_{\langle I_c,F_c \rangle}(x_{k})).  
+%\\ x_{k+1}&=A_d x_{k} + B_du_{k}
+\end{align*}
+%\left\lbrace
+%\begin{array}{l}
+%u_{k}=\mathcal{F}_{\langle I,F \rangle}(r_{k}-\mathcal{F}_{\langle I,F \rangle}(\mathcal{F}_{\langle I,F \rangle}(K)\cdot\mathcal{F}_{\langle I,F \rangle}(x_{k})))\\
+%x_{k+1}=Ax_{k}+Bu_{k}
+%\end{array}\right.
+%\end{equation}
 
-Let $\mathbb{R} \langle I,F \rangle$ be a fixed point domain with $I$ bits representing the integer part and $F$ bits
+\bigskip
+
+The 
+%systems and 
+models we consider have two sources of error due to numeric representation. 
+The first is the numeric error introduced by the fixed-point numbers employed to model the plant, i.e. to represent the plant dynamics $A_d$, $B_d$ and its states. 
+The second is the numeric error introduced by the digital controller, 
+which 
+%uses an analogue-to-digital converter to read the states as a fixed-point number and performs operations in this domain. 
+performs operations in the domain of fixed-point numbers. 
+In this section we formally outline the errors introduced by fixed-point representation of numbers. 
+In further sections we will differentiate between these two errors, 
+by referring to them as the \emph{plant error} and the \emph{digital controller error} respectively. 
+
+Let $\mathbb{R} \langle I,F \rangle$ \todo{notice this notation differs from the one used above} be a fixed point domain with $I$ bits representing the integer part and $F$ bits
 representing the decimal part. The smallest number that can be represented in this domain is $c_m=2^{-F}$.
 The following approximation errors will arise:
 \begin{enumerate}
