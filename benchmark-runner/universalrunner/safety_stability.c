@@ -201,6 +201,15 @@ void __CPROVER_EIGEN_charpoly(void){
   #elif NSTATES==4
       __CPROVER_EIGEN_charpoly_4();
   #endif
+
+  // Normalise
+  __plant_typet max_coefficient=zero_type;
+  for (int i = 0; i <= NSTATES; ++i)
+    if (lessthan(max_coefficient, __CPROVER_EIGEN_poly[i]))
+      max_coefficient=__CPROVER_EIGEN_poly[i];
+
+  for (int i = 0; i <= NSTATES; ++i)
+    __CPROVER_EIGEN_poly[i]=div(__CPROVER_EIGEN_poly[i], max_coefficient);
 }
 
 void A_minus_B_K()
@@ -328,13 +337,14 @@ int check_safety(void)
      __plant_typet __state0 = _controller_states[0];
      __plant_typet __state1 = _controller_states[1];
      __plant_typet __state2 = _controller_states[2];
-    #ifdef INTERVAL
-    __CPROVER_assume(_controller_states[j].high<=INITIALSTATE_UPPERBOUND && _controller_states[j].low>=INITIALSTATE_LOWERBOUND);
-    __CPROVER_assume(_controller_states[j]!=zero_type);
-    #else
-    __CPROVER_assume(_controller_states[j]<=INITIALSTATE_UPPERBOUND && _controller_states[j]>=INITIALSTATE_LOWERBOUND);
-    __CPROVER_assume(_controller_states[j]!=zero_type);
-    #endif
+    // XXX: Unnecessary if we only check poles
+    //#ifdef INTERVAL
+    //__CPROVER_assume(_controller_states[j].high<=INITIALSTATE_UPPERBOUND && _controller_states[j].low>=INITIALSTATE_LOWERBOUND);
+    //__CPROVER_assume(_controller_states[j]!=zero_type);
+    //#else
+    //__CPROVER_assume(_controller_states[j]<=INITIALSTATE_UPPERBOUND && _controller_states[j]>=INITIALSTATE_LOWERBOUND);
+    //__CPROVER_assume(_controller_states[j]!=zero_type);
+    //#endif
     #endif
   }
 
@@ -458,6 +468,7 @@ int safety_stability(void) {
   __CPROVER_EIGEN_charpoly();
   __DSVERIFIER_assert(check_stability());
 #if NSTATES != 1
+  //check_safety();
   __DSVERIFIER_assert(check_safety());
 #endif
 
