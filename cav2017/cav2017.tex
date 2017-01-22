@@ -302,7 +302,8 @@ Eq.~\eqref{eq:ode} is soundly discretised in time (as shown in the Appendix) int
 x_{k+1} = A_d x_k+ B_d u_k. 
 \end{align} 
 where $k \in \mathbb N$, 
-and with initial state $x_{0}=x(0)$.
+and with initial state $x_{0}=x(0)$. 
+Later, we will deal with the issue of variable quantisation, as introduced by the ADC and DAC blocks.  
 
 %
 \begin{figure*}[htb]
@@ -435,20 +436,25 @@ As argued later, in this work, we will target more complex objectives, such as q
 
 %\addtodo{[Here discuss Jury criterium for DISCRETE-TIME models - a simplified version of the first part of what is now in Section \ref{sec:cof_verification} (with no quantisation noises yet).]}  
 
-A discrete-time system is asymptotically stable if and only if all the roots 
-of the characteristic polynomial ({\it i.e.}, the eigenvalues) are inside of 
-the unity circle, {\it i.e.}, their absolute value are less than 
-one~\cite{astrom1997computer}. In this paper, we express 
-the stability specification $\phi_{stability}$ in terms of  
-Jury's criterion \cite{fadali}. A detailed description of this 
-specification can be found in the Appendix~\ref{sec:appendix-stability}.
+A discrete-time system as \eqref{eq:closedloopss} is asymptotically stable if and only if all the roots 
+of the characteristic polynomial ({\it i.e.}, the eigenvalues of the closed-loop matrix $A_d - B_d K$) are inside the unity circle in the complex plane, 
+{\it i.e.} iff their absolute value are less than one~\cite{astrom1997computer}. 
+In this paper, we express the stability specification $\phi_{stability}$ in terms of a check known as Jury's criterion \cite{fadali}. 
+This condition boils down to an easy algebraic formula to select the entries of matrix $K$, 
+so that the closed-loop dynamics are shaped as desired. 
+A detailed description of this specification can be found in the Appendix~\ref{sec:appendix-stability}. 
 
 %-------------------------------
-\subsection{Safety specifications for cyber-physical systems}
+\subsection{Safety specifications for dynamical systems}
 \label{ssec:safety}
 %-------------------------------
 
-We also require that the closed-loop system meets safety specifications. 
+As mentioned earlier, 
+in this work we are not bound to the synthesis of digital stabilising controllers -- 
+a well known task in the literature on digital control system -- 
+but target safety requirements with an overall approach that is sound and automated. 
+More specifically, 
+we require that the closed-loop system \eqref{eq:closedloopss} meets given safety specifications. 
 A safety specification establishes bounds for the states, such that 
 the controller $K$ must maintain the states within a given lower and upper 
 bound for any initial state. Note that a stable system is not necessarily a
