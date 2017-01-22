@@ -34,7 +34,7 @@ signed int check_stability_closedloop(vectort a)
 #ifndef __CPROVER
   printf("polynomial %f",m[0][0]);
 #endif
-  for(i = 0 ; i < n; i++) 
+  for(i = 0 ; i < _DIMENSION; i++) 
   { 
     m[0][i+1]=a[i];
     sum += a[i];
@@ -77,12 +77,12 @@ signed int check_stability_closedloop(vectort a)
   }
 #endif
   sum = _zero;
-  for(i = 0 ; i < _DIMENSION; i++)
+  for(i = 0 ; i < n; i++)
   {
-    if (((_DIMENSION -i)&1)!=0) sum+=m[0][i];
+    if (((n -i)&1)!=0) sum+=m[0][i];
     else               sum-=m[0][i];
   }
-  if ((_DIMENSION&1)==0) sum=-sum;
+  if ((n&1)==0) sum=-sum;
 #ifdef __CPROVER
   verify_assume(sum > _sum_error);
 #else
@@ -91,7 +91,7 @@ signed int check_stability_closedloop(vectort a)
   columns--;
   control_floatt error=_transform_error;
   control_floatt mag=1;
-  for(i=1;i<_DIMENSION;i++)
+  for(i=1;i<n;i++)
   {
     //denominator is always >0
     control_floatt factor=m[i-1][columns] / m[i-1][0];
