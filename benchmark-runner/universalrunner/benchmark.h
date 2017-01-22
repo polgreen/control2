@@ -10,9 +10,9 @@
 
 #define INT_BITS 8
 #define FRAC_BITS 8
+#define NSTATES 3
 #include "control_types.h"
 
-#define NSTATES 3
 #define NINPUTS 1
 #define NOUTPUTS 1
 #define INPUT_UPPERBOUND (__plant_precisiont)1

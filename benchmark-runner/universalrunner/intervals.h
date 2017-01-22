@@ -4,7 +4,7 @@
 
 
 
-#include "control_types.h"
+//#include "control_types.h"
 
 typedef  __plant_precisiont control_typet;
 
@@ -75,10 +75,11 @@ struct intervalt fxp_interval_check(struct intervalt value)
 }
 
 #define interval_cast(x) (struct intervalt) {.low=x, .high=x}
-#define interval_lessthan(x,y) ((x.high) )< (y.low))
+#define interval_lessthan(x,y) (x.high < y.low)
 #define interval_lessthanzero(x) (x.high<0)
 #define interval_lessthan_equal_to_zero(x) (x.high <= 0)
 #define interval_greaterthan(x,y) (x.low > y.high)
+#define interval_equaltozero(x) (x.high==0.0 && x.high==0.0)
 
 #define zero_interval (struct intervalt) {.low=_zero, .high=_zero}
 #define one_interval (struct intervalt) {.low=1.0, .high=1.0}

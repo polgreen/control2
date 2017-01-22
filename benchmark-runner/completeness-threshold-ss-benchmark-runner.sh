@@ -50,6 +50,7 @@ function setup_benchmark_directory {
  cp ${source_template_directory}/${synthesis_file} ${working_directory}/
  cp ${source_template_directory}/control_types.h ${working_directory}/
  cp ${source_template_directory}/operators.h ${working_directory}/
+ cp ${source_template_directory}/intervals.h ${working_directory}/
  cp ${source_template_directory}/mpreal.h ${working_directory}/
  cp ${source_template_directory}/discrete_step_k_completeness_check.cpp ${working_directory}/
 }
@@ -58,9 +59,10 @@ function write_spec_header {
  header_file="${working_directory}/${spec_header_file}"
  echo "#define INT_BITS ${impl_int_bits}" >${header_file}
  echo "#define FRAC_BITS ${impl_frac_bits}" >>${header_file}
+ echo "#define NSTATES ${num_states}" >>${header_file}
  echo '#include "control_types.h"' >>${header_file}
  echo '' >>${header_file}
- echo "#define NSTATES ${num_states}" >>${header_file}
+
  echo "#define NINPUTS ${num_inputs}" >>${header_file}
  echo "#define NOUTPUTS ${num_outputs}" >>${header_file}
  echo "#define INPUT_LOWERBOUND (__plant_typet)${input_lower_bound}" >>${header_file}
@@ -80,12 +82,12 @@ mkdir -p ${working_directory_base} 2>/dev/null
 
 if [ -z "$1" ]; then
  #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/cruise_ss/') #ok
- #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/dcmotor_ss/') #ok
+ benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/dcmotor_ss/') #ok
  #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/helicopter_ss/') #unsat
  #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/invpendulum_cartpos_ss/') #unsat
  #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/invpendulum_pendang_ss/') #unsat
  #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/magsuspension_ss/') #unsat
- benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/pendulum_ss/') #unsat
+ #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/pendulum_ss/') #unsat
  #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/suspension_ss/') #ok
  #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/tapedriver_ss/') #ok
  #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/cruise_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/dcmotor_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/helicopter_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/invpendulum_cartpos_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/invpendulum_pendang_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/magsuspension_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/pendulum_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/suspension_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/tapedriver_ss/')
@@ -146,15 +148,23 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
     eval "./discrete_step_k_completeness_check ${k_size} ${controller_params}"
     k_check_result=$?
     if [ ${k_check_result} -eq 2 ]; then
-      k_size_index=$((k_size_index+1))
+     k_size_index=$((k_size_index+1))
     elif [ ${k_check_result} -eq 1 ]; then
-      echo_log 'K check error occurred'
-      break
+     echo_log 'K check error occurred'
+     break
     else
-      # TODO: Check interval
+     controller_intervals=$(echo "${controller_params}" | sed -r 's/([-0-9]+(\.[0-9]*)?)/interval(\1),/g' | sed 's/\(.*\),/\1/')
+     gcc -D INTERVAL -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTORL_RADIX_WIDTH=${radix_width} -D NUMBERLOOPS=${k_size} -D _CONTROLLER_INTERVALS="${controller_intervals}" safety_stability.c -o precision_check
+     echo_log "./precision_check"
+     ./precision_check
+     if [ ${k_check_result} -eq 0 ]; then
       echo_success_message ${start_time}
       echo_log "<controller>${controller_params}</controller>"
       break
+     else
+      integer_width=$((integer_width+4))
+      radix_width=$((radix_width+4))
+     fi
     fi
    else
     integer_width=$((integer_width+4))

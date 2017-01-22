@@ -19,6 +19,7 @@
   #define greaterthan(x,y) ((x)>(y))
   #define lessthanzero(x) ((x) < 0)
   #define lessthan_equaltozero(x) ((x) <= 0)
+  #define equaltozero(x) (x == 0)
   #define zero_type 0
   #define one_type (__plant_precisiont)1.0
   #define minusone  (__plant_precisiont)-1
@@ -40,6 +41,7 @@
   #define add(x,y) (interval_add((x),(y)))
   #define lessthanzero(x) (interval_lessthanzero(x))
   #define lessthan_equaltozero(x) (interval_lessthan_equal_to_zero(x))
+  #define equaltozero(x) interval_equaltozero(x)
 
   #define zero_type (zero_interval)
   #define minusone  (minusone_interval)
