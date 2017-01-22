@@ -436,6 +436,11 @@ As argued later, in this work, we will target more complex objectives, such as q
 
 %\addtodo{[Here discuss Jury criterium for DISCRETE-TIME models - a simplified version of the first part of what is now in Section \ref{sec:cof_verification} (with no quantisation noises yet).]}  
 
+Asymptotic stability boils down to Lyapunov stability and convergence to an equilibrium point \todo{add reference}.  
+Lyapunov stability requires that model trajectories remain in a neighbourhood of the equilibrium point. 
+In the case of closed-loop LTI models as in \eqref{eq:closedloopss}, 
+the equilibrium point is the origin (if the reference is equal to zero), or an offset thereof.  
+
 A discrete-time system as \eqref{eq:closedloopss} is asymptotically stable if and only if all the roots 
 of the characteristic polynomial ({\it i.e.}, the eigenvalues of the closed-loop matrix $A_d - B_d K$) are inside the unity circle in the complex plane, 
 {\it i.e.} iff their absolute value are less than one~\cite{astrom1997computer}. 
@@ -455,12 +460,14 @@ a well known task in the literature on digital control system --
 but target safety requirements with an overall approach that is sound and automated. 
 More specifically, 
 we require that the closed-loop system \eqref{eq:closedloopss} meets given safety specifications. 
-A safety specification establishes bounds for the states, such that 
-the controller $K$ must maintain the states within a given lower and upper 
-bound for any initial state. Note that a stable system is not necessarily a
-safe system, the state values may leave the safe states during the stabilization.
+A safety specification raises a requirement on the states of the model, 
+such that the feedback controller (namely the choice of the gains in $K$) 
+must ensure that the states never exist such requirement. 
+Note that a stable, closed-loop system is not necessarily a safe system: 
+indeed, the state values may leave the safe whilst they converge to the equilibrium, 
+which is typical in the case of oscillatory dynamics. 
 
-The safety property represented by $\phi_{safety}$ is encoded as follows:
+In this work, the safety property represented by $\phi_{safety}$ is encoded as follows: 
 %
 \begin{equation}
 \label{eq:safetyliteral}
@@ -468,10 +475,16 @@ The safety property represented by $\phi_{safety}$ is encoded as follows:
 \end{equation}
 %
 %\addtodo{We consider $x_{i}^{-}$ and $x_{i}^{+}$ to be -1 and 1, respectively.}
-where $\underline{x_{i}}$ and $\overline{x_{i}}$ are the lower and upper bound 
-of the $i$-th state $x_{i}$ at the $k$-th instant, respectively.
-This means that the states will always be within the $n$-dimensional 
-hyper-box, which is typically defined by the safety specification.
+where $\underline{x_{i}}$ and $\overline{x_{i}}$ are lower and upper bounds for the $i$-th coordinate $x_{i}$ of state $x\in \mathbb R^n$ at the $k$-th instant, respectively. 
+This means that the states will always be within the $n$-dimensional hyper-box. 
+%, which is typically defined by the safety specification.
+
+Furthermore, 
+it is practically relevant to consider constraints on the input signal $u_{k}$, 
+which we assume has given bounds $\overline{u}$ and $\underline{u}$, 
+such that ${\underline{u} \leq u_{k} \leq \overline{u}},\forall k\geq 0$.  
+In practice, 
+this means that the control input saturates in view of physical constraints. 
 
 The states values must be computed considering the digital controller error, i.e., the error introduced by the ADC and
 digital controller, and the digital reference signal. In this paper, we consider systems with
@@ -493,9 +506,7 @@ x_{k+1}&=Ax_{k}+Bu_{k}
 %\end{array}\right.
 %\end{equation}
 
-The input $u_{k}$ %is non-deterministic with 
-has known bounds $\overline{u}$ and $\underline{u}$, 
-such that ${\underline{u} \leq u_{k} \leq \overline{u}},\forall k\geq 0$. 
+
 
 %%%-------------------------------
 %%\subsection{Digital implementation of feedback controller}
