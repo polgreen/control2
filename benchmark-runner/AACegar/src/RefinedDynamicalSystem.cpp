@@ -215,9 +215,8 @@ AbstractPolyhedra<scalar> CegarSystem<scalar>::generateNoiseInput()
   MatrixS supports(2*ndimension,1);
   faces.block(0,0,ndimension,ndimension)=MatrixS::Identity(ndimension,ndimension);
   faces.block(ndimension,0,ndimension,ndimension)=-MatrixS::Identity(ndimension,ndimension);
-  scalar fb_noise=this->ms_two*m_feedback.sum();//add all source noises from the output
-  scalar roundoff=odimension+1;
-  supports.coeffRef(0,0)=lsb*(fb_noise+roundoff);
+  scalar fb_noise=m_feedback.cwiseAbs().sum()/*lpNorm<1>()*/+this->ms_one;//|Noise|<(|K|_1+1)lsb assuming q1,q2=1lsb,(q3:=q1->K) = (|K|_1q1+q2)
+  supports.coeffRef(0,0)=lsb*(fb_noise);
   supports.coeffRef(1,0)=supports.coeff(0,0);
   result.load(faces,supports);
   return result;
@@ -227,7 +226,7 @@ AbstractPolyhedra<scalar> CegarSystem<scalar>::generateNoiseInput()
 template<class scalar>
 AbstractPolyhedra<scalar> CegarSystem<scalar>::generateFeedbackInput(int fdimension,bool makeNoise,MatrixS &sensitivity)
 {
-  AbstractPolyhedra<scalar> inputs(fdimension);
+  AbstractPolyhedra<scalar> inputs(0);
   if (m_reference.getDimension()>0) {
     inputs.copy(m_reference);
     fdimension=m_reference.getDimension();

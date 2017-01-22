@@ -1,6 +1,6 @@
 #!/bin/bash
+#export PATH=${PATH//cbmc-5190/cbmc-trunk-diffblue-control-synthesis}
 #export PATH=${PATH}:/media/sf_Documents/GitHub/cbmc-master/src/cbmc
-export PATH=${PATH//cbmc-5190/cbmc-trunk-diffblue-control-synthesis}
 export PATH=${PATH}:/users/pkesseli/software/cpp/cbmc/cbmc-trunk-diffblue-control-synthesis/src/cegis:/users/pkesseli/software/cpp/cbmc/cbmc-trunk-diffblue-control-synthesis-analyzer/src/goto-analyzer:/users/pkesseli/software/cpp/z3/trunk/target/i686-linux/bin
 
 status_output_file='output.txt'
@@ -15,7 +15,7 @@ cbmc_log_file='cbmc-tmp.log'
 function setup_benchmark_directory {
  mkdir -p "$1" 2>/dev/null
  cp ${script_base_directory}/AACegar/* ${working_directory}/
- chmod +x ${working_directory}/axelerator
+ # TODO: cp source files and headers, and benchmark headers
 }
 
 function echo_log {
@@ -110,7 +110,7 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
   B=$(extract_spec_matrix "${spec_content}" 'B')
   input_lower_bound=$(extract_input_lower_bound "${spec_content}")
   input_upper_bound=$(extract_input_upper_bound "${spec_content}")
-  options="-u -p -ii -mpi 256 -synth CEGIS -params \"p=${num_states},q=${num_inputs},f=1,m=256:$((impl_int_bits+impl_frac_bits)):${impl_int_bits}\" -dynamics \"[${A}]\" -init \"[1,0,0<1;-1,0,0<1;0,1,0<1;0,-1,0<1;0,0,1<1;0,0,-1<1]\" -isense \"[${B}]\" -inputs \"[1>${input_lower_bound};1<${input_upper_bound}]\" -sguard \"[1,0,0<2;-1,0,0<2;0,1,0<2;0,-1,0<2;0,0,1<2;0,0,-1<2]\""
+  options="-u -p -ii -mpi 256 -synth CEGIS -params \"p=${num_states},q=${num_inputs},f=1,m=256:$((impl_int_bits+impl_frac_bits)):${impl_int_bits}\" -dynamics \"[${A}]\" -init \"[cube<1]\" -isense \"[${B}]\" -inputs \"[1>${input_lower_bound};1<${input_upper_bound}]\" -sguard \"[cube<2]\""
 
   working_directory="${working_directory_base}/accelerator-ss"
   setup_benchmark_directory ${working_directory}
@@ -126,8 +126,8 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
   [ ${min_size_offset} -ne 0 ] && integer_width=$((integer_width+8-min_size_offset))
   timeout_time=3600
   kill_time=3780
-  echo_log "./axelerator $options -control \"[0,0,0]\""
-  eval "./axelerator $options -control \"[0,0,0]\""
+  start_time=`date +%s`
+  eval "./axelerator $options -control \"[0]\""
   while [ $((integer_width+radix_width)) -le ${max_length} ]; do
    echo_log "int: ${integer_width}, radix: ${radix_width}"
    solution_found=false

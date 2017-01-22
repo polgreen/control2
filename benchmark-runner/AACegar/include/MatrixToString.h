@@ -30,6 +30,8 @@ public:
 
     MatToStr(const int precision,const std::string leftBracket,const std::string rightBracket,const std::string separator);
     MatToStr(const bool brackets);
+    scalar getNumber(const char * pData,size_t &pos=0,const size_t eof=0);
+    scalar getNumber(const std::string &str,size_t &pos=0) { return getNumber(str.data(),pos,str.size()); }
     std::string MakeNumber(scalar number,const bool interval=ms_traceIntervals,const int precision=6,const int row=-1);
     std::string MakeSTerm(scalar number,std::string &s);
     std::string MakeLSTerm(std::string string,int j,std::string s);

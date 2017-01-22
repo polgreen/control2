@@ -81,6 +81,7 @@ public:
     using DynamicalSystem<scalar>::getAbstractReachTube;
     using DynamicalSystem<scalar>::getAbstractDynamics;
     using DynamicalSystem<scalar>::getAbstractVertices;
+    using DynamicalSystem<scalar>::getInputVertices;
     using DynamicalSystem<scalar>::addSupportsAtIteration;
     using DynamicalSystem<scalar>::getAccelInSupports;
     using DynamicalSystem<scalar>::mergeAccelInSupports;

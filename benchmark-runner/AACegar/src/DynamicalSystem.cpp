@@ -872,16 +872,16 @@ typename JordanMatrix<scalar>::MatrixS DynamicalSystem<scalar>::getCombinedVecto
 
 /// Retrieves the parametric input vertices for the current problem configuration
 template <class scalar>
-const typename JordanMatrix<scalar>::MatrixS& DynamicalSystem<scalar>::getInputVertices(bool fromSource)
+const typename JordanMatrix<scalar>::MatrixS& DynamicalSystem<scalar>::getInputVertices(space_t space,bool fromSource)
 {
   if (fromSource && (m_inputType==eParametricInputs)) {
     MatrixS& trueInputVertices=m_inputs.getVertices();
     if (trueInputVertices.rows()<=0) processError(m_inputs.getName());
     trueInputVertices*=m_sensitivity.transpose();
-    trueInputVertices*=m_invPseudoEigenVectors.transpose();
+    if (space>eNormalSpace) trueInputVertices*=m_invPseudoEigenVectors.transpose();
     return trueInputVertices;
   }
-  AbstractPolyhedra<scalar> &inputsSource=m_transformedInputs.getPolyhedra(eEigenSpace);
+  AbstractPolyhedra<scalar> &inputsSource=m_transformedInputs.getPolyhedra(space);
   const MatrixS& inputVertices=(m_inputType==eParametricInputs) ? inputsSource.getVertices() : inputsSource.getCentre();
   if (inputVertices.rows()<=0) processError(inputsSource.getName());
   return inputVertices;

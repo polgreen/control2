@@ -1000,7 +1000,7 @@ std::string Synthesiser<scalar>::makeCEGISDescription(bool intervals)
   if (m_feedback.rows()>0) {
     MatrixS vertices=m_initialState.getPolyhedra().getVertices();
     makeClosedLoop(false,false,true);
-    MatrixS inputVertices=m_closedLoop.m_transformedInputs.getPolyhedra().getVertices();
+    const MatrixS inputVertices=m_closedLoop.getInputVertices(eNormalSpace,true);
     result << "#define _NUM_VERTICES " << vertices.rows() << "\n";
     result << "#define _NUM_INPUT_VERTICES " << inputVertices.rows() << "\n";
     result << "#define _NUM_VECTORS " << vectors.rows() << "\n";
@@ -1049,13 +1049,15 @@ std::string Synthesiser<scalar>::makeCEGISIterations(std::string &existing)
     result << "int iter_vertices[_NUM_ITERATIONS][2]={";
     AbstractPolyhedra<scalar> &safe=m_safeReachTube.getPolyhedra();
     MatrixS vertices=m_initialState.getPolyhedra().getVertices();
-    MatrixS inputVertices=m_closedLoop.getAccelInputPoly().getPolyhedra().getVertices();
+    MatrixS inputVertices=m_closedLoop.getInputVertices();
     for (typename powerList::iterator it=counterexamples.begin();it!=counterexamples.end();it++) {
       if (it!=counterexamples.begin()) result << ",";
       MatrixS dynamics=m_closedLoop.getPseudoDynamics(it->first).transpose();
-      ms_logger.logData(dynamics,"dynamics");
-      ms_logger.logData(vertices,"vertices");
-      ms_logger.logData(inputVertices,"inputVertices");
+      if (ms_trace_dynamics>eTraceDynamics) {
+        ms_logger.logData(dynamics,"dynamics");
+        ms_logger.logData(vertices,"vertices");
+        ms_logger.logData(inputVertices,"inputVertices");
+      }
       bool found=false;
       for (int i=0;i<vertices.rows();i++) {
         for (int j=0;j<inputVertices.rows();j++) {
@@ -1072,7 +1074,6 @@ std::string Synthesiser<scalar>::makeCEGISIterations(std::string &existing)
       if (!found) result << "{-1,-1}";
     }
     result << "};\n";
-
   }
   return result.str();
 }

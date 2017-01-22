@@ -45,6 +45,7 @@ signed int check_stability_closedloop(vectort a)
 #ifdef __CPROVER
   verify_assume(m[0][0] > _transform_error);
   verify_assume(sum > _sum_error);
+  verify_assume(m[0][n-1]!=0);
   verify_assume(m[0][n-1]+_transform_error < m[0][0]);
   verify_assume(-m[0][n-1]+_transform_error < m[0][0]);
 #else
@@ -59,6 +60,11 @@ signed int check_stability_closedloop(vectort a)
     printf("sum=%f>%f\n",sum,_sum_error);
     return 0;
   }
+  if (m[0][n - 1]==0)
+  {
+    printf("m[0][%d]=0\n",n-1);
+    return 0;    
+  }  
   if (!(m[0][n - 1]+_transform_error < m[0][0])) 
   {
     printf("m[0][%d]=%f<m[0][0]=%f\n",n-1,m[0][n - 1],m[0][0]);

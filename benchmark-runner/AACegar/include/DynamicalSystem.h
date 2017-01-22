@@ -358,6 +358,9 @@ public:
     /// @param precision if greater than -2 indicates to supply logahedral faces when no templates are available
     MatrixS& getTemplates(const space_t space=eNormalSpace,int precision=-2);
 
+    /// Retrieves the parametric input vertices for the current problem configuration
+    const MatrixS& getInputVertices(space_t space=eEigenSpace,bool fromSource=false);
+
     long long int getLoadTime()         { return m_loadTime; }
     long long int getReachTime()        { return m_reachTime; }
 protected:
@@ -381,9 +384,6 @@ protected:
     MatrixS& getAbstractVertices(const MatrixS& templates,MatrixS &vectors,int &numVertices);
     MatrixS& getAbstractVertices(const MatrixS& templates)
     { return getAbstractVertices(templates,m_abstractVertices,m_numVertices); }
-
-    /// Retrieves the parametric input vertices for the current problem configuration
-    const MatrixS& getInputVertices(bool fromSource=false);
 
     /// Retrieves the parametric accelerated input vertices for the current problem configuration
     MatrixS& getAccelVertices();

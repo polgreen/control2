@@ -274,6 +274,16 @@ int MatToStr<scalar>::StringToMat(MatrixS &directions,MatrixS &supports,const st
 }
 
 template <class scalar>
+scalar MatToStr<scalar>::getNumber(const char * pData,size_t &pos,const size_t eof)
+{
+  pos=skipControls(pData,pos,eof);
+  scalar value;
+  char *pEnd=func::toScalar(pData+pos,value);
+  pos=(int)(pEnd-pData);
+  return value;
+}
+
+template <class scalar>
 int MatToStr<scalar>::StringToMat(MatrixS& matrix,MatrixS &aux,const char * pData,size_t pos,size_t eof)
 {
   char * pEnd;
@@ -639,18 +649,23 @@ template <class scalar> std::string MatToStr<scalar>::MatToC(const std::string n
 template <class scalar> std::string MatToStr<scalar>::IneToC(const std::string type,const std::string cast,const std::string name,const MatrixS &directions,const MatrixS &supports,const bool interval,const int orBlockSize)
 {
   std::stringstream buffer;
-  buffer << type << " (";
   if (orBlockSize<=1) {
+    int firstRow;
     for (int row=0;row<directions.rows();row++) {
       int firstCol=0;
-      if (row>0)  buffer << " && ";
-      buffer << "(";
       for (int col=0;col<directions.cols();col++) {
         scalar coeff=directions.coeff(row,col);
-        if (func::isZero(coeff)) {
-          firstCol++;
-          continue;
-        }
+        if (func::isZero(coeff)) firstCol++;
+        else break;
+      }
+      if (firstCol==directions.cols()) {
+        firstRow++;
+        continue;
+      }
+      if (row>firstRow)  buffer << " && ";
+      buffer << "(";
+      for (int col=firstCol;col<directions.cols();col++) {
+        scalar coeff=directions.coeff(row,col);
         if ((col>firstCol) && (!func::isNegative(coeff))) buffer << "+";
         if (func::isZero(ms_one+coeff)) {
           buffer << "-";
@@ -699,9 +714,10 @@ template <class scalar> std::string MatToStr<scalar>::IneToC(const std::string t
       else buffer << "<" << cast << MakeNumber(supports.coeff(row,0),false,m_precision) << ")\n";
     }
     buffer << ")";
+    if (buffer.str()=="()") return type+"(1)";
   }
-  buffer << ")";
-  return buffer.str();
+  if (buffer.str().empty()) return type+"(1)";
+  return type+"("+buffer.str()+")";
 }
 
 
