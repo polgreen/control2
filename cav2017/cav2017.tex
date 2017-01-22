@@ -285,20 +285,24 @@ an unbounded time and uses it as a `buffer' region for the safety specification.
 \label{ssec:ssrepresentation}
 %-------------------------------
 
-We consider physical models expressed as ordinary differential equations (ODEs) with full state information:  
+We consider models of physical plants expressed as ordinary differential equations (ODEs), 
+with full state information (namely where we have access to all the model variables):  
 %
 \begin{align}
 \label{eq:ode}
-\dot{x}(t) = Ax(t)+ B u(t)\ \ :\ \ x \in \mathbb{R}^{n}, u \in \mathbb{R}^m, A \in \mathbb{R}^{n \times n}, B \in \mathbb{R}^{n \times m}
+\dot{x}(t) = Ax(t)+ B u(t), \quad x \in \mathbb{R}^{n}, u \in \mathbb{R}^m, A \in \mathbb{R}^{n \times n}, B \in \mathbb{R}^{n \times m}, 
 \end{align}
-where $A$ and $B$ are matrices that fully specify the continuous plant with the initial states $x(0)$. 
-Eq.~\eqref{eq:ode} is soundly discretized (as shown in the Appendix) into
+where $t \in \mathbb R_0^+$, 
+where $A$ and $B$ are matrices that fully specify the continuous plant, 
+and with initial states set as $x(0)$. 
+Eq.~\eqref{eq:ode} is soundly discretised in time (as shown in the Appendix) into
 %
 \begin{align}
 \label{eq:plant}
 x_{k+1} = A_d x_k+ B_d u_k. 
-\end{align}
-with initial state $x_{0}=x(0)$.
+\end{align} 
+where $k \in \mathbb N$, 
+and with initial state $x_{0}=x(0)$.
 
 %
 \begin{figure*}[htb]
@@ -400,28 +404,29 @@ with initial state $x_{0}=x(0)$.
 %-------------------------------
 
 Models \eqref{eq:ode} and \eqref{eq:plant} depend on external non-determinism in the form of input signals $u (t), u_k$, respectively. 
-Feedback can be employed to affect the properties and behaviours of the process. 
+Feedback architectures can be employed to affect the properties and behaviours of the continuous process (the plant) of interest.   
 %reduce the effect of parametric uncertainties and attenuate the effects of noise and disturbance. 
+We are interested in the synthesis of digital feedback, 
+as implemented on modern FPGAs or ICs. 
 The most basic feedback architecture is the state feedback, 
-where the control action $\vec{u}_k$ is computed by: 
+where the control action $u_k$ (notice we work with the discretised signal) is computed by: 
 %
 \begin{equation}
 \label{eq:controlaction}
-u_k = r_{k} - K x_k, 
+u_k = r_{k} - K x_k. 
 \end{equation}
 %
-where $K \in \mathbb{R}^{m \times n}$ is a feedback gain matrix, 
-and $r_{k}$ is a reference signal.   
+Here $K \in \mathbb{R}^{m \times n}$ is a feedback gain matrix, 
+and $r_{k}$ is a reference signal (again digital).   
 %
 The closed-loop model then takes the form 
 \begin{align}
 \label{eq:closedloopss}
 x_{k+1} = ( A_d - B_d K ) + B_d r_k.
 \end{align}
-The gain matrix $K$ can be set so that the closed-loop dynamics are shaped as desired, 
-according to a desired goal or objective. 
-A standard objective is to obtain stable closed-loop dynamics. 
-
+The gain matrix $K$ can be set so that the closed-loop digitalised dynamics are shaped as desired, 
+for instance according to a specific stability goal or around a specific dynamical behaviour \cite{astrom1997computer}. 
+As argued later, in this work, we will target more complex objectives, such as quantitative safety requirements that are not typical in the digital control literature. 
 
 %-------------------------------
 \subsection{Stability of closed-loop systems}
