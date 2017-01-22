@@ -790,7 +790,7 @@ inputs, and time horizons. %% (with a final verification loop that verifies
   %% which enables it to perform abstraction refinement inside the CEGIS loop.
   finds a controller for a continuous initial set of states and input set, 
   over an abstraction of the continuous dynamics that conforms to witness proofs at specific times; 
-  it further generalises the solution over all times by refining the number of witnesses. 
+  it further generalises the solution over all times by refining the number of witnesses.  \todo{clarify use of abstract acceleration. add references.}
 \end{itemize}
 
 
@@ -1010,8 +1010,8 @@ non-deterministic simulation of an infinite set of states, which is undecidable.
 abstraction of this system by establishing bounds on the error between such a system and a discrete-time/continuous-space model.
 This model is still however, quite complex, hard to verify, and many of the states involved are inconsequential to
 the safety specification.
-Our second model, rather than look at a bisimulation in discrete time, explores a much higher abstraction,
-evaluating the unbounded time-continuous space reach tube as a set of inequalities that represent only the safety specifcation.
+Our second model, rather than look at a bisimulation \todo{specific notion that has not been formally define - do not use} in discrete time, explores a much higher abstraction, 
+evaluating the unbounded time-continuous space reach tube as a set of inequalities that represent only the safety specification.
 We begin with a minimum set of linear inequalities describing the constraints caused by the input and the initial state during a
 single iteration, in addition to a stability specification defined by Jury's criteria, and try to synthesise a controller that meets these specs.
 A second abstraction that encompasses the accelerated continuous reach-tube over an unbounded time is used to verify that the controller meets the full safety specification. If this step fails, we find a counterexample iteration and initial state and create a new constraint to refine our abstraction.
@@ -1029,7 +1029,7 @@ Merge the rest in Sec~\ref{sec:cof_synth}.}
 Let us recall the formulas used for single-input and single-output (SISO) systems 
 in sections \ref{sec:reachable} and \ref{sec:observable}.
 A controllable system with quantization will have the following dynamics:
-
+\todo{eliminate vectors}
 %
 \begin{align}
 \label{eq:observer_LTI_cf}
@@ -1210,7 +1210,8 @@ $z^n+\sum_{i=1}^n[a_i-k_i]z^{n-i}=\prod_{i=1}^n (z-[\lambda_i]) : |[\lambda_i]|<
      (verify.north) edge node {$\Psi (\mat{K})$} (aux);
 \end{tikzpicture}
 }
-\caption{CEGIS with abstraction refinement\label{fig:CEGARIS}.}
+\caption{CEGIS with abstraction refinement}
+\label{fig:CEGARIS} 
 \end{figure}
 
 %-------------------------------
