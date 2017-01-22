@@ -85,9 +85,9 @@ if [ -z "$1" ]; then
  #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/invpendulum_cartpos_ss/') #unsat
  #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/invpendulum_pendang_ss/') #unsat
  #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/magsuspension_ss/') #unsat
- #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/pendulum_ss/') #unsat
+ benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/pendulum_ss/') #unsat
  #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/suspension_ss/') #ok
- benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/tapedriver_ss/') #ok
+ #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/tapedriver_ss/') #ok
  #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/cruise_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/dcmotor_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/helicopter_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/invpendulum_cartpos_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/invpendulum_pendang_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/magsuspension_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/pendulum_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/suspension_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/tapedriver_ss/')
  #benchmark_dirs=("${script_base_directory}/../benchmarks/state-space/dcmotor_ss/")
 else
@@ -123,12 +123,13 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
   cbmc_log_file="${working_directory}/cbmc.log"
 
   max_length=64
-  #integer_width=8
   integer_width=${impl_int_bits}
-  #radix_width=$((impl_int_bits+impl_frac_bits))
-  radix_width=${impl_frac_bits}
-  #min_size_offset=$(((integer_width+radix_width)%8))
-  #[ ${min_size_offset} -ne 0 ] && integer_width=$((integer_width+8-min_size_offset))
+  #integer_width=8
+  #integer_width=${impl_int_bits}
+  radix_width=$((impl_int_bits+impl_frac_bits))
+  #radix_width=${impl_frac_bits}
+  min_size_offset=$(((integer_width+radix_width)%8))
+  [ ${min_size_offset} -ne 0 ] && integer_width=$((integer_width+8-min_size_offset))
   k_sizes=(10 20 30 50 75 100 200)
   k_size_index=0
   timeout_time=3600
