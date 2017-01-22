@@ -565,26 +565,27 @@ In this section we formally outline the errors introduced by fixed-point represe
 In further sections we will differentiate between these two errors, 
 by referring to them as the \emph{plant error} and the \emph{digital controller error} respectively. 
 
-Let $\mathbb{R} \langle I,F \rangle$ \todo{notice this notation differs from the one used above} be a fixed point domain with $I$ bits representing the integer part and $F$ bits
-representing the decimal part. The smallest number that can be represented in this domain is $c_m=2^{-F}$.
+Let $\mathbb{R} \langle I,F \rangle$ \todo{notice this notation differs from the one used above} be a fixed point domain with $I$ bits representing the integer part 
+and $F$ bits representing the decimal part \todo{why R, comment on that.}. The smallest number that can be represented in this domain is $c_m=2^{-F}$.
 The following approximation errors will arise:
 \begin{enumerate}
 \item {\bf Truncation:}
-Let $\mathcal{F}\langle I,F \rangle(\cdot) : \mathbb{R} \rightarrow \mathbb{R}\langle I,F \rangle, \tilde x=\mathcal{F}\langle I,F \rangle(x) = x-\delta_T : \delta_T=x\ \%_{c_m}\ \tilde x$, where $\%_{c_m}$ is the modulus operation performed wrt the last bit.
-$\delta_T$ is the truncation error and it will propagate across operations.
+Let $\mathcal{F}\langle I,F \rangle(\cdot) : \mathbb{R} \rightarrow \mathbb{R}\langle I,F \rangle, \tilde x=\mathcal{F}\langle I,F \rangle(x) = x-\delta_T : \delta_T=x\ \%_{c_m}\ \tilde x$, where $\%_{c_m}$ is the modulus operation performed on the last bit.
+So $\delta_T$ is the truncation error and it will propagate across operations.
 \item {\bf Rounding:}
 The following errors appear in simple operations:
 \begin{enumerate}
-\item Addition/Substraction: these operations only propagate errors coming from truncation of the operands.
+\item Addition/Subtraction: these operations only propagate errors coming from truncation of the operands. 
+\todo{the following maths is loose. fix as follows: define terms with their domain. define operation. apply operator $\mathcal{F}$ above. derive bound. }
 $c_1\pm c_2= c_3 + \delta_3 :|\delta_3| \leq |\delta_{T1}| + |\delta_{T2}|$ 
-\item Multiplication: $c_1 * c_2= c_3 + \delta_3 :|\delta_3| \leq |\delta_{T1}*c_2| + |\delta_{T2}*c_1| + c_m$ 
-\item Division will not be applied in these implementations.
+\item Multiplication: $c_1 * c_2= c_3 + \delta_3 :|\delta_3| \leq |\delta_{T1}*c_2| + |\delta_{T2}*c_1| + c_m$  \todo{same as above.}
+\item Division will not be applied in these implementations. \todo{why not? comment further.}
 \end{enumerate}
 
 \item {\bf Overflow:}
   %Another source of error introduced by Finite Word Length representations is that of overflow.
   The finite word length set a
-maximum representable number in the domain ($\pm (2^{I-1}+1-2^{-F})$), which means that any number outside this range
+maximum representable number in the domain \todo{what is next? a domain? define formally, no back-of-the-envelope mathsy stuff.} ($\pm (2^{I-1}+1-2^{-F})$), which means that any number outside this range
 cannot be represented by the domain. Our tool currently assumes no saturation
 function and verifies that no state overflows.
 \end{enumerate}
