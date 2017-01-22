@@ -591,17 +591,21 @@ function and verifies that no state overflows.
 \end{enumerate}
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{Fixed word length effects on matrix multiplications}
-\label{sec:cof_fwl}
+%\subsection{Fixed word length effects on matrix multiplications}
+%\label{sec:cof_fwl}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\todo{this section is unclear and probably needs to move somewhere else as it is only relevant for the acceleration back end}
-Thus far we have presented a verification procedure for a digitalized plant in a continuous space (\emph{ie} the
-range of the quantizers is still $\mathbb{R}$. The next step we must realize is that the controller 
+
+\todo{this section is unclear and probably needs to move somewhere else as it is only relevant for the acceleration back end} 
+\todo{yes, please reformat the discussion below so that it fits the discussion above. }
+
+Thus far we have presented a verification procedure for a digitalised plant in a continuous space (\emph{ie} the
+range of the quantisers is still $\mathbb{R}$. The next step we must realise is that the controller 
 exists in a digital program, hence its domain is $\mathbb{R}\langle I,F\rangle$. We have $\mat{A},\mat{B},\vec{x} \in \mathbb{R}^*$, $\mat{K}_d,\vec{u},\hat{\vec{x}}=\mathcal{F}\langle I,F \rangle(\vec{x}) \in \mathbb{R}\langle I,F\rangle^*$
 Where $*$ represents the appropriate dimension for each matrix/vector.
 Unfortunately this means that although the closed loop dynamics are in the reals, they suffer from
 the fixed word restrictions in their composing elements.
-Apart from the quantization errors $q_1,q_2$ there are rounding errors in the calculation of $u_k$. These will introduce a new source of quantization noise which we may denote $\vec{\nu}_3 \in [-q_3\ \ q_3]$.
+Apart from the quantisation errors $q_1,q_2$ there are rounding errors in the calculation of $u_k$. 
+These will introduce a new source of quantisation noise which we may denote $\vec{\nu}_3 \in [-q_3\ \ q_3]$.
 The error in $\vec{u}$ corresponds of the multiplication of $\mat{K}_d\hat{\vec{x}}$, hence $q_3=\overline{\delta}_u=(|\mat{K}|_1+1)c_m$
 
 
@@ -699,7 +703,7 @@ in both approaches. We then detail the 2 methods of solution generalisation that
 \label{synthesizer-general}
 The input specification provided to the program synthesizer is of the form
 $\exists \vec{P} .  \forall \vec{x}.  \sigma(\vec{x}, \vec{P})$ where
-$\vec{P}$ ranges over functions, $\vec{x}$ ranges over ground terms and
+$\vec{P}$ ranges over functions, $\vec{x}$ \todo{now variables are vectorised, however previously the model variables aren't. please align notation. I do not like to use vectors unless essential, let's say it's a waste of ink in printouts. } ranges over ground terms and
 $\sigma$ is a quantifier-free formula.  We interpret the ground terms over
 some finite domain $\mathcal{D}$.
 
@@ -727,7 +731,7 @@ that the full set of inputs $\mathcal{D}$ is finite, this means that
 the refinement loop can only iterate a finite number of times.
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{Our synthesis problem}
+\subsection{Synthesis problem: statement}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 The synthesis problem we are trying to solve is the following:
 find a digital controller $K$ (see Eq.~\ref{eq:controlaction})
