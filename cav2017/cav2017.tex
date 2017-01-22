@@ -695,10 +695,11 @@ The error in $\vec{u}$ corresponds of the multiplication of $\mat{K}_d\hat{\vec{
 \label{sec:CEGARIS} 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 %Abstractly-Refined
-In this section we outline the general architecture of the progam synthesizer used 
-in both approaches. We then detail the 2 methods of solution generalisation that we compare.
+In this section we outline the general architecture of the program synthesiser used in both approaches\todo{which approaches?}. 
+We then detail the two methods of solution generalisation that we compare.
+ 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{General architecture of the program synthesizer}
+\subsection{General architecture of the program synthesiser}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \label{synthesizer-general}
 The input specification provided to the program synthesizer is of the form
@@ -731,17 +732,21 @@ that the full set of inputs $\mathcal{D}$ is finite, this means that
 the refinement loop can only iterate a finite number of times.
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{Synthesis problem: statement}
+\subsection{Synthesis problem: statement (recap) and connection to program synthesis}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+\todo{The following paragraph has been already stated above. Let us clarify this is a useful repetition to recap things?} 
+
 The synthesis problem we are trying to solve is the following:
 find a digital controller $K$ (see Eq.~\ref{eq:controlaction})
 that makes the closed-loop system safe for 
 initial state $x_0$, reference signal $r_k$ and input $u_k$
 as defined in Sec.~\ref{ssec:safety}. 
 We consider non-deterministic initial states within a specified range
-and the reference signal to be 0 (\addtodo{refer to wherever this is explained initially}).
-Then, when mapping back to the notation used for describing the general architecture 
-of the program synthesizer, the controller $K$ denotes $P$ and 
+and the reference signal to be set to zero.  
+
+When mapping back to the notation used for describing the general architecture 
+of the program synthesiser, the controller $K$ denotes $P$ and 
 $(x_0, u_k)$ represents $x$. 
 While the controller's precision $\langle I_c,F_c\rangle$ is given, 
 we can vary the plant's precision $\langle I_p,F_p\rangle$ such that 
@@ -772,22 +777,20 @@ language.
 We investigate two different approaches of integrating solution generalisation 
 with CEGIS:
 \begin{itemize}
-\item[1.] The first approach described in Sec.~\ref{sec:CEGIS-precision-incrementation}
-  uses a multi-staged validation phase and performs solution generalisation based on
-the plant's precision, the number of loop unrollings
+\item[1.] The first approach (described in Sec.~\ref{sec:CEGIS-precision-incrementation})
+  uses a multi-staged verification phase and performs solution generalisation based on
+the plant precision, the number of loop unrollings, 
 and the sampling rate. Essentially, it finds a controller for an individual initial state
-and input with a bounded time horizon and generalizes to all states,
-inputs and time horizons. %% (with a final verification loop that verifies
+and input with a bounded time horizon and generalises to all states,
+inputs, and time horizons. %% (with a final verification loop that verifies
 %% the continuous system behaviour against the previously verified
 %% discrete system bi-simulation)
-\item[2.] The second approach described in Sec~\ref{sec:CEGIS-abstraction-refinement}
+\item[2.] The second approach (described in Sec~\ref{sec:CEGIS-abstraction-refinement})
   %% uses abstract acceleration to compute the set of reachable states,
   %% which enables it to perform abstraction refinement inside the CEGIS loop.
-  finds a controller for a continuous initial
-state-space and input sets over an abstraction of the continuous
-dynamics which conforms to witness proofs at specific times, and
-generalizes the solution for all times by refining the number of
-witnesses.
+  finds a controller for a continuous initial set of states and input set, 
+  over an abstraction of the continuous dynamics that conforms to witness proofs at specific times; 
+  it further generalises the solution over all times by refining the number of witnesses. 
 \end{itemize}
 
 
@@ -881,7 +884,7 @@ witnesses.
 
  \end{tikzpicture}
 }}
-\caption{CEGIS with multi-staged verification.}
+\caption{CEGIS with multi-staged verification}
 \label{fig:CEGIS-precision-increment}
 \end{figure}
 
@@ -890,16 +893,19 @@ witnesses.
 The controller synthesis is described in Fig.~\ref{fig:CEGIS-precision-increment}.
 One important observation is that, for this approach, we verify and synthesise 
 a controller over $k$ time steps. We then compute a completeness threshold, $\overline{k}$,
-for this controller, and verify the controller's correctness to $\overline{k}$ time steps.
+for this controller, and verify the controller correctness to $\overline{k}$ time steps.
 Essentially, $\overline{k}$ represents the number of iterations 
 required to sufficiently unwind the closed-loop state-space system 
 such that the boundaries are not violated for any $k{>}\overline{k}$
-(i.e. it's sufficient to unwound the closed-loop state-space system up to  
+(i.e. it is sufficient to unwind the closed-loop state-space system up to  
 $\overline{k}$ in order to ensure that $\phi_{safety}$ holds). 
 
+\medskip
 
 Next, we describe the different phases in Fig.~\ref{fig:CEGIS-precision-increment}
 (blocks 1 to 5):
+
+\todo{please eventually itemize next}
 
 1. The inductive synthesis phase (i.e. {\sc synthesize}) uses BMC to
 compute a candidate solution $K$
@@ -950,7 +956,16 @@ is the number of states.
 
 \todo[inline]{please will Alessandro write out the proof that checking only the corner cases is valid for the safety verification - EP}
 
-
+Proof. 
+Consider the set of initial states, $X_0$, assumed to be convex since it's a box. 
+Name $v_i$ its vertices, where $i=1,\ldots, 2^n$.  
+Thus any point $x \in X_0$ can be expressed by convexity as $x = \sum_{i=1}^{2^n} \alpha_i v_i$, 
+where $\sum_{i=1}^{2^n} \alpha_i =1$. 
+So then if $x_0=x$, then $x_k = (A_d - B_d K)^k x = 
+(A_d - B_d K)^k \sum_{i=1}^{2^n} \alpha_i v_i = 
+\sum_{i=1}^{2^n} \alpha_i (A_d - B_d K)^k v_i  = 
+\sum_{i=1}^{2^n} \alpha_i x_k^i$, 
+where I have denoted with $x_k^i$ the trajectories obtained from the single vertices $v_i$.QED
 
 
 3. The second {\sc verify} stage, {\sc precision}, 
@@ -970,7 +985,13 @@ distance from the reference (in this case the origin) decreases over time.
 \todo[inline] {please will Alessandro write the proof for the completeness threshold here - EP}
 \missingfigure{picture for completeness threshold}
 
-
+Proof sketch. 
+Consider spectrum of matrix $(A_d - B_d K)$ and select eigenvalue with smallest (non trivial) imaginary value.  
+call such value $\vartheta$. 
+At every time interval $kT_s, (k+1)T_s$ ($T_s$ being the sampling time), 
+the dynamics projected on the corresponding eigenspace rotate of $\vartheta T_s$ radiants.  
+So surely taking $k$ as the ceiling of $\frac{2\pi}{\vartheta T_s}$, after $k$ steps we've completed a rotation. 
+This is the CT. 
 
 5. The last {\sc verify} stage, {\sc sampling}, 
 ensures that the current sampling rate is large enough by using an 
