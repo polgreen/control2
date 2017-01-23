@@ -191,29 +191,27 @@ to look for candidate solutions in a reduced solution space.
 
 \paragraph{CEGIS}
 
-Program synthesis is the problem of computing correct-by-design programs
-from high-level specifications; algorithms for this problem have made
-substantial progress in recent years.  One such
-approach~\cite{itzhaky2010simple} inductively synthesises invariants to
+Program synthesis is the problem of computing correct-by-design programs from high-level specifications; 
+algorithms for this problem have made substantial progress in recent years.  
+One such approach~\cite{itzhaky2010simple} inductively synthesises invariants to
 generate the desired programs.
 
 Program synthesizers are an ideal fit for synthesis of %parametric
-controllers since the semantics of programs capture effects such as FWL
+digital controllers, since the semantics of programs capture effects such as FWL
 precisely.  In~\cite{DBLP:conf/cdc/RavanbakhshS15}, the authors use CEGIS
 for the synthesis of switching controllers for stabilising continuous-time
-plants with polynomial dynamics.  The work extends to its application on
-affine systems, finding its major challenge in the hardness of solving
-linear arithmetic with the state-of-the-art SMT solvers.  Since this
-approach uses switching states instead of linear dynamics in the digital
-controller, it entirely circumvents the FWL problem.  It is also not
-suitable for the kind of control we seek to synthesise.
+plants with polynomial dynamics.  The work extends to affine systems, 
+finding a major challenge in the hardness of solving linear arithmetic with the state-of-the-art SMT solvers.  
+Since this approach uses switching models instead of linear dynamics for the digital controller, 
+it entirely circumvents the FWL problem, but potentially incurs state-space explosion issues.  
+This approach is not suitable for the kind of control we seek to synthesise.
 
 %\textcolor{red}{Cristina: can you please revise this sentence:
 Moreover, in \cite{DBLP:conf/emsoft/RavanbakhshS16} the same authors 
 use a CEGIS-based approach for synthesising continuous-time switching
-controllers that guarantee Reach While Stay properties of closed
-loop systems, i.e., properties that specify a set of goal states and safe states.%}. 
-The solution is based on synthesising control Lyapunov
+controllers that guarantee \emph{reach-while-stay} properties of closed-loop systems, 
+i.e., properties that specify a set of goal states and safe states (constrained reachability).%}. 
+The solution is based on synthesising control Lyapunov 
 functions for switched systems, that yield switching controllers with
 a guaranteed minimum dwell time in each mode.
 
@@ -229,24 +227,24 @@ make the closed-loop system \emph{safe}.  Moreover,
 this work  integrates an abstraction/refinement step inside the main CEGIS loop.
 
 The tool Pessoa~\cite{mazo2010pessoa} is a MatLab toolbox that synthesises correct-by-design
-embedded control software. It is based on the principle of describing a physical system
-as an equivalent finite-state machine and computing reachability over the finite-state 
-machine. Pessoa can synthesise safe embedded controller software for a range of properties based on a safety specification over state
-values, as well as specification on characteristic functions of the controller. 
-However, Pessoa does not have native inclusion of the ADC/DAC quantization error needed for
-synthesising a fixed-point digital controller.
+embedded control software. It is based on the description of a physical system
+as an equivalent finite-state machine and on the computation of reachability properties over the finite-state 
+machine. 
+Based on this safety specification over state values, 
+Pessoa can synthesise embedded controller software for a range of properties.  
+%based on a safety specification over state values, as well as specification on characteristic functions of the controller. 
+However, Pessoa does not have native inclusion of the ADC/DAC quantisation error needed for
+synthesising fixed-point digital controllers.
 
 We use a combination of a synthesis engine with a control
-verification tool that addresses the challenges presented here in the
-form of FWL effects and stability measures for LTI SISO controllers.
+verification tool that addresses the challenges presented in the
+form of FWL effects and stability measures over digital controllers for LTI models.  
 
-We take the former from~\cite{DBLP:conf/lpar/DavidKL15}. The verification engine, for
+We take the synthesis engine from~\cite{DBLP:conf/lpar/DavidKL15}. The verification engine, for
 the first approach we present, performs bounded model checking of control properties,
-based on~\cite{Monteiro16}, but 
-enhanced to include evaluation of quantization effects and safety properties
-over the state space. In the second approach, we use a verification engine
-based on abstract acceleration~\cite{cattaruzza2015unbounded} than avoids the explicit 
-unwinding the transition system necessarily for the first approach.
+based on~\cite{Monteiro16}, but enhanced to include evaluation of quantisation effects and safety properties
+over the state space. In an alternative approach, we use a verification engine based on abstract acceleration~\cite{cattaruzza2015unbounded}, 
+which avoids the explicit unwinding the transition system necessarily for the first approach.
 
 
 
