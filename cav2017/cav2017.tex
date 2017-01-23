@@ -193,7 +193,7 @@ to look for candidate solutions in a reduced solution space.
 \paragraph{CEGIS}
 
 Program synthesis is the problem of computing correct-by-design programs
-from high-level specifications, and algorithms for this problem have made
+from high-level specifications; algorithms for this problem have made
 substantial progress in recent years.  One such
 approach~\cite{itzhaky2010simple} inductively synthesizes invariants to
 generate the desired programs.
@@ -208,10 +208,11 @@ linear arithmetic with the state-of-the-art SMT solvers.  Since this
 approach uses switching states instead of linear dynamics in the digital
 controller, it entirely circumvents the FWL problem.  It is also not
 suitable for the kind of control we seek to synthesize.
+\textcolor{red}{Cristina: can you please revise this sentence:
 Moreover, in \cite{DBLP:conf/emsoft/RavanbakhshS16} the same authors 
 use a CEGIS-based approach for synthesizing continuous-time switching
 controllers that guarantee reach while stay properties of a closed
-loop system. The solution is based on synthesizing control Lyapunov
+loop system}. The solution is based on synthesizing control Lyapunov
 functions for switched systems, that yield switching controllers with
 a guaranteed minimum dwell time in each mode.
 
