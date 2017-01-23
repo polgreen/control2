@@ -252,16 +252,16 @@ which avoids the explicit unwinding the transition system necessarily for the fi
 
 \paragraph{Discretization Effects}
 
-The classical approach to control synthesis has often disregarded
-quantization as a minimal effect, thus proving unsound in the case of digital control systems.
-Modern techniques focus on different elements of the discretization effect, including delayed
-response~\cite{Duggirala2015}, and Finite Word Length (FWL) semantics with
-the goal to either verify (e.g.~\cite{daes20161}) or optimise
-(e.g.~\cite{oudjida2014design}) given implementations.
+The classical approach to control synthesis has often disregarded quantization, 
+thus resulting in general to unsound digital controllers. 
+Modern techniques focus on different elements of discretization effects, including delayed
+response~\cite{Duggirala2015}, and Finite Word Length (FWL) semantics, 
+with the goal either to verify (e.g.~\cite{daes20161}) or to optimise
+(e.g.~\cite{oudjida2014design}) given implementations. 
 
 There are two different problems that arise from FWL semantics.  The first
 is the error in the dynamics caused by the inability to represent the exact
-state of the physical system while the second relates to rounding errors
+state of the physical system, while the second relates to rounding errors
 during computation.  In~\cite{fialho1994stability}, a stability measure
 based on the error of the digital dynamics ensures that the deviation
 introduced by FWL does not make the digital system unstable.  A more recent
@@ -274,7 +274,7 @@ Programming (SDP).  While the former uses BIBO properties to determine
 stability, the latter uses Lyapunov-based quadratic invariants.  In both
 cases, the SDP solver uses floating-point arithmetic and soundness is
 checked by bounding the error.  An alternative approach is taken
-by~\cite{park2016scalable}, where the verification of existing code is
+by~\cite{park2016scalable}, where the verification of given control code is
 performed against a known model by extracting an LTI model of the code
 through symbolic execution.  In order to account for rounding errors, an
 upper bound is introduced in the verification phase.
@@ -282,10 +282,10 @@ The work in \cite{picasso2003stabilization,picasso2002construction} introduces
 attractive invariant sets as a mechanism to bound the quantization error effect
 on stabilisation as an invariant set that always converges toward the controllable
 set. In a similar fashion, \cite{liberzon2003hybrid} evaluates the dynamics of the
-quantization error and binds their trajectory to a known region over a finite
+quantization error and bounds its trajectory to a known region over a finite
 period of time. This technique works for both linear and non-linear systems.
 This paper uses an approach that projects the maximum effect of the noise over
-an unbounded time and uses it as a `buffer' region for the safety specification.
+an unbounded time and uses it as a buffer region for the safety specification.
 
 %\addtodo{[Move material from \ref{sec:rw} here]}
 
