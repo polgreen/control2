@@ -1042,20 +1042,75 @@ external checker (\addtodo{add more details here once we have them}).
 \subsubsection{Verification of a controllable system}
 \label{sec:cof_verification}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Whilst there are other properties, we may include in the verification, 
+% we will solely focus on these for simplicity of the explanation.
+% We assume that we do not want saturation in our system, 
+% hence the control loop has only one mode. 
 
-Let us recall the formulas used for single-input and single-output (SISO) systems 
-in sections \ref{sec:reachable} and \ref{sec:observable}.
-A controllable system with quantization will have the following dynamics:
+We have also identified 
+the quantization noise as a bounded non-deterministic input.
+%
+The first step constraints
+\begin{equation}
+\mat{K} \models u_k=-\mat{K}x_k : \phi_{safety}
+\label{eq:of_bounds}
+\end{equation}
+The second step is evaluating the progression of the system over time to evaluate 
+$x_{k+1} \models \phi_{safety}$. For this step we require 
+an initial set from which the system progresses. Obviously, this set $x_0$ 
+must satisfy the specification; otherwise, the system will be unsafe to begin with.
+We accept a specification in the form $\mat{E}\mat{T}x_0<\mat{f}$. 
+The presence of $\mat{T}$ is because this will typically be given in the original 
+state-space. Accelerating \eqref{eq:observer_LTI_cf}, we obtain:
+%
+\begin{align}
+\label{eq:acc_observer_LTI_cf}
+x=&\mat{A}_t^kx_0
++\sum_{i=0}^{k-1} \mat{A}_t^i \mat{B}_{tp} r_i
++\sum_{i=0}^{k-1} \mat{A}_t^i \mat{B}_{tn}(\nu_1+\nu_2+\nu_3) : x_0 \models \phi_{init}
+\end{align}
+which would still require us to verify the system for every $k$ up to infinity. 
+Instead we use abstract acceleration~\cite{cattaruzza2015unbounded}, which translates the formula into
+%
+\begin{align}
+\label{eq:aa_observer_LTI_cf}
+\hat{X}^\#
+=&\mathcal{A}_t X_0+\mathcal{B}_{tp} R + \mathcal{B}_{tn} N\\
+X_0 =&\left \{x : x \models \phi_{init} \right\}\nonumber\\
+ R =&\{r : \mat{E}_r < f_r \}\nonumber\\
+ N=&\left \{ \nu_1+\nu_2+ \nu_3 : \nu_1 \in \left[-\frac{q1}{2}\ \ \frac{q1}{2}\right] \wedge \nu_2 \in \left[-\frac{q2}{2}\ \ \frac{q2}{2}\right]  \wedge \nu_3 \in \left[-q3\ \ q3\right]  \right \}\nonumber
+\end{align}
+%
+where $\mathcal{A}_t=\bigcup_{k=1}^\infty \mat{A}^k, \mathcal{B}_{tp}=\bigcup_{k=1}^\infty \sum_{i=0}^k\mat{A}^i\mat{B}_{tp}, \mathcal{B}_{tn}=\bigcup_{k=1}^\infty \sum_{i=0}^k\mat{A}^i\mat{B}_{tn}$ are abstract matrices for the system in \eqref{eq:observer_LTI_cf} and $r$ is a non-deterministic parametric input (\emph{ie} $\forall k>0, r_{k+1} =r_k$) whereas the set N is composed of non-deterministic variable inputs.
+
+
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+\subsubsection{Controller synthesis}\label{sec:cof_synth}
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+The CEGIS loop for this approach is illustrated in \ref{fig:CEGARIS}.
+
+% Now that we have explained the verification process, we may proceed to describe the synthesis procedure, which is illustrated in figure \ref{fig:CEGARIS}.
+% Our model, rather than look at a bisimulation \todo{specific notion that has not been formally define - do not use} in discrete time, explores a much higher abstraction, 
+% evaluating the unbounded time-continuous space reach tube as a set of inequalities that represent only the safety specification.
+
+\begin{enumerate}
+\item 
+We start by preprocessing the dynamics. This can be computationally intensive and we don't want it to be part of the CEGIS loop.
+% Let us recall the formulas used for single-input and single-output (SISO) systems 
+% in sections \ref{sec:reachable} and \ref{sec:observable}.
+A controllable system with quantization will have the following dynamics 
+(note that we use underscript ``n'' to denote a noise term,
+``cf'' to denote Controllable Canonical Form and $\mat{J}_{n,m}$ to represent a matrix of ones with $n$ rows and $m$ columns):
 \todo{eliminate vectors}
 %
 \begin{align}
 \label{eq:observer_LTI_cf}
-\vec{x}_{k+1}=&\mat{A}_{t}\vec{x}_k+\mat{B}_{tp} \vec{r}_k+\mat{B}_{tn} (\vec{\nu}_1 + \vec{\nu}_2 + \vec{\nu}_3)
+x_{k+1}=&\mat{A}_{t}x_k+\mat{B}_{t} r_k+\mat{B}_{n} (\nu_1 + \nu_2 + \nu_3)
 \end{align}
 \begin{align*}
 \mat{A}_{t}=&\mat{T}\mat{A}_d\mat{T}^{-1}&
-\mat{B}_{tp}=&\mat{T}\mat{B}_d&
-\mat{B}_{tn}=&\mat{T}\mat{B}_d&
+\mat{B}_{t}=&\mat{T}\mat{B}_d&
+\mat{B}_{n}=&\mat{J}_{n,1}&
 \mat{T}=&\mat{R}_{cf}\mat{R}^{-1}&
 \end{align*}
 
@@ -1077,64 +1132,6 @@ The characteristic polynomial of the above matrix is:
 z^n+\sum_{i=1}^p{(a_i-k_i)z^{n-i}}
 \end{align*}
 
-For a stabilised closed-loop, which is necessary for our safety property, we need
-these roots to remain within the unit circle, which we verify using Jury's criteria.
-Notice that in our polynomials $c_0=1$ and we only use reals.
-\todo{where is $\phi_{input}$ computed?}
-Once we have established convergence, we may examine the 
-specification of the state and input spaces ($\phi_{safety} \wedge \phi_{input}$).
-% Whilst there are other properties, we may include in the verification, 
-% we will solely focus on these for simplicity of the explanation.
-% We assume that we do not want saturation in our system, 
-% hence the control loop has only one mode. 
-
-We have also identified 
-the quantization noise as a bounded non-deterministic input.
-%
-The first step constraints
-\begin{equation}
-\mat{K} \models \vec{u}_k=-\mat{K}\vec{x}_k : \phi_{safety} \wedge \phi_{input}
-\label{eq:of_bounds}
-\end{equation}
-The second step is evaluating the progression of the system over time to evaluate 
-$\vec{x}_{k+1} \models \phi_{safety}$. For this step we require 
-an initial set from which the system progresses. Obviously, this set $\vec{x}_0$ 
-must satisfy the specification; otherwise, the system will be unsafe to begin with.
-We accept a specification in the form $\mat{E}\mat{T}\vec{x}_0<\mat{f}$. 
-The presence of $\mat{T}$ is because this will typically be given in the original 
-state-space. Accelerating \eqref{eq:observer_LTI_cf}, we obtain:
-%
-\begin{align}
-\label{eq:acc_observer_LTI_cf}
-\vec{x}=&\mat{A}_t^k\vec{x}_0
-+\sum_{i=0}^{k-1} \mat{A}_t^i \mat{B}_{tp} \vec{r}_i
-+\sum_{i=0}^{k-1} \mat{A}_t^i \mat{B}_{tn}(\vec{\nu}_1+\vec{\nu}_2+\vec{\nu}_3) : \vec{x}_0 \models \phi_{init}
-\end{align}
-which would still require us to verify the system for every $k$ up to infinity. 
-Instead we use abstract acceleration~\cite{cattaruzza2015unbounded}, which translates the formula into
-%
-\begin{align}
-\label{eq:aa_observer_LTI_cf}
-\hat{X}^\#
-=&\mathcal{A}_t X_0+\mathcal{B}_{tp} R + \mathcal{B}_{tn} N\\
-X_0 =&\left \{\vec{x} : \vec{x} \models \phi_{init} \right\}\nonumber\\
- R =&\{r : \mat{E}_r < \vec{f}_r \}\nonumber\\
- N=&\left \{ \vec{\nu}_1+\vec{\nu}_2+ \vec{\nu}_3 : \nu_1 \in \left[-\frac{q1}{2}\ \ \frac{q1}{2}\right] \wedge \nu_2 \in \left[-\frac{q2}{2}\ \ \frac{q2}{2}\right]  \wedge \nu_3 \in \left[-q3\ \ q3\right]  \right \}\nonumber
-\end{align}
-%
-where $\mathcal{A}_t=\bigcup_{k=1}^\infty \mat{A}^k, \mathcal{B}_{tp}=\bigcup_{k=1}^\infty \sum_{i=0}^k\mat{A}^i\mat{B}_{tp}, \mathcal{B}_{tn}=\bigcup_{k=1}^\infty \sum_{i=0}^k\mat{A}^i\mat{B}_{tn}$ are abstract matrices for the system in \eqref{eq:observer_LTI_cf} and $r$ is a non-deterministic parametric input (\emph{ie} $\forall k>0, r_{k+1} =r_k$) whereas the set N is composed of non-deterministic variable inputs.
-
-
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsubsection{Controller synthesis}\label{sec:cof_synth}
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-Now that we have explained the verification process, we may proceed to describe the synthesis procedure, which is illustrated in figure \ref{fig:CEGARIS}.
-Our model, rather than look at a bisimulation \todo{specific notion that has not been formally define - do not use} in discrete time, explores a much higher abstraction, 
-evaluating the unbounded time-continuous space reach tube as a set of inequalities that represent only the safety specification.
-
-\begin{enumerate}
-\item 
-We start by preprocessing the dynamics. This can be computationally intensive and we don't want it to be part of the CEGIS loop.
 \begin{enumerate}
 \item Calculate $\mat{T}$ using equations \eqref{eq:rncf}\eqref{eq:rcf}\eqref{eq:to_cf}
 \item Extract the Plant's characteristic polynomial coefficients from the last row of $P_a=(\mat{T}\mat{A}\mat{T}^-1)_{n*}$.
@@ -1143,6 +1140,11 @@ We start by preprocessing the dynamics. This can be computationally intensive an
 \end{enumerate}
 \item Next we synthesise a candidate controller. 
 We begin with a minimum set of linear inequalities describing the constraints caused by the input and the initial state during a single iteration, in addition to a stability specification defined by Jury's criteria. %, and try to synthesise a controller that meets these specs.
+% For a stabilized closed-loop, which is necessary for our safety property, we need
+% these roots to remain within the unit circle, which we verify using Jury's criteria.
+% Notice that in our polynomials $c_0=1$ and we only use reals.
+% Once we have established convergence, we may examine the 
+% safety specification $\phi_{safety}$.
 
 Let $\mathcal{J}\langle I,F \rangle (P,\mat{T})$ be a program describing Jury's method.
 \begin{enumerate}
