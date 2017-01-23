@@ -217,18 +217,16 @@ The solution is based on synthesising control Lyapunov
 functions for switched systems, that yield switching controllers with
 a guaranteed minimum dwell time in each mode.
 
-In \cite{DBLP:journals/corr/AbateBCCDKK16}, Abate et al.  focus on
-synthesising stabilising controllers for continuous plants
-by exploiting advantage in bit-accurate verification of software-implemented 
-digital control~\cite{Bessa16}.  While they also make use of a CEGIS-based 
-technique, their approach is restricted to synthesising controllers for hybrid 
-closed-loop systems that are stable and only consider transfer function models.  
-In contrast, in the current paper, we consider a state-space
-representation of the physical system, which allows us to synthesise controllers that
-make the closed-loop system \emph{safe} as well as stable.  Moreover, 
-a key aspect of the second approach we evaluate
-is that we integrate abstraction
-refinement inside the CEGIS loop.
+The work in \cite{DBLP:journals/corr/AbateBCCDKK16} investigates the synthesis of 
+stabilising controllers for continuous plants described as transfer functions, 
+by exploiting bit-accurate verification of software-implemented 
+digital controllers~\cite{Bessa16}.  While this work also make use of a CEGIS-based technique, 
+the approach is restricted to synthesising digital controllers for stable 
+closed-loop systems described via transfer function models.  
+In contrast, in the current paper we consider a state-space representation of the physical system, 
+which is known to be more general \cite{Astrom08} and allows to synthesise controllers that
+make the closed-loop system \emph{safe}.  Moreover, 
+this work  integrates an abstraction/refinement step inside the main CEGIS loop.
 
 The tool Pessoa~\cite{mazo2010pessoa} is a MatLab toolbox that synthesises correct-by-design
 embedded control software. It is based on the principle of describing a physical system
@@ -441,7 +439,7 @@ and $r_{k}$ is a reference signal (again digital).
 The closed-loop model then takes the form 
 \begin{align}
 \label{eq:closedloopss}
-x_{k+1} = ( A_d - B_d K ) + B_d r_k.
+x_{k+1} = ( A_d - B_d K ) x_k + B_d r_k.
 \end{align}
 The gain matrix $K$ can be set so that the closed-loop digitalised dynamics are shaped as desired, 
 for instance according to a specific stability goal or around a specific dynamical behaviour \cite{astrom1997computer}. 
@@ -454,7 +452,7 @@ As argued later, in this work, we will target more complex objectives, such as q
 
 %\addtodo{[Here discuss Jury criterium for DISCRETE-TIME models - a simplified version of the first part of what is now in Section \ref{sec:cof_verification} (with no quantization noises yet).]}  
 
-Asymptotic stability boils down to Lyapunov stability and convergence to an equilibrium point\cite{Astrom08} %\todo{add reference}.  
+Asymptotic stability boils down to Lyapunov stability and convergence to an equilibrium point~\cite{Astrom08}.  %\todo{add reference}.  
 Lyapunov stability requires that model trajectories remain in a neighbourhood of the equilibrium point. 
 In the case of closed-loop LTI models as in \eqref{eq:closedloopss}, 
 the equilibrium point is the origin (if the reference is equal to zero), or an offset thereof.  
@@ -1477,7 +1475,7 @@ Pendulum   & $\left[\begin{array}{cc}
 -0.271		& -0.05336	& 0	\\
 0.03125		& 0			& 0			\\
 0			& 0.01562 	& 0			\\	
-\end{array}\right]$ & , $\left[\begin{array}{c}
+\end{array}\right]$ & $\left[\begin{array}{c}
 1 \\ 0 \\ 0
 \end{array}\right]$ & $\left[\begin{array}{ccc}
 0	& -0.5888	& -0.2562 \\
