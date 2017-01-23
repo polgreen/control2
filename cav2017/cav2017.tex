@@ -1624,7 +1624,8 @@ x_{1} &= (A_d  - B_dK)x_0 + B_dK\delta \\
 x_{2} &= (A_d  - B_dK)((A_d  - B_dK)x_0 + B_dK\delta ) + B_dK\delta \\
       &=(A_d  - B_dK)^2x_0 + (A_d  - B_dK)B_dK\delta + B_dK\delta \\
 x_{3}  &=(A_d  - B_dK)^3x_0 + (A_d  - B_dK)^2B_dK\delta + (A_d  - B_dK)B_dK\delta + B_dK\delta\\
-x_{k+1} &= (A_d  - B_dK)^nx_0 + (A_d  - B_dK)^{n-1}B_dK\delta + ... + (A_d  - B_dK)^1B_dK \delta + B_dK\delta \\
+x_{n} &= (A_d  - B_dK)^nx_0 + (A_d  - B_dK)^{n-1}B_dK\delta + ... + (A_d  - B_dK)^1B_dK \delta + B_dK\delta \\
+  &= (A_d - B_dK)^nx_0 + \sum_{i=0}^{i=n-1}(A_d - B_dK)^iB_dk\delta
 \end{align*}
 
 The definition of asymptotic stability is that the system converges to a reference signal, in this case we use no
@@ -1632,11 +1633,11 @@ reference signal so an asymptotically stable system will converge to the origin.
 with an infinite precision controller is stable, because we have synthesised it to meet Jury's criteria. Hence
 $(A_d  - B_dK)^n*x_0$ must converge to zero. 
 
-Hence, we can show that a fixed point implementation of the same controller will converge to a steady value, as 
-all terms that contain $(A_d  - B_dK)^k$ will eventually converge to zero, and the remaining non-converging term is $B_dK\delta$. 
+To show that a fixed point implementation of the same controller will converge to a steady value, we need to show that the infinite sum converges.
 
-We do not require asymptotic stability to ensure safety, we do require that the controller converges to a steady value 
-in the safe state values.
+A known result is that a power series of matrices converges iff the eigenvalues of the matrix are less than 1. 
+
+\todo[inline]{complete this, show convergence}
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \section{LTI system Transformations and Equivalencies} \label{sec:appendix}
