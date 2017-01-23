@@ -311,7 +311,7 @@ with full state information (namely where we have access to all the model variab
 where $t \in \mathbb R_0^+$, 
 where $A$ and $B$ are matrices that fully specify the continuous plant, 
 and with initial states set as $x(0)$. 
-Eq.~\eqref{eq:ode} is soundly discretised in time (as shown in the Appendix) into %\textcolor{red}{What is subscript ``d''?}
+Eq.~\eqref{eq:ode} is soundly discretized in time (as shown in the Appendix) into %\textcolor{red}{What is subscript ``d''?}
 %
 \begin{align}
 \label{eq:plant}
@@ -426,7 +426,7 @@ Feedback architectures can be employed to affect the properties and behaviours o
 We are interested in the synthesis of digital feedback, 
 as implemented on modern FPGAs or ICs. 
 The most basic feedback architecture is the state feedback, 
-where the control action $u_k$ (notice we work with the discretised signal) is computed by: 
+where the control action $u_k$ (notice we work with the discretized signal) is computed by: 
 %
 \begin{equation}
 \label{eq:controlaction}
@@ -452,7 +452,7 @@ As argued later, in this work, we will target more complex objectives, such as q
 
 %\addtodo{[Here discuss Jury criterium for DISCRETE-TIME models - a simplified version of the first part of what is now in Section \ref{sec:cof_verification} (with no quantisation noises yet).]}  
 
-Asymptotic stability boils down to Lyapunov stability and convergence to an equilibrium point \todo{add reference}.  
+Asymptotic stability boils down to Lyapunov stability and convergence to an equilibrium point\cite{Astrom08} %\todo{add reference}.  
 Lyapunov stability requires that model trajectories remain in a neighbourhood of the equilibrium point. 
 In the case of closed-loop LTI models as in \eqref{eq:closedloopss}, 
 the equilibrium point is the origin (if the reference is equal to zero), or an offset thereof.  
@@ -546,28 +546,11 @@ this means that the control input saturates in view of physical constraints.
 \label{sec:numeric_rep}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-\todo{I've moved the following paragraph to this section, from that on safety specs.}
-The states values must be computed considering the digital controller error, i.e., the error introduced by the ADC and the digital controller. 
-%, and the digital reference signal. 
-%In this paper, we consider systems with a reference signal equal to zero. 
-%the FWL effects in all operations related to the control action~\eqref{eq:controlaction} 
-%and disregarding it in the state equation~\eqref{eq:plant}.
-Thus, the states are computed using the following equations. We use $\mathcal{F}_{\langle I_c,F_c \rangle}$ \todo{explain and clarify notation.}
-to to denote numbers represented with the precision of the digital controller. All other numbers
-are represented with the precision of our plant model:
-%
-\begin{align*}
-u_{k}&=-(\mathcal{F}_{\langle I_c,F_c \rangle}(K)\cdot\mathcal{F}_{\langle I_c,F_c \rangle}(x_{k})).  
-%\\ x_{k+1}&=A_d x_{k} + B_du_{k}
-\end{align*}
-%\left\lbrace
-%\begin{array}{l}
-%u_{k}=\mathcal{F}_{\langle I,F \rangle}(r_{k}-\mathcal{F}_{\langle I,F \rangle}(\mathcal{F}_{\langle I,F \rangle}(K)\cdot\mathcal{F}_{\langle I,F \rangle}(x_{k})))\\
-%x_{k+1}=Ax_{k}+Bu_{k}
-%\end{array}\right.
-%\end{equation}
 
-\bigskip
+
+
+
+
 
 The 
 %systems and 
@@ -624,7 +607,24 @@ Apart from the quantisation errors $q_1,q_2$ there are rounding errors in the ca
 These will introduce a new source of quantisation noise which we may denote $\vec{\nu}_3 \in [-q_3\ \ q_3]$.
 The error in $\vec{u}$ corresponds of the multiplication of $\mat{K}_d\hat{\vec{x}}$, hence $q_3=\overline{\delta}_u=(|\mat{K}|_1+1)c_m$
 
+\bigskip
 
+\subsubsection{Effect on safety specification and stability}
+The states values must be computed considering the digital controller error, i.e., the error introduced by the ADC and the digital controller. 
+%, and the digital reference signal. 
+%In this paper, we consider systems with a reference signal equal to zero. 
+%the FWL effects in all operations related to the control action~\eqref{eq:controlaction} 
+%and disregarding it in the state equation~\eqref{eq:plant}.
+Thus, the states are computed using the following equations. We use $\mathcal{F}_{\langle I_c,F_c \rangle}$ \todo{explain and clarify notation.}
+to to denote numbers represented with the precision of the digital controller. All other numbers
+are represented with the precision of our plant model:
+%
+\begin{align*}
+u_{k}&=-(\mathcal{F}_{\langle I_c,F_c \rangle}(K)\cdot\mathcal{F}_{\langle I_c,F_c \rangle}(x_{k})).  
+%\\ x_{k+1}&=A_d x_{k} + B_du_{k}
+\end{align*}
+
+We note that the effect on stability due to the fixed-word-length error is that the system may, instead of converging to the desired equilibrium point, converge to a point that is $\delta$ away from the desired equilibrium point, see Appendix. In this paper, we are concerned with \emph{safe} controllers and therefore concerned only that the system converges to a point within the safety specification. Hence, it is sufficient to synthesise a stable controller based on infinite precision, and then verify safety. 
 
 
 %% %-------------------------------
@@ -1613,7 +1613,7 @@ $$
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{Discretising continuous space dynamics}
+\subsection{Discretizing continuous space dynamics}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 A dynamical system is a system in which a function describes the progression of a state over time. 
