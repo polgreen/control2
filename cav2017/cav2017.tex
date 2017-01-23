@@ -118,7 +118,7 @@ State-space dynamical models of physical systems;
 Digital controllers; 
 Analogue-to-digital converters; 
 Time sampling; 
-Quantisation; 
+quantization; 
 Fixed-point arithmetic; 
 CEGIS; 
 safety requirements. 
@@ -137,7 +137,7 @@ the life sciences, robotics, and engineering~\cite{astrom1997computer,Franklin15
 Control synthesis for LTI is broadly investigated, 
 however the use of digital control architectures adds new challenges due to 
 %exacerbated by specific artefacts,  
-the effects of finite-precision arithmetic, time discretization, and quantisation noise, which are typically introduced 
+the effects of finite-precision arithmetic, time discretization, and quantization noise, which are typically introduced 
 by Analogue-to-Digital (A/D) and Digital-to-Analogue (D/A) conversion.  
 Whilst the research on digital control is well developed~\cite{astrom1997computer}, 
 automated and sound control synthesis is a challenging task. 
@@ -321,7 +321,7 @@ x_{k+1} = A_d x_k+ B_d u_k.
 \end{align} 
 where $k \in \mathbb N$, 
 and with initial state $x_{0}=x(0)$. $A_d$ and $B_d$ denote the discretized matrices of $A$ and $B$, the plant dynamics. 
-Later, we will deal with the issue of variable quantisation, as introduced by the ADC and DAC blocks.  
+Later, we will deal with the issue of variable quantization, as introduced by the ADC and DAC blocks.  
 
 %
 \begin{figure*}[htb]
@@ -452,7 +452,7 @@ As argued later, in this work, we will target more complex objectives, such as q
 \label{ssec:stability}
 %-------------------------------
 
-%\addtodo{[Here discuss Jury criterium for DISCRETE-TIME models - a simplified version of the first part of what is now in Section \ref{sec:cof_verification} (with no quantisation noises yet).]}  
+%\addtodo{[Here discuss Jury criterium for DISCRETE-TIME models - a simplified version of the first part of what is now in Section \ref{sec:cof_verification} (with no quantization noises yet).]}  
 
 Asymptotic stability boils down to Lyapunov stability and convergence to an equilibrium point\cite{Astrom08} %\todo{add reference}.  
 Lyapunov stability requires that model trajectories remain in a neighbourhood of the equilibrium point. 
@@ -594,13 +594,13 @@ function and verifies that no state overflows.
 \todo{yes, please reformat the discussion below so that it fits the discussion above. }
 
 Thus far we have presented a verification procedure for a digitalised plant in a continuous space (\emph{i.e.} the
-range of the quantisers is still $\mathbb{R}$. The next step we must realise is that the controller 
+range of the quantizers is still $\mathbb{R}$. The next step we must realise is that the controller 
 exists in a digital program, hence its domain is $\mathbb{R}\langle I,F\rangle$. We have $\mat{A},\mat{B},\vec{x} \in \mathbb{R}^*$, $\mat{K}_d,\vec{u},\hat{\vec{x}}=\mathcal{F}\langle I,F \rangle(\vec{x}) \in \mathbb{R}\langle I,F\rangle^*$
 Where $*$ represents the appropriate dimension for each matrix/vector.
 Unfortunately this means that although the closed loop dynamics are in the reals, they suffer from
 the fixed word restrictions in their composing elements.
-Apart from the quantisation errors $q_1,q_2$ there are rounding errors in the calculation of $u_k$. 
-These will introduce a new source of quantisation noise which we may denote $\vec{\nu}_3 \in [-q_3\ \ q_3]$.
+Apart from the quantization errors $q_1,q_2$ there are rounding errors in the calculation of $u_k$. 
+These will introduce a new source of quantization noise which we may denote $\vec{\nu}_3 \in [-q_3\ \ q_3]$.
 The error in $\vec{u}$ corresponds of the multiplication of $\mat{K}_d\hat{\vec{x}}$, hence $q_3=\overline{\delta}_u=(|\mat{K}|_1+1)c_m$
 
 \bigskip
@@ -1541,7 +1541,7 @@ The performance gain from abstract acceleration may not hold for more complex pr
 \label{sec:appendix-stability}
 %-------------------------------
 
-%\addtodo{[Here discuss Jury criterium for DISCRETE-TIME models - a simplified version of the first part of what is now in Section \ref{sec:cof_verification} (with no quantisation noises yet).]}  
+%\addtodo{[Here discuss Jury criterium for DISCRETE-TIME models - a simplified version of the first part of what is now in Section \ref{sec:cof_verification} (with no quantization noises yet).]}  
 
 For a closed-loop system as~\eqref{eq:closedloopss}, 
 the characteristic polynomial $P(z)$ should be computed as follows:
