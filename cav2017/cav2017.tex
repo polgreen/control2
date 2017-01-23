@@ -468,6 +468,7 @@ This condition boils down to an easy algebraic formula to select the entries of 
 so that the closed-loop dynamics are shaped as desired. 
 A detailed description of this specification can be found in the Appendix~\ref{sec:appendix-stability}. 
 
+
 %-------------------------------
 \subsection{Safety specifications for dynamical systems}
 \label{ssec:safety}
@@ -1606,6 +1607,38 @@ $$
 \phi_{stability}\iff \ (R_{1} \wedge R_{2} \wedge R_{3} \wedge R_{4}).
 $$
 
+%-------------------------------
+\subsection{Stability of closed-loop systems with fixed-point controller error}
+%-------------------------------
+
+The proof above relies on the fact that the relationship between states and next states is defined by
+$x_{k+1} = (A_d  - B_dK)*x_k$, all computed at infinite precision. In fact, when we employ a FWL digital controller, 
+the operation becomes:
+\begin{align*}
+x_{k+1} &= A_d * x_{k} -(\mathcal{F}_{\langle I_c,F_c \rangle}(K)\cdot\mathcal{F}_{\langle I_c,F_c \rangle}(x_{k})).  \\
+x_{k+1} &= (A_d  - B_dK)*x_k + B_dK\delta
+%\\ x_{k+1}&=A_d x_{k} + B_du_{k}
+\end{align*}
+where $\delta$ is the maximum error that can be introduced by the FWL controller in one step, i.e., by reading the states values once and multiplying by $K$ once. We derive the closed form expression for $x_n$
+
+\begin{align*}
+x_{1} &= (A_d  - B_dK)x_0 + B_dK\delta \\
+x_{2} &= (A_d  - B_dK)((A_d  - B_dK)x_0 + B_dK\delta ) + B_dK\delta \\
+      &=(A_d  - B_dK)^2x_0 + (A_d  - B_dK)B_dK\delta + B_dK\delta \\
+x_{3}  &=(A_d  - B_dK)^3x_0 + (A_d  - B_dK)^2B_dK\delta + (A_d  - B_dK)B_dK\delta + B_dK\delta\\
+x_{k+1} &= (A_d  - B_dK)^nx_0 + (A_d  - B_dK)^{n-1}B_dK\delta + ... + (A_d  - B_dK)^1B_dK \delta + B_dK\delta \\
+\end{align*}
+
+The definition of asymptotic stability is that the system converges to a reference signal, in this case we use no
+reference signal so an asymptotically stable system will converge to the origin. We know that the original system
+with an infinite precision controller is stable, because we have synthesised it to meet Jury's criteria. Hence
+$(A_d  - B_dK)^n*x_0$ must converge to zero. 
+
+Hence, we can show that a fixed point implementation of the same controller will converge to a steady value, as 
+all terms that contain $(A_d  - B_dK)^k$ will eventually converge to zero, and the remaining non-converging term is $B_dK\delta$. 
+
+We do not require asymptotic stability to ensure safety, we do require that the controller converges to a steady value 
+in the safe state values.
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \section{LTI system Transformations and Equivalencies} \label{sec:appendix}
