@@ -170,7 +170,7 @@ synthesis of safe digital controllers.
 We describe and evaluate two approaches for synthesizing digital controllers 
 for state-space physical plants. Both approaches consider a counterexample 
 guided inductive synthesis (CEGIS) loop. In the first approach, 
-we devise a digital controller that stabilizes the system; then, we verify its 
+we devise a digital controller that stabilises the system; then, we verify its 
 potential safety by unfolding the dynamics of the system and checking for 
 a completeness threshold. \textcolor{red}{Dario: Can you please briefly explain your approach?
 In the second approach,...}
@@ -183,7 +183,7 @@ of abstraction refinement in order to achieve scalability.
 This strategy enables the inductive generalisation engine inside CEGIS
 to look for candidate solutions in a reduced solution space.  
 
-\addtodo{We have to summarize our main contributions here}
+\addtodo{We have to summarise our main contributions here}
 
 %-------------------------------
 \section{Related work}
@@ -195,29 +195,29 @@ to look for candidate solutions in a reduced solution space.
 Program synthesis is the problem of computing correct-by-design programs
 from high-level specifications; algorithms for this problem have made
 substantial progress in recent years.  One such
-approach~\cite{itzhaky2010simple} inductively synthesizes invariants to
+approach~\cite{itzhaky2010simple} inductively synthesises invariants to
 generate the desired programs.
 
-Program synthesisers are an ideal fit for synthesis of %parametric
+Program synthesizers are an ideal fit for synthesis of %parametric
 controllers since the semantics of programs capture effects such as FWL
 precisely.  In~\cite{DBLP:conf/cdc/RavanbakhshS15}, the authors use CEGIS
-for the synthesis of switching controllers for stabilizing continuous-time
+for the synthesis of switching controllers for stabilising continuous-time
 plants with polynomial dynamics.  The work extends to its application on
 affine systems, finding its major challenge in the hardness of solving
 linear arithmetic with the state-of-the-art SMT solvers.  Since this
 approach uses switching states instead of linear dynamics in the digital
 controller, it entirely circumvents the FWL problem.  It is also not
-suitable for the kind of control we seek to synthesize.
+suitable for the kind of control we seek to synthesise.
 \textcolor{red}{Cristina: can you please revise this sentence:
 Moreover, in \cite{DBLP:conf/emsoft/RavanbakhshS16} the same authors 
-use a CEGIS-based approach for synthesizing continuous-time switching
+use a CEGIS-based approach for synthesising continuous-time switching
 controllers that guarantee reach while stay properties of a closed
-loop system}. The solution is based on synthesizing control Lyapunov
+loop system}. The solution is based on synthesising control Lyapunov
 functions for switched systems, that yield switching controllers with
 a guaranteed minimum dwell time in each mode.
 
 In \cite{DBLP:journals/corr/AbateBCCDKK16}, Abate et al.  focus on
-synthesising stabilizing controllers for continuous plants
+synthesising stabilising controllers for continuous plants
 by exploiting advantage in bit-accurate verification of software-implemented 
 digital control~\cite{Bessa16}.  While they also make use of a CEGIS-based 
 technique, their approach is restricted to synthesising controllers for hybrid 
@@ -258,7 +258,7 @@ The classical approach to control synthesis has often disregarded
 quantization as a minimal effect, thus proving unsound in the case of digital control systems.
 Modern techniques focus on different elements of the discretization effect, including delayed
 response~\cite{Duggirala2015}, and Finite Word Length (FWL) semantics with
-the goal to either verify (e.g.~\cite{daes20161}) or optimize
+the goal to either verify (e.g.~\cite{daes20161}) or optimise
 (e.g.~\cite{oudjida2014design}) given implementations.
 
 There are two different problems that arise from FWL semantics.  The first
@@ -282,7 +282,7 @@ through symbolic execution.  In order to account for rounding errors, an
 upper bound is introduced in the verification phase.
 The work in \cite{picasso2003stabilization,picasso2002construction} introduces
 attractive invariant sets as a mechanism to bound the quantization error effect
-on stabilization as an invariant set that always converges toward the controllable
+on stabilisation as an invariant set that always converges toward the controllable
 set. In a similar fashion, \cite{liberzon2003hybrid} evaluates the dynamics of the
 quantization error and binds their trajectory to a known region over a finite
 period of time. This technique works for both linear and non-linear systems.
@@ -711,11 +711,11 @@ The error in $\vec{u}$ corresponds of the multiplication of $\mat{K}_d\hat{\vec{
 \label{sec:CEGARIS} 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 %Abstractly-Refined
-In this section we outline the general architecture of the program synthesiser used in both approaches%\todo{which approaches?}. 
+In this section we outline the general architecture of the program synthesizer used in both approaches%\todo{which approaches?}. 
 We then give the details of the two methods of solution generalisation that we compare; the first checking safety by unwinding the transition relation to a completeness threshold; and the second employing abstract acceleration.
  
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{General architecture of the program synthesiser}
+\subsection{General architecture of the program synthesizer}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \label{synthesizer-general}
 The input specification provided to the program synthesizer is of the form
@@ -762,7 +762,7 @@ as defined in Sec.~\ref{ssec:safety}.
 We consider non-deterministic initial states within a specified range
 and the reference signal to be set to zero.  
 When mapping back to the notation used for describing the general architecture 
-of the program synthesiser, the controller $K$ denotes $P$ and 
+of the program synthesizer, the controller $K$ denotes $P$ and 
 $(x_0, u_k)$ represents $x$. 
 While the controller's precision $\langle I_c,F_c\rangle$ is given, 
 we can vary the plant's precision $\langle I_p,F_p\rangle$ such that 
@@ -929,7 +929,7 @@ Next, we describe the different phases in Fig.~\ref{fig:CEGIS-precision-incremen
 
 \todo{please eventually itemize next}
 
-1. The inductive synthesis phase (i.e. {\sc synthesize}) uses BMC to
+1. The inductive synthesis phase (i.e. {\sc synthesise}) uses BMC to
 compute a candidate solution $K$
 that satisfies both the stability criteria detailed in 
 Sec.~\ref{ssec:stability} and the safety specification in Sec.~\ref{ssec:safety}.
@@ -938,7 +938,7 @@ Sec.~\ref{ssec:stability} and the safety specification in Sec.~\ref{ssec:safety}
 Regarding the latter, we synthesise a safe controller by unwinding the transition system
 $k$ steps and picking a controller $K$ and an initial state such that the states at each step do
 not violate the safety criteria. This is sound if the current $k$ is below the
-completeness threshold, which we assume to be true in the {\sc synthesize} phase.
+completeness threshold, which we assume to be true in the {\sc synthesise} phase.
 We also assume some
 precision $\langle I_p,F_p\rangle$ for the plant and a sampling rate.  The
 checks that all these assumptions are sound are performed by subsequent
@@ -980,14 +980,14 @@ is the number of states.
 
 Proof. 
 Consider the set of initial states, $X_0$, assumed to be convex since it's a box. 
-Name $v_i$ its vertices, where $i=1,\ldots, 2^n$.  
+Name $v_i$ its vertexes, where $i=1,\ldots, 2^n$.  
 Thus any point $x \in X_0$ can be expressed by convexity as $x = \sum_{i=1}^{2^n} \alpha_i v_i$, 
 where $\sum_{i=1}^{2^n} \alpha_i =1$. 
 So then if $x_0=x$, then $x_k = (A_d - B_d K)^k x = 
 (A_d - B_d K)^k \sum_{i=1}^{2^n} \alpha_i v_i = 
 \sum_{i=1}^{2^n} \alpha_i (A_d - B_d K)^k v_i  = 
 \sum_{i=1}^{2^n} \alpha_i x_k^i$, 
-where I have denoted with $x_k^i$ the trajectories obtained from the single vertices $v_i$.QED
+where I have denoted with $x_k^i$ the trajectories obtained from the single vertexes $v_i$.QED
 
 
 3. The second {\sc verify} stage, {\sc precision}, 
@@ -1077,7 +1077,7 @@ The characteristic polynomial of the above matrix is:
 z^n+\sum_{i=1}^p{(a_i-k_i)z^{n-i}}
 \end{align*}
 
-For a stabilized closed-loop, which is necessary for our safety property, we need
+For a stabilised closed-loop, which is necessary for our safety property, we need
 these roots to remain within the unit circle, which we verify using Jury's criteria.
 Notice that in our polynomials $c_0=1$ and we only use reals.
 \todo{where is $\phi_{input}$ computed?}
@@ -1155,12 +1155,12 @@ Let $\mathcal{J}\langle I,F \rangle (P,\mat{T})$ be a program describing Jury's 
 \item Calculate the abstract matrices $\mathcal{A}_t, \mathcal{B}_{tp},\mathcal{B}_{tn}$ for the candidate closed loop solution.
 \item Evaluate $\hat{X}^\# \models \Psi$. If the verification holds we have a solution, and exit the loop.
 \end{enumerate} 
-\item If the candidate solution is not valid we refine the abstraction used by the synthesiser
+\item If the candidate solution is not valid we refine the abstraction used by the synthesizer
 \begin{enumerate}
 \item Find the constraints that invalidate the property. These are the rows of $\mat{E} \in \Psi$ that intersect/segment $\hat{X}^\#$. Transforming these rows into the eigenspace of $\mat{A}_t$, and applying backward acceleration to obtain a set of counterexamples for the eigenvalues, which we define as $\phi(\Lambda)$. This is a constraint in the spectrum (\emph{ie} frequency response transfer function) of the closed loop dynamics. 
 \item Transform the soft constraints on the spectrum into soft constraints on the coefficients of the characteristic polynomial. 
 $z^n+\sum_{i=1}^n[a_i-k_i]z^{n-i}=\prod_{i=1}^n (z-[\lambda_i]) : |[\lambda_i]|<1 \wedge [\lambda_i] \models \phi_{\Lambda}$.
-\item Pass the refined abstraction with the new contraints to the synthesiser, as well as a counterexample plant coefficients ($P_a$) and repeat the loop again. We note that the Abstraction refinement is a soft constraint on the proposed model which can increase or decrease the parameter space at any time, whereas the concrete counterexample passed to the synthesiser is monotonically decreasing. The first one improves speed of the tool whereas the second ensures convergence.
+\item Pass the refined abstraction with the new constraints to the synthesizer, as well as a counterexample plant coefficients ($P_a$) and repeat the loop again. We note that the Abstraction refinement is a soft constraint on the proposed model which can increase or decrease the parameter space at any time, whereas the concrete counterexample passed to the synthesizer is monotonically decreasing. The first one improves speed of the tool whereas the second ensures convergence.
 
 \end{enumerate} 
 \end{enumerate}
@@ -1268,7 +1268,7 @@ y(t)=\textbf{C}\textbf{x}(t)+\textbf{D}u(t)
 \end{array}\right.
 \end{equation}
 
-Table~\ref{table:State-space benchmarks} summarizes all benchmarks extracted 
+Table~\ref{table:State-space benchmarks} summarises all benchmarks extracted 
 from the control system literature~\cite{Franklin15,maglev,converters,CTMS}. 
 \textit{DC Motor Position and Rate} plants describes the angular position and 
 velocity of a DC Motor, respectively, that coupled with wheels and cables provides 
@@ -1293,7 +1293,7 @@ with its center of mass above its pivot point.
 \textit{Magnetic Suspension} plant provides the physical model for which 
 a given object is suspended via a magnetic field. 
 \textit{Magnetized Pointer} plant describes a physical model that is rotated through interaction 
-with magnetic fields (typically employed in analog gauges and indicators).
+with magnetic fields (typically employed in analogue gauges and indicators).
 \textit{1/4 Car Suspension} plant presents a physical model that connects a car to its wheels 
 and allows relative motion between both parts.
 \textit{Computer Tape Driver} plant describes a physical model to read and write data 
@@ -1491,7 +1491,7 @@ Pendulum   & $\left[\begin{array}{cc}
 %-------------------------------
 \subsection{Threats to validity}
 %-------------------------------
-We report an assessment of both our approaches over a diverse set of real-world benchmarks. Nevertheless, this set of benchmarks is limited within the scope of this paper and the performance may not generalize to other benchmarks. 
+We report an assessment of both our approaches over a diverse set of real-world benchmarks. Nevertheless, this set of benchmarks is limited within the scope of this paper and the performance may not generalise to other benchmarks. 
 
 Our algorithm to select suitable FWL word widths to model plant behaviour employs a heuristic based on user-provided controller word-width specifications. For the first approach, where we may need to increase the precision of the time discretization, we select the time steps for the discretizations on a similar basis. This works sufficiently well for our benchmarks, but performance may suffer in some cases, for example if the completeness threshold is high. 
 
