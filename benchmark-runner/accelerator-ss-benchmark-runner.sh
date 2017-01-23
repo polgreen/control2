@@ -1,6 +1,6 @@
 #!/bin/bash
-#export PATH=${PATH//cbmc-5190/cbmc-trunk-diffblue-control-synthesis}
 #export PATH=${PATH}:/media/sf_Documents/GitHub/cbmc-master/src/cbmc
+export PATH=${PATH//cbmc-5190/cbmc-trunk-diffblue-control-synthesis}
 export PATH=${PATH}:/users/pkesseli/software/cpp/cbmc/cbmc-trunk-diffblue-control-synthesis/src/cegis:/users/pkesseli/software/cpp/cbmc/cbmc-trunk-diffblue-control-synthesis-analyzer/src/goto-analyzer:/users/pkesseli/software/cpp/z3/trunk/target/i686-linux/bin
 
 status_output_file='output.txt'
@@ -15,7 +15,6 @@ cbmc_log_file='cbmc-tmp.log'
 function setup_benchmark_directory {
  mkdir -p "$1" 2>/dev/null
  cp ${script_base_directory}/AACegar/* ${working_directory}/
- # TODO: cp source files and headers, and benchmark headers
 }
 
 function echo_log {
@@ -24,7 +23,7 @@ function echo_log {
 
 function echo_success_message {
  start_time=$1
- end_time=`date +%s`
+ end_time=$2
  runtime=$((end_time-start_time))
  echo_log 'SYNTHESIS SUCCESSFUL'
  echo_log "<control_synthesis_time>${runtime}</control_synthesis_time>"
@@ -71,6 +70,12 @@ function write_spec_header {
  echo "const __CPROVER_EIGEN_fixedbvt _controller_B[NSTATES] = { ${B_value} };" >>${header_file}
 }
 
+function get_current_cpu_millis {
+ cat ${time_tmp_file} >>${log_file}
+ formula=$(sed -r 's/([0-9]+(\.[0-9]+)?)m([0-9]+)\.0*([0-9]+)?s/60000*\1+1000*\3+\4/g' ${time_tmp_file} | tr '\n' ' ' | sed -r 's/ /+/g' | sed -r 's/(.*)[+]$/\1/' | sed -r 's/(.*)[+]$/\1/' | sed -r 's/[+]+/+/')
+ echo $((${formula}))
+}
+
 mkdir -p ${working_directory_base} 2>/dev/null
 
 if [ -z "$1" ]; then
@@ -91,8 +96,9 @@ fi
 
 for benchmark_dir in ${benchmark_dirs[@]}; do
  for benchmark in ${benchmark_dir}*.ss; do
-  start_time=`date +%s`
   log_file="${benchmark%.ss}_accelerator-ss.log"
+  time_tmp_file=/tmp/times${working_directory_base_suffix}.log
+  times >${time_tmp_file}; start_time=$(get_current_cpu_millis)
   truncate -s 0 ${log_file}
   echo_log ${benchmark}
   echo_log 'accelerator-ss'
@@ -126,7 +132,6 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
   [ ${min_size_offset} -ne 0 ] && integer_width=$((integer_width+8-min_size_offset))
   timeout_time=3600
   kill_time=3780
-  start_time=`date +%s`
   echo_log "./axelerator $options -control \"[0]\""
   eval "./axelerator $options -control \"[0]\""
   while [ $((integer_width+radix_width)) -le ${max_length} ]; do
@@ -141,7 +146,8 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
      echo_log "./axelerator $options -control \"[${controller}]\""
      eval "./axelerator $options -control \"[${controller}]\""
      if grep --quiet 'SUCCESS' "${working_directory}/${status_output_file}"; then
-      echo_success_message ${start_time}
+      times >${time_tmp_file}; end_time=$(get_current_cpu_millis)
+      echo_success_message ${start_time} ${end_time}
       echo_log "<controller>${controller}</controller>"
       solution_found=true
       synthesis_in_progress=false

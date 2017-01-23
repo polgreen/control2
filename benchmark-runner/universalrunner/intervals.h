@@ -184,7 +184,7 @@ struct intervalt abs_interval(struct intervalt x)
 typedef struct intervalt int_vectort[NSTATES];
 typedef struct intervalt int_matrixt[NSTATES][NSTATES];
 
-void closed_fxp_mult(int_matrixt A,int_vectort B,int_vectort K,int_vectort x)
+void closed_fxp_mult(const int_matrixt A,const int_vectort B,const int_vectort K,int_vectort x)
 {
   int i,j,row;
   int_vectort x2;
