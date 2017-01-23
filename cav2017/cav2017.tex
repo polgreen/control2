@@ -715,8 +715,9 @@ We then give the details of the two methods of solution generalisation that we c
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \label{synthesizer-general}
 The input specification provided to the program synthesizer is of the form
-$\exists \vec{P} .  \forall \vec{x}.  \sigma(\vec{x}, \vec{P})$ where
-$\vec{P}$ ranges over functions, $\vec{x}$ \todo{now variables are vectorised, however previously the model variables aren't. please align notation. I do not like to use vectors unless essential, let's say it's a waste of ink in printouts. }
+%$\exists \vec{P} .  \forall \vec{x}.  \sigma(\vec{x}, \vec{P})$ 
+$\exists P .  \forall x.  \sigma(x, P)$ 
+where $P$ ranges over functions, $x$ 
  ranges over ground terms and
 $\sigma$ is a quantifier-free formula.  We interpret the ground terms over
 some finite domain $\mathcal{D}$.
@@ -725,16 +726,16 @@ The design of our synthesizer consists of two phases, an inductive
 synthesis phase and a validation phase, which interact via a finite
 set of test vectors {\sc inputs} that is updated incrementally.  Given
 the aforementioned specification $\sigma$, the inductive synthesis
-procedure tries to find an existential witness $\vec{P}$ satisfying
-the specification $\sigma(\vec{x}, \vec{P})$ for all $\vec{x}$ in {\sc
-  inputs} (as opposed to all $\vec{x} \in \mathcal{D}$).
+procedure tries to find an existential witness $P$ satisfying
+the specification $\sigma(x, P)$ for all $x$ in {\sc
+  inputs} (as opposed to all $x \in \mathcal{D}$).
 %
-If the synthesis phase succeeds in finding a witness~$\vec{P}$, this
+If the synthesis phase succeeds in finding a witness~$P$, this
 witness is a candidate solution to the full synthesis formula.  We
 pass this candidate solution to the validation phase, which checks
-whether it is a full solution (i.e., $\vec{P}$ satisfies the
-specification $\sigma(\vec{x}, \vec{P})$ for all
-$\vec{x}\in\mathcal{D}$).  If this is the case, then the algorithm
+whether it is a full solution (i.e., $P$ satisfies the
+specification $\sigma(x, P)$ for all
+$x\in\mathcal{D}$).  If this is the case, then the algorithm
 terminates.  Otherwise, additional information is provided to the
 inductive synthesis phase in the form of a new counterexample that is
 added to the {\sc inputs} set and the loop iterates again.
