@@ -1526,32 +1526,10 @@ The performance gain from abstract acceleration may not hold for more complex pr
 %% %-------------------------------
 
 
-%-------------------------------
-\section{Extensions}
-\label{sec:extensions}
-%-------------------------------
 
 %-------------------------------
-\subsection{LTI systems with output} 
-\label{ssec:LTI}
+\section{Conclusions}
 %-------------------------------
-
-LTI models in the form: 
-%
-\begin{align}
-\dot{\vec{x}}(t)&=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)\ \ :\ \ \vec{x} \in \mathbb{R}^{n}, \vec{u} \in \mathbb{R}^m, \mat{A} \in \mathbb{R}^{n \times n},\mat{B} \in \mathbb{R}^{n \times m}\\
-\vec{y}(t)&=\mat{C}\vec{x}(t)+\mat{D}\vec{u}(t)\ \ :\ \ \vec{y} \in \mathbb{R}^{o}, \mat{C} \in \mathbb{R}^{o \times n}, \mat{D}  \in \mathbb{R}^{o \times m}\nonumber
-\end{align}
-\noindent where $\dot{\vec{x}}(t)$ describes the state evolution equation; 
-$\vec{y}(t)$ represents an instantaneous output equation; and $\mat{A}$, $\mat{B}$, $\mat{C}$, and $\mat{D}$ are matrices that fully specify 
-a continuous plant. Eq.~\eqref{eq:ode} is soundly discretized 
-(as shown in the appendix) into
-%
-\begin{align}
-\vec{x}_{k+1}&=\mat{A}_d\vec{x}_k+\mat{B}_d\vec{u}_k\\
-\vec{y}_k&=\mat{C}_d\vec{x}_k+\mat{D}_d\vec{u}_k .\nonumber
-\end{align}
-%
 
 
 \newpage
@@ -1820,4 +1798,30 @@ the reachability matrix of the canonical form. Then
 \end{equation}
 
 
+%-------------------------------
+\section{Extensions}
+\label{sec:extensions}
+%-------------------------------
+
+%-------------------------------
+\subsection{LTI systems with output} 
+\label{ssec:LTI}
+%-------------------------------
+
+LTI models in the form: 
+%
+\begin{align}
+\dot{\vec{x}}(t)&=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)\ \ :\ \ \vec{x} \in \mathbb{R}^{n}, \vec{u} \in \mathbb{R}^m, \mat{A} \in \mathbb{R}^{n \times n},\mat{B} \in \mathbb{R}^{n \times m}\\
+\vec{y}(t)&=\mat{C}\vec{x}(t)+\mat{D}\vec{u}(t)\ \ :\ \ \vec{y} \in \mathbb{R}^{o}, \mat{C} \in \mathbb{R}^{o \times n}, \mat{D}  \in \mathbb{R}^{o \times m}\nonumber
+\end{align}
+\noindent where $\dot{\vec{x}}(t)$ describes the state evolution equation; 
+$\vec{y}(t)$ represents an instantaneous output equation; and $\mat{A}$, $\mat{B}$, $\mat{C}$, and $\mat{D}$ are matrices that fully specify 
+a continuous plant. Eq.~\eqref{eq:ode} is soundly discretized 
+(as shown in the appendix) into
+%
+\begin{align}
+\vec{x}_{k+1}&=\mat{A}_d\vec{x}_k+\mat{B}_d\vec{u}_k\\
+\vec{y}_k&=\mat{C}_d\vec{x}_k+\mat{D}_d\vec{u}_k .\nonumber
+\end{align}
+%
 \end{document}
