@@ -146,12 +146,11 @@ automated and sound control synthesis is a challenging task.
 
 Whilst there is a vast literature on validation of control systems,
 the subject of control synthesis has been somewhat restricted in the
-properties it explores.  Traditionally, this focuses mainly on the
-subject of stability %, working typically on continuous domains
+properties it explores.  Traditionally, this focuses mainly on stability %, working typically on continuous domains
 \cite{DBLP:journals/corr/AbateBCCDKK16,sadabadi2016static}, or using switched
 models~\cite{DBLP:conf/emsoft/RavanbakhshS16}.
 Reachability tools are
-also used when discretizing the state-space for both verification and
+also used when discretizing the state-space for verification and
 parametric synthesis~\cite{cimatti2013parameter}.
 
 In this work, we propose the synthesis of \emph{safe} control algorithms for
@@ -163,8 +162,8 @@ alongside the discrete domain of the controller and the hybrid elements that rel
 %% \emph{safe}.
 Due to the complexity of such systems, in this particular work we focus
 on linear models %\addtodo{[clarify next] with known configurations} 
-and perform parametric synthesis
-of safe digital controllers.
+and perform %parametric 
+correct-by-design synthesis of safe digital controllers.
 
 We describe and evaluate two approaches for synthesizing digital controllers 
 for state-space physical plants. Both approaches consider a counterexample 
@@ -198,7 +197,7 @@ substantial progress in recent years.  One such
 approach~\cite{itzhaky2010simple} inductively synthesizes invariants to
 generate the desired programs.
 
-Program synthesisers are an ideal fit for synthesis of parametric
+Program synthesisers are an ideal fit for synthesis of %parametric
 controllers since the semantics of programs capture effects such as FWL
 precisely.  In~\cite{DBLP:conf/cdc/RavanbakhshS15}, the authors use CEGIS
 for the synthesis of switching controllers for stabilizing continuous-time
@@ -226,18 +225,30 @@ in the current paper, we consider a state-space
 representation of the physical system, which allows us to synthesise controllers that
 make the closed-loop system \emph{safe} as well as stable.  Moreover, 
 a key aspect of the second approach we evaluate
-is the fact that we integrate abstraction
+is that we integrate abstraction
 refinement inside the CEGIS loop.
+
+The tool Pessoa~\cite{mazo2010pessoa} is a MatLab toolbox that synthesises correct-by-design
+embedded control software. It is based on the principle of describing a physical system
+as an equivalent finite-state machine and computing reachability over the finite-state 
+machine. Pessoa can synthesise safe embedded controller software for a range of properties based on a safety specification over state
+values, as well as specification on characteristic functions of the controller. 
+However, Pessoa does not have native inclusion of the ADC/DAC quantization error needed for
+synthesising a fixed point digital controller.
 
 We use a combination of a synthesis engine with a control
 verification tool that addresses the challenges presented here in the
 form of FWL effects and stability measures for LTI SISO controllers.
-We take the former from~\cite{DBLP:conf/lpar/DavidKL15} and the latter
-from~\cite{daes20161}\todo{This paper seems to be for transfer functions, not state space,
-is there a paper that does state space stability and safety?}
-, while enhancing the procedure by evaluating the
-quantization effects of the Hardware interfaces (ADC/DAC) to obtain an
-accurate discrete-time FWL representation of the continuous dynamics.
+We take the former from~\cite{DBLP:conf/lpar/DavidKL15}. The latter is 
+based on~\cite{daes20161}, but adapted to state-space representation and
+enhanced to include evaluation of quantization effects.
+
+\todo{something about the acceleration verification engine}
+
+% and the latter from~\cite{daes20161}
+%, while enhancing the procedure by evaluating the
+%quantization effects of the Hardware interfaces (ADC/DAC) to obtain an
+%accurate discrete-time FWL representation of the continuous dynamics.
 
 \paragraph{Discretization Effects}
 
