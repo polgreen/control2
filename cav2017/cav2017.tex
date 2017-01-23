@@ -924,9 +924,9 @@ $\overline{k}$ in order to ensure that $\phi_{safety}$ holds).
 Next, we describe the different phases in Fig.~\ref{fig:CEGIS-precision-increment}
 (blocks 1 to 5):
 
-\todo{please eventually itemize next}
-
-1. The inductive synthesis phase (i.e. {\sc synthesise}) uses BMC to
+%\todo{please eventually itemize next}
+\begin{enumerate}
+\item The inductive synthesis phase (i.e. {\sc synthesise}) uses BMC to
 compute a candidate solution $K$
 that satisfies both the stability criteria detailed in 
 Sec.~\ref{ssec:stability} and the safety specification in Sec.~\ref{ssec:safety}.
@@ -959,7 +959,7 @@ checks that all these assumptions are sound are performed by subsequent
 \label{alg:safetycheck}
 \end{algorithm}
 
-2. The first {\sc verify} stage, {\sc safety}, checks that the candidate
+\item The first {\sc verify} stage, {\sc safety}, checks that the candidate
 solution $K$ is safe for all possible initial states, i.e., does not reach an unsafe
 state within $k$ steps where again we assume $k$ to be under the completeness threshold. 
 %The safety criteria here must be valid for all possible allowed initial states, and so we
@@ -987,12 +987,12 @@ So then if $x_0=x$, then $x_k = (A_d - B_d K)^k x =
 where I have denoted with $x_k^i$ the trajectories obtained from the single vertexes $v_i$.QED
 
 
-3. The second {\sc verify} stage, {\sc precision}, 
+\item The second {\sc verify} stage, {\sc precision}, 
  restores soundness with respect to the plant's precision
 by using interval arithmetic \cite{moore1966interval} to validate the 
 operations performed by the previous stage. 
 
-4. The third {\sc verify} stage, {\sc complete}, checks that the
+\item The third {\sc verify} stage, {\sc complete}, checks that the
 current $k$ is large enough to ensure that the boundaries are not
 violated for any $k'{>}k$.  For this purpose, we compute the
 completeness threshold $\overline{k}$ for the current candidate $K$
@@ -1012,10 +1012,11 @@ the dynamics projected on the corresponding eigenspace rotate of $\vartheta T_s$
 So surely taking $k$ as the ceiling of $\frac{2\pi}{\vartheta T_s}$, after $k$ steps we've completed a rotation. 
 This is the CT. 
 
-5. The last {\sc verify} stage, {\sc sampling}, 
+\item The last {\sc verify} stage, {\sc sampling}, 
 ensures that the current sampling rate is large enough by using an 
 external checker (\addtodo{add more details here once we have them}).
 
+\end{enumerate}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{CEGIS with abstraction refinement}
 \label{sec:CEGIS-abstraction-refinement}
