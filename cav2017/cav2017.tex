@@ -1008,21 +1008,16 @@ external checker (\addtodo{add more details here once we have them}).
 \label{sec:CEGIS-abstraction-refinement}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-The verification of a hybrid continuous/discrete system over an unbounded time, requires the
-non-deterministic simulation of an infinite set of states, which is undecidable. Our initial approach creates an
-abstraction of this system by establishing bounds on the error between such a system and a discrete-time/continuous-space model.
-This model is still however, quite complex, hard to verify, and many of the states involved are inconsequential to
-the safety specification.
-Our second model, rather than look at a bisimulation \todo{specific notion that has not been formally define - do not use} in discrete time, explores a much higher abstraction, 
-evaluating the unbounded time-continuous space reach tube as a set of inequalities that represent only the safety specification.
-We begin with a minimum set of linear inequalities describing the constraints caused by the input and the initial state during a
-single iteration, in addition to a stability specification defined by Jury's criteria, and try to synthesise a controller that meets these specs.
-A second abstraction that encompasses the accelerated continuous reach-tube over an unbounded time is used to verify that the controller meets the full safety specification. If this step fails, we find a counterexample iteration and initial state and create a new constraint to refine our abstraction.
-The advantage of this model is that it starts with a very simple description regardless of the complexity of the overall dynamics, and only expands to more complex models when a solution cannot be found.
+% The verification of a hybrid continuous/discrete system over an unbounded time, requires the
+% non-deterministic simulation of an infinite set of states, which is undecidable. Our initial approach creates an
+% abstraction of this system by establishing bounds on the error between such a system and a discrete-time/continuous-space model.
+% This model is still however, quite complex, hard to verify, and many of the states involved are inconsequential to
+% the safety specification.
+% The advantage of this model is that it starts with a very simple description regardless of the complexity of the overall dynamics, and only expands to more complex models when a solution cannot be found.
 
-\addtodo{Move as much as possible from Sec~\ref{sec:cof_verification}
-to the appendix (e.g. discussion on abstract acceleration). 
-Merge the rest in Sec~\ref{sec:cof_synth}.}
+% \addtodo{Move as much as possible from Sec~\ref{sec:cof_verification}
+% to the appendix (e.g. discussion on abstract acceleration). 
+% Merge the rest in Sec~\ref{sec:cof_synth}.}
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsubsection{Verification of a controllable system}
@@ -1113,20 +1108,28 @@ where $\mathcal{A}_t=\bigcup_{k=1}^\infty \mat{A}^k, \mathcal{B}_{tp}=\bigcup_{k
 \subsubsection{Controller synthesis}\label{sec:cof_synth}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 Now that we have explained the verification process, we may proceed to describe the synthesis procedure, which is illustrated in figure \ref{fig:CEGARIS}.
+Our model, rather than look at a bisimulation \todo{specific notion that has not been formally define - do not use} in discrete time, explores a much higher abstraction, 
+evaluating the unbounded time-continuous space reach tube as a set of inequalities that represent only the safety specification.
+
 \begin{enumerate}
-\item We start by preprocessing the dynamics. This can be computationally intensive and we don't want it to be part of the CEGIS loop.
+\item 
+We start by preprocessing the dynamics. This can be computationally intensive and we don't want it to be part of the CEGIS loop.
 \begin{enumerate}
 \item Calculate $\mat{T}$ using equations \eqref{eq:rncf}\eqref{eq:rcf}\eqref{eq:to_cf}
 \item Extract the Plant's characteristic polynomial coefficients from the last row of $P_a=(\mat{T}\mat{A}\mat{T}^-1)_{n*}$.
 \item Calculate the noise set $N$ from the quantizer resolutions and estimated round-off errors ($\frac{q_1}{2},\frac{q_2}{2},q_3$)
 \item Calculate a set of initial bounds on K based on the input constraints. $$\phi_{input} \Leftrightarrow u_k=r-Kx_k : x \in X^\# \wedge u_k \in [\underline{u}\ \ \overline{u}]$$
 \end{enumerate}
-\item Next we synthesise a candidate controller. Let $\mathcal{J}\langle I,F \rangle (P,\mat{T})$ be a program describing Jury's method.
+\item Next we synthesise a candidate controller. 
+We begin with a minimum set of linear inequalities describing the constraints caused by the input and the initial state during a single iteration, in addition to a stability specification defined by Jury's criteria. %, and try to synthesise a controller that meets these specs.
+
+Let $\mathcal{J}\langle I,F \rangle (P,\mat{T})$ be a program describing Jury's method.
 \begin{enumerate}
 \item Select a controller $\tilde{\mat{K}} \in \mathbb{R}\langle I,F\rangle^n$. This is achieved by solving a SAT formula $\mathcal{J}_K=\mathcal{J}\langle I,F \rangle (P_{a-k},\mat{T})\wedge \phi_{input}$ that satisfies the input constraint and Jury's criteria for $P_{a-k}=z^n+\sum_{i=1}^n (a_i-k_i) z^{n-i} : k_i \in \mat{K} \wedge \mat{K}=\tilde{\mat{K}}\mat{T}$.
 \item If there is no candidate solution we return UNSAT and exit the loop.
 \end{enumerate}
-\item Once we have a candidate solution, we perform a safety verification using abstract acceleration.
+\item Once we have a candidate solution, we perform a safety verification using abstract acceleration. For this purpose, we make use of a second abstraction that encompasses the accelerated continuous reach-tube over an unbounded time. % If this step fails, we find a counterexample iteration and initial state and create a new constraint to refine our abstraction.
+
 \begin{enumerate}
 \item Calculate the abstract matrices $\mathcal{A}_t, \mathcal{B}_{tp},\mathcal{B}_{tn}$ for the candidate closed loop solution.
 \item Evaluate $\hat{X}^\# \models \Psi$. If the verification holds we have a solution, and exit the loop.
