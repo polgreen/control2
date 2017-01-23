@@ -603,13 +603,13 @@ The error in $\vec{u}$ corresponds of the multiplication of $\mat{K}_d\hat{\vec{
 \bigskip
 
 \subsubsection{Effect on safety specification and stability}
-First consider the effect of the quantization error on safety; the state values must be computed considering the error introduced by the digital controller caused by performing the multiplication $K*x$ at low digital precision.
+First consider the effect of the quantization error on safety; the state values must be computed considering the error introduced by the digital controller caused by performing the vector multiplication $Kx$ at low digital precision.
 %, and the digital reference signal. 
 %In this paper, we consider systems with a reference signal equal to zero. 
 %the FWL effects in all operations related to the control action~\eqref{eq:controlaction} 
 %and disregarding it in the state equation~\eqref{eq:plant}.
-Thus, the states are computed using the following equations. We use $\mathcal{F}_{\langle I_c,F_c \rangle}$ 
-to to denote numbers represented with the precision of the digital controller, where $I_c$ is the number of bits used to represent the integer value in the controller and $F_c$ is the number of bits used to represent the fractional part of numbers in the controller. 
+Thus, the states are computed using the following equations. We use $\mathcal{F}_{\langle I_c,F_c \rangle}$ \todo{These notations are different from those above.}
+to to denote numbers represented with the precision of the digital controller, where $I_c$ is the number of bits used to represent the integer value in the controller and $F_c$ is the number of bits used to represent the fractional part of the numbers manipulated within the controller. 
 %
 \begin{align*}
 u_{k}&=-(\mathcal{F}_{\langle I_c,F_c \rangle}(K)\cdot\mathcal{F}_{\langle I_c,F_c \rangle}(x_{k})).  
@@ -617,7 +617,8 @@ u_{k}&=-(\mathcal{F}_{\langle I_c,F_c \rangle}(K)\cdot\mathcal{F}_{\langle I_c,F
 \end{align*}
 
 
-We note that the effect on stability due to the fixed-word-length error is that the system may, instead of converging to the desired equilibrium point, converge to a point that is $\delta$ away from the desired equilibrium point, see Appendix. In this paper, we are concerned with \emph{safe} controllers and therefore concerned only that the system converges to a point within the safety specification. Hence, it is sufficient to synthesise a stable controller based on infinite precision, and then verify safety. 
+We note that the effect on stability due to the fixed-word-length error is that the system may, instead of converging to the desired equilibrium point, converge to a point that is bounded away from the desired equilibrium point (see Appendix for details). 
+In this paper, we are concerned with \emph{safe} controllers and therefore concerned only that the system converges to a point within the safety specification. Hence, it is sufficient to synthesise a stable controller based on infinite precision, and then verify safety. 
 
 
 %% %-------------------------------
