@@ -1484,6 +1484,11 @@ Pendulum   & $\left[\begin{array}{cc}
 %-------------------------------
 \subsection{Threats to validity}
 %-------------------------------
+We report an assessment of both our approaches over a diverse set of real-world benchmarks. Nevertheless, this set of benchmarks is limited within the scope of this paper and the performance may not generalize to other benchmarks. 
+
+Our algorithm to select suitable FWL word widths to model plant behaviour employs a heuristic based on user-provided controller word-width specifications. For the first approach, where we may need to increase the precision of the time discretization, we select the time steps for the discretizations on a similar basis. This works sufficiently well for our benchmarks, but performance may suffer in some cases, for example if the completeness threshold is high. 
+
+The performance gain from abstract acceleration may not hold for more complex properties than stability, for instance ``eventually always reaches a certain safe set''. 
 
 
 %% %-------------------------------
