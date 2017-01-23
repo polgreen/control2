@@ -1101,38 +1101,41 @@ P_a = z^n+\sum_{i=1}^p{(a_i-k_i)z^{n-i}}
 \item Calculate the noise set $N$ from the quantizer resolutions and estimated round-off errors: %($\frac{q_1}{2},\frac{q_2}{2},q_3$)
 $$N=\left \{ \nu_1+\nu_2+ \nu_3 : \nu_1 \in \left[-\frac{q1}{2}\ \ \frac{q1}{2}\right] 
 \wedge \nu_2 \in \left[-\frac{q2}{2}\ \ \frac{q2}{2}\right]  \wedge \nu_3 \in \left[-q3\ \ q3\right]  \right \}\nonumber$$
-\item Calculate a set of initial bounds on K based on the input constraints. $$\phi_{safety} \Leftrightarrow u_k=r-Kx_k : x \in X^\# \wedge u_k \in [\underline{u}\ \ \overline{u}]$$
+\item Calculate a set of initial bounds on K based on the input constraints. Note that these bounds will be used during the 
+synthesis phase to reduce the size of the solution space.
+$$\phi_{safety} \Leftrightarrow u_k=-Kx_k : x_0 \in [\underline{x_0} \ \overline{x_0}] \wedge u_k \in [\underline{u}\ \ \overline{u}]$$
 \end{enumerate}
-\item Next we synthesise a candidate controller. 
-We begin with a minimum set of linear inequalities describing the constraints caused by the input and the initial state during a single iteration, in addition to a stability specification defined by Jury's criteria. %, and try to synthesise a controller that meets these specs.
+\item In this phase we synthesise a candidate controller
+%We begin with a minimum set of linear inequalities describing the constraints caused by the input and the initial state during a single iteration, in addition to a stability 
+% specification defined by Jury's 
+%criteria. %, and try to synthesise a controller that meets these specs.
 % For a stabilized closed-loop, which is necessary for our safety property, we need
 % these roots to remain within the unit circle, which we verify using Jury's criteria.
 % Notice that in our polynomials $c_0=1$ and we only use reals.
 % Once we have established convergence, we may examine the 
 % safety specification $\phi_{safety}$.
-
-Let $\mathcal{J}\langle I,F \rangle (P,\mat{T})$ be a program describing Jury's method.
-\begin{enumerate}
-\item Select a controller $\tilde{\mat{K}} \in \mathbb{R}\langle I,F\rangle^n$. This is achieved by solving a SAT formula $\mathcal{J}_K=\mathcal{J}\langle I,F \rangle (P_{a-k},\mat{T})\wedge \phi_{input}$ that satisfies the input constraint and Jury's criteria for $P_{a-k}=z^n+\sum_{i=1}^n (a_i-k_i) z^{n-i} : k_i \in \mat{K} \wedge \mat{K}=\tilde{\mat{K}}\mat{T}$.
-\item If there is no candidate solution we return UNSAT and exit the loop.
-\end{enumerate}
-\item Once we have a candidate solution, we perform a safety verification using abstract acceleration. For this purpose, we make use of a second abstraction that encompasses the accelerated continuous reach-tube over an unbounded time. % If this step fails, we find a counterexample iteration and initial state and create a new constraint to refine our abstraction.
+as a model $\mat{K} \in \mathbb{R}\langle I,F\rangle^n$. We obtain it by solving the SAT formula 
+$$\mathcal{J}_K=\mathcal{J}\langle I,F \rangle (P_{a-k},\mat{T})\wedge \phi_{safety}$$ 
+that satisfies the input constraint and Jury's criteria for 
+$P_{a-k}=z^n+\sum_{i=1}^n (a_i-k_i) z^{n-i} : k_i \in \mat{K} \wedge \tilde{\mat{K}}=\mat{K}\mat{T}$,
+where $\mathcal{J}\langle I,F \rangle (P,\mat{T})$ is a program describing Jury's method.
+If there is no candidate solution we return UNSAT and exit the loop.
+\item Once we have a candidate solution, we perform a safety verification % If this step fails, we find a counterexample iteration and initial state and create a new constraint to refine our abstraction.
 %
-The first step constraints
-\begin{equation}
-\mat{K} \models u_k=-\mat{K}x_k : \phi_{safety}
-\label{eq:of_bounds}
-\end{equation}
-The second step is evaluating the progression of the system over time to evaluate 
-$x_{k+1} \models \phi_{safety}$. For this step we require 
-an initial set from which the system progresses. Obviously, this set $x_0$ 
-must satisfy the specification; otherwise, the system will be unsafe to begin with.
-We accept a specification in the form $\mat{E}\mat{T}x_0<\mat{f}$. 
-The presence of $\mat{T}$ is because this will typically be given in the original 
-state-space. Accelerating \eqref{eq:observer_LTI_cf}, we obtain:
+consisting of evaluating the progression of the system over time,
+$x_{k+1} \models \phi_{safety}$. For this purpose we require 
+an initial set $\phi_{init}= x_0 \in [\underline{x_0} \ \overline{x_0}]$ 
+from which the system progresses. % Obviously, this set $x_0$ 
+% must satisfy the specification; otherwise, the system will be unsafe to begin with.
+% We accept a specification in the form $\mat{E}\mat{T}x_0<\mat{f}$. 
+% The presence of $\mat{T}$ is because this will typically be given in the original 
+% state-space.
+Next, we use abstract acceleration to get a second abstraction that 
+encompasses the accelerated continuous reach-tube over an unbounded time.
+Accelerating \eqref{eq:observer_LTI_cf}, we obtain:
 %
 \begin{align}
-\label{eq:acc_observer_LTI_cf}
+%\label{eq:acc_observer_LTI_cf}
 x=&\mat{A}_t^kx_0
 %+\sum_{i=0}^{k-1} \mat{A}_t^i \mat{B}_{t} r_i
 +\sum_{i=0}^{k-1} \mat{A}_t^i \mat{B}_{n}(\nu_1+\nu_2+\nu_3) : x_0 \models \phi_{init}
