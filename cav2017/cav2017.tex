@@ -1152,7 +1152,7 @@ $z^n+\sum_{i=1}^n[a_i-k_i]z^{n-i}=\prod_{i=1}^n (z-[\lambda_i]) : |[\lambda_i]|<
    \& \coordinate (aux2);
    \& ;\\
    \&\node[fill=gray!20,align=center] (pre) {{\sc 1. pre-}\\{\sc processing}};
-   \& \node[fill=gray!20,align=center] (abstract) {\sc 4. abstraction};
+   \& \node[fill=gray!20,align=center] (abstract) {\sc 4. abstract};
    \& \coordinate (aux); \\ % \node[fill=yellow!20,align=center] (counter) {\sc counterexample};\\
    \& 
    \& \node[fill=gray!20,align=center, minimum width=3cm] (synth) {\sc 2. synthesize};
@@ -1171,11 +1171,11 @@ $z^n+\sum_{i=1}^n[a_i-k_i]z^{n-i}=\prod_{i=1}^n (z-[\lambda_i]) : |[\lambda_i]|<
     }
    \& complexnode/.pic={
      \coordinate (AA);
-     \node[draw,rectangle,align=center] (AAI) at ([xshift=-1.5cm]AA.center) {\sc AI\\Model};
-     \node[draw,rectangle,align=center] (AAC) at ([xshift=1.5cm,yshift=1.5cm]AA.center) {\sc CEGAR};
+     \node[draw,rectangle,align=center] (AAI) at ([xshift=-1.5cm]AA.center) {\sc Abstract};
+     \node[draw,rectangle,align=center] (AAC) at ([xshift=1.5cm,yshift=1.5cm]AA.center) {Abstraction \\ Verifier};
      \node[draw,rectangle,align=center] (AAV) at ([xshift=1.5cm]AA.center) {\sc AA\\Solver};
      
-     \node[draw=none] (AB) at ([xshift=.4cm,yshift=1.5cm]AAI.center)  {\sc $\mat{A},\mat{B}$\\$\phi$};     
+     %\node[draw=none] (AB) at ([xshift=.4cm,yshift=1.5cm]AAI.center)  {\sc $\mat{A},\mat{B}$\\$\phi$};     
      \node[draw=none] (MA) at ([yshift=.2cm]AA.center)  {$\mathcal{A}_t$};     
      \node[draw=none] (MB) at ([yshift=-.3cm]AA.center)  {$\mathcal{B}_{tp},\mathcal{B}_{tn}$}; 
      \node[draw=none] (XT) at ([xshift=0.3cm,yshift=0.5cm]AAC.center)  {\sl $\hat{X}_r^\#$};  
@@ -1204,11 +1204,12 @@ $z^n+\sum_{i=1}^n[a_i-k_i]z^{n-i}=\prod_{i=1}^n (z-[\lambda_i]) : |[\lambda_i]|<
   \path
     ([xshift=+.6cm]KSAT.north) edge ([xshift=0.6cm]synth.south) 
     ([xshift=-.6cm]synth.south) edge ([xshift=-.6cm]KSAT.north)
-    ([xshift=-4.9cm]verify.south) edge (AAI.north)
+    (AAC) edge[bend right] node[align=center] {$k$} (AAI.north)
+    ([xshift=-4.9cm]verify.south) edge node[align=center] {$\mat{A},\mat{B}$\\$\phi$} (AAI.north)
     (AAI.east) edge (AAV.west)
     (AAV.north) edge (AAC.south)
     (AAC.north) edge ([xshift=4.9cm]verify.south)
-    (AAC.west) edge (AB.west)
+    %(AAC.west) edge (AB.west)
     %(verify.north) edge (counter.south)
     %(counter.west) edge (abstract.east)
     %(counter.south west) edge (synth.north east)
