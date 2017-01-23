@@ -26,14 +26,12 @@
 \usepackage{pgfplots}
 \usepackage{framed}
 \usepackage{listings}
-\usepackage{algorithm,algpseudocode}
 
-\usepackage{todonotes}
 \usetikzlibrary{positioning, automata, shapes.arrows, calc, shapes, arrows}
 \usetikzlibrary{patterns}
 
 
-\newcommand{\addtodo}[1]{{\color{red} TODO: #1}}
+\newcommand{\todo}[1]{{\color{red} TODO: #1}}
 \newcommand{\commentib}[1]{{\color{blue} [IB: #1]}}
 \newcommand{\mat}[1]{\boldsymbol{#1}}
 
@@ -104,14 +102,12 @@ in two main parts, brought together by a counter-example guided inductive
 synthesis (CEGIS) loop, as follows. First, we devise a static feedback controller 
 that stabilises the system; then, we verify its potential safety by means of either 
 of the following approaches: forward reachability analysis via unfolding of the dynamics, 
-or invariant set generation via abstract acceleration;  
-further, if the above step fails, we loop back and invoke a CEGIS call 
-to seek alternative stabilising feedbacks, benefiting from the obtained counter-examples 
+or invariance generation;  if the above step fails, we loop back and invoke a CEGIS call 
+to seek alternative stabilising feedbacks, benefitting from the obtained counter-examples 
 to safety. 
-\textcolor{red}{[Mention GA \todo{GA? Genetic Algorithms? We don't use GA?} and Abstract Acceleration here? Alessandro: we are not using GA. We don't think that we should describe it here.]} 
-
-The approach is proven sound by accounting for errors due to the digitalisation of signals that are manipulated by the controller block.  
-The proposed synthesis approaches and a developed tool are evaluated considering 
+\textcolor{red}{[Mention GA and Abstract Acceleration here?] 
+The approach is proven sound by accounting for errors due to \ldots }
+The proposed synthesis approaches and respective tool are evaluated considering
 a set of intricate physical plant models taken from the digital control literature.
 \keywords{
 State-space dynamical models of physical systems; 
@@ -130,49 +126,48 @@ safety requirements.
 \section{Introduction}
 %-------------------------------
 
-Linear Time Invariant (LTI) control models represent a broad class of dynamical systems
-%modern embedded software, performing highly non-trivial control tasks,
+Linear Time Invariant (LTI) control systems represent a sizeable portion of
+modern embedded software, performing highly non-trivial control tasks,
 with significant impact in numerous application areas such as
-the life sciences, robotics, and engineering~\cite{astrom1997computer,Franklin15}.
-Control synthesis for LTI is broadly investigated, 
-however the use of digital control architectures adds new challenges due to 
-%exacerbated by specific artefacts,  
-the effects of finite-precision arithmetic, time discretization, and quantisation noise, which are typically introduced 
-by Analogue-to-Digital (A/D) and Digital-to-Analogue (D/A) conversion.  
-Whilst the research on digital control is well developed~\cite{astrom1997computer}, 
-automated and sound control synthesis is a challenging task. 
-%Thus, the programming is a key barrier to broad adoption of digital control, 
-%and requires considerable expertise.
+environmental control, navigation, and 
+robotics~\cite{astrom1997computer,Franklin15}.
+Correct and sound control system verification is a challenging task. 
+In particular, the verification problem is exacerbated by artifacts specific 
+to digital control, such as the effects of finite-precision arithmetic, 
+time discretization, and quantization noise, which are typically introduced 
+by Analog-to-Digital (A/D) and Digital-to-Analog (D/A) conversion.  
+Thus, the programming is a key barrier to broad adoption of digital control, 
+and requires considerable expertise.
 
-Whilst there is a vast literature on validation of control systems,
+Whilst there is a vast literature in validation of control systems,
 the subject of control synthesis has been somewhat restricted in the
-properties it explores.  Traditionally, this focuses mainly on stability %, working typically on continuous domains
+properties it explores.  Traditionally, this focuses mainly on the
+subject of stability %, working typically on continuous domains
 \cite{DBLP:journals/corr/AbateBCCDKK16,sadabadi2016static}, or using switched
 models~\cite{DBLP:conf/emsoft/RavanbakhshS16}.
 Reachability tools are
-also used when discretizing the state-space for verification and
+also used when discretizing the state-space for both verification and
 parametric synthesis~\cite{cimatti2013parameter}.
 
-In this work, we propose the synthesis of \emph{safe} control algorithms for
-LTI models taking into consideration the continuous domain of the plant, 
-alongside the discrete domain of the controller and the hybrid elements that relate them.  
+In this paper, however, we propose the synthesis of \emph{safe} control algorithms for
+cyberphysical systems taking into consideration the continuous domain
+of the plant, alongside the discrete domain of the controller and the
+hybrid elements that communicate them.
+%
 %% In this paper, we synthesize controllers for hybrid
 %% closed-loop systems, i.e., software-implemented embedded controllers along
 %% with a model of their physical environment (the plant), that are
 %% \emph{safe}.
 Due to the complexity of such systems, in this particular work we focus
-on linear models with known  implementation features (e.g., number of bits, fixed-point
-arithmetic) %\addtodo{[clarify next] with known configurations} 
-and perform %parametric 
-synthesis of safe digital controllers.
+on linear models with known configurations and perform parametric synthesis
+of safe digital controllers.
 
 We describe and evaluate two approaches for synthesizing digital controllers 
 for state-space physical plants. Both approaches consider a counterexample 
 guided inductive synthesis (CEGIS) loop. In the first approach, 
 we devise a digital controller that stabilizes the system; then, we verify its 
 potential safety by unfolding the dynamics of the system and checking for 
-a completeness threshold. \textcolor{red}{Dario: Can you please briefly explain your approach?
-In the second approach,...}
+a completeness threshold. \textcolor{red}{In the second approach,...}
 
 \textcolor{red}{we have to connect both paragraphs...}
 
@@ -182,7 +177,9 @@ of abstraction refinement in order to achieve scalability.
 This strategy enables the inductive generalisation engine inside CEGIS
 to look for candidate solutions in a reduced solution space.  
 
-\addtodo{We have to summarize our main contributions here}
+
+
+\todo{Add contributions (Cristina)}
 
 %-------------------------------
 \section{Related work}
@@ -192,12 +189,12 @@ to look for candidate solutions in a reduced solution space.
 \paragraph{CEGIS}
 
 Program synthesis is the problem of computing correct-by-design programs
-from high-level specifications; algorithms for this problem have made
+from high-level specifications, and algorithms for this problem have made
 substantial progress in recent years.  One such
 approach~\cite{itzhaky2010simple} inductively synthesizes invariants to
 generate the desired programs.
 
-Program synthesisers are an ideal fit for synthesis of %parametric
+Program synthesisers are an ideal fit for synthesis of parametric
 controllers since the semantics of programs capture effects such as FWL
 precisely.  In~\cite{DBLP:conf/cdc/RavanbakhshS15}, the authors use CEGIS
 for the synthesis of switching controllers for stabilizing continuous-time
@@ -207,49 +204,34 @@ linear arithmetic with the state-of-the-art SMT solvers.  Since this
 approach uses switching states instead of linear dynamics in the digital
 controller, it entirely circumvents the FWL problem.  It is also not
 suitable for the kind of control we seek to synthesize.
-\textcolor{red}{Cristina: can you please revise this sentence:
 Moreover, in \cite{DBLP:conf/emsoft/RavanbakhshS16} the same authors 
 use a CEGIS-based approach for synthesizing continuous-time switching
 controllers that guarantee reach while stay properties of a closed
-loop system}. The solution is based on synthesizing control Lyapunov
+loop system. The solution is based on synthesizing control Lyapunov
 functions for switched systems, that yield switching controllers with
 a guaranteed minimum dwell time in each mode.
 
 In \cite{DBLP:journals/corr/AbateBCCDKK16}, Abate et al.  focus on
 synthesising stabilizing controllers for continuous plants
-by exploiting advantage in bit-accurate verification of software-implemented 
-digital control~\cite{Bessa16}.  While they also make use of a CEGIS-based 
-technique, their approach is restricted to synthesising controllers for hybrid 
-closed-loop systems that are stable and only consider transfer function models.  
-In contrast, in the current paper, we consider a state-space
-representation of the physical system, which allows us to synthesise controllers that
-make the closed-loop system \emph{safe} as well as stable.  Moreover, 
-a key aspect of the second approach we evaluate
-is that we integrate abstraction
+by exploiting advantage in bit-accurate verification of C programs 
+to obtain a verifier for software-implemented digital control~\cite{Bessa16}.  
+While they also make use of a CEGIS-based technique, their approach is
+restricted to synthesising controllers for hybrid closed-loop systems
+that are stable and only consider transfer function models.  In contrast,
+in the current paper, we consider a state-space
+representation of the physical system and synthesise controllers that
+make the closed-loop system safe.  Moreover, 
+a key aspect of our approach
+is the fact that we integrate abstraction
 refinement inside the CEGIS loop.
 
-The tool Pessoa~\cite{mazo2010pessoa} is a MatLab toolbox that synthesises correct-by-design
-embedded control software. It is based on the principle of describing a physical system
-as an equivalent finite-state machine and computing reachability over the finite-state 
-machine. Pessoa can synthesise safe embedded controller software for a range of properties based on a safety specification over state
-values, as well as specification on characteristic functions of the controller. 
-However, Pessoa does not have native inclusion of the ADC/DAC quantization error needed for
-synthesising a fixed point digital controller.
-
-We use a combination of a synthesis engine with a control
+We require a combination of a synthesis engine with a control
 verification tool that addresses the challenges presented here in the
 form of FWL effects and stability measures for LTI SISO controllers.
-
-We take the former from~\cite{DBLP:conf/lpar/DavidKL15}. The verification engine, for
-the first approach we present, is 
-based on~\cite{Monteiro16}, but 
-enhanced to include evaluation of quantization effects and safety properties
-over the state space. In the second approach, we use a verification engine
-based on XXXXXXX
-\todo{something about the acceleration verification engine}
-
-
-
+We take the former from~\cite{DBLP:conf/lpar/DavidKL15} and the latter
+from~\cite{daes20161}, while enhancing the procedure by evaluating the
+quantization effects of the Hardware interfaces (ADC/DAC) to obtain an
+accurate discrete-time FWL representation of the continuous dynamics.
 
 \paragraph{Discretization Effects}
 
@@ -281,14 +263,14 @@ through symbolic execution.  In order to account for rounding errors, an
 upper bound is introduced in the verification phase.
 The work in \cite{picasso2003stabilization,picasso2002construction} introduces
 attractive invariant sets as a mechanism to bound the quantization error effect
-on stabilization as an invariant set that always converges toward the controllable
+on stabilization as an invariant set that always converges toward the cotrollable
 set. In a similar fashion, \cite{liberzon2003hybrid} evaluates the dynamics of the
 quantization error and binds their trajectory to a known region over a finite
 period of time. This technique works for both linear and non-linear systems.
 This paper uses an approach that projects the maximum effect of the noise over
 an unbounded time and uses it as a `buffer' region for the safety specification.
 
-%\addtodo{[Move material from \ref{sec:rw} here]}
+%\todo{[Move material from \ref{sec:rw} here]}
 
 %-------------------------------
 \section{Preliminaries}
@@ -300,222 +282,80 @@ an unbounded time and uses it as a `buffer' region for the safety specification.
 \label{ssec:ssrepresentation}
 %-------------------------------
 
-We consider models of physical plants expressed as ordinary differential equations (ODEs), 
-with full state information (namely where we have access to all the model variables):  
+We consider physical models expressed as ordinary differential equations (ODEs) with full state information:  
 %
 \begin{align}
 \label{eq:ode}
-\dot{x}(t) = Ax(t)+ B u(t), \quad x \in \mathbb{R}^{n}, u \in \mathbb{R}^m, A \in \mathbb{R}^{n \times n}, B \in \mathbb{R}^{n \times m}, 
+\dot{x}(t) = Ax(t)+ B u(t)\ \ :\ \ x \in \mathbb{R}^{n}, u \in \mathbb{R}^m, A \in \mathbb{R}^{n \times n}, B \in \mathbb{R}^{n \times m}
 \end{align}
-where $t \in \mathbb R_0^+$, 
-where $A$ and $B$ are matrices that fully specify the continuous plant, 
-and with initial states set as $x(0)$. 
-Eq.~\eqref{eq:ode} is soundly discretised in time (as shown in the Appendix) into
+where $A$ and $B$ are matrices that fully specify the continuous plant with the initial states $x(0)$. 
+Eq.~\eqref{eq:ode} is soundly discretised (as shown in the Appendix) into
 %
 \begin{align}
 \label{eq:plant}
 x_{k+1} = A_d x_k+ B_d u_k. 
-\end{align} 
-where $k \in \mathbb N$, 
-and with initial state $x_{0}=x(0)$. 
-Later, we will deal with the issue of variable quantisation, as introduced by the ADC and DAC blocks.  
+\end{align}
+with initial state $x_{0}=x(0)$.
 
 %
-\begin{figure*}[htb]
-\centering
 
-\tikzset{add/.style n args={4}{
-    minimum width=6mm,
-    path picture={
-        \draw[circle] 
-            (path picture bounding box.south east) -- (path picture bounding box.north west)
-            (path picture bounding box.south west) -- (path picture bounding box.north east);
-        \node[draw=none] at ($(path picture bounding box.south)+(0,0.13)$)     {\small #1};
-        \node[draw=none] at ($(path picture bounding box.west)+(0.13,0)$)      {\small #2};
-        \node[draw=none] at ($(path picture bounding box.north)+(0,-0.13)$)    {\small #3};
-        \node[draw=none] at ($(path picture bounding box.east)+(-0.13,0)$)     {\small #4};
-        }
-    }
- }
-
-\resizebox{1.0\textwidth}{!}{
- \begin{tikzpicture}[scale=0.6,-,>=stealth',shorten >=.2pt,auto,
-     semithick, initial text=, ampersand replacement=\&,]
-
-  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center}, row sep=.6cm, column sep=.6cm] {
-    \node[draw=none] (r) {$r_k$};
-    
-   \& \node[circle,add={-}{+}{}{}] (circle) {};
-   \node[draw=none] (ez) at ([xshift=1cm,yshift=.15cm]circle)  {$u_k$};
-   \node[rectangle,draw,minimum width=1cm,minimum height=1cm] (Kd) at ([xshift=0,yshift=-1.5cm]circle)  {\sc $\mat{K}_d$};
-   \coordinate (kdsouth) at ([yshift=-2cm]Kd);
-      
-   
-   \& complexnode/.pic={ 
-      \node[rectangle,dashed,draw,minimum width=3cm,minimum height=1.6cm,label=\textbf{DAC}] (dac) {};
-     \node[circle,add={+}{+}{}{},fill=gray!20] (q2) at ([xshift=-.65cm]dac.center) {};
-     \node[draw=none] (q2t)  at ([yshift=.55cm]q2) {{\sc Q2}};
-     \node[draw=none] (v2)  at ([yshift=-1.5cm]q2) {$\nu_2$};
-     \node[fill=gray!20] (zoh) at ([xshift=.65cm]dac.center) {\sc ZOH};
-   }   
-
-   \& complexnode/.pic={ 
-      \node[rectangle,dashed,draw,minimum width=8cm,minimum height=3.5cm,label=\textbf{Plant}] (plant)  at ([yshift=-.5cm]dac.center) {};
-      \node[rectangle,draw,minimum width=1cm,minimum height=1cm] (B) at ([xshift=-2.5cm,yshift=.5cm]plant.center)  {\sc $\mat{B}$};
-      \node[draw=none] (u) at ([xshift=-1cm,yshift=.15cm]B)  {$u(t)$};
-      \node[circle,add={+}{+}{}{}] (p1) at ([xshift=-1.3cm,yshift=.5cm]plant.center) {};
-      \node[draw=none] (xdot) at ([xshift=.85cm,yshift=.15cm]p1)  {$\dot{\vec{x}}(t)$};   
-      \node[rectangle,draw,minimum width=1cm] (int) at ([xshift=.5cm,yshift=.5cm]plant.center) {\sc $\int$};
-      \coordinate (xsouth) at ([xshift=1cm]int);
-      \node[draw=none] (x) at ([xshift=1cm,yshift=.15cm]int)  {$\vec{x}(t)$};
-      \node[rectangle,draw,minimum width=1cm,minimum height=1cm] (A) at ([xshift=.5cm,yshift=-1cm]plant.center)  {\sc $\mat{A}$};
-      \coordinate (aeast) at ([xshift=1cm]A);
-      \coordinate (awest) at ([xshift=-1.8cm]A);
-    }   
-        
-   \& complexnode/.pic={ 
-     \node[rectangle,dashed,draw,minimum width=3.5cm,minimum height=1.6cm,label=\textbf{ADC},] (adc) {};
-     \draw[] ([xshift=-1cm]adc.center) -- ++(0.5,0.2cm);
-     \coordinate (switch1) at ([xshift=-1cm]adc.center);
-     \coordinate (switch2) at ([xshift=-0.4cm]adc.center);
-     \node[circle,add={+}{+}{}{},fill=gray!20] (q1) at ([xshift=.6cm]adc.center) {};
-     \node[draw=none] (q2t)  at ([yshift=.55cm]q1) {\sc Q1};
-     \node[draw=none] (v1)  at ([yshift=-1.5cm]q1) {$\nu_1$};
-     \node[draw=none] (y) at ([xshift=.85cm,yshift=.15cm]q1)  {$\vec{x}_k$};       
-     \coordinate (ykeast) at ([xshift=1.9cm]q1);
-     \coordinate (yksouth) at ([xshift=1.9cm,yshift=-3.5cm]q1);
-   } 
-   \& \coordinate (aux1);
-   \& \\
-  };
-
-  \path[->] (v1) edge (q1.south);
-  \path[->] (v2) edge (q2.south);
-  \path[->] (r) edge (circle.west);
-  \path[->] (circle.east) edge (q2.west);
-  \path       (q2.east) edge (zoh.west);
-  \path[->] (zoh.east) edge (B.west);
-  \path
-   (B.east) edge (p1.west)
-   (p1.east) edge (int.west)
-   (xsouth) edge (aeast)
-   (aeast) edge (A.east)
-   (A.west) edge (awest)
-   (awest) edge (p1.south)
-   (int.east) edge (switch1.west)
-   (switch2) edge (q1.west);
-  \path
-   (q1.east) edge (ykeast)
-   (ykeast) edge (yksouth)
-   (yksouth) edge (kdsouth);
-  \path[->]  (kdsouth) edge (Kd.south);
-  \path (Kd.north) edge (circle.south);
- \end{tikzpicture}
-}
- \caption{Closed-loop digital control system \label{fig:digitalsystem}}
-\end{figure*}
 %-------------------------------
 \subsection{Controller synthesis via state feedback}
 \label{ssec:statefeedbackcontrol}
 %-------------------------------
 
 Models \eqref{eq:ode} and \eqref{eq:plant} depend on external non-determinism in the form of input signals $u (t), u_k$, respectively. 
-Feedback architectures can be employed to affect the properties and behaviours of the continuous process (the plant) of interest.   
+Feedback can be employed to affect the properties and behaviours of the process. 
 %reduce the effect of parametric uncertainties and attenuate the effects of noise and disturbance. 
-We are interested in the synthesis of digital feedback, 
-as implemented on modern FPGAs or ICs. 
 The most basic feedback architecture is the state feedback, 
-where the control action $u_k$ (notice we work with the discretised signal) is computed by: 
+where the control action $\vec{u}_k$ is computed by: 
 %
 \begin{equation}
 \label{eq:controlaction}
-u_k = r_{k} - K x_k. 
+u_k = r_{k} - K x_k, 
 \end{equation}
 %
-Here $K \in \mathbb{R}^{m \times n}$ is a feedback gain matrix, 
-and $r_{k}$ is a reference signal (again digital).   
+where $K \in \mathbb{R}^{m \times n}$ is a feedback gain matrix, 
+and $r_{k}$ is a reference signal.   
 %
 The closed-loop model then takes the form 
 \begin{align}
 \label{eq:closedloopss}
 x_{k+1} = ( A_d - B_d K ) + B_d r_k.
 \end{align}
-The gain matrix $K$ can be set so that the closed-loop digitalised dynamics are shaped as desired, 
-for instance according to a specific stability goal or around a specific dynamical behaviour \cite{astrom1997computer}. 
-As argued later, in this work, we will target more complex objectives, such as quantitative safety requirements that are not typical in the digital control literature. 
+The gain matrix $K$ can be set so that the closed-loop dynamics are shaped as desired, 
+according to a desired goal or objective. 
+A standard objective is to obtain stable closed-loop dynamics. 
+
 
 %-------------------------------
 \subsection{Stability of closed-loop systems}
-\label{ssec:stability}
+\label{sec:stability}
 %-------------------------------
 
-%\addtodo{[Here discuss Jury criterium for DISCRETE-TIME models - a simplified version of the first part of what is now in Section \ref{sec:cof_verification} (with no quantisation noises yet).]}  
+%\todo{[Here discuss Jury criterium for DISCRETE-TIME models - a simplified version of the first part of what is now in Section \ref{sec:cof_verification} (with no quantisation noises yet).]}  
 
-Asymptotic stability boils down to Lyapunov stability and convergence to an equilibrium point \todo{add reference}.  
-Lyapunov stability requires that model trajectories remain in a neighbourhood of the equilibrium point. 
-In the case of closed-loop LTI models as in \eqref{eq:closedloopss}, 
-the equilibrium point is the origin (if the reference is equal to zero), or an offset thereof.  
-In this paper, we consider systems with a reference signal equal to zero. 
-
-A discrete-time system as \eqref{eq:closedloopss} is asymptotically stable if and only if all the roots 
-of the characteristic polynomial ({\it i.e.}, the eigenvalues of the closed-loop matrix $A_d - B_d K$) are inside the unity circle in the complex plane, 
-{\it i.e.} iff their absolute values are less than one~\cite{astrom1997computer}. 
-In this paper, we express the stability specification $\phi_{stability}$ in terms of a check known as Jury's criterion \cite{fadali}. 
-This condition boils down to an easy algebraic formula to select the entries of matrix $K$, 
-so that the closed-loop dynamics are shaped as desired. 
-A detailed description of this specification can be found in the Appendix~\ref{sec:appendix-stability}. 
-
-%-------------------------------
-\subsection{Safety specifications for dynamical systems}
-\label{ssec:safety}
-%-------------------------------
-
-As mentioned earlier, 
-in this work we are not bound to the synthesis of digital stabilising controllers -- 
-a well known task in the literature on digital control system -- 
-but target safety requirements with an overall approach that is sound and automated. 
-More specifically, 
-we require that the closed-loop system \eqref{eq:closedloopss} meets given safety specifications. 
-A safety specification raises a requirement on the states of the model, 
-such that the feedback controller (namely the choice of the gains in $K$) 
-must ensure that the states never exist such requirement. 
-Note that a stable, closed-loop system is not necessarily a safe system: 
-indeed, the state values may leave the safe whilst they converge to the equilibrium, 
-which is typical in the case of oscillatory dynamics. 
-
-In this work, the safety property represented by $\phi_{safety}$ is encoded as follows: 
-%
-\begin{equation}
-\label{eq:safetyliteral}
-\phi_{safety}\iff \forall k\geq 0, \bigwedge_{i=1}^{n}{\underline{x_{i}} \leq x_{i,k} \leq \overline{x_{i}}},
-\end{equation}
-%
-%\addtodo{We consider $x_{i}^{-}$ and $x_{i}^{+}$ to be -1 and 1, respectively.}
-where $\underline{x_{i}}$ and $\overline{x_{i}}$ are lower and upper bounds for the $i$-th coordinate $x_{i}$ of state $x\in \mathbb R^n$ at the $k$-th instant, respectively. 
-This means that the states will always be within the $n$-dimensional hyper-box. 
-%, which is typically defined by the safety specification.
-
-Furthermore, 
-it is practically relevant to consider constraints on the input signal $u_{k}$, 
-which we assume has given bounds $\overline{u}$ and $\underline{u}$, 
-such that ${\underline{u} \leq u_{k} \leq \overline{u}},\forall k\geq 0$.  
-In practice, 
-this means that the control input saturates in view of physical constraints. 
-
+A discrete-time system is asymptotically stable if and only if all the roots 
+of the characteristic polynomial ({\it i.e.}, the eigenvalues) are inside of 
+the unity circle, {\it i.e.}, their absolute value are less than 
+one~\cite{astrom1997computer}. In this paper, we express 
+the stability specification $\phi_{stability}$ in terms of  
+Jury's criterion \cite{fadali}. A detailed description of this 
+specification can be found in the Appendix~\ref{sec:appendix-stability}.
 
 %%%-------------------------------
 %%\subsection{Digital implementation of feedback controller}
 %%\label{ssec:quantizationerror}
 %%%-------------------------------
 %%
-%%\addtodo{HERE add a figure similar to Fig. \label{fig:observersystem} to explain digital features of controller.} 
+%%\todo{HERE add a figure similar to Fig. \label{fig:observersystem} to explain digital features of controller.} 
 %%
-%%\addtodo{[The remainder of the section needs to be updated. ]}
+%%\todo{[The remainder of the section needs to be updated. ]}
 %%The output and measurable of the plant is being sampled by an ADC, and since the full state of the
 %%plant cannot be witnessed directly, the controller software includes an observer that 
 %%estimates the state of the plant (see appendix for details on how such an observer
 %%is constructed). In this work, we are assuming that all the states measurements are available for the state feedback purpose, and the state observer design may be disregarded.  
-%%\addtodo{[Unclear what the remainder is for: ]}
+%%\todo{[Unclear what the remainder is for: ]}
 %%We further presume that there are small tolerances in the system 
 %%described in the following form
 %%%
@@ -531,33 +371,111 @@ this means that the control input saturates in view of physical constraints.
 %%evaluation. Whilst it is possible to address these with this methodology, we will focus on the case
 %%above for simplicity.
 
-% \addtodo{HERE add a figure similar to Fig. \label{fig:observersystem} to explain digital features of controller.} 
+% \todo{HERE add a figure similar to Fig. \label{fig:observersystem} to explain digital features of controller.} 
 
-% \addtodo{[The remainder of the section needs to be updated. ]}
+% \todo{[The remainder of the section needs to be updated. ]}
 % The output and measurable of the plant is being sampled by an ADC, and since the full state of the
 % plant cannot be witnessed directly, the controller software includes an observer that 
 % estimates the state of the plant (see appendix for details on how such an observer
 % is constructed). In this work, we are assuming that all the states measurements are available for the state feedback purpose, and the state observer design may be disregarded.  
-% \addtodo{[Unclear what the remainder is for: ]}
+% \todo{[Unclear what the remainder is for: ]}
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{Numeric representations and soundness} 
 \label{sec:numeric_rep}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-\todo{I've moved the following paragraph to this section, from that on safety specs.}
-The states values must be computed considering the digital controller error, i.e., the error introduced by the ADC and the digital controller. 
-%, and the digital reference signal. 
-%In this paper, we consider systems with a reference signal equal to zero. 
+There are two sources of error due to numeric representation; the numeric error introduced by 
+the fixed point numbers used to model our plant, i.e, the plant dynamics $A_d$, $B_d$ and the states; 
+and the numeric error introduced by the digital controller, which uses an analogue-to-digital converter to read
+the states as a fixed-point number. In this section we formally outline the errors introduced by
+fixed point representation of numbers; in further sections we will differentiate between these
+two errors by referring to them as the \emph{plant error} and the \emph{digital controller error}.
+
+Let $\mathbb{R} \langle I,F \rangle$ be a fixed point domain with $I$ bits representing the integer part and $F$ bits
+representing the decimal part. 
+The following approximation errors will arise:
+\begin{enumerate}
+\item {\bf Truncation:}
+Let $\mathcal{F}\langle I,F \rangle(\cdot) : \mathbb{R} \rightarrow \mathbb{R}\langle I,F \rangle, \tilde x=\mathcal{F}\langle I,F \rangle(x) = x-\delta : \delta=x\ \%_F\  c\tilde x$, where $\%_F$ is the modulus operation performed on the last bit of the representation ($2^{-F}$).
+The number $\delta$ corresponds to the truncation error of the representation and it will propagate across operations.
+\item {\bf Rounding:}
+%% Every time an operation is performed on a number in the $\mathbb{R} \langle I,F,E \rangle$ domain, an error may be
+%% introduced due to truncation of the result.
+Let us define $c\langle i,f \rangle \in \mathbb{R}\langle I,F\rangle$, where $i \in [-2^{I-1}\ 2^{I-1}],f \in [0 1)$ are its assigned values. The smallest number that can be represented for any given exponent is $c_{min}=2^{-F}$.
+The following errors appear in simple operations:
+\begin{enumerate}
+\item Addition/Substraction: in the case of fixed point arithmetic of numbers with the same domain, there are no rounding errors, otherwise the maximum error is given by the domain of the result $c\langle \cdot, F_1\rangle \pm c\langle \cdot , F_2\rangle= c\langle \cdot , F_3\rangle + \delta_3 :|\delta_3| \leq 2^{-F_3} \wedge F_3 \leq F_1,F_2$ 
+\item Multiplication: $c\langle \cdot, F_1\rangle * c\langle \cdot,F_2\rangle=c\langle \cdot,F_3\rangle + \delta_3 : |\delta_3| \leq 2^{-F_3} \wedge F_3 \leq F_1,F_2$ 
+\end{enumerate}
+The bounds obtained for division are left to the reader as it will not be applied in this paper.
+
+At this point it is worth mentioning that not all systems truncate equally. In the definition above $\delta$ may be positive
+or negative, and even this decision can be made dependent on the sign of $x$. Common cases in computer systems are:
+round downwards (\emph{ie} to $-\infty$), round upwards (\emph{ie} to $+\infty$), and round to zero.
+Rounding errors are cumulative which means the overall error will statistically increase with every operation, thus algorithms
+performing fewer operations can be more precise in this respect than iterative ones. 
+\item {\bf Overflow:}
+  %Another source of error introduced by Finite Word Length representations is that of overflow.
+  The finite word length set a
+maximum representable number in the domain ($\pm 2^{I-1}+1-2^{-F}$), which means that any number outside this range
+cannot be accurately represented by the domain (\emph{eg} $\delta=x-2^{I-1}+1-2^{-F}$). In the case of floating point, a special
+case for infinity has been introduced, which addresses some of this issues, but once the error has gone to infinity, the numbers
+become meaningless. It is the responsibility of software designers and tools to account for overflows and either supply saturation
+functions to prevent them or raise alarms in their presence. In the case of verification, the latter is seen as a safety problem.
+\end{enumerate}
+
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+\subsection{Fixed word length effects on matrix multiplications}
+\label{sec:cof_fwl}
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Thus far we have presented a verification procedure for a digitalized plant in a continuous space (\emph{ie} the
+range of the quatizers is still $\mathbb{R}$. The next step we must reaize is that the controller and the observer
+exist in a digital program, hence their domain is $\mathbb{R}\langle I,F\rangle$. This has two separate effects
+on the model. If we recall equation \eqref{eq:to_of}, the matrices of the observer and the controller  are not necessarily those of the plant.
+In fact we have $\mat{A},\mat{B} \in \mathbb{R}^*$, $\mat{A}_o,\mat{B}_o,\mat{K}_d, \mat{L}_d \in \mathbb{R}\langle I,F\rangle^*$
+Where $*$ represents the appropriate dimension for each matrix.
+Unfortunately this means that although combined matrices such as $\mat{A}_t$ are in the reals, they suffer from
+the fixed word restrictions in their composing matrices.
+The second effect corresponds to the rounding errors in the calculation of $\hat{x}_{k+1}, u_k$. These will introduce a new source of quantiztion noise which we may denote $\vec{\nu}_3 \in [-q_3\ \ q_3]$.
+The estimation of $\hat{\vec{x}}$ corresponds to the sum of three matrix-vector multiplications. Each of these has a coefficient-wise error bound $c_{min}$. Hence the overall $\overline{\delta}_{\hat{x}}=3nc_{min}$. The error in $\vec{u}$ corresponds of the multiplication of $\mat{K}_d\hat{\vec{x}}$, hence $q_3=\overline{\delta}_u=nc_{min}+\sum_{k=1}^nc_k\overline{\delta}_{\hat{x}}=(3|\mat{K}|_1+1)n2^{-F}$
+
+
+%-------------------------------
+\subsection{Safety specifications for cyber-physical systems}
+\label{ssec:safety}
+%-------------------------------
+
+We require that the closed-loop system meets safety specifications. 
+A safety specification establishes bounds for the states, such that 
+the controller $K$ must maintain the states within a given lower and upper 
+bound for any initial state. 
+
+The safety property represented by $\phi_{safety}$ is encoded as follows:
+%
+\begin{equation}
+\label{eq:safetyliteral}
+\phi_{safety}\iff \forall k\geq 0, \bigwedge_{i=1}^{n}{x_{i}^{-} \leq x_{i,k} \leq x_{i}^{+}},
+\end{equation}
+%
+%\todo{We consider $x_{i}^{-}$ and $x_{i}^{+}$ to be -1 and 1, respectively.}
+where $x_{i}^{-}$ and $x_{i}^{+}$ are the lower and upper bound 
+of the $i$-th state $x_{i}$ at the $k$-th instant, respectively.
+This means that the states will always be within the $n$-dimensional 
+hyper-box, which is typically defined by the safety specification.
+
+The states values must be computed considering the digital controller error, i.e., the error introduced by the ADC and
+digital controller, and the digital reference signal. In this paper, we consider systems with
+a reference signal equal to zero. 
 %the FWL effects in all operations related to the control action~\eqref{eq:controlaction} 
 %and disregarding it in the state equation~\eqref{eq:plant}.
-Thus, the states are computed using the following equations. We use $\mathcal{F}_{\langle I_c,F_c \rangle}$ \todo{explain and clarify notation.}
-to to denote numbers represented with the precision of the digital controller. All other numbers
+Thus, the states are computed using the following equations. We use $\mathcal{F}_{\langle I_c,F_c \rangle}$
+to denote numbers represented with the precision of the digital controller. All other numbers
 are represented with the precision of our plant model:
 %
 \begin{align*}
-u_{k}&=-(\mathcal{F}_{\langle I_c,F_c \rangle}(K)\cdot\mathcal{F}_{\langle I_c,F_c \rangle}(x_{k})).  
-%\\ x_{k+1}&=A_d x_{k} + B_du_{k}
+u_{k}&=-(\mathcal{F}_{\langle I_c,F_c \rangle}(K)\cdot\mathcal{F}_{\langle I_c,F_c \rangle}(x_{k})) \\
+x_{k+1}&=Ax_{k}+Bu_{k}
 \end{align*}
 %\left\lbrace
 %\begin{array}{l}
@@ -566,65 +484,9 @@ u_{k}&=-(\mathcal{F}_{\langle I_c,F_c \rangle}(K)\cdot\mathcal{F}_{\langle I_c,F
 %\end{array}\right.
 %\end{equation}
 
-\bigskip
-
-The 
-%systems and 
-models we consider have two sources of error due to numeric representation. 
-The first is the numeric error introduced by the fixed-point numbers employed to model the plant, i.e. to represent the plant dynamics $A_d$, $B_d$ and its states. 
-The second is the numeric error introduced by the digital controller, 
-which 
-%uses an analogue-to-digital converter to read the states as a fixed-point number and performs operations in this domain. 
-performs operations in the domain of fixed-point numbers. 
-In this section we formally outline the errors introduced by fixed-point representation of numbers. 
-In further sections we will differentiate between these two errors, 
-by referring to them as the \emph{plant error} and the \emph{digital controller error} respectively. 
-
-Let $\mathbb{R} \langle I,F \rangle$ \todo{notice this notation differs from the one used above} be a fixed point domain with $I$ bits representing the integer part 
-and $F$ bits representing the decimal part \todo{why R, comment on that.}. The smallest number that can be represented in this domain is $c_m=2^{-F}$.
-The following approximation errors will arise:
-\begin{enumerate}
-\item {\bf Truncation:}
-Let $\mathcal{F}\langle I,F \rangle(\cdot) : \mathbb{R} \rightarrow \mathbb{R}\langle I,F \rangle, \tilde x=\mathcal{F}\langle I,F \rangle(x) = x-\delta_T : \delta_T=x\ \%_{c_m}\ \tilde x$, where $\%_{c_m}$ is the modulus operation performed on the last bit.
-So $\delta_T$ is the truncation error and it will propagate across operations.
-\item {\bf Rounding:}
-The following errors appear in simple operations:
-\begin{enumerate}
-\item Addition/Subtraction: these operations only propagate errors coming from truncation of the operands. 
-\todo{the following maths is loose. fix as follows: define terms with their domain. define operation. apply operator $\mathcal{F}$ above. derive bound. }
-$c_1\pm c_2= c_3 + \delta_3 :|\delta_3| \leq |\delta_{T1}| + |\delta_{T2}|$ 
-\item Multiplication: $c_1 * c_2= c_3 + \delta_3 :|\delta_3| \leq |\delta_{T1}*c_2| + |\delta_{T2}*c_1| + c_m$  \todo{same as above.}
-\item Division will not be applied in these implementations. \todo{why not? comment further.}
-\end{enumerate}
-
-\item {\bf Overflow:}
-  %Another source of error introduced by Finite Word Length representations is that of overflow.
-  The finite word length set a
-maximum representable number in the domain \todo{what is next? a domain? define formally, no back-of-the-envelope mathsy stuff.} ($\pm (2^{I-1}+1-2^{-F})$), which means that any number outside this range
-cannot be represented by the domain. Our tool currently assumes no saturation
-function and verifies that no state overflows.
-\end{enumerate}
-
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-%\subsection{Fixed word length effects on matrix multiplications}
-%\label{sec:cof_fwl}
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-
-\todo{yes, please reformat the discussion below so that it fits the discussion above. }
-
-Thus far we have presented a verification procedure for a digitalised plant in a continuous space (\emph{ie} the
-range of the quantisers is still $\mathbb{R}$. The next step we must realise is that the controller 
-exists in a digital program, hence its domain is $\mathbb{R}\langle I,F\rangle$. We have $\mat{A},\mat{B},\vec{x} \in \mathbb{R}^*$, $\mat{K}_d,\vec{u},\hat{\vec{x}}=\mathcal{F}\langle I,F \rangle(\vec{x}) \in \mathbb{R}\langle I,F\rangle^*$
-Where $*$ represents the appropriate dimension for each matrix/vector.
-Unfortunately this means that although the closed loop dynamics are in the reals, they suffer from
-the fixed word restrictions in their composing elements.
-Apart from the quantisation errors $q_1,q_2$ there are rounding errors in the calculation of $u_k$. 
-These will introduce a new source of quantisation noise which we may denote $\vec{\nu}_3 \in [-q_3\ \ q_3]$.
-The error in $\vec{u}$ corresponds of the multiplication of $\mat{K}_d\hat{\vec{x}}$, hence $q_3=\overline{\delta}_u=(|\mat{K}|_1+1)c_m$
-
-
-
+The input $u_{k}$%is non-deterministic with 
+has known bounds $u^{+}$ and $u^{-}$, 
+such that ${u^{-} \leq u_{k} \leq u^{+}},\forall k\geq 0$. 
 
 %% %-------------------------------
 %% \section{Counter-Example Guided Inductive Synthesis with solution generalisation}
@@ -710,16 +572,14 @@ The error in $\vec{u}$ corresponds of the multiplication of $\mat{K}_d\hat{\vec{
 \label{sec:CEGARIS} 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 %Abstractly-Refined
-In this section we outline the general architecture of the program synthesiser used in both approaches%\todo{which approaches?}. 
-We then give the details of the two methods of solution generalisation that we compare; the first checking safety by unwinding the transition relation to a completeness threshold; and the second employing abstract acceleration.
- 
+
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{General architecture of the program synthesiser}
+\subsection{General architecture of the program synthesizer}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \label{synthesizer-general}
 The input specification provided to the program synthesizer is of the form
 $\exists \vec{P} .  \forall \vec{x}.  \sigma(\vec{x}, \vec{P})$ where
-$\vec{P}$ ranges over functions, $\vec{x}$ \todo{now variables are vectorised, however previously the model variables aren't. please align notation. I do not like to use vectors unless essential, let's say it's a waste of ink in printouts. } ranges over ground terms and
+$\vec{P}$ ranges over functions, $\vec{x}$ ranges over ground terms and
 $\sigma$ is a quantifier-free formula.  We interpret the ground terms over
 some finite domain $\mathcal{D}$.
 
@@ -746,31 +606,8 @@ the finite set $\text{\sc inputs}$ that is used for synthesis.  Given
 that the full set of inputs $\mathcal{D}$ is finite, this means that
 the refinement loop can only iterate a finite number of times.
 
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{Synthesis problem: statement (recap) and connection to program synthesis}
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-\todo{The following paragraph has been already stated above. Let us clarify this is a useful repetition to recap things?} 
-
-The synthesis problem we are trying to solve is the following:
-find a digital controller $K$ (see Eq.~\ref{eq:controlaction})
-that makes the closed-loop system safe for 
-initial state $x_0$, reference signal $r_k$ and input $u_k$
-as defined in Sec.~\ref{ssec:safety}. 
-We consider non-deterministic initial states within a specified range
-and the reference signal to be set to zero.  
-
-When mapping back to the notation used for describing the general architecture 
-of the program synthesiser, the controller $K$ denotes $P$ and 
-$(x_0, u_k)$ represents $x$. 
-While the controller's precision $\langle I_c,F_c\rangle$ is given, 
-we can vary the plant's precision $\langle I_p,F_p\rangle$ such that 
-$\mathbb{R}\langle I_p,F_p \rangle \supseteq \mathbb{R}\langle I_c,F_c \rangle$.
-
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{Solution generalisation} 
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-Given the large solution space to be searched during the inductive
+Given the large soloution space to be searched during the inductive
 synthesis phase, we parametrise the target language, which induces a
 lattice of progressively more expressive languages.  This enables us
 to start by attempting to synthesise a program at the lowest point on
@@ -789,40 +626,260 @@ much faster than if synthesis had been attempted in a high-complexity
 language.
 
 
+
 We investigate two different approaches of integrating solution generalisation 
 with CEGIS:
 \begin{itemize}
-\item[1.] The first approach (described in Sec.~\ref{sec:CEGIS-precision-incrementation})
-  uses a multi-staged verification phase and performs solution generalisation based on
-the plant precision, the number of loop unrollings, 
-and the sampling rate. Essentially, it finds a controller for an individual initial state
-and input with a bounded time horizon and generalises to all states,
-inputs, and time horizons. %% (with a final verification loop that verifies
-%% the continuous system behaviour against the previously verified
-%% discrete system bi-simulation)
-\item[2.] The second approach (described in Sec~\ref{sec:CEGIS-abstraction-refinement})
-  %% uses abstract acceleration to compute the set of reachable states,
-  %% which enables it to perform abstraction refinement inside the CEGIS loop.
-  finds a controller for a continuous initial set of states and input set, 
-  over an abstraction of the continuous dynamics that conforms to witness proofs at specific times; 
-  it further generalises the solution over all times by refining the number of witnesses.  \todo{clarify use of abstract acceleration. add references.}
+\item[1.] The first approach uses abstract acceleration to compute the set of reachable states, which enables it to perform abstraction refinement inside the CEGIS loop (see Sec~\ref{sec:CEGIS-abstraction-refinement}). 
+\item[2.] The second approach relies on computing a 
+completeness threshold $k$ for each loop such that it is sufficient to 
+unroll the corresponding loop $k$ times. For this approach the 
+generalisation step is given as an incremental
+increase of precision and sampling rate (see Sec.~\ref{sec:CEGIS-precision-incrementation}).
 \end{itemize}
-
-
-
-%% The advantage of the second approcah are that whereas in the first case we use concrete traces from non-deterministic simulations
-%% and generalize over continuous sets into an unbounded time, 
-%% the abstract acceleration synthesis analyses the system over a generalized state-space (ie it looks at all the states simultaneously), requiring the CEGIS loop to generalize only over the time horizon of the system.
-
-%% \addtodo{Can we come up with some sort of figure that makes it easier to visualise
-%% the generalisation step in each approach?}
 
 % In Sec.~\ref{sec:CEGIS-abstraction-refinement} and 
 % Sec.~\ref{sec:CEGIS-precision-incrementation}, we explain how we 
 % specialise the general CEGIS approach in order to perform solution generalisation.
 
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+\subsection{Our synthesis problem}
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+The synthesis problem we are trying to solve is the following: find a
+digital controller $K$ (see Eq.~\ref{eq:controlaction}) that makes the
+closed-loop system safe for initial state $x_0$, reference signal
+$r_k$ and input $u_k$ as defined in Sec.~\ref{ssec:safety}.  We
+consider non-deterministic initial states within a specified range and
+the reference signal to be 0 (\todo{refer to wherever this is
+  explained initially}).  Then, when mapping back to the notation used
+for describing the general architecture of the program synthesizer,
+the controller $K$ denotes $P$ and $(x_0, u_k)$ represents $x$.  We
+compute the coefficients for $K$ in the domain $\mathbb{R}<I,F>$.
+
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+\subsection{CEGIS with abstraction refinement}
+\label{sec:CEGIS-abstraction-refinement}
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+\todo{Move as much as possible from Sec~\ref{sec:cof_verification}
+to the appendix (e.g. discussion on abstract acceleration). 
+Merge the rest in Sec~\ref{sec:cof_synth}.}
+
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+\subsubsection{Verification of a controllable observed system}
+\label{sec:cof_verification}
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Let us recall the formulas used for single-input and single-output (SISO) systems 
+in sections \ref{sec:reachable} and \ref{sec:observable}.
+A controllable and observable system will have the following dynamics:
+
+%
+\begin{align}
+\label{eq:observer_LTI_cf}
+\vec{x}_{k+1}=&\mat{A}_{t}\vec{x}_k+\mat{B}_{tp} \vec{r}_k+\mat{B}_{tn}\left [\begin{array}{c}\vec{\nu}_2\\ \vec{\nu}_1\end{array}\right]
+\end{align}
+\begin{align*}
+\mat{A}_{t}=&\mat{T}\mat{A}_d\mat{T}^{-1}&
+\mat{B}_{tp}=&\mat{T}\mat{B}_d&
+\mat{B}_{tn}=&\mat{T}\mat{B}_d&
+\mat{T}=&\mat{R}_{cf}\mat{R}^{-1}&
+\end{align*}
+
+\begin{align*}
+\mat{A}_{tp}=&\left[
+\begin{array}{ccccc}
+0&1&0&\cdots&0\\
+0&0&1&\cdots&0\\
+\vdots&\vdots&\vdots&\ddots&\vdots\\
+0&0&0&\cdots&1\\
+k_n-a_n&k_{n-1}-a_{n-1}&k_{n-2}-a_{n-2}&\cdots&k_1-a_1
+\end{array}\right]
+\label{eq:cf_SISO_2}
+\end{align*}
+
+Careful examination of these matrices reveals that because the $\mat{A}_t$ is 
+upper block diagonal, the spectrum of $\mat{A}_t$ is equal to the union of the 
+spectrum of $\mat{A}_{tp}$ and $\mat{A}_{to}$, which can be calculated separately. 
+Additionally, these correspond to the roots of the following polynomials:
+%
+\begin{align*}
+\left(z^n+\sum_{i=1}^p{(a_i-k_i)z^{n-i}}\right)
+\end{align*}
+
+For a stabilized closed-loop, we need these roots to remain within the
+unit circle (left hand side of the plane for continuous time).  Whilst
+this is not a sufficient condition for verifying safety properties, it
+is a necessary one; therefore, we review this verification process.  
+The direct approach would be to calculate the roots of the
+polynomials (\emph{i.e.}, the matrix eigenvalues), but this ends
+up being too costly, particularly in the case of synthesis, so we use
+an indirect method.
+
+Notice that in both our polynomials $c_0=1$ and we only use reals.
+Now that we have established convergence, we may examine the safety 
+specification of the state space. In the case of SISO systems, 
+this is given by a range of the input and a range of the output, 
+which are considered safe ($\vec{u}_k \in [\underline{u}\ \ \overline{u}] \wedge \vec{y}_k \in [\underline{y}\ \ \overline{y}]$). 
+Whilst there are other properties, we may include in the verification, 
+we will solely focus on these for simplicity of the explanation.
+We will assume that we do not want saturation in our system, 
+hence the control loop has only one mode. We have also identified 
+the quantization noise as a bounded non-deterministic input.
+First we must translate the safety specification into the state-space. 
+Replacing on the second part of equation \eqref{eq:observer_LTI_cf} we obtain
+%
+\begin{equation}
+\Psi := \underline{y}-\overline{\mat{B}\vec{u}}<\mat{C}_t\vec{x}_k<\overline{y}-\underline{\mat{B}\vec{u}}
+\label{eq:of_bounds}
+\end{equation}
+Note that we use the bounds of the input after the transformation by $\mat{B}$ 
+since the matrix may reverse the bounds. Eq.~\eqref{eq:of_bounds} can be solved 
+using linear programming as it describes a polyhedral region in $\mathbb{R}^n$.
+The second step is evaluating the progression of the system over time to calculate 
+$\vec{x}_k$ to validate against this specification. For this step we require 
+an initial set from which the system progresses. Obviously, this set $\vec{x}_0$ 
+must satisfy the specification; otherwise, the system will be unsafe to begin with.
+We accept a specification in the form $\mat{E}\mat{T}\vec{x}_0<\mat{f}$. 
+The presence of $\mat{T}$ is because this will typically be given in the original 
+state-space. Accelerating \eqref{eq:observer_LTI_cf}, we obtain:
+%
+\begin{align}
+\label{eq:acc_observer_LTI_cf}
+\vec{x}=&\mat{A}_t^k\vec{x}_0
++\sum_{i=0}^{k-1} \mat{A}_t^i \mat{B}_{tp} \vec{r}_i
++\sum_{i=0}^{k-1} \mat{A}_t^i \mat{B}_{tn}\left [\begin{array}{c}\vec{\nu}_2\\ \vec{\nu}_1\end{array}\right] : \mat{E}\mat{T} \vec{x}_0<\mat{f}
+\end{align}
+which would still require us to verify the system for every $k$ up to infinity. 
+Instead we use abstract acceleration~\cite{cattaruzza2015unbounded}, which translates the formula into
+%
+\begin{align}
+\label{eq:aa_observer_LTI_cf}
+\hat{X}^\#
+=&\mathcal{A}_t X_0+\mathcal{B}_{tp} R + \mathcal{B}_{tn} N\\
+X_0 =&\left \{\vec{x} : \mat{E}\mat{T} \vec{x}_0<\mat{f} \right\}\nonumber\\
+ R =&\{r : \mat{E}_r < \vec{f}_r \}\nonumber\\
+ N=&\left \{ \left[\begin{array}{c}\vec{\nu}_2\\ \vec{\nu}_1\end{array}\right] : \nu_1 \in \left[-\frac{q1}{2}\ \ \frac{q1}{2}\right] \wedge \nu_2 \in \left[-\frac{q2}{2}\ \ \frac{q2}{2}\right]  \right \}\nonumber
+\end{align}
+%
+where $\mathcal{A}_t=\bigcup_{k=1}^\infty \mat{A}^k, \mathcal{B}_{tp}=\bigcup_{k=1}^\infty \sum_{i=0}^k\mat{A}^i\mat{B}_{tp}, \mathcal{B}_{tn}=\bigcup_{k=1}^\infty \sum_{i=0}^k\mat{A}^i\mat{B}_{tn}$ are abstract matrices for the system in \eqref{eq:observer_LTI_cf}. It is worth noting that $r$ is a non-deterministic parametric input (\emph{ie} $\forall k>0, r_{k+1} =r_k$) whereas the set N is composed of non-deterministic variable inputs.
 
 
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+\subsubsection{Controller synthesis}\label{sec:cof_synth}
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Now that we have explained the verification process, we may proceed to describe the synthesis procedure, which is illustrated in figure \ref{fig:CEGARIS}.
+\begin{enumerate}
+\item We start by preprocessing the dynamics. This can be computationally intensive and we don't want it to be part of the CEGIS loop.
+\begin{enumerate}
+\item Calculate $\mat{A}_o,\mat{B}_o,\mat{C}_o$ by rounding down the coefficients $*_{oij}=\mathcal{F}\langle I,F,E\rangle (*_{ij}) : *=\{a,b,c\}$
+\item Calculate $\mat{T}$ and $\mat{W}_o^{-1}\mat{W}_{of}$ using equations \eqref{eq:rncf}\eqref{eq:rcf}\eqref{eq:to_cf}\eqref{eq:wnof}\eqref{eq:wof}
+\item Extract the Plant's characteristic polynomial coefficients from the last row of $P_a=(\mat{T}\mat{A}\mat{T}^-1)_{n*}$.
+\item Calculate the noise set $N$ from the quantizer resolutions and estimated round-off errors ($\frac{q_1}{2},\frac{q_2}{2},q_3$)
+\item Produce an initial abstraction which corresponds to an unconstrained solution space.
+\end{enumerate}
+\item Next we synthesise a candidate controller and observer. Let $\mathcal{J}\langle I,F \rangle (P,\mat{T})$ be a program describing Jury's method.
+\begin{enumerate}
+\item Select a controller $\tilde{\mat{K}} \in \mathbb{R}\langle I,F\rangle^n$. This is achieved by solving a SAT formula $\mathcal{J}_K=\mathcal{J}\langle I,F,E \rangle (P_{a-k},\mat{T})$ that satisfies Jury's criteria for $P_{a-k}=z^n+\sum_{i=1}^n (a_i-k_i) z^{n-i} : k_i \in \mat{K} \wedge \mat{K}=\tilde{\mat{K}}\mat{T}$.
+\item If there is no candidate solution we return UNSAT and exit the loop.
+\end{enumerate}
+\item Once we have a candidate solution, we perform a safety verification using abstract acceleration.
+\begin{enumerate}
+\item Calculate the abstract matrices $\mathcal{A}_t, \mathcal{B}_{tp},\mathcal{B}_{tn}$ for the candidate closed loop solution.
+\item Evaluate $\hat{X}^\# \models \Psi$. If the verification holds we have a solution, and exit the loop.
+\end{enumerate} 
+\item If the candidate solution is not valid we refine the abstraction used by the synthesiser
+\begin{enumerate}
+\item Find the constraints that invalidate the property. These are the rows of $\mat{E} \in \Psi$ that intersect/segment $\hat{X}^\#$. Transforming these rows into the eigenspace of $\mat{A}_t$, and applying backward acceleration to obtain a set of counterexamples for the eigenvalues, which we define as $\Psi(\Lambda)$. This is a constraint in the spectrum (\emph{ie} frequency response transfer function) of the closed loop dynamics. 
+\item Transform the soft constraints on the spectrum into soft constraints on the coefficients of the characteristic polynomial. 
+$z^n+\sum_{i=1}^n[a_i-k_i]z^{n-i}=\prod_{i=1}^n (z-[\lambda_i]) : |[\lambda_i]|<1 \wedge [\lambda_i] \models \Psi_{\Lambda}$.
+\item Pass the refined abstraction with the new contraints to the synthesiser, as well as a counterexample plant coefficients ($P_a$) and repeat the loop again. We note that the Abstraction refinement is a soft constraint on the proposed model which can increase or decrease the parameter space at any time, whereas the concrete counterexample passed to the synthesiser is monotonically decreasing. The first one improves speed of the tool whereas the second ensures convergence.
+
+\end{enumerate} 
+\end{enumerate}
+
+\begin{figure}
+\centering
+{\scriptsize
+\hspace*{-1cm}
+\begin{tikzpicture}[scale=0.3,->,>=stealth',shorten >=.2pt,auto, semithick, ampersand replacement=\&,]
+  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center},row sep=.8cm, column sep=.2cm] {
+   \coordinate (aux1);
+   \& \coordinate (aux2);
+   \& ;\\
+   \&\node[fill=gray!20,align=center] (pre) {{\sc 1. pre-}\\{\sc processing}};
+   \& \node[fill=gray!20,align=center] (abstract) {\sc 4. abstraction};
+       % \node[draw=none] (FIK) at ([xshift=2.5cm,yshift=.3cm]abstract)  {\sc $\Psi (\mat{K})$};
+   \& \coordinate (aux); \\ % \node[fill=yellow!20,align=center] (counter) {\sc counterexample};\\
+   \& 
+   \& \node[fill=gray!20,align=center, minimum width=3cm] (synth) {\sc 2. synthesize};
+       %\node[draw=none] (KL) at ([xshift=2.5cm,yshift=-.25cm]synth)  {\sc $\mat{K},\mat{L}$};
+       %\node[draw=none] (NKL) at ([xshift=2cm,yshift=1cm]synth)  {\sc $P_a$};
+   \& \node[fill=gray!20,align=center, minimum width=4cm] (verify) {\sc 3. verify ($\Psi$)};
+       %\node[draw=none] (VUNS) at ([xshift=.6cm,yshift=1cm]verify)  {\sc SAT};
+       \node[draw=none] (SAT) at ([xshift=2.7cm,yshift=-.3cm]verify)  {\sc UNSAT};
+   \& \node[ellipse, fill=gray!20] (done) {{\sc Done}};\\
+   \&
+   \& complexnode/.pic={
+     \coordinate (auxsynth);
+     \node[draw,rectangle,align=center] (KSAT) at ([xshift=-.8cm]auxsynth.center) {\sc Prog.\\Search};
+     \node[draw,rectangle,align=center] (LSAT) at ([xshift=.8cm]auxsynth.center) {\sc Prog.\\Search};
+     \node[draw=none] (SATK) at ([xshift=-.5cm,yshift=1.5cm]KSAT)  {$\mathcal{J}_K$};
+     \node[draw=none] (K) at ([xshift=.4cm,yshift=1.5cm]KSAT)  {$\tilde{\mat{K}}$};
+     \node[draw=none] (SATL) at ([xshift=-.5cm,yshift=1.5cm]LSAT)  {$\mathcal{J}_L$};
+     \node[draw=none] (L) at ([xshift=.4cm,yshift=1.5cm]LSAT)  {$\tilde{\mat{L}}$};
+    }
+   \& complexnode/.pic={
+     \coordinate (AA);
+     \node[draw,rectangle,align=center] (AAI) at ([xshift=-1.5cm]AA.center) {\sc AI\\Model};
+     \node[draw,rectangle,align=center] (AAV) at ([xshift=1.5cm]AA.center) {\sc AA\\Solver};
+     \node[draw=none] (AB) at ([xshift=.4cm,yshift=1.5cm]AAI.center)  {\sc $\mat{A}_t$ $\mat{B}_{tp}$ $\mat{B}_{tn}$};     
+     \node[draw=none] (MA) at ([yshift=.2cm]AA.center)  {$\mathcal{A}_t$};     
+     \node[draw=none] (MB) at ([yshift=-.3cm]AA.center)  {$\mathcal{B}_{tp},\mathcal{B}_{tn}$}; 
+     \node[draw=none] (AB) at ([xshift=0.3cm,yshift=1.5cm]AAV.center)  {\sl $\hat{X}^\#$};  
+    }\\
+   \&
+   \& complexnode/.pic={
+     \coordinate (UNSAT);
+     \coordinate (KUNSAT)  at ([xshift=-.8cm]UNSAT.center);
+     \coordinate (LUNSAT) at ([xshift=.8cm]UNSAT.center);
+     \node[draw=none] (UNSATB) at ([xshift=1.6cm,yshift=.3cm]UNSAT)  {\sc UNSAT};
+  }
+  \& \& \coordinate (FAIL);\\
+  };
+  \path
+    (pre.east) edge (abstract.west)
+    (abstract.south) edge (synth.north)
+    %([yshift=2em]synth.east) edge node {Candidate} ([yshift=2em]verif.west)
+    %([yshift=-2em]verif.west) edge node {New input} ([yshift=-2em]synth.east)
+    %([yshift=2em]synth.east) edge node[xshift=-0.7em] {Candidate} ([yshift=2em]verif.west)
+    %([yshift=-2em]verif.west) edge node[xshift=-0.7em] {New input} ([yshift=-2em]synth.east)
+    ([yshift=1em]synth.east) edge node {$\mat{K},\mat{L}$} ([yshift=1em]verify.west)
+    ([yshift=-1em]verify.west) edge node {$P_a$} ([yshift=-1em]synth.east)
+    (aux) edge (abstract.east) 
+    (verify.east) edge (done.west);
+  \path
+    ([xshift=+.6cm]KSAT.north) edge ([xshift=-2.1cm]synth.south) 
+    ([xshift=-3.3cm]synth.south) edge ([xshift=-.6cm]KSAT.north)
+    ([xshift=.6cm]LSAT.north) edge ([xshift=3.3cm]synth.south)
+    ([xshift=+2.1cm]synth.south) edge ([xshift=-.6cm]LSAT.north)
+    ([xshift=-4.9cm]verify.south) edge (AAI.north)
+    (AAI.east) edge (AAV.west)
+    (AAV.north) edge ([xshift=4.9cm]verify.south)
+    %(verify.north) edge (counter.south)
+    %(counter.west) edge (abstract.east)
+    %(counter.south west) edge (synth.north east)
+    (FAIL.north) edge (done.south);
+   \path[-] 
+     (KSAT.south) edge (KUNSAT.north)
+     (LSAT.south) edge (LUNSAT.north)
+     (KUNSAT.east) edge (LUNSAT.west)
+     (verify.north) edge node {$\Psi (\mat{K})$} (aux)
+     (LUNSAT.east) edge (FAIL.west);
+\end{tikzpicture}
+}
+\caption{CEGIS with abstraction refinement\label{fig:CEGARIS}.}
+\end{figure}
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{CEGIS with multi-staged verification}
@@ -899,7 +956,7 @@ inputs, and time horizons. %% (with a final verification loop that verifies
 
  \end{tikzpicture}
 }}
-\caption{CEGIS with multi-staged verification}
+\caption{CEGIS with multi-staged verification.}
 \label{fig:CEGIS-precision-increment}
 \end{figure}
 
@@ -908,335 +965,61 @@ inputs, and time horizons. %% (with a final verification loop that verifies
 The controller synthesis is described in Fig.~\ref{fig:CEGIS-precision-increment}.
 One important observation is that, for this approach, we verify and synthesise 
 a controller over $k$ time steps. We then compute a completeness threshold, $\overline{k}$,
-for this controller, and verify the controller correctness to $\overline{k}$ time steps.
+for this controller, and verify the controller's correctness to $\overline{k}$ time steps.
 Essentially, $\overline{k}$ represents the number of iterations 
 required to sufficiently unwind the closed-loop state-space system 
-such that the boundaries are not violated for any $k{>}\overline{k}$
-(i.e. it is sufficient to unwind the closed-loop state-space system up to  
+such that the boundaries are not violated for any $k>\overline{k}$
+(i.e. it's sufficient to unwound the closed-loop state-space system up to  
 $\overline{k}$ in order to ensure that $\phi_{safety}$ holds). 
-
-\medskip
 
 Next, we describe the different phases in Fig.~\ref{fig:CEGIS-precision-increment}
 (blocks 1 to 5):
 
-\todo{please eventually itemize next}
-
 1. The inductive synthesis phase (i.e. {\sc synthesize}) uses BMC to
-compute a candidate solution $K$
-that satisfies both the stability criteria detailed in 
-Sec.~\ref{ssec:stability} and the safety specification in Sec.~\ref{ssec:safety}.
-%% The stability criteria are satisfied if the characteristic polynomial of $A_d - B_d * K_d$ meets Jury's criteria. This is 
-%% independent of the initial states. 
-Regarding the latter, we synthesise a safe controller by unwinding the transition system
-$k$ steps and picking a controller $K$ and an initial state such that the states at each step do
-not violate the safety criteria. This is sound if the current $k$ is below the
-completeness threshold, which we assume to be true in the {\sc synthesize} phase.
-We also assume some
-precision $\langle I_p,F_p\rangle$ for the plant and a sampling rate.  The
-checks that all these assumptions are sound are performed by subsequent
-{\sc verify} stages.
+compute a candidate solution $K$ that satisfies the stability criteria described in 
+\todo{SECTION STABILITY CRITERIA}, i.e., that the eigenvalues of the dynamics fall within 
+the unit circle, and the safety specification described in \todo{SECTION:SAFETY SPEC}, i.e.,
+that the state values do not violate the safe state upper and lower bounds within $k$ steps. 
+It does this by assuming some 
+precision $<I_p,F_p>$ for the plant, a $k$ and a sampling rate. 
 
-
-
-\begin{algorithm}[]
-\begin{algorithmic}[1]
-\Function{$safetyCheck()$}{}
-	\State assert($ \underline{u}  \leq u \leq \overline{u}$)
-	\While{$i=0; i< k; i++$}
-		%\State $u = (\langle I_p,F_p\rangle)((\langle I_c,F_c\rangle)K * (\langle I_c,F_c\rangle) x)$
-		\State $u = (plant\_typet)((controller\_typet)K * (controller\_typet) x)$
-		\State $x = A * x + B * u$
-		\State assert($\underline{x} \leq x \leq \overline{x}$ )
-  	\EndWhile
-  %\State Return $K$
-\EndFunction
-\end{algorithmic}
-\label{alg:safetycheck}
-\end{algorithm}
+The checks that
+these assumptions are sound are performed by the subsequent {\sc
+  verify} stages.
 
 2. The first {\sc verify} stage, {\sc safety}, checks that the candidate
 solution $K$ is safe for all possible initial states, i.e., does not reach an unsafe
-state within $k$ steps where again we assume $k$ to be under the completeness threshold. 
-%The safety criteria here must be valid for all possible allowed initial states, and so we
-After unwinding the transition system corresponding to the previously synthesised controller
-$k$ steps, we check that the safety specification holds for any initial state. 
+state within $k$ steps. 
+This check is potentially unsound because we considering the currently
+assumed $<I_p,F_p>$, $k$ and sampling rate. 
 
-This is relatively computationally expensive if the bounds on the
-allowed initial states are large.  However, we can show that, if the
-controller is safe for each of the corner cases of our hypercube of
-allowed initial states, it is safe for any initial state in the
-hypercube. Thus we only need to check $2^N$ initial states, where $N$
-is the number of states.
 
-\todo[inline]{please will Alessandro write out the proof that checking only the corner cases is valid for the safety verification - EP}
-
-Proof. 
-Consider the set of initial states, $X_0$, assumed to be convex since it's a box. 
-Name $v_i$ its vertices, where $i=1,\ldots, 2^n$.  
-Thus any point $x \in X_0$ can be expressed by convexity as $x = \sum_{i=1}^{2^n} \alpha_i v_i$, 
-where $\sum_{i=1}^{2^n} \alpha_i =1$. 
-So then if $x_0=x$, then $x_k = (A_d - B_d K)^k x = 
-(A_d - B_d K)^k \sum_{i=1}^{2^n} \alpha_i v_i = 
-\sum_{i=1}^{2^n} \alpha_i (A_d - B_d K)^k v_i  = 
-\sum_{i=1}^{2^n} \alpha_i x_k^i$, 
-where I have denoted with $x_k^i$ the trajectories obtained from the single vertices $v_i$.QED
-
+% The soundness is to be 
+% restored by the subsequent three validation stages.
 
 3. The second {\sc verify} stage, {\sc precision}, 
  restores soundness with respect to the plant's precision
 by using interval arithmetic \cite{moore1966interval} to validate the 
-operations performed by the previous stage. 
+operations performed by the previous stage.
 
 4. The third {\sc verify} stage, {\sc complete}, checks that the
 current $k$ is large enough to ensure that the boundaries are not
-violated for any $k'{>}k$.  For this purpose, we compute the
+violated for any $k'>k$.  For this purpose, we compute the
 completeness threshold $\overline{k}$ for the current candidate $K$
 and check that $k{\leq}\overline{k}$. 
 
 A stable control system is known to have converging dynamics, i.e., the
 distance from the reference (in this case the origin) decreases over time. 
 
-\todo[inline] {please will Alessandro write the proof for the completeness threshold here - EP}
-\missingfigure{picture for completeness threshold}
 
-Proof sketch. 
-Consider spectrum of matrix $(A_d - B_d K)$ and select eigenvalue with smallest (non trivial) imaginary value.  
-call such value $\vartheta$. 
-At every time interval $kT_s, (k+1)T_s$ ($T_s$ being the sampling time), 
-the dynamics projected on the corresponding eigenspace rotate of $\vartheta T_s$ radiants.  
-So surely taking $k$ as the ceiling of $\frac{2\pi}{\vartheta T_s}$, after $k$ steps we've completed a rotation. 
-This is the CT. 
+
+ \todo{discuss the computation
+  of the completeness threshold}
 
 5. The last {\sc verify} stage, {\sc sampling}, 
 ensures that the current sampling rate is large enough by using an 
-external checker (\addtodo{add more details here once we have them}).
+external checker (\todo{add more details here once we have them}).
 
-
-
-
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{CEGIS with abstraction refinement}
-\label{sec:CEGIS-abstraction-refinement}
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-% The verification of a hybrid continuous/discrete system over an unbounded time, requires the
-% non-deterministic simulation of an infinite set of states, which is undecidable. Our initial approach creates an
-% abstraction of this system by establishing bounds on the error between such a system and a discrete-time/continuous-space model.
-% This model is still however, quite complex, hard to verify, and many of the states involved are inconsequential to
-% the safety specification.
-% The advantage of this model is that it starts with a very simple description regardless of the complexity of the overall dynamics, and only expands to more complex models when a solution cannot be found.
-
-% \addtodo{Move as much as possible from Sec~\ref{sec:cof_verification}
-% to the appendix (e.g. discussion on abstract acceleration). 
-% Merge the rest in Sec~\ref{sec:cof_synth}.}
-
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsubsection{Verification of a controllable system}
-\label{sec:cof_verification}
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-Let us recall the formulas used for single-input and single-output (SISO) systems 
-in sections \ref{sec:reachable} and \ref{sec:observable}.
-A controllable system with quantization will have the following dynamics:
-\todo{eliminate vectors}
-%
-\begin{align}
-\label{eq:observer_LTI_cf}
-\vec{x}_{k+1}=&\mat{A}_{t}\vec{x}_k+\mat{B}_{tp} \vec{r}_k+\mat{B}_{tn} (\vec{\nu}_1 + \vec{\nu}_2 + \vec{\nu}_3)
-\end{align}
-\begin{align*}
-\mat{A}_{t}=&\mat{T}\mat{A}_d\mat{T}^{-1}&
-\mat{B}_{tp}=&\mat{T}\mat{B}_d&
-\mat{B}_{tn}=&\mat{T}\mat{B}_d&
-\mat{T}=&\mat{R}_{cf}\mat{R}^{-1}&
-\end{align*}
-
-\begin{align*}
-\mat{A}_{t}=\mat{T}\mat{A}_d\mat{T}^{-1}=&\left[
-\begin{array}{ccccc}
-0&1&0&\cdots&0\\
-0&0&1&\cdots&0\\
-\vdots&\vdots&\vdots&\ddots&\vdots\\
-0&0&0&\cdots&1\\
-k_n-a_n&k_{n-1}-a_{n-1}&k_{n-2}-a_{n-2}&\cdots&k_1-a_1
-\end{array}\right]
-\label{eq:cf_SISO_2}
-\end{align*}
-
-The characteristic polynomial of the above matrix is:
-%
-\begin{align*}
-z^n+\sum_{i=1}^p{(a_i-k_i)z^{n-i}}
-\end{align*}
-
-For a stabilized closed-loop, which is necessary for our safety property, we need
-these roots to remain within the unit circle, which we verify using Jury's criteria.
-Notice that in our polynomials $c_0=1$ and we only use reals.
-
-Once we have established convergence, we may examine the 
-specification of the state and input spaces ($\phi_{safety} \wedge \phi_{input}$).
-Whilst there are other properties, we may include in the verification, 
-we will solely focus on these for simplicity of the explanation.
-We assume that we do not want saturation in our system, 
-hence the control loop has only one mode. We have also identified 
-the quantization noise as a bounded non-deterministic input.
-%
-The first step constraints
-\begin{equation}
-\mat{K} \models \vec{u}_k=-\mat{K}\vec{x}_k : \phi_{safety} \wedge \phi_{input}
-\label{eq:of_bounds}
-\end{equation}
-The second step is evaluating the progression of the system over time to evaluate 
-$\vec{x}_{k+1} \models \phi_{safety}$. For this step we require 
-an initial set from which the system progresses. Obviously, this set $\vec{x}_0$ 
-must satisfy the specification; otherwise, the system will be unsafe to begin with.
-We accept a specification in the form $\mat{E}\mat{T}\vec{x}_0<\mat{f}$. 
-The presence of $\mat{T}$ is because this will typically be given in the original 
-state-space. Accelerating \eqref{eq:observer_LTI_cf}, we obtain:
-%
-\begin{align}
-\label{eq:acc_observer_LTI_cf}
-\vec{x}=&\mat{A}_t^k\vec{x}_0
-+\sum_{i=0}^{k-1} \mat{A}_t^i \mat{B}_{tp} \vec{r}_i
-+\sum_{i=0}^{k-1} \mat{A}_t^i \mat{B}_{tn}(\vec{\nu}_1+\vec{\nu}_2+\vec{\nu}_3) : \vec{x}_0 \models \phi_{init}
-\end{align}
-which would still require us to verify the system for every $k$ up to infinity. 
-Instead we use abstract acceleration~\cite{cattaruzza2015unbounded}, which translates the formula into
-%
-\begin{align}
-\label{eq:aa_observer_LTI_cf}
-\hat{X}^\#
-=&\mathcal{A}_t X_0+\mathcal{B}_{tp} R + \mathcal{B}_{tn} N\\
-X_0 =&\left \{\vec{x} : \vec{x} \models \phi_{init} \right\}\nonumber\\
- R =&\{r : \mat{E}_r < \vec{f}_r \}\nonumber\\
- N=&\left \{ \vec{\nu}_1+\vec{\nu}_2+ \vec{\nu}_3 : \nu_1 \in \left[-\frac{q1}{2}\ \ \frac{q1}{2}\right] \wedge \nu_2 \in \left[-\frac{q2}{2}\ \ \frac{q2}{2}\right]  \wedge \nu_3 \in \left[-q3\ \ q3\right]  \right \}\nonumber
-\end{align}
-%
-where $\mathcal{A}_t=\bigcup_{k=1}^\infty \mat{A}^k, \mathcal{B}_{tp}=\bigcup_{k=1}^\infty \sum_{i=0}^k\mat{A}^i\mat{B}_{tp}, \mathcal{B}_{tn}=\bigcup_{k=1}^\infty \sum_{i=0}^k\mat{A}^i\mat{B}_{tn}$ are abstract matrices for the system in \eqref{eq:observer_LTI_cf} and $r$ is a non-deterministic parametric input (\emph{ie} $\forall k>0, r_{k+1} =r_k$) whereas the set N is composed of non-deterministic variable inputs.
-
-
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsubsection{Controller synthesis}\label{sec:cof_synth}
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-Now that we have explained the verification process, we may proceed to describe the synthesis procedure, which is illustrated in figure \ref{fig:CEGARIS}.
-Our model, rather than look at a bisimulation \todo{specific notion that has not been formally define - do not use} in discrete time, explores a much higher abstraction, 
-evaluating the unbounded time-continuous space reach tube as a set of inequalities that represent only the safety specification.
-
-\begin{enumerate}
-\item 
-We start by preprocessing the dynamics. This can be computationally intensive and we don't want it to be part of the CEGIS loop.
-\begin{enumerate}
-\item Calculate $\mat{T}$ using equations \eqref{eq:rncf}\eqref{eq:rcf}\eqref{eq:to_cf}
-\item Extract the Plant's characteristic polynomial coefficients from the last row of $P_a=(\mat{T}\mat{A}\mat{T}^-1)_{n*}$.
-\item Calculate the noise set $N$ from the quantizer resolutions and estimated round-off errors ($\frac{q_1}{2},\frac{q_2}{2},q_3$)
-\item Calculate a set of initial bounds on K based on the input constraints. $$\phi_{input} \Leftrightarrow u_k=r-Kx_k : x \in X^\# \wedge u_k \in [\underline{u}\ \ \overline{u}]$$
-\end{enumerate}
-\item Next we synthesise a candidate controller. 
-We begin with a minimum set of linear inequalities describing the constraints caused by the input and the initial state during a single iteration, in addition to a stability specification defined by Jury's criteria. %, and try to synthesise a controller that meets these specs.
-
-Let $\mathcal{J}\langle I,F \rangle (P,\mat{T})$ be a program describing Jury's method.
-\begin{enumerate}
-\item Select a controller $\tilde{\mat{K}} \in \mathbb{R}\langle I,F\rangle^n$. This is achieved by solving a SAT formula $\mathcal{J}_K=\mathcal{J}\langle I,F \rangle (P_{a-k},\mat{T})\wedge \phi_{input}$ that satisfies the input constraint and Jury's criteria for $P_{a-k}=z^n+\sum_{i=1}^n (a_i-k_i) z^{n-i} : k_i \in \mat{K} \wedge \mat{K}=\tilde{\mat{K}}\mat{T}$.
-\item If there is no candidate solution we return UNSAT and exit the loop.
-\end{enumerate}
-\item Once we have a candidate solution, we perform a safety verification using abstract acceleration. For this purpose, we make use of a second abstraction that encompasses the accelerated continuous reach-tube over an unbounded time. % If this step fails, we find a counterexample iteration and initial state and create a new constraint to refine our abstraction.
-
-\begin{enumerate}
-\item Calculate the abstract matrices $\mathcal{A}_t, \mathcal{B}_{tp},\mathcal{B}_{tn}$ for the candidate closed loop solution.
-\item Evaluate $\hat{X}^\# \models \Psi$. If the verification holds we have a solution, and exit the loop.
-\end{enumerate} 
-\item If the candidate solution is not valid we refine the abstraction used by the synthesiser
-\begin{enumerate}
-\item Find the constraints that invalidate the property. These are the rows of $\mat{E} \in \Psi$ that intersect/segment $\hat{X}^\#$. Transforming these rows into the eigenspace of $\mat{A}_t$, and applying backward acceleration to obtain a set of counterexamples for the eigenvalues, which we define as $\phi(\Lambda)$. This is a constraint in the spectrum (\emph{ie} frequency response transfer function) of the closed loop dynamics. 
-\item Transform the soft constraints on the spectrum into soft constraints on the coefficients of the characteristic polynomial. 
-$z^n+\sum_{i=1}^n[a_i-k_i]z^{n-i}=\prod_{i=1}^n (z-[\lambda_i]) : |[\lambda_i]|<1 \wedge [\lambda_i] \models \phi_{\Lambda}$.
-\item Pass the refined abstraction with the new contraints to the synthesiser, as well as a counterexample plant coefficients ($P_a$) and repeat the loop again. We note that the Abstraction refinement is a soft constraint on the proposed model which can increase or decrease the parameter space at any time, whereas the concrete counterexample passed to the synthesiser is monotonically decreasing. The first one improves speed of the tool whereas the second ensures convergence.
-
-\end{enumerate} 
-\end{enumerate}
-
-\begin{figure}
-\centering
-{\scriptsize
-\hspace*{-1cm}
-\begin{tikzpicture}[scale=0.3,->,>=stealth',shorten >=.2pt,auto, semithick, ampersand replacement=\&,]
-  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center},row sep=.8cm, column sep=.2cm] {
-   \coordinate (aux1);
-   \& \coordinate (aux2);
-   \& ;\\
-   \&\node[fill=gray!20,align=center] (pre) {{\sc 1. pre-}\\{\sc processing}};
-   \& \node[fill=gray!20,align=center] (abstract) {\sc 4. abstract};
-   \& \coordinate (aux); \\ % \node[fill=yellow!20,align=center] (counter) {\sc counterexample};\\
-   \& 
-   \& \node[fill=gray!20,align=center, minimum width=3cm] (synth) {\sc 2. synthesize};
-       %\node[draw=none] (KL) at ([xshift=2.5cm,yshift=-.25cm]synth)  {\sc $\mat{K},\mat{L}$};
-       %\node[draw=none] (NKL) at ([xshift=2cm,yshift=1cm]synth)  {\sc $P_a$};
-   \& \node[fill=gray!20,align=center, minimum width=4cm] (verify) {\sc 3. verify ($\phi$)};
-       %\node[draw=none] (VUNS) at ([xshift=.6cm,yshift=1cm]verify)  {\sc SAT};
-       \node[draw=none] (SAT) at ([xshift=2.7cm,yshift=-.3cm]verify)  {\sc SAT};
-   \& \node[ellipse, fill=gray!20] (done) {{\sc Done}};\\
-   \&
-   \& complexnode/.pic={
-     \coordinate (auxsynth);
-     \node[draw,rectangle,align=center] (KSAT) at ([xshift=0cm]auxsynth.center) {\sc Prog.\\Search};
-     \node[draw=none] (SATK) at ([xshift=-0.5cm,yshift=1.5cm]KSAT)  {$\mathcal{J}_K$};
-     \node[draw=none] (K) at ([xshift=.4cm,yshift=1.5cm]KSAT)  {$\tilde{\mat{K}}$};
-    }
-   \& complexnode/.pic={
-     \coordinate (AA);
-     \node[draw,rectangle,align=center] (AAI) at ([xshift=-1.5cm]AA.center) {\sc Abstract};
-     \node[draw,rectangle,align=center] (AAC) at ([xshift=1.5cm,yshift=1.5cm]AA.center) {Abstraction \\ Verifier};
-     \node[draw,rectangle,align=center] (AAV) at ([xshift=1.5cm]AA.center) {\sc AA\\Solver};
-     
-     %\node[draw=none] (AB) at ([xshift=.4cm,yshift=1.5cm]AAI.center)  {\sc $\mat{A},\mat{B}$\\$\phi$};     
-     \node[draw=none] (MA) at ([yshift=.2cm]AA.center)  {$\mathcal{A}_t$};     
-     \node[draw=none] (MB) at ([yshift=-.3cm]AA.center)  {$\mathcal{B}_{tp},\mathcal{B}_{tn}$}; 
-     \node[draw=none] (XT) at ([xshift=0.3cm,yshift=0.5cm]AAC.center)  {\sl $\hat{X}_r^\#$};  
-     \node[draw=none] (XT2) at ([xshift=0.3cm,yshift=0.8cm]AAV.center)  {\sl $\hat{X}^\#$};  
-     %\draw [->,line width=1pt] ([xshift=-0.1cm,yshift=2cm]AA.center) arc[x radius=0.7cm, y radius =.7cm, start angle=-250, end angle=60];
-    }\\
-   \&
-   \& complexnode/.pic={
-     \coordinate (UNSAT);
-     \coordinate (KUNSAT)  at ([xshift=0cm]UNSAT.center);
-     \node[draw=none] (UNSATB) at ([xshift=1.6cm,yshift=.3cm]UNSAT)  {\sc UNSAT};
-  }
-  \& \& \coordinate (FAIL);\\
-  };
-  \path
-    (pre.east) edge (abstract.west)
-    (abstract.south) edge (synth.north)
-    %([yshift=2em]synth.east) edge node {Candidate} ([yshift=2em]verif.west)
-    %([yshift=-2em]verif.west) edge node {New input} ([yshift=-2em]synth.east)
-    %([yshift=2em]synth.east) edge node[xshift=-0.7em] {Candidate} ([yshift=2em]verif.west)
-    %([yshift=-2em]verif.west) edge node[xshift=-0.7em] {New input} ([yshift=-2em]synth.east)
-    ([yshift=1em]synth.east) edge node {$\mat{K}$} ([yshift=1em]verify.west)
-    ([yshift=-1em]verify.west) edge node {$P_a$} ([yshift=-1em]synth.east)
-    (aux) edge (abstract.east) 
-    (verify.east) edge (done.west);
-  \path
-    ([xshift=+.6cm]KSAT.north) edge ([xshift=0.6cm]synth.south) 
-    ([xshift=-.6cm]synth.south) edge ([xshift=-.6cm]KSAT.north)
-    (AAC) edge[bend right] node[align=center] {$k$} (AAI.north)
-    ([xshift=-4.9cm]verify.south) edge node[align=center] {$\mat{A},\mat{B}$\\$\phi$} (AAI.north)
-    (AAI.east) edge (AAV.west)
-    (AAV.north) edge (AAC.south)
-    (AAC.north) edge ([xshift=4.9cm]verify.south)
-    %(AAC.west) edge (AB.west)
-    %(verify.north) edge (counter.south)
-    %(counter.west) edge (abstract.east)
-    %(counter.south west) edge (synth.north east)
-    (FAIL.north) edge (done.south);
-   \path[-] 
-     (KSAT.south) edge (KUNSAT.north)
-     (KUNSAT.east) edge (FAIL.west)
-     (verify.north) edge node {$\phi (\mat{K},k)$} (aux);
-\end{tikzpicture}
-}
-\caption{CEGIS with abstraction refinement}
-\label{fig:CEGARIS} 
-\end{figure}
 
 %-------------------------------
 \section{Experimental Evaluation}
@@ -1503,6 +1286,7 @@ Pendulum   & $\left[\begin{array}{cc}
 LTI models in the form: 
 %
 \begin{align}
+\label{eq:ode}
 \dot{\vec{x}}(t)&=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)\ \ :\ \ \vec{x} \in \mathbb{R}^{n}, \vec{u} \in \mathbb{R}^m, \mat{A} \in \mathbb{R}^{n \times n},\mat{B} \in \mathbb{R}^{n \times m}\\
 \vec{y}(t)&=\mat{C}\vec{x}(t)+\mat{D}\vec{u}(t)\ \ :\ \ \vec{y} \in \mathbb{R}^{o}, \mat{C} \in \mathbb{R}^{o \times n}, \mat{D}  \in \mathbb{R}^{o \times m}\nonumber
 \end{align}
@@ -1512,6 +1296,7 @@ a continuous plant. Eq.~\eqref{eq:ode} is soundly discretized
 (as shown in the appendix) into
 %
 \begin{align}
+\label{eq:plant}
 \vec{x}_{k+1}&=\mat{A}_d\vec{x}_k+\mat{B}_d\vec{u}_k\\
 \vec{y}_k&=\mat{C}_d\vec{x}_k+\mat{D}_d\vec{u}_k .\nonumber
 \end{align}
@@ -1532,7 +1317,15 @@ a continuous plant. Eq.~\eqref{eq:ode} is soundly discretized
 \label{sec:appendix-stability}
 %-------------------------------
 
-%\addtodo{[Here discuss Jury criterium for DISCRETE-TIME models - a simplified version of the first part of what is now in Section \ref{sec:cof_verification} (with no quantisation noises yet).]}  
+%\todo{[Here discuss Jury criterium for DISCRETE-TIME models - a simplified version of the first part of what is now in Section \ref{sec:cof_verification} (with no quantisation noises yet).]}  
+
+A discrete-time system is asymptotically stable if and only if all the roots 
+of the characteristic polynomial ({\it i.e.}, the eigenvalues) are inside of 
+the unity circle, {\it i.e.}, their absolute value are less than 
+one~\cite{astrom1997computer}. In this paper, we express 
+the stability specification $\phi_{stability}$ in terms of  
+Jury's criterion \cite{fadali}. A detailed description of this 
+specification can be found in the Appendix~\ref{sec:appendix-stability}.
 
 For a closed-loop system as~\eqref{eq:closedloopss}, 
 the characteristic polynomial $P(z)$ should be computed as follows:
@@ -1635,7 +1428,7 @@ Q_d &= \int_{0}^{T_s} e^{\vec{A} t} Q e^{\vec{A}^T t} dt.
 \end{align}
 and $T_s$ is the sample time. Then
 \begin{align*}
-x(kT_s)=x_k \wedge y(kT_s) = y_k, \forall k.
+x(kT)=x_k \wedge y(kT) = y_k, \forall k.
 \end{align*}
 Let $g_d(k)=\mathcal{G}(t,g(t),T)$ be a function that performs the discretization described above, where $g(t)$
 represents the continuous dynamics and $g_d(k)$ the corresponding discrete dynamics. 
@@ -1652,35 +1445,20 @@ The following remark is worth mentioning regarding the above.
 The witnessed maximum amplitude of the discrete signals $x_k,y_k$ may be smaller to that of $x(t),y(t)$ due to synchronism at fraction-frequency sampling.
 This means that reasoning about the state-space must consider the effects of this possibility as well of the case of maximal inputs from the continuous specification.
 \end{remark}
- Since \eqref{eq:discretization} is a bi-simulation of \eqref{eq:ode}, we may use the semantics in section \ref{sec:model_semantics} to model continuous dynamical systems.
-
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{Overapproximating continuous space dynamics using discrete models}
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-Let us recall equation \ref{eq:discretize}. The discrete representation of the system dynamics discretized with sample time $T_1$ is ruled by the formula
-$\vec{A}_1 = e^{\vec{A} T_1}$. From matrix theory, we have 
-\begin{equation}
-\vec{A}_1 = \mat{S}_1\mat{J}_1\mat{S}_1^{-1}= \mat{S}_1e^{\mat{J} T_1}\mat{S}_1^{-1}.
-\end{equation}
-Let $\mat{J}$ be a diagonal matrix, such that ${\lambda_1}_i=e^{\lambda_i T_1}, \forall \lambda \in \mat{J}$.
-Let us now take a different sample rate $T_2$, such that ${\lambda_2}_i=e^{\lambda_i T_2}, \forall \lambda \in \mat{J}$. We can then say that 
-\begin{equation}
-{\lambda_2}_i=e^{\lambda_i T_1 T_2/T_1}={\lambda_1}_i^{T_2/T_1} \Rightarrow A_2=A_1^{\frac{T_2}{T_1}}
-\end{equation}
-We have also shown in the previous section that $x_k=A^nx_0$ is a witness of $x(t): \dot{x}(t)=Ax(t)$ at time $kT_s$. Applying this notion to multiple sample times, we can state that $x_{k_i}=A_i^nx_0$ are a set of witnesses at times $kT_i$, and by extension the set $\{x=A_i^nx_0 : \forall n \in \mathbb{R} \}$ witnesses all states visited by the continuous system in time $t \in [0,\infty)$. This applies to any arbitrary sample time $T_i$.
+ Since \eqref{eq:discretization} is a bisimulation of \eqref{eq:ode}, we may use the semantics in section \ref{sec:model_semantics} to model continuous dynamical systems.
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{Modelling quantization as noise}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-During any given ADC conversion, the continuous signal will be sampled in the real domain and transformed into a $\mathbb{R}\langle I_{adc},F_{adc} \rangle$ value. this sampling uses a threshold which is defined by the less significant bit ($q_{adc}=2^{-F_{adc}}$) of the ADC and some non-linearities of the circuitry. The overall conversion is
+During any given ADC conversion, the continuous signal will be sampled in the real domain and transformed into a $\mathbb{R}\langle I_{adc},F_{adc} \rangle$ value. this sampling uses a threshold which is defined by the less significant bit ($q_{adc}=2^{-F_{adc}}$) of the adc and some nonlinearities of the circuitry. The overall conversion is
 $$\mathcal{F}\langle I_{adc},F_{adc} \rangle(y(t)) = y_k : y_k \in \left[y(t)-\frac{q_{adc}}{2}\ \ \ \ y(t)+\frac{q_{adc}}{2}\right]$$.
 If we denote the error in the conversion as $\nu_k=y_k-y(t) : t=nk$ then we may define some bounds for it $\nu_k \in [-\frac{q_{adc}}{2}\ \ \frac{q_{adc}}{2}]$.
 
 We will assume, for the purposes of this analysis, that the domain of the ADC is that of the digital controller (\emph{ie} the quantizer includes any digital gain added in the code).
 The process of quantization in the DAC is similar except that it is going from $\mathbb{R}\langle I_{adc},F_{adc} \rangle \rightarrow \mathbb{R}\langle I_{dac},F_{dac} \rangle$. If these domains are the same ($I_{adc}=I_{dac},F_{adc}=F_{dac}$), or if the DAC resolution in higher than the ADCs, then the DAC quantization error is equal to zero.
 From the above equations we can now infer that $\nu_1 \in [-\frac{q_1}{2}\ \ \frac{q_1}{2}], \nu_2 \in [-\frac{q_2}{2}\ \ \frac{q_2}{2}] : q_1=q_{adc} \wedge q_2=q_{dac}$.
-Note that these bounds hold irrespective of whether the noise is correlated, hence we may use them to over-approximate the effect of the noise on the state space progression over time.
+Note that these bounds hold irrespective of whether the noise is correlated, hence we may use them to overapproximate the effect of the noise on the state space progression over time.
 The resulting dynamics are:
 \begin{align}
 \label{eq:pre_quantization}
