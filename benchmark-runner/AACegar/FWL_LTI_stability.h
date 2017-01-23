@@ -1,5 +1,3 @@
-#define __CHECK_FP
-
 void make_closed_loop()
 {
   cnttype i,j;
@@ -83,7 +81,7 @@ signed int check_stability_closedloop(vectort a)
     if (((n -i)&1)!=0) sum+=m[0][i];
     else               sum-=m[0][i];
   }
-  if ((n&1)!=0) sum=-sum;
+  if ((n&1)==0) sum=-sum;
 #ifdef __CPROVER
   verify_assume(sum > _sum_error);
 #else

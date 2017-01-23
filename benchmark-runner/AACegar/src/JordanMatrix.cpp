@@ -177,7 +177,10 @@ bool JordanMatrix<scalar>::calculateJordanForm(bool includeSvd)
 
   m_eigenSpace.computeJordan(m_refDynamics);
   if (ms_trace_time) ms_logger.logData(timer.elapsed()*1000,"Jordan Form:",true);
-  if (m_eigenSpace.info()!=Eigen::Success) return false;
+  if (m_eigenSpace.info()!=Eigen::Success) {
+    if (ms_trace_dynamics>=eTraceDynamics) ms_logger.logData("Failed to find Jordan Form");
+    return false;
+  }
   refToInter(m_eigenValues,m_eigenSpace.getEigenValues());
   refToInter(m_eigenVectors,m_eigenSpace.getEigenVectors());
 
@@ -188,7 +191,12 @@ bool JordanMatrix<scalar>::calculateJordanForm(bool includeSvd)
   m_hasMultiplicities=m_eigenSpace.hasMultiplicities();
   m_eigenNorms.resize(m_eigenValues.rows(),1);
   for (int i=0;i<m_eigenValues.rows();i++) m_eigenNorms.coeffRef(i,0)=func::norm2(m_eigenValues.coeff(i,i));
-  m_invEigenVectors=m_eigenVectors.inverse();
+  try {
+    m_invEigenVectors=m_eigenVectors.inverse();
+  }
+  catch(...) {
+    refToInter(m_invEigenVectors,m_eigenSpace.getEigenVectors().inverse());
+  }
   if (ms_trace_dynamics>=eTraceDynamics) {
     ms_logger.logData(m_dynamics,"Dynamics:");
     ms_logger.logData(m_eigenValues,"EigenValues:");

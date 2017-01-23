@@ -959,8 +959,11 @@ std::string Synthesiser<scalar>::makeCEGISDescription(bool intervals)
 {
   std::stringstream result;
   MatrixS T=getReachableCanonicalTransformMatrix();
-  MatrixS controllable=T*m_dynamics*T.inverse();
-  if (ms_trace_dynamics>=eTraceDynamics) ms_logger.logData(controllable,"Controllable");
+  MatrixS invT=T.inverse();
+  MatrixS controllable=T*m_dynamics*invT;
+  if (ms_trace_dynamics>=eTraceDynamics) {
+    ms_logger.logData(controllable,"Controllable");
+  }
   MatrixS coefficients=controllable.row(0);
   int totalbits=m_paramValues.coeff(eNumBits,1);
   int fracbits=m_paramValues.coeff(eNumBits,2);
@@ -977,7 +980,6 @@ std::string Synthesiser<scalar>::makeCEGISDescription(bool intervals)
          << "};\n";
   result << "struct coefft ";
   result << ms_logger.MatToC("plant",coefficients,intervals);
-  MatrixS invT=T.inverse();
   result << "struct transformt " << ms_logger.MatToC("transform",invT,intervals);
   result << "matrixt dynamics" << ms_logger.MatToC("",m_dynamics,intervals);
   result << "vectort sensitivity" << ms_logger.MatToC("",m_sensitivity.transpose(),intervals);
@@ -1085,6 +1087,7 @@ bool Synthesiser<scalar>::makeCEGISFiles()
   std::ofstream headerFile;
   headerFile.open("types.h");
   if (!headerFile.is_open()) return false;
+  ms_logger.setPrecision(12);
   std::string data=makeCEGISHeader();
   headerFile.write(data.data(),data.size());
   headerFile.close();

@@ -643,7 +643,8 @@ template <class scalar>
 bool AbstractMatrix<scalar>::isDivergent(const bool strict)
 {
   for (int i=0;i<m_dimension;i++) {
-    char sign=func::hardSign(func::norm2(m_eigenValues.coeff(i,i))-ms_one);
+    scalar eigenNorm=func::norm2(m_eigenValues.coeff(i,i));
+    char sign=func::hardSign(eigenNorm-ms_one);
     if (strict && (sign<0)) return false;
     else if (!strict && (sign>=0)) return true;
   }

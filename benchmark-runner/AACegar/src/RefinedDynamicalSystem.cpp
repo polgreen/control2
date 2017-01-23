@@ -53,9 +53,9 @@ typename CegarSystem<scalar>::MatrixS CegarSystem<scalar>::getDynamicPolynomialC
 {
   MatrixC result=MatrixC::Zero(2,m_dimension+1);
   result.coeffRef(0,0)=ms_one;
-  result.coeffRef(0,1)=m_eigenValues.coeff(0,0);
+  result.coeffRef(0,1)=-m_eigenValues.coeff(0,0);
   for (int i=1;i<m_dimension;i++) {
-    result.row(1)=result.row(0)*m_eigenValues.coeff(i,i);
+    result.row(1)=-result.row(0)*m_eigenValues.coeff(i,i);
     result.block(0,1,1,i+1)+=result.block(1,0,1,i+1);
   }
   return result.real();
@@ -85,9 +85,10 @@ typename CegarSystem<scalar>::MatrixS CegarSystem<scalar>::getCanonicalReachabil
   MatrixS result=MatrixS::Identity(m_sensitivity.rows(),m_dimension*m_sensitivity.cols());
   MatrixS coefficients=getDynamicPolynomialCoefficients();
   if (ms_trace_dynamics>=eTraceDynamics) {
-    ms_logger.logData(coefficients,"Coefficients");
+    MatrixS matrix=coefficients.row(0);
+    ms_logger.logData(matrix,"Coefficients");
   }
-  for (int i=1;i<m_dimension;i++) result.block(i-1,i,1,m_dimension-i)=-coefficients.block(0,1,1,m_dimension-i);
+  for (int i=1;i<m_dimension;i++) result.block(i-1,i,1,m_dimension-i)=coefficients.block(0,1,1,m_dimension-i);
   if (ms_trace_dynamics>=eTraceDynamics) ms_logger.logData(result,"Canonical Reachability Matrix");
   return result;
 }
@@ -96,7 +97,8 @@ typename CegarSystem<scalar>::MatrixS CegarSystem<scalar>::getCanonicalReachabil
 template <class scalar>
 typename CegarSystem<scalar>::MatrixS CegarSystem<scalar>::getReachableCanonicalTransformMatrix()
 {
-  return getCanonicalReachabilityMatrix().inverse()*getReachabilityMatrix().inverse();
+  MatrixS result=getReachabilityMatrix()*getCanonicalReachabilityMatrix();
+  return result.inverse();
 }
 
 /// Retrieves the observability matrix [C CA CA^2 ...CA^{n-1}]^T

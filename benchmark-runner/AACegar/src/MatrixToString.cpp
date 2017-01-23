@@ -650,7 +650,7 @@ template <class scalar> std::string MatToStr<scalar>::IneToC(const std::string t
 {
   std::stringstream buffer;
   if (orBlockSize<=1) {
-    int firstRow;
+    int firstRow=0;
     for (int row=0;row<directions.rows();row++) {
       int firstCol=0;
       for (int col=0;col<directions.cols();col++) {

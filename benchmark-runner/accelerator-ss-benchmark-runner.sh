@@ -110,7 +110,7 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
   B=$(extract_spec_matrix "${spec_content}" 'B')
   input_lower_bound=$(extract_input_lower_bound "${spec_content}")
   input_upper_bound=$(extract_input_upper_bound "${spec_content}")
-  options="-u -p -ii -mpi 256 -synth CEGIS -params \"p=${num_states},q=${num_inputs},f=1,m=256:$((impl_int_bits+impl_frac_bits)):${impl_int_bits}\" -dynamics \"[${A}]\" -init \"[cube<1]\" -isense \"[${B}]\" -inputs \"[1>${input_lower_bound};1<${input_upper_bound}]\" -sguard \"[cube<2]\""
+  options="-u -p -ii -mpi 256 -synth CEGIS -params \"p=${num_states},q=${num_inputs},f=1,m=256:$((impl_int_bits+impl_frac_bits)):${impl_int_bits}\" -dynamics \"[${A}]\" -init \"[cube<.5]\" -isense \"[${B}]\" -inputs \"[1>${input_lower_bound};1<${input_upper_bound}]\" -sguard \"[cube<1]\""
 
   working_directory="${working_directory_base}/accelerator-ss"
   setup_benchmark_directory ${working_directory}
@@ -127,6 +127,7 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
   timeout_time=3600
   kill_time=3780
   start_time=`date +%s`
+  echo_log "./axelerator $options -control \"[0]\""
   eval "./axelerator $options -control \"[0]\""
   while [ $((integer_width+radix_width)) -le ${max_length} ]; do
    echo_log "int: ${integer_width}, radix: ${radix_width}"
@@ -145,14 +146,13 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
       solution_found=true
       synthesis_in_progress=false
      else
-      echo_log "<controller>${controller}</controller>"      
-      echo_log 'Refining abstraction...'
-      #TODO: timeout --preserve-status --kill-after=${kill_time} ${timeout_time} cbmc "${working_directory}/${width_check_file}" >>${log_file} 2>&1
-      #if [ $? -eq 10 ]; then
-      # continue
-      #else
-      # synthesis_in_progress=false
-      #fi
+      if grep --quiet 'DIVERGENT' "${working_directory}/system.h"; then
+       solution_found=false;
+       synthesis_in_progress=false;
+      else
+       echo_log "<controller>${controller}</controller>"      
+       echo_log 'Refining abstraction...'
+      fi
      fi
     else
      synthesis_in_progress=false

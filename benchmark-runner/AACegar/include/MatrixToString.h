@@ -28,6 +28,7 @@ public:
 
     typedef functions<refScalar> func;
 
+    void setPrecision(int precision) { m_precision=precision; }
     MatToStr(const int precision,const std::string leftBracket,const std::string rightBracket,const std::string separator);
     MatToStr(const bool brackets);
     scalar getNumber(const char * pData,size_t &pos=0,const size_t eof=0);

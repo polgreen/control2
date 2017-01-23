@@ -77,25 +77,24 @@ bool Polyhedra<scalar>::convexHull(const MatrixS &points,const MatrixS &vectors)
 template <class scalar>
 int Polyhedra<scalar>::loadData(const std::string &data,size_t pos,const bool vertices)
 {
-  int result=0;
+  size_t result=0;
   boost::timer timer;
   this->m_isNormalised=false;
   m_vertices.resize(0,m_vertices.cols());
-  if (data.find("cube<") == 0) {
+  if ((result=data.find("cube<",pos)) >= 0) {
     int dimension=getDimension();
     m_faces.resize(2*dimension,dimension);
     m_faces.block(0,0,dimension,dimension)=MatrixS::Identity(dimension,dimension);
     m_faces.block(dimension,0,dimension,dimension)=-MatrixS::Identity(dimension,dimension);
     m_supports.resize(m_faces.rows(),1);
-    pos+=5;
-    m_supports.coeffRef(0,0)=ms_logger.getNumber(data,pos);
+    result+=5;
+    m_supports.coeffRef(0,0)=ms_logger.getNumber(data,result);
     for (int row=1;row<m_faces.rows();row++) {
       m_supports.coeffRef(row,0)=m_supports.coeff(row-1,0);
     }
     load(m_faces,m_supports);
-    logTableau(m_name,true);
     m_loadTime=timer.elapsed()*1000;
-    return pos;
+    return result;
   }
   int lines=MatToStr<scalar>::ms_defaultLogger.lines(data,pos);
   if (lines==0) {
