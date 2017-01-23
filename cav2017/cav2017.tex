@@ -1151,36 +1151,39 @@ $z^n+\sum_{i=1}^n[a_i-k_i]z^{n-i}=\prod_{i=1}^n (z-[\lambda_i]) : |[\lambda_i]|<
    \& ;\\
    \&\node[fill=gray!20,align=center] (pre) {{\sc 1. pre-}\\{\sc processing}};
    \& \node[fill=gray!20,align=center] (abstract) {\sc 4. abstraction};
-       % \node[draw=none] (FIK) at ([xshift=2.5cm,yshift=.3cm]abstract)  {\sc $\Psi (\mat{K})$};
    \& \coordinate (aux); \\ % \node[fill=yellow!20,align=center] (counter) {\sc counterexample};\\
    \& 
    \& \node[fill=gray!20,align=center, minimum width=3cm] (synth) {\sc 2. synthesize};
        %\node[draw=none] (KL) at ([xshift=2.5cm,yshift=-.25cm]synth)  {\sc $\mat{K},\mat{L}$};
        %\node[draw=none] (NKL) at ([xshift=2cm,yshift=1cm]synth)  {\sc $P_a$};
-   \& \node[fill=gray!20,align=center, minimum width=4cm] (verify) {\sc 3. verify ($\Psi$)};
+   \& \node[fill=gray!20,align=center, minimum width=4cm] (verify) {\sc 3. verify ($\phi$)};
        %\node[draw=none] (VUNS) at ([xshift=.6cm,yshift=1cm]verify)  {\sc SAT};
-       \node[draw=none] (SAT) at ([xshift=2.7cm,yshift=-.3cm]verify)  {\sc UNSAT};
+       \node[draw=none] (SAT) at ([xshift=2.7cm,yshift=-.3cm]verify)  {\sc SAT};
    \& \node[ellipse, fill=gray!20] (done) {{\sc Done}};\\
    \&
    \& complexnode/.pic={
      \coordinate (auxsynth);
-     \node[draw,rectangle,align=center] (KSAT) at ([xshift=-.8cm]auxsynth.center) {\sc Prog.\\Search};
-     \node[draw=none] (SATK) at ([xshift=-.5cm,yshift=1.5cm]KSAT)  {$\mathcal{J}_K$};
+     \node[draw,rectangle,align=center] (KSAT) at ([xshift=0cm]auxsynth.center) {\sc Prog.\\Search};
+     \node[draw=none] (SATK) at ([xshift=-0.5cm,yshift=1.5cm]KSAT)  {$\mathcal{J}_K$};
      \node[draw=none] (K) at ([xshift=.4cm,yshift=1.5cm]KSAT)  {$\tilde{\mat{K}}$};
     }
    \& complexnode/.pic={
      \coordinate (AA);
      \node[draw,rectangle,align=center] (AAI) at ([xshift=-1.5cm]AA.center) {\sc AI\\Model};
+     \node[draw,rectangle,align=center] (AAC) at ([xshift=1.5cm,yshift=1.5cm]AA.center) {\sc CEGAR};
      \node[draw,rectangle,align=center] (AAV) at ([xshift=1.5cm]AA.center) {\sc AA\\Solver};
-     \node[draw=none] (AB) at ([xshift=.4cm,yshift=1.5cm]AAI.center)  {\sc $\mat{A}_t$ $\mat{B}_{tp}$ $\mat{B}_{tn}$};     
+     
+     \node[draw=none] (AB) at ([xshift=.4cm,yshift=1.5cm]AAI.center)  {\sc $\mat{A},\mat{B}$\\$\phi$};     
      \node[draw=none] (MA) at ([yshift=.2cm]AA.center)  {$\mathcal{A}_t$};     
      \node[draw=none] (MB) at ([yshift=-.3cm]AA.center)  {$\mathcal{B}_{tp},\mathcal{B}_{tn}$}; 
-     \node[draw=none] (AB) at ([xshift=0.3cm,yshift=1.5cm]AAV.center)  {\sl $\hat{X}^\#$};  
+     \node[draw=none] (XT) at ([xshift=0.3cm,yshift=0.5cm]AAC.center)  {\sl $\hat{X}_r^\#$};  
+     \node[draw=none] (XT2) at ([xshift=0.3cm,yshift=0.8cm]AAV.center)  {\sl $\hat{X}^\#$};  
+     %\draw [->,line width=1pt] ([xshift=-0.1cm,yshift=2cm]AA.center) arc[x radius=0.7cm, y radius =.7cm, start angle=-250, end angle=60];
     }\\
    \&
    \& complexnode/.pic={
      \coordinate (UNSAT);
-     \coordinate (KUNSAT)  at ([xshift=-.8cm]UNSAT.center);
+     \coordinate (KUNSAT)  at ([xshift=0cm]UNSAT.center);
      \node[draw=none] (UNSATB) at ([xshift=1.6cm,yshift=.3cm]UNSAT)  {\sc UNSAT};
   }
   \& \& \coordinate (FAIL);\\
@@ -1192,16 +1195,18 @@ $z^n+\sum_{i=1}^n[a_i-k_i]z^{n-i}=\prod_{i=1}^n (z-[\lambda_i]) : |[\lambda_i]|<
     %([yshift=-2em]verif.west) edge node {New input} ([yshift=-2em]synth.east)
     %([yshift=2em]synth.east) edge node[xshift=-0.7em] {Candidate} ([yshift=2em]verif.west)
     %([yshift=-2em]verif.west) edge node[xshift=-0.7em] {New input} ([yshift=-2em]synth.east)
-    ([yshift=1em]synth.east) edge node {$\mat{K},\mat{L}$} ([yshift=1em]verify.west)
+    ([yshift=1em]synth.east) edge node {$\mat{K}$} ([yshift=1em]verify.west)
     ([yshift=-1em]verify.west) edge node {$P_a$} ([yshift=-1em]synth.east)
     (aux) edge (abstract.east) 
     (verify.east) edge (done.west);
   \path
-    ([xshift=+.6cm]KSAT.north) edge ([xshift=-2.1cm]synth.south) 
-    ([xshift=-3.3cm]synth.south) edge ([xshift=-.6cm]KSAT.north)
+    ([xshift=+.6cm]KSAT.north) edge ([xshift=0.6cm]synth.south) 
+    ([xshift=-.6cm]synth.south) edge ([xshift=-.6cm]KSAT.north)
     ([xshift=-4.9cm]verify.south) edge (AAI.north)
     (AAI.east) edge (AAV.west)
-    (AAV.north) edge ([xshift=4.9cm]verify.south)
+    (AAV.north) edge (AAC.south)
+    (AAC.north) edge ([xshift=4.9cm]verify.south)
+    (AAC.west) edge (AB.west)
     %(verify.north) edge (counter.south)
     %(counter.west) edge (abstract.east)
     %(counter.south west) edge (synth.north east)
@@ -1209,7 +1214,7 @@ $z^n+\sum_{i=1}^n[a_i-k_i]z^{n-i}=\prod_{i=1}^n (z-[\lambda_i]) : |[\lambda_i]|<
    \path[-] 
      (KSAT.south) edge (KUNSAT.north)
      (KUNSAT.east) edge (FAIL.west)
-     (verify.north) edge node {$\Psi (\mat{K})$} (aux);
+     (verify.north) edge node {$\phi (\mat{K},k)$} (aux);
 \end{tikzpicture}
 }
 \caption{CEGIS with abstraction refinement}
@@ -1613,7 +1618,7 @@ Q_d &= \int_{0}^{T_s} e^{\vec{A} t} Q e^{\vec{A}^T t} dt.
 \end{align}
 and $T_s$ is the sample time. Then
 \begin{align*}
-x(kT)=x_k \wedge y(kT) = y_k, \forall k.
+x(kT_s)=x_k \wedge y(kT_s) = y_k, \forall k.
 \end{align*}
 Let $g_d(k)=\mathcal{G}(t,g(t),T)$ be a function that performs the discretization described above, where $g(t)$
 represents the continuous dynamics and $g_d(k)$ the corresponding discrete dynamics. 
@@ -1631,6 +1636,21 @@ The witnessed maximum amplitude of the discrete signals $x_k,y_k$ may be smaller
 This means that reasoning about the state-space must consider the effects of this possibility as well of the case of maximal inputs from the continuous specification.
 \end{remark}
  Since \eqref{eq:discretization} is a bi-simulation of \eqref{eq:ode}, we may use the semantics in section \ref{sec:model_semantics} to model continuous dynamical systems.
+
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+\subsection{Overapproximating continuous space dynamics using discrete models}
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Let us recall equation \ref{eq:discretize}. The discrete representation of the system dynamics discretized with sample time $T_1$ is ruled by the formula
+$\vec{A}_1 = e^{\vec{A} T_1}$. From matrix theory, we have 
+\begin{equation}
+\vec{A}_1 = \mat{S}_1\mat{J}_1\mat{S}_1^{-1}= \mat{S}_1e^{\mat{J} T_1}\mat{S}_1^{-1}.
+\end{equation}
+Let $\mat{J}$ be a diagonal matrix, such that ${\lambda_1}_i=e^{\lambda_i T_1}, \forall \lambda \in \mat{J}$.
+Let us now take a different sample rate $T_2$, such that ${\lambda_2}_i=e^{\lambda_i T_2}, \forall \lambda \in \mat{J}$. We can then say that 
+\begin{equation}
+{\lambda_2}_i=e^{\lambda_i T_1 T_2/T_1}={\lambda_1}_i^{T_2/T_1} \Rightarrow A_2=A_1^{\frac{T_2}{T_1}}
+\end{equation}
+We have also shown in the previous section that $x_k=A^nx_0$ is a witness of $x(t): \dot{x}(t)=Ax(t)$ at time $kT_s$. Applying this notion to multiple sample times, we can state that $x_{k_i}=A_i^nx_0$ are a set of witnesses at times $kT_i$, and by extension the set $\{x=A_i^nx_0 : \forall n \in \mathbb{R} \}$ witnesses all states visited by the continuous system in time $t \in [0,\infty)$. This applies to any arbitrary sample time $T_i$.
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{Modelling quantization as noise}
