@@ -407,6 +407,9 @@ int check_safety(void)
 
   for(int k=0; k<NUMBERLOOPS; k++)
   {
+#ifdef INTERVALS
+    closed_fxp_mult(A,B,K)fxp,states);
+#endif
     inputs_equal_ref_minus_k_times_states(); //update inputs one time step
     states_equals_A_states_plus_B_inputs(); //update states one time step
 

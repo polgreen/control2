@@ -109,7 +109,6 @@ or invariant set generation via abstract acceleration;
 further, if the above step fails, we loop back and invoke a CEGIS call 
 to seek alternative stabilising feedbacks, benefiting from the obtained counter-examples 
 to safety. 
-\textcolor{red}{[Mention GA \todo{GA? Genetic Algorithms? We don't use GA?} and Abstract Acceleration here? Alessandro: we are not using GA. We don't think that we should describe it here.]} 
 
 The approach is proven sound by accounting for errors due to the digitalisation of signals that are manipulated by the controller block.  
 The proposed synthesis approaches and a developed tool are evaluated considering 
@@ -120,7 +119,7 @@ Digital controllers;
 Analogue-to-digital converters; 
 Time sampling; 
 Quantisation; 
-Fixed-point arithmetics; 
+Fixed-point arithmetic; 
 CEGIS; 
 safety requirements. 
 }
@@ -208,11 +207,13 @@ linear arithmetic with the state-of-the-art SMT solvers.  Since this
 approach uses switching states instead of linear dynamics in the digital
 controller, it entirely circumvents the FWL problem.  It is also not
 suitable for the kind of control we seek to synthesise.
-\textcolor{red}{Cristina: can you please revise this sentence:
+
+%\textcolor{red}{Cristina: can you please revise this sentence:
 Moreover, in \cite{DBLP:conf/emsoft/RavanbakhshS16} the same authors 
 use a CEGIS-based approach for synthesising continuous-time switching
-controllers that guarantee reach while stay properties of a closed
-loop system}. The solution is based on synthesising control Lyapunov
+controllers that guarantee Reach While Stay properties of closed
+loop systems, i.e., properties that specify a set of goal states and safe states.%}. 
+The solution is based on synthesising control Lyapunov
 functions for switched systems, that yield switching controllers with
 a guaranteed minimum dwell time in each mode.
 
@@ -242,12 +243,13 @@ verification tool that addresses the challenges presented here in the
 form of FWL effects and stability measures for LTI SISO controllers.
 
 We take the former from~\cite{DBLP:conf/lpar/DavidKL15}. The verification engine, for
-the first approach we present, is 
+the first approach we present, performs bounded model checking of control properties,
 based on~\cite{Monteiro16}, but 
 enhanced to include evaluation of quantization effects and safety properties
 over the state space. In the second approach, we use a verification engine
-based on XXXXXXX
-\todo{something about the acceleration verification engine}
+based on abstract acceleration~\cite{cattaruzza2015unbounded} than avoids the explicit 
+unwinding the transition system necessarily for the first approach.
+
 
 
 
@@ -1019,9 +1021,6 @@ This is the CT.
 ensures that the current sampling rate is large enough by using an 
 external checker (\addtodo{add more details here once we have them}).
 
-
-
-
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{CEGIS with abstraction refinement}
 \label{sec:CEGIS-abstraction-refinement}
@@ -1039,59 +1038,27 @@ external checker (\addtodo{add more details here once we have them}).
 % Merge the rest in Sec~\ref{sec:cof_synth}.}
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsubsection{Verification of a controllable system}
-\label{sec:cof_verification}
+%\subsubsection{Verification of a controllable system}
+%\label{sec:cof_verification}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-Whilst there are other properties, we may include in the verification, 
+%Whilst there are other properties, we may include in the verification, 
 % we will solely focus on these for simplicity of the explanation.
 % We assume that we do not want saturation in our system, 
 % hence the control loop has only one mode. 
 
-We have also identified 
-the quantization noise as a bounded non-deterministic input.
-%
-The first step constraints
-\begin{equation}
-\mat{K} \models u_k=-\mat{K}x_k : \phi_{safety}
-\label{eq:of_bounds}
-\end{equation}
-The second step is evaluating the progression of the system over time to evaluate 
-$x_{k+1} \models \phi_{safety}$. For this step we require 
-an initial set from which the system progresses. Obviously, this set $x_0$ 
-must satisfy the specification; otherwise, the system will be unsafe to begin with.
-We accept a specification in the form $\mat{E}\mat{T}x_0<\mat{f}$. 
-The presence of $\mat{T}$ is because this will typically be given in the original 
-state-space. Accelerating \eqref{eq:observer_LTI_cf}, we obtain:
-%
-\begin{align}
-\label{eq:acc_observer_LTI_cf}
-x=&\mat{A}_t^kx_0
-+\sum_{i=0}^{k-1} \mat{A}_t^i \mat{B}_{tp} r_i
-+\sum_{i=0}^{k-1} \mat{A}_t^i \mat{B}_{tn}(\nu_1+\nu_2+\nu_3) : x_0 \models \phi_{init}
-\end{align}
-which would still require us to verify the system for every $k$ up to infinity. 
-Instead we use abstract acceleration~\cite{cattaruzza2015unbounded}, which translates the formula into
-%
-\begin{align}
-\label{eq:aa_observer_LTI_cf}
-\hat{X}^\#
-=&\mathcal{A}_t X_0+\mathcal{B}_{tp} R + \mathcal{B}_{tn} N\\
-X_0 =&\left \{x : x \models \phi_{init} \right\}\nonumber\\
- R =&\{r : \mat{E}_r < f_r \}\nonumber\\
- N=&\left \{ \nu_1+\nu_2+ \nu_3 : \nu_1 \in \left[-\frac{q1}{2}\ \ \frac{q1}{2}\right] \wedge \nu_2 \in \left[-\frac{q2}{2}\ \ \frac{q2}{2}\right]  \wedge \nu_3 \in \left[-q3\ \ q3\right]  \right \}\nonumber
-\end{align}
-%
-where $\mathcal{A}_t=\bigcup_{k=1}^\infty \mat{A}^k, \mathcal{B}_{tp}=\bigcup_{k=1}^\infty \sum_{i=0}^k\mat{A}^i\mat{B}_{tp}, \mathcal{B}_{tn}=\bigcup_{k=1}^\infty \sum_{i=0}^k\mat{A}^i\mat{B}_{tn}$ are abstract matrices for the system in \eqref{eq:observer_LTI_cf} and $r$ is a non-deterministic parametric input (\emph{ie} $\forall k>0, r_{k+1} =r_k$) whereas the set N is composed of non-deterministic variable inputs.
 
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsubsection{Controller synthesis}\label{sec:cof_synth}
+%\subsubsection{Controller synthesis}\label{sec:cof_synth}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 The CEGIS loop for this approach is illustrated in \ref{fig:CEGARIS}.
 
 % Now that we have explained the verification process, we may proceed to describe the synthesis procedure, which is illustrated in figure \ref{fig:CEGARIS}.
 % Our model, rather than look at a bisimulation \todo{specific notion that has not been formally define - do not use} in discrete time, explores a much higher abstraction, 
 % evaluating the unbounded time-continuous space reach tube as a set of inequalities that represent only the safety specification.
+% We have also identified 
+% the quantization noise as a bounded non-deterministic input.
+
 
 \begin{enumerate}
 \item 
@@ -1099,8 +1066,8 @@ We start by preprocessing the dynamics. This can be computationally intensive an
 % Let us recall the formulas used for single-input and single-output (SISO) systems 
 % in sections \ref{sec:reachable} and \ref{sec:observable}.
 A controllable system with quantization will have the following dynamics 
-(note that we use underscript ``n'' to denote a noise term,
-``cf'' to denote Controllable Canonical Form and $\mat{J}_{n,m}$ to represent a matrix of ones with $n$ rows and $m$ columns):
+(note that we use underscript ``n'' to denote a noise term and
+``cf'' to denote Controllable Canonical Form):
 \todo{eliminate vectors}
 %
 \begin{align}
@@ -1110,8 +1077,8 @@ x_{k+1}=&\mat{A}_{t}x_k+\mat{B}_{t} r_k+\mat{B}_{n} (\nu_1 + \nu_2 + \nu_3)
 \begin{align*}
 \mat{A}_{t}=&\mat{T}\mat{A}_d\mat{T}^{-1}&
 \mat{B}_{t}=&\mat{T}\mat{B}_d&
-\mat{B}_{n}=&\mat{J}_{n,1}&
-\mat{T}=&\mat{R}_{cf}\mat{R}^{-1}&
+\mat{B}_{n}=&[1 \cdots 1]^T&
+\mat{T}=&\mat{W}_{cf}\mat{W}^{-1}&
 \end{align*}
 
 \begin{align*}
@@ -1129,14 +1096,16 @@ k_n-a_n&k_{n-1}-a_{n-1}&k_{n-2}-a_{n-2}&\cdots&k_1-a_1
 The characteristic polynomial of the above matrix is:
 %
 \begin{align*}
-z^n+\sum_{i=1}^p{(a_i-k_i)z^{n-i}}
+P_a = z^n+\sum_{i=1}^p{(a_i-k_i)z^{n-i}}
 \end{align*}
 
 \begin{enumerate}
-\item Calculate $\mat{T}$ using equations \eqref{eq:rncf}\eqref{eq:rcf}\eqref{eq:to_cf}
-\item Extract the Plant's characteristic polynomial coefficients from the last row of $P_a=(\mat{T}\mat{A}\mat{T}^-1)_{n*}$.
-\item Calculate the noise set $N$ from the quantizer resolutions and estimated round-off errors ($\frac{q_1}{2},\frac{q_2}{2},q_3$)
-\item Calculate a set of initial bounds on K based on the input constraints. $$\phi_{input} \Leftrightarrow u_k=r-Kx_k : x \in X^\# \wedge u_k \in [\underline{u}\ \ \overline{u}]$$
+\item Calculate $\mat{T}$ as $\mat{W}_{cf}\mat{W}^{-1}$. %using equations \eqref{eq:rncf}\eqref{eq:rcf}\eqref{eq:to_cf}
+\item Extract the Plant's characteristic polynomial coefficients from $P_a$. %the last row of $P_a=(\mat{T}\mat{A}\mat{T}^-1)_{n*}$.
+\item Calculate the noise set $N$ from the quantizer resolutions and estimated round-off errors: %($\frac{q_1}{2},\frac{q_2}{2},q_3$)
+$$N=\left \{ \nu_1+\nu_2+ \nu_3 : \nu_1 \in \left[-\frac{q1}{2}\ \ \frac{q1}{2}\right] 
+\wedge \nu_2 \in \left[-\frac{q2}{2}\ \ \frac{q2}{2}\right]  \wedge \nu_3 \in \left[-q3\ \ q3\right]  \right \}\nonumber$$
+\item Calculate a set of initial bounds on K based on the input constraints. $$\phi_{safety} \Leftrightarrow u_k=r-Kx_k : x \in X^\# \wedge u_k \in [\underline{u}\ \ \overline{u}]$$
 \end{enumerate}
 \item Next we synthesise a candidate controller. 
 We begin with a minimum set of linear inequalities describing the constraints caused by the input and the initial state during a single iteration, in addition to a stability specification defined by Jury's criteria. %, and try to synthesise a controller that meets these specs.
@@ -1152,9 +1121,45 @@ Let $\mathcal{J}\langle I,F \rangle (P,\mat{T})$ be a program describing Jury's 
 \item If there is no candidate solution we return UNSAT and exit the loop.
 \end{enumerate}
 \item Once we have a candidate solution, we perform a safety verification using abstract acceleration. For this purpose, we make use of a second abstraction that encompasses the accelerated continuous reach-tube over an unbounded time. % If this step fails, we find a counterexample iteration and initial state and create a new constraint to refine our abstraction.
+%
+The first step constraints
+\begin{equation}
+\mat{K} \models u_k=-\mat{K}x_k : \phi_{safety}
+\label{eq:of_bounds}
+\end{equation}
+The second step is evaluating the progression of the system over time to evaluate 
+$x_{k+1} \models \phi_{safety}$. For this step we require 
+an initial set from which the system progresses. Obviously, this set $x_0$ 
+must satisfy the specification; otherwise, the system will be unsafe to begin with.
+We accept a specification in the form $\mat{E}\mat{T}x_0<\mat{f}$. 
+The presence of $\mat{T}$ is because this will typically be given in the original 
+state-space. Accelerating \eqref{eq:observer_LTI_cf}, we obtain:
+%
+\begin{align}
+\label{eq:acc_observer_LTI_cf}
+x=&\mat{A}_t^kx_0
+%+\sum_{i=0}^{k-1} \mat{A}_t^i \mat{B}_{t} r_i
++\sum_{i=0}^{k-1} \mat{A}_t^i \mat{B}_{n}(\nu_1+\nu_2+\nu_3) : x_0 \models \phi_{init}
+\end{align}
+which would still require us to verify the system for every $k$ up to infinity. 
+Instead we use abstract acceleration~\cite{cattaruzza2015unbounded}, which translates the formula into
+%
+\begin{align}
+\label{eq:aa_observer_LTI_cf}
+\hat{X}^\#
+=&\mathcal{A}_t X_0+\mathcal{B}_{t} R + \mathcal{B}_{n} N\\
+X_0 =&\left \{x : x \models \phi_{init} \right\}\nonumber\\
+% R =&\{r : \mat{E}_r < f_r \}\nonumber\\
+ %N=&\left \{ \nu_1+\nu_2+ \nu_3 : \nu_1 \in \left[-\frac{q1}{2}\ \ \frac{q1}{2}\right] \wedge \nu_2 \in \left[-\frac{q2}{2}\ \ \frac{q2}{2}\right]  \wedge \nu_3 \in \left[-q3\ \ q3\right]  \right \}\nonumber
+\end{align}
+%
+where $\mathcal{A}_t=\bigcup_{k=1}^\infty \mat{A}^k, \mathcal{B}_{t}=\bigcup_{k=1}^\infty \sum_{i=0}^k\mat{A}^i\mat{B}_{t}, \mathcal{B}_{n}=\bigcup_{k=1}^\infty \sum_{i=0}^k\mat{A}^i\mat{B}_{n}$ are abstract matrices for the system in \eqref{eq:observer_LTI_cf} 
+%and $r$ is a non-deterministic parametric input (\emph{ie} $\forall k>0, r_{k+1} =r_k$) 
+whereas the set N is composed of non-deterministic variable inputs.
+
 
 \begin{enumerate}
-\item Calculate the abstract matrices $\mathcal{A}_t, \mathcal{B}_{tp},\mathcal{B}_{tn}$ for the candidate closed loop solution.
+\item Calculate the abstract matrices $\mathcal{A}_t, \mathcal{B}_{t},\mathcal{B}_{n}$ for the candidate closed loop solution.
 \item Evaluate $\hat{X}^\# \models \Psi$. If the verification holds we have a solution, and exit the loop.
 \end{enumerate} 
 \item If the candidate solution is not valid we refine the abstraction used by the synthesizer
@@ -1202,7 +1207,7 @@ $z^n+\sum_{i=1}^n[a_i-k_i]z^{n-i}=\prod_{i=1}^n (z-[\lambda_i]) : |[\lambda_i]|<
      
      %\node[draw=none] (AB) at ([xshift=.4cm,yshift=1.5cm]AAI.center)  {\sc $\mat{A},\mat{B}$\\$\phi$};     
      \node[draw=none] (MA) at ([yshift=.2cm]AA.center)  {$\mathcal{A}_t$};     
-     \node[draw=none] (MB) at ([yshift=-.3cm]AA.center)  {$\mathcal{B}_{tp},\mathcal{B}_{tn}$}; 
+     \node[draw=none] (MB) at ([yshift=-.3cm]AA.center)  {$\mathcal{B}_{t},\mathcal{B}_{n}$}; 
      \node[draw=none] (XT) at ([xshift=0.3cm,yshift=0.5cm]AAC.center)  {\sl $\hat{X}_r^\#$};  
      \node[draw=none] (XT2) at ([xshift=0.3cm,yshift=0.8cm]AAV.center)  {\sl $\hat{X}^\#$};  
      %\draw [->,line width=1pt] ([xshift=-0.1cm,yshift=2cm]AA.center) arc[x radius=0.7cm, y radius =.7cm, start angle=-250, end angle=60];
