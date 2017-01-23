@@ -80,7 +80,7 @@ function write_spec_header {
 }
 
 function get_current_cpu_millis {
- formula=$(sed -r 's/([0-9]+(\.[0-9]+)?)m([0-9]+)\.0*([0-9]+)?s/60000*\1+1000*\3+\4/g' /tmp/times-${working_directory_base_suffix}.log | sed -r 's/ /+/g' | tr '\n' '+' | sed -r 's/(.*)[+]/\1/')
+ formula=$(sed -r 's/([0-9]+(\.[0-9]+)?)m([0-9]+)\.0*([0-9]+)?s/60000*\1+1000*\3+\4/g' /tmp/times${working_directory_base_suffix}.log | tr '\n' ' ' | sed -r 's/ /+/g' | sed -r 's/(.*)[+]+$/\1/' | sed -r 's/[+]+/+/')
  echo $((${formula}))
 }
 
@@ -104,7 +104,7 @@ fi
 
 for benchmark_dir in ${benchmark_dirs[@]}; do
  for benchmark in ${benchmark_dir}*.ss; do
-  times >/tmp/times-${working_directory_base_suffix}.log; start_time=$(get_current_cpu_millis)
+  times >/tmp/times${working_directory_base_suffix}.log; start_time=$(get_current_cpu_millis)
   log_file="${benchmark%.ss}_completeness-threshold-ss.log"
   truncate -s 0 ${log_file}
   echo_log ${benchmark}
@@ -131,22 +131,23 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
   cbmc_log_file="${working_directory}/cbmc.log"
 
   max_length=64
-  integer_width=${impl_int_bits}
   #integer_width=8
-  #integer_width=${impl_int_bits}
+  integer_width=${impl_int_bits}
   radix_width=$((impl_int_bits+impl_frac_bits))
   #radix_width=${impl_frac_bits}
   min_size_offset=$(((integer_width+radix_width)%8))
   [ ${min_size_offset} -ne 0 ] && integer_width=$((integer_width+8-min_size_offset))
-  k_sizes=(10 20 30 50 75 100 200)
+  k_sizes=(5 10 20 30 50 75 100 200)
   k_size_index=0
   timeout_time=3600
   kill_time=3780
   while [ $((integer_width+radix_width)) -le ${max_length} ] && [ ${k_size_index} -lt ${#k_sizes[@]} ]; do
    k_size=${k_sizes[${k_size_index}]}
    echo_log "int: ${integer_width}, radix: ${radix_width}"
+   echo_log "cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTORL_RADIX_WIDTH=${radix_width} -D NUMBERLOOPS=${k_size} ${synthesis_file}"
    timeout --preserve-status --kill-after=${kill_time} ${timeout_time} cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTORL_RADIX_WIDTH=${radix_width} -D NUMBERLOOPS=${k_size} ${synthesis_file} 2>>${log_file} 1>${cbmc_log_file}
    cbmc_result=$?
+   cat ${cbmc_log_file} >>${log_file}
    controller_items=$(grep '<item>' ${cbmc_log_file} | tail -n ${num_states})
    controller_params=$(echo "${controller_items}" | sed -r 's/<\/item> <item>/ /g' | sed -r 's/<item>//g' | sed -r 's/<\/item>//g' | tr '\n' ' ')
    if [ ${cbmc_result} -eq 0 ]; then
@@ -164,7 +165,7 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
      echo_log "./precision_check"
      ./precision_check
      if [ ${k_check_result} -eq 0 ]; then
-      times >/tmp/times-${working_directory_base_suffix}.log; end_time=$(get_current_cpu_millis)
+      times >/tmp/times${working_directory_base_suffix}.log; end_time=$(get_current_cpu_millis)
       echo_success_message ${start_time} ${end_time}
       echo_log "<controller>${controller_params}</controller>"
       break
