@@ -218,12 +218,11 @@ a guaranteed minimum dwell time in each mode.
 
 In \cite{DBLP:journals/corr/AbateBCCDKK16}, Abate et al.  focus on
 synthesising stabilizing controllers for continuous plants
-by exploiting advantage in bit-accurate verification of C programs 
-to obtain a verifier for software-implemented digital control~\cite{Bessa16}.  
-While they also make use of a CEGIS-based technique, their approach is
-restricted to synthesising controllers for hybrid closed-loop systems
-that are stable and only consider transfer function models.  In contrast,
-in the current paper, we consider a state-space
+by exploiting advantage in bit-accurate verification of software-implemented 
+digital control~\cite{Bessa16}.  While they also make use of a CEGIS-based 
+technique, their approach is restricted to synthesising controllers for hybrid 
+closed-loop systems that are stable and only consider transfer function models.  
+In contrast, in the current paper, we consider a state-space
 representation of the physical system, which allows us to synthesise controllers that
 make the closed-loop system \emph{safe} as well as stable.  Moreover, 
 a key aspect of the second approach we evaluate
@@ -234,8 +233,8 @@ We use a combination of a synthesis engine with a control
 verification tool that addresses the challenges presented here in the
 form of FWL effects and stability measures for LTI SISO controllers.
 We take the former from~\cite{DBLP:conf/lpar/DavidKL15} and the latter
-from~\cite{daes20161}\todo{This paper seems to be for transfer functions, not state space,
-is there a paper that does state space stability and safety?}
+from~\cite{Monteiro16}%\todo{This paper seems to be for transfer functions, not state space,
+%is there a paper that does state space stability and safety?}
 , while enhancing the procedure by evaluating the
 quantization effects of the Hardware interfaces (ADC/DAC) to obtain an
 accurate discrete-time FWL representation of the continuous dynamics.
