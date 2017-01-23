@@ -18,8 +18,8 @@
 //#define NUMBERLOOPS 5 // Defined by benchmark script
 #define INITIALSTATE_UPPERBOUND (__plant_precisiont)0.5
 #define INITIALSTATE_LOWERBOUND (__plant_precisiont)-0.5
-#define SAFE_STATE_UPPERBOUND (__plant_precisiont)2.0
-#define SAFE_STATE_LOWERBOUND (__plant_precisiont)-2.0
+#define SAFE_STATE_UPPERBOUND (__plant_precisiont)1.0
+#define SAFE_STATE_LOWERBOUND (__plant_precisiont)-1.0
 
 //other plant variables
 #ifdef CPROVER
