@@ -1036,50 +1036,52 @@ external checker (\addtodo{add more details here once we have them}).
 \label{sec:cof_verification}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-Let us recall the formulas used for single-input and single-output (SISO) systems 
-in sections \ref{sec:reachable} and \ref{sec:observable}.
-A controllable system with quantization will have the following dynamics:
-\todo{eliminate vectors}
-%
-\begin{align}
-\label{eq:observer_LTI_cf}
-\vec{x}_{k+1}=&\mat{A}_{t}\vec{x}_k+\mat{B}_{tp} \vec{r}_k+\mat{B}_{tn} (\vec{\nu}_1 + \vec{\nu}_2 + \vec{\nu}_3)
-\end{align}
-\begin{align*}
-\mat{A}_{t}=&\mat{T}\mat{A}_d\mat{T}^{-1}&
-\mat{B}_{tp}=&\mat{T}\mat{B}_d&
-\mat{B}_{tn}=&\mat{T}\mat{B}_d&
-\mat{T}=&\mat{R}_{cf}\mat{R}^{-1}&
-\end{align*}
+% Let us recall the formulas used for single-input and single-output (SISO) systems 
+% in sections \ref{sec:reachable} and \ref{sec:observable}.
+% A controllable system with quantization will have the following dynamics:
+% \todo{eliminate vectors}
+% %
+% \begin{align}
+% \label{eq:observer_LTI_cf}
+% \vec{x}_{k+1}=&\mat{A}_{t}\vec{x}_k+\mat{B}_{tp} \vec{r}_k+\mat{B}_{tn} (\vec{\nu}_1 + \vec{\nu}_2 + \vec{\nu}_3)
+% \end{align}
+% \begin{align*}
+% \mat{A}_{t}=&\mat{T}\mat{A}_d\mat{T}^{-1}&
+% \mat{B}_{tp}=&\mat{T}\mat{B}_d&
+% \mat{B}_{tn}=&\mat{T}\mat{B}_d&
+% \mat{T}=&\mat{R}_{cf}\mat{R}^{-1}&
+% \end{align*}
 
-\begin{align*}
-\mat{A}_{t}=\mat{T}\mat{A}_d\mat{T}^{-1}=&\left[
-\begin{array}{ccccc}
-0&1&0&\cdots&0\\
-0&0&1&\cdots&0\\
-\vdots&\vdots&\vdots&\ddots&\vdots\\
-0&0&0&\cdots&1\\
-k_n-a_n&k_{n-1}-a_{n-1}&k_{n-2}-a_{n-2}&\cdots&k_1-a_1
-\end{array}\right]
-\label{eq:cf_SISO_2}
-\end{align*}
+% \begin{align*}
+% \mat{A}_{t}=\mat{T}\mat{A}_d\mat{T}^{-1}=&\left[
+% \begin{array}{ccccc}
+% 0&1&0&\cdots&0\\
+% 0&0&1&\cdots&0\\
+% \vdots&\vdots&\vdots&\ddots&\vdots\\
+% 0&0&0&\cdots&1\\
+% k_n-a_n&k_{n-1}-a_{n-1}&k_{n-2}-a_{n-2}&\cdots&k_1-a_1
+% \end{array}\right]
+% \label{eq:cf_SISO_2}
+% \end{align*}
 
-The characteristic polynomial of the above matrix is:
-%
-\begin{align*}
-z^n+\sum_{i=1}^p{(a_i-k_i)z^{n-i}}
-\end{align*}
+% The characteristic polynomial of the above matrix is:
+% %
+% \begin{align*}
+% z^n+\sum_{i=1}^p{(a_i-k_i)z^{n-i}}
+% \end{align*}
 
-For a stabilized closed-loop, which is necessary for our safety property, we need
-these roots to remain within the unit circle, which we verify using Jury's criteria.
-Notice that in our polynomials $c_0=1$ and we only use reals.
-
+% For a stabilized closed-loop, which is necessary for our safety property, we need
+% these roots to remain within the unit circle, which we verify using Jury's criteria.
+% Notice that in our polynomials $c_0=1$ and we only use reals.
+\todo{where is $\phi_{input}$ defined?}
 Once we have established convergence, we may examine the 
 specification of the state and input spaces ($\phi_{safety} \wedge \phi_{input}$).
-Whilst there are other properties, we may include in the verification, 
-we will solely focus on these for simplicity of the explanation.
-We assume that we do not want saturation in our system, 
-hence the control loop has only one mode. We have also identified 
+% Whilst there are other properties, we may include in the verification, 
+% we will solely focus on these for simplicity of the explanation.
+% We assume that we do not want saturation in our system, 
+% hence the control loop has only one mode. 
+
+We have also identified 
 the quantization noise as a bounded non-deterministic input.
 %
 The first step constraints
