@@ -1256,25 +1256,27 @@ $z^n+\sum_{i=1}^n[a_i-k_i]z^{n-i}=\prod_{i=1}^n (z-[\lambda_i]) : |[\lambda_i]|<
 
 %-------------------------------
 \subsection{Description of the benchmarks}
+\label{experimental-setup}
 %-------------------------------
 
 A set of state-space models for different classes of 
-systems were extracted from the literature and employed 
-for validating our automated synthesis methodology. 
-All the systems are SISO models of the following form:
+systems were extracted from the 
+literature~\cite{Franklin15,maglev,converters,CTMS} 
+and employed for validating our methodology. 
+%All systems are SISO models of the following form:
 %
-\begin{equation}
-\left\lbrace\begin{array}{c}
-\dot{\textbf{x}}(t)=\textbf{A}\textbf{x}(t)+\textbf{B}u(t)\\
-y(t)=\textbf{C}\textbf{x}(t)+\textbf{D}u(t)
-\end{array}\right.
-\end{equation}
+%\begin{equation}
+%\left\lbrace\begin{array}{c}
+%\dot{\textbf{x}}(t)=\textbf{A}\textbf{x}(t)+\textbf{B}u(t)\\
+%y(t)=\textbf{C}\textbf{x}(t)+\textbf{D}u(t)
+%\end{array}\right.
+%\end{equation}
+%
+Table~\ref{table:State-space benchmarks} summarizes 
+all our benchmarks, which are SISO models (cf. section~\ref{sec:preliminaries}). 
 
-Table~\ref{table:State-space benchmarks} summarises all benchmarks extracted 
-from the control system literature~\cite{Franklin15,maglev,converters,CTMS}. 
 \textit{DC Motor Position and Rate} plants describes the angular position and 
-velocity of a DC Motor, respectively, that coupled with wheels and cables provides 
-translational motion. 
+velocity of a DC Motor, respectively. 
 \textit{Aircraft Pitch Dynamics} plant represents the air vehicle orientation and 
 control based on the pitch dimension. 
 \textit{Ball Magnetic Levitation} plant describes a physical model to keep a 
@@ -1308,7 +1310,7 @@ the approach described in the Appendix~\ref{sec:appendix}.
 All experiments were performed considering $x_{i}^{-}=-1$ and 
 $x_{i}^{+}=1$ and the inputs $u_{k}=0, \forall k>0$.
 
-We have also conducted the experimental evaluation on a 12-core 2.40 GHz
+We have conducted the experimental evaluation on a 12-core 2.40 GHz
 Intel Xeon E5-2440 with 96 GB of RAM and Linux OS. All times given are wall 
 clock time in seconds as measured by the UNIX date command. 
 
@@ -1484,6 +1486,21 @@ Pendulum   & $\left[\begin{array}{cc}
 %-------------------------------
 \subsection{Objectives}
 %-------------------------------
+
+Using the state-space models given in Section~\ref{experimental-setup}, 
+our experimental evaluation aims to answer two research questions:
+%
+\begin{enumerate}
+
+\item[RQ1] \textbf{(CEGIS)} do the CEGIS with multi-stage 
+verification and abstraction refinement generate a FWL digital 
+controller in a reasonable amount of time?
+
+\item[RQ2] \textbf{(sanity check)} are the synthesized controllers sound
+and can their stability and safety be confirmed outside of our model?
+
+\end{enumerate}
+
 
 %-------------------------------
 \subsection{Results}
