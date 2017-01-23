@@ -719,7 +719,8 @@ We then give the details of the two methods of solution generalisation that we c
 \label{synthesizer-general}
 The input specification provided to the program synthesizer is of the form
 $\exists \vec{P} .  \forall \vec{x}.  \sigma(\vec{x}, \vec{P})$ where
-$\vec{P}$ ranges over functions, $\vec{x}$ \todo{now variables are vectorised, however previously the model variables aren't. please align notation. I do not like to use vectors unless essential, let's say it's a waste of ink in printouts. } ranges over ground terms and
+$\vec{P}$ ranges over functions, $\vec{x}$ \todo{now variables are vectorised, however previously the model variables aren't. please align notation. I do not like to use vectors unless essential, let's say it's a waste of ink in printouts. }
+ ranges over ground terms and
 $\sigma$ is a quantifier-free formula.  We interpret the ground terms over
 some finite domain $\mathcal{D}$.
 
@@ -750,16 +751,15 @@ the refinement loop can only iterate a finite number of times.
 \subsection{Synthesis problem: statement (recap) and connection to program synthesis}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-\todo{The following paragraph has been already stated above. Let us clarify this is a useful repetition to recap things?} 
+% \todo{The following paragraph has been already stated above. Let us clarify this is a useful repetition to recap things?} 
 
-The synthesis problem we are trying to solve is the following:
+At this point, we recap the the synthesis problem that we solve in this work:
 find a digital controller $K$ (see Eq.~\ref{eq:controlaction})
 that makes the closed-loop system safe for 
 initial state $x_0$, reference signal $r_k$ and input $u_k$
 as defined in Sec.~\ref{ssec:safety}. 
 We consider non-deterministic initial states within a specified range
 and the reference signal to be set to zero.  
-
 When mapping back to the notation used for describing the general architecture 
 of the program synthesiser, the controller $K$ denotes $P$ and 
 $(x_0, u_k)$ represents $x$. 
@@ -797,15 +797,21 @@ with CEGIS:
 the plant precision, the number of loop unrollings, 
 and the sampling rate. Essentially, it finds a controller for an individual initial state
 and input with a bounded time horizon and generalises to all states,
-inputs, and time horizons. %% (with a final verification loop that verifies
+inputs, and time horizons. The safety check is performed in this approach 
+via unfolding of the transition system corresponding to the synthesised controller.
+
+
+%% (with a final verification loop that verifies
 %% the continuous system behaviour against the previously verified
 %% discrete system bi-simulation)
 \item[2.] The second approach (described in Sec~\ref{sec:CEGIS-abstraction-refinement})
-  %% uses abstract acceleration to compute the set of reachable states,
-  %% which enables it to perform abstraction refinement inside the CEGIS loop.
-  finds a controller for a continuous initial set of states and input set, 
-  over an abstraction of the continuous dynamics that conforms to witness proofs at specific times; 
-  it further generalises the solution over all times by refining the number of witnesses.  \todo{clarify use of abstract acceleration. add references.}
+  finds a controller for a continuous initial set of states and input
+  set, over an abstraction of the continuous dynamics that conforms to
+  witness proofs at specific times; it further generalises the
+  solution over all times by refining the number of witnesses.  
+  In order to perform the safety check, this approach uses abstract acceleration
+  \cite{cattaruzza2015unbounded} to compute the controller's set of states. 
+  %\todo{clarify use of abstract acceleration. add references.}
 \end{itemize}
 
 
@@ -1036,44 +1042,44 @@ external checker (\addtodo{add more details here once we have them}).
 \label{sec:cof_verification}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-% Let us recall the formulas used for single-input and single-output (SISO) systems 
-% in sections \ref{sec:reachable} and \ref{sec:observable}.
-% A controllable system with quantization will have the following dynamics:
-% \todo{eliminate vectors}
-% %
-% \begin{align}
-% \label{eq:observer_LTI_cf}
-% \vec{x}_{k+1}=&\mat{A}_{t}\vec{x}_k+\mat{B}_{tp} \vec{r}_k+\mat{B}_{tn} (\vec{\nu}_1 + \vec{\nu}_2 + \vec{\nu}_3)
-% \end{align}
-% \begin{align*}
-% \mat{A}_{t}=&\mat{T}\mat{A}_d\mat{T}^{-1}&
-% \mat{B}_{tp}=&\mat{T}\mat{B}_d&
-% \mat{B}_{tn}=&\mat{T}\mat{B}_d&
-% \mat{T}=&\mat{R}_{cf}\mat{R}^{-1}&
-% \end{align*}
+Let us recall the formulas used for single-input and single-output (SISO) systems 
+in sections \ref{sec:reachable} and \ref{sec:observable}.
+A controllable system with quantization will have the following dynamics:
+\todo{eliminate vectors}
+%
+\begin{align}
+\label{eq:observer_LTI_cf}
+\vec{x}_{k+1}=&\mat{A}_{t}\vec{x}_k+\mat{B}_{tp} \vec{r}_k+\mat{B}_{tn} (\vec{\nu}_1 + \vec{\nu}_2 + \vec{\nu}_3)
+\end{align}
+\begin{align*}
+\mat{A}_{t}=&\mat{T}\mat{A}_d\mat{T}^{-1}&
+\mat{B}_{tp}=&\mat{T}\mat{B}_d&
+\mat{B}_{tn}=&\mat{T}\mat{B}_d&
+\mat{T}=&\mat{R}_{cf}\mat{R}^{-1}&
+\end{align*}
 
-% \begin{align*}
-% \mat{A}_{t}=\mat{T}\mat{A}_d\mat{T}^{-1}=&\left[
-% \begin{array}{ccccc}
-% 0&1&0&\cdots&0\\
-% 0&0&1&\cdots&0\\
-% \vdots&\vdots&\vdots&\ddots&\vdots\\
-% 0&0&0&\cdots&1\\
-% k_n-a_n&k_{n-1}-a_{n-1}&k_{n-2}-a_{n-2}&\cdots&k_1-a_1
-% \end{array}\right]
-% \label{eq:cf_SISO_2}
-% \end{align*}
+\begin{align*}
+\mat{A}_{t}=\mat{T}\mat{A}_d\mat{T}^{-1}=&\left[
+\begin{array}{ccccc}
+0&1&0&\cdots&0\\
+0&0&1&\cdots&0\\
+\vdots&\vdots&\vdots&\ddots&\vdots\\
+0&0&0&\cdots&1\\
+k_n-a_n&k_{n-1}-a_{n-1}&k_{n-2}-a_{n-2}&\cdots&k_1-a_1
+\end{array}\right]
+\label{eq:cf_SISO_2}
+\end{align*}
 
-% The characteristic polynomial of the above matrix is:
-% %
-% \begin{align*}
-% z^n+\sum_{i=1}^p{(a_i-k_i)z^{n-i}}
-% \end{align*}
+The characteristic polynomial of the above matrix is:
+%
+\begin{align*}
+z^n+\sum_{i=1}^p{(a_i-k_i)z^{n-i}}
+\end{align*}
 
-% For a stabilized closed-loop, which is necessary for our safety property, we need
-% these roots to remain within the unit circle, which we verify using Jury's criteria.
-% Notice that in our polynomials $c_0=1$ and we only use reals.
-\todo{where is $\phi_{input}$ defined?}
+For a stabilized closed-loop, which is necessary for our safety property, we need
+these roots to remain within the unit circle, which we verify using Jury's criteria.
+Notice that in our polynomials $c_0=1$ and we only use reals.
+\todo{where is $\phi_{input}$ computed?}
 Once we have established convergence, we may examine the 
 specification of the state and input spaces ($\phi_{safety} \wedge \phi_{input}$).
 % Whilst there are other properties, we may include in the verification, 
