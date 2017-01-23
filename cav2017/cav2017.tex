@@ -549,18 +549,12 @@ this means that the control input saturates in view of physical constraints.
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
-
-
-
-
-
 The 
 %systems and 
 models we consider have two sources of error due to numeric representation. 
 The first is the numeric error introduced by the fixed-point numbers employed to model the plant, i.e. to represent the plant dynamics $A_d$, $B_d$ and its states. 
-The second is the numeric error introduced by the digital controller, 
+The second is the quantization error introduced by the digital controller, 
 which 
-%uses an analogue-to-digital converter to read the states as a fixed-point number and performs operations in this domain. 
 performs operations in the domain of fixed-point numbers. 
 In this section we formally outline the errors introduced by fixed-point representation of numbers. 
 In further sections we will differentiate between these two errors, 
@@ -599,7 +593,7 @@ function and verifies that no state overflows.
 
 \todo{yes, please reformat the discussion below so that it fits the discussion above. }
 
-Thus far we have presented a verification procedure for a digitalised plant in a continuous space (\emph{ie} the
+Thus far we have presented a verification procedure for a digitalised plant in a continuous space (\emph{i.e.} the
 range of the quantisers is still $\mathbb{R}$. The next step we must realise is that the controller 
 exists in a digital program, hence its domain is $\mathbb{R}\langle I,F\rangle$. We have $\mat{A},\mat{B},\vec{x} \in \mathbb{R}^*$, $\mat{K}_d,\vec{u},\hat{\vec{x}}=\mathcal{F}\langle I,F \rangle(\vec{x}) \in \mathbb{R}\langle I,F\rangle^*$
 Where $*$ represents the appropriate dimension for each matrix/vector.
@@ -612,19 +606,19 @@ The error in $\vec{u}$ corresponds of the multiplication of $\mat{K}_d\hat{\vec{
 \bigskip
 
 \subsubsection{Effect on safety specification and stability}
-The states values must be computed considering the digital controller error, i.e., the error introduced by the ADC and the digital controller. 
+First consider the effect of the quantization error on safety; the state values must be computed considering the error introduced by the digital controller caused by performing the multiplication $K*x$ at low digital precision.
 %, and the digital reference signal. 
 %In this paper, we consider systems with a reference signal equal to zero. 
 %the FWL effects in all operations related to the control action~\eqref{eq:controlaction} 
 %and disregarding it in the state equation~\eqref{eq:plant}.
-Thus, the states are computed using the following equations. We use $\mathcal{F}_{\langle I_c,F_c \rangle}$ \todo{explain and clarify notation.}
-to to denote numbers represented with the precision of the digital controller. All other numbers
-are represented with the precision of our plant model:
+Thus, the states are computed using the following equations. We use $\mathcal{F}_{\langle I_c,F_c \rangle}$ 
+to to denote numbers represented with the precision of the digital controller, where $I_c$ is the number of bits used to represent the integer value in the controller and $F_c$ is the number of bits used to represent the fractional part of numbers in the controller. 
 %
 \begin{align*}
 u_{k}&=-(\mathcal{F}_{\langle I_c,F_c \rangle}(K)\cdot\mathcal{F}_{\langle I_c,F_c \rangle}(x_{k})).  
 %\\ x_{k+1}&=A_d x_{k} + B_du_{k}
 \end{align*}
+
 
 We note that the effect on stability due to the fixed-word-length error is that the system may, instead of converging to the desired equilibrium point, converge to a point that is $\delta$ away from the desired equilibrium point, see Appendix. In this paper, we are concerned with \emph{safe} controllers and therefore concerned only that the system converges to a point within the safety specification. Hence, it is sufficient to synthesise a stable controller based on infinite precision, and then verify safety. 
 
