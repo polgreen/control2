@@ -1,3 +1,5 @@
+#define __CHECK_FP
+
 void make_closed_loop()
 {
   cnttype i,j;
@@ -32,7 +34,7 @@ signed int check_stability_closedloop(vectort a)
   control_floatt sum=_one;
   m[0][0]=1;
 #ifndef __CPROVER
-  printf("polynomial %f",m[0][0]);
+  printf("polynomial[%d] %f",n,m[0][0]);
 #endif
   for(i = 0 ; i < _DIMENSION; i++) 
   { 
@@ -50,29 +52,28 @@ signed int check_stability_closedloop(vectort a)
   verify_assume(-m[0][n-1]+_transform_error < m[0][0]);
 #else
   printf("\n");
+  printf("m[0][0]=%f>%f\n",m[0][0],_transform_error);
   if (!(m[0][0] > _transform_error)) 
   {
-    printf("m[0][0]=%f>%f\n",m[0][0],_transform_error);
     return 0;
   }
+  printf("sum=%f>%f\n",sum,_sum_error);
   if (!(sum > _sum_error))
   {
-    printf("sum=%f>%f\n",sum,_sum_error);
     return 0;
   }
+  printf("m[0][%d]=%f<m[0][0]=%f\n",n-1,m[0][n - 1],m[0][0]);
   if (m[0][n - 1]==0)
   {
-    printf("m[0][%d]=0\n",n-1);
     return 0;    
   }  
   if (!(m[0][n - 1]+_transform_error < m[0][0])) 
   {
-    printf("m[0][%d]=%f<m[0][0]=%f\n",n-1,m[0][n - 1],m[0][0]);
     return 0;
   }
+  printf("-m[0][%d]=%f<m[0][0]=%f\n",n-1,m[0][n - 1],m[0][0]);
   if (!(-m[0][n - 1]+_transform_error < m[0][0])) 
   {
-    printf("-m[0][%d]=%f<m[0][0]=%f\n",n-1,m[0][n - 1],m[0][0]);
     return 0;
   }
 #endif
@@ -82,10 +83,11 @@ signed int check_stability_closedloop(vectort a)
     if (((n -i)&1)!=0) sum+=m[0][i];
     else               sum-=m[0][i];
   }
-  if ((n&1)==0) sum=-sum;
+  if ((n&1)!=0) sum=-sum;
 #ifdef __CPROVER
   verify_assume(sum > _sum_error);
 #else
+  printf("sum_o-sum_e=%f>0\n",sum);
   if (!(sum > _sum_error)) return 0;
 #endif
   columns--;
@@ -120,7 +122,7 @@ signed int check_stability_closedloop(vectort a)
       m[i][j] = m[i - 1][j] - factor * m[i - 1][columns-j];
     }
 #ifdef __CPROVER
-      verify_assume(m[i][0l] >= _transform_error);
+      verify_assume(m[i][0] >= _transform_error);
 #else
     printf("m[%d]=%f>0\n", i, m[i][0]);
     if (!(m[i][0] >= _transform_error)) return 0;
