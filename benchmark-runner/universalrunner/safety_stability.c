@@ -272,7 +272,7 @@ void __CPROVER_EIGEN_charpoly(void){
 void A_minus_B_K()
 {
 
-#ifdef CPROVER
+/*#ifdef CPROVER //NOT NEEDED
   __CPROVER_array_copy(_AminusBK, _controller_A);
 #else
   for(int i=0; i<NSTATES; i++)
@@ -280,12 +280,11 @@ void A_minus_B_K()
       for(int j=0; j<NSTATES; j++)
         {_AminusBK[i][j] = _controller_A[i][j];}
      }
-#endif
+#endif*/
 
   for (int i=0;i<NSTATES; i++) { //rows of B
       for (int j=0; j<NSTATES; j++) { //columns of K
-      //  _AminusBK[i][j] -= _controller_B[i] * (__plant_typet)K_fxp[j];
-        _AminusBK[i][j] = sub( _AminusBK[i][j], mult(_controller_B[i] , plant_cast(K_fxp[j])  ));
+        _AminusBK[i][j] = sub( _controller_A[i][j], mult(_controller_B[i] , plant_cast(K_fxp[j])  ));
           }
       }
 }
@@ -407,8 +406,9 @@ int check_safety(void)
 
   for(int k=0; k<NUMBERLOOPS; k++)
   {
-#ifdef INTERVALS
-    closed_fxp_mult(A,B,K)fxp,states);
+#ifdef INTERVAL
+    closed_fxp_mult(_controller_A, _controller_B, K_fxp, _controller_states);
+    printf("states: %f %f %f", _controller_states[0], _controller_states[1], _controller_states[2]);
 #endif
     inputs_equal_ref_minus_k_times_states(); //update inputs one time step
     states_equals_A_states_plus_B_inputs(); //update states one time step
