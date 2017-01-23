@@ -15,7 +15,7 @@ function echo_log {
 
 function echo_success_message {
  start_time=$1
- end_time=`date +%s`
+ end_time=$2
  runtime=$((end_time-start_time))
  echo_log 'SYNTHESIS SUCCESSFUL'
  echo_log "<control_synthesis_time>${runtime}</control_synthesis_time>"
@@ -79,18 +79,23 @@ function write_spec_header {
  chmod +x discrete_step_k_completeness_check
 }
 
+function get_current_cpu_millis {
+ formula=$(sed -r 's/([0-9]+(\.[0-9]+)?)m([0-9]+)\.0*([0-9]+)?s/60000*\1+1000*\3+\4/g' /tmp/times-${working_directory_base_suffix}.log | sed -r 's/ /+/g' | tr '\n' '+' | sed -r 's/(.*)[+]/\1/')
+ echo $((${formula}))
+}
+
 mkdir -p ${working_directory_base} 2>/dev/null
 
 if [ -z "$1" ]; then
  #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/cruise_ss/') #ok
- #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/dcmotor_ss/') #ok
+ benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/dcmotor_ss/') #ok
  #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/helicopter_ss/') #unsat
  #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/invpendulum_cartpos_ss/') #unsat
  #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/invpendulum_pendang_ss/') #unsat
  #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/magsuspension_ss/') #unsat
  #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/pendulum_ss/') #unsat
  #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/suspension_ss/') #ok
- benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/tapedriver_ss/') #ok
+ #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/tapedriver_ss/') #ok
  #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/cruise_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/dcmotor_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/helicopter_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/invpendulum_cartpos_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/invpendulum_pendang_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/magsuspension_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/pendulum_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/suspension_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/tapedriver_ss/')
  #benchmark_dirs=("${script_base_directory}/../benchmarks/state-space/dcmotor_ss/")
 else
@@ -99,7 +104,7 @@ fi
 
 for benchmark_dir in ${benchmark_dirs[@]}; do
  for benchmark in ${benchmark_dir}*.ss; do
-  start_time=`date +%s`
+  times >/tmp/times-${working_directory_base_suffix}.log; start_time=$(get_current_cpu_millis)
   log_file="${benchmark%.ss}_completeness-threshold-ss.log"
   truncate -s 0 ${log_file}
   echo_log ${benchmark}
@@ -159,7 +164,8 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
      echo_log "./precision_check"
      ./precision_check
      if [ ${k_check_result} -eq 0 ]; then
-      echo_success_message ${start_time}
+      times >/tmp/times-${working_directory_base_suffix}.log; end_time=$(get_current_cpu_millis)
+      echo_success_message ${start_time} ${end_time}
       echo_log "<controller>${controller_params}</controller>"
       break
      else
