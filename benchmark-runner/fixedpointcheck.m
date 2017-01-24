@@ -23,29 +23,46 @@ FiSettings = fimath('ProductMode',...
                
                
 fxp=@(v) fi(v,1,16,8,FiSettings);
-fxpP = @(v) fi(v,1,64,32,FiSettingsP);
+fxpP = @(v) v;% fi(v,0.5,64,32,FiSettingsP);
 
-K = [fxp(46.25), fxp(-16)];
-%K = [fxp(17.4384765625), fxp(-0.0537109375)];
+loops = 50;
+numstates = numel(B);
 
-A = [fxpP(2.001),fxpP(-1);fxpP(1),fxpP(0)] ;
-B = [fxpP(0.0625);fxpP(0)] ;
-states = [fxpP(0.5); fxpP(0.5)];
-loops = 100;
-for i=1:loops
+if(numstates==2)
+    statematrix = [fxpP(-0.5),fxpP(-0.5),fxpP(0.5),fxpP(0.5) ; fxpP(-0.5),fxpP(0.5),fxpP(-0.5), fxpP(0.5)];
+elseif (numstates==3)
+    statematrix = [fxpP(-0.5),fxpP(-0.5),fxpP(-0.5),fxpP(-0.5),fxpP(0.5),fxpP(0.5),fxpP(0.5),fxpP(0.5); ...
+                   fxpP(-0.5),fxpP(-0.5),fxpP(0.5), fxpP(0.5),fxpP(-0.5),fxpP(-0.5),fxpP(0.5),fxpP(0.5); ...
+                   fxpP(-0.5),fxpP(0.5),fxpP(-0.5), fxpP(0.5),fxpP(-0.5),fxpP(0.5),fxpP(-0.5),fxpP(0.5)];
+elseif (numstates==4)   
+    statematrix = [fxpP(-0.5),fxpP(-0.5),fxpP(-0.5),fxpP(-0.5),fxpP(-0.5),fxpP(-0.5),fxpP(-0.5),fxpP(-0.5),fxpP(0.5),fxpP(0.5),fxpP(0.5),fxpP(0.5),fxpP(0.5),fxpP(0.5),fxpP(0.5),fxpP(0.5); ...
+                   fxpP(-0.5),fxpP(-0.5),fxpP(-0.5),fxpP(-0.5),fxpP(0.5),fxpP(0.5),fxpP(0.5),fxpP(0.5),fxpP(-0.5),fxpP(-0.5),fxpP(-0.5),fxpP(-0.5),fxpP(0.5),fxpP(0.5),fxpP(0.5),fxpP(0.5); ...
+                   fxpP(-0.5),fxpP(-0.5),fxpP(0.5), fxpP(0.5),fxpP(-0.5),fxpP(-0.5),fxpP(0.5),fxpP(0.5),fxpP(-0.5),fxpP(-0.5),fxpP(0.5), fxpP(0.5),fxpP(-0.5),fxpP(-0.5),fxpP(0.5),fxpP(0.5); ...
+                   fxpP(-0.5),fxpP(0.5),fxpP(-0.5), fxpP(0.5),fxpP(-0.5),fxpP(0.5),fxpP(0.5),fxpP(0.5),fxpP(-0.5),fxpP(0.5),fxpP(-0.5), fxpP(0.5),fxpP(-0.5),fxpP(0.5),fxpP(0.5),fxpP(0.5)];
+end
+
+
+  
+for j=1:2^(numstates)
+  states = statematrix(:,j) ;
+  for i=1:loops
 
     input = -K * fxp(states);
     tmp_input = double(input);
-    if(input>1000 || input< -1000)
+    if(input>INPUT(2) || input< INPUT(1))
         msg = 'input too big'
         return
     end    
-    states = A * (states) + B * fxpP(input);
+    states = A * (states) + B * double(input);
     for idx = 1: numel(states)
         if(states(idx) > 1 || states(idx) < -1)
-            msg = 'unsafe'
+            msg = '!!!!!UNSAFE!!!!!'
             i
+            states
+            statematrix(:,j)
             return
         end  
     end
-end 
+  end 
+end
+msg = 'safe and stable'
