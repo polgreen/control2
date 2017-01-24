@@ -134,43 +134,54 @@ safety requirements.
 
 Linear Time Invariant (LTI) control models represent a broad class of dynamical systems
 %modern embedded software, performing highly non-trivial control tasks,
-with significant impact in numerous application areas such as
+with significant impact in numerous application areas as in 
 the life sciences, robotics, and engineering~\cite{astrom1997computer,Franklin15}.
 Control synthesis for LTI is broadly investigated, 
 however the use of digital control architectures adds new challenges due to 
 %exacerbated by specific artefacts,  
 the effects of finite-precision arithmetic, time discretization, and quantization noise, which are typically introduced 
-by Analogue-to-Digital (A/D) and Digital-to-Analogue (D/A) conversion.  
+by Analogue-to-Digital (A/D) \todo{later ADC and DAC} and Digital-to-Analogue (D/A) conversion.  
 Whilst the research on digital control is well developed~\cite{astrom1997computer}, 
-automated and sound control synthesis is a challenging task. 
+automated and sound control synthesis is a challenging task,  
 %Thus, the programming is a key barrier to broad adoption of digital control, 
 %and requires considerable expertise.
-
-Although there is a vast literature on validation of control systems,
-the subject of control synthesis has been somewhat restricted in the
-properties it explores.  Traditionally, this focuses mainly on stability %, working typically on continuous domains
-\cite{DBLP:journals/corr/AbateBCCDKK16,sadabadi2016static}, or using switched
-models~\cite{DBLP:conf/emsoft/RavanbakhshS16}.
-Reachability tools are
-also used when discretizing the state-space for verification and
-parametric synthesis~\cite{cimatti2013parameter}.
+%Whilst there is a vast literature on validation of control systems,
+%the subject of control synthesis has been somewhat restricted in the properties it explores.  
+%Traditionally, this focuses mainly on stability %, working typically on continuous domains
+particularly when the synthesis objective goes beyond classical stability or tracking requirements. 
+%\cite{DBLP:journals/corr/AbateBCCDKK16,sadabadi2016static}, or using switched
+%models~\cite{DBLP:conf/emsoft/RavanbakhshS16}. 
+Beyond stability, 
+recently reachability tools have been developed [cite SPACEx, Phaver, and others], 
+however they have not been employed towards control synthesis. 
+\todo{why do we cite this paper \cite{cimatti2013parameter}?what is the relationship with our work? }
+% when discretising the state-space for verification and
+%parameter synthesis~\cite{cimatti2013parameter}. 
 
 In this work, we propose the synthesis of \emph{safe} control algorithms for
 LTI models taking into consideration the continuous domain of the plant, 
-alongside the discrete domain of the controller and the hybrid elements that relate them.  
-Due to the complexity of such systems, in this particular work we focus
+alongside the discrete domain of the controller, 
+as well as the hybrid elements that relate them.  
+%% In this paper, we synthesize controllers for hybrid
+%% closed-loop systems, i.e., software-implemented embedded controllers along
+%% with a model of their physical environment (the plant), that are
+%% \emph{safe}.
+Due to the complexity of such systems, in this work we focus 
 on linear models with known  implementation features (e.g., number of bits, fixed-point
-arithmetic) and perform synthesis of safe digital controllers.
+arithmetic), %\addtodo{[clarify next] with known configurations} 
+and perform %parametric 
+synthesis of safe digital controllers - the extension to more general quantitative properties is left to future work. 
 
 We describe and evaluate two approaches for synthesizing digital controllers 
 for state-space physical plants. Both approaches consider a counterexample 
 guided inductive synthesis (CEGIS) loop. In the first approach, 
 we devise a digital controller that stabilizes the system whilst remaining safe given a 
-pre-selected time horizon; then, we verify its 
-potential safety by unfolding the dynamics of the system and checking for 
-a completeness threshold. In the second approach, we employ abstract acceleration
-to accelerate the dynamics forward instead of symbolically unwinding the 
-transition relation~\cite{cattaruzza2015unbounded}. We provide experimental results 
+pre-selected time horizon; then, we verify its potential safety by unfolding the dynamics of the system and checking for 
+a completeness threshold. In the second approach, we substitute the second step by employing abstract acceleration
+to unfold the dynamics forward, instead of symbolically unwinding the 
+transition relation~\cite{cattaruzza2015unbounded}. 
+\todo{We need to mention the CEGIS architecture here. We need to emphasise the derivation of errors for soundness. Can we claim completeness already?}
+We provide experimental results 
 showing that both approaches are able to efficiently synthesize stable and safe controllers 
 for a set of intricate physical plant models taken from the digital 
 control literature: the median runtime for our benchmark
@@ -677,11 +688,12 @@ $x\in\mathcal{D}$).  If this is the case, then the algorithm
 terminates.  Otherwise, additional information is provided to the
 inductive synthesis phase in the form of a new counterexample that is
 added to the {\sc inputs} set and the loop iterates again.
-%
-It is worth noting that each iteration of the loop adds a new input to
-the finite set $\text{\sc inputs}$ that is used for synthesis.  Given
-that the full set of inputs $\mathcal{D}$ is finite, this means that
-the refinement loop can only iterate a finite number of times.
+More details about the general architecture of the synthesiser can
+be found in~\cite{DBLP:conf/lpar/DavidKL15}.
+%% It is worth noting that each iteration of the loop adds a new input to
+%% the finite set $\text{\sc inputs}$ that is used for synthesis.  Given
+%% that the full set of inputs $\mathcal{D}$ is finite, this means that
+%% the refinement loop can only iterate a finite number of times.
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{Synthesis problem: statement (recap) and connection to program synthesis}
