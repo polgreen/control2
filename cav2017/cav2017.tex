@@ -709,7 +709,7 @@ and account for digitalisation and quantisation errors introduced by the control
 
 When mapping back to the notation used for describing the general architecture of the program synthesizer, 
 the controller $K$ denotes $P$ and $(x_0, u_k)$ represents $x$. 
-While the controller precision \todo{update notations} $\langle I_c,F_c\rangle$ is given and fixed, 
+While the controller precision \todo{are these notations updated?} $\langle I_c,F_c\rangle$ is given and fixed, 
 we can vary the plant precision $\langle I_p,F_p\rangle$ such that $I_p \geq I_c \wedge F_p \geq F_c$.
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -868,9 +868,9 @@ To synthesize a controller that satisfies the stability criteria, we require tha
 a computed characteristic polynomial satisifies Jury's criteria. The details of this
 calculation can be found in the Appendix.
 
-
-Regarding the latter, we synthesize a safe controller by unwinding the transition system
-$k$ steps and picking a controller $K$ and an initial state such that the states at each step do
+ \todo{unclear next: it seems like to select a single initial state here, rather than considering the set thereof - clarify. also, clarify relationship btw k and soundness. }
+Regarding the second requirement, we synthesize a safe controller by unwinding the transition system
+$k$ steps and by picking a controller $K$ and an initial state, such that the states at each step do
 not violate the safety criteria. This is sound if the current $k$ is below the
 completeness threshold, which we assume to be true in the {\sc synthesize} phase.
 We also assume some
