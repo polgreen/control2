@@ -482,7 +482,7 @@ In this paper, we consider systems with a reference signal equal to zero.
 A discrete-time system as \eqref{eq:closedloopss} is asymptotically stable if and only if all the roots 
 of the characteristic polynomial ({\it i.e.}, the eigenvalues of the closed-loop matrix $A_d - B_d K$) are inside the unity circle in the complex plane, 
 {\it i.e.} iff their absolute values are less than one~\cite{astrom1997computer}. 
-In this paper, we express the stability specification $\phi_{stability}$ in terms of a check known as Jury's criterion \cite{fadali}. 
+We express the stability specification $\phi_{stability}$ in terms of a check known as Jury's criterion \cite{fadali}. 
 This condition boils down to an easy algebraic formula to select the entries of matrix $K$, 
 so that the closed-loop dynamics are shaped as desired. 
 A detailed description of this specification can be found in the Appendix~\ref{sec:appendix-stability}. 
@@ -504,7 +504,7 @@ such that the feedback controller (namely the choice of the gains in $K$)
 must ensure that the states never exist such requirement. 
 Note that a stable, closed-loop system is not necessarily a safe system: 
 indeed, the state values may leave the safe whilst they converge to the equilibrium, 
-which is typical in the case of oscillatory dynamics. 
+which is typical in the case of oscillatory dynamics. However, a safe system will always be stable.
 
 In this work, the safety property represented by $\phi_{safety}$ is encoded as follows: 
 %
@@ -614,16 +614,6 @@ The maximum size of a real number $x$ that can be represented in a fixed point d
 
 We will use $\mathcal{F}\langle I_c,F_c \rangle(x)$ to denote a real number $x$ represented in the fixed-point precision level of the controller, and $\mathcal{F}\langle I_p,F_p \rangle(x)$ to denote a real number $x$ represented in the fixed-point precision level of the plant model. Thus any mathematical operations occurring in the digital controller will occur in the domain $\mathcal{F}\langle I_c,F_c \rangle$, and all other calculations will be carried out in the domain $\mathcal{F}\langle I_p,F_p \rangle$.
 
-%Thus far we have presented a verification procedure for a digitalised plant in a continuous space (\emph{i.e.} the
-%range of the quantizers is still $\mathbb{R}$. The next step we must realise is that the controller 
-%exists in a digital program, hence its domain is $\mathbb{R}\langle I,F\rangle$. We have $\mat{A},\mat{B},\vec{x} \in \mathbb{R}^*$, $\mat{K}_d,\vec{u},\hat{\vec{x}}=\mathcal{F}\langle I,F \rangle(\vec{x}) \in \mathbb{R}\langle I,F\rangle^*$
-%Where $*$ represents the appropriate dimension for each matrix/vector.
-%Unfortunately this means that although the closed loop dynamics are in the reals, they suffer from
-%the fixed word restrictions in their composing elements.
-%Apart from the quantization errors $q_1,q_2$ there are rounding errors in the calculation of $u_k$. 
-%These will introduce a new source of quantization noise which we may denote $\vec{\nu}_3 \in [-q_3\ \ q_3]$.
-%The error in $\vec{u}$ corresponds of the multiplication of $\mat{K}_d\hat{\vec{x}}$, hence $q_3=\overline{\delta}_u=(|\mat{K}|_1+1)c_m$
-
 
 \subsubsection{Effect on safety specification and stability}
 Thus we can consider the effect of these errors on our safety and stability verification.
@@ -648,7 +638,7 @@ We address these errors by use of a final verification check that uses interval 
 
 
 We note that the effect on stability due to the fixed-word-length error is that the system may, instead of converging to the desired equilibrium point, converge to a point that is bounded away from the desired equilibrium point (see Appendix for details). 
-In this paper, we are concerned with \emph{safe} controllers and therefore concerned only that the system converges to a point within the safety specification. Hence, it is sufficient to synthesize a stable controller based on infinite precision, and then verify safety. 
+In this paper, we synthesise a stable controller only as a precursor to synthesising a \emph{safe} controllers and it is therefore sufficient that the system converges to a point within the safe states. Hence, it is sufficient to disregard the errors when we synthesize a stable controller, and then verify safety. 
 
 
 %% %-------------------------------
