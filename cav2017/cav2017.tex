@@ -98,21 +98,23 @@
 
 \begin{abstract}
 This work presents a sound and automated approach to synthesize 
-digital feedback control architectures for physical plants represented 
-as linear, time invariant models. Models are encompassed by dynamical 
+safe digital feedback controllers for physical plants represented 
+as linear, time invariant models. Models are described as dynamical 
 equations with inputs, evolving over a continuous state space and accounting 
 for errors due to the digitalization of signals that are manipulated by the 
-controller block. The approach is divided in two main parts, brought together 
-by a counter-example guided inductive synthesis (CEGIS) loop, as follows. 
-First, we devise a static feedback controller that stabilizes the system; 
-then, we verify its potential safety by means of either of the following 
-approaches: forward reachability analysis via unfolding of the dynamics, 
-or invariant set generation via abstract acceleration;  further, if the 
-above step fails, we loop back and invoke a CEGIS call to seek alternative 
-stabilizing feedback, benefiting from the obtained counterexamples 
-to safety. Both approaches are able to efficiently synthesize stable and 
-safe controllers considering a set of intricate physical plant models taken 
-from the digital control literature.
+controller block. 
+The approach works in two stages, leveraging the use of counter-example guided
+inductive synthesis (CEGIS) and reachability analysis. The former synthesises a static 
+feedback controller that stabilizes the system under some restrictions given by the safety of
+the reach space. The latter verifies its potential safety by means of either of the following 
+approaches: forward reachability analysis via unfolding of the dynamics or invariant set 
+generation via abstract acceleration; if the 
+verification step fails, we loop back to seek an 
+alternative controller benefiting from the obtained counterexamples 
+to safety using solution generalization and abstraction refinement.
+We are able to efficiently synthesize stable and safe controllers
+considering a set of intricate physical plant models taken from the digital
+control literature.
 \keywords{
 State-space dynamical models of physical systems; 
 Digital controllers; 
