@@ -179,16 +179,17 @@ control literature: the median runtime for our benchmark
 set is \textcolor{red}{$XXX$}s, i.e., most controllers can be synthesized in less
 than \textcolor{red}{$XXX$} seconds.
 
-
 \textit{Contributions}. We use a combination of a synthesis engine with a control
 verification tool that addresses the challenges presented in the
-form of FWL effects and stability measures over digital controllers for LTI models.  
+form of FWL effects, safety, and stability measures over digital controllers for LTI models.  
 We take the synthesis engine from~\cite{DBLP:conf/lpar/DavidKL15}. The verification engine, for
 the first approach we present, performs bounded model checking of control properties,
 based on~\cite{Monteiro16}, but enhanced to include evaluation of quantization effects and 
 safety properties over the state space. In an alternative approach, we use a verification engine based 
 on abstract acceleration~\cite{cattaruzza2015unbounded}, which avoids the explicit unwinding 
-the transition system necessarily for the first approach.
+the transition system necessarily for the first approach. In both approaches, we project
+the maximum effect of the noise over an unbounded time and uses it as a buffer region 
+for the safety specification.
 
 %\textcolor{red}{we have to connect both paragraphs...}
 
@@ -305,8 +306,6 @@ on stabilisation as an invariant set that always converges toward the controllab
 set. In a similar fashion, \cite{liberzon2003hybrid} evaluates the dynamics of the
 quantization error and bounds its trajectory to a known region over a finite
 period of time. This technique works for both linear and non-linear systems.
-This paper uses an approach that projects the maximum effect of the noise over
-an unbounded time and uses it as a buffer region for the safety specification.
 
 %\addtodo{[Move material from \ref{sec:rw} here]}
 
