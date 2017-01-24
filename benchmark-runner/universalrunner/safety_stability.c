@@ -156,10 +156,17 @@ void __CPROVER_EIGEN_charpoly_2(void) { //m00*m11 - m01*m10 - m00*x - m11*x + x^
 }
 #elif NSTATES==3
 void __CPROVER_EIGEN_charpoly_3(void) {
-//                        m_11*m_22*m_33                    + m_11*m_23*m_32                    + m_12*m_21*m_33                    - m_12*m_23*m_31                    - m_13*m_21*m_32                    + m_13*m_22*m_31
-__CPROVER_EIGEN_poly[3] = add(sub(sub(add(add(mult(__m[0][0],mult( __m[1][1], __m[2][2])), mult( __m[0][0] ,mult( __m[1][2] , __m[2][1]))),
-                mult(__m[0][1],mult( __m[1][0], __m[2][2]))), mult(__m[0][1],mult( __m[1][2], __m[2][0]) )), mult(__m[0][2] ,mult(__m[1][0], __m[2][1]))),
-                    mult( __m[0][2], mult(__m[1][1],__m[2][0])));
+//
+
+ // - m00*m11*m22 + m00*m12*m21 + m01*m10*m22 - m01*m12*m20 - m02*m10*m21 + m02*m11*m20
+
+__CPROVER_EIGEN_poly[3] =  add(sub(sub(add(add( sub(zero_type,
+                            mult(__m[0][0], mult( __m[1][1], __m[2][2]))),// +
+                            mult(__m[0][0], mult(__m[1][2], __m[2][1]))),// +
+                            mult(__m[0][1], mult(__m[1][0], __m[2][2]))),// -
+                            mult(__m[0][1], mult(__m[1][2], __m[2][0]))),// -
+                            mult(__m[0][2], mult(__m[1][0], __m[2][1]))),// +
+                            mult(__m[0][2], mult(__m[1][1], __m[2][0])));
 //                        (m_11*m_22            + m_11*m_33             - m_12*m_21             - m_13*m_31             + m_22*m_33             - m_23*m_32) * s
 __CPROVER_EIGEN_poly[2] =   sub(add(sub(sub(add(
                             mult(__m[0][0], __m[1][1]),
@@ -168,7 +175,6 @@ __CPROVER_EIGEN_poly[2] =   sub(add(sub(sub(add(
                             mult(__m[0][2], __m[2][0])),// +
                             mult(__m[1][1], __m[2][2])),// -
                             mult(__m[1][2], __m[2][1]));
-
 
 //                        (-m_11     - m_22      - m_33) * s^2
 __CPROVER_EIGEN_poly[1] = sub(sub(sub(zero_type,__m[0][0]), __m[1][1]), __m[2][2]);
