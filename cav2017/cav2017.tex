@@ -723,58 +723,32 @@ the controller $K$ denotes $P$ and $(x_0, u_k)$ represents $x$.
 %% While the controller precision \todo{update notations} $\langle I_c,F_c\rangle$ is given and fixed, 
 %% we can vary the plant precision $\langle I_p,F_p\rangle$ such that $I_p \geq I_c \wedge F_p \geq F_c$.
 
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{Solution generalization} 
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+%% %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+%% \subsection{Solution generalization} 
+%% %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-\todo{All good - only the word ``generalisation'' won't be understood by a control person (we might have reviewers from this area?). Anticipate the explanation  given below to the introduction section.}
+%% \todo{All good - only the word ``generalisation'' won't be understood by a control person (we might have reviewers from this area?). Anticipate the explanation  given below to the introduction section.}
 
-Given the large solution space to be searched during the inductive
-synthesis, we parametrize the target language, which induces a
-lattice of progressively more expressive languages.  This enables us
-to start by synthesizing a program at the lowest point on
-this lattice, and to increase the parameters of the language until we
-reach a point at which the synthesis succeeds \todo{if at all - completeness?}. Whenever we manage to
-synthesize a solution at some lower point on the lattice, we
-must apply some form of solution generalization to obtain a full
-solution (i.e., a solution in the original search space).
-This parametrization greatly increases the efficiency of our system, since
-low-level languages (over the lattice) are easier to decide safety for 
-(i.e., the validation oracle finds an answer faster). In other words, 
-if a program can be synthesized in a low-complexity language, the whole procedure finishes
-much faster than if synthesis had been attempted in a high-complexity
-language. We investigate two different approaches for integrating solution 
-generalization into CEGIS:
-%
-\begin{itemize}
-\item[1.] The first approach (described in Sec.~\ref{sec:CEGIS-precision-incrementation})
-  uses a multi-staged verification phase and performs solution generalisation based on
-the plant precision, the number of loop unrollings, 
-and the sampling rate. Essentially, it finds a controller for an individual initial state
-and input with a bounded time horizon and generalizes to all reachable states,
-inputs, and time horizons. The safety check is performed in this approach 
-via unfolding of the transition system corresponding to the synthesized controller.
-\todo{mention issue of completeness threshold here?}
-
-%% (with a final verification loop that verifies
-%% the continuous system behaviour against the previously verified
-%% discrete system bi-simulation)
-\item[2.] The second approach (described in Sec~\ref{sec:CEGIS-abstraction-refinement})
-  finds a controller for a continuous initial set of states and set of inputs, 
-  over an abstraction of the continuous dynamics that conforms to
-  witness proofs at specific times. It further generalizes the
-  solution over all times by refining the number of witnesses.  
-  In order to perform the safety check, this approach uses abstract acceleration
-  \cite{cattaruzza2015unbounded} to compute the controller's set of states. 
-  \todo{clarify: what is the ``set of states'' of the controller? }
-\end{itemize}
-
-
-
-
+%% Given the large solution space to be searched during the inductive
+%% synthesis, we parametrize the target language, which induces a
+%% lattice of progressively more expressive languages.  This enables us
+%% to start by synthesizing a program at the lowest point on
+%% this lattice, and to increase the parameters of the language until we
+%% reach a point at which the synthesis succeeds \todo{if at all - completeness?}. Whenever we manage to
+%% synthesize a solution at some lower point on the lattice, we
+%% must apply some form of solution generalization to obtain a full
+%% solution (i.e., a solution in the original search space).
+%% This parametrization greatly increases the efficiency of our system, since
+%% low-level languages (over the lattice) are easier to decide safety for 
+%% (i.e., the validation oracle finds an answer faster). In other words, 
+%% if a program can be synthesized in a low-complexity language, the whole procedure finishes
+%% much faster than if synthesis had been attempted in a high-complexity
+%% language. We investigate two different approaches for integrating solution 
+%% generalization into CEGIS:
+%% %
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{CEGIS with multi-staged verification}
+\subsection{Naive approach: CEGIS with multi-staged verification}
 \label{sec:CEGIS-precision-incrementation}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -1008,40 +982,63 @@ $x_0=[0.5\ -0.5\ -0.5]$ found again by the {\sc safety} verification
 stage.  In the next iteration, we get the candidate $K=[0 \ 0
   \ -0.015625]$, followed by the counterexample $x_0 = [0.5 \ 0.5
   \ 0.5]$. Finally, {\sc synthesize} finds the candidate $K=[0.01171875
-  \ -0.013671875 \ -0.013671875]$, which is validated as a final
+  \ -0.013671875 \ -0.013671875]^T$, which is validated as a final
 solution by all verification stages.
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{CEGIS with abstraction refinement}
+\subsection{Abstraction-based CEGIS}
 \label{sec:CEGIS-abstraction-refinement}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-% The verification of a hybrid continuous/discrete system over an unbounded time, requires the
-% non-deterministic simulation of an infinite set of states, which is undecidable. Our initial approach creates an
-% abstraction of this system by establishing bounds on the error between such a system and a discrete-time/continuous-space model.
-% This model is still however, quite complex, hard to verify, and many of the states involved are inconsequential to
-% the safety specification.
-% The advantage of this model is that it starts with a very simple description regardless of the complexity of the overall dynamics, and only expands to more complex models when a solution cannot be found.
 
-% \addtodo{Move as much as possible from Sec~\ref{sec:cof_verification}
-% to the appendix (e.g., discussion on abstract acceleration). 
-% Merge the rest in Sec~\ref{sec:cof_synth}.}
+%\begin{itemize}
+%\item[1.]
 
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-%\subsubsection{Verification of a controllable system}
-%\label{sec:cof_verification}
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-%Whilst there are other properties, we may include in the verification, 
-% we will solely focus on these for simplicity of the explanation.
-% We assume that we do not want saturation in our system, 
-% hence the control loop has only one mode. 
+  The naive approach described in Sec.~\ref{sec:CEGIS-precision-incrementation}
+  %uses a multi-staged verification phase and performs solution generalisation based on
+%the plant precision, the number of loop unrollings, 
+  %and the sampling rate. Essentially, it
+  synthesises a controller for an individual initial state
+and input with a bounded time horizon and, subsequently, it generalizes it to all reachable states,
+inputs, and time horizons during the verification phase.
+Essentially, this approach relies on the explicit
+simulation over a bounded time horizon of individual states that form
+part of an uncountable space and tries to generalize it for an
+infinite space over an infinite time horizon.
+
+%% The safety check is performed in this approach 
+%% via unfolding of the transition system corresponding to the synthesized controller
+%% up to a completeness threshold. Due to its 
+%\todo{mention issue of completeness threshold here?}
+
+  %% solution over all times by refining the number of witnesses.  
+  %% In order to perform the safety check, this approach uses abstract acceleration
+  %% \cite{cattaruzza2015unbounded} to compute the controller's set of states. 
+  %% \todo{clarify: what is the ``set of states'' of the controller? }
+%\end{itemize}
+
+%% The verification of a hybrid continuous/discrete system over an
+%% unbounded time, requires the non-deterministic simulation of an
+%% infinite set of states, which is undecidable.
 
 
+%% Our naive approach
+%% creates an abstraction of the system by establishing bounds on the
+%% error between such a system and a discrete-time/continuous-space
+%% model.  This model is still however, quite complex, hard to verify,
+%% and many of the states involved are inconsequential to the safety
+%% specification.
 
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-%\subsubsection{Controller synthesis}\label{sec:cof_synth}
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-The CEGIS loop for this approach is illustrated in Fig.~\ref{fig:CEGARIS}.
+Conversely, in this section, 
+we  find a controller for a continuous initial set of states and set of inputs, 
+  over an abstraction of the continuous dynamics that conforms to
+  witness proofs at specific times. %% It further generalizes the
+  Moreover, this approach uses abstraction refinement enabling us to 
+  always start with a very simple description regardless of the complexity of the overall
+dynamics, and only expand to more complex models when a solution
+cannot be found.
+
+  The CEGIS loop for this approach is illustrated in Fig.~\ref{fig:CEGARIS}.
 
 % Now that we have explained the verification process, we may proceed to describe the synthesis procedure, which is illustrated in figure \ref{fig:CEGARIS}.
 % Our model, rather than look at a bisimulation \todo{specific notion that has not been formally define - do not use} in discrete time, explores a much higher abstraction, 
@@ -1258,7 +1255,7 @@ $z^n+\sum_{i=1}^n(a_i-k_i)z^{n-i}=\prod_{i=1}^n (z-\lambda_i) : |\lambda_i|<1 \w
      (verify.north) edge node {$(k,x_0)$} (aux);
 \end{tikzpicture}
 }
-\caption{CEGIS with abstraction refinement.}
+\caption{Abstraction-based CEGIS.}
 \label{fig:CEGARIS} 
 \end{figure}
 
