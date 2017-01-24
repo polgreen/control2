@@ -648,14 +648,23 @@ In the following, we shall disregard these errors when we synthesise a stable co
 and then verify its safety accounting for the finite-precision errors. 
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\section{CEGIS of Safe Controllers for LTI Systems with Solution Generalization} 
+\section{CEGIS of Safe Controllers for LTI Systems} 
 \label{sec:CEGARIS} 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-We outline the general architecture of the program synthesizer used in both approaches \todo{which approaches - pls recall or clarify}. 
-We then give the details of both methods of solution generalization \todo{define ``solution generalisation''} that we compare.  
-The first checks safety by unwinding the transition relation to a completeness threshold, 
-whereas the second employs abstract acceleration.
+In this section, we describe our technique for synthesizing safe
+digital feedback controllers using CEGIS.  For this purpose, we first
+provide the synthesiser's general architecture, followed by describing
+two approaches that use it to automatically generate safe controllers:
+the first one is a baseline approach which relies on a naive explicit
+unwinding of the transition relation, whereas the second uses an
+abstraction to implicitly evaluate all possible progressions of the
+system simultaneously. % on an infinite time horizon.
+
+%% We outline the general architecture of the program synthesizer used in both approaches \todo{which approaches - pls recall or clarify}. 
+%% We then give the details of both methods of solution generalization \todo{define ``solution generalisation''} that we compare.  
+%% The first checks safety by unwinding the transition relation to a completeness threshold, 
+%% whereas the second employs abstract acceleration.
  
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{General architecture of the program synthesizer}
@@ -711,8 +720,8 @@ and account for digitalisation and quantisation errors introduced by the control
 
 When mapping back to the notation used for describing the general architecture of the program synthesizer, 
 the controller $K$ denotes $P$ and $(x_0, u_k)$ represents $x$. 
-While the controller precision \todo{are these notations updated?} $\langle I_c,F_c\rangle$ is given and fixed, 
-we can vary the plant precision $\langle I_p,F_p\rangle$ such that $I_p \geq I_c \wedge F_p \geq F_c$.
+%% While the controller precision \todo{update notations} $\langle I_c,F_c\rangle$ is given and fixed, 
+%% we can vary the plant precision $\langle I_p,F_p\rangle$ such that $I_p \geq I_c \wedge F_p \geq F_c$.
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{Solution generalization} 
