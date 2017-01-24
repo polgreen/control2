@@ -510,7 +510,7 @@ Appendix~\ref{sec:appendix-stability}.
 \label{ssec:safety}
 %-------------------------------
 
-In this study, we are not bound to the synthesis of digital stabilizing controllers -- 
+In this study, we are not limited to the synthesis of digital stabilizing controllers -- 
 a well known task in the literature on digital control system -- 
 but target safety requirements with an overall approach that is sound and automated. 
 More specifically, 
@@ -647,16 +647,18 @@ A further error is caused by the representation of the plant dynamics.
 We address these errors by use of a final verification check that uses interval arithmetic~\cite{moore1966interval}.
 
 We note that the effect on stability due to the fixed-word-length error is that the system may, instead of converging to the desired equilibrium point, converge to a point that is bounded away from the desired equilibrium point (see Appendix for details). 
-In this paper, we synthesise a stable controller only as a precursor to synthesising a \emph{safe} controllers and it is therefore sufficient that the system converges to a point within the safe states. Hence, it is sufficient to disregard the errors when we synthesize a stable controller, and then verify safety. 
+In this paper, we synthesize a stable controller only as a precursor to synthesizing a \emph{safe} controllers and it is therefore sufficient that the system converges to a point within the safe states. Hence, it is sufficient to disregard the errors when we synthesize a stable controller, and then verify safety. 
 
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\section{CEGIS of Safe Controllers for LTI Systems with Solution Generalisation} 
+\section{CEGIS of Safe Controllers for LTI Systems with Solution Generalization} 
 \label{sec:CEGARIS} 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-%Abstractly-Refined
-In this section we outline the general architecture of the program synthesizer used in both approaches%\todo{which approaches?}. 
-We then give the details of the two methods of solution generalisation that we compare; the first checking safety by unwinding the transition relation to a completeness threshold; and the second employing abstract acceleration.
+
+Here, we outline the general architecture of the program synthesizer used in both approaches. 
+We then give the details of both methods of solution generalization that we compare; 
+the first checking safety by unwinding the transition relation to a completeness threshold; 
+and the second employing abstract acceleration.
  
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{General architecture of the program synthesizer}
@@ -669,7 +671,7 @@ where $P$ ranges over functions, $x$
  ranges over ground terms and
 $\sigma$ is a quantifier-free formula.  We interpret the ground terms over
 some finite domain $\mathcal{D}$.
-
+%
 The design of our synthesizer consists of two phases, an inductive
 synthesis phase and a validation phase, which interact via a finite
 set of test vectors {\sc inputs} that is updated incrementally.  Given
@@ -687,11 +689,12 @@ $x\in\mathcal{D}$).  If this is the case, then the algorithm
 terminates.  Otherwise, additional information is provided to the
 inductive synthesis phase in the form of a new counterexample that is
 added to the {\sc inputs} set and the loop iterates again.
-
-It is worth noting that each iteration of the loop adds a new input to
-the finite set $\text{\sc inputs}$ that is used for synthesis.  Given
-that the full set of inputs $\mathcal{D}$ is finite, this means that
-the refinement loop can only iterate a finite number of times.
+More details about the general architecture of the synthesiser can
+be found in~\cite{DBLP:conf/lpar/DavidKL15}.
+%% It is worth noting that each iteration of the loop adds a new input to
+%% the finite set $\text{\sc inputs}$ that is used for synthesis.  Given
+%% that the full set of inputs $\mathcal{D}$ is finite, this means that
+%% the refinement loop can only iterate a finite number of times.
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{Synthesis problem: statement (recap) and connection to program synthesis}
