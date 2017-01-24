@@ -546,40 +546,42 @@ this means that the control input saturates in view of physical constraints.
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
-The 
-%systems and 
-models we consider have two sources of error due to numeric representation. 
+The models we consider have two sources of error due to numeric representation. 
 The first is the numeric error introduced by the fixed-point numbers employed to model the plant, i.e. to represent the plant dynamics $A_d$, $B_d$ and its states. 
 The second is the quantization error introduced by the digital controller, 
 which 
 performs operations in the domain of fixed-point numbers. 
 In this section we formally outline the errors introduced by fixed-point representation of numbers. 
-In further sections we will differentiate between these two errors, 
-by referring to them as the \emph{plant error} and the \emph{digital controller error} respectively. 
 
-Let $\mathbb{R} \langle I,F \rangle$ \todo{notice this notation differs from the one used above} be a fixed point domain with $I$ bits representing the integer part 
-and $F$ bits representing the decimal part \todo{why R, comment on that.}. The smallest number that can be represented in this domain is $c_m=2^{-F}$.
+Let $\mathcal{F}\langle I,F \rangle(x)$ denote a real number $x$ represented in a fixed point domain, with $I$ bits representing the integer part and $F$ bits representing the decimal part. The smallest number that can be represented in this domain is $c_m=2^{-F}$.
+
+%Let $\mathbb{R} \langle I,F \rangle$ \todo{notice this notation differs from the one used above} be a fixed point domain with $I$ bits representing the integer part 
+%and $F$ bits representing the decimal part \todo{why R, comment on that.}. The smallest number that can be represented in this domain is $c_m=2^{-F}$.
 The following approximation errors will arise:
 \begin{enumerate}
 \item {\bf Truncation:}
-Let $\mathcal{F}\langle I,F \rangle(\cdot) : \mathbb{R} \rightarrow \mathbb{R}\langle I,F \rangle, \tilde x=\mathcal{F}\langle I,F \rangle(x) = x-\delta_T : \delta_T=x\ \%_{c_m}\ \tilde x$, where $\%_{c_m}$ is the modulus operation performed on the last bit.
+Let $x$ be a real number, and $\mathcal{F}\langle I,F \rangle(x)$ be the same number represented in a fixed point domain as above. $\mathcal{F}\langle I,F \rangle(x) = x-\delta_T : \delta_T=x\ \%_{c_m}\ \tilde x$, where $\%_{c_m}$ is the modulus operation performed on the last bit.
+%Let $\mathcal{F}\langle I,F \rangle(\cdot) : \mathbb{R} \rightarrow \mathbb{R}\langle I,F \rangle, \tilde x=\mathcal{F}\langle I,F \rangle(x) = x-\delta_T : \delta_T=x\ \%_{c_m}\ \tilde x$, where $\%_{c_m}$ is the modulus operation performed on the last bit.
 So $\delta_T$ is the truncation error and it will propagate across operations.
 \item {\bf Rounding:}
-The following errors appear in simple operations:
+The following errors appear in simple operations. Let $c_1, c_2$ and $c_3$ be real numbers, and $\delta_{T1}$ and $\delta_{T2}$ be the truncation errors caused by representing $c_1$ and $c_2$ in the fixed-point domain as above.
 \begin{enumerate}
 \item Addition/Subtraction: these operations only propagate errors coming from truncation of the operands. 
-\todo{the following maths is loose. fix as follows: define terms with their domain. define operation. apply operator $\mathcal{F}$ above. derive bound. }
-$c_1\pm c_2= c_3 + \delta_3 :|\delta_3| \leq |\delta_{T1}| + |\delta_{T2}|$ 
-\item Multiplication: $c_1 * c_2= c_3 + \delta_3 :|\delta_3| \leq |\delta_{T1}*c_2| + |\delta_{T2}*c_1| + c_m$  \todo{same as above.}
-\item Division will not be applied in these implementations. \todo{why not? comment further.}
+$\mathcal{F}\langle I,F \rangle(c_1) \pm \mathcal{F}\langle I,F \rangle(c_2) = c_3 + \delta_3 :|\delta_3| \leq |\delta_{T1}| + |\delta_{T2}|$.
+
+%$c_1\pm c_2= c_3 + \delta_3 :|\delta_3| \leq |\delta_{T1}| + |\delta_{T2}|$ 
+\item Multiplication: $\mathcal{F}\langle I,F \rangle(c_1) * \mathcal{F}\langle I,F \rangle(c_2) =  c_3 + \delta_3 :|\delta_3| \leq |\delta_{T1}*\mathcal{F}\langle I,F \rangle(c_2)| + |\delta_{T2}*\mathcal{F}\langle I,F \rangle(c_1)| + c_m$, where $c_m=2^{-F}$ as above.
+\item Division is only needed for positive numbers in this implementation (where it is needed for checking stability). 
 \end{enumerate}
 
 \item {\bf Overflow:}
   %Another source of error introduced by Finite Word Length representations is that of overflow.
-  The finite word length set a
-maximum representable number in the domain \todo{what is next? a domain? define formally, no back-of-the-envelope mathsy stuff.} ($\pm (2^{I-1}+1-2^{-F})$), which means that any number outside this range
-cannot be represented by the domain. Our tool currently assumes no saturation
-function and verifies that no state overflows.
+The maximum size of a real number $x$ that can be represented in a fixed point domain as $\mathcal{F}\langle I,F \rangle(x)$ is $\pm (2^{I-1}+1-2^{-F})$. Numbers outside this range cannot be represented by the domain. We assume no saturation (where any overflow is represented as the largest or smallest possible number), and check that overflow does not occur.
+
+%The finite word length set a
+%maximum representable number in the domain \todo{what is next? a domain? define formally, no back-of-the-envelope mathsy stuff.} ($\pm (2^{I-1}+1-2^{-F})$), which means that any number outside this range
+%cannot be represented by the domain. Our tool currently assumes no saturation
+%function and verifies that no state overflows.
 \end{enumerate}
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -587,34 +589,39 @@ function and verifies that no state overflows.
 %\label{sec:cof_fwl}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+We will use $\mathcal{F}\langle I_c,F_c \rangle(x)$ to denote a real number $x$ represented in the fixed-point precision level of the controller, and $\mathcal{F}\langle I_p,F_p \rangle(x)$ to denote a real number $x$ represented in the fixed-point precision level of the plant model. Thus any mathematical operations occurring in the digital controller will occur in the domain $\mathcal{F}\langle I_c,F_c \rangle$, and all other calculations will be carried out in the domain $\mathcal{F}\langle I_p,F_p \rangle$.
 
-\todo{yes, please reformat the discussion below so that it fits the discussion above. }
+%Thus far we have presented a verification procedure for a digitalised plant in a continuous space (\emph{i.e.} the
+%range of the quantizers is still $\mathbb{R}$. The next step we must realise is that the controller 
+%exists in a digital program, hence its domain is $\mathbb{R}\langle I,F\rangle$. We have $\mat{A},\mat{B},\vec{x} \in \mathbb{R}^*$, $\mat{K}_d,\vec{u},\hat{\vec{x}}=\mathcal{F}\langle I,F \rangle(\vec{x}) \in \mathbb{R}\langle I,F\rangle^*$
+%Where $*$ represents the appropriate dimension for each matrix/vector.
+%Unfortunately this means that although the closed loop dynamics are in the reals, they suffer from
+%the fixed word restrictions in their composing elements.
+%Apart from the quantization errors $q_1,q_2$ there are rounding errors in the calculation of $u_k$. 
+%These will introduce a new source of quantization noise which we may denote $\vec{\nu}_3 \in [-q_3\ \ q_3]$.
+%The error in $\vec{u}$ corresponds of the multiplication of $\mat{K}_d\hat{\vec{x}}$, hence $q_3=\overline{\delta}_u=(|\mat{K}|_1+1)c_m$
 
-Thus far we have presented a verification procedure for a digitalised plant in a continuous space (\emph{i.e.} the
-range of the quantizers is still $\mathbb{R}$. The next step we must realise is that the controller 
-exists in a digital program, hence its domain is $\mathbb{R}\langle I,F\rangle$. We have $\mat{A},\mat{B},\vec{x} \in \mathbb{R}^*$, $\mat{K}_d,\vec{u},\hat{\vec{x}}=\mathcal{F}\langle I,F \rangle(\vec{x}) \in \mathbb{R}\langle I,F\rangle^*$
-Where $*$ represents the appropriate dimension for each matrix/vector.
-Unfortunately this means that although the closed loop dynamics are in the reals, they suffer from
-the fixed word restrictions in their composing elements.
-Apart from the quantization errors $q_1,q_2$ there are rounding errors in the calculation of $u_k$. 
-These will introduce a new source of quantization noise which we may denote $\vec{\nu}_3 \in [-q_3\ \ q_3]$.
-The error in $\vec{u}$ corresponds of the multiplication of $\mat{K}_d\hat{\vec{x}}$, hence $q_3=\overline{\delta}_u=(|\mat{K}|_1+1)c_m$
-
-\bigskip
 
 \subsubsection{Effect on safety specification and stability}
-First consider the effect of the quantization error on safety; the state values must be computed considering the error introduced by the digital controller caused by performing the vector multiplication $Kx$ at low digital precision.
-%, and the digital reference signal. 
-%In this paper, we consider systems with a reference signal equal to zero. 
-%the FWL effects in all operations related to the control action~\eqref{eq:controlaction} 
-%and disregarding it in the state equation~\eqref{eq:plant}.
-Thus, the states are computed using the following equations. We use $\mathcal{F}_{\langle I_c,F_c \rangle}$ \todo{These notations are different from those above.}
-to to denote numbers represented with the precision of the digital controller, where $I_c$ is the number of bits used to represent the integer value in the controller and $F_c$ is the number of bits used to represent the fractional part of the numbers manipulated within the controller. 
-%
+Thus we can consider the effect of these errors on our safety and stability verification.
+
+First consider the effect of the quantization errors on safety; the state values must be computed considering the error introduced by the digital controller caused by performing the vector multiplication $Kx$ at low digital precision.
+
+The states are computed using the following equations. 
 \begin{align*}
 u_{k}&=-(\mathcal{F}_{\langle I_c,F_c \rangle}(K)\cdot\mathcal{F}_{\langle I_c,F_c \rangle}(x_{k})).  
-%\\ x_{k+1}&=A_d x_{k} + B_du_{k}
+% x_{k+1}&=A_d x_{k} + B_du_{k}
 \end{align*}
+
+This will induce two types of the error detailed above, first the truncation errors due to representing $x_k$ as ${\langle I_c,F_c \rangle}(x_{k})$, and second the rounding error introduce by multiplying $x_k$ and $K$. We represent these errors as non-deterministic noise.
+
+A further error is caused by the representation of the plant dynamics.
+\begin{align*}
+\mathcal{F}_{\langle I_p,F_p \rangle}(u_{k})&=-(\mathcal{F}_{\langle I_c,F_c \rangle}(K)\cdot\mathcal{F}_{\langle I_c,F_c \rangle}(x_{k})).  \\
+\mathcal{F}_{\langle I_p,F_p \rangle}(u_{k})(x_{k+1}) &=\mathcal{F}_{\langle I_p,F_p \rangle}(u_{k})(A_d) \mathcal{F}_{\langle I_p,F_p \rangle}(u_{k})(x_{k}) + \mathcal{F}_{\langle I_p,F_p \rangle}(u_{k})(B_d)\mathcal{F}_{\langle I_p,F_p \rangle}(u_{k})(u_{k})
+\end{align*}
+
+We address these errors by use of a final verification check that uses interval arithmetic~\cite{moore1966interval}.
 
 
 We note that the effect on stability due to the fixed-word-length error is that the system may, instead of converging to the desired equilibrium point, converge to a point that is bounded away from the desired equilibrium point (see Appendix for details). 
