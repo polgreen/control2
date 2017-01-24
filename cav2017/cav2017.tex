@@ -275,6 +275,8 @@ Pessoa can synthesize embedded controller software for a range of properties.
 However, Pessoa does not have native inclusion of the ADC/DAC quantization error needed for
 synthesizing fixed-point digital controllers.
 
+\todo{Have we covered all the literature by Feron et al?}  
+
 \paragraph{Discretization Effects}
 
 The classical approach to control synthesis has often disregarded quantization, 
@@ -899,10 +901,8 @@ Thus any point $x \in X_0$ can be expressed by convexity as $x = \sum_{i=1}^{2^n
 where $\sum_{i=1}^{2^n} \alpha_i =1$. \\
 So then if $x_0=x$, then 
 \begin{align*}
-x_k   &= (A_d - B_d K)^k x \\
-      &= (A_d - B_d K)^k \sum_{i=1}^{2^n} \alpha_i v_i \\
-      &= \sum_{i=1}^{2^n} \alpha_i (A_d - B_d K)^k v_i \\
-      &= \sum_{i=1}^{2^n} \alpha_i x_k^i
+x_k   &= (A_d - B_d K)^k x = (A_d - B_d K)^k \sum_{i=1}^{2^n} \alpha_i v_i \\
+      &= \sum_{i=1}^{2^n} \alpha_i (A_d - B_d K)^k v_i = \sum_{i=1}^{2^n} \alpha_i x_k^i, 
  \end{align*}     
 where $x_k^i$ denotes the trajectories obtained from the single vertexes $v_i$. 
 \end{proof}
@@ -928,7 +928,7 @@ distance from the reference (in this case the origin) decreases over time.
 \centering
 \includegraphics[width=0.7\textwidth]{ct.eps}
 \vspace{0.1cm}
-\caption{Completeness threshold}
+\caption{Completeness threshold for multi-staged verification}
 \end{figure*}
 
 \begin{proof}
