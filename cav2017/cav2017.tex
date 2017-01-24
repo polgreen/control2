@@ -181,7 +181,7 @@ potential safety by unfolding the dynamics of the system and checking for
 a completeness threshold. In the second approach, we substitute the second step by employing abstract acceleration
 to unfold the dynamics forward, instead of symbolically unwinding the 
 transition relation~\cite{cattaruzza2015unbounded}. 
-\todo{We need to mention the CEGIS architecture here. We need to emphasise the derivation of errors for soundness. Can we claim completeness already?}
+\todo{We need to emphasise the derivation of errors for soundness. Can we claim completeness already?}
 We provide experimental results 
 showing that both approaches are able to efficiently synthesise stable and safe controllers 
 for a set of intricate physical plant models taken from the digital 
@@ -189,7 +189,8 @@ control literature: the median runtime for our benchmark
 set is \textcolor{red}{$XXX$}s, i.e., most controllers can be synthesized in less
 than \textcolor{red}{$XXX$} seconds.
 
-\textit{Contributions}. 
+\subsection*{Contributions} 
+
 \begin{enumerate}
 \item In this paper we extend the problem of digital control synthesis from a transfer function representation into a state space representation.
 This entails the verification of safety properties in addition to the already existing stability conditions which is a much harder problem.
@@ -487,6 +488,7 @@ x_{k+1} = ( A_d - B_d K ) x_k + B_d r_k.
 The gain matrix $K$ can be set so that the closed-loop digitalized dynamics are shaped as desired, 
 for instance according to a specific stability goal or around a specific dynamical behaviour \cite{astrom1997computer}. 
 As argued later in this work, we will target more complex objectives, such as quantitative safety requirements that are not typical in the digital control literature. 
+Further, we will encompass the digital nature of the controller, which manipulates quantities with finite precision. 
 
 %-------------------------------
 \subsection{Stability of closed-loop systems}
@@ -508,11 +510,10 @@ A discrete-time system as \eqref{eq:closedloopss} is asymptotically stable
 are inside the unity circle in the complex plane, i.e., \textit{iff} their absolute 
 values are less than one~\cite{astrom1997computer}. 
 In this paper, we express the stability specification $\phi_{stability}$ 
-in terms of a check known as Jury's criterion~\cite{fadali}. 
-This condition boils down to an easy algebraic formula to select the entries 
-of matrix $K$, so that the closed-loop dynamics are shaped as desired. 
-A detailed description of this specification can be found in the 
-Appendix~\ref{sec:appendix-stability}. 
+in terms of a check known as Jury's criterion~\cite{fadali}:  
+this is an easy algebraic formula to select the entries of matrix $K$, 
+so that the closed-loop dynamics are shaped as desired. 
+A detailed description of this specification can be found in Appendix~\ref{sec:appendix-stability}. 
 
 
 %-------------------------------
@@ -544,14 +545,14 @@ This means that the states will always be within the $n$-dimensional hyper-box.
 
 Furthermore, 
 it is practically relevant to consider constraints on the input signal $u_{k}$
-and initial states $x_0$, 
+and bounds on the initial states $x_0$, 
 which we assume have given bounds. %%  $\overline{u}$, $\underline{u}$
 %% and $\overline{x_0}$, $\underline{x_0}$, respectively.
 We refer to these constraints as $\phi_{init}$:
 $$\phi_{init} = {\forall k.\underline{u} \leq u_{k} \leq \overline{u}} 
 \wedge \bigwedge_{i=1}^{n} \underline{x_{i,0}} \leq x_{i,0} \leq \overline{x_{i,0}}.$$  
-
-This means that the control input saturates in view of physical constraints. 
+In the first case, 
+this means that the control input saturates in view of physical constraints. 
 
 % \addtodo{[The remainder of the section needs to be updated. ]}
 % The output and measurable of the plant is being sampled by an ADC, and since the full state of the
