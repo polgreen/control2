@@ -883,14 +883,14 @@ via unfolding of the transition system corresponding to the synthesized controll
    \&
    complexnode/.pic={ 
      \node[rectangle,draw,dotted,
-	minimum width=8cm,
+	minimum width=6cm,
 	minimum height=1cm,
         pattern=north west lines, pattern color=gray!20,
-	label={\sc Verify},] (verif) {};
-     \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif1) at ([xshift=-2.9cm]verif.center) {{\sc 2.Safety}};
-     \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif2) at ([xshift=-0.8cm]verif.center) {{\sc 3.Precision}};
-     \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif3) at ([xshift=1.2cm]verif.center) {{\sc 4.Complete}};
-     \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif4) at ([xshift=3.1cm]verif.center) {{\sc 5.Sampling}};
+	label={\sc ~~~~~~~~~~~~Verify},] (verif) {};
+     \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif1) at ([xshift=-2cm]verif.center) {{\sc 2.Safety}};
+     \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif2) at ([xshift=0cm]verif.center) {{\sc 3.Precision}};
+     \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif3) at ([xshift=2cm]verif.center) {{\sc 4.Complete}};
+     %\node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif4) at ([xshift=3.1cm]verif.center) {{\sc 5.Sampling}};
    } 
    \& \node[ellipse, fill=gray!20] (done) {{\sc Done}};\\
    \& \\
@@ -898,36 +898,36 @@ via unfolding of the transition system corresponding to the synthesized controll
    \&
    complexnode/.pic={ 
      \coordinate (aux);
-   \node (bmc) at ([xshift=-2.9cm]aux.center) {\sf BMC-based \\Verifier};
-   \node (fp)  at ([xshift=-.8cm]aux.center) {\sf Fixed-point \\ Arithmetic\\Verifier};
-   \node (sv)  at ([xshift=1.2cm]aux.center) {\sf Completeness\\Verifier};
-   \node (cv)  at ([xshift=3.1cm]aux.center) {\sf Sampling\\Verifier};
+   \node (bmc) at ([xshift=-2cm]aux.center) {\sf BMC-based \\Verifier};
+   \node (fp)  at ([xshift=0cm]aux.center) {\sf Fixed-point \\ Arithmetic\\Verifier};
+   \node (sv)  at ([xshift=2cm]aux.center) {\sf Completeness\\Verifier};
+   %\node (cv)  at ([xshift=3.1cm]aux.center) {\sf Sampling\\Verifier};
    }   
     \\
   };
 
    \path
-    ([yshift=2em]synth.east) edge node[xshift=-0.5em,align=center] {$P$} ([yshift=2em]verif1.west)
+    ([yshift=2em]synth.east) edge node[xshift=-0.5em,align=center] {$K$} ([yshift=2em]verif1.west)
     ([yshift=-2em]verif1.west) edge node {C-ex} ([yshift=-2em]synth.east)
     ([xshift=-5em]fp.north) edge node[align=center]  {T/F} ([xshift=-5em]verif2.south)
     ([xshift=-5em]sv.north) edge node[align=center]  {T/F} ([xshift=-5em]verif3.south)
-    ([xshift=-5em]cv.north) edge node[align=center]  {T/F} ([xshift=-5em]verif4.south)
-    ([xshift=5em]verif1.south) edge node[align=center] {$P$} ([xshift=5em]bmc.north)
-    ([xshift=5em]verif2.south) edge node[align=center] {$P$} ([xshift=5em]fp.north)
-    ([xshift=5em]verif3.south) edge node[align=center] {$P$} ([xshift=5em]sv.north)
-    ([xshift=5em]verif4.south) edge node[align=center] {$P$} ([xshift=5em]cv.north)
+    %([xshift=-5em]cv.north) edge node[align=center]  {T/F} ([xshift=-5em]verif4.south)
+    ([xshift=5em]verif1.south) edge node[align=center] {$K$} ([xshift=5em]bmc.north)
+    ([xshift=5em]verif2.south) edge node[align=center] {$K$} ([xshift=5em]fp.north)
+    ([xshift=5em]verif3.south) edge node[align=center] {$K$} ([xshift=5em]sv.north)
+    %([xshift=5em]verif4.south) edge node[align=center] {$K$} ([xshift=5em]cv.north)
     ([xshift=-5em]bmc.north) edge node[align=center]  {UNSAT/\\model} ([xshift=-5em]verif1.south)
     (verif) edge node {} (done)
     ([xshift=5em]synth.south) edge node[align=center] {Inputs} ([xshift=5em]gp.north)
-    ([xshift=-5em]gp.north) edge node[align=center] {UNSAT/\\$P$} ([xshift=-5em]synth.south)
-    (aux1) edge (synth.north);
+    ([xshift=-5em]gp.north) edge node[align=center] {UNSAT/\\$K$} ([xshift=-5em]synth.south)
+    (aux3) edge (synth.north);
    \path[-]
-   (verif2.north) edge node[align=center] {} ([xshift=-2.7cm]aux6)
-   ([xshift=-2.7cm]aux6) edge node[align=center] {Increase Precision} (aux5)
-   (verif3.north) edge node[align=center] {} ([xshift=4cm]aux4)
-   ([xshift=4cm]aux4) edge node[align=center] {Increase Completeness Threshold} (aux3)
-   (verif4.north) edge node[align=center] {} ([xshift=10.5cm]aux2)
-   ([xshift=10.5cm]aux2) edge node[align=center] {Increase Sampling Rate} (aux1);
+   (verif2.north) edge node[align=center] {} ([xshift=0cm]aux6)
+   ([xshift=0cm]aux6) edge node[align=center] {Increase Precision} (aux5)
+   (verif3.north) edge node[align=center] {} ([xshift=6.7cm]aux4)
+   ([xshift=6.7cm]aux4) edge node[align=center] {Increase Completeness Threshold} (aux3);
+   %(verif4.north) edge node[align=center] {} ([xshift=10.5cm]aux2)
+   %([xshift=10.5cm]aux2) edge node[align=center] {Increase Sampling Rate} (aux1);
 
  \end{tikzpicture}
 }}
