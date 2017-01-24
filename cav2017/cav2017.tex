@@ -445,7 +445,8 @@ Later, we will deal with the issue of variable quantization, as introduced by th
   \path (Kd.north) edge (circle.south);
  \end{tikzpicture}
 }
- \caption{Closed-loop digital control system \label{fig:digitalsystem}}
+ \caption{Closed-loop digital control system. 
+ \label{fig:digitalsystem}}
 \end{figure*}
 %-------------------------------
 \subsection{Controller synthesis via state feedback}
@@ -606,7 +607,7 @@ This will induce two types of the error detailed above, first the truncation err
 
 A further error is caused by the representation of the plant dynamics.
 \begin{align*}
-x_{k+1} &=\mathcal{F}_{\langle I_p,F_p \rangle}(A_d) \mathcal{F}_{\langle I_p,F_p \rangle}(x_{k}) + \mathcal{F}_{\langle I_p,F_p \rangle}(B_d)\mathcal{F}_{\langle I_p,F_p \rangle}(u_{k})
+x_{k+1} &=\mathcal{F}_{\langle I_p,F_p \rangle}(A_d) \mathcal{F}_{\langle I_p,F_p \rangle}(x_{k}) + \mathcal{F}_{\langle I_p,F_p \rangle}(B_d)\mathcal{F}_{\langle I_p,F_p \rangle}(u_{k}).
 \end{align*}
 
 We address these errors by use of a final verification check that uses interval arithmetic~\cite{moore1966interval}.
@@ -804,7 +805,7 @@ via unfolding of the transition system corresponding to the synthesized controll
 
  \end{tikzpicture}
 }}
-\caption{CEGIS with multi-staged verification}
+\caption{CEGIS with multi-staged verification.}
 \label{fig:CEGIS-precision-increment}
 \end{figure}
 
@@ -919,7 +920,7 @@ distance from the reference (in this case the origin) decreases over time.
 \centering
 \includegraphics[width=0.7\textwidth]{ct.eps}
 \vspace{0.1cm}
-\caption{Completeness threshold for multi-staged verification}
+\caption{Completeness threshold for multi-staged verification.}
 \end{figure*}
 
 \begin{proof}
@@ -1230,7 +1231,7 @@ $z^n+\sum_{i=1}^n(a_i-k_i)z^{n-i}=\prod_{i=1}^n (z-\lambda_i) : |\lambda_i|<1 \w
      (verify.north) edge node {$(k,x_0)$} (aux);
 \end{tikzpicture}
 }
-\caption{CEGIS with abstraction refinement}
+\caption{CEGIS with abstraction refinement.}
 \label{fig:CEGARIS} 
 \end{figure}
 
