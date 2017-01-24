@@ -471,6 +471,7 @@ As argued later, in this work, we will target more complex objectives, such as q
 \label{ssec:stability}
 %-------------------------------
 
+
 Asymptotic stability boils down to Lyapunov stability 
 and convergence to an equilibrium point~\cite{Astrom08}. 
 Lyapunov stability requires that model trajectories remain in 
@@ -536,7 +537,7 @@ This means that the control input saturates in view of physical constraints.
 
 
 The models we consider have two sources of error due to numeric representation. 
-The first is the numeric error introduced by the fixed-point numbers employed to model the plant, i.e. to represent the plant dynamics $A_d$, $B_d$ and its states. 
+The first is the numeric error introduced by the fixed-point numbers employed to model the plant, i.e., to represent the plant dynamics $A_d$, $B_d$ and its states. 
 The second is the quantization error introduced by the digital controller, 
 which 
 performs operations in the domain of fixed-point numbers. 
@@ -568,10 +569,6 @@ The maximum size of a real number $x$ that can be represented in a fixed point d
 
 \end{enumerate}
 
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-%\subsection{Fixed word length effects on matrix multiplications}
-%\label{sec:cof_fwl}
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 We will use $\mathcal{F}\langle I_c,F_c \rangle(x)$ to denote a real number $x$ represented in the fixed-point precision level of the controller, and $\mathcal{F}\langle I_p,F_p \rangle(x)$ to denote a real number $x$ represented in the fixed-point precision level of the plant model. Thus any mathematical operations occurring in the digital controller will occur in the domain $\mathcal{F}\langle I_c,F_c \rangle$, and all other calculations will be carried out in the domain $\mathcal{F}\langle I_p,F_p \rangle$.
 
@@ -596,7 +593,6 @@ A further error is caused by the representation of the plant dynamics.
 \end{align*}
 
 We address these errors by use of a final verification check that uses interval arithmetic~\cite{moore1966interval}.
-
 
 We note that the effect on stability due to the fixed-word-length error is that the system may, instead of converging to the desired equilibrium point, converge to a point that is bounded away from the desired equilibrium point (see Appendix for details). 
 In this paper, we synthesise a stable controller only as a precursor to synthesising a \emph{safe} controllers and it is therefore sufficient that the system converges to a point within the safe states. Hence, it is sufficient to disregard the errors when we synthesize a stable controller, and then verify safety. 
@@ -676,12 +672,12 @@ this lattice and increase the parameters of the language until we
 reach a point at which the synthesis succeeds. Whenever we manage to
 synthesize a candidate solution at some lower point on the lattice, we
 must apply some form of solution generalisation to obtain a full
-solution (i.e. a solution in the original search space).
+solution (i.e., a solution in the original search space).
 
 As well as giving us an automatic search procedure, this
 parametrisation greatly increases the efficiency of our system since
 languages low down the lattice are very easy to decide safety for
-(i.e. the validation oracle finds an answer fast). If a program can be
+(i.e., the validation oracle finds an answer fast). If a program can be
 synthesized in a low-complexity language, the whole procedure finishes
 much faster than if synthesis had been attempted in a high-complexity
 language.
@@ -712,18 +708,6 @@ via unfolding of the transition system corresponding to the synthesized controll
   %\todo{clarify use of abstract acceleration. add references.}
 \end{itemize}
 
-
-
-%% The advantage of the second approcah are that whereas in the first case we use concrete traces from non-deterministic simulations
-%% and generalize over continuous sets into an unbounded time, 
-%% the abstract acceleration synthesis analyses the system over a generalized state-space (ie it looks at all the states simultaneously), requiring the CEGIS loop to generalize only over the time horizon of the system.
-
-%% \addtodo{Can we come up with some sort of figure that makes it easier to visualise
-%% the generalisation step in each approach?}
-
-% In Sec.~\ref{sec:CEGIS-abstraction-refinement} and 
-% Sec.~\ref{sec:CEGIS-precision-incrementation}, we explain how we 
-% specialise the general CEGIS approach in order to perform solution generalisation.
 
 
 
@@ -816,7 +800,7 @@ for this controller, and verify the controller correctness to $\overline{k}$ tim
 Essentially, $\overline{k}$ represents the number of iterations 
 required to sufficiently unwind the closed-loop state-space system 
 such that the boundaries are not violated for any $k{>}\overline{k}$
-(i.e. it is sufficient to unwind the closed-loop state-space system up to  
+(i.e., it is sufficient to unwind the closed-loop state-space system up to  
 $\overline{k}$ in order to ensure that $\phi_{safety}$ holds). 
 
 \medskip
@@ -826,7 +810,7 @@ Next, we describe the different phases in Fig.~\ref{fig:CEGIS-precision-incremen
 
 %\todo{please eventually itemize next}
 \begin{enumerate}
-\item The inductive synthesis phase (i.e. {\sc synthesize}) uses BMC to
+\item The inductive synthesis phase (i.e., {\sc synthesize}) uses BMC to
 compute a candidate solution $K$
 that satisfies both the stability criteria detailed in 
 Sec.~\ref{ssec:stability} and the safety specification in Sec.~\ref{ssec:safety}.
@@ -834,8 +818,7 @@ To synthesize a controller that satisfies the stability criteria, we require tha
 a computed characteristic polynomial satisifies Jury's criteria. The details of this
 calculation can be found in the Appendix.
 
-%% The stability criteria are satisfied if the characteristic polynomial of $A_d - B_d * K_d$ meets Jury's criteria. This is 
-%% independent of the initial states. 
+
 Regarding the latter, we synthesize a safe controller by unwinding the transition system
 $k$ steps and picking a controller $K$ and an initial state such that the states at each step do
 not violate the safety criteria. This is sound if the current $k$ is below the
@@ -877,7 +860,6 @@ checks that all these assumptions are sound are performed by subsequent
 \item The first {\sc verify} stage, {\sc safety}, checks that the candidate
 solution $K$ is safe for all possible initial states, i.e., does not reach an unsafe
 state within $k$ steps where again we assume $k$ to be under the completeness threshold. 
-%The safety criteria here must be valid for all possible allowed initial states, and so we
 After unwinding the transition system corresponding to the previously synthesized controller
 $k$ steps, we check that the safety specification holds for any initial state. 
 
@@ -915,9 +897,6 @@ and check that $k{\leq}\overline{k}$.
 
 A stable control system is known to have converging dynamics, i.e., the
 distance from the reference (in this case the origin) decreases over time. 
-
-%\todo[inline] {please will Alessandro write the proof for the completeness threshold here - EP}
-%\missingfigure{picture for completeness threshold}
 
 \begin{figure*}[t]
 \centering
@@ -1120,7 +1099,7 @@ x=&A_t^kx_0
 \todo{explain $B_n$ and $A_t$}
 As this still requires us to verify the system for every $k$ up to infinity, 
 we use abstract acceleration again to obtain
-the reach-tube, i.e. the set of all reachable states at all times given an initial set $\phi_{init}$:
+the reach-tube, i.e., the set of all reachable states at all times given an initial set $\phi_{init}$:
 \begin{align}
 \label{eq:aa_observer_LTI_cf}
 \hat{X}^\#
