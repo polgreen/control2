@@ -1158,7 +1158,7 @@ The CEGIS loop for this approach is illustrated in \ref{fig:CEGARIS}.
 % Let us recall the formulas used for single-input and single-output (SISO) systems 
   % in sections \ref{sec:reachable} and \ref{sec:observable}.
   \begin{enumerate}
-\item Compute the characteristic polynomial of the matrix $(\mat{A_d}-\mat{B_d}\mat{K})$ as 
+\item Compute the characteristic polynomial of the matrix $(A_d-B_dK)$ as 
 $P_a(z) = z^n+\sum_{i=1}^p{(a_i-k_i)z^{n-i}}$.
 %%   A controllable system with quantization will have the following dynamics, where
 %% we use underscript ``n'' to denote a noise term,
@@ -1205,8 +1205,8 @@ $$N=\left \{ \nu_1+\nu_2+ \nu_3 : \nu_1 \in \left[-\frac{q1}{2}\ \ \frac{q1}{2}\
 \wedge \nu_2 \in \left[-\frac{q2}{2}\ \ \frac{q2}{2}\right]  \wedge \nu_3 \in \left[-q3\ \ q3\right]  \right \}\nonumber$$
 More details on how to model quantization as noise are given in the 
 Appendix~\ref{appendix:quantization-noise}.
-\item Calculate a set of initial bounds on $\mat{K}$, $\phi_{init}^{K}$, based on the input constraints. Note that these bounds will be used by the {\sc synthesize} phase to reduce the size of the solution space.
-$$(\phi_{init} \wedge u_k=-\mat{K} x_k) \Rightarrow \phi_{init}^{K}$$
+\item Calculate a set of initial bounds on $K$, $\phi_{init}^{K}$, based on the input constraints. Note that these bounds will be used by the {\sc synthesize} phase to reduce the size of the solution space.
+$$(\phi_{init} \wedge u_k=-K x_k) \Rightarrow \phi_{init}^{K}$$
 
 \end{enumerate}
 \item In the {\sc synthesize} phase, we synthesise a candidate controller
@@ -1218,7 +1218,7 @@ $$(\phi_{init} \wedge u_k=-\mat{K} x_k) \Rightarrow \phi_{init}^{K}$$
 % Notice that in our polynomials $c_0=1$ and we only use reals.
 % Once we have established convergence, we may examine the 
 % safety specification $\phi_{safety}$.
-  $\mat{K} \in \mathbb{R}\langle I_c,F_c\rangle^n$ that satisfies
+  $K \in \mathbb{R}\langle I_c,F_c\rangle^n$ that satisfies
   $\phi_{stability} \wedge \phi_{safety} \wedge \phi_{init}^{K}$ by invoking a SAT solver.
 %%   We obtain it by solving the SAT formula 
 %% $$\mathcal{J}_K=\mathcal{J}\langle I,F \rangle (P_{a-k},\mat{T})\wedge \phi_{safety}$$ 
@@ -1250,9 +1250,9 @@ $x_{k+1} \models \phi_{safety}$. %% For this purpose we require
 %
 \begin{align}
 %\label{eq:acc_observer_LTI_cf}
-x=&\mat{A}_t^kx_0
+x=&A_t^kx_0
 %+\sum_{i=0}^{k-1} \mat{A}_t^i \mat{B}_{t} r_i
-+\sum_{i=0}^{k-1} \mat{A}_t^i \mat{B}_{n}(\nu_1+\nu_2+\nu_3) 
++\sum_{i=0}^{k-1} A_t^i B_{n}(\nu_1+\nu_2+\nu_3) 
 \end{align}
 \todo{explain $B_n$ and $A_t$}
 As this still requires us to verify the system for every $k$ up to infinity, 
@@ -1265,7 +1265,7 @@ the reach-tube, i.e. the set of all reachable states at all times given an initi
 X_0 =&\left \{x : x \models \phi_{init} \right\}\nonumber
 \end{align}
 %
-where $\mathcal{A}_t=\bigcup_{k=1}^\infty \mat{A_t}^k, \mathcal{B}_{n}=\bigcup_{k=1}^\infty \sum_{i=0}^k\mat{A_t}^i\mat{B}_{n}$ are abstract matrices for the closed-loop system,
+where $\mathcal{A}_t=\bigcup_{k=1}^\infty A_t^k, \mathcal{B}_{n}=\bigcup_{k=1}^\infty \sum_{i=0}^kA_t^iB_{n}$ are abstract matrices for the closed-loop system,
 % in \eqref{eq:observer_LTI_cf} 
 %and $r$ is a non-deterministic parametric input (\emph{ie} $\forall k>0, r_{k+1} =r_k$) 
 whereas the set N is non-deterministically chosen.
@@ -1286,7 +1286,7 @@ When the abstraction cannot be further refined, and provide them to the {\sc abs
 \item We use $\phi_\Lambda$ to
   further constrain the characteristic polynomial  
 $z^n+\sum_{i=1}^n(a_i-k_i)z^{n-i}=\prod_{i=1}^n (z-\lambda_i) : |\lambda_i|<1 \wedge \lambda_i \models \phi_{\Lambda}$. These constraints correspond to specific iterations for which the system may be unsafe.
-\item Pass the refined abstraction $\phi(\mat{K})$ with the new constraints and the list of iterations $\vec{k}$ to the {\sc synthesize} phase.
+\item Pass the refined abstraction $\phi(K)$ with the new constraints and the list of iterations $\vec{k}$ to the {\sc synthesize} phase.
   %, as well as a counterexample plant coefficients ($P_a$) and repeat the loop again. 
 \end{enumerate} 
 \end{enumerate}
@@ -1318,7 +1318,7 @@ $z^n+\sum_{i=1}^n(a_i-k_i)z^{n-i}=\prod_{i=1}^n (z-\lambda_i) : |\lambda_i|<1 \w
      \coordinate (auxsynth);
      \node[draw,rectangle,align=center] (KSAT) at ([xshift=0cm]auxsynth.center) {Prog.\\Search};
      \node[draw=none] (SATK) at ([xshift=-.7cm,yshift=1.5cm]KSAT)  {{\sc Inputs}};
-     \node[draw=none] (K) at ([xshift=.4cm,yshift=1.5cm]KSAT)  {$\mat{K}$};
+     \node[draw=none] (K) at ([xshift=.4cm,yshift=1.5cm]KSAT)  {$K$};
     }
    \& complexnode/.pic={
      \coordinate (AA);
@@ -1343,12 +1343,12 @@ $z^n+\sum_{i=1}^n(a_i-k_i)z^{n-i}=\prod_{i=1}^n (z-\lambda_i) : |\lambda_i|<1 \w
   };
   \path
     (pre.east) edge node[align=center] {$P_a$, $N$,\\ $\phi_{init}^k$} (abstract.west)
-    (abstract.south) edge node{$(\phi(\mat{K}), \vec{k})$} (synth.north)
+    (abstract.south) edge node{$(\phi(K), \vec{k})$} (synth.north)
     %([yshift=2em]synth.east) edge node {Candidate} ([yshift=2em]verif.west)
     %([yshift=-2em]verif.west) edge node {New input} ([yshift=-2em]synth.east)
     %([yshift=2em]synth.east) edge node[xshift=-0.7em] {Candidate} ([yshift=2em]verif.west)
     %([yshift=-2em]verif.west) edge node[xshift=-0.7em] {New input} ([yshift=-2em]synth.east)
-    ([yshift=1em]synth.east) edge node {$\mat{K}$} ([yshift=1em]verify.west)
+    ([yshift=1em]synth.east) edge node {$K$} ([yshift=1em]verify.west)
     %([yshift=-1em]verify.west) edge node {$P_a$} ([yshift=-1em]synth.east)
     (aux) edge (abstract.east) 
     (verify.east) edge (done.west);
@@ -1366,7 +1366,7 @@ $z^n+\sum_{i=1}^n(a_i-k_i)z^{n-i}=\prod_{i=1}^n (z-\lambda_i) : |\lambda_i|<1 \w
     %(counter.west) edge (abstract.east)
     %(counter.south west) edge (synth.north east)
     (FAIL.north) edge (done.south)
-    ([xshift=-5cm]verify.south) edge node{$\mat{K}$} (AAV.north);
+    ([xshift=-5cm]verify.south) edge node{$K$} (AAV.north);
   \path[-] 
      (KSAT.south) edge (KUNSAT.north)
      (KUNSAT.east) edge (FAIL.west)
