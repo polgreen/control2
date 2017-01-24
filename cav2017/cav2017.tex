@@ -226,7 +226,7 @@ generate the desired programs.
 Program synthesizers are an ideal fit for synthesis of %parametric
 digital controllers, since the semantics of programs capture effects such as FWL
 precisely.  In~\cite{DBLP:conf/cdc/RavanbakhshS15}, the authors use CEGIS
-for the synthesis of switching controllers for stabilising continuous-time
+for the synthesis of switching controllers for stabilizing continuous-time
 plants with polynomial dynamics.  The work extends to affine systems, 
 finding a major challenge in the hardness of solving linear arithmetic with the state-of-the-art SMT solvers.  
 Since this approach uses switching models instead of linear dynamics for the digital controller, 
@@ -235,18 +235,18 @@ This approach is not suitable for the kind of control we seek to synthesise.
 
 %\textcolor{red}{Cristina: can you please revise this sentence:
 Moreover, in \cite{DBLP:conf/emsoft/RavanbakhshS16} the same authors 
-use a CEGIS-based approach for synthesising continuous-time switching
+use a CEGIS-based approach for synthesizing continuous-time switching
 controllers that guarantee \emph{reach-while-stay} properties of closed-loop systems, 
 i.e., properties that specify a set of goal states and safe states (constrained reachability).%}. 
-The solution is based on synthesising control Lyapunov 
+The solution is based on synthesizing control Lyapunov 
 functions for switched systems, that yield switching controllers with
 a guaranteed minimum dwell time in each mode.
 
 The work in \cite{DBLP:journals/corr/AbateBCCDKK16} investigates the synthesis of 
-stabilising controllers for continuous plants described as transfer functions, 
+stabilizing controllers for continuous plants described as transfer functions, 
 by exploiting bit-accurate verification of software-implemented 
 digital controllers~\cite{Bessa16}.  While this work also make use of a CEGIS-based technique, 
-the approach is restricted to synthesising digital controllers for stable 
+the approach is restricted to synthesizing digital controllers for stable 
 closed-loop systems described via transfer function models.  
 In contrast, in the current paper we consider a state-space representation of the physical system, 
 which is known to be more general \cite{Astrom08} and allows to synthesise controllers that
@@ -261,7 +261,7 @@ Based on this safety specification over state values,
 Pessoa can synthesise embedded controller software for a range of properties.  
 %based on a safety specification over state values, as well as specification on characteristic functions of the controller. 
 However, Pessoa does not have native inclusion of the ADC/DAC quantisation error needed for
-synthesising fixed-point digital controllers.
+synthesizing fixed-point digital controllers.
 
 We use a combination of a synthesis engine with a control
 verification tool that addresses the challenges presented in the
@@ -498,7 +498,7 @@ A detailed description of this specification can be found in the Appendix~\ref{s
 %-------------------------------
 
 As mentioned earlier, 
-in this work we are not bound to the synthesis of digital stabilising controllers -- 
+in this work we are not bound to the synthesis of digital stabilizing controllers -- 
 a well known task in the literature on digital control system -- 
 but target safety requirements with an overall approach that is sound and automated. 
 More specifically, 
@@ -659,7 +659,7 @@ In this paper, we are concerned with \emph{safe} controllers and therefore conce
 %% \section{Counter-Example Guided Inductive Synthesis with solution generalisation}
 %% %-------------------------------
 
-%% This technique relies on parametrising the target language, which
+%% This technique relies on parametrizing the target language, which
 %% induces a lattice of progressively more expressive languages 
 %% \textcolor{red}{Cristina: Citation?}.  We
 %% start by attempting to synthesise a program at the lowest point on
