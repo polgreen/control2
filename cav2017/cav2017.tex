@@ -648,10 +648,10 @@ and then verify its safety accounting for the finite-precision errors.
 \label{sec:CEGARIS} 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-Here, we outline the general architecture of the program synthesizer used in both approaches. 
-We then give the details of both methods of solution generalization that we compare; 
-the first checking safety by unwinding the transition relation to a completeness threshold; 
-and the second employing abstract acceleration.
+We outline the general architecture of the program synthesizer used in both approaches \todo{which approaches - pls recall or clarify}. 
+We then give the details of both methods of solution generalization \todo{define ``solution generalisation''} that we compare.  
+The first checks safety by unwinding the transition relation to a completeness threshold, 
+whereas the second employs abstract acceleration.
  
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{General architecture of the program synthesizer}
@@ -659,11 +659,11 @@ and the second employing abstract acceleration.
 \label{synthesizer-general}
 The input specification provided to the program synthesizer is of the form
 %$\exists P .  \forall \vec{x}.  \sigma(\vec{x}, \vec{P})$ 
-$\exists P .  \forall x.  \sigma(x, P)$ 
-where $P$ ranges over functions, $x$ 
- ranges over ground terms and
-$\sigma$ is a quantifier-free formula.  We interpret the ground terms over
-some finite domain $\mathcal{D}$.
+$\exists P .  \forall x.  \sigma(x, P)$, 
+where $P$ ranges over functions, 
+$x$ ranges over ground terms, 
+and $\sigma$ is a quantifier-free formula.  
+We interpret the ground terms over some finite domain $\mathcal{D}$.
 %
 The design of our synthesizer consists of two phases, an inductive
 synthesis phase and a validation phase, which interact via a finite
@@ -696,36 +696,39 @@ be found in~\cite{DBLP:conf/lpar/DavidKL15}.
 % \todo{The following paragraph has been already stated above. Let us clarify this is a useful repetition to recap things?} 
 
 At this point, we recap the the synthesis problem that we solve in this work:
-find a digital controller $K$ (see Eq.~\ref{eq:controlaction})
-that makes the closed-loop system safe for 
+we seek a digital feedback controller $K$ (see Eq.~\ref{eq:controlaction})
+that makes the closed-loop plant model safe for 
 initial state $x_0$, reference signal $r_k$ and input $u_k$
 as defined in Sec.~\ref{ssec:safety}. 
-We consider non-deterministic initial states within a specified range
-and the reference signal to be set to zero.  
-When mapping back to the notation used for describing the general architecture 
-of the program synthesizer, the controller $K$ denotes $P$ and 
-$(x_0, u_k)$ represents $x$. 
-While the controller's precision $\langle I_c,F_c\rangle$ is given, 
-we can vary the plant's precision $\langle I_p,F_p\rangle$ such that 
-$I_p \geq I_c \wedge F_p \geq F_c$.
+We consider non-deterministic initial states within a specified range, 
+the reference signal to be set to zero, 
+saturations on the inputs, 
+and account for digitalisation and quantisation errors introduced by the controller.  
+
+When mapping back to the notation used for describing the general architecture of the program synthesizer, 
+the controller $K$ denotes $P$ and $(x_0, u_k)$ represents $x$. 
+While the controller precision \todo{update notations} $\langle I_c,F_c\rangle$ is given and fixed, 
+we can vary the plant precision $\langle I_p,F_p\rangle$ such that $I_p \geq I_c \wedge F_p \geq F_c$.
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{Solution generalization} 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+\todo{All good - only the word ``generalisation'' won't be understood by a control person (we might have reviewers from this area?). Anticipate the explanation  given below to the introduction section.}
+
 Given the large solution space to be searched during the inductive
 synthesis, we parametrize the target language, which induces a
 lattice of progressively more expressive languages.  This enables us
-to start by attempting to synthesize a program at the lowest point on
-this lattice and increase the parameters of the language until we
-reach a point at which the synthesis succeeds. Whenever we manage to
+to start by synthesizing a program at the lowest point on
+this lattice, and to increase the parameters of the language until we
+reach a point at which the synthesis succeeds \todo{if at all - completeness?}. Whenever we manage to
 synthesize a solution at some lower point on the lattice, we
 must apply some form of solution generalization to obtain a full
 solution (i.e., a solution in the original search space).
-This parametrization greatly increases the efficiency of our system since
-languages low down the lattice are easy to decide safety for
-(i.e., the validation oracle finds an answer fast). If a program can be
-synthesized in a low-complexity language, the whole procedure finishes
+This parametrization greatly increases the efficiency of our system, since
+low-level languages (over the lattice) are easier to decide safety for 
+(i.e., the validation oracle finds an answer faster). In other words, 
+if a program can be synthesized in a low-complexity language, the whole procedure finishes
 much faster than if synthesis had been attempted in a high-complexity
 language. We investigate two different approaches for integrating solution 
 generalization into CEGIS:
@@ -735,22 +738,22 @@ generalization into CEGIS:
   uses a multi-staged verification phase and performs solution generalisation based on
 the plant precision, the number of loop unrollings, 
 and the sampling rate. Essentially, it finds a controller for an individual initial state
-and input with a bounded time horizon and generalizes to all states,
+and input with a bounded time horizon and generalizes to all reachable states,
 inputs, and time horizons. The safety check is performed in this approach 
 via unfolding of the transition system corresponding to the synthesized controller.
-
+\todo{mention issue of completeness threshold here?}
 
 %% (with a final verification loop that verifies
 %% the continuous system behaviour against the previously verified
 %% discrete system bi-simulation)
 \item[2.] The second approach (described in Sec~\ref{sec:CEGIS-abstraction-refinement})
-  finds a controller for a continuous initial set of states and input
-  set, over an abstraction of the continuous dynamics that conforms to
-  witness proofs at specific times; it further generalizes the
+  finds a controller for a continuous initial set of states and set of inputs, 
+  over an abstraction of the continuous dynamics that conforms to
+  witness proofs at specific times. It further generalizes the
   solution over all times by refining the number of witnesses.  
   In order to perform the safety check, this approach uses abstract acceleration
   \cite{cattaruzza2015unbounded} to compute the controller's set of states. 
-  %\todo{clarify use of abstract acceleration. add references.}
+  \todo{clarify: what is the ``set of states'' of the controller? }
 \end{itemize}
 
 
