@@ -1015,6 +1015,45 @@ ensures that the current sampling rate is large enough by using an
 external checker (\addtodo{add more details here once we have them}).
 
 \end{enumerate}
+
+\subsubsection{Illustrative Example} \label{sec:running-ex}
+
+We illustrate our approach with \todo{what example is this?} example,
+extracted from the literature~\cite{?}.
+%% Next, we demonstrate how our approach solves the synthesis problem for this
+%% example.
+
+We start with a candidate solution with all coefficients zero, $K=[0
+  \ 0 \ 0]^T$, and a precision of $I_p=13$, $F_p=3$.  In the first
+{\sc verify} stage, the {\sc safety} check finds the counterexample
+%
+$ x_0 = [-0.5 \ 0.5 \ 0.5] $.
+%
+After adding the new counterexample to its sets of {\sc inputs}, {\sc
+  synthesize} finds the candidate solution $K=[0 \ 0
+  \ 0.00048828125]^T$, which prompts the {\sc safety} verifier to
+return $x_0=[-0.5 -0.5 -0.5]$ as the new counterexample.
+
+In the subsequent iteration, the synthesiser can't find any more
+candidates and returns UNSAT, meaning that the current precision is
+insufficient.  Consequently, we increase the precision to $I_p=17$,
+$F_p=7$.
+%
+Since the previous counterexamples were obtained at lower precision,
+we remove them from the set of counterexamples.  Back in the {\sc
+  synthesize} phase, we re-start the process with a candidate solution
+with all coefficients $0$.  Next, the {\sc safety} verification stage
+provides the first counterexample at higher precision, $x_0=[-0.5
+  \ 0.5 \ 0.5]$ and {\sc synthesize} finds $K=[0 \ 0.01171875
+  \ 0.015625]^T$ as a candidate that eliminates this counterexample.
+However, this candidate triggers the counterexample
+$x_0=[0.5\ -0.5\ -0.5]$ found again by the {\sc safety} verification
+stage.  In the next iteration, we get the candidate $K=[0 \ 0
+  \ -0.015625]$, followed by the counterexample $x_0 = [0.5 \ 0.5
+  \ 0.5]$. Finally, {\sc synthesize} find the candidate $K=[0.01171875
+  \ -0.013671875 \ -0.013671875]$, which is validated as a final
+solution by all the verification stages.
+
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{CEGIS with abstraction refinement}
 \label{sec:CEGIS-abstraction-refinement}
