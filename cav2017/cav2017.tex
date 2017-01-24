@@ -28,6 +28,7 @@
 \usepackage{listings}
 \usepackage{algorithm,algpseudocode}
 \usepackage{microtype}
+\usepackage{epstopdf}
 
 \usepackage{todonotes}
 \usetikzlibrary{positioning, automata, shapes.arrows, calc, shapes, arrows}
@@ -97,21 +98,23 @@
 
 \begin{abstract}
 This work presents a sound and automated approach to synthesize 
-digital feedback control architectures for physical plants represented 
-as linear, time invariant models. Models are encompassed by dynamical 
+safe digital feedback controllers for physical plants represented 
+as linear, time invariant models. Models are described as dynamical 
 equations with inputs, evolving over a continuous state space and accounting 
 for errors due to the digitalization of signals that are manipulated by the 
-controller block. The approach is divided in two main parts, brought together 
-by a counter-example guided inductive synthesis (CEGIS) loop, as follows. 
-First, we devise a static feedback controller that stabilizes the system; 
-then, we verify its potential safety by means of either of the following 
-approaches: forward reachability analysis via unfolding of the dynamics, 
-or invariant set generation via abstract acceleration;  further, if the 
-above step fails, we loop back and invoke a CEGIS call to seek alternative 
-stabilizing feedback, benefiting from the obtained counterexamples 
-to safety. Both approaches are able to efficiently synthesize stable and 
-safe controllers considering a set of intricate physical plant models taken 
-from the digital control literature.
+controller block. 
+The approach works in two stages, leveraging the use of counter-example guided
+inductive synthesis (CEGIS) and reachability analysis. The former synthesises a static 
+feedback controller that stabilizes the system under some restrictions given by the safety of
+the reach space. The latter verifies its potential safety by means of either of the following 
+approaches: forward reachability analysis via unfolding of the dynamics or invariant set 
+generation via abstract acceleration; if the 
+verification step fails, we loop back to seek an 
+alternative controller benefiting from the obtained counterexamples 
+to safety using solution generalization and abstraction refinement.
+We are able to efficiently synthesize stable and safe controllers
+considering a set of intricate physical plant models taken from the digital
+control literature.
 \keywords{
 State-space dynamical models of physical systems; 
 Digital controllers; 
@@ -1054,16 +1057,13 @@ distance from the reference (in this case the origin) decreases over time.
 \end{figure*}
 
 \begin{proof}
-Consider spectrum of matrix $(A_d - B_d K)$ and select eigenvalue with smallest (non trivial) imaginary value.  
+Consider the matrix $(A_d - B_d K)$, which updates the states every time step, and select eigenvalue with smallest (non trivial) imaginary value.  
 call such value $\vartheta$. 
 At every time interval $kT_s, (k+1)T_s$ ($T_s$ being the sampling time), 
 the dynamics projected on the corresponding eigenspace rotate of $\vartheta T_s$ radiants.  
 So surely taking $k$ as the ceiling of $\frac{2\pi}{\vartheta T_s}$, after $k$ steps we've completed a rotation. 
 This is the completeness threshold. 
 \end{proof}
-\item The last {\sc verify} stage, {\sc sampling}, 
-ensures that the current sampling rate is large enough by using an 
-external checker (\addtodo{add more details here once we have them}).
 
 \end{enumerate}
 
