@@ -279,9 +279,9 @@ void closed_fxp_mult(const int_matrixt A,const int_vectort B,const int_vectort K
 }
 
 #if (NSTATES==2)
-  #include "int_2inverse.h"
+  #include "int_2Inverse.h"
 #else
-  #include "int_3inverse.h"
+  #include "int_3Inverse.h"
 #endif
 
 void bound_error(int_matrixt closed_loop,int_vectort K,int_vectort error_coeffs)
