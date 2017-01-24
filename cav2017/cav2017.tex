@@ -1024,7 +1024,7 @@ external checker (\addtodo{add more details here once we have them}).
 \subsubsection{Illustrative Example} \label{sec:running-ex}
 
 We illustrate our approach with \todo{what example is this?} example,
-extracted from the literature~\cite{?}.
+extracted from the literature~\cite{Franklin15}.
 %% Next, we demonstrate how our approach solves the synthesis problem for this
 %% example.
 
@@ -1039,8 +1039,8 @@ After adding the new counterexample to its sets of {\sc inputs}, {\sc
   \ 0.00048828125]^T$, which prompts the {\sc safety} verifier to
 return $x_0=[-0.5 -0.5 -0.5]$ as the new counterexample.
 
-In the subsequent iteration, the synthesiser can't find any more
-candidates and returns UNSAT, meaning that the current precision is
+In the subsequent iteration, the synthesiser is unable to find further 
+suitbale candidates and it returns UNSAT, meaning that the current precision is
 insufficient.  Consequently, we increase the precision to $I_p=17$,
 $F_p=7$.
 %
@@ -1055,9 +1055,9 @@ However, this candidate triggers the counterexample
 $x_0=[0.5\ -0.5\ -0.5]$ found again by the {\sc safety} verification
 stage.  In the next iteration, we get the candidate $K=[0 \ 0
   \ -0.015625]$, followed by the counterexample $x_0 = [0.5 \ 0.5
-  \ 0.5]$. Finally, {\sc synthesize} find the candidate $K=[0.01171875
+  \ 0.5]$. Finally, {\sc synthesize} finds the candidate $K=[0.01171875
   \ -0.013671875 \ -0.013671875]$, which is validated as a final
-solution by all the verification stages.
+solution by all verification stages.
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{CEGIS with abstraction refinement}
