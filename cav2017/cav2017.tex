@@ -180,6 +180,16 @@ set is \textcolor{red}{$XXX$}s, i.e., most controllers can be synthesized in les
 than \textcolor{red}{$XXX$} seconds.
 
 
+\textit{Contributions}. We use a combination of a synthesis engine with a control
+verification tool that addresses the challenges presented in the
+form of FWL effects and stability measures over digital controllers for LTI models.  
+We take the synthesis engine from~\cite{DBLP:conf/lpar/DavidKL15}. The verification engine, for
+the first approach we present, performs bounded model checking of control properties,
+based on~\cite{Monteiro16}, but enhanced to include evaluation of quantization effects and 
+safety properties over the state space. In an alternative approach, we use a verification engine based 
+on abstract acceleration~\cite{cattaruzza2015unbounded}, which avoids the explicit unwinding 
+the transition system necessarily for the first approach.
+
 %\textcolor{red}{we have to connect both paragraphs...}
 
 %To this end, we formalise the notion of solution generalisation for
@@ -231,21 +241,19 @@ plants with polynomial dynamics.  The work extends to affine systems,
 finding a major challenge in the hardness of solving linear arithmetic with the state-of-the-art SMT solvers.  
 Since this approach uses switching models instead of linear dynamics for the digital controller, 
 it entirely circumvents the FWL problem, but potentially incurs state-space explosion issues.  
-This approach is not suitable for the kind of control we seek to synthesize.
-
-%\textcolor{red}{Cristina: can you please revise this sentence:
 Moreover, in \cite{DBLP:conf/emsoft/RavanbakhshS16} the same authors 
 use a CEGIS-based approach for synthesizing continuous-time switching
 controllers that guarantee \emph{reach-while-stay} properties of closed-loop systems, 
-i.e., properties that specify a set of goal states and safe states (constrained reachability).%}. 
-The solution is based on synthesizing control Lyapunov 
+i.e., properties that specify a set of goal states and safe states (constrained reachability).
+This solution is based on synthesizing control Lyapunov 
 functions for switched systems, that yield switching controllers with
-a guaranteed minimum dwell time in each mode.
+a guaranteed minimum dwell time in each mode. However, both approaches 
+are not suitable for the kind of control we seek to synthesize.
 
 The work in \cite{DBLP:journals/corr/AbateBCCDKK16} investigates the synthesis of 
 stabilizing controllers for continuous plants described as transfer functions, 
 by exploiting bit-accurate verification of software-implemented 
-digital controllers~\cite{Bessa16}.  While this work also make use of a CEGIS-based technique, 
+digital controllers~\cite{Bessa16}.  While this work also makes use of a CEGIS-based technique, 
 the approach is restricted to synthesizing digital controllers for stable 
 closed-loop systems described via transfer function models.  
 In contrast, in the current paper we consider a state-space representation of the physical system, 
@@ -262,20 +270,6 @@ Pessoa can synthesize embedded controller software for a range of properties.
 %based on a safety specification over state values, as well as specification on characteristic functions of the controller. 
 However, Pessoa does not have native inclusion of the ADC/DAC quantization error needed for
 synthesizing fixed-point digital controllers.
-
-We use a combination of a synthesis engine with a control
-verification tool that addresses the challenges presented in the
-form of FWL effects and stability measures over digital controllers for LTI models.  
-
-We take the synthesis engine from~\cite{DBLP:conf/lpar/DavidKL15}. The verification engine, for
-the first approach we present, performs bounded model checking of control properties,
-based on~\cite{Monteiro16}, but enhanced to include evaluation of quantization effects and safety properties
-over the state space. In an alternative approach, we use a verification engine based on abstract acceleration~\cite{cattaruzza2015unbounded}, 
-which avoids the explicit unwinding the transition system necessarily for the first approach.
-
-
-
-
 
 \paragraph{Discretization Effects}
 
