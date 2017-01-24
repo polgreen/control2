@@ -522,13 +522,54 @@ This means that the states will always be within the $n$-dimensional hyper-box.
 %, which is typically defined by the safety specification.
 
 Furthermore, 
-it is practically relevant to consider constraints on the input signal $u_{k}$, 
-which we assume has given bounds $\overline{u}$ and $\underline{u}$, 
-such that ${\underline{u} \leq u_{k} \leq \overline{u}},\forall k\geq 0$.  
-This means that the control input saturates in view of physical constraints. 
+it is practically relevant to consider constraints on the input signal $u_{k}$
+and initial states $x_0$, 
+which we assume have given bounds. %%  $\overline{u}$, $\underline{u}$
+%% and $\overline{x_0}$, $\underline{x_0}$, respectively.
+We refer to these constraints as $\phi_{init}$:
+$$\phi_{init} = {\forall k.\underline{u} \leq u_{k} \leq \overline{u}} 
+\wedge \bigwedge_{i=1}^{n} \underline{x_{i,0}} \leq x_{i,0} \leq \overline{x_{i,0}}$$.  
+In practice, 
+this means that the control input saturates in view of physical constraints. 
 
 
+%%%-------------------------------
+%%\subsection{Digital implementation of feedback controller}
+%%\label{ssec:quantizationerror}
+%%%-------------------------------
+%%
+%%\addtodo{HERE add a figure similar to Fig. \label{fig:observersystem} to explain digital features of controller.} 
+%%
+%%\addtodo{[The remainder of the section needs to be updated. ]}
+%%The output and measurable of the plant is being sampled by an ADC, and since the full state of the
+%%plant cannot be witnessed directly, the controller software includes an observer that 
+%%estimates the state of the plant (see appendix for details on how such an observer
+%%is constructed). In this work, we are assuming that all the states measurements are available for the state feedback purpose, and the state observer design may be disregarded.  
+%%\addtodo{[Unclear what the remainder is for: ]}
+%%We further presume that there are small tolerances in the system 
+%%described in the following form
+%%%
+%%\begin{align*}
+%%\mat{A} \in \mathcal{G}_A=\mat{S}\mat{J}\mat{S}^{-1} : \mat{J} \in \mathcal{G}_J
+%%\end{align*}
+%%\commentib{What is S?}
+%%
+%%Where $\mathcal{G}_J$ is a collection of eigenvalue ranges that define the frequency response of the system.
+%%We presume that the internal model of the plant is an ARMA model, modified by a
+%%state transform that has no tolerances. Tolerances in the eigenvectors will manifest themselves
+%%as tolerances in the canonical forms outside of the row/column of interests and complicate the 
+%%evaluation. Whilst it is possible to address these with this methodology, we will focus on the case
+%%above for simplicity.
 
+% \addtodo{HERE add a figure similar to Fig. \label{fig:observersystem} to explain digital features of controller.} 
+
+% \addtodo{[The remainder of the section needs to be updated. ]}
+% The output and measurable of the plant is being sampled by an ADC, and since the full state of the
+% plant cannot be witnessed directly, the controller software includes an observer that 
+% estimates the state of the plant (see appendix for details on how such an observer
+% is constructed). In this work, we are assuming that all the states measurements are available for the state feedback purpose, and the state observer design may be disregarded.  
+% \addtodo{[Unclear what the remainder is for: ]}
+>>>>>>> added initial constraints on x_0
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{Numeric representations and soundness} 
@@ -805,7 +846,7 @@ $\overline{k}$ in order to ensure that $\phi_{safety}$ holds).
 \medskip
 
 Next, we describe the different phases in Fig.~\ref{fig:CEGIS-precision-increment}
-(blocks 1 to 5):
+(blocks 1 to 4):
 
 %\todo{please eventually itemize next}
 \begin{enumerate}
