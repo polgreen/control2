@@ -19,7 +19,10 @@ typedef __CPROVER_fixedbv[24][12] __CPROVER_EIGEN_fixedbvt;
 #define INT_BITS 8
 #define FRAC_BITS 8
 
-const __CPROVER_EIGEN_fixedbvt _controller_A[NSTATES][NSTATES] = {{0.9905,0.075687,0.021033},{0.125,0,0},{0,0.015625,0} };
-const __CPROVER_EIGEN_fixedbvt _controller_B[NSTATES] = { { 16.0 },{0.0},{0.0} };
+
+const __CPROVER_EIGEN_fixedbvt _controller_A[NSTATES][NSTATES] = {{2.6207,-1.1793, 0.65705},{2,0,0},{0,0.5,0}};
+const __CPROVER_EIGEN_fixedbvt _controller_B[NSTATES] = { { 8},{0},{0}};
+//const __CPROVER_EIGEN_fixedbvt _controller_A[NSTATES][NSTATES] = {{0.9905,0.075687,0.021033},{0.125,0,0},{0,0.015625,0} };
+//const __CPROVER_EIGEN_fixedbvt _controller_B[NSTATES] = { { 16.0 },{0.0},{0.0} };
 
 #endif /* BENCHMARK_H_ */

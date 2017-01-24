@@ -85,15 +85,11 @@ function get_current_cpu_millis {
  echo $((${formula}))
 }
 
-working_directory_base_suffix='-dkr12'
-working_directory_base="/tmp/control_synthesis-ss${working_directory_base_suffix}"
-mkdir -p ${working_directory_base} 2>/dev/null
-
 if [ -z "$1" ]; then
  #dkr10
  #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/cruise_ss/')
  #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/dcmotor_ss/')
- #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/helicopter_ss/')
+ benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/helicopter_ss/')
  #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/cruise_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/dcmotor_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/helicopter_ss/')
 
  #dkr11
@@ -114,8 +110,31 @@ if [ -z "$1" ]; then
  #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/cruise_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/dcmotor_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/helicopter_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/invpendulum_cartpos_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/invpendulum_pendang_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/magsuspension_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/pendulum_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/suspension_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/tapedriver_ss/')
  #benchmark_dirs=("${script_base_directory}/../benchmarks/state-space/dcmotor_ss/")
 else
- benchmark_dirs=("$1")
+ #benchmark_dirs=("$1")
+ working_directory_base_suffix="$1"
+ #dkr10
+ if [ "$1" == "dkr10" ]; then
+  benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/cruise_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/dcmotor_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/helicopter_ss/')
+ fi
+
+ #dkr11
+ if [ "$1" == "dkr11" ]; then
+  benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/magsuspension_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/invpendulum_pendang_ss/')
+ fi
+
+ #dkr12
+ if [ "$1" == "dkr12" ]; then
+  benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/invpendulum_cartpos_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/suspension_ss/')
+ fi
+
+ #dkr13
+ if [ "$1" == "dkr13" ]; then
+  benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/tapedriver_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/pendulum_ss/')
+ fi
 fi
+
+working_directory_base="/tmp/control_synthesis-ss${working_directory_base_suffix}"
+mkdir -p ${working_directory_base} 2>/dev/null
 
 for benchmark_dir in ${benchmark_dirs[@]}; do
  for benchmark in ${benchmark_dir}*.ss; do
@@ -160,6 +179,7 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
   while [ $((integer_width+radix_width)) -le ${max_length} ] && [ ${k_size_index} -lt ${#k_sizes[@]} ]; do
    k_size=${k_sizes[${k_size_index}]}
    echo_log "int: ${integer_width}, radix: ${radix_width}"
+   solution_found=false
    echo_log "cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTORL_RADIX_WIDTH=${radix_width} -D NUMBERLOOPS=${k_size} ${synthesis_file}"
    timeout --preserve-status --kill-after=${kill_time} ${timeout_time} cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTORL_RADIX_WIDTH=${radix_width} -D NUMBERLOOPS=${k_size} ${synthesis_file} 2>>${log_file} 1>${cbmc_log_file}
    cbmc_result=$?
@@ -186,6 +206,7 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
       times >${time_tmp_file}; end_time=$(get_current_cpu_millis)
       echo_success_message ${start_time} ${end_time}
       echo_log "<controller>${controller_params}</controller>"
+      solution_found=true
       break
      else
       integer_width=$((integer_width+4))
@@ -197,7 +218,9 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
     radix_width=$((radix_width+4))
    fi
   done
-
-  break # TODO: Replace this if sampling rate check is introduced
+  # All files are the same benchmark with increased sample frequency. Exit after first.
+  if [ "${solution_found}" = true ]; then
+    break
+  fi
  done
 done

@@ -75,10 +75,6 @@ function get_current_cpu_millis {
  echo $((${formula}))
 }
 
-working_directory_base_suffix='-dkr10'
-working_directory_base="/tmp/control_synthesis-ss${working_directory_base_suffix}"
-mkdir -p ${working_directory_base} 2>/dev/null
-
 if [ -z "$1" ]; then
  #dkr10
  #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/cruise_ss/') #ok
@@ -95,13 +91,36 @@ if [ -z "$1" ]; then
 
  #dkr13 
  #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/tapedriver_ss/') #same controller loop (system makes no sense 10^-144?)
- #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/pendulum_ss/') #ok
+ benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/pendulum_ss/') #ok
 
  #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/cruise_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/dcmotor_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/helicopter_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/invpendulum_cartpos_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/invpendulum_pendang_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/magsuspension_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/pendulum_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/suspension_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/tapedriver_ss/')
  #benchmark_dirs=("${script_base_directory}/../benchmarks/state-space/dcmotor_ss/")
 else
- benchmark_dirs=("$1")
+ #benchmark_dirs=("$1")
+ working_directory_base_suffix="$1"
+ #dkr10
+ if [ "$1" == "dkr10" ]; then
+  benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/cruise_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/dcmotor_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/helicopter_ss/')
+ fi
+
+ #dkr11
+ if [ "$1" == "dkr11" ]; then
+  benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/magsuspension_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/invpendulum_pendang_ss/')
+ fi
+
+ #dkr12
+ if [ "$1" == "dkr12" ]; then
+  benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/invpendulum_cartpos_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/suspension_ss/')
+ fi
+
+ #dkr13
+ if [ "$1" == "dkr13" ]; then
+  benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/tapedriver_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/pendulum_ss/')
+ fi
 fi
+
+working_directory_base="/tmp/control_synthesis-ss${working_directory_base_suffix}"
+mkdir -p ${working_directory_base} 2>/dev/null
 
 for benchmark_dir in ${benchmark_dirs[@]}; do
  for benchmark in ${benchmark_dir}*.ss; do

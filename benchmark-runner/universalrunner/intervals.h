@@ -2,9 +2,7 @@
 #ifndef INTERVALS_H_
 #define INTERVALS_H_
 
-
-
-//#include "control_types.h"
+#include "control_types.h"
 
 typedef  __plant_precisiont control_typet;
 
@@ -16,8 +14,6 @@ struct intervalt
   control_typet low;
   control_typet high;
 };
-
-
 
 control_typet _dbl_max;
 control_typet _dbl_min;
@@ -87,6 +83,14 @@ struct intervalt fxp_interval_check(struct intervalt value)
 #define interval_add(x,y) (struct intervalt){.low=x.low+y.low, .high=x.high+y.high}
 #define interval_sub(x,y) (struct intervalt) {.low=x.low-y.high, .high=x.high-y.low}
 
+struct intervalt neg_interval(struct intervalt x)
+{
+  struct intervalt z;
+  z.low=-x.high;
+  z.high=-x.low;
+  return z;
+}
+
 struct intervalt abs_interval(struct intervalt x)
 {
     struct intervalt z;
@@ -94,7 +98,7 @@ struct intervalt abs_interval(struct intervalt x)
     if(x.high < _zero)
     {
       z.high = -x.low;
-      z.low = -x.high;
+      z.low = 0;
       return z;
     }
      else if(x.low < _zero && x.high >= _zero)
@@ -272,6 +276,67 @@ void closed_fxp_mult(const int_matrixt A,const int_vectort B,const int_vectort K
     z.high=-z.high;
   }
   return z;
+}
+
+#if (NSTATES==2)
+  #include "int_2Inverse.h"
+#else
+  #include "int_3Inverse.h"
+#endif
+
+void bound_error(int_matrixt closed_loop,int_vectort K,int_vectort error_coeffs)
+{
+  int i,j;
+  int_matrixt IminA;
+  for (i=0;i<NSTATES;i++)
+  {
+    for (j=0;j<NSTATES;j++)
+    {
+      IminA[i][j].low=-closed_loop[i][j].high;
+      IminA[i][j].high=-closed_loop[i][j].low;
+    }
+    IminA[i][i].low+=1;
+    IminA[i][i].high+=1;
+  }
+  int_matrixt invIminA;
+  inverse(invIminA,IminA);
+  struct intervalt noise;
+  if (K[0].low>=0)
+  {
+   noise.low=K[0].low;
+   noise.high=K[0].high;
+  }
+  else
+  {
+   noise.low=-K[0].high;
+   noise.high=-K[0].low;
+  }
+  for (i=1;i<NSTATES;i++)
+  {
+   if (K[i].low>=0)
+   {
+    noise.low+=K[i].low;
+    noise.high+=K[i].high;
+   }
+   else
+   {
+    noise.low-=K[i].high;
+    noise.high-=K[i].low;    
+   }   
+  }
+  noise.low*=_dbl_lsb;
+  noise.high*=_dbl_lsb;
+  for (i=0;i<NSTATES;i++)
+  {
+    error_coeffs[i].low=invIminA[i][0].low;
+    error_coeffs[i].high=invIminA[i][0].high;
+    for (j=1;j<NSTATES;j++)
+    {
+      error_coeffs[i]=interval_add(error_coeffs[i],invIminA[i][j]);
+    }
+    error_coeffs[i]=interval_mult(error_coeffs[i],noise);
+  }
+  
 }
 
 #endif /*INTERVALS_H_*/
