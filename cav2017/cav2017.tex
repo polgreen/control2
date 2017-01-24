@@ -939,8 +939,6 @@ precision $\langle I_p,F_p\rangle$ for the plant and a sampling rate.  The
 checks that all these assumptions are sound are performed by subsequent
 {\sc verify} stages.
 
-
-
 \begin{algorithm}[]
 \begin{algorithmic}[1]
 \Function{$safetyCheck()$}{}
@@ -999,8 +997,15 @@ and check that $k{\leq}\overline{k}$.
 A stable control system is known to have converging dynamics, i.e., the
 distance from the reference (in this case the origin) decreases over time. 
 
-\todo[inline] {please will Alessandro write the proof for the completeness threshold here - EP}
-\missingfigure{picture for completeness threshold}
+%\todo[inline] {please will Alessandro write the proof for the completeness threshold here - EP}
+%\missingfigure{picture for completeness threshold}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.7\textwidth]{ct.eps}
+\vspace{0.1cm}
+\caption{Completeness threshold}
+\end{figure*}
 
 Proof sketch. 
 Consider spectrum of matrix $(A_d - B_d K)$ and select eigenvalue with smallest (non trivial) imaginary value.  
