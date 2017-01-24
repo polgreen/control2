@@ -29,6 +29,7 @@
 \usepackage{algorithm,algpseudocode}
 \usepackage{microtype}
 \usepackage{epstopdf}
+\usepackage{cite}
 
 \usepackage{todonotes}
 \usetikzlibrary{positioning, automata, shapes.arrows, calc, shapes, arrows}
@@ -97,24 +98,25 @@
 
 
 \begin{abstract}
-This work presents a sound and automated approach to synthesize 
-safe digital feedback controllers for physical plants represented 
-as linear, time invariant models. Models are described as dynamical 
-equations with inputs, evolving over a continuous state space and accounting 
-for errors due to the digitalization of signals that are manipulated by the 
-controller block. 
-The approach works in two stages, leveraging the use of counter-example guided
-inductive synthesis (CEGIS) and reachability analysis. The former synthesises a static 
-feedback controller that stabilizes the system under some restrictions given by the safety of
-the reach space. The latter verifies its potential safety by means of either of the following 
-approaches: forward reachability analysis via unfolding of the dynamics or invariant set 
-generation via abstract acceleration; if the 
-verification step fails, we loop back to seek an 
-alternative controller benefiting from the obtained counterexamples 
-to safety using solution generalization and abstraction refinement.
-We are able to efficiently synthesize stable and safe controllers
-considering a set of intricate physical plant models taken from the digital
-control literature.
+%
+This work presents a sound and automated approach to synthesize safe digital
+feedback controllers for physical plants represented as linear, time
+invariant models.  Models are described as dynamical equations with inputs,
+evolving over a continuous state space and accounting for errors due to the
+digitalization of signals that are manipulated by the controller block.  The
+approach works in two stages, leveraging the use of counter-example guided
+inductive synthesis (CEGIS) and reachability analysis.  The former
+synthesises a static feedback controller that stabilizes the system under
+some restrictions given by the safety of the reach space.  The latter
+verifies its potential safety by means of either of the following
+approaches: forward reachability analysis via unfolding of the dynamics or
+invariant set generation via abstract acceleration; if the verification step
+fails, we loop back to seek an alternative controller benefiting from the
+obtained counterexamples to safety using solution generalization and
+abstraction refinement.  We are able to efficiently synthesize stable and
+safe controllers considering a set of intricate physical plant models taken
+from the digital control literature.
+%
 \keywords{
 State-space dynamical models of physical systems; 
 Digital controllers; 
@@ -172,15 +174,15 @@ arithmetic), %\addtodo{[clarify next] with known configurations}
 and perform %parametric 
 synthesis of safe digital controllers - the extension to more general quantitative properties is left to future work. 
 
-We describe and evaluate two approaches for synthesising digital controllers 
-for state-space physical plants. Both approaches consider a counterexample 
-guided inductive synthesis (CEGIS) loop. In the first approach, 
-we devise a digital controller that stabilizes the system whilst remaining safe given a 
-pre-selected time horizon; then, we verify its 
-potential safety by unfolding the dynamics of the system and checking for 
-a completeness threshold. In the second approach, we substitute the second step by employing abstract acceleration
-to unfold the dynamics forward, instead of symbolically unwinding the 
-transition relation~\cite{cattaruzza2015unbounded}. 
+We describe and evaluate two approaches for synthesising digital controllers
+for state-space physical plants.  Both approaches consider a counterexample
+guided inductive synthesis (CEGIS) loop.  In the first approach, we devise a
+digital controller that stabilizes the system whilst remaining safe given a
+pre-selected time horizon; then, we verify its potential safety by unfolding
+the dynamics of the system and checking for a completeness threshold.  In
+the second approach, we substitute the second step by employing abstract
+acceleration to unfold the dynamics forward, instead of symbolically
+unwinding the transition relation~\cite{cattaruzza2015unbounded}.
 \todo{We need to emphasise the derivation of errors for soundness. Can we claim completeness already?}
 We provide experimental results 
 showing that both approaches are able to efficiently synthesise stable and safe controllers 
@@ -192,11 +194,16 @@ than \textcolor{red}{$XXX$} seconds.
 \subsection*{Contributions} 
 
 \begin{enumerate}
+%
 \item In this paper we extend the problem of digital control synthesis from a transfer function representation into a state space representation.
 This entails the verification of safety properties in addition to the already existing stability conditions which is a much harder problem.
+%
 \item To achieve this, we develop two approaches and compare them, the first relying on a non-deterministic simulation of the system and a completeness proof, whilst the second leverages on the concepts of abstraction and acceleration to increase speed whilst retaining soundness.
+%
 \item We develop a solution generalization algorithm for the first approach and an abstraction refinement for the second, both of which improve the performance of the CEGIS loop. 
+%
 \item We develop a model for different sources quantization and their effect on the state space progression, for which we find safe bounds that ensure the safety of our controllers in a hybrid continuous-digital domain.
+%
 \end{enumerate}
 
 %We use a combination of a synthesis engine with a control
@@ -252,59 +259,64 @@ This entails the verification of safety properties in addition to the already ex
 
 \paragraph{CEGIS}
 
-Program synthesis is the problem of computing correct-by-design programs from high-level specifications; 
-algorithms for this problem have made substantial progress in recent years.  
-One such approach~\cite{itzhaky2010simple} inductively synthesizes invariants to
+Program synthesis is the problem of computing correct-by-design programs
+from high-level specifications; algorithms for this problem have made
+substantial progress in recent years.  One such
+approach~\cite{itzhaky2010simple} inductively synthesizes invariants to
 generate the desired programs.
 
 Program synthesizers are an ideal fit for synthesis of %parametric
-digital controllers, since the semantics of programs capture effects such as FWL
-precisely.  In~\cite{DBLP:conf/cdc/RavanbakhshS15}, the authors use CEGIS
-for the synthesis of switching controllers for stabilizing continuous-time
-plants with polynomial dynamics.  The work extends to affine systems, 
-finding a major challenge in the hardness of solving linear arithmetic with the state-of-the-art SMT solvers.  
-Since this approach uses switching models instead of linear dynamics for the digital controller, 
-it entirely circumvents the FWL problem, but potentially incurs state-space explosion issues.  
-Moreover, in \cite{DBLP:conf/emsoft/RavanbakhshS16} the same authors 
-use a CEGIS-based approach for synthesizing continuous-time switching
-controllers that guarantee \emph{reach-while-stay} properties of closed-loop systems, 
-i.e., properties that specify a set of goal states and safe states (constrained reachability).
-This solution is based on synthesizing control Lyapunov 
-functions for switched systems, that yield switching controllers with
-a guaranteed minimum dwell time in each mode. However, both approaches 
-are not suitable for the kind of control we seek to synthesize.
+digital controllers, since the semantics of programs capture effects such as
+FWL precisely.  In~\cite{DBLP:conf/cdc/RavanbakhshS15}, the authors use
+CEGIS for the synthesis of switching controllers for stabilizing
+continuous-time plants with polynomial dynamics.  The work extends to affine
+systems, finding a major challenge in the hardness of solving linear
+arithmetic with the state-of-the-art SMT solvers.  Since this approach uses
+switching models instead of linear dynamics for the digital controller, it
+entirely circumvents the FWL problem, but potentially incurs state-space
+explosion issues.  Moreover, in \cite{DBLP:conf/emsoft/RavanbakhshS16} the
+same authors use a CEGIS-based approach for synthesizing continuous-time
+switching controllers that guarantee \emph{reach-while-stay} properties of
+closed-loop systems, i.e., properties that specify a set of goal states and
+safe states (constrained reachability).  This solution is based on
+synthesizing control Lyapunov functions for switched systems, that yield
+switching controllers with a guaranteed minimum dwell time in each mode. 
+However, both approaches are not suitable for the kind of control we seek to
+synthesize.
 
-The work in \cite{DBLP:journals/corr/AbateBCCDKK16} investigates the synthesis of 
-stabilizing controllers for continuous plants described as transfer functions, 
-by exploiting bit-accurate verification of software-implemented 
-digital controllers~\cite{Bessa16}.  While this work also makes use of a CEGIS-based technique, 
-the approach is restricted to synthesizing digital controllers for stable 
-closed-loop systems described via transfer function models.  
-In contrast, in the current paper we consider a state-space representation of the physical system, 
-which is known to be more general \cite{Astrom08} and allows to synthesize controllers that
-make the closed-loop system \emph{safe}.  Moreover, 
-this work  integrates an abstraction/refinement step inside the main CEGIS loop.
+The work in \cite{DBLP:journals/corr/AbateBCCDKK16} investigates the
+synthesis of stabilizing controllers for continuous plants described as
+transfer functions, by exploiting bit-accurate verification of
+software-implemented digital controllers~\cite{Bessa16}.  While this work
+also makes use of a CEGIS-based technique, the approach is restricted to
+synthesizing digital controllers for stable closed-loop systems described
+via transfer function models.  In contrast, in the current paper we consider
+a state-space representation of the physical system, which is known to be
+more general \cite{Astrom08} and allows to synthesize controllers that make
+the closed-loop system \emph{safe}.  Moreover, this work integrates an
+abstraction/refinement step inside the main CEGIS loop.
 
-The tool Pessoa~\cite{mazo2010pessoa} is a MatLab toolbox that synthesizes correct-by-design
-embedded control software. It is based on the description of a physical system
-as an equivalent finite-state machine and on the computation of reachability properties over the finite-state 
-machine. 
-Based on this safety specification over state values, 
-Pessoa can synthesize embedded controller software for a range of properties.  
+The tool Pessoa~\cite{mazo2010pessoa} is a MatLab toolbox that synthesizes
+correct-by-design embedded control software.  It is based on the description
+of a physical system as an equivalent finite-state machine and on the
+computation of reachability properties over the finite-state machine.  Based
+on this safety specification over state values, Pessoa can synthesize
+embedded controller software for a range of properties.
 %based on a safety specification over state values, as well as specification on characteristic functions of the controller. 
-However, Pessoa does not have native inclusion of the quantization error introduced by Digital-to-Analogue/Analogue-to-Digital conversion needed for
+However, Pessoa does not have native inclusion of the quantization error
+introduced by Digital-to-Analogue/Analogue-to-Digital conversion needed for
 synthesizing fixed-point digital controllers.
 
 \todo{Have we covered all the literature by Feron et al?}  
 
 \paragraph{Discretization Effects}
 
-The classical approach to control synthesis has often disregarded quantization, 
-thus resulting in general to unsound digital controllers. 
-Modern techniques focus on different elements of discretization effects, including delayed
-response~\cite{Duggirala2015}, and Finite Word Length (FWL) semantics, 
-with the goal either to verify (e.g.,~ \cite{daes20161}) or to optimize
-(e.g.,~ \cite{oudjida2014design}) given implementations. 
+The classical approach to control synthesis has often disregarded
+quantization, thus resulting in general to unsound digital controllers. 
+Modern techniques focus on different elements of discretization effects,
+including delayed response~\cite{Duggirala2015}, and Finite Word Length
+(FWL) semantics, with the goal either to verify (e.g.,~ \cite{daes20161}) or
+to optimize (e.g.,~ \cite{oudjida2014design}) given implementations.
 
 There are two different problems that arise from FWL semantics.  The first
 is the error in the dynamics caused by the inability to represent the exact
@@ -314,23 +326,23 @@ based on the error of the digital dynamics ensures that the deviation
 introduced by FWL does not make the digital system unstable.  A more recent
 approach~\cite{DBLP:journals/automatica/WuLCC09} uses $\mu$ calculus to
 directly model the digital controller so that the selected parameters are
-stable by design.  The analyses
-in~\cite{DBLP:conf/hybrid/RouxJG15,DBLP:conf/hybrid/WangGRJF16} rely on an
-invariant computation on the discrete system dynamics using Semi-Definite
-Programming (SDP).  While the former uses BIBO properties to determine
-stability, the latter uses Lyapunov-based quadratic invariants.  In both
-cases, the SDP solver uses floating-point arithmetic and soundness is
-checked by bounding the error.  An alternative approach is taken
-by~\cite{park2016scalable}, where the verification of given control code is
-performed against a known model by extracting an LTI model of the code
-through symbolic execution.  In order to account for rounding errors, an
-upper bound is introduced in the verification phase.
-The work in \cite{picasso2003stabilization,picasso2002construction} introduces
-attractive invariant sets as a mechanism to bound the quantization error effect
-on stabilisation as an invariant set that always converges toward the controllable
-set. In a similar fashion, \cite{liberzon2003hybrid} evaluates the dynamics of the
-quantization error and bounds its trajectory to a known region over a finite
-period of time. This technique works for both linear and non-linear systems.
+stable by design.  The analyses in~\cite{DBLP:conf/hybrid/RouxJG15,
+DBLP:conf/hybrid/WangGRJF16} rely on an invariant computation on the
+discrete system dynamics using Semi-Definite Programming (SDP).  While the
+former uses BIBO properties to determine stability, the latter uses
+Lyapunov-based quadratic invariants.  In both cases, the SDP solver uses
+floating-point arithmetic and soundness is checked by bounding the error. 
+An alternative approach is taken by~\cite{park2016scalable}, where the
+verification of given control code is performed against a known model by
+extracting an LTI model of the code through symbolic execution.  In order to
+account for rounding errors, an upper bound is introduced in the
+verification phase.  The work in \cite{picasso2003stabilization,
+picasso2002construction} introduces attractive invariant sets as a mechanism
+to bound the quantization error effect on stabilisation as an invariant set
+that always converges toward the controllable set.  In a similar fashion,
+\cite{liberzon2003hybrid} evaluates the dynamics of the quantization error
+and bounds its trajectory to a known region over a finite period of time. 
+This technique works for both linear and non-linear systems.
 
 %\addtodo{[Move material from \ref{sec:rw} here]}
 
