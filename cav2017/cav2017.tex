@@ -108,9 +108,8 @@ of the following approaches: forward reachability analysis via unfolding of the 
 or invariant set generation via abstract acceleration;  
 further, if the above step fails, we loop back and invoke a CEGIS call 
 to seek alternative stabilising feedbacks, benefiting from the obtained counter-examples 
-to safety. 
-
-The approach is proven sound by accounting for errors due to the digitalisation of signals that are manipulated by the controller block.  
+to safety. The approach is proven sound by accounting for errors due to the digitalisation 
+of signals that are manipulated by the controller block.  
 The proposed synthesis approaches and a developed tool are evaluated considering 
 a set of intricate physical plant models taken from the digital control literature.
 \keywords{
@@ -171,18 +170,40 @@ for state-space physical plants. Both approaches consider a counterexample
 guided inductive synthesis (CEGIS) loop. In the first approach, 
 we devise a digital controller that stabilises the system; then, we verify its 
 potential safety by unfolding the dynamics of the system and checking for 
-a completeness threshold. \textcolor{red}{Dario: Can you please briefly explain your approach?
-In the second approach,...}
+a completeness threshold. In the second approach, we employ abstract acceleration
+to accelerate the dynamics forward instead of symbolically unwinding the 
+transition relation~\cite{cattaruzza2015unbounded}.
 
-\textcolor{red}{we have to connect both paragraphs...}
+%\textcolor{red}{we have to connect both paragraphs...}
 
-To this end, we formalise the notion of solution generalisation for
-Counter-Example Guided Inductive Synthesis (CEGIS), which makes use 
-of abstraction refinement in order to achieve scalability.
-This strategy enables the inductive generalisation engine inside CEGIS
-to look for candidate solutions in a reduced solution space.  
+%To this end, we formalise the notion of solution generalisation for
+%Counter-Example Guided Inductive Synthesis (CEGIS), which makes use 
+%of abstraction refinement in order to achieve scalability.
+%This strategy enables the inductive generalisation engine inside CEGIS
+%to look for candidate solutions in a reduced solution space.  
 
-\addtodo{We have to summarise our main contributions here}
+In summary, this paper makes the following original contributions.
+%
+\begin{itemize}
+
+\item We design and implement two approaches to synthesize 
+  digital feedback control architectures for physical plants, 
+	considering dynamical equations with inputs that evolves over 
+	a continuous state space. In both approaches, we apply CEGIS to 
+	devise a digital controller that stabilizes the system and we then
+	we verify safety by means of either forward reachability analysis 
+	via dynamics unfolding or invariant set generation via 
+	abstract acceleration.
+
+\item We provide experimental results showing that our approaches
+  are able to efficiently synthesize stable and safe controllers 
+	for a set of intricate physical plant models taken from the digital 
+	control literature: the median runtime for our benchmark
+  set is \textcolor{red}{$XXX$}s, i.e., most controllers can be synthesized in less
+  than \textcolor{red}{$XXX$} seconds.
+
+\end{itemize}
+
 
 %-------------------------------
 \section{Related work}
