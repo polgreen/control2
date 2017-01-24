@@ -146,7 +146,7 @@ automated and sound control synthesis is a challenging task.
 %Thus, the programming is a key barrier to broad adoption of digital control, 
 %and requires considerable expertise.
 
-Whilst there is a vast literature on validation of control systems,
+Although there is a vast literature on validation of control systems,
 the subject of control synthesis has been somewhat restricted in the
 properties it explores.  Traditionally, this focuses mainly on stability %, working typically on continuous domains
 \cite{DBLP:journals/corr/AbateBCCDKK16,sadabadi2016static}, or using switched
@@ -158,20 +158,15 @@ parametric synthesis~\cite{cimatti2013parameter}.
 In this work, we propose the synthesis of \emph{safe} control algorithms for
 LTI models taking into consideration the continuous domain of the plant, 
 alongside the discrete domain of the controller and the hybrid elements that relate them.  
-%% In this paper, we synthesize controllers for hybrid
-%% closed-loop systems, i.e., software-implemented embedded controllers along
-%% with a model of their physical environment (the plant), that are
-%% \emph{safe}.
 Due to the complexity of such systems, in this particular work we focus
 on linear models with known  implementation features (e.g., number of bits, fixed-point
-arithmetic) %\addtodo{[clarify next] with known configurations} 
-and perform %parametric 
-synthesis of safe digital controllers.
+arithmetic) and perform synthesis of safe digital controllers.
 
 We describe and evaluate two approaches for synthesizing digital controllers 
 for state-space physical plants. Both approaches consider a counterexample 
 guided inductive synthesis (CEGIS) loop. In the first approach, 
-we devise a digital controller that stabilizes the system; then, we verify its 
+we devise a digital controller that stabilizes the system whilst remaining safe given a 
+pre-selected time horizon; then, we verify its 
 potential safety by unfolding the dynamics of the system and checking for 
 a completeness threshold. In the second approach, we employ abstract acceleration
 to accelerate the dynamics forward instead of symbolically unwinding the 
@@ -188,10 +183,13 @@ form of FWL effects, safety, and stability measures over digital controllers for
 We take the synthesis engine from~\cite{DBLP:conf/lpar/DavidKL15}. The verification engine, for
 the first approach we present, performs bounded model checking of control properties,
 based on~\cite{Monteiro16}, but enhanced to include evaluation of quantization effects and 
-safety properties over the state space. In an alternative approach, we use a verification engine based 
+safety properties over the state space. 
+In an alternative approach, we use a verification engine based 
 on abstract acceleration~\cite{cattaruzza2015unbounded}, which avoids the explicit unwinding 
-the transition system necessarily for the first approach. In both approaches, we project
-the maximum effect of the noise over an unbounded time and uses it as a buffer region 
+of the transition system necessary for the first approach. We introduce a CEGAR loop to this abstraction
+in order to make it less conservative, and develop a CEGIS feedback based on abstraction refinement to
+increase the speed of the synthesis algorithm.
+In both approaches, we project the maximum effect of the noise over an unbounded time and uses it as a buffer region 
 for the safety specification.
 
 %\textcolor{red}{we have to connect both paragraphs...}
