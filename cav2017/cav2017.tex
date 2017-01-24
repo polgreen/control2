@@ -188,20 +188,29 @@ control literature: the median runtime for our benchmark
 set is \textcolor{red}{$XXX$}s, i.e., most controllers can be synthesized in less
 than \textcolor{red}{$XXX$} seconds.
 
-\textit{Contributions}. We use a combination of a synthesis engine with a control
-verification tool that addresses the challenges presented in the
-form of FWL effects, safety, and stability measures over digital controllers for LTI models.  
-We take the synthesis engine from~\cite{DBLP:conf/lpar/DavidKL15}. The verification engine, for
-the first approach we present, performs bounded model checking of control properties,
-based on~\cite{Monteiro16}, but enhanced to include evaluation of quantization effects and 
-safety properties over the state space. 
-In an alternative approach, we use a verification engine based 
-on abstract acceleration~\cite{cattaruzza2015unbounded}, which avoids the explicit unwinding 
-of the transition system necessary for the first approach. We introduce a CEGAR loop to this abstraction
-in order to make it less conservative, and develop a CEGIS feedback based on abstraction refinement to
-increase the speed of the synthesis algorithm.
-In both approaches, we project the maximum effect of the noise over an unbounded time and uses it as a buffer region 
-for the safety specification.
+\textit{Contributions}. 
+\begin{enumerate}
+\item In this paper we extend the problem of digital control synthesis from a transfer function representation into a state space representation.
+This entails the verification of safety properties in addition to the already existing stability conditions which is a much harder problem.
+\item To achieve this, we develop two approaches and compare them, the first relying on a non-deterministic simulation of the system and a completeness proof, whilst the second leverages on the concepts of abstraction and acceleration to increase speed whilst retaining soundness.
+\item We develop a solution generalization algorithm for the first approach and an abstraction refinement for the second, both of which improve the performance of the CEGIS loop. 
+\item We develop a model for different sources quantization and their effect on the state space progression, for which we find safe bounds that ensure the safety of our controllers in a hybrid continuous-digital domain.
+\end{enumerate}
+
+%We use a combination of a synthesis engine with a control
+%verification tool that addresses the challenges presented in the
+%form of FWL effects, safety, and stability measures over digital controllers for LTI models.  
+%We take the synthesis engine from~\cite{DBLP:conf/lpar/DavidKL15}. The verification engine, for
+%the first approach we present, performs bounded model checking of control properties,
+%based on~\cite{Monteiro16}, but enhanced to include evaluation of quantization effects and 
+%safety properties over the state space. 
+%In an alternative approach, we use a verification engine based 
+%on abstract acceleration~\cite{cattaruzza2015unbounded}, which avoids the explicit unwinding 
+%of the transition system necessary for the first approach. We introduce a CEGAR loop to this abstraction
+%in order to make it less conservative, and develop a CEGIS feedback based on abstraction refinement to
+%increase the speed of the synthesis algorithm.
+%In both approaches, we project the maximum effect of the noise over an unbounded time and uses it as a buffer region 
+%for the safety specification.
 
 %\textcolor{red}{we have to connect both paragraphs...}
 
@@ -580,7 +589,7 @@ $\mathcal{F}\langle I,F \rangle(c_1) \pm \mathcal{F}\langle I,F \rangle(c_2) = c
 
 
 \item Multiplication: $\mathcal{F}\langle I,F \rangle(c_1) * \mathcal{F}\langle I,F \rangle(c_2) =  c_3 + \delta_3 :|\delta_3| \leq |\delta_{T1}*\mathcal{F}\langle I,F \rangle(c_2)| + |\delta_{T2}*\mathcal{F}\langle I,F \rangle(c_1)| + c_m$, where $c_m=2^{-F}$ as above.
-\item Division is only needed for positive numbers in this implementation (where it is needed for checking stability). 
+\item In this implementation we only need to divide by positive numbers(where it is needed for checking stability). 
 \end{enumerate}
 
 \item {\bf Overflow:}
@@ -613,8 +622,7 @@ x_{k+1} &=\mathcal{F}_{\langle I_p,F_p \rangle}(A_d) \mathcal{F}_{\langle I_p,F_
 We address these errors by use of a final verification check that uses interval arithmetic~\cite{moore1966interval}.
 
 We note that the effect on stability due to the fixed-word-length error is that the system may, instead of converging to the desired equilibrium point, converge to a point that is bounded away from the desired equilibrium point (see Appendix for details). 
-In this paper, we synthesize a stable controller only as a precursor to synthesizing a \emph{safe} controllers and it is therefore sufficient that the system converges to a point within the safe states. Hence, it is sufficient to disregard the errors when we synthesize a stable controller, and then verify safety. 
-
+In this paper, we require stability ony as a precusros to safety and it is therefore sufficient that the system converges to a point within the safe states. Hence, it is sufficient to disregard these errors when we synthesize a stable controller, and then verify safety. 
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \section{CEGIS of Safe Controllers for LTI Systems with Solution Generalization} 
@@ -1108,28 +1116,23 @@ $x_{k+1} \models \phi_{safety}$. %% For this purpose we require
 %
 \begin{align}
 %\label{eq:acc_observer_LTI_cf}
-x=&A_t^kx_0
+x=&(A_d-B_dK)^kx_0
 %+\sum_{i=0}^{k-1} \mat{A}_t^i \mat{B}_{t} r_i
-+\sum_{i=0}^{k-1} A_t^i B_{n}(\nu_1+\nu_2+\nu_3) 
++\sum_{i=0}^{k-1} (A_d-B_dK)^i B_{n}(\nu_1+\nu_2+\nu_3) : B_n= [1\ 1 \cdots \ 1 ]^T
 \end{align}
-\todo{explain $B_n$ and $A_t$}
 As this still requires us to verify the system for every $k$ up to infinity, 
 we use abstract acceleration again to obtain
 the reach-tube, i.e., the set of all reachable states at all times given an initial set $\phi_{init}$:
 \begin{align}
 \label{eq:aa_observer_LTI_cf}
 \hat{X}^\#
-=&\mathcal{A}_t X_0 + \mathcal{B}_{n} N\\
+=&\mathcal{A} X_0 + \mathcal{B}_{n} N\\
 X_0 =&\left \{x : x \models \phi_{init} \right\}\nonumber
 \end{align}
 %
-where $\mathcal{A}_t=\bigcup_{k=1}^\infty A_t^k, \mathcal{B}_{n}=\bigcup_{k=1}^\infty \sum_{i=0}^kA_t^iB_{n}$ are abstract matrices for the closed-loop system,
-% in \eqref{eq:observer_LTI_cf} 
-%and $r$ is a non-deterministic parametric input (\emph{ie} $\forall k>0, r_{k+1} =r_k$) 
+where $\mathcal{A}=\bigcup_{k=1}^\infty (A_d-B_dK)t^k, \mathcal{B}_{n}=\bigcup_{k=1}^\infty \sum_{i=0}^k(A_d-B_dK)^iB_{n}$ are abstract matrices for the closed-loop system,
 whereas the set N is non-deterministically chosen.
 
-%\begin{enumerate}
-%% \item Calculate the abstract matrices $\mathcal{A}_t, \mathcal{B}_{t},\mathcal{B}_{n}$ for the candidate closed loop solution.
 We next evaluate $\hat{X}^\# \models \phi_{safety}$. If the verification holds we have a solution, and exit the loop. Otherwise, 
 we find a counterexample iteration $k$ and corresponding initial point $x_0$ for which the property does not hold, which we use to locally refine the abstraction.
 When the abstraction cannot be further refined, we provide them to the {\sc abstract} phase.
@@ -1139,7 +1142,6 @@ When the abstraction cannot be further refined, we provide them to the {\sc abst
   in which case we must refine the abstraction used by the synthesizer.
 \begin{enumerate}
 \item Find the constraints that invalidate the property
-  %% These are the rows of $\mat{E} \in \Psi$ that intersect/segment $\hat{X}^\#$. Transforming these rows into the eigenspace of $\mat{A}_t$, and applying backward acceleration to
  as a set of counterexamples for the eigenvalues, which we define as $\phi_\Lambda$. This is a constraint in the spectrum i.e., transfer function) of the closed loop dynamics. 
 \item We use $\phi_\Lambda$ to
   further constrain the characteristic polynomial  
@@ -1182,14 +1184,6 @@ $z^n+\sum_{i=1}^n(a_i-k_i)z^{n-i}=\prod_{i=1}^n (z-\lambda_i) : |\lambda_i|<1 \w
      \coordinate (AA);
      \node[draw,rectangle,align=center] (AAV) at ([xshift=-1.5cm]AA.center) {Abstract\\Acceleration};
      \node[draw,rectangle,align=center] (AAC) at ([xshift=1.5cm]AA.center) {Abstraction \\ Verifier};
-     %\node[draw,rectangle,align=center] (AAI) at ([xshift=1.5cm]AA.center) {\sc AA\\Solver};
-     
-     %\node[draw=none] (AB) at ([xshift=.4cm,yshift=1.5cm]AAI.center)  {\sc $\mat{A},\mat{B}$\\$\phi$};     
-     %\node[draw=none] (MA) at ([yshift=.2cm]AA.center)  {$\mathcal{A}_t$};     
-     %\node[draw=none] (MB) at ([yshift=-.3cm]AA.center)  {$\mathcal{B}_{t},\mathcal{B}_{n}$}; 
-     %\node[draw=none] (XT) at ([xshift=0.3cm,yshift=0.5cm]AAC.center)  {\sl $\hat{X}_r^\#$};  
-     %\node[draw=none] (XT2) at ([xshift=0.3cm,yshift=0.8cm]AAV.center)  {\sl $\hat{X}^\#$};  
-     %\draw [->,line width=1pt] ([xshift=-0.1cm,yshift=2cm]AA.center) arc[x radius=0.7cm, y radius =.7cm, start angle=-250, end angle=60];
     }\\
    \&
    \& complexnode/.pic={
