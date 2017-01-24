@@ -168,7 +168,7 @@ synthesis of safe digital controllers.
 We describe and evaluate two approaches for synthesizing digital controllers 
 for state-space physical plants. Both approaches consider a counterexample 
 guided inductive synthesis (CEGIS) loop. In the first approach, 
-we devise a digital controller that stabilises the system; then, we verify its 
+we devise a digital controller that stabilizes the system; then, we verify its 
 potential safety by unfolding the dynamics of the system and checking for 
 a completeness threshold. In the second approach, we employ abstract acceleration
 to accelerate the dynamics forward instead of symbolically unwinding the 
@@ -220,7 +220,7 @@ than \textcolor{red}{$XXX$} seconds.
 
 Program synthesis is the problem of computing correct-by-design programs from high-level specifications; 
 algorithms for this problem have made substantial progress in recent years.  
-One such approach~\cite{itzhaky2010simple} inductively synthesises invariants to
+One such approach~\cite{itzhaky2010simple} inductively synthesizes invariants to
 generate the desired programs.
 
 Program synthesizers are an ideal fit for synthesis of %parametric
@@ -231,7 +231,7 @@ plants with polynomial dynamics.  The work extends to affine systems,
 finding a major challenge in the hardness of solving linear arithmetic with the state-of-the-art SMT solvers.  
 Since this approach uses switching models instead of linear dynamics for the digital controller, 
 it entirely circumvents the FWL problem, but potentially incurs state-space explosion issues.  
-This approach is not suitable for the kind of control we seek to synthesise.
+This approach is not suitable for the kind of control we seek to synthesize.
 
 %\textcolor{red}{Cristina: can you please revise this sentence:
 Moreover, in \cite{DBLP:conf/emsoft/RavanbakhshS16} the same authors 
@@ -249,16 +249,16 @@ digital controllers~\cite{Bessa16}.  While this work also make use of a CEGIS-ba
 the approach is restricted to synthesizing digital controllers for stable 
 closed-loop systems described via transfer function models.  
 In contrast, in the current paper we consider a state-space representation of the physical system, 
-which is known to be more general \cite{Astrom08} and allows to synthesise controllers that
+which is known to be more general \cite{Astrom08} and allows to synthesize controllers that
 make the closed-loop system \emph{safe}.  Moreover, 
 this work  integrates an abstraction/refinement step inside the main CEGIS loop.
 
-The tool Pessoa~\cite{mazo2010pessoa} is a MatLab toolbox that synthesises correct-by-design
+The tool Pessoa~\cite{mazo2010pessoa} is a MatLab toolbox that synthesizes correct-by-design
 embedded control software. It is based on the description of a physical system
 as an equivalent finite-state machine and on the computation of reachability properties over the finite-state 
 machine. 
 Based on this safety specification over state values, 
-Pessoa can synthesise embedded controller software for a range of properties.  
+Pessoa can synthesize embedded controller software for a range of properties.  
 %based on a safety specification over state values, as well as specification on characteristic functions of the controller. 
 However, Pessoa does not have native inclusion of the ADC/DAC quantisation error needed for
 synthesizing fixed-point digital controllers.
@@ -283,7 +283,7 @@ The classical approach to control synthesis has often disregarded quantization,
 thus resulting in general to unsound digital controllers. 
 Modern techniques focus on different elements of discretization effects, including delayed
 response~\cite{Duggirala2015}, and Finite Word Length (FWL) semantics, 
-with the goal either to verify (e.g.~\cite{daes20161}) or to optimise
+with the goal either to verify (e.g.~\cite{daes20161}) or to optimize
 (e.g.~\cite{oudjida2014design}) given implementations. 
 
 There are two different problems that arise from FWL semantics.  The first
@@ -466,7 +466,7 @@ The closed-loop model then takes the form
 \label{eq:closedloopss}
 x_{k+1} = ( A_d - B_d K ) x_k + B_d r_k.
 \end{align}
-The gain matrix $K$ can be set so that the closed-loop digitalised dynamics are shaped as desired, 
+The gain matrix $K$ can be set so that the closed-loop digitalized dynamics are shaped as desired, 
 for instance according to a specific stability goal or around a specific dynamical behaviour \cite{astrom1997computer}. 
 As argued later, in this work, we will target more complex objectives, such as quantitative safety requirements that are not typical in the digital control literature. 
 
@@ -652,7 +652,7 @@ We address these errors by use of a final verification check that uses interval 
 
 
 We note that the effect on stability due to the fixed-word-length error is that the system may, instead of converging to the desired equilibrium point, converge to a point that is bounded away from the desired equilibrium point (see Appendix for details). 
-In this paper, we are concerned with \emph{safe} controllers and therefore concerned only that the system converges to a point within the safety specification. Hence, it is sufficient to synthesise a stable controller based on infinite precision, and then verify safety. 
+In this paper, we are concerned with \emph{safe} controllers and therefore concerned only that the system converges to a point within the safety specification. Hence, it is sufficient to synthesize a stable controller based on infinite precision, and then verify safety. 
 
 
 %% %-------------------------------
@@ -801,12 +801,12 @@ $\mathbb{R}\langle I_p,F_p \rangle \supseteq \mathbb{R}\langle I_c,F_c \rangle$.
 \subsection{Solution generalisation} 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 Given the large solution space to be searched during the inductive
-synthesis phase, we parametrise the target language, which induces a
+synthesis phase, we parametrize the target language, which induces a
 lattice of progressively more expressive languages.  This enables us
-to start by attempting to synthesise a program at the lowest point on
+to start by attempting to synthesize a program at the lowest point on
 this lattice and increase the parameters of the language until we
 reach a point at which the synthesis succeeds. Whenever we manage to
-synthesise a candidate solution at some lower point on the lattice, we
+synthesize a candidate solution at some lower point on the lattice, we
 must apply some form of solution generalisation to obtain a full
 solution (i.e. a solution in the original search space).
 
@@ -814,7 +814,7 @@ As well as giving us an automatic search procedure, this
 parametrisation greatly increases the efficiency of our system since
 languages low down the lattice are very easy to decide safety for
 (i.e. the validation oracle finds an answer fast). If a program can be
-synthesised in a low-complexity language, the whole procedure finishes
+synthesized in a low-complexity language, the whole procedure finishes
 much faster than if synthesis had been attempted in a high-complexity
 language.
 
@@ -826,9 +826,9 @@ with CEGIS:
   uses a multi-staged verification phase and performs solution generalisation based on
 the plant precision, the number of loop unrollings, 
 and the sampling rate. Essentially, it finds a controller for an individual initial state
-and input with a bounded time horizon and generalises to all states,
+and input with a bounded time horizon and generalizes to all states,
 inputs, and time horizons. The safety check is performed in this approach 
-via unfolding of the transition system corresponding to the synthesised controller.
+via unfolding of the transition system corresponding to the synthesized controller.
 
 
 %% (with a final verification loop that verifies
@@ -837,7 +837,7 @@ via unfolding of the transition system corresponding to the synthesised controll
 \item[2.] The second approach (described in Sec~\ref{sec:CEGIS-abstraction-refinement})
   finds a controller for a continuous initial set of states and input
   set, over an abstraction of the continuous dynamics that conforms to
-  witness proofs at specific times; it further generalises the
+  witness proofs at specific times; it further generalizes the
   solution over all times by refining the number of witnesses.  
   In order to perform the safety check, this approach uses abstract acceleration
   \cite{cattaruzza2015unbounded} to compute the controller's set of states. 
@@ -942,7 +942,7 @@ via unfolding of the transition system corresponding to the synthesised controll
 %\subsubsection{Controller synthesis}
 
 The controller synthesis is described in Fig.~\ref{fig:CEGIS-precision-increment}.
-One important observation is that, for this approach, we verify and synthesise 
+One important observation is that, for this approach, we verify and synthesize 
 a controller over $k$ time steps. We then compute a completeness threshold, $\overline{k}$,
 for this controller, and verify the controller correctness to $\overline{k}$ time steps.
 Essentially, $\overline{k}$ represents the number of iterations 
@@ -958,20 +958,20 @@ Next, we describe the different phases in Fig.~\ref{fig:CEGIS-precision-incremen
 
 %\todo{please eventually itemize next}
 \begin{enumerate}
-\item The inductive synthesis phase (i.e. {\sc synthesise}) uses BMC to
+\item The inductive synthesis phase (i.e. {\sc synthesize}) uses BMC to
 compute a candidate solution $K$
 that satisfies both the stability criteria detailed in 
 Sec.~\ref{ssec:stability} and the safety specification in Sec.~\ref{ssec:safety}.
-To synthesise a controller that satisfies the stability criteria, we require that
+To synthesize a controller that satisfies the stability criteria, we require that
 a computed characteristic polynomial satisifies Jury's criteria. The details of this
 calculation can be found in the Appendix.
 
 %% The stability criteria are satisfied if the characteristic polynomial of $A_d - B_d * K_d$ meets Jury's criteria. This is 
 %% independent of the initial states. 
-Regarding the latter, we synthesise a safe controller by unwinding the transition system
+Regarding the latter, we synthesize a safe controller by unwinding the transition system
 $k$ steps and picking a controller $K$ and an initial state such that the states at each step do
 not violate the safety criteria. This is sound if the current $k$ is below the
-completeness threshold, which we assume to be true in the {\sc synthesise} phase.
+completeness threshold, which we assume to be true in the {\sc synthesize} phase.
 We also assume some
 precision $\langle I_p,F_p\rangle$ for the plant and a sampling rate.  The
 checks that all these assumptions are sound are performed by subsequent
@@ -1010,7 +1010,7 @@ checks that all these assumptions are sound are performed by subsequent
 solution $K$ is safe for all possible initial states, i.e., does not reach an unsafe
 state within $k$ steps where again we assume $k$ to be under the completeness threshold. 
 %The safety criteria here must be valid for all possible allowed initial states, and so we
-After unwinding the transition system corresponding to the previously synthesised controller
+After unwinding the transition system corresponding to the previously synthesized controller
 $k$ steps, we check that the safety specification holds for any initial state. 
 
 This is relatively computationally expensive if the bounds on the
@@ -1092,7 +1092,7 @@ After adding the new counterexample to its sets of {\sc inputs}, {\sc
   \ 0.00048828125]^T$, which prompts the {\sc safety} verifier to
 return $x_0=[-0.5 -0.5 -0.5]$ as the new counterexample.
 
-In the subsequent iteration, the synthesiser is unable to find further 
+In the subsequent iteration, the synthesizer is unable to find further 
 suitbale candidates and it returns UNSAT, meaning that the current precision is
 insufficient.  Consequently, we increase the precision to $I_p=17$,
 $F_p=7$.
@@ -1200,7 +1200,7 @@ $$N=\left \{ \nu_1+\nu_2+ \nu_3 : \nu_1 \in \left[-\frac{q1}{2}\ \ \frac{q1}{2}\
 synthesis phase to reduce the size of the solution space.
 $$\phi_{safety} \Leftrightarrow u_k=-Kx_k : x_0 \in [\underline{x_0} \ \overline{x_0}] \wedge u_k \in [\underline{u}\ \ \overline{u}]$$
 \end{enumerate}
-\item In this phase we synthesise a candidate controller
+\item In this phase we synthesize a candidate controller
 %We begin with a minimum set of linear inequalities describing the constraints caused by the input and the initial state during a single iteration, in addition to a stability 
 % specification defined by Jury's 
 %criteria. %, and try to synthesise a controller that meets these specs.
@@ -1607,7 +1607,7 @@ and can their stability and safety be confirmed outside of our model?
 %-------------------------------
 \subsection{Threats to validity}
 %-------------------------------
-We report an assessment of both our approaches over a diverse set of real-world benchmarks. Nevertheless, this set of benchmarks is limited within the scope of this paper and the performance may not generalise to other benchmarks. 
+We report an assessment of both our approaches over a diverse set of real-world benchmarks. Nevertheless, this set of benchmarks is limited within the scope of this paper and the performance may not generalize to other benchmarks. 
 
 Our algorithm to select suitable FWL word widths to model plant behaviour employs a heuristic based on user-provided controller word-width specifications. For the first approach, where we may need to increase the precision of the time discretization, we select the time steps for the discretizations on a similar basis. This works sufficiently well for our benchmarks, but performance may suffer in some cases, for example if the completeness threshold is high. 
 
@@ -1726,7 +1726,7 @@ x_{n} &= (A_d  - B_dK)^nx_0 + (A_d  - B_dK)^{n-1}B_dK\delta + ... + (A_d  - B_dK
 
 The definition of asymptotic stability is that the system converges to a reference signal, in this case we use no
 reference signal so an asymptotically stable system will converge to the origin. We know that the original system
-with an infinite precision controller is stable, because we have synthesised it to meet Jury's criteria. Hence
+with an infinite precision controller is stable, because we have synthesized it to meet Jury's criteria. Hence
 $(A_d  - B_dK)^n*x_0$ must converge to zero. 
 
 To show that a fixed point implementation of the same controller will converge to a steady value, we need to show that the infinite sum converges.
