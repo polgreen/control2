@@ -1,21 +1,69 @@
-A = [4.6764e-166,0.0,0.0; 5.1253e-144,0.0,0.0; 0,2.5627e-144,0.0];
-B = [0.125; 0 ; 0];
-K = [0.0009765625  800 0.5];
 
-states = [9; 9; 9];
-input = 1;
+%mag suspension
+K = [17.4384765625, -0.0537109375];
+A = [558.1114,-1;1,0] 
+B = [32;0] 
+
+%inv pendulum
+%A = [2.2553,-1;1,0] 
+%B = [0.5;0] 
+%K = [4.75, -1]
 
 
+%pendulum ss
+%K = [-4.7421875, -1]
+%A = [-1.9999,-1;1,0] 
+%B = [0.5;0]  
 
-if (abs(eig(A - B*K)) > 1)
+loops = 50;
+if (abs((eig(A - B*K))) < 1)
+    msg = 'stable'
+else
     msg = 'unstable'
+    eig(A - B*K)
 end
 
-for i=0:150
+states = [1;1];
+for i=0:loops
     input = -K * states;
     states = A * states + B * input;
-    if(states > 10 | states < -10)
+    if(states > 1 | states < -1)
         msg = 'unsafe'
+        states
+        i
     end
-end    
-msg = 'safe and stable'
+end 
+
+states = [1;-1];
+for i=0:loops
+    input = -K * states;
+    states = A * states + B * input;
+    if(states > 1 | states < -1)
+        msg = 'unsafe'
+        states
+        i
+    end
+end 
+
+states = [-1;1];
+for i=0:loops
+    input = -K * states;
+    states = A * states + B * input;
+    if(states > 1 | states < -1)
+        msg = 'unsafe'
+        states
+        i
+        return
+    end
+end 
+states = [-1;-1];
+
+for i=0:loops
+    input = -K * states;
+    states = A * states + B * input;
+    if(states > 1 | states < -1)
+        msg = 'unsafe'
+        states
+        i
+    end
+end 

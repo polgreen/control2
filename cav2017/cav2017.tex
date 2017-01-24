@@ -956,6 +956,10 @@ Next, we describe the different phases in Fig.~\ref{fig:CEGIS-precision-incremen
 compute a candidate solution $K$
 that satisfies both the stability criteria detailed in 
 Sec.~\ref{ssec:stability} and the safety specification in Sec.~\ref{ssec:safety}.
+To synthesise a controller that satisfies the stability criteria, we require that
+a computed characteristic polynomial satisifies Jury's criteria. The details of this
+calculation can be found in the Appendix.
+
 %% The stability criteria are satisfied if the characteristic polynomial of $A_d - B_d * K_d$ meets Jury's criteria. This is 
 %% independent of the initial states. 
 Regarding the latter, we synthesise a safe controller by unwinding the transition system
@@ -969,8 +973,21 @@ checks that all these assumptions are sound are performed by subsequent
 
 \begin{algorithm}[]
 \begin{algorithmic}[1]
+\Function{$stabilityCheck()$}{}
+  \State computecharPoly($A_d - B_dK$)
+  \State assert(Jury's criteria hold)
+  %\State Return $K$
+\EndFunction
+\end{algorithmic}
+\label{alg:stabilitycheck}
+\end{algorithm}
+
+
+\begin{algorithm}[]
+\begin{algorithmic}[1]
 \Function{$safetyCheck()$}{}
 	\State assert($ \underline{u}  \leq u \leq \overline{u}$)
+  \State assert($ \underline{x_0}  \leq x_0 \leq \overline{x_0}$)
 	\While{$i=0; i< k; i++$}
 		%\State $u = (\langle I_p,F_p\rangle)((\langle I_c,F_c\rangle)K * (\langle I_c,F_c\rangle) x)$
 		\State $u = (plant\_typet)((controller\_typet)K * (controller\_typet) x)$
@@ -997,19 +1014,21 @@ allowed initial states, it is safe for any initial state in the
 hypercube. Thus we only need to check $2^N$ initial states, where $N$
 is the number of states.
 
-\todo[inline]{please will Alessandro write out the proof that checking only the corner cases is valid for the safety verification - EP}
 
-Proof. 
-Consider the set of initial states, $X_0$, assumed to be convex since it's a box. 
+\begin{proof} 
+Consider the set of initial states, $X_0$, assumed to be convex since it's a hypercube. 
 Name $v_i$ its vertexes, where $i=1,\ldots, 2^n$.  
 Thus any point $x \in X_0$ can be expressed by convexity as $x = \sum_{i=1}^{2^n} \alpha_i v_i$, 
-where $\sum_{i=1}^{2^n} \alpha_i =1$. 
-So then if $x_0=x$, then $x_k = (A_d - B_d K)^k x = 
-(A_d - B_d K)^k \sum_{i=1}^{2^n} \alpha_i v_i = 
-\sum_{i=1}^{2^n} \alpha_i (A_d - B_d K)^k v_i  = 
-\sum_{i=1}^{2^n} \alpha_i x_k^i$, 
-where I have denoted with $x_k^i$ the trajectories obtained from the single vertexes $v_i$.QED
-
+where $\sum_{i=1}^{2^n} \alpha_i =1$. \\
+So then if $x_0=x$, then 
+\begin{align*}
+x_k   &= (A_d - B_d K)^k x \\
+      &= (A_d - B_d K)^k \sum_{i=1}^{2^n} \alpha_i v_i \\
+      &= \sum_{i=1}^{2^n} \alpha_i (A_d - B_d K)^k v_i \\
+      &= \sum_{i=1}^{2^n} \alpha_i x_k^i
+ \end{align*}     
+where $x_k^i$ denotes the trajectories obtained from the single vertexes $v_i$. 
+\end{proof}
 
 \item The second {\sc verify} stage, {\sc precision}, 
  restores soundness with respect to the plant's precision
@@ -1035,14 +1054,14 @@ distance from the reference (in this case the origin) decreases over time.
 \caption{Completeness threshold}
 \end{figure*}
 
-Proof sketch. 
+\begin{proof}
 Consider spectrum of matrix $(A_d - B_d K)$ and select eigenvalue with smallest (non trivial) imaginary value.  
 call such value $\vartheta$. 
 At every time interval $kT_s, (k+1)T_s$ ($T_s$ being the sampling time), 
 the dynamics projected on the corresponding eigenspace rotate of $\vartheta T_s$ radiants.  
 So surely taking $k$ as the ceiling of $\frac{2\pi}{\vartheta T_s}$, after $k$ steps we've completed a rotation. 
-This is the CT. 
-
+This is the completeness threshold. 
+\end{proof}
 \item The last {\sc verify} stage, {\sc sampling}, 
 ensures that the current sampling rate is large enough by using an 
 external checker (\addtodo{add more details here once we have them}).
