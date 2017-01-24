@@ -1155,7 +1155,7 @@ X_0 =&\left \{x : x \models \phi_{init} \right\}\nonumber
 \end{align}
 %
 where $\mathcal{A}=\bigcup_{k=1}^\infty (A_d-B_dK)t^k, \mathcal{B}_{n}=\bigcup_{k=1}^\infty \sum_{i=0}^k(A_d-B_dK)^iB_{n}$ are abstract matrices for the closed-loop system,
-whereas the set N is non-deterministically chosen.
+whereas the set N is non-deterministically chosen. \todo{add citation to SAS article, readers will be lost. }
 
 We next evaluate $\hat{X}^\# \models \phi_{safety}$. If the verification holds we have a solution, and exit the loop. Otherwise, 
 we find a counterexample iteration $k$ and corresponding initial point $x_0$ for which the property does not hold, which we use to locally refine the abstraction.
@@ -1278,6 +1278,8 @@ and employed for validating our methodology.
 %
 Table~\ref{table:State-space benchmarks} summarizes 
 all our benchmarks, which are SISO models (cf. section~\ref{sec:preliminaries}). 
+\todo{they are not: we do not have a 1d output map (SO= single output), rather get access to all variables. so the output map (C) is the identity, if you will. 
+this is a good point to clarify this, mention possible extensions to observer-based feedback architectures. }
 
 \textit{DC Motor Position and Rate} plants describes the angular position and 
 velocity of a DC Motor, respectively. 
