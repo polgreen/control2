@@ -471,21 +471,25 @@ As argued later, in this work, we will target more complex objectives, such as q
 \label{ssec:stability}
 %-------------------------------
 
-%\addtodo{[Here discuss Jury criterium for DISCRETE-TIME models - a simplified version of the first part of what is now in Section \ref{sec:cof_verification} (with no quantization noises yet).]}  
-
-Asymptotic stability boils down to Lyapunov stability and convergence to an equilibrium point~\cite{Astrom08}.  %\todo{add reference}.  
-Lyapunov stability requires that model trajectories remain in a neighbourhood of the equilibrium point. 
+Asymptotic stability boils down to Lyapunov stability 
+and convergence to an equilibrium point~\cite{Astrom08}. 
+Lyapunov stability requires that model trajectories remain i
+n a neighborhood of the equilibrium point. 
 In the case of closed-loop LTI models as in \eqref{eq:closedloopss}, 
-the equilibrium point is the origin (if the reference is equal to zero), or an offset thereof.  
-In this paper, we consider systems with a reference signal equal to zero. 
+the equilibrium point is the origin (if the reference is equal to zero), 
+or an offset thereof. Here, we consider systems with a zero reference signal. 
 
-A discrete-time system as \eqref{eq:closedloopss} is asymptotically stable if and only if all the roots 
-of the characteristic polynomial ({\it i.e.}, the eigenvalues of the closed-loop matrix $A_d - B_d K$) are inside the unity circle in the complex plane, 
-{\it i.e.} iff their absolute values are less than one~\cite{astrom1997computer}. 
-In this paper, we express the stability specification $\phi_{stability}$ in terms of a check known as Jury's criterion \cite{fadali}. 
-This condition boils down to an easy algebraic formula to select the entries of matrix $K$, 
-so that the closed-loop dynamics are shaped as desired. 
-A detailed description of this specification can be found in the Appendix~\ref{sec:appendix-stability}. 
+A discrete-time system as \eqref{eq:closedloopss} is asymptotically stable 
+\textit{iff} all the roots of the characteristic polynomial 
+(i.e., the eigenvalues of the closed-loop matrix $A_d - B_d K$) 
+are inside the unity circle in the complex plane, i.e., \textit{iff} their absolute 
+values are less than one~\cite{astrom1997computer}. 
+In this paper, we express the stability specification $\phi_{stability}$ 
+in terms of a check known as Jury's criterion~\cite{fadali}. 
+This condition boils down to an easy algebraic formula to select the entries 
+of matrix $K$, so that the closed-loop dynamics are shaped as desired. 
+A detailed description of this specification can be found in the 
+Appendix~\ref{sec:appendix-stability}. 
 
 
 %-------------------------------
