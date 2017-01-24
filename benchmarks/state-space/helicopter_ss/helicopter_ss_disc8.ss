@@ -1,4 +1,4 @@
-implementation <7,3>
+implementation <8,8>
 states = 3;
 inputs = 1;
 outputs = 1;
