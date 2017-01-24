@@ -413,13 +413,19 @@ int check_safety(void)
     #endif
   }
 
+#ifdef INTERVAL
+  int_vectort error_coeffs;
+  bound_error(_AminusBK,K_fxp,error_coeffs);
+#endif  
   for(int k=0; k<NUMBERLOOPS; k++)
   {
 
     inputs_equal_ref_minus_k_times_states(); //update inputs one time step //this is still needed for INTERVALS because it enforces bounds on the input
 
     #ifdef INTERVAL
-        closed_fxp_mult(_controller_A, _controller_B, K_fxp, _controller_states);
+      matrix_vector_mult(_AminusBK,_controller_states);
+    
+      //closed_fxp_mult(_controller_A, _controller_B, K_fxp, _controller_states);
     #endif
     #ifndef INTERVAL
         states_equals_A_states_plus_B_inputs(); //update states one time step
@@ -428,7 +434,7 @@ int check_safety(void)
     for(int i=0; i<NSTATES; i++)
     {
       #ifdef INTERVAL
-      if(_controller_states[i].low>SAFE_STATE_UPPERBOUND || _controller_states[i].high<SAFE_STATE_LOWERBOUND)
+      if(_controller_states[i].low-error_coeffs[i].high>SAFE_STATE_UPPERBOUND || _controller_states[i].high+error_coeffs[i].high<SAFE_STATE_LOWERBOUND)
         {return 0;}
       #else
       if(_controller_states[i]>SAFE_STATE_UPPERBOUND || _controller_states[i]<SAFE_STATE_LOWERBOUND)

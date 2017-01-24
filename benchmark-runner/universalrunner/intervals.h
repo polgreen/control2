@@ -188,6 +188,25 @@ struct intervalt abs_interval(struct intervalt x)
 typedef struct intervalt int_vectort[NSTATES];
 typedef struct intervalt int_matrixt[NSTATES][NSTATES];
 
+void matrix_vector_mult(int_matrixt A,int_vectort x)
+{
+  int i,j;
+  int_vectort y;
+  for (i=0;i<NSTATES;i++)
+  {
+    y[i]=interval_mult(A[i][0],x[0]);
+    for (j=1;j<NSTATES;j++)
+    {
+      y[i]=interval_add(y[i],interval_mult(A[i][j],x[j]));
+    }
+  }
+  for (i=0;i<NSTATES;i++)
+  {
+    x[i].low=y[i].low;
+    x[i].high=y[i].high;
+  }
+}
+
 void closed_fxp_mult(const int_matrixt A,const int_vectort B,const int_vectort K,int_vectort x)
 {
   int i,j,row;
