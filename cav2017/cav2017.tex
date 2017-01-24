@@ -475,7 +475,7 @@ x_{k+1} = ( A_d - B_d K ) x_k + B_d r_k.
 \end{align}
 The gain matrix $K$ can be set so that the closed-loop digitalized dynamics are shaped as desired, 
 for instance according to a specific stability goal or around a specific dynamical behaviour \cite{astrom1997computer}. 
-As argued later, in this work, we will target more complex objectives, such as quantitative safety requirements that are not typical in the digital control literature. 
+As argued later in this work, we will target more complex objectives, such as quantitative safety requirements that are not typical in the digital control literature. 
 
 %-------------------------------
 \subsection{Stability of closed-loop systems}
@@ -516,9 +516,9 @@ More specifically,
 we require that the closed-loop system \eqref{eq:closedloopss} meets given safety specifications. 
 A safety specification raises a requirement on the states of the model, 
 such that the feedback controller (namely the choice of the gains in $K$) 
-must ensure that the states never exist such requirement. 
+must ensure that the states never exit such requirement. 
 Note that a stable, closed-loop system is not necessarily a safe system: 
-indeed, the state values may leave the safe whilst they converge to the equilibrium, 
+indeed, the state values may leave the safe space whilst they converge to the equilibrium, 
 which is typical in the case of oscillatory dynamics. However, a safe system will always be stable.
 In this work, the safety property represented by $\phi_{safety}$ is encoded as follows: 
 %
@@ -530,7 +530,6 @@ In this work, the safety property represented by $\phi_{safety}$ is encoded as f
 %\addtodo{We consider $x_{i}^{-}$ and $x_{i}^{+}$ to be -1 and 1, respectively.}
 where $\underline{x_{i}}$ and $\overline{x_{i}}$ are lower and upper bounds for the $i$-th coordinate $x_{i}$ of state $x\in \mathbb R^n$ at the $k$-th instant, respectively. 
 This means that the states will always be within the $n$-dimensional hyper-box. 
-%, which is typically defined by the safety specification.
 
 Furthermore, 
 it is practically relevant to consider constraints on the input signal $u_{k}$
@@ -542,37 +541,6 @@ $$\phi_{init} = {\forall k.\underline{u} \leq u_{k} \leq \overline{u}}
 \wedge \bigwedge_{i=1}^{n} \underline{x_{i,0}} \leq x_{i,0} \leq \overline{x_{i,0}}$$.  
 In practice, 
 this means that the control input saturates in view of physical constraints. 
-
-
-%%%-------------------------------
-%%\subsection{Digital implementation of feedback controller}
-%%\label{ssec:quantizationerror}
-%%%-------------------------------
-%%
-%%\addtodo{HERE add a figure similar to Fig. \label{fig:observersystem} to explain digital features of controller.} 
-%%
-%%\addtodo{[The remainder of the section needs to be updated. ]}
-%%The output and measurable of the plant is being sampled by an ADC, and since the full state of the
-%%plant cannot be witnessed directly, the controller software includes an observer that 
-%%estimates the state of the plant (see appendix for details on how such an observer
-%%is constructed). In this work, we are assuming that all the states measurements are available for the state feedback purpose, and the state observer design may be disregarded.  
-%%\addtodo{[Unclear what the remainder is for: ]}
-%%We further presume that there are small tolerances in the system 
-%%described in the following form
-%%%
-%%\begin{align*}
-%%\mat{A} \in \mathcal{G}_A=\mat{S}\mat{J}\mat{S}^{-1} : \mat{J} \in \mathcal{G}_J
-%%\end{align*}
-%%\commentib{What is S?}
-%%
-%%Where $\mathcal{G}_J$ is a collection of eigenvalue ranges that define the frequency response of the system.
-%%We presume that the internal model of the plant is an ARMA model, modified by a
-%%state transform that has no tolerances. Tolerances in the eigenvectors will manifest themselves
-%%as tolerances in the canonical forms outside of the row/column of interests and complicate the 
-%%evaluation. Whilst it is possible to address these with this methodology, we will focus on the case
-%%above for simplicity.
-
-% \addtodo{HERE add a figure similar to Fig. \label{fig:observersystem} to explain digital features of controller.} 
 
 % \addtodo{[The remainder of the section needs to be updated. ]}
 % The output and measurable of the plant is being sampled by an ADC, and since the full state of the
@@ -591,8 +559,7 @@ this means that the control input saturates in view of physical constraints.
 The models we consider have two sources of error due to numeric representation. 
 The first is the numeric error introduced by the fixed-point numbers employed to model the plant, i.e., to represent the plant dynamics $A_d$, $B_d$ and its states. 
 The second is the quantization error introduced by the digital controller, 
-which 
-performs operations in the domain of fixed-point numbers. 
+which performs operations in the domain of fixed-point numbers. 
 In this section we formally outline the errors introduced by fixed-point representation of numbers. 
 
 Let $\mathcal{F}\langle I,F \rangle(x)$ denote a real number $x$ represented in a fixed point domain, with $I$ bits representing the integer part and $F$ bits representing the decimal part. The smallest number that can be represented in this domain is $c_m=2^{-F}$.
@@ -623,24 +590,23 @@ The maximum size of a real number $x$ that can be represented in a fixed point d
 
 We use $\mathcal{F}\langle I_c,F_c \rangle(x)$ to denote a real number $x$ represented in the fixed-point precision level of the controller, and $\mathcal{F}\langle I_p,F_p \rangle(x)$ to denote a real number $x$ represented in the fixed-point precision level of the plant model. Thus all mathematical operations occurring in the digital controller occur in the domain $\mathcal{F}\langle I_c,F_c \rangle$, and all other calculations are carried out in the domain $\mathcal{F}\langle I_p,F_p \rangle$.
 
+We will use $\mathcal{F}\langle I_c,F_c \rangle(x)$ to denote a real number $x$ represented in the fixed-point precision level of the controller, and $\mathcal{F}\langle I_p,F_p \rangle(x)$ to denote a real number $x$ represented in the fixed-point precision level of the plant model ($I_p \geq I_c \wedge F_p \geq F_c$). Thus any mathematical operations occurring in the digital controller will occur in the range of $\mathcal{F}\langle I_c,F_c \rangle$, and all other calculations will be carried out in the range of $\mathcal{F}\langle I_p,F_p \rangle$.
 
 \subsubsection{Effect on safety specification and stability}
-Thus we can consider the effect of these errors on our safety and stability verification.
+%Thus we can consider the effect of these errors on our safety and stability verification.
 
 First consider the effect of the quantization errors on safety; the state values must be computed considering the error introduced by the digital controller caused by performing the vector multiplication $Kx$ at low digital precision.
 
-The states are computed using the following equations. 
+The inputs are computed using the following equations. 
 \begin{align*}
-u_{k}&=-(\mathcal{F}_{\langle I_c,F_c \rangle}(K)\cdot\mathcal{F}_{\langle I_c,F_c \rangle}(x_{k})).  
-% x_{k+1}&=A_d x_{k} + B_du_{k}
+u_{k}&=-(\mathcal{F}_{\langle I_c,F_c \rangle}(K)\cdot\mathcal{F}_{\langle I_c,F_c \rangle}(x_{k})). 
 \end{align*}
 
-This will induce two types of the error detailed above, first the truncation errors due to representing $x_k$ as ${\langle I_c,F_c \rangle}(x_{k})$, and second the rounding error introduce by multiplying $x_k$ and $K$. We represent these errors as non-deterministic noise.
+This will induce two types of the error detailed above, first the truncation errors due to representing $x_k$ as $\mathcal{F}{\langle I_c,F_c \rangle}(x_{k})$, and second the rounding error introduced by the multiplication. We represent these errors as non-deterministic noise.
 
 A further error is caused by the representation of the plant dynamics.
 \begin{align*}
-\mathcal{F}_{\langle I_p,F_p \rangle}(u_{k})&=-(\mathcal{F}_{\langle I_c,F_c \rangle}(K)\cdot\mathcal{F}_{\langle I_c,F_c \rangle}(x_{k})).  \\
-\mathcal{F}_{\langle I_p,F_p \rangle}(u_{k})(x_{k+1}) &=\mathcal{F}_{\langle I_p,F_p \rangle}(u_{k})(A_d) \mathcal{F}_{\langle I_p,F_p \rangle}(u_{k})(x_{k}) + \mathcal{F}_{\langle I_p,F_p \rangle}(u_{k})(B_d)\mathcal{F}_{\langle I_p,F_p \rangle}(u_{k})(u_{k})
+x_{k+1} &=\mathcal{F}_{\langle I_p,F_p \rangle}(A_d) \mathcal{F}_{\langle I_p,F_p \rangle}(x_{k}) + \mathcal{F}_{\langle I_p,F_p \rangle}(B_d)\mathcal{F}_{\langle I_p,F_p \rangle}(u_{k})
 \end{align*}
 
 We address these errors by use of a final verification check that uses interval arithmetic~\cite{moore1966interval}.
@@ -713,7 +679,7 @@ of the program synthesizer, the controller $K$ denotes $P$ and
 $(x_0, u_k)$ represents $x$. 
 While the controller's precision $\langle I_c,F_c\rangle$ is given, 
 we can vary the plant's precision $\langle I_p,F_p\rangle$ such that 
-$\mathbb{R}\langle I_p,F_p \rangle \supseteq \mathbb{R}\langle I_c,F_c \rangle$.
+$I_p \geq I_c \wedge F_p \geq F_c$.
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{Solution generalization} 
