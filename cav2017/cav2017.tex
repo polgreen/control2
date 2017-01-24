@@ -140,7 +140,7 @@ Control synthesis for LTI is broadly investigated,
 however the use of digital control architectures adds new challenges due to 
 %exacerbated by specific artefacts,  
 the effects of finite-precision arithmetic, time discretization, and quantization noise, which are typically introduced 
-by Analogue-to-Digital (A/D) \todo{later ADC and DAC} and Digital-to-Analogue (D/A) conversion.  
+by Analogue-to-Digital (ADC) and Digital-to-Analogue (DAC) conversion.  
 Whilst the research on digital control is well developed~\cite{astrom1997computer}, 
 automated and sound control synthesis is a challenging task,  
 %Thus, the programming is a key barrier to broad adoption of digital control, 
@@ -281,7 +281,7 @@ machine.
 Based on this safety specification over state values, 
 Pessoa can synthesize embedded controller software for a range of properties.  
 %based on a safety specification over state values, as well as specification on characteristic functions of the controller. 
-However, Pessoa does not have native inclusion of the ADC/DAC quantization error needed for
+However, Pessoa does not have native inclusion of the quantization error introduced by Digital-to-Analogue/Analogue-to-Digital conversion needed for
 synthesizing fixed-point digital controllers.
 
 \todo{Have we covered all the literature by Feron et al?}  
@@ -351,7 +351,7 @@ x_{k+1} = A_d x_k+ B_d u_k.
 \end{align} 
 where $k \in \mathbb N$, 
 and with initial state $x_{0}=x(0)$. $A_d$ and $B_d$ denote the discretized matrices of $A$ and $B$, the plant dynamics. 
-Later, we will deal with the issue of variable quantization, as introduced by the ADC and DAC blocks.  
+Later, we will deal with the issue of variable quantization, as introduced by the ADC/DAC conversion blocks.  
 
 %
 \begin{figure*}[htb]
@@ -1711,13 +1711,13 @@ Since the controller output is fed to a Zero Order Holder, the progression of th
 \subsection{Modelling quantization as noise} \label{appendix:quantization-noise}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-During any given ADC conversion, the continuous signal will be sampled in the real domain and transformed into a $\mathbb{R}\langle I_{adc},F_{adc} \rangle$ value. this sampling uses a threshold which is defined by the less significant bit ($q_{adc}=2^{-F_{adc}}$) of the ADC and some non-linearities of the circuitry. The overall conversion is
-$$\mathcal{F}\langle I_{adc},F_{adc} \rangle(y(t)) = y_k : y_k \in \left[y(t)-\frac{q_{adc}}{2}\ \ \ \ y(t)+\frac{q_{adc}}{2}\right]$$.
-If we denote the error in the conversion as $\nu_k=y_k-y(t) : t=nk$ then we may define some bounds for it $\nu_k \in [-\frac{q_{adc}}{2}\ \ \frac{q_{adc}}{2}]$.
+During any given ADC conversion, the continuous signal will be sampled in the real domain and transformed into a $\mathbb{R}\langle I_{c},F_{c} \rangle$ value. this sampling uses a threshold which is defined by the less significant bit ($q_{adc}=2^{-F_{adc}}$) of the ADC and some non-linearities of the circuitry. The overall conversion is
+$$\mathcal{F}\langle I_{c},F_{c} \rangle(y(t)) = y_k : y_k \in \left[y(t)-\frac{q_{c}}{2}\ \ \ \ y(t)+\frac{q_{adc}}{2}\right]$$.
+If we denote the error in the conversion as $\nu_k=y_k-y(t) : t=nk$ then we may define some bounds for it $\nu_k \in [-\frac{q_{c}}{2}\ \ \frac{q_{c}}{2}]$.
 
 We will assume, for the purposes of this analysis, that the domain of the ADC is that of the digital controller (\emph{ie} the quantizer includes any digital gain added in the code).
-The process of quantization in the DAC is similar except that it is going from $\mathbb{R}\langle I_{adc},F_{adc} \rangle \rightarrow \mathbb{R}\langle I_{dac},F_{dac} \rangle$. If these domains are the same ($I_{adc}=I_{dac},F_{adc}=F_{dac}$), or if the DAC resolution in higher than the ADCs, then the DAC quantization error is equal to zero.
-From the above equations we can now infer that $\nu_1 \in [-\frac{q_1}{2}\ \ \frac{q_1}{2}], \nu_2 \in [-\frac{q_2}{2}\ \ \frac{q_2}{2}] : q_1=q_{adc} \wedge q_2=q_{dac}$.
+The process of quantization in the DAC is similar except that it is going from $\mathbb{R}\langle I_{c},F_{c} \rangle \rightarrow \mathbb{R}\langle I_{dac},F_{dac} \rangle$. If these domains are the same ($I_{c}=I_{dac},F_{c}=F_{dac}$), or if the DAC resolution in higher than the ADCs, then the DAC quantization error is equal to zero.
+From the above equations we can now infer that $\nu_1 \in [-\frac{q_1}{2}\ \ \frac{q_1}{2}], \nu_2 \in [-\frac{q_2}{2}\ \ \frac{q_2}{2}] : q_1=q_{c} \wedge q_2=q_{dac}$.
 Note that these bounds hold irrespective of whether the noise is correlated, hence we may use them to over-approximate the effect of the noise on the state space progression over time.
 The resulting dynamics are:
 \begin{align}
