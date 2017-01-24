@@ -1153,54 +1153,63 @@ The CEGIS loop for this approach is illustrated in \ref{fig:CEGARIS}.
 
 \begin{enumerate}
 \item 
-We start by preprocessing the dynamics. This can be computationally intensive and we don't want it to be part of the CEGIS loop.
+  We start by doing some preprocessing:%%  that 
+  %% can be computationally intensive and we don't want it to be part of the CEGIS loop.
 % Let us recall the formulas used for single-input and single-output (SISO) systems 
-% in sections \ref{sec:reachable} and \ref{sec:observable}.
-A controllable system with quantization will have the following dynamics 
-(note that we use underscript ``n'' to denote a noise term and
-``cf'' to denote Controllable Canonical Form):
-%\todo{eliminate vectors}
-%
-\begin{align}
-\label{eq:observer_LTI_cf}
-x_{k+1}=&\mat{A}_{t}x_k+\mat{B}_{t} r_k+\mat{B}_{n} (\nu_1 + \nu_2 + \nu_3)
-\end{align}
-\begin{align*}
-\mat{A}_{t}=&\mat{T}\mat{A}_d\mat{T}^{-1}&
-\mat{B}_{t}=&\mat{T}\mat{B}_d&
-\mat{B}_{n}=&[1 \cdots 1]^T&
-\mat{T}=&\mat{W}_{cf}\mat{W}^{-1}&
-\end{align*}
+  % in sections \ref{sec:reachable} and \ref{sec:observable}.
+  \begin{enumerate}
+\item Compute the characteristic polynomial of the matrix $(\mat{A_d}-\mat{B_d}\mat{K})$ as 
+$P_a(z) = z^n+\sum_{i=1}^p{(a_i-k_i)z^{n-i}}$.
+%%   A controllable system with quantization will have the following dynamics, where
+%% we use underscript ``n'' to denote a noise term,
+%% ``cf'' to denote Controllable Canonical Form,
+%% $\nu_1$, $\nu_2$ are quantization errors
+%% caused by the ADC and DAC conversions, respectively, 
+%% and $\nu_3$ is the round-off error.
+%% \todo{Why do we use $_t$ here?}
+%% %
+%% \begin{align}
+%% \label{eq:observer_LTI_cf}
+%% x_{k+1}=&\mat{A}_{t}x_k+\mat{B}_{t} r_k+\mat{B}_{n} (\nu_1 + \nu_2 + \nu_3)
+%% \end{align}
+%% \begin{align*}
+%% \mat{A}_{t}=&\mat{T}\mat{A}_d\mat{T}^{-1}&
+%% \mat{B}_{t}=&\mat{T}\mat{B}_d&
+%% \mat{B}_{n}=&[1 \cdots 1]^T&
+%% \mat{T}=&\mat{W}_{cf}\mat{W}^{-1}&
+%% \end{align*}
 
-\begin{align*}
-\mat{A}_{t}=\mat{T}\mat{A}_d\mat{T}^{-1}=&\left[
-\begin{array}{ccccc}
-0&1&0&\cdots&0\\
-0&0&1&\cdots&0\\
-\vdots&\vdots&\vdots&\ddots&\vdots\\
-0&0&0&\cdots&1\\
-k_n-a_n&k_{n-1}-a_{n-1}&k_{n-2}-a_{n-2}&\cdots&k_1-a_1
-\end{array}\right]
-\label{eq:cf_SISO_2}
-\end{align*}
+%% \begin{align*}
+%% \mat{A}_{t}=\mat{T}\mat{A}_d\mat{T}^{-1}=&\left[
+%% \begin{array}{ccccc}
+%% 0&1&0&\cdots&0\\
+%% 0&0&1&\cdots&0\\
+%% \vdots&\vdots&\vdots&\ddots&\vdots\\
+%% 0&0&0&\cdots&1\\
+%% k_n-a_n&k_{n-1}-a_{n-1}&k_{n-2}-a_{n-2}&\cdots&k_1-a_1
+%% \end{array}\right]
+%% \label{eq:cf_SISO_2}
+%% \end{align*}
 
-The characteristic polynomial of the above matrix is:
-%
-\begin{align*}
-P_a = z^n+\sum_{i=1}^p{(a_i-k_i)z^{n-i}}
-\end{align*}
 
-\begin{enumerate}
-\item Calculate $\mat{T}$ as $\mat{W}_{cf}\mat{W}^{-1}$. %using equations \eqref{eq:rncf}\eqref{eq:rcf}\eqref{eq:to_cf}
-\item Extract the Plant's characteristic polynomial coefficients from $P_a$. %the last row of $P_a=(\mat{T}\mat{A}\mat{T}^-1)_{n*}$.
+%% \begin{enumerate}
+%% \item Calculate $\mat{T}$ as $\mat{W}_{cf}\mat{W}^{-1}$. %using equations \eqref{eq:rncf}\eqref{eq:rcf}\eqref{eq:to_cf}
+%% \item Extract the characteristic polynomial of the above matrix:
+%% %
+%\begin{align*}
+%$P_a = z^n+\sum_{i=1}^p{(a_i-k_i)z^{n-i}}$
+%\end{align*}
+
 \item Calculate the noise set $N$ from the quantizer resolutions and estimated round-off errors: %($\frac{q_1}{2},\frac{q_2}{2},q_3$)
 $$N=\left \{ \nu_1+\nu_2+ \nu_3 : \nu_1 \in \left[-\frac{q1}{2}\ \ \frac{q1}{2}\right] 
 \wedge \nu_2 \in \left[-\frac{q2}{2}\ \ \frac{q2}{2}\right]  \wedge \nu_3 \in \left[-q3\ \ q3\right]  \right \}\nonumber$$
-\item Calculate a set of initial bounds on K based on the input constraints. Note that these bounds will be used during the 
-synthesis phase to reduce the size of the solution space.
-$$\phi_{safety} \Leftrightarrow u_k=-Kx_k : x_0 \in [\underline{x_0} \ \overline{x_0}] \wedge u_k \in [\underline{u}\ \ \overline{u}]$$
+More details on how to model quantization as noise are given in the 
+Appendix~\ref{appendix:quantization-noise}.
+\item Calculate a set of initial bounds on $\mat{K}$, $\phi_{init}^{K}$, based on the input constraints. Note that these bounds will be used by the {\sc synthesize} phase to reduce the size of the solution space.
+$$(\phi_{init} \wedge u_k=-\mat{K} x_k) \Rightarrow \phi_{init}^{K}$$
+
 \end{enumerate}
-\item In this phase we synthesize a candidate controller
+\item In the {\sc synthesize} phase, we synthesise a candidate controller
 %We begin with a minimum set of linear inequalities describing the constraints caused by the input and the initial state during a single iteration, in addition to a stability 
 % specification defined by Jury's 
 %criteria. %, and try to synthesise a controller that meets these specs.
@@ -1209,62 +1218,80 @@ $$\phi_{safety} \Leftrightarrow u_k=-Kx_k : x_0 \in [\underline{x_0} \ \overline
 % Notice that in our polynomials $c_0=1$ and we only use reals.
 % Once we have established convergence, we may examine the 
 % safety specification $\phi_{safety}$.
-as a model $\mat{K} \in \mathbb{R}\langle I,F\rangle^n$. We obtain it by solving the SAT formula 
-$$\mathcal{J}_K=\mathcal{J}\langle I,F \rangle (P_{a-k},\mat{T})\wedge \phi_{safety}$$ 
-that satisfies the input constraint and Jury's criteria for 
-$P_{a-k}=z^n+\sum_{i=1}^n (a_i-k_i) z^{n-i} : k_i \in \mat{K} \wedge \tilde{\mat{K}}=\mat{K}\mat{T}$,
-where $\mathcal{J}\langle I,F \rangle (P,\mat{T})$ is a program describing Jury's method.
+  $\mat{K} \in \mathbb{R}\langle I_c,F_c\rangle^n$ that satisfies
+  $\phi_{stability} \wedge \phi_{safety} \wedge \phi_{init}^{K}$ by invoking a SAT solver.
+%%   We obtain it by solving the SAT formula 
+%% $$\mathcal{J}_K=\mathcal{J}\langle I,F \rangle (P_{a-k},\mat{T})\wedge \phi_{safety}$$ 
+%% that satisfies the input constraint and Jury's criteria for 
+%% $P_{a-k}=z^n+\sum_{i=1}^n (a_i-k_i) z^{n-i} : k_i \in \mat{K} \wedge \tilde{\mat{K}}=\mat{K}\mat{T}$,
+%% where $\mathcal{J}\langle I,F \rangle (P,\mat{T})$ is a program describing Jury's method.
 If there is no candidate solution we return UNSAT and exit the loop.
 \item Once we have a candidate solution, we perform a safety verification % If this step fails, we find a counterexample iteration and initial state and create a new constraint to refine our abstraction.
-%
-consisting of evaluating the progression of the system over time,
-$x_{k+1} \models \phi_{safety}$. For this purpose we require 
-an initial set $\phi_{init}= x_0 \in [\underline{x_0} \ \overline{x_0}]$ 
-from which the system progresses. % Obviously, this set $x_0$ 
+  %
+  of the 
+  %consisting of evaluating the
+  progression of the system from $\phi_{init}$ over time,
+$x_{k+1} \models \phi_{safety}$. %% For this purpose we require 
+%% an initial set $\phi_{init}= x_0 \in [\underline{x_0} \ \overline{x_0}]$ 
+%% from which the system progresses.
+% Obviously, this set $x_0$ 
 % must satisfy the specification; otherwise, the system will be unsafe to begin with.
 % We accept a specification in the form $\mat{E}\mat{T}x_0<\mat{f}$. 
 % The presence of $\mat{T}$ is because this will typically be given in the original 
 % state-space.
-Next, we use abstract acceleration to get a second abstraction that 
-encompasses the accelerated continuous reach-tube over an unbounded time.
-Accelerating \eqref{eq:observer_LTI_cf}, we obtain:
+%% Next, we use abstract acceleration to get a second abstraction that 
+  %% encompasses the accelerated continuous reach-tube over an unbounded time.
+  In order to compute the progression of point $x_0$ at iteration $k$,
+  we accelerate the dynamics of the closed-loop system and obtain:
+  %we take the
+  %the closed-loop model:
+  %$x_{k+1}=\mat{A}_{t}x_k+\mat{B}_{n} (\nu_1 + \nu_2 + \nu_3)$
+  %and accelerate it to:
 %
 \begin{align}
 %\label{eq:acc_observer_LTI_cf}
 x=&\mat{A}_t^kx_0
 %+\sum_{i=0}^{k-1} \mat{A}_t^i \mat{B}_{t} r_i
-+\sum_{i=0}^{k-1} \mat{A}_t^i \mat{B}_{n}(\nu_1+\nu_2+\nu_3) : x_0 \models \phi_{init}
++\sum_{i=0}^{k-1} \mat{A}_t^i \mat{B}_{n}(\nu_1+\nu_2+\nu_3) 
 \end{align}
-which would still require us to verify the system for every $k$ up to infinity. 
-Instead we use abstract acceleration~\cite{cattaruzza2015unbounded}, which translates the formula into
-%
+\todo{explain $B_n$ and $A_t$}
+As this still requires us to verify the system for every $k$ up to infinity, 
+we use abstract acceleration again to obtain
+the reach-tube, i.e. the set of all reachable states at all times given an initial set $\phi_{init}$:
 \begin{align}
 \label{eq:aa_observer_LTI_cf}
 \hat{X}^\#
-=&\mathcal{A}_t X_0+\mathcal{B}_{t} R + \mathcal{B}_{n} N\\
-X_0 =&\left \{x : x \models \phi_{init} \right\}\nonumber\\
-% R =&\{r : \mat{E}_r < f_r \}\nonumber\\
- %N=&\left \{ \nu_1+\nu_2+ \nu_3 : \nu_1 \in \left[-\frac{q1}{2}\ \ \frac{q1}{2}\right] \wedge \nu_2 \in \left[-\frac{q2}{2}\ \ \frac{q2}{2}\right]  \wedge \nu_3 \in \left[-q3\ \ q3\right]  \right \}\nonumber
+=&\mathcal{A}_t X_0 + \mathcal{B}_{n} N\\
+X_0 =&\left \{x : x \models \phi_{init} \right\}\nonumber
 \end{align}
 %
-where $\mathcal{A}_t=\bigcup_{k=1}^\infty \mat{A}^k, \mathcal{B}_{t}=\bigcup_{k=1}^\infty \sum_{i=0}^k\mat{A}^i\mat{B}_{t}, \mathcal{B}_{n}=\bigcup_{k=1}^\infty \sum_{i=0}^k\mat{A}^i\mat{B}_{n}$ are abstract matrices for the system in \eqref{eq:observer_LTI_cf} 
+where $\mathcal{A}_t=\bigcup_{k=1}^\infty \mat{A_t}^k, \mathcal{B}_{n}=\bigcup_{k=1}^\infty \sum_{i=0}^k\mat{A_t}^i\mat{B}_{n}$ are abstract matrices for the closed-loop system,
+% in \eqref{eq:observer_LTI_cf} 
 %and $r$ is a non-deterministic parametric input (\emph{ie} $\forall k>0, r_{k+1} =r_k$) 
-whereas the set N is composed of non-deterministic variable inputs.
+whereas the set N is non-deterministically chosen.
 
-
+%\begin{enumerate}
+%% \item Calculate the abstract matrices $\mathcal{A}_t, \mathcal{B}_{t},\mathcal{B}_{n}$ for the candidate closed loop solution.
+We next evaluate $\hat{X}^\# \models \phi_{safety}$. If the verification holds we have a solution, and exit the loop. Otherwise, 
+we find a counterexample iteration $k$ and corresponding initial point $x_0$ for which the property does not hold, which we use to locally refine the abstraction.
+When the abstraction cannot be further refined, and provide them to the {\sc abstract} phase.
+\todo{we should have a better argument here.}
+%\end{enumerate} 
+\item If we reach the {\sc abstract} phase, it means that the candidate solution is not valid,
+  in which case we must refine the abstraction used by the synthesizer.
 \begin{enumerate}
-\item Calculate the abstract matrices $\mathcal{A}_t, \mathcal{B}_{t},\mathcal{B}_{n}$ for the candidate closed loop solution.
-\item Evaluate $\hat{X}^\# \models \Psi$. If the verification holds we have a solution, and exit the loop.
-\end{enumerate} 
-\item If the candidate solution is not valid we refine the abstraction used by the synthesizer
-\begin{enumerate}
-\item Find the constraints that invalidate the property. These are the rows of $\mat{E} \in \Psi$ that intersect/segment $\hat{X}^\#$. Transforming these rows into the eigenspace of $\mat{A}_t$, and applying backward acceleration to obtain a set of counterexamples for the eigenvalues, which we define as $\phi(\Lambda)$. This is a constraint in the spectrum (\emph{ie} frequency response transfer function) of the closed loop dynamics. 
-\item Transform the soft constraints on the spectrum into soft constraints on the coefficients of the characteristic polynomial. 
-$z^n+\sum_{i=1}^n[a_i-k_i]z^{n-i}=\prod_{i=1}^n (z-[\lambda_i]) : |[\lambda_i]|<1 \wedge [\lambda_i] \models \phi_{\Lambda}$.
-\item Pass the refined abstraction with the new constraints to the synthesizer, as well as a counterexample plant coefficients ($P_a$) and repeat the loop again. We note that the Abstraction refinement is a soft constraint on the proposed model which can increase or decrease the parameter space at any time, whereas the concrete counterexample passed to the synthesizer is monotonically decreasing. The first one improves speed of the tool whereas the second ensures convergence.
-
+\item Find the constraints that invalidate the property
+  %% These are the rows of $\mat{E} \in \Psi$ that intersect/segment $\hat{X}^\#$. Transforming these rows into the eigenspace of $\mat{A}_t$, and applying backward acceleration to
+ as a set of counterexamples for the eigenvalues, which we define as $\phi_\Lambda$. This is a constraint in the spectrum (\emph{ie} transfer function) of the closed loop dynamics. 
+\item We use $\phi_\Lambda$ to
+  further constrain the characteristic polynomial  
+$z^n+\sum_{i=1}^n(a_i-k_i)z^{n-i}=\prod_{i=1}^n (z-\lambda_i) : |\lambda_i|<1 \wedge \lambda_i \models \phi_{\Lambda}$. These constraints correspond to specific iterations for which the system may be unsafe.
+\item Pass the refined abstraction $\phi(\mat{K})$ with the new constraints and the list of iterations $\vec{k}$ to the {\sc synthesize} phase.
+  %, as well as a counterexample plant coefficients ($P_a$) and repeat the loop again. 
 \end{enumerate} 
 \end{enumerate}
+
+%% Note that the abstraction refinement is a constraint on the proposed model which can increase or decrease the parameter space at any time, whereas the concrete counterexample passed to the synthesizer is monotonically decreasing. The former improves the speed of the tool, whereas the second ensures convergence.
 
 \begin{figure}
 \centering
@@ -1289,21 +1316,21 @@ $z^n+\sum_{i=1}^n[a_i-k_i]z^{n-i}=\prod_{i=1}^n (z-[\lambda_i]) : |[\lambda_i]|<
    \&
    \& complexnode/.pic={
      \coordinate (auxsynth);
-     \node[draw,rectangle,align=center] (KSAT) at ([xshift=0cm]auxsynth.center) {\sc Prog.\\Search};
-     \node[draw=none] (SATK) at ([xshift=-0.5cm,yshift=1.5cm]KSAT)  {$\mathcal{J}_K$};
-     \node[draw=none] (K) at ([xshift=.4cm,yshift=1.5cm]KSAT)  {$\tilde{\mat{K}}$};
+     \node[draw,rectangle,align=center] (KSAT) at ([xshift=0cm]auxsynth.center) {Prog.\\Search};
+     \node[draw=none] (SATK) at ([xshift=-.7cm,yshift=1.5cm]KSAT)  {{\sc Inputs}};
+     \node[draw=none] (K) at ([xshift=.4cm,yshift=1.5cm]KSAT)  {$\mat{K}$};
     }
    \& complexnode/.pic={
      \coordinate (AA);
-     \node[draw,rectangle,align=center] (AAI) at ([xshift=-1.5cm]AA.center) {\sc Abstract};
-     \node[draw,rectangle,align=center] (AAC) at ([xshift=1.5cm,yshift=1.5cm]AA.center) {Abstraction \\ Verifier};
-     \node[draw,rectangle,align=center] (AAV) at ([xshift=1.5cm]AA.center) {\sc AA\\Solver};
+     \node[draw,rectangle,align=center] (AAV) at ([xshift=-1.5cm]AA.center) {Abstract\\Acceleration};
+     \node[draw,rectangle,align=center] (AAC) at ([xshift=1.5cm]AA.center) {Abstraction \\ Verifier};
+     %\node[draw,rectangle,align=center] (AAI) at ([xshift=1.5cm]AA.center) {\sc AA\\Solver};
      
      %\node[draw=none] (AB) at ([xshift=.4cm,yshift=1.5cm]AAI.center)  {\sc $\mat{A},\mat{B}$\\$\phi$};     
-     \node[draw=none] (MA) at ([yshift=.2cm]AA.center)  {$\mathcal{A}_t$};     
-     \node[draw=none] (MB) at ([yshift=-.3cm]AA.center)  {$\mathcal{B}_{t},\mathcal{B}_{n}$}; 
-     \node[draw=none] (XT) at ([xshift=0.3cm,yshift=0.5cm]AAC.center)  {\sl $\hat{X}_r^\#$};  
-     \node[draw=none] (XT2) at ([xshift=0.3cm,yshift=0.8cm]AAV.center)  {\sl $\hat{X}^\#$};  
+     %\node[draw=none] (MA) at ([yshift=.2cm]AA.center)  {$\mathcal{A}_t$};     
+     %\node[draw=none] (MB) at ([yshift=-.3cm]AA.center)  {$\mathcal{B}_{t},\mathcal{B}_{n}$}; 
+     %\node[draw=none] (XT) at ([xshift=0.3cm,yshift=0.5cm]AAC.center)  {\sl $\hat{X}_r^\#$};  
+     %\node[draw=none] (XT2) at ([xshift=0.3cm,yshift=0.8cm]AAV.center)  {\sl $\hat{X}^\#$};  
      %\draw [->,line width=1pt] ([xshift=-0.1cm,yshift=2cm]AA.center) arc[x radius=0.7cm, y radius =.7cm, start angle=-250, end angle=60];
     }\\
    \&
@@ -1315,33 +1342,35 @@ $z^n+\sum_{i=1}^n[a_i-k_i]z^{n-i}=\prod_{i=1}^n (z-[\lambda_i]) : |[\lambda_i]|<
   \& \& \coordinate (FAIL);\\
   };
   \path
-    (pre.east) edge (abstract.west)
-    (abstract.south) edge (synth.north)
+    (pre.east) edge node[align=center] {$P_a$, $N$,\\ $\phi_{init}^k$} (abstract.west)
+    (abstract.south) edge node{$(\phi(\mat{K}), \vec{k})$} (synth.north)
     %([yshift=2em]synth.east) edge node {Candidate} ([yshift=2em]verif.west)
     %([yshift=-2em]verif.west) edge node {New input} ([yshift=-2em]synth.east)
     %([yshift=2em]synth.east) edge node[xshift=-0.7em] {Candidate} ([yshift=2em]verif.west)
     %([yshift=-2em]verif.west) edge node[xshift=-0.7em] {New input} ([yshift=-2em]synth.east)
     ([yshift=1em]synth.east) edge node {$\mat{K}$} ([yshift=1em]verify.west)
-    ([yshift=-1em]verify.west) edge node {$P_a$} ([yshift=-1em]synth.east)
+    %([yshift=-1em]verify.west) edge node {$P_a$} ([yshift=-1em]synth.east)
     (aux) edge (abstract.east) 
     (verify.east) edge (done.west);
   \path
     ([xshift=+.6cm]KSAT.north) edge ([xshift=0.6cm]synth.south) 
     ([xshift=-.6cm]synth.south) edge ([xshift=-.6cm]KSAT.north)
-    (AAC) edge[bend right] node[align=center] {$k$} (AAI.north)
-    ([xshift=-4.9cm]verify.south) edge node[align=center] {$\mat{A},\mat{B}$\\$\phi$} (AAI.north)
-    (AAI.east) edge (AAV.west)
-    (AAV.north) edge (AAC.south)
-    (AAC.north) edge ([xshift=4.9cm]verify.south)
+    %(AAC) edge[bend right] node[align=center] {$k$} (AAI.north)
+    %([xshift=-4.9cm]verify.south) edge node[align=center] {$\mat{A},\mat{B}$\\$\phi$} (AAI.north)
+    %(AAI.east) edge (AAV.west)
+    ([yshift=.5cm]AAV.east) edge node{\sl $\hat{X}^\#$} ([yshift=.5cm]AAC.west)
+    ([yshift=-.5cm]AAC.west) edge node{$(k,x_0)$} ([yshift=-.5cm]AAV.east)
+    (AAC.north) edge node{\sl $\hat{X}^\#$} ([xshift=4.9cm]verify.south)
     %(AAC.west) edge (AB.west)
     %(verify.north) edge (counter.south)
     %(counter.west) edge (abstract.east)
     %(counter.south west) edge (synth.north east)
-    (FAIL.north) edge (done.south);
-   \path[-] 
+    (FAIL.north) edge (done.south)
+    ([xshift=-5cm]verify.south) edge node{$\mat{K}$} (AAV.north);
+  \path[-] 
      (KSAT.south) edge (KUNSAT.north)
      (KUNSAT.east) edge (FAIL.west)
-     (verify.north) edge node {$\phi (\mat{K},k)$} (aux);
+     (verify.north) edge node {$(k,x_0)$} (aux);
 \end{tikzpicture}
 }
 \caption{CEGIS with abstraction refinement}
@@ -1820,7 +1849,7 @@ Let us now take a different sample rate $T_2$, such that ${\lambda_2}_i=e^{\lamb
 We have also shown in the previous section that $x_k=A^nx_0$ is a witness of $x(t): \dot{x}(t)=Ax(t)$ at time $kT_s$. Applying this notion to multiple sample times, we can state that $x_{k_i}=A_i^nx_0$ are a set of witnesses at times $kT_i$, and by extension the set $\{x=A_i^nx_0 : \forall n \in \mathbb{R} \}$ witnesses all states visited by the continuous system in time $t \in [0,\infty)$. This applies to any arbitrary sample time $T_i$.
 Since the controller output is fed to a Zero Order Holder, the progression of the system between times $kT_s$ and $(k+1)T_s$ is $\mat{A}^n\vec{x}_k+\mat{B}\vec{u}_k : n \in (0,1)$. We therefore obtain a reach tube for the continuous dynamics of a time sampled system to be contained within the abstract reach tube $\mathcal{A}^1\mathcal{M}X_0+\mathcal{BK}^1\mathcal{M}X_0=\mathcal{M}X_0$
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{Modelling quantization as noise}
+\subsection{Modelling quantization as noise} \label{appendix:quantization-noise}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 During any given ADC conversion, the continuous signal will be sampled in the real domain and transformed into a $\mathbb{R}\langle I_{adc},F_{adc} \rangle$ value. this sampling uses a threshold which is defined by the less significant bit ($q_{adc}=2^{-F_{adc}}$) of the ADC and some non-linearities of the circuitry. The overall conversion is
