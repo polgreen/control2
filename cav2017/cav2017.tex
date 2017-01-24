@@ -526,42 +526,7 @@ In practice,
 this means that the control input saturates in view of physical constraints. 
 
 
-%%%-------------------------------
-%%\subsection{Digital implementation of feedback controller}
-%%\label{ssec:quantizationerror}
-%%%-------------------------------
-%%
-%%\addtodo{HERE add a figure similar to Fig. \label{fig:observersystem} to explain digital features of controller.} 
-%%
-%%\addtodo{[The remainder of the section needs to be updated. ]}
-%%The output and measurable of the plant is being sampled by an ADC, and since the full state of the
-%%plant cannot be witnessed directly, the controller software includes an observer that 
-%%estimates the state of the plant (see appendix for details on how such an observer
-%%is constructed). In this work, we are assuming that all the states measurements are available for the state feedback purpose, and the state observer design may be disregarded.  
-%%\addtodo{[Unclear what the remainder is for: ]}
-%%We further presume that there are small tolerances in the system 
-%%described in the following form
-%%%
-%%\begin{align*}
-%%\mat{A} \in \mathcal{G}_A=\mat{S}\mat{J}\mat{S}^{-1} : \mat{J} \in \mathcal{G}_J
-%%\end{align*}
-%%\commentib{What is S?}
-%%
-%%Where $\mathcal{G}_J$ is a collection of eigenvalue ranges that define the frequency response of the system.
-%%We presume that the internal model of the plant is an ARMA model, modified by a
-%%state transform that has no tolerances. Tolerances in the eigenvectors will manifest themselves
-%%as tolerances in the canonical forms outside of the row/column of interests and complicate the 
-%%evaluation. Whilst it is possible to address these with this methodology, we will focus on the case
-%%above for simplicity.
 
-% \addtodo{HERE add a figure similar to Fig. \label{fig:observersystem} to explain digital features of controller.} 
-
-% \addtodo{[The remainder of the section needs to be updated. ]}
-% The output and measurable of the plant is being sampled by an ADC, and since the full state of the
-% plant cannot be witnessed directly, the controller software includes an observer that 
-% estimates the state of the plant (see appendix for details on how such an observer
-% is constructed). In this work, we are assuming that all the states measurements are available for the state feedback purpose, and the state observer design may be disregarded.  
-% \addtodo{[Unclear what the remainder is for: ]}
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{Numeric representations and soundness} 
@@ -578,13 +543,12 @@ In this section we formally outline the errors introduced by fixed-point represe
 
 Let $\mathcal{F}\langle I,F \rangle(x)$ denote a real number $x$ represented in a fixed point domain, with $I$ bits representing the integer part and $F$ bits representing the decimal part. The smallest number that can be represented in this domain is $c_m=2^{-F}$.
 
-%Let $\mathbb{R} \langle I,F \rangle$ \todo{notice this notation differs from the one used above} be a fixed point domain with $I$ bits representing the integer part 
-%and $F$ bits representing the decimal part \todo{why R, comment on that.}. The smallest number that can be represented in this domain is $c_m=2^{-F}$.
+
 The following approximation errors will arise:
 \begin{enumerate}
 \item {\bf Truncation:}
 Let $x$ be a real number, and $\mathcal{F}\langle I,F \rangle(x)$ be the same number represented in a fixed point domain as above. $\mathcal{F}\langle I,F \rangle(x) = x-\delta_T : \delta_T=x\ \%_{c_m}\ \tilde x$, where $\%_{c_m}$ is the modulus operation performed on the last bit.
-%Let $\mathcal{F}\langle I,F \rangle(\cdot) : \mathbb{R} \rightarrow \mathbb{R}\langle I,F \rangle, \tilde x=\mathcal{F}\langle I,F \rangle(x) = x-\delta_T : \delta_T=x\ \%_{c_m}\ \tilde x$, where $\%_{c_m}$ is the modulus operation performed on the last bit.
+
 So $\delta_T$ is the truncation error and it will propagate across operations.
 \item {\bf Rounding:}
 The following errors appear in simple operations. Let $c_1, c_2$ and $c_3$ be real numbers, and $\delta_{T1}$ and $\delta_{T2}$ be the truncation errors caused by representing $c_1$ and $c_2$ in the fixed-point domain as above.
@@ -592,19 +556,15 @@ The following errors appear in simple operations. Let $c_1, c_2$ and $c_3$ be re
 \item Addition/Subtraction: these operations only propagate errors coming from truncation of the operands. 
 $\mathcal{F}\langle I,F \rangle(c_1) \pm \mathcal{F}\langle I,F \rangle(c_2) = c_3 + \delta_3 :|\delta_3| \leq |\delta_{T1}| + |\delta_{T2}|$.
 
-%$c_1\pm c_2= c_3 + \delta_3 :|\delta_3| \leq |\delta_{T1}| + |\delta_{T2}|$ 
+
 \item Multiplication: $\mathcal{F}\langle I,F \rangle(c_1) * \mathcal{F}\langle I,F \rangle(c_2) =  c_3 + \delta_3 :|\delta_3| \leq |\delta_{T1}*\mathcal{F}\langle I,F \rangle(c_2)| + |\delta_{T2}*\mathcal{F}\langle I,F \rangle(c_1)| + c_m$, where $c_m=2^{-F}$ as above.
 \item Division is only needed for positive numbers in this implementation (where it is needed for checking stability). 
 \end{enumerate}
 
 \item {\bf Overflow:}
-  %Another source of error introduced by Finite Word Length representations is that of overflow.
 The maximum size of a real number $x$ that can be represented in a fixed point domain as $\mathcal{F}\langle I,F \rangle(x)$ is $\pm (2^{I-1}+1-2^{-F})$. Numbers outside this range cannot be represented by the domain. We assume no saturation (where any overflow is represented as the largest or smallest possible number), and check that overflow does not occur.
 
-%The finite word length set a
-%maximum representable number in the domain \todo{what is next? a domain? define formally, no back-of-the-envelope mathsy stuff.} ($\pm (2^{I-1}+1-2^{-F})$), which means that any number outside this range
-%cannot be represented by the domain. Our tool currently assumes no saturation
-%function and verifies that no state overflows.
+
 \end{enumerate}
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -640,85 +600,6 @@ We address these errors by use of a final verification check that uses interval 
 We note that the effect on stability due to the fixed-word-length error is that the system may, instead of converging to the desired equilibrium point, converge to a point that is bounded away from the desired equilibrium point (see Appendix for details). 
 In this paper, we synthesise a stable controller only as a precursor to synthesising a \emph{safe} controllers and it is therefore sufficient that the system converges to a point within the safe states. Hence, it is sufficient to disregard the errors when we synthesize a stable controller, and then verify safety. 
 
-
-%% %-------------------------------
-%% \section{Counter-Example Guided Inductive Synthesis with solution generalisation}
-%% %-------------------------------
-
-%% This technique relies on parametrizing the target language, which
-%% induces a lattice of progressively more expressive languages 
-%% \textcolor{red}{Cristina: Citation?}.  We
-%% start by attempting to synthesise a program at the lowest point on
-%% this lattice and increase the parameters of the language until we
-%% reach a point at which the synthesis succeeds. As well as giving us an
-%% automatic search procedure, this parametrisation greatly increases the
-%% efficiency of our system since languages low down the lattice are very
-%% easy to decide safety for (i.e. the validation oracle finds an answer
-%% fast). If a program can be synthesised in a low-complexity language,
-%% the whole procedure finishes much faster than if synthesis had been
-%% attempted in a high-complexity language.
-
-%% \textcolor{red}{Cristina: How does this section relate to our control-synthesis work? 
-%% This is text is too generic...}
-
-%% \begin{figure}
-%% \centering
-%% \hspace*{-1cm}
-%% \begin{tikzpicture}[scale=0.3,->,>=stealth',shorten >=.2pt,auto, semithick, initial text=, ampersand replacement=\&,]
-%%   \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center
-%% },
-%%           row sep=1cm, column sep=1.5cm] {
-%%    \coordinate (aux1);
-%%    \& \coordinate (aux2);
-%%    \& ;\\
-%%    \node[fill=yellow!20,align=center] (synth) {{\sc inductive}\\{\sc generalisation}};
-%%    \&
-%%    complexnode/.pic={ 
-%%      \node[rectangle,draw,dashed,
-%% 	minimum width=6.7cm,
-%% 	minimum height=.8cm,
-%% 	label={\sc Validation oracles},] (verif) {};
-%%    \node[fill=yellow!20] (verif1) at ([xshift=-2.1cm]verif.center) {{\sc Validate}};
-%%    \node[fill=yellow!20,align=center] (verif2) at ([xshift=1.7cm]verif.center) {{\sc validate general}};
-%%    } 
-%%    \& \node[ellipse, fill=yellow!20] (done) {{\sc Done}};\\
-%%    %% \node[fill=yellow!20] (verif) {{\sc ~~~~~~Uncertainty~~~~~~}};
-%%    %% \&
-%%    %% \node[fill=yellow!20] (verif2) {{\sc ~~~~~~Precision~~~~~~~}};\\
-%%    \& \\
-%%    \& \\
-%%    \node (gp) {Program Search};
-%%    \&
-%%    complexnode/.pic={ 
-%%      \coordinate (aux);
-%%    \node (bmc) at ([xshift=-2.1cm]aux.center) {SAT/SMT Solver};
-%%    \node (fp)  at ([xshift=1.9cm]aux.center) {SAT/SMT Solver};
-%%    }   
-%%     \\
-%%   };
-
-%%    \path
-%%     ([yshift=2em]synth.east) edge node[xshift=-0.7em] {Candidate} ([yshift=2em]verif1.west)
-%%     ([yshift=-2em]verif1.west) edge node[xshift=-0.7em] {New input} ([yshift=-2em]synth.east)
-%%     (verif1) edge node {Generalise} (verif2)
-%%     ([xshift=5em]verif1.south) edge node[align=center] {Candidate} ([xshift=5em]bmc.north)
-%%     ([xshift=5em]verif2.south) edge node[align=center] {Candidate} ([xshift=3.8em]fp.north)
-%%     ([xshift=-5em]bmc.north) edge node[align=center]  {UNSAT/\\Model} ([xshift=-5em]verif1.south)
-%%     ([xshift=-6.2em]fp.north) edge node[align=center]  {UNSAT/\\Model} ([xshift=-5em]verif2.south)
-%%     (verif2) edge node {} (done)
-%%     ([xshift=5em]synth.south) edge node[align=center] {{\sc Inputs}} ([xshift=5em]gp.north)
-%%     ([xshift=-5em]gp.north) edge node[align=center] {No solution/\\Candidate} ([xshift=-5em]synth.south)
-%%     (aux1) edge (synth.north);
-%%    \path[-]
-%%    (verif2.north) edge node[align=center] {} ([xshift=5.6cm]aux2)
-%%    ([xshift=5.6cm]aux2) edge node[align=center] {Increase parameters} (aux1);
-
-%% \end{tikzpicture}
-%% \caption{The CEGIS loop with solution generalisation\label{fig:CEGIS-multiple-verif}. 
-%% \textcolor{red}{Cristina: What is the difference of this figure to that in our HSCC paper?}}
-%% \end{figure}
-
-%%   %% \textcolor{red}{LC: Cristina, can you please fix this figure? The text ``candidate'' overlaps with the dotted box.}
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \section{CEGIS of Safe Controllers for LTI Systems with Solution Generalisation} 
