@@ -94,7 +94,7 @@ struct intervalt abs_interval(struct intervalt x)
     if(x.high < _zero)
     {
       z.high = -x.low;
-      z.low = -x.high;
+      z.low = 0;
       return z;
     }
      else if(x.low < _zero && x.high >= _zero)
