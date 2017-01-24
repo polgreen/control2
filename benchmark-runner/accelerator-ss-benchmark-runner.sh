@@ -6,15 +6,14 @@ export PATH=${PATH}:/users/pkesseli/software/cpp/cbmc/cbmc-trunk-diffblue-contro
 status_output_file='output.txt'
 synthesis_file='FWL_LTI.c'
 width_check_file='width_LTI.c'
-working_directory_base_suffix='-dkr10'
-working_directory_base="/tmp/control_synthesis-ss${working_directory_base_suffix}"
 script_base_directory=`pwd`
 spec_header_file='spec.h'
 cbmc_log_file='cbmc-tmp.log'
 
 function setup_benchmark_directory {
  mkdir -p "$1" 2>/dev/null
- cp ${script_base_directory}/AACegar/* ${working_directory}/
+ cp ${script_base_directory}/AACegar/* ${working_directory}/ 2>/dev/null
+ chmod +x ${working_directory}/axelerator
 }
 
 function echo_log {
@@ -76,18 +75,28 @@ function get_current_cpu_millis {
  echo $((${formula}))
 }
 
+working_directory_base_suffix='-dkr10'
+working_directory_base="/tmp/control_synthesis-ss${working_directory_base_suffix}"
 mkdir -p ${working_directory_base} 2>/dev/null
 
 if [ -z "$1" ]; then
- benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/cruise_ss/') #ok
+ #dkr10
+ #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/cruise_ss/') #ok
  #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/dcmotor_ss/') #ok
  #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/helicopter_ss/') #ok
- #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/invpendulum_cartpos_ss/') #ok
- #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/invpendulum_pendang_ss/') #ok
+
+ #dkr11
  #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/magsuspension_ss/') #ok on 4th file
- #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/pendulum_ss/') #ok
+ #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/invpendulum_pendang_ss/') #ok
+
+ #dkr12
+ #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/invpendulum_cartpos_ss/') #ok
  #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/suspension_ss/') #initial controller unsat
+
+ #dkr13 
  #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/tapedriver_ss/') #same controller loop (system makes no sense 10^-144?)
+ #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/pendulum_ss/') #ok
+
  #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/cruise_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/dcmotor_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/helicopter_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/invpendulum_cartpos_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/invpendulum_pendang_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/magsuspension_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/pendulum_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/suspension_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/tapedriver_ss/')
  #benchmark_dirs=("${script_base_directory}/../benchmarks/state-space/dcmotor_ss/")
 else

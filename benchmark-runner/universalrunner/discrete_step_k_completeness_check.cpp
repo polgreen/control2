@@ -23,7 +23,6 @@ using namespace mpfr;
 
 typedef Matrix<realt, NSTATES, NSTATES> matrixt;
 
-// TODO: Read actual K
 //const realt _controller_K[] = { 0.0234375,-0.1328125, 0.00390625 };
 //const realt _controller_K[] = { 0.0234375,0.1328125, 0.00390625 };
 realt _controller_K[NSTATES];

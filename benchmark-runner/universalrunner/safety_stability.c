@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "benchmark.h" //benchmark header file
 //#include "control_types.h" //included via benchmark.h
 //#define CPROVER
@@ -27,7 +28,9 @@ extern const __controller_typet K_fxp[NSTATES]; //nondet controller
 extern __plant_typet _controller_states[NSTATES]; //nondet initial states
 #else
 //const __controller_typet K_fxp[NSTATES] = { interval(0.0), interval(0.004638671875), interval(-0.00439453125) };
-const __controller_typet K_fxp[NSTATES] = { _CONTROLLER_INTERVALS };
+//const __controller_typet K_fxp[NSTATES] = { _CONTROLLER_INTERVALS };
+__controller_typet K_fxp[NSTATES];
+int NUMBERLOOPS;
 __plant_typet _controller_states[NSTATES];
 #endif
 __plant_typet _controller_inputs;
@@ -58,7 +61,6 @@ int check_stability(void){
   else
     {return 1;}
 #endif
-
 
 #define __a __CPROVER_EIGEN_poly
 #define __n NSTATES + 1u
@@ -152,9 +154,7 @@ void __CPROVER_EIGEN_charpoly_2(void) { //m00*m11 - m10*m11 - m00*x - m11*x + x^
   // s^2
   __CPROVER_EIGEN_poly[0] = one_type;
 }
-#endif
-
-#if NSTATES==3
+#elif NSTATES==3
 void __CPROVER_EIGEN_charpoly_3(void) {
 //                        m_11*m_22*m_33                    + m_11*m_23*m_32                    + m_12*m_21*m_33                    - m_12*m_23*m_31                    - m_13*m_21*m_32                    + m_13*m_22*m_31
 __CPROVER_EIGEN_poly[3] = add(sub(sub(add(add(mult(__m[0][0],mult( __m[1][1], __m[2][2])), mult( __m[0][0] ,mult( __m[1][2] , __m[2][1]))),
@@ -169,25 +169,25 @@ __CPROVER_EIGEN_poly[1] = sub(sub(sub(zero_type,__m[0][0]), __m[1][1]), __m[2][2
 __CPROVER_EIGEN_poly[0] = one_type;
 
 }
-#endif
-#if NSTATES==4
+#elif NSTATES==4
 void __CPROVER_EIGEN_charpoly_4(void) {
-
-  __CPROVER_EIGEN_poly[4] = add(sub(sub(add(add(sub(sub(add(add(sub(sub(add(add(sub(sub(add(add(sub(sub(add(add(sub(sub(
+  const __plant_typet tmp0=sub(sub(add(add(sub(sub(
       mult(__m[0][0], mult(__m[1][1],mult(__m[2][2],__m[3][3]))), //-
       mult(__m[0][0],mult(__m[1][1],mult(__m[2][3],__m[3][2])))), //-
       mult(__m[0][0],mult(__m[1][2],mult(__m[2][1],__m[3][3])))), //+
       mult(__m[0][0],mult(__m[1][2],mult(__m[2][3],__m[3][1])))), //+
       mult(__m[0][0],mult(__m[1][3],mult(__m[2][1],__m[3][2])))), //-
       mult(__m[0][0],mult(__m[1][3],mult(__m[2][2],__m[3][1])))), ///-
-      mult(__m[0][1],mult(__m[1][0],mult(__m[2][2],__m[3][3])))), // +
+      mult(__m[0][1],mult(__m[1][0],mult(__m[2][2],__m[3][3]))));
+  const __plant_typet tmp1=sub(add(add(sub(sub(add(add(tmp0, // +
       mult(__m[0][1],mult(__m[1][0],mult(__m[2][3],__m[3][2])))), //+
       mult(__m[0][1],mult(__m[1][2],mult(__m[2][0],__m[3][3])))),// -
       mult(__m[0][1],mult(__m[1][2],mult(__m[2][3],__m[3][0])))), //-
       mult(__m[0][1],mult(__m[1][3],mult(__m[2][0],__m[3][2])))),// +
       mult(__m[0][1],mult(__m[1][3],mult(__m[2][2],__m[3][0])))),// +
       mult(__m[0][2],mult(__m[1][0],mult(__m[2][1],__m[3][3])))), //-
-      mult(__m[0][2],mult(__m[1][0],mult(__m[2][3],__m[3][1])))), //-
+      mult(__m[0][2],mult(__m[1][0],mult(__m[2][3],__m[3][1]))));
+  __CPROVER_EIGEN_poly[4] = add(sub(sub(add(add(sub(sub(add(add(sub(tmp1, //-
       mult(__m[0][2],mult(__m[1][1],mult(__m[2][0],__m[3][3])))), //+
       mult(__m[0][2],mult(__m[1][1],mult(__m[2][3],__m[3][0])))), //+
       mult(__m[0][2],mult(__m[1][3],mult(__m[2][0],__m[3][1])))), //-
@@ -199,27 +199,29 @@ void __CPROVER_EIGEN_charpoly_4(void) {
       mult(__m[0][3],mult(__m[1][2],mult(__m[2][0],__m[3][1])))),// +
       mult(__m[0][3],mult(__m[1][2],mult(__m[2][1],__m[3][0]))));
 
-
-__CPROVER_EIGEN_poly[3] = add(sub(sub(add(add(sub(add(sub(sub(add(add(sub(add(sub(sub(add(add(sub(add(sub(sub(add(add(sub(0,
+  const __plant_typet tmp2=sub(add(sub(sub(add(add(sub(zero_type,
     mult(__m[0][0], mult(__m[1][1],__m[2][2]))),
     mult(__m[0][0], mult(__m[1][2],__m[2][1]))),
     mult(__m[0][1], mult(__m[1][0],__m[2][2]))),
     mult(__m[0][1], mult(__m[1][2],__m[2][0]))),
     mult(__m[0][2], mult(__m[1][0],__m[2][1]))),
     mult(__m[0][2], mult(__m[1][1],__m[2][0]))),
-    mult(__m[0][0], mult(__m[1][1],__m[3][3]))),
+    mult(__m[0][0], mult(__m[1][1],__m[3][3])));
+  const __plant_typet tmp3=sub(add(sub(sub(add(add(tmp2,
     mult(__m[0][0], mult(__m[1][3],__m[3][1]))),
     mult(__m[0][1], mult(__m[1][0],__m[3][3]))),
     mult(__m[0][1], mult(__m[1][3],__m[3][0]))),
     mult(__m[0][3], mult(__m[1][0],__m[3][1]))),
     mult(__m[0][3], mult(__m[1][1],__m[3][0]))),
-    mult(__m[0][0], mult(__m[2][2],__m[3][3]))),
+    mult(__m[0][0], mult(__m[2][2],__m[3][3])));
+  const __plant_typet tmp4=sub(add(sub(sub(add(add(tmp3,
     mult(__m[0][0], mult(__m[2][3],__m[3][2]))),
     mult(__m[0][2], mult(__m[2][0],__m[3][3]))),
     mult(__m[0][2], mult(__m[2][3],__m[3][0]))),
     mult(__m[0][3], mult(__m[2][0],__m[3][2]))),
     mult(__m[0][3], mult(__m[2][2],__m[3][0]))),// -
-    mult(__m[1][1], mult(__m[2][2],__m[3][3]))),//  +
+    mult(__m[1][1], mult(__m[2][2],__m[3][3])));
+  __CPROVER_EIGEN_poly[3] = add(sub(sub(add(add(tmp4,//  +
     mult(__m[1][1], mult(__m[2][3],__m[3][2]))),//  +
     mult(__m[1][2], mult(__m[2][1],__m[3][3]))),// -
     mult(__m[1][2], mult(__m[2][3],__m[3][1]))),// -
@@ -242,7 +244,7 @@ __CPROVER_EIGEN_poly[3] = add(sub(sub(add(add(sub(add(sub(sub(add(add(sub(add(su
    mult(__m[2][3], __m[3][2]));
 
 
-  __CPROVER_EIGEN_poly[1] = sub(sub(sub(sub(0, __m[3][3]), __m[2][2]) ,__m[1][1]), __m[0][0]);
+  __CPROVER_EIGEN_poly[1] = sub(sub(sub(sub(zero_type, __m[3][3]), __m[2][2]) ,__m[1][1]), __m[0][0]);
   __CPROVER_EIGEN_poly[0] = one_type;
 }
 #endif
@@ -542,10 +544,14 @@ void safety_stability(void) {
 #endif
 }
 
-int main(void) {
+int main(int argc, const char *argv[]) {
 #ifdef CPROVER
   assume_corner_cases_for_states();
 #else
+  NUMBERLOOPS=atoi(argv[0]);
+  for (int i = 0; i < NSTATES; ++i) {
+    K_fxp[i]=interval(atof(argv[1+i]));
+  }
   for (int poleIndex = 0; poleIndex < NPOLES; ++poleIndex) {
     for (int stateIndex = 0; stateIndex < NSTATES; ++stateIndex) {
       _controller_states[stateIndex] = _state_poles[poleIndex][stateIndex];
