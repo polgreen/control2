@@ -148,7 +148,7 @@ int check_stability(void){
 #if NSTATES==2
 void __CPROVER_EIGEN_charpoly_2(void) { //m00*m11 - m01*m10 - m00*x - m11*x + x^2
 
-  __CPROVER_EIGEN_poly[2] = sub ( mult(__m[0][0],__m[1][1]), mult(__m[1][0] , __m[1][0]) );
+  __CPROVER_EIGEN_poly[2] = sub ( mult(__m[0][0],__m[1][1]), mult(__m[0][1] , __m[1][0]) );
 
   __CPROVER_EIGEN_poly[1] = sub (zero_type, add (__m[0][0], __m[1][1]) ) ;
   // s^2
