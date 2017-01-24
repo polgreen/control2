@@ -919,22 +919,19 @@ This is relatively computationally expensive if the bounds on the
 allowed initial states are large.  However, we can show that, if the
 controller is safe for each of the corner cases of our hypercube of
 allowed initial states, it is safe for any initial state in the
-hypercube. Thus we only need to check $2^N$ initial states, where $N$
-is the number of states.
+hypercube. Thus we only need to check $2^n$ initial states, where $n$
+is the dimension of the state space (number of continuous variables). 
 
-
-\begin{proof} 
-Consider the set of initial states, $X_0$, assumed to be convex since it's a hypercube. 
+To argue for this sufficient check, 
+consider the set of initial states, $X_0$, which we assume to be convex since it's a hypercube. 
 Name $v_i$ its vertexes, where $i=1,\ldots, 2^n$.  
 Thus any point $x \in X_0$ can be expressed by convexity as $x = \sum_{i=1}^{2^n} \alpha_i v_i$, 
-where $\sum_{i=1}^{2^n} \alpha_i =1$. \\
-So then if $x_0=x$, then 
+where $\sum_{i=1}^{2^n} \alpha_i =1$. Then if $x_0=x$, we obtain 
 \begin{align*}
 x_k   &= (A_d - B_d K)^k x = (A_d - B_d K)^k \sum_{i=1}^{2^n} \alpha_i v_i \\
       &= \sum_{i=1}^{2^n} \alpha_i (A_d - B_d K)^k v_i = \sum_{i=1}^{2^n} \alpha_i x_k^i, 
  \end{align*}     
 where $x_k^i$ denotes the trajectories obtained from the single vertexes $v_i$. 
-\end{proof}
 
 \item The second {\sc verify} stage, {\sc precision}, 
  restores soundness with respect to the plant's precision
@@ -945,10 +942,20 @@ operations performed by the previous stage.
 current $k$ is large enough to ensure that the boundaries are not
 violated for any $k'{>}k$.  For this purpose, we compute the
 completeness threshold $\overline{k}$ for the current candidate $K$
-and check that $k{\leq}\overline{k}$. 
+and check that $k{\leq}\overline{k}$. This is done according to the following argument.  
 
-A stable control system is known to have converging dynamics, i.e., the
-distance from the reference (in this case the origin) decreases over time. 
+A stable control system is known to have converging dynamics. 
+Assume the closed-loop matrix eigenvalues are not repeated (which is sensible to do, since we select them). 
+The distance of trajectories from the reference point (in this case the origin) decreases over time within subspaces related to real-valued eigenvalues. 
+However, this in general not the case when dealing with complex eigenvalues.  
+Consider the matrix $(A_d - B_d K)$, which updates the states every time step, and select eigenvalue with smallest (non trivial) imaginary value.  
+call such value $\vartheta$. 
+At every time interval $kT_s, (k+1)T_s$ ($T_s$ being the sampling time), 
+the dynamics projected on the corresponding eigenspace rotate of $\vartheta T_s$ radiants.  
+So surely taking $k$ as the ceiling of $\frac{2\pi}{\vartheta T_s}$, 
+after $k$ steps we have completed a rotation. 
+This is the completeness threshold. 
+
 
 \begin{figure*}[t]
 \centering
@@ -957,20 +964,11 @@ distance from the reference (in this case the origin) decreases over time.
 \caption{Completeness threshold for multi-staged verification.}
 \end{figure*}
 
-\begin{proof}
-Consider the matrix $(A_d - B_d K)$, which updates the states every time step, and select eigenvalue with smallest (non trivial) imaginary value.  
-call such value $\vartheta$. 
-At every time interval $kT_s, (k+1)T_s$ ($T_s$ being the sampling time), 
-the dynamics projected on the corresponding eigenspace rotate of $\vartheta T_s$ radiants.  
-So surely taking $k$ as the ceiling of $\frac{2\pi}{\vartheta T_s}$, after $k$ steps we've completed a rotation. 
-This is the completeness threshold. 
-\end{proof}
-
 \end{enumerate}
 
 \subsubsection{Illustrative Example} \label{sec:running-ex}
 
-We illustrate our approach with \todo{what example is this?} example,
+We illustrate our approach with \todo{what example is this?} an example,
 extracted from the literature~\cite{Franklin15}.
 %
 We start with a candidate solution with all coefficients zero, $K=[0
