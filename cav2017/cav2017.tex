@@ -572,37 +572,37 @@ The models we consider have two sources of error due to numeric representation.
 The first is the numeric error introduced by the fixed-point numbers employed to model the plant, i.e., to represent the plant dynamics $A_d$, $B_d$ and its states. 
 The second is the quantization error introduced by the digital controller, 
 which performs operations in the domain of fixed-point numbers. 
-In this section we formally outline the errors introduced by fixed-point representation of numbers. 
-
+In this section we formally outline the errors introduced by the fixed-point representation of numbers. 
+% 
 Let $\mathcal{F}_{\langle I,F \rangle}(x)$ denote a real number $x$ represented in a fixed point domain, with $I$ bits representing the integer part and $F$ bits representing the decimal part. The smallest number that can be represented in this domain is $c_m=2^{-F}$.
 
 
 The following approximation errors will arise:
 \begin{enumerate}
 \item {\bf Truncation:}
-Let $x$ be a real number, and $\mathcal{F}_{\langle I,F \rangle}(x)$ be the same number represented in a fixed point domain as above. $\mathcal{F}_{\langle I,F \rangle}(x) = x-\delta_T : \delta_T=x\ \%_{c_m}\ \tilde x$, where $\%_{c_m}$ is the modulus operation performed on the last bit.
+Let $x$ be a real number, and $\mathcal{F}_{\langle I,F \rangle}(x)$ be the same number represented in a fixed-point domain as above. 
+Then $\mathcal{F}_{\langle I,F \rangle}(x) = x-\delta_T : \delta_T=x\ \%_{c_m}\ \tilde x$, where $\%_{c_m}$ is the modulus operation performed on the last bit.
 
 So $\delta_T$ is the truncation error and it will propagate across operations.
 \item {\bf Rounding:}
 The following errors appear in simple operations. Let $c_1, c_2$ and $c_3$ be real numbers, and $\delta_{T1}$ and $\delta_{T2}$ be the truncation errors caused by representing $c_1$ and $c_2$ in the fixed-point domain as above.
 \begin{enumerate}
-\item Addition/Subtraction: these operations only propagate errors coming from truncation of the operands. 
+\item Addition/Subtraction: these operations only propagate errors coming from truncation of the operands, namely 
 $\mathcal{F}_{\langle I,F \rangle}(c_1) \pm \mathcal{F}_{\langle I,F \rangle}(c_2) = c_3 + \delta_3 :|\delta_3| \leq |\delta_{T1}| + |\delta_{T2}|$.
 
 
 \item Multiplication: $\mathcal{F}_{\langle I,F \rangle}(c_1) * \mathcal{F}_{\langle I,F \rangle}(c_2) =  c_3 + \delta_3 :|\delta_3| \leq |\delta_{T1}*\mathcal{F}_{\langle I,F \rangle}(c_2)| + |\delta_{T2}*\mathcal{F}_{\langle I,F \rangle}(c_1)| + c_m$, where $c_m=2^{-F}$ as above.
-\item In this implementation we only need to divide by positive numbers(where it is needed for checking stability). 
+\item In this implementation we only need to divide by positive numbers(where it is needed for checking stability) \todo{so: what does that imply? pls clarify explicitly.}. 
 \end{enumerate}
 
 \item {\bf Overflow:}
 The maximum size of a real number $x$ that can be represented in a fixed point domain as $\mathcal{F}_{\langle I,F \rangle}(x)$ is $\pm (2^{I-1}+1-2^{-F})$. Numbers outside this range cannot be represented by the domain. We assume no saturation (where any overflow is represented as the largest or smallest possible number), and check that overflow does not occur.
 
-
 \end{enumerate}
 
-We use $\mathcal{F}_{\langle I_c,F_c \rangle}(x)$ to denote a real number $x$ represented in the fixed-point precision level of the controller, and $\mathcal{F}_{\langle I_p,F_p \rangle}(x)$ to denote a real number $x$ represented in the fixed-point precision level of the plant model. Thus all mathematical operations occurring in the digital controller occur in the domain $\mathcal{F}_{\langle I_c,F_c \rangle}$, and all other calculations are carried out in the domain $\mathcal{F}_{\langle I_p,F_p \rangle}$.
-
-We will use $\mathcal{F}_{\langle I_c,F_c \rangle}(x)$ to denote a real number $x$ represented in the fixed-point precision level of the controller, and $\mathcal{F}_{\langle I_p,F_p \rangle}(x)$ to denote a real number $x$ represented in the fixed-point precision level of the plant model ($I_p \geq I_c \wedge F_p \geq F_c$). Thus any mathematical operations occurring in the digital controller will occur in the range of $\mathcal{F}_{\langle I_c,F_c \rangle}$, and all other calculations will be carried out in the range of $\mathcal{F}_{\langle I_p,F_p \rangle}$.
+We will use $\mathcal{F}_{\langle I_c,F_c \rangle}(x)$ to denote a real number $x$ represented in the fixed-point precision level of the controller, and $\mathcal{F}_{\langle I_p,F_p \rangle}(x)$ to denote a real number $x$ represented in the fixed-point precision level of the plant model ($I_p \geq I_c \wedge F_p \geq F_c$). 
+\todo{Should we include a discussion on the fact that the plant is physical? So for example, a reviewer may ask what is the meaning of the model with time derivative, with variables over a Euclidean space. }
+Thus any mathematical operations occurring in the digital controller will occur in the range of $\mathcal{F}_{\langle I_c,F_c \rangle}$, and all other calculations will be carried out in the range of $\mathcal{F}_{\langle I_p,F_p \rangle}$.
 
 \subsubsection{Effect on safety specification and stability}
 %Thus we can consider the effect of these errors on our safety and stability verification.
