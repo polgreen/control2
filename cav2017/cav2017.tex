@@ -1680,12 +1680,12 @@ To show that a fixed point implementation of the same controller will converge t
 
 A known result is that a power series of matrices converges~\cite{horn1990matrix} iff the eigenvalues of the matrix are less than 1, to the following:
 \begin{align*}
-\sum_{i=0}^{\inf}T^i  &= (I - T)^-1
+\sum_{i=0}^{\infty}T^i  &= (I - T)^-1
 \end{align*}
 Where $I$ is the identity matrix and $T$ is a square matrix. Thus, our system will converge
 
 \begin{align*}
-x_{\inf} &= 0 + (I - A_d + B_dK)^-1\B_dk\delta
+x_{\infty} &= 0 + (I - A_d + B_dK)^-1\B_dk\delta
 \end{align*}
 
 Hence, provided $(I - A_d + B_dK)^-1\B_dk\delta$ is within the safe space, our fixed point controller system is stable, in that it converges to a finite value, although not asymptomatically stable because it doesn't converge to the origin.
