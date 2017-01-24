@@ -704,29 +704,26 @@ we can vary the plant's precision $\langle I_p,F_p\rangle$ such that
 $\mathbb{R}\langle I_p,F_p \rangle \supseteq \mathbb{R}\langle I_c,F_c \rangle$.
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{Solution generalisation} 
+\subsection{Solution generalization} 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 Given the large solution space to be searched during the inductive
-synthesis phase, we parametrize the target language, which induces a
+synthesis, we parametrize the target language, which induces a
 lattice of progressively more expressive languages.  This enables us
 to start by attempting to synthesize a program at the lowest point on
 this lattice and increase the parameters of the language until we
 reach a point at which the synthesis succeeds. Whenever we manage to
-synthesize a candidate solution at some lower point on the lattice, we
-must apply some form of solution generalisation to obtain a full
+synthesize a solution at some lower point on the lattice, we
+must apply some form of solution generalization to obtain a full
 solution (i.e., a solution in the original search space).
-
-As well as giving us an automatic search procedure, this
-parametrisation greatly increases the efficiency of our system since
-languages low down the lattice are very easy to decide safety for
+This parametrization greatly increases the efficiency of our system since
+languages low down the lattice are easy to decide safety for
 (i.e., the validation oracle finds an answer fast). If a program can be
 synthesized in a low-complexity language, the whole procedure finishes
 much faster than if synthesis had been attempted in a high-complexity
-language.
-
-
-We investigate two different approaches of integrating solution generalisation 
-with CEGIS:
+language. We investigate two different approaches for integrating solution 
+generalization into CEGIS:
+%
 \begin{itemize}
 \item[1.] The first approach (described in Sec.~\ref{sec:CEGIS-precision-incrementation})
   uses a multi-staged verification phase and performs solution generalisation based on
