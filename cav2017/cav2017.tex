@@ -173,14 +173,14 @@ quantitative properties is left to future work.
 We describe and evaluate two approaches for synthesising digital controllers
 for state-space physical plants, both based on CounterExample
 Guided Inductive Synthesis (CEGIS)~\cite{sketch}.
-The first approach uses a naive
+{\em The first approach} uses a naive
 technique that starts by devising a digital controller that stabilizes the system
 whilst remaining safe for a 
 pre-selected time horizon; then, it verifies its potential safety by unfolding
 the dynamics of the system and checking for a completeness threshold.
 As it requires explicit unfolding up to a completeness
 threshold, this approach may result in a state space explosion.
-Instead of explicitly unfolding the dynamics, the second approach 
+Instead of explicitly unfolding the dynamics, {\em the second approach} 
 employs abstract acceleration~\cite{cattaruzza2015unbounded} to implicitly
 evaluate all possible progressions of the system simultaneously.
 Additionally, the second approach uses
@@ -204,14 +204,22 @@ than \textcolor{red}{$XXX$} seconds.
 
 \begin{enumerate}
 %
-\item In this paper we extend the problem of digital control synthesis from a transfer function representation into a state space representation.
-This entails the verification of safety properties in addition to the already existing stability conditions which is a much harder problem.
+\item In this paper we extend the problem of digital control synthesis
+  from a transfer function representation into a state space
+  representation.  This entails the verification of safety properties
+  in addition to the already existing stability conditions which is a
+  much harder problem.
 %
-\item To achieve this, we develop two approaches and compare them, the first relying on a non-deterministic simulation of the system and a completeness proof, whilst the second leverages on the concepts of abstraction and acceleration to increase speed whilst retaining soundness.
+\item We develop two approaches: the first, naive one relies on
+  explicit unfolding of the system's dynamics up to a completeness
+  threshold, whilst the second one is abstraction-based and leverages
+  on the concept of abstraction refinement and acceleration to increase speed whilst retaining
+  soundness.
 %
-\item We develop a solution generalization algorithm for the first approach and an abstraction refinement for the second, both of which improve the performance of the CEGIS loop. 
-%
-\item We develop a model for different sources quantization and their effect on the state space progression, for which we find safe bounds that ensure the safety of our controllers in a hybrid continuous-digital domain.
+\item We develop a model for different sources quantization and their
+  effect on the state space progression, for which we find safe bounds
+  that ensure the safety of our controllers in a hybrid
+  continuous-digital domain.
 %
 \end{enumerate}
 
