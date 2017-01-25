@@ -111,7 +111,7 @@ digitalization of signals by the controller.  The approach works in two
 stages, leveraging counterexample guided inductive synthesis (CEGIS) and
 reachability analysis.  CEGIS synthesises a static feedback controller that
 stabilizes the system under some restrictions given by the safety of the
-reach space.  Safety is verfied iether via BMC or abstract acceleration; if
+reach space.  Safety is verified either via BMC or abstract acceleration; if
 the verification step fails, we generate an alternative controller by
 generalizing the counterexample.  We synthesize stable and safe controllers
 for intricate physical plant models from the digital control literature.
@@ -159,19 +159,21 @@ implementation, as well as the hybrid elements that relate them.
 %% \emph{safe}.
 Due to the complexity of such systems, in this work we focus 
 on linear models with known  implementation features (e.g., number of bits, fixed-point
-arithmetic), and perform synthesis of safe digital controllers, a property often 
+arithmetic). We specify the safety requirement over the state space. This is a property often 
 overlooked in feedback control synthesis, but which plays an important role 
 in real-world systems.
 
-We describe and evaluate two approaches for synthesizing digital controllers
-for state-space physical plants, both based on CounterExample
-Guided Inductive Synthesis (CEGIS)~\cite{sketch}, performed considering deviations due the computation computations and representations of dynamics, providing sufficient conditions for sound and complete safe solutions for the state feedback control problem.
+We describe and evaluate two approaches for synthesizing digital controllers for state-space physical plants, 
+both based on the CounterExample Guided Inductive Synthesis (CEGIS)~\cite{sketch} architecture, recently of wide use for program synthesis.   
+We provide two alternative automated procedures to synthesise safe digital state-feedback controls, 
+and alongside completeness we prove their soundness by encompassing errors due to digitalisation and quantisation effects that are present in the digital controller interacting with the continuous plant. 
+% computations and representations of dynamics, providing sufficient conditions for sound and complete safe solutions for the state feedback control problem.
 
 {\em The first approach} uses a {\em naive}
 technique that starts by devising a digital controller that stabilizes the system
 whilst remaining safe for a 
-pre-selected time horizon; then, it verifies its potential safety by unfolding
-the dynamics of the system and checking for a {\em completeness threshold}, i.e.,
+pre-selected time horizon and a single initial state; then, it verifies its potential safety by unfolding
+the dynamics of the system, considering the full hyper-cube of initial states, and checking for a {\em completeness threshold}, i.e.,
 the number of iterations required to sufficiently unwind
 the closed-loop state-space system such
 that the boundaries are not violated for any larger number of iterations.
@@ -277,8 +279,8 @@ than $17.2$ seconds.
 
 
 %-------------------------------
-\section{Related work}
-\label{sec:relw}
+\subsection*{Related work}
+%\label{sec:relw}
 %-------------------------------
 
 \paragraph{CEGIS}
@@ -321,15 +323,15 @@ easy to generalize for the multivariate systems (i.e., with multiple inputs
 and outputs); (ii) shows the state-to-input relationships offering an internal 
 model of the system; and (iii) allows to synthesize control systems that ensures
 properties about the internal dynamics, e.g., to synthesize controllers that make
-the closed-loop system \emph{safe}. This work focuses in the \emph{safety} of 
+the closed-loop system \emph{safe}. This work focuses on the \emph{safety} of 
 internal states, such property is usually overlooked in the previous cited 
 works, but plays an important role in real world systems, where systems states 
 cannot assume any real value. Moreover, this work integrates an
 abstraction/refinement step inside the main CEGIS loop.
 
 The tool Pessoa~\cite{mazo2010pessoa} synthesizes
-correct-by-design embedded control software, in a Matlab ToolBox.  It is based on the description
-of a physical system as an equivalent finite-state machine and on the
+correct-by-design embedded control software, in a Matlab ToolBox.  It is based on the abstraction
+of a physical system to an equivalent finite-state machine and on the
 computation of reachability properties over the finite-state machine.  Based
 on this safety specification over state values, Pessoa can synthesize
 embedded controller software for a range of properties.
@@ -991,7 +993,7 @@ This is the completeness threshold.
 
 \subsubsection{Illustrative Example} \label{sec:running-ex}
 
-We illustrate our approach with \todo{what example is this?} an example,
+We illustrate our approach with an example,
 extracted from the literature~\cite{Franklin15}.
 %
 We start with a candidate solution with all coefficients zero, $K=[0
@@ -1006,7 +1008,7 @@ After adding the new counterexample to its sets of {\sc inputs}, {\sc
 return $x_0=[-0.5 -0.5 -0.5]$ as the new counterexample.
 
 In the subsequent iteration, the synthesizer is unable to find further 
-suitbale candidates and it returns UNSAT, meaning that the current precision is
+suitable candidates and it returns UNSAT, meaning that the current precision is
 insufficient.  Consequently, we increase the precision to $I_p=17$,
 $F_p=7$.
 %
@@ -1583,7 +1585,7 @@ benchmark coverage and together solve all benchmarks provided in the set.
 10 & Satellite           & 8,16   & 8975   & \xmark & \xmark \\\hline
 
 \end{tabular}
-\caption{Experimental results with runtime in milliseconds \label{tab:results}}
+\caption{Experimental results with runtime in milliseconds. \label{tab:results}}
 \end{table}
 
 The median runtime for our benchmark set is 7.9\,s.  Overall,
