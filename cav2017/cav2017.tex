@@ -166,7 +166,7 @@ in real-world systems.
 We describe and evaluate two approaches for synthesizing digital controllers for state-space physical plants, 
 both based on the CounterExample Guided Inductive Synthesis (CEGIS)~\cite{sketch} architecture, recently of wide use for program synthesis.   
 We provide two alternative automated procedures to synthesise safe digital state-feedback controls, 
-and alongside completeness we prove their soundness by encompassing errors due to digitalisation and quantisation effects that are present in the digital controller interacting with the continuous plant. 
+and alongside completeness \todo{are we actually complete? for instance, abstraction refinement might not be successful (we do TO)} we prove their soundness by encompassing errors due to digitalisation and quantisation effects that are present in the digital controller interacting with the continuous plant. 
 % computations and representations of dynamics, providing sufficient conditions for sound and complete safe solutions for the state feedback control problem.
 
 {\em The first approach} uses a {\em naive}
@@ -516,7 +516,7 @@ Models \eqref{eq:ode} and \eqref{eq:plant} depend on external non-determinism in
 Feedback architectures can be employed to manipulate the properties and behaviors of the continuous process (the plant).   
 %reduce the effect of parametric uncertainties and attenuate the effects of noise and disturbance. 
 We are interested in the synthesis of digital feedback control algorithm, 
-as implemented on modern FPGAs or DSPs. 
+as implemented on modern FPGAs or Digital Signal Processorss. 
 The most basic feedback architecture is the state feedback, 
 where the control action $u_k$ (notice we work with the discretized signal) is computed by: 
 %
@@ -621,7 +621,7 @@ The models we consider have two sources of error due to numeric representation.
 The first is the numeric error introduced by the fixed-point numbers employed to model the plant, i.e., to represent the plant dynamics $A_d$, $B_d$ and its states. 
 The second is the quantization error introduced by the digital controller, 
 which performs operations in the domain of fixed-point numbers. 
-In this section we formally outline the errors introduced by the fixed-point representation of numbers. 
+In this section we formally outline the errors introduced by the fixed-point representation of numbers~\cite{DBLP:conf/arith/BrainTRW15}. 
 % 
 Let $\mathcal{F}_{\langle I,F \rangle}(x)$ denote a real number $x$ represented in a fixed point domain, with $I$ bits representing the integer part and $F$ bits representing the decimal part. The smallest number that can be represented in this domain is $c_m=2^{-F}$.
 
@@ -1606,9 +1606,9 @@ footnote.\footnote{\url{https://drive.google.com/open?id=0ByIexo3Z5N91eDludEdWdW
 \subsection{Threats to validity}
 %-------------------------------
 We report an assessment of both our approaches over a diverse set of real-world benchmarks. Nevertheless, this set of benchmarks is limited within the scope of this paper and the performance may not generalize to other benchmarks. 
-
+%
 Our algorithm to select suitable FWL word widths to model plant behavior employs a heuristic based on user-provided controller word-width specifications. For the first approach, where we may need to increase the precision of the time discretization, we select the time steps for the discretizations on a similar basis. This works sufficiently well for our benchmarks, but performance may suffer in some cases, for example if the completeness threshold is high. 
-
+%
 The performance gain from abstract acceleration may not hold for more complex properties than stability, for instance ``eventually always reaches a certain safe set''. 
 
 
@@ -1623,6 +1623,21 @@ The performance gain from abstract acceleration may not hold for more complex pr
 \section{Conclusions}
 %-------------------------------
 
+We have presented two approaches to synthesize state feedback controllers 
+that ensure both stability and safety over the state-space representation.
+The first approach relies on explicit unfolding of the system's dynamics 
+up to the completeness threshold, whilst the second one applies abstraction 
+refinement and acceleration to increase speed whilst retaining soundness.
+Both approaches are novel in the control system literature in that it puts
+forward a fully automated synthesis approach that is algorithmically and
+numerically sound, considering the various error sources in the implementation 
+of the control algorithm and in the computational modeling of plant dynamics.
+Our experimental results show that both approaches are able
+to synthesize stable controllers in most benchmarks within a reasonable
+amount of time fully automatically.  In particular, both approaches
+complement each other and together solve all benchmarks provided in the set.
+Future work will be the extension of these approaches to consider performance 
+requirements while synthesizing digital controllers.
 
 \newpage
 
