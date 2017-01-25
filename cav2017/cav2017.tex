@@ -167,7 +167,7 @@ We describe and evaluate two approaches for synthesizing digital controllers for
 both based on the Counter-Example Guided Inductive Synthesis (CEGIS)~\cite{sketch} architecture, recently of wide use for program synthesis.   
 We provide two alternative automated procedures to synthesise safe 
 digital state-feedback controls
-and prove their soundness by encompassing errors due to digitalisation and quantisation effects that are present in the digital controller interacting with the continuous plant. 
+and prove their soundness by encompassing errors due to digitalization and quantization effects that are present in the digital controller interacting with the continuous plant. 
 % computations and representations of dynamics, providing sufficient conditions for sound and complete safe solutions for the state feedback control problem.
 
 {\em The first approach} uses a {\em naive}
@@ -255,10 +255,10 @@ multi-staged approach.
 
 %\textcolor{red}{we have to connect both paragraphs...}
 
-%To this end, we formalise the notion of solution generalisation for
+%To this end, we formalise the notion of solution generalization for
 %Counter-Example Guided Inductive Synthesis (CEGIS), which makes use 
 %of abstraction refinement in order to achieve scalability.
-%This strategy enables the inductive generalisation engine inside CEGIS
+%This strategy enables the inductive generalization engine inside CEGIS
 %to look for candidate solutions in a reduced solution space.  
 
 %In summary, this paper makes the following original contributions.
@@ -680,7 +680,7 @@ abstraction to implicitly evaluate all possible progressions of the
 system simultaneously. % on an infinite time horizon.
 
 %% We outline the general architecture of the program synthesizer used in both approaches \todo{which approaches - pls recall or clarify}. 
-%% We then give the details of both methods of solution generalization \todo{define ``solution generalisation''} that we compare.  
+%% We then give the details of both methods of solution generalization \todo{define ``solution generalization''} that we compare.  
 %% The first checks safety by unwinding the transition relation to a completeness threshold, 
 %% whereas the second employs abstract acceleration.
  
@@ -734,7 +734,7 @@ as defined in Sec.~\ref{ssec:safety}.
 We consider non-deterministic initial states within a specified range, 
 the reference signal to be set to zero, 
 saturations on the inputs, 
-and account for digitalisation and quantisation errors introduced by the controller.  
+and account for digitalization and quantization errors introduced by the controller.  
 
 When mapping back to the notation used for describing the general architecture of the program synthesizer, 
 the controller $K$ denotes $P$ and $(x_0, u_k)$ represents $x$. 
@@ -745,7 +745,7 @@ the controller $K$ denotes $P$ and $(x_0, u_k)$ represents $x$.
 %% \subsection{Solution generalization} 
 %% %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-%% \todo{All good - only the word ``generalisation'' won't be understood by a control person (we might have reviewers from this area?). Anticipate the explanation  given below to the introduction section.}
+%% \todo{All good - only the word ``generalization'' won't be understood by a control person (we might have reviewers from this area?). Anticipate the explanation  given below to the introduction section.}
 
 %% Given the large solution space to be searched during the inductive
 %% synthesis, we parametrize the target language, which induces a
@@ -1022,7 +1022,7 @@ solution by all verification stages.
 %\item[1.]
 
   The naive approach described in Sec.~\ref{sec:CEGIS-precision-incrementation}
-  %uses a multi-staged verification phase and performs solution generalisation based on
+  %uses a multi-staged verification phase and performs solution generalization based on
 %the plant precision, the number of loop unrollings, 
   %and the sampling rate. Essentially, it
   synthesises a controller for an individual initial state
