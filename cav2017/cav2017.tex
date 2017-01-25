@@ -368,7 +368,7 @@ extracting an LTI model of the code through symbolic execution.  In order to
 account for rounding errors, an upper bound is introduced in the
 verification phase.  The work in \cite{picasso2003stabilization,
 picasso2002construction} introduces attractive invariant sets as a mechanism
-to bound the quantization error effect on stabilisation as an invariant set
+to bound the quantization error effect on stabilization as an invariant set
 that always converges toward the controllable set.  In a similar fashion,
 \cite{liberzon2003hybrid} evaluates the dynamics of the quantization error
 and bounds its trajectory to a known region over a finite period of time. 
@@ -538,14 +538,13 @@ Further, we will encompass the digital nature of the controller, which manipulat
 %-------------------------------
 
 
-Asymptotic stability boils down to Lyapunov stability and convergence to an
-equilibrium point~\cite{Astrom08}.  Lyapunov stability requires that model
-trajectories remain in a neighborhood of the equilibrium point.  In the case
-of closed-loop LTI models as in~\eqref{eq:closedloopss}, the equilibrium
-point is the origin (if the reference is equal to zero), or an offset
-thereof.  Here, we consider systems with a zero reference signal.
+Asymptotic stability implies convergence to an equilibrium point from any states in its neighborhood. This stability concept is stronger than the Lyapunov and BIBO stability researched by previous works~\cite{DBLP:conf/emsoft/RavanbakhshS16,DBLP:journals/corr/AbateBCCDKK16,DBLP:conf/hybrid/RouxJG15,
+DBLP:conf/hybrid/WangGRJF16}. In the case of linear systems as 
+in~\eqref{eq:closedloopss}, the equilibrium point for zero-input 
+response is always the  origin.  Here, we consider systems with 
+a zero reference signal.
 
-A discrete-time system as \eqref{eq:closedloopss} is asymptotically stable
+A discrete-time LTI system as \eqref{eq:closedloopss} is asymptotically stable
 \textit{iff} all the roots of the characteristic polynomial (i.e., the
 eigenvalues of the closed-loop matrix $A_d - B_d K$) are inside the unity
 circle in the complex plane, i.e., \textit{iff} their absolute values are
