@@ -31,7 +31,7 @@ K = [fxp(0.0078125), fxp(-0.0078125)];
 A = fxpP([ 0.90122,1.3429e-08;7.4506e-09,0 ]);
 B = fxpP([ 128;0 ]);
 
-loops = 2;
+loops = 50;
 numstates = numel(B);
 
 if(numstates==2)
@@ -50,12 +50,12 @@ end
   
 for j=1:2^(numstates)
  % states = statematrix(:,j) ;
- states = [-0.5;0.5];
+ states = fxpP([-0.5;0.5]);
   for i=1:loops
 
     tmp = fxp(states)  
     input = -K * fxp(states)
-    tmp_input = double(input);
+    tmp_input = fxpP(input)
     if(input>INPUT(2) || input< INPUT(1))
         msg = 'input too big'
         return
