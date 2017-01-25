@@ -314,9 +314,16 @@ software-implemented digital controllers~\cite{Bessa16}.  While this work
 also makes use of a CEGIS-based technique, the approach is restricted to
 synthesizing digital controllers for stable closed-loop systems described
 via transfer function models.  In contrast, in the current paper we consider
-a state-space representation of the physical system, which is known to be
-more general \cite{Astrom08} and allows to synthesize controllers that make
-the closed-loop system \emph{safe}.  Moreover, this work integrates an
+a state-space representation of the physical system, which is known to present
+various advantages over transfer function representation \cite{Astrom08}: (i) 
+easy to generalize for the multivariate systems (i.e., with multiple inputs 
+and outputs); (ii) shows the state-to-input relationships offering an internal 
+model of the system; and (iii) allows to synthesize control systems that ensures
+properties about the internal dynamics, e.g., to synthesize controllers that make
+the closed-loop system \emph{safe}. This work focuses in the \emph{safety} of 
+internal states, such property is usually overlooked in the previous cited 
+works, but plays an important role in real world systems, where systems states 
+cannot assume any real value. Moreover, this work integrates an
 abstraction/refinement step inside the main CEGIS loop.
 
 The tool Pessoa~\cite{mazo2010pessoa} is a MatLab toolbox that synthesizes
