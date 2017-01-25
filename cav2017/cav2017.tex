@@ -161,9 +161,9 @@ arithmetic), and perform synthesis of safe digital controllers, a property often
 overlooked in feedback control synthesis, but which plays an important role 
 in real-world systems.
 
-We describe and evaluate two approaches for synthesising digital controllers
+We describe and evaluate two approaches for synthesizing digital controllers
 for state-space physical plants, both based on CounterExample
-Guided Inductive Synthesis (CEGIS)~\cite{sketch}.
+Guided Inductive Synthesis (CEGIS)~\cite{sketch}, performed considering deviations due the computation computations and representations of dynamics, providing sufficient conditions for sound and complete solutions.
 
 {\em The first approach} uses a {\em naive}
 technique that starts by devising a digital controller that stabilizes the system
@@ -188,10 +188,10 @@ complex models when a solution cannot be found.
 %% we substitute the second step by employing abstract
 %% acceleration to unfold the dynamics forward, instead of symbolically
 %% unwinding the transition relation~\cite{cattaruzza2015unbounded}.
-\todo{We need to emphasise the derivation of errors for soundness. Can we claim completeness already?}
+%\todo{We need to emphasise the derivation of errors for soundness. Can we claim completeness already?}
 
 We provide experimental results 
-showing that both approaches are able to efficiently synthesise stable and safe controllers 
+showing that both approaches are able to efficiently synthesize stable and safe controllers 
 for a set of intricate physical plant models taken from the digital 
 control literature: the median runtime for our benchmark
 set is \textcolor{red}{$XXX$}s, i.e., most controllers can be synthesized in less
@@ -203,21 +203,24 @@ than \textcolor{red}{$XXX$} seconds.
 \begin{enumerate}
 %
 \item In this paper we extend the problem of digital control synthesis 
-from a transfer function representation into a state space representation. 
-Such representation allows to study the  input-to-state dynamics, while 
-transfer functions represents only input-output relations and cannot be 
-enough to ensure deeper properties, e.g. the safety property.
+  from a transfer function representation into a state space representation. 
+  Such representation allows to study the  input-to-state dynamics, while 
+  transfer functions represents only input-output relations and cannot be 
+  enough to ensure deeper properties, e.g. the safety property.
 %
 \item We proposes a synthesis of state feedback controllers that ensures 
-safety properties, that is only  possible in state-space representation. 
-In addition to the already existing stability conditions which is a much 
-harder problem.
+  safety properties, that is only  possible in state-space representation. 
+  In addition to the already existing stability conditions which is a much 
+  harder problem.
 %
 \item We develop two approaches: the first, naive, one relies on
   explicit unfolding of the system's dynamics up to the completeness
   threshold, whilst the second one is abstraction-based and leverages
-  the concepts of abstraction refinement and acceleration to increase speed whilst retaining
-  soundness.
+  the concepts of abstraction refinement and acceleration to increase 
+  speed whilst retaining soundness. Both approaches provide sound and 
+  complete synthesis of state feedback systems considering the various
+  errors sources in the implementation of control algorithm and in the
+  computational modeling of plant dynamics.
 %
 \item We develop a model for different sources quantization and their
   effect on the state space progression, for which we find safe bounds
