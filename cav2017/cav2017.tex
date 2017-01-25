@@ -171,12 +171,12 @@ synthesis of safe digital controllers -- the extension to more general
 quantitative properties is left to future work.
 
 We describe and evaluate two approaches for synthesising digital controllers
-for state-space physical plants, both based on a counterexample
-guided inductive synthesis (CEGIS)~\cite{sketch} loop.
+for state-space physical plants, both based on CounterExample
+Guided Inductive Synthesis (CEGIS)~\cite{sketch}.
 The first approach uses a naive
 technique that starts by devising a digital controller that stabilizes the system
 whilst remaining safe for a 
-pre-selected time horizon and, subsequently, verifies its potential safety by unfolding
+pre-selected time horizon; then, it verifies its potential safety by unfolding
 the dynamics of the system and checking for a completeness threshold.
 As it requires explicit unfolding up to a completeness
 threshold, this approach may result in a state space explosion.
