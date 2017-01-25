@@ -1571,8 +1571,8 @@ x_{k+1} &= A_d * x_{k} -(\mathcal{F}_{\langle I_c,F_c \rangle}(K)\cdot\mathcal{F
 x_{k+1} &= (A_d  - B_dK)*x_k + B_dK\delta
 %\\ x_{k+1}&=A_d x_{k} + B_du_{k}
 \end{align*}
-where $\delta$ is the maximum error that can be introduced by the FWL controller in one step, i.e., by reading the states values once and multiplying by $K$ once. We derive the closed form expression for $x_n$
-
+where $\delta$ is the maximum error that can be introduced by the FWL controller in one step, i.e., by reading the states values once and multiplying by $K$ once. 
+We derive the closed form expression for $x_n$ as follows: 
 \begin{align*}
 x_{1} &= (A_d  - B_dK)x_0 + B_dK\delta \\
 x_{2} &= (A_d  - B_dK)((A_d  - B_dK)x_0 + B_dK\delta ) + B_dK\delta \\
@@ -1584,22 +1584,21 @@ x_{n} &= (A_d  - B_dK)^nx_0 + (A_d  - B_dK)^{n-1}B_dK\delta + ... + (A_d  - B_dK
 
 The definition of asymptotic stability is that the system converges to a reference signal, in this case we use no
 reference signal so an asymptotically stable system will converge to the origin. We know that the original system
-with an infinite precision controller is stable, because we have synthesized it to meet Jury's criteria. Hence
+with an infinite-precision controller is stable, because we have synthesized it to meet Jury's criterion. Hence, 
 $(A_d  - B_dK)^n*x_0$ must converge to zero. 
 
-To show that a fixed point implementation of the same controller will converge to a steady value, we need to show that the infinite sum converges.
-
-A known result is that a power series of matrices converges~\cite{horn1990matrix} iff the eigenvalues of the matrix are less than 1, to the following:
+To show that a fixed-point implementation of the same controller will converge to a finite value, 
+we need to show that the infinite sum converges.
+A known result is that a power series of matrices converges~\cite{horn1990matrix}, iff the eigenvalues of the matrix are less than 1, as follows:
+%\begin{align*}
+$\sum_{i=0}^{\infty}T^i  = (I - T)^{-1}$, 
+%\end{align*}
+where $I$ is the identity matrix and $T$ is a square matrix. Thus, our system will converge to the value 
 \begin{align*}
-\sum_{i=0}^{\infty}T^i  &= (I - T)^{-1}
+0 + (I - A_d + B_dK)^{-1}B_dk\delta. 
 \end{align*}
-Where $I$ is the identity matrix and $T$ is a square matrix. Thus, our system will converge
-
-\begin{align*}
-x_{\infty} &= 0 + (I - A_d + B_dK)^{-1}B_dk\delta
-\end{align*}
-
-Hence, provided $(I - A_d + B_dK)^{-1}B_dk\delta$ is within the safe space, our fixed point controller system is stable, in that it converges to a finite value, although not asymptomatically stable because it doesn't converge to the origin.
+As a result, if the value $(I - A_d + B_dK)^{-1}B_dk\delta$ is within the safe space, then the synthesized fixed-point controller results in a safe closed-loop model. 
+The convergence to a finite value, however, will not make it asymptomatically stable.
 
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
