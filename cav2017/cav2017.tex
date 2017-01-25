@@ -1121,7 +1121,7 @@ $P_a(z) = z^n+\sum_{i=1}^p{(a_i-k_i)z^{n-i}}$.
 \item Calculate the noise set $N$ from the quantizer resolutions and estimated round-off errors: %($\frac{q_1}{2},\frac{q_2}{2},q_3$)
 $$N=\left \{ \nu_1+\nu_2+ \nu_3 : \nu_1 \in \left[-\frac{q1}{2}\ \ \frac{q1}{2}\right] 
 \wedge \nu_2 \in \left[-\frac{q2}{2}\ \ \frac{q2}{2}\right]  \wedge \nu_3 \in \left[-q3\ \ q3\right]  \right \}\nonumber$$
-where $q3$ is the maximum truncation and rounding error of $u_k=-K\hat{x}_k$ as discussed in section \ref{sec:numeric_rep}
+where $q3$ is the maximum truncation and rounding error of $u_k=-K\hat{x}_k$ as discussed in section \ref{sec:numeric_rep}.
 More details on how to model quantization as noise are given in the 
 Appendix~\ref{appendix:quantization-noise}.
 \item Calculate a set of initial bounds on $K$, $\phi_{init}^{K}$, based on the input constraints. Note that these bounds will be used by the {\sc synthesize} phase to reduce the size of the solution space.
@@ -1410,9 +1410,12 @@ The median runtime for our benchmark set is 7.9\,s.  Overall,
 the average synthesis time amounts to approximately 17.2\,s.  We
 consider these times short enough to be of practical use to control
 engineers, and thus affirm RQ1.  
+There are several cases for which the system may fail to find a controller. In the naive approach,
+there is the risk of the completeness threshold being too large, thus causing a timeout.
+In the abstraction case, there is the risk of requiring a very precise abstraction, resulting in too many refinements which may timeout.
+Other sources for incompleness are the inability of the {\sc synthesize} phase to use a large enough precision for the plant model in a given problem.
 
-The
-synthesized controllers were confirmed to be stable outside of our model
+The synthesized controllers were confirmed to be stable outside of our model
 representation using MATLAB, positively answering RQ2.  A~link to the full
 experimental environment, including scripts to reproduce the results, all
 benchmarks and the tool, is provided in the
