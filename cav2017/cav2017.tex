@@ -596,13 +596,12 @@ for the $i$-th coordinate $x_{i}$ of state $x\in \mathbb R^n$ at the $k$-th
 instant, respectively.  This means that the states will always be within the
 $n$-dimensional hyper-box.
 
-Furthermore, it is practically relevant to consider constraints on the input
-signal $u_{k}$ and bounds on the initial states $x_0$,
-which we assume have given bounds. %%  $\overline{u}$, $\underline{u}$
-%% and $\overline{x_0}$, $\underline{x_0}$, respectively.
-We refer to these constraints as $\phi_{init}$: \todo{input constraints should not be called 'init'}
-$$\phi_{init} = {\forall k.\underline{u} \leq u_{k} \leq \overline{u}} 
-\wedge \bigwedge_{i=1}^{n} \underline{x_{i,0}} \leq x_{i,0} \leq \overline{x_{i,0}}.$$  
+Furthermore, it is practically relevant to consider the 
+constraints $\phi_{init}$ on the input
+signal $u_{k}$ and $\phi_{input}$ on the initial states $x_0$,
+which we assume have given bounds:
+$\phi_{init} = {\forall k.\underline{u} \leq u_{k} \leq \overline{u}} $, 
+$\phi_{input} = \bigwedge_{i=1}^{n} \underline{x_{i,0}} \leq x_{i,0} \leq \overline{x_{i,0}}.$
 In the first case, this means that the control input saturates in view of
 physical constraints.
 
@@ -614,7 +613,7 @@ physical constraints.
 % \addtodo{[Unclear what the remainder is for: ]}
 %>>>>>>> added initial constraints on x_0
 
-aazZ%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{Numeric representations and soundness} 
 \label{sec:numeric_rep}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -624,31 +623,9 @@ The models we consider have two sources of error due to numeric representation.
 The first is the numeric error introduced by the fixed-point numbers employed to model the plant, i.e., to represent the plant dynamics $A_d$, $B_d$ and $x_k$. 
 The second is the quantization error introduced by the digital controller, 
 which performs operations in the domain of fixed-point numbers. 
-In this section we formally outline the errors introduced by the fixed-point representation of numbers~\cite{DBLP:conf/arith/BrainTRW15}. 
+In this section we formally outline the errors introduced by the fixed-point representation of numbers. 
 % 
-Let $\mathcal{F}_{\langle I,F \rangle}(x)$ denote a real number $x$ represented in a fixed point domain, with $I$ bits representing the integer part and $F$ bits representing the decimal part. The smallest number that can be represented in this domain is $c_m=2^{-F}$.
-
-
-The following approximation errors will arise:
-\begin{enumerate}
-\item {\bf Truncation:}
-Let $x$ be a real number, and $\mathcal{F}_{\langle I,F \rangle}(x)$ be the same number represented in a fixed-point domain as above. 
-Then $\mathcal{F}_{\langle I,F \rangle}(x) = x-\delta_T$ where the error $ \delta_T=x\ \%_{c_m}\ \tilde x$, and $\%_{c_m}$ is the modulus operation performed on the last bit.
-
-So $\delta_T$ is the truncation error and it will propagate across operations.
-\item {\bf Rounding:}
-The following errors appear in simple operations. Let $c_1, c_2$ and $c_3$ be real numbers, and $\delta_{T1}$ and $\delta_{T2}$ be the truncation errors caused by representing $c_1$ and $c_2$ in the fixed-point domain as above.
-\begin{enumerate}
-\item Addition/Subtraction: these operations only propagate errors coming from truncation of the operands, namely 
-$\mathcal{F}_{\langle I,F \rangle}(c_1) \pm \mathcal{F}_{\langle I,F \rangle}(c_2) = c_3 + \delta_3$ with $|\delta_3| \leq |\delta_{T1}| + |\delta_{T2}|$.
-\item Multiplication: $\mathcal{F}_{\langle I,F \rangle}(c_1) * \mathcal{F}_{\langle I,F \rangle}(c_2) =  c_3 + \delta_3$ with $|\delta_3| \leq |\delta_{T1}*\mathcal{F}_{\langle I,F \rangle}(c_2)| + |\delta_{T2}*\mathcal{F}_{\langle I,F \rangle}(c_1)| + c_m$, where $c_m=2^{-F}$ as above.
-\item Division: the operations performed by our controllers in the FWL domain do not include division, so these bounds are inconsequential to this paper. 
-\end{enumerate}
-
-\item {\bf Overflow:}
-The maximum size of a real number $x$ that can be represented in a fixed point domain as $\mathcal{F}_{\langle I,F \rangle}(x)$ is $\pm (2^{I-1}+1-2^{-F})$. Numbers outside this range cannot be represented by the domain. We check that overflow does not occur.
-
-\end{enumerate}
+Let $\mathcal{F}_{\langle I,F \rangle}(x)$ denote a real number $x$ represented in a fixed point domain, with $I$ bits representing the integer part and $F$ bits representing the decimal part. The smallest number that can be represented in this domain is $c_m=2^{-F}$. Any mathematical operations performed at the precision $\mathcal{F}_{\langle I,F \rangle}(x)$ will introduce errors, that can be upper bounded~\cite{DBLP:conf/arith/BrainTRW15}. Further details are in Appendix~\ref{appendix:numerical_errors}.
 
 We will use $\mathcal{F}_{\langle I_c,F_c \rangle}(x)$ to denote a real number $x$ represented in the fixed-point precision level of the controller, and $\mathcal{F}_{\langle I_p,F_p \rangle}(x)$ to denote a real number $x$ represented in the fixed-point precision level of the plant computational model ($I_p \geq I_c \wedge F_p \geq F_c$).
 Thus any mathematical operations occurring in the digital controller will occur in the range of $\mathcal{F}_{\langle I_c,F_c \rangle}$, and all other calculations will be carried out in the range of $\mathcal{F}_{\langle I_p,F_p \rangle}$. The physical plant operates in the reals, which means our verification phase must account for calculation errors in the model.
@@ -686,7 +663,6 @@ sufficient to check that the (perturbed, noisy) model converges to a neighbourho
 
 In the following, we shall disregard these steady-state errors (caused by FWL effects)
  when the stability is ensured by synthesis, and then verify its safety accounting for the finite-precision errors. 
-
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \section{CEGIS of Safe Controllers for LTI Systems} 
 \label{sec:CEGARIS} 
@@ -903,17 +879,17 @@ precision $\langle I_p,F_p\rangle$ for the plant and a sampling rate.  The
 checks that all these assumptions are sound are performed by subsequent
 {\sc verify} stages.
 
-\begin{algorithm}[]
-\scriptsize
-\begin{algorithmic}[1]
-\Function{$stabilityCheck()$}{}
-  \State computecharPoly($A_d - B_dK$)
-  \State assert(Jury's criteria hold)
+%\begin{algorithm}[]
+%\scriptsize
+%\begin{algorithmic}[1]
+%\Function{$stabilityCheck()$}{}
+%  \State computecharPoly($A_d - B_dK$)
+%  \State assert(Jury's criteria hold)
   %\State Return $K$
-\EndFunction
-\end{algorithmic}
-\label{alg:stabilitycheck}
-\end{algorithm}
+%\EndFunction
+%\end{algorithmic}
+%\label{alg:stabilitycheck}
+%\end{algorithm}
 
 
 \begin{algorithm}[]
@@ -1329,7 +1305,7 @@ systems were extracted from the
 literature~\cite{Franklin15,maglev,converters,CTMS} 
 and employed for validating our methodology. 
 
-\textit{DC Motor Position and Rate} plants describes the angular position and 
+\textit{DC Motor Position and Rate} plants describe the angular position and 
 velocity of a DC Motor, respectively. 
 \textit{Automotive Cruise System} plant represents the speed of a motor vehicle. 
 \textit{Helicopter Longitudinal Motion} plant provides the longitudinal motion model 
@@ -1342,7 +1318,7 @@ a given object is suspended via magnetic field.
 and indicators that is rotated through interaction with magnetic fields.
 \textit{1/4 Car Suspension} plant presents a physical model that connects a car to its wheels 
 and allows relative motion between both parts.
-\textit{Computer Tape Driver} plant describes a physical model to read and write data 
+\textit{Computer Tape Driver} plant describes a system to read and write data 
 on a storage device in the computer.
 
 Section~\ref{sec:BenchmarksforStateSpace} in the appendix summarizes 
@@ -1351,7 +1327,7 @@ The Inverted Pendulum appears to be a two output system, but it was treated as t
 SISO systems during the experiments. For the sake of simplicity all the states 
 measurements are assumed available. In practice, state estimators should be designed 
 in order to obtain an estimate of the states from the single output. 
-Further extensions of this work can include 
+Further work can include 
 state observers synthesis.
 
 All benchmarks were discretized with different sample times using 
@@ -1659,6 +1635,32 @@ The following remark is worth mentioning regarding the above.
 The witnessed maximum amplitude of the discrete signals $x_k,y_k$ may be smaller to that of $x(t),y(t)$ due to synchronism at fraction-frequency sampling.
 This means that reasoning about the state-space must consider the effects of this possibility as well of the case of maximal inputs from the continuous specification.
 \end{remark}
+
+\subsection{Errors due to numerical representation} \label{appendix:numerical_errors}
+
+Let $\mathcal{F}_{\langle I,F \rangle}(x)$ denote a real number $x$ represented in a fixed point domain, with $I$ bits representing the integer part and $F$ bits representing the decimal part. The smallest number that can be represented in this domain is $c_m=2^{-F}$.
+The following approximation errors will arise in mathematical operations and representation:
+\begin{enumerate}
+\item {\bf Truncation:}
+Let $x$ be a real number, and $\mathcal{F}_{\langle I,F \rangle}(x)$ be the same number represented in a fixed-point domain as above. 
+Then $\mathcal{F}_{\langle I,F \rangle}(x) = x-\delta_T$ where the error $ \delta_T=x\ \%_{c_m}\ \tilde x$, and $\%_{c_m}$ is the modulus operation performed on the last bit.
+
+So $\delta_T$ is the truncation error and it will propagate across operations.
+\item {\bf Rounding:}
+The following errors appear in simple operations. Let $c_1, c_2$ and $c_3$ be real numbers, and $\delta_{T1}$ and $\delta_{T2}$ be the truncation errors caused by representing $c_1$ and $c_2$ in the fixed-point domain as above.
+\begin{enumerate}
+\item Addition/Subtraction: these operations only propagate errors coming from truncation of the operands, namely 
+$\mathcal{F}_{\langle I,F \rangle}(c_1) \pm \mathcal{F}_{\langle I,F \rangle}(c_2) = c_3 + \delta_3$ with $|\delta_3| \leq |\delta_{T1}| + |\delta_{T2}|$.
+\item Multiplication: $\mathcal{F}_{\langle I,F \rangle}(c_1) * \mathcal{F}_{\langle I,F \rangle}(c_2) =  c_3 + \delta_3$ with $|\delta_3| \leq |\delta_{T1}*\mathcal{F}_{\langle I,F \rangle}(c_2)| + |\delta_{T2}*\mathcal{F}_{\langle I,F \rangle}(c_1)| + c_m$, where $c_m=2^{-F}$ as above.
+\item Division: the operations performed by our controllers in the FWL domain do not include division. However, we do use division in computations at the precision of the plant. $\mathcal{F}_{\langle I,F \rangle}(c_1) / \mathcal{F}_{\langle I,F \rangle}(c_2) =  c_3 + \delta_3$ with $|\delta_3| \leq $, where $c_m=2^{-F}$ as above.
+\end{enumerate}
+
+\item {\bf Overflow:}
+The maximum size of a real number $x$ that can be represented in a fixed point domain as $\mathcal{F}_{\langle I,F \rangle}(x)$ is $\pm (2^{I-1}+1-2^{-F})$. Numbers outside this range cannot be represented by the domain. We check that overflow does not occur.
+
+\end{enumerate}
+
+
 %  Since \eqref{eq:discretization} is a bi-simulation of \eqref{eq:ode}, we may use the semantics in section \ref{sec:model_semantics} to model continuous dynamical systems.
 
 % %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1853,15 +1855,15 @@ the reachability matrix of the canonical form. Then
 % 1 & 0 & 0\\
 % \end{array}\right]$ & 0 \\ \hline
 %3            & 
-\begin{tabular}[c]{@{}c@{}}Ball\\ Magnetic\\ Levitation\end{tabular} & $\left[\begin{array}{ccc}
-0		& 1 		& 0		\\
-1752	& 0			& -34.07\\
-0		& 0			& -38.27\\
-\end{array}\right]$ & $\left[\begin{array}{c}
-0 \\ 0 \\ 1.923
-\end{array}\right]$ & $\left[\begin{array}{ccc}
-1 & 0 & 0\\
-\end{array}\right]$ & 0 \\ \hline
+%\begin{tabular}[c]{@{}c@{}}Ball\\ Magnetic\\ Levitation\end{tabular} & $\left[\begin{array}{ccc}
+%0		& 1 		& 0		\\
+%1752	& 0			& -34.07\\
+%0		& 0			& -38.27\\
+%\end{array}\right]$ & $\left[\begin{array}{c}
+%0 \\ 0 \\ 1.923
+%\end{array}\right]$ & $\left[\begin{array}{ccc}
+%1 & 0 & 0\\
+%\end{array}\right]$ & 0 \\ \hline
 %4              & 
 % \begin{tabular}[c]{@{}c@{}}Buck\\ Converter\end{tabular}                      & $\left[\begin{array}{cc}
 % 0		& -500 \\
