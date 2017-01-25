@@ -197,15 +197,21 @@ control literature: the median runtime for our benchmark
 set is \textcolor{red}{$XXX$}s, i.e., most controllers can be synthesized in less
 than \textcolor{red}{$XXX$} seconds.
 
+
 \subsection*{Contributions} 
 
 \begin{enumerate}
 %
-\item In this paper we extend the problem of digital control synthesis
-  from a transfer function representation into a state space
-  representation.  This entails the verification of safety properties
-  in addition to the already existing stability conditions which is a
-  much harder problem.
+\item In this paper we extend the problem of digital control synthesis 
+from a transfer function representation into a state space representation. 
+Such representation allows to study the  input-to-state dynamics, while 
+transfer functions represents only input-output relations and cannot be 
+enough to ensure deeper properties, e.g. the safety property.
+%
+\item We proposes a synthesis of state feedback controllers that ensures 
+safety properties, that is only  possible in state-space representation. 
+In addition to the already existing stability conditions which is a much 
+harder problem.
 %
 \item We develop two approaches: the first, naive, one relies on
   explicit unfolding of the system's dynamics up to the completeness
