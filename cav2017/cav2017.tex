@@ -203,14 +203,15 @@ than \textcolor{red}{$XXX$} seconds.
 \begin{enumerate}
 %
 \item In this paper we extend the problem of digital control synthesis 
-  from a transfer function representation into a state space one. 
+  from a transfer function representation into a state space representation. 
   Such representation allows to study the  input-to-state dynamics, while 
   transfer functions represents only input-output relations and cannot be 
   enough to ensure deeper properties, e.g. the safety property.
 %
 \item We proposes a synthesis of state feedback controllers that ensures 
-  safety properties in addition to the already existing stability conditions,
-  that is only  possible in state-space representation. 
+  safety properties, that is only  possible in state-space representation. 
+  In addition to the already existing stability conditions which is a much 
+  harder problem.
 %
 \item We develop two approaches: the first, naive, one relies on
   explicit unfolding of the system's dynamics up to the completeness
@@ -395,14 +396,14 @@ with full state information (namely where we have access to all the model variab
 where $t \in \mathbb R_0^+$, 
 where $A$ and $B$ are matrices that fully specify the continuous plant, 
 and with initial states set as $x(0)$. 
-Eq.~\eqref{eq:ode} is soundly discretized in time (as shown in the Appendix) into %\textcolor{red}{What is subscript ``d''?}
+Eq.~\eqref{eq:ode} is soundly discretized in time (as shown in the Appendix~\ref{sec:appendix:LTIbackground}) into %\textcolor{red}{What is subscript ``d''?}
 %
 \begin{align}
 \label{eq:plant}
 x_{k+1} = A_d x_k+ B_d u_k. 
 \end{align} 
 where $k \in \mathbb N$, 
-and with initial state $x_{0}=x(0)$. $A_d$ and $B_d$ denote the discretized matrices of $A$ and $B$, the plant dynamics. 
+and with initial state $x_{0}=x(0)$. $A_d$ and $B_d$ denote the matrices that describes the discretized plant dynamics and $A$ and $B$ the continuous plant dynamics. 
 Later, we will deal with the issue of variable quantization, as introduced by the ADC/DAC conversion blocks.  
 
 %
@@ -506,7 +507,7 @@ Later, we will deal with the issue of variable quantization, as introduced by th
 %-------------------------------
 
 Models \eqref{eq:ode} and \eqref{eq:plant} depend on external non-determinism in the form of input signals $u (t), u_k$, respectively. 
-Feedback architectures can be employed to affect the properties and behaviours of the continuous process (the plant).   
+Feedback architectures can be employed to manipulate the properties and behaviors of the continuous process (the plant).   
 %reduce the effect of parametric uncertainties and attenuate the effects of noise and disturbance. 
 We are interested in the synthesis of digital feedback, 
 as implemented on modern FPGAs or ICs. 
@@ -1739,7 +1740,7 @@ Hence, provided $(I - A_d + B_dK)^{-1}B_dk\delta$ is within the safe space, our 
 
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\section{LTI system Transformations and Equivalences} \label{sec:appendix}
+\section{LTI system Transformations and Equivalences} \label{sec:appendix:LTIbackground}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
