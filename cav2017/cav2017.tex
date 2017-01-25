@@ -1620,6 +1620,22 @@ The performance gain from abstract acceleration may not hold for more complex pr
 \section{Conclusions}
 %-------------------------------
 
+We have presented two approaches to synthesize state feedback controllers 
+that ensure both stability and safety over the state-space representation.
+The first approach relies on explicit unfolding of the system's dynamics 
+up to the completeness threshold, whilst the second one applies abstraction 
+refinement and acceleration to increase speed whilst retaining soundness.
+Both approaches are novel in the control system literature in that it puts
+forward a fully automated synthesis approach that is algorithmically and
+numerically sound, considering the various error sources in the implementation 
+of the control algorithm and in the computational modeling of plant dynamics.
+Our experimental results show that both approaches are able
+to synthesize stable controllers in most benchmarks within a reasonable
+amount of time fully automatically.  In particular, both approaches
+complement each other in the benchmark coverage and together 
+solve all benchmarks provided in the set.
+Future work will be the extension of these approaches to consider performance 
+requirements while synthesizing digital controllers.
 
 \newpage
 
