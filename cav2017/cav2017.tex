@@ -30,6 +30,7 @@
 \usepackage{microtype}
 \usepackage{epstopdf}
 \usepackage{cite}
+\usepackage{pifont}
 
 \usepackage{todonotes}
 \usetikzlibrary{positioning, automata, shapes.arrows, calc, shapes, arrows}
@@ -39,6 +40,7 @@
 \newcommand{\addtodo}[1]{{\color{red} TODO: #1}}
 \newcommand{\commentib}[1]{{\color{blue} [IB: #1]}}
 \newcommand{\mat}[1]{\boldsymbol{#1}}
+\newcommand{\xmark}{\ding{55}}
 
 \usepackage{url}
 %\urldef{\mailsa}\path|{alfred.hofmann, ursula.barth, ingrid.haas, frank.holzwarth,|
@@ -1329,8 +1331,6 @@ all our benchmarks, which are SISO models (cf. section~\ref{sec:preliminaries}).
 velocity of a DC Motor, respectively. 
 \textit{Aircraft Pitch Dynamics} plant represents the air vehicle orientation and 
 control based on the pitch dimension. 
-\textit{Ball Magnetic Levitation} plant describes a physical model that keeps a 
-metal ball hanged in air via magnetic field. 
 \textit{Buck Converter} plant represents a power converter model that steps down 
 voltage from the supply to the load while stepping up current. 
 \textit{Boost Converter} plant also represents a power converter model, but
@@ -1387,15 +1387,15 @@ All times given are wall clock time in seconds as measured by the UNIX date comm
 1 & 0 & 0\\
 \end{array}\right]$ & 0 \\  \hline
 %2              & 
-\begin{tabular}[c]{@{}c@{}}Aircraft \\ Pitch\\ Dynamics\end{tabular} & $\left[\begin{array}{ccc}
--0.313	& 56.7 		& 0		\\
--0.0139	& -0.426	& 0		\\
-0		& 56.7		& 0		\\
-\end{array}\right]$ & $\left[\begin{array}{c}
-0.232 \\ 0.0203 \\ 0
-\end{array}\right]$ & $\left[\begin{array}{ccc}
-1 & 0 & 0\\
-\end{array}\right]$ & 0 \\ \hline
+% \begin{tabular}[c]{@{}c@{}}Aircraft \\ Pitch\\ Dynamics\end{tabular} & $\left[\begin{array}{ccc}
+% -0.313	& 56.7 		& 0		\\
+% -0.0139	& -0.426	& 0		\\
+% 0		& 56.7		& 0		\\
+% \end{array}\right]$ & $\left[\begin{array}{c}
+% 0.232 \\ 0.0203 \\ 0
+% \end{array}\right]$ & $\left[\begin{array}{ccc}
+% 1 & 0 & 0\\
+% \end{array}\right]$ & 0 \\ \hline
 %3            & 
 \begin{tabular}[c]{@{}c@{}}Ball\\ Magnetic\\ Levitation\end{tabular} & $\left[\begin{array}{ccc}
 0		& 1 		& 0		\\
@@ -1407,32 +1407,32 @@ All times given are wall clock time in seconds as measured by the UNIX date comm
 1 & 0 & 0\\
 \end{array}\right]$ & 0 \\ \hline
 %4              & 
-\begin{tabular}[c]{@{}c@{}}Buck\\ Converter\end{tabular}                      & $\left[\begin{array}{cc}
-0		& -500 \\
-4545	& -1515\\
-\end{array}\right]$ & $\left[\begin{array}{c}
-125 \\ 0 \\
-\end{array}\right]$ & $\left[\begin{array}{cc}
- 0 & 1\\
-\end{array}\right]$ & 0 \\ \hline
+% \begin{tabular}[c]{@{}c@{}}Buck\\ Converter\end{tabular}                      & $\left[\begin{array}{cc}
+% 0		& -500 \\
+% 4545	& -1515\\
+% \end{array}\right]$ & $\left[\begin{array}{c}
+% 125 \\ 0 \\
+% \end{array}\right]$ & $\left[\begin{array}{cc}
+%  0 & 1\\
+% \end{array}\right]$ & 0 \\ \hline
 %5              & 
-\begin{tabular}[c]{@{}c@{}}Boost\\ Converter\end{tabular} & $\left[\begin{array}{cc}
-0		& -375 \\
-3409	& -1515\\
-\end{array}\right]$ & $\left[\begin{array}{c}
-500 \\ 0 \\
-\end{array}\right]$ &  $\left[\begin{array}{cc}
-0 & 1\\
-\end{array}\right]$  & 0        \\ \hline
+% \begin{tabular}[c]{@{}c@{}}Boost\\ Converter\end{tabular} & $\left[\begin{array}{cc}
+% 0		& -375 \\
+% 3409	& -1515\\
+% \end{array}\right]$ & $\left[\begin{array}{c}
+% 500 \\ 0 \\
+% \end{array}\right]$ &  $\left[\begin{array}{cc}
+% 0 & 1\\
+% \end{array}\right]$  & 0        \\ \hline
 %6              & 
-\begin{tabular}[c]{@{}c@{}}Buck-boost\\ Converter\end{tabular} & $\left[\begin{array}{cc}
-0		& 375 \\
--3409	& -1515\\
-\end{array}\right]$ & $\left[\begin{array}{c}
-125 \\ 0 \\
-\end{array}\right]$ & $\left[\begin{array}{cc}
-0 & 1\\
-\end{array}\right]$ & 0 \\ \hline
+% \begin{tabular}[c]{@{}c@{}}Buck-boost\\ Converter\end{tabular} & $\left[\begin{array}{cc}
+% 0		& 375 \\
+% -3409	& -1515\\
+% \end{array}\right]$ & $\left[\begin{array}{c}
+% 125 \\ 0 \\
+% \end{array}\right]$ & $\left[\begin{array}{cc}
+% 0 & 1\\
+% \end{array}\right]$ & 0 \\ \hline
 %7              & 
 \begin{tabular}[c]{@{}c@{}}Automotive\\ Cruise\\ System\end{tabular} & -0.05 & 0.03125 & 0.032 & 0 \\ \hline
 %8              & 
@@ -1520,15 +1520,15 @@ Pendulum   & $\left[\begin{array}{cc}
 1.5	& 2.051	& 1.144 \\
 \end{array}\right]$ & 0           \\ \hline
 %16             & 
-\begin{tabular}[c]{@{}c@{}}USCG \\ Cutter\\ Tampa\\ Heading\\ Angle\end{tabular} & $\left[\begin{array}{ccc}
--0.271		& -0.05336	& 0	\\
-0.03125		& 0			& 0			\\
-0			& 0.01562 	& 0			\\	
-\end{array}\right]$ & $\left[\begin{array}{c}
-1 \\ 0 \\ 0
-\end{array}\right]$ & $\left[\begin{array}{ccc}
-0	& -0.5888	& -0.2562 \\
-\end{array}\right]$ & 0 \\ \hline
+% \begin{tabular}[c]{@{}c@{}}USCG \\ Cutter\\ Tampa\\ Heading\\ Angle\end{tabular} & $\left[\begin{array}{ccc}
+% -0.271		& -0.05336	& 0	\\
+% 0.03125		& 0			& 0			\\
+% 0			& 0.01562 	& 0			\\	
+% \end{array}\right]$ & $\left[\begin{array}{c}
+% 1 \\ 0 \\ 0
+% \end{array}\right]$ & $\left[\begin{array}{ccc}
+% 0	& -0.5888	& -0.2562 \\
+% \end{array}\right]$ & 0 \\ \hline
 \end{tabular}
 \end{table}
 
@@ -1568,23 +1568,21 @@ For the majority of our benchmarks, the conjecture stands that the Acceleration 
 The basic multi-staged verification approach finds X / X benchmarks, albeit in an expected slower time. The solutions that are not found are due to time-out or XXXX
 
 \begin{table}
-
-\begin{tabular}{| r | c | l | r | r |}
+\centering
+\begin{tabular}{| r | c | c | r | c | r |}
 \hline
-\# & Benchmark  & $\mathcal{F}_{\langle I_p,F_p \rangle}$ & time for approach 1  & time for approach 2 \\\hline
-1 & Ball Maglev & & & \\
-2 & Cruise Control & & & \\
-3 & DC Motor& & & \\
-4 & Helicopter & & & \\
-5 & Inverted Pendulum 1& & & \\
-6 & Inverted Pendulum 2& & & \\
-7 & Magnetic Pointer& & & \\
-8 & Magnetic Suspension& & & \\
-9 & Pendulum& & & \\
-10 & Suspension& & & \\
-11 & Tape Driver & & & \\
-12 & Uscgtamper & & & \\
-13 & Satellite & & & \\\hline
+\# & Benchmark  & \multicolumn{2}{|c|}{Multi-stage}                 & \multicolumn{2}{|c|}{Abstraction} \\
+   &            & $\mathcal{F}_{\langle I_p,F_p \rangle}$ & Runtime & $\mathcal{F}_{\langle I_p,F_p \rangle}$ & Runtime \\\hline
+1  & Cruise Control      & 8,16   & 6875   & 16,16  & 241    \\
+2  & DC Motor            & 8,16   & 8103   & 20,20  & 5376   \\
+3  & Helicopter          & \xmark & \xmark & 16,16  & 2120   \\
+4  & Inverted Pendulum   & 8,16   & 7813   & 16,16  & 387    \\
+5  & Magnetic Pointer    & \xmark & \xmark & 28,28  & 132845 \\
+6  & Magnetic Suspension & 12,20  & 8727   & 32,32  & 7854   \\
+7  & Pendulum            & 8,16   & 9008   & 20,20  & 1150   \\
+8  & Suspension          & 12,20  & 49410  & \xmark & \xmark \\
+9  & Tape Driver         & 8,16   & 9177   & \xmark & \xmark \\
+10 & Satellite           & 8,16   & 8975   & \xmark & \xmark \\\hline
 
 \end{tabular}
 \caption{Experimental results \label{tab:results}}
