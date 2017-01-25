@@ -516,7 +516,7 @@ Models \eqref{eq:ode} and \eqref{eq:plant} depend on external non-determinism in
 Feedback architectures can be employed to manipulate the properties and behaviors of the continuous process (the plant).   
 %reduce the effect of parametric uncertainties and attenuate the effects of noise and disturbance. 
 We are interested in the synthesis of digital feedback control algorithm, 
-as implemented on modern FPGAs or DSPs. 
+as implemented on modern FPGAs or Digital Signal Processorss. 
 The most basic feedback architecture is the state feedback, 
 where the control action $u_k$ (notice we work with the discretized signal) is computed by: 
 %
@@ -621,7 +621,7 @@ The models we consider have two sources of error due to numeric representation.
 The first is the numeric error introduced by the fixed-point numbers employed to model the plant, i.e., to represent the plant dynamics $A_d$, $B_d$ and its states. 
 The second is the quantization error introduced by the digital controller, 
 which performs operations in the domain of fixed-point numbers. 
-In this section we formally outline the errors introduced by the fixed-point representation of numbers. 
+In this section we formally outline the errors introduced by the fixed-point representation of numbers~\cite{DBLP:conf/arith/BrainTRW15}. 
 % 
 Let $\mathcal{F}_{\langle I,F \rangle}(x)$ denote a real number $x$ represented in a fixed point domain, with $I$ bits representing the integer part and $F$ bits representing the decimal part. The smallest number that can be represented in this domain is $c_m=2^{-F}$.
 
