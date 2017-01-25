@@ -328,12 +328,15 @@ works, but plays an important role in real world systems, where systems states
 cannot assume any real value. Moreover, this work integrates an
 abstraction/refinement step inside the main CEGIS loop.
 
-The tool Pessoa~\cite{mazo2010pessoa} is a MatLab toolbox that synthesizes
-correct-by-design embedded control software.  It is based on the description
+The tool Pessoa~\cite{mazo2010pessoa} synthesizes
+correct-by-design embedded control software, in a Matlab ToolBox.  It is based on the description
 of a physical system as an equivalent finite-state machine and on the
 computation of reachability properties over the finite-state machine.  Based
 on this safety specification over state values, Pessoa can synthesize
 embedded controller software for a range of properties.
+The embedded controller software can be more complicated than
+the state feedback control we synthesised, and the properties 
+available cover more detail.
 %based on a safety specification over state values, as well as specification on characteristic functions of the controller. 
 However, Pessoa does not have native inclusion of the quantization error
 introduced by Digital-to-Analogue/Analogue-to-Digital conversion needed for
