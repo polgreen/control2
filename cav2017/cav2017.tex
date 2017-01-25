@@ -166,21 +166,33 @@ as well as the hybrid elements that relate them.
 %% \emph{safe}.
 Due to the complexity of such systems, in this work we focus 
 on linear models with known  implementation features (e.g., number of bits, fixed-point
-arithmetic), %\addtodo{[clarify next] with known configurations} 
-and perform %parametric 
+arithmetic), and perform 
 synthesis of safe digital controllers -- the extension to more general
 quantitative properties is left to future work.
 
 We describe and evaluate two approaches for synthesising digital controllers
-for state-space physical plants.  Both approaches consider a counterexample
-guided inductive synthesis (CEGIS) loop.  In the first approach, we devise a
-digital controller that stabilizes the system whilst remaining safe given a
-pre-selected time horizon; then, we verify its potential safety by unfolding
-the dynamics of the system and checking for a completeness threshold.  In
-the second approach, we substitute the second step by employing abstract
-acceleration to unfold the dynamics forward, instead of symbolically
-unwinding the transition relation~\cite{cattaruzza2015unbounded}.
+for state-space physical plants, both based on a counterexample
+guided inductive synthesis (CEGIS)~\cite{sketch} loop.
+The first approach uses a naive
+technique that starts by devising a digital controller that stabilizes the system
+whilst remaining safe for a 
+pre-selected time horizon and, subsequently, verifies its potential safety by unfolding
+the dynamics of the system and checking for a completeness threshold.
+As it requires explicit unfolding up to a completeness
+threshold, this approach may result in a state space explosion.
+Instead of explicitly unfolding the dynamics, the second approach 
+employs abstract acceleration~\cite{cattaruzza2015unbounded} to implicitly
+evaluate all possible progressions of the system simultaneously.
+Additionally, the second approach uses
+abstraction refinement enabling us to always start with a very simple description
+regardless of the complexity of the overall dynamics, and only expand to more
+complex models when a solution cannot be found.
+
+%% we substitute the second step by employing abstract
+%% acceleration to unfold the dynamics forward, instead of symbolically
+%% unwinding the transition relation~\cite{cattaruzza2015unbounded}.
 \todo{We need to emphasise the derivation of errors for soundness. Can we claim completeness already?}
+
 We provide experimental results 
 showing that both approaches are able to efficiently synthesise stable and safe controllers 
 for a set of intricate physical plant models taken from the digital 
@@ -1005,11 +1017,6 @@ Essentially, this approach relies on the explicit
 simulation over a bounded time horizon of individual states that form
 part of an uncountable space and tries to generalize it for an
 infinite space over an infinite time horizon.
-
-%% The safety check is performed in this approach 
-%% via unfolding of the transition system corresponding to the synthesized controller
-%% up to a completeness threshold. Due to its 
-%\todo{mention issue of completeness threshold here?}
 
   %% solution over all times by refining the number of witnesses.  
   %% In order to perform the safety check, this approach uses abstract acceleration
