@@ -133,21 +133,22 @@ safety requirements.
 \section{Introduction}
 %-------------------------------
 
-Linear Time Invariant (LTI) models represent a broad class of dynamical systems
-%modern embedded software, performing highly non-trivial control tasks,
-with significant impact in numerous application areas as in 
-the life sciences, robotics, and engineering~\cite{astrom1997computer,Franklin15}.
-Synthesis of controllers for LTI models is broadly investigated, 
-however the use of digital control architectures adds new challenges due to 
-the effects of finite-precision arithmetic, time discretization, and quantization noise, which are typically introduced 
-by Analogue-to-Digital (ADC) and Digital-to-Analogue (DAC) conversion.  
-While research on digital control is well developed~\cite{astrom1997computer}, 
-automated and sound control synthesis is challenging, 
-particularly when the synthesis objective goes beyond classical stability or tracking requirements. 
-Beyond stability, recently reachability tools have been developed \cite{FLD+11,Fre05}, however they have not been employed towards
-control synthesis.
-The problem of safety is an important one, since the synthesis of a stable controller does not ensure
-that the system will not transitively visit an unsafe state which may result in an unrecoverable failure. 
+Linear Time Invariant (LTI) models represent a broad class of dynamical
+systems with significant impact in numerous application areas as in the life
+sciences, robotics, and engineering~\cite{astrom1997computer,Franklin15}. 
+Synthesis of controllers for LTI models is broadly investigated, however the
+use of digital control architectures adds new challenges due to the effects
+of finite-precision arithmetic, time discretization, and quantization noise,
+which are typically introduced by Analogue-to-Digital (ADC) and
+Digital-to-Analogue (DAC) conversion.  While research on digital control is
+well developed~\cite{astrom1997computer}, automated and sound control
+synthesis is challenging, particularly when the synthesis objective goes
+beyond classical stability or tracking requirements.  Beyond stability,
+recently reachability tools have been developed~\cite{FLD+11,Fre05}, however
+they have not been employed towards control synthesis.  The problem of
+safety is an important one, since the synthesis of a stable controller does
+not ensure that the system will not transitively visit an unsafe state which
+may result in an unrecoverable failure.
 
 In this work, we propose the synthesis of \emph{safe} control algorithms for
 LTI models taking into consideration the continuous dynamics of the plant, 
