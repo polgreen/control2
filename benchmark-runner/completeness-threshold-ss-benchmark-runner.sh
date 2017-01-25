@@ -6,6 +6,7 @@ synthesis_file='safety_stability.c'
 script_base_directory=`pwd`
 spec_header_file='benchmark.h'
 source_template_directory=${script_base_directory}/universalrunner
+solution_file='solution.log'
 
 function echo_log {
  echo $1 | tee -a ${log_file}
@@ -45,12 +46,14 @@ function extract_input_upper_bound {
 
 function setup_benchmark_directory {
  mkdir -p "$1" 2>/dev/null
- rm "$1"/* 2>/dev/null
+ #rm "$1"/* 2>/dev/null
  cp ${source_template_directory}/${synthesis_file} ${working_directory}/
  cp ${source_template_directory}/control_types.h ${working_directory}/
  cp ${source_template_directory}/operators.h ${working_directory}/
  cp ${source_template_directory}/intervals.h ${working_directory}/
  cp ${source_template_directory}/mpreal.h ${working_directory}/
+ cp ${source_template_directory}/int_2Inverse.h ${working_directory}/
+ cp ${source_template_directory}/int_3Inverse.h ${working_directory}/
  cp ${source_template_directory}/discrete_step_k_completeness_check.cpp ${working_directory}/
 }
 
@@ -64,8 +67,13 @@ function write_spec_header {
 
  echo "#define NINPUTS ${num_inputs}" >>${header_file}
  echo "#define NOUTPUTS ${num_outputs}" >>${header_file}
+ echo '#ifdef INTERVAL' >>${header_file}
+ echo "#define INPUT_LOWERBOUND (__plant_precisiont)${input_lower_bound}" >>${header_file}
+ echo "#define INPUT_UPPERBOUND (__plant_precisiont)${input_upper_bound}" >>${header_file}
+ echo '#else' >>${header_file}
  echo "#define INPUT_LOWERBOUND (__plant_typet)${input_lower_bound}" >>${header_file}
  echo "#define INPUT_UPPERBOUND (__plant_typet)${input_upper_bound}" >>${header_file}
+ echo '#endif' >>${header_file}
  A_value=$(echo ${A} | sed -r 's/;/ }, { /g')
  A_value=$(echo ${A_value} | sed -r 's/([-0-9]+(\.[0-9e-]+)?)/interval(\1)/g')
  echo "const __plant_typet _controller_A[NSTATES][NSTATES] = { { ${A_value} } };" >>${header_file}
@@ -89,11 +97,11 @@ if [ -z "$1" ]; then
  #dkr10
  #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/cruise_ss/')
  #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/dcmotor_ss/')
- benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/helicopter_ss/')
+ #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/helicopter_ss/')
  #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/cruise_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/dcmotor_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/helicopter_ss/')
 
  #dkr11
- #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/magsuspension_ss/') #initial controller unsat
+ benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/magsuspension_ss/') #initial controller unsat
  #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/invpendulum_pendang_ss/') #initial controller unsat
  #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/magsuspension_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/invpendulum_pendang_ss/')
 
@@ -119,25 +127,26 @@ else
 
  #dkr11
  if [ "$1" == "dkr11" ]; then
-  benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/magsuspension_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/invpendulum_pendang_ss/')
+  benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/ballmaglev_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/magsuspension_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/invpendulum_pendang_ss/')
  fi
 
  #dkr12
  if [ "$1" == "dkr12" ]; then
-  benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/invpendulum_cartpos_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/suspension_ss/')
+  benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/magneticpointer_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/invpendulum_cartpos_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/suspension_ss/')
  fi
 
  #dkr13
  if [ "$1" == "dkr13" ]; then
-  benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/tapedriver_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/pendulum_ss/')
+  benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/satellite_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/tapedriver_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/pendulum_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/uscgtampa_ss/')
  fi
 fi
 
-working_directory_base="/tmp/control_synthesis-ss${working_directory_base_suffix}"
+working_directory_base="/tmp/control_synthesis-ss-${working_directory_base_suffix}"
 mkdir -p ${working_directory_base} 2>/dev/null
 
 for benchmark_dir in ${benchmark_dirs[@]}; do
  for benchmark in ${benchmark_dir}*.ss; do
+ #for benchmark in '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/magsuspension_ss/magsuspension_ss_disc4.ss'; do
   log_file="${benchmark%.ss}_completeness-threshold-ss.log"
   time_tmp_file=/tmp/times${working_directory_base_suffix}.log
   times >${time_tmp_file}; start_time=$(get_current_cpu_millis)
@@ -172,7 +181,7 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
   #radix_width=${impl_frac_bits}
   min_size_offset=$(((integer_width+radix_width)%8))
   [ ${min_size_offset} -ne 0 ] && integer_width=$((integer_width+8-min_size_offset))
-  k_sizes=(5 10 20 30 50 75 100 200)
+  k_sizes=(10 20 30 50 75 100 200)
   k_size_index=0
   timeout_time=3600
   kill_time=3780
@@ -206,6 +215,20 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
       times >${time_tmp_file}; end_time=$(get_current_cpu_millis)
       echo_success_message ${start_time} ${end_time}
       echo_log "<controller>${controller_params}</controller>"
+      echo_log "msg = '$(basename ${benchmark})'"
+      echo "msg = '$(basename ${benchmark})'" >>${solution_file}
+      matlab_controller="[$(echo ${controller_items} | sed -r 's/(-?[0-9]+(\.[0-9e-]+)?)/fxp(\1)/g' | sed -r 's/<item>//g' | sed -r 's/<\/item>//g' | sed -r 's/\)/\), /g')]"
+      matlab_controller="$(echo ${matlab_controller} | sed -r 's/, \]/ \]/g')"
+      echo_log "K = ${matlab_controller};"
+      echo "K = ${matlab_controller};" >>${solution_file}
+      echo_log "A = [ ${A} ];"
+      echo "A = [ ${A} ];" >>${solution_file}
+      echo_log "B = [ ${B} ];"
+      echo "B = [ ${B} ];" >>${solution_file}
+      echo_log "INPUT = [${input_lower_bound},${input_upper_bound}];"
+      echo "INPUT = [${input_lower_bound},${input_upper_bound}];" >>${solution_file}
+      echo "run fixedpointcheck.m" >>${solution_file}
+      echo "" >>${solution_file}
       solution_found=true
       break
      else

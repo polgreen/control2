@@ -321,13 +321,11 @@ void inputs_equal_ref_minus_k_times_states(void)
        //{ result_fxp += (K_fxp[k] * (__controller_typet)_controller_states[k]);}
 
         _controller_inputs = sub(zero_type, plant_cast(result_fxp));
-      #ifdef CPROVER
-          #ifdef INTERVAL
-          __CPROVER_assume(_controller_inputs.high<INPUT_UPPERBOUND && _controller_inputs.low >INPUT_LOWERBOUND);
-          #else
-          __CPROVER_assume(_controller_inputs < INPUT_UPPERBOUND && _controller_inputs > INPUT_LOWERBOUND);
-          #endif
-      #endif
+        #ifdef INTERVAL
+        __DSVERIFIER_assert(_controller_inputs.high<INPUT_UPPERBOUND && _controller_inputs.low >INPUT_LOWERBOUND);
+        #else
+        __DSVERIFIER_assert(_controller_inputs < INPUT_UPPERBOUND && _controller_inputs > INPUT_LOWERBOUND);
+        #endif
 
   }
  }
@@ -349,8 +347,8 @@ void states_equals_A_states_plus_B_inputs(void)
      //states_equals_A_states_plus_B_inputs_result[i]=0;
     for(int k=0; k<NSTATES; k++) {
       states_equals_A_states_plus_B_inputs_result[i] = add(states_equals_A_states_plus_B_inputs_result[i] , mult( _controller_A[i][k],_controller_states[k]));
-      states_equals_A_states_plus_B_inputs_result[i] = add(states_equals_A_states_plus_B_inputs_result[i] , mult( _controller_B[i],_controller_inputs));
     }
+    states_equals_A_states_plus_B_inputs_result[i] = add(states_equals_A_states_plus_B_inputs_result[i] , mult( _controller_B[i],_controller_inputs));
    }
 
 #ifndef INTERVAL
@@ -402,7 +400,7 @@ void states_equals_A_states_plus_B_inputs(void)
 int check_safety(void)
 {
 
-  for(int j=0; j<NSTATES; j++)//set initial states and reference
+  /*for(int j=0; j<NSTATES; j++)//set initial states and reference
   {
     #ifdef CPROVER
      __plant_typet __state0 = _controller_states[0];
@@ -417,7 +415,7 @@ int check_safety(void)
     //__CPROVER_assume(_controller_states[j]!=zero_type);
     //#endif
     #endif
-  }
+  }*/
 
 #ifdef INTERVAL
   int_vectort error_coeffs;
@@ -550,7 +548,9 @@ void safety_stability(void) {
 #endif
   closed_loop(); //calculate A - BK
   __CPROVER_EIGEN_charpoly();
+#ifndef INTERVAL
   __DSVERIFIER_assert(check_stability());
+#endif
 #if NSTATES != 1
   //check_safety();
   __DSVERIFIER_assert(check_safety());
@@ -567,9 +567,9 @@ int main(int argc, const char *argv[]) {
 #ifdef CPROVER
   assume_corner_cases_for_states();
 #else
-  NUMBERLOOPS=atoi(argv[0]);
+  NUMBERLOOPS=atoi(argv[1]);
   for (int i = 0; i < NSTATES; ++i) {
-    K_fxp[i]=interval(atof(argv[1+i]));
+    K_fxp[i]=interval(atof(argv[2+i]));
   }
   for (int poleIndex = 0; poleIndex < NPOLES; ++poleIndex) {
     for (int stateIndex = 0; stateIndex < NSTATES; ++stateIndex) {

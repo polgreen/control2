@@ -9,6 +9,7 @@ width_check_file='width_LTI.c'
 script_base_directory=`pwd`
 spec_header_file='spec.h'
 cbmc_log_file='cbmc-tmp.log'
+solution_file='solution.log'
 
 function setup_benchmark_directory {
  mkdir -p "$1" 2>/dev/null
@@ -105,21 +106,22 @@ else
 
  #dkr11
  if [ "$1" == "dkr11" ]; then
-  benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/magsuspension_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/invpendulum_pendang_ss/')
+  benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/ballmaglev_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/magsuspension_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/invpendulum_pendang_ss/')
  fi
 
  #dkr12
  if [ "$1" == "dkr12" ]; then
-  benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/invpendulum_cartpos_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/suspension_ss/')
+  benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/magneticpointer_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/invpendulum_cartpos_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/suspension_ss/')
  fi
 
  #dkr13
  if [ "$1" == "dkr13" ]; then
-  benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/tapedriver_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/pendulum_ss/')
+  benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/pendulum_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/uscgtampa_ss/')
+  #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/satellite_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/tapedriver_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/pendulum_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/uscgtampa_ss/')
  fi
 fi
 
-working_directory_base="/tmp/control_synthesis-ss${working_directory_base_suffix}"
+working_directory_base="/tmp/control_synthesis-ss-${working_directory_base_suffix}"
 mkdir -p ${working_directory_base} 2>/dev/null
 
 for benchmark_dir in ${benchmark_dirs[@]}; do
@@ -177,6 +179,20 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
       times >${time_tmp_file}; end_time=$(get_current_cpu_millis)
       echo_success_message ${start_time} ${end_time}
       echo_log "<controller>${controller}</controller>"
+      echo_log "msg = '$(basename ${benchmark})'"
+      echo "msg = '$(basename ${benchmark})'" >>${solution_file}
+      matlab_controller="[$(echo ${controller} | sed -r 's/(-?[0-9]+(\.[0-9e-]+)?)/fxp(\1)/g')]"
+      echo_log "K = ${matlab_controller};"
+      echo "K = ${matlab_controller};" >>${solution_file}
+      echo_log "A = [ ${A} ];"
+      echo "A = [ ${A} ];" >>${solution_file}
+      echo_log "B = [ ${B} ];"
+      echo "B = [ ${B} ];" >>${solution_file}
+      echo_log "INPUT = [${input_lower_bound},${input_upper_bound}];"
+      echo "INPUT = [${input_lower_bound},${input_upper_bound}];" >>${solution_file}
+      echo "run fixedpointcheck.m" >>${solution_file}
+      echo "" >>${solution_file}
+      
       solution_found=true
       synthesis_in_progress=false
      else
