@@ -189,10 +189,7 @@ Additionally, the second approach uses
 regardless of the complexity of the overall dynamics, and only expand to more
 complex models when a solution cannot be found.
 
-%% we substitute the second step by employing abstract
-%% acceleration to unfold the dynamics forward, instead of symbolically
-%% unwinding the transition relation~\cite{cattaruzza2015unbounded}.
-%\todo{We need to emphasize the derivation of errors for soundness. Can we claim completeness already?}
+Both models synthesise sound safe controllers given a discrete-time model of the closed-loop system.
 
 We provide experimental results 
 showing that both approaches are able to efficiently synthesize stable and safe controllers 
@@ -234,8 +231,6 @@ multi-staged approach.
   continuous-digital domain.
 %
 \end{enumerate}
-
-\todo{Have we clarified anywhere the time domain of validity of our claims? CT vs DT? }
 
 %We use a combination of a synthesis engine with a control
 %verification tool that addresses the challenges presented in the
@@ -1121,8 +1116,8 @@ $P_a(z) = z^n+\sum_{i=1}^p{(a_i-k_i)z^{n-i}}$.
 $$N=\left \{ \nu_1+\nu_2+ \nu_3 : \nu_1 \in \left[-\frac{q1}{2}\ \ \frac{q1}{2}\right] 
 \wedge \nu_2 \in \left[-\frac{q2}{2}\ \ \frac{q2}{2}\right]  \wedge \nu_3 \in \left[-q3\ \ q3\right]  \right \}\nonumber$$
 where $q3$ is the maximum truncation and rounding error of $u_k=-K\hat{x}_k$ as discussed in section \ref{sec:numeric_rep}.
-More details on how to model quantization as noise are given in the 
-Appendix~\ref{appendix:quantization-noise}.
+%More details on how to model quantization as noise are given in the 
+%Appendix~\ref{appendix:quantization-noise}.
 \item Calculate a set of initial bounds on $K$, $\phi_{init}^{K}$, based on the input constraints. Note that these bounds will be used by the {\sc synthesize} phase to reduce the size of the solution space.
 $$(\phi_{init} \wedge \phi_{input} \wedge u_k=-K x_k) \Rightarrow \phi_{init}^{K}$$
 
@@ -1407,10 +1402,15 @@ The median runtime for our benchmark set is 7.9\,s.  Overall,
 the average synthesis time amounts to approximately 17.2\,s.  We
 consider these times short enough to be of practical use to control
 engineers, and thus affirm RQ1.  
-There are several cases for which the system may fail to find a controller. In the naive approach,
-there is the risk of the completeness threshold being too large, thus causing a timeout.
-In the abstraction case, there is the risk of requiring a very precise abstraction, resulting in too many refinements which may timeout.
-Other sources for incompleness are the inability of the {\sc synthesize} phase to use a large enough precision for the plant model in a given problem.
+
+There are several cases for which the system
+may fail to find a controller. For the naive approach, 
+the completeness threshold may be too large, thus causing a
+timeout.  On the other hand, the abstraction-based approach may
+require a very precise abstraction, resulting in too many refinements
+and, consequently, a timeout.  Yet another source of incompleness is the inability
+of the {\sc synthesize} phase to use a large enough precision for the
+plant model in a given problem.
 
 The synthesized controllers were confirmed to be stable outside of our model
 representation using MATLAB, positively answering RQ2.  A~link to the full
@@ -1452,11 +1452,11 @@ numerically sound, considering various error sources in the implementation
 of the digital control algorithm and in the computational modeling of plant dynamics. 
 %
 Our experimental results show that both approaches are able
-to synthesize stable controllers in most benchmarks within a small 
-amount of time automatically.  In particular, both approaches 
-complement each other and together solve all benchmarks, which have been derived from the control literature.  
+to synthesize stable controllers in most benchmarks within a reasonable
+amount of time fully automatically.  In particular, both approaches
+complement each other and together solve all benchmarks , which have been derived from the control literature.
 
-Future work will focus the extension of these approaches to output-based control architectures (hinging on the use of observers), 
+Future work will focus the extension of these approaches to the continuous time case with output-based control architectures (hinging on the use of observers), 
 and to considering performance requirements (alongside safety) in the synthesis of digital controllers.  
 
 
@@ -1685,28 +1685,28 @@ The maximum size of a real number $x$ that can be represented in a fixed point d
 \subsection{Modelling quantization as noise} \label{appendix:quantization-noise}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-During any given ADC conversion, the continuous signal will be sampled in the real domain and transformed into a $\mathbb{R}\langle I_{c},F_{c} \rangle$ value. this sampling uses a threshold which is defined by the less significant bit ($q_{adc}=2^{-F_{adc}}$) of the ADC and some non-linearities of the circuitry. The overall conversion is
-$$\mathcal{F}\langle I_{c},F_{c} \rangle(y(t)) = y_k : y_k \in \left[y(t)-\frac{q_{c}}{2}\ \ \ \ y(t)+\frac{q_{adc}}{2}\right]$$.
-If we denote the error in the conversion as $\nu_k=y_k-y(t) : t=nk$ then we may define some bounds for it $\nu_k \in [-\frac{q_{c}}{2}\ \ \frac{q_{c}}{2}]$.
+%During any given ADC conversion, the continuous signal will be sampled in the real domain and transformed into a $\mathcal{F}_{\langle I_c,F_c \rangle}$ value. This sampling uses a threshold which is defined by the less significant bit of the ADC. We will assume, for the purposes of this analysis, that the domain of the ADC is that of the digital controller (\emph{ie} the quantizer includes any digital gain added in the code), and so we will denote this error $q_{c}=2^{-F_{c}}$). We omit the effect of non-linearities of the circuitry. The overall conversion is
+%$$\mathcal{F}\langle I_{c},F_{c} \rangle(y(t)) = y_k : y_k \in \left[y(t)-\frac{q_{c}}{2}\ \ \ \ y(t)+\frac{q_{c}}{2}\right]$$.
+%If we denote the error in the conversion as noise $\nu_k=y_k-y(t) : t=nk$ then we may define some bounds for it $\nu_k \in [-\frac{q_{c}}{2}\ \ \frac{q_{c}}{2}]$.
 
-We will assume, for the purposes of this analysis, that the domain of the ADC is that of the digital controller (\emph{ie} the quantizer includes any digital gain added in the code).
-The process of quantization in the DAC is similar except that it is going from $\mathbb{R}\langle I_{c},F_{c} \rangle \rightarrow \mathbb{R}\langle I_{dac},F_{dac} \rangle$. If these domains are the same ($I_{c}=I_{dac},F_{c}=F_{dac}$), or if the DAC resolution in higher than the ADCs, then the DAC quantization error is equal to zero.
-From the above equations we can now infer that $\nu_1 \in [-\frac{q_1}{2}\ \ \frac{q_1}{2}], \nu_2 \in [-\frac{q_2}{2}\ \ \frac{q_2}{2}] : q_1=q_{c} \wedge q_2=q_{dac}$.
-Note that these bounds hold irrespective of whether the noise is correlated, hence we may use them to over-approximate the effect of the noise on the state space progression over time.
-The resulting dynamics are:
-\begin{align}
-\label{eq:pre_quantization}
-\vec{x}_{k+1} &= \vec{A}_d\vec{x}_k+\vec{B}_d(\vec{u}_k+{\vec{\nu}_2}_k) + \vec{w}_k,\\
-y_k &= \vec{C}_d \vec{x}_ k + \vec{D}_d \vec{u}_ k+{\vec{\nu}_1}_k. 
-\end{align}
 
-Which, when modelled into closed loop dynamics results in:
+%The process of quantization in the DAC is similar except that it is going from $\mathcal{F}_{\langle I_c,F_c \rangle}  \rightarrow \mathcal{F}_{\langle I_p,F_p \rangle}$. If these domains are the same ($I_{p}=I_{c},F_{p}=F_{c}$), or if the DAC resolution in higher than the ADCs, then the DAC quantization error is equal to zero.
+%From the above equations we can now infer that $\nu_1 \in [-\frac{q_1}{2}\ \ \frac{q_1}{2}], \nu_2 \in [-\frac{q_2}{2}\ \ \frac{q_2}{2}] : q_1=q_{c} \wedge q_2=q_{dac}$.
+%Note that these bounds hold irrespective of whether the noise is correlated, hence we may use them to over-approximate the effect of the noise on the state space progression over time.
+%The resulting dynamics are:
+%\begin{align}
+%\label{eq:pre_quantization}
+%\vec{x}_{k+1} &= \vec{A}_d\vec{x}_k+\vec{B}_d(\vec{u}_k+{\vec{\nu}_2}_k) + \vec{w}_k,\\
+%y_k &= \vec{C}_d \vec{x}_ k + \vec{D}_d \vec{u}_ k+{\vec{\nu}_1}_k. 
+%\end{align}
 
-\begin{align}
-\label{eq:quantization}
-\vec{x}_{k+1} &= (\vec{A}_d-\vec{B}_d\mat{K}_d\mat{C}_d) \vec{x}_k+\vec{B}_d{\vec{\nu}_2}_k + \vec{w}_k,\\
-y_k &= \vec{C}_d \vec{x}_ k + \vec{D}_d \vec{u}_ k+{\vec{\nu}_1}_k. 
-\end{align}
+%Which, when modelled into closed loop dynamics results in:
+
+%\begin{align}
+%\label{eq:quantization}
+%\vec{x}_{k+1} &= (\vec{A}_d-\vec{B}_d\mat{K}_d\mat{C}_d) \vec{x}_k+\vec{B}_d{\vec{\nu}_2}_k + \vec{w}_k,\\
+%y_k &= \vec{C}_d \vec{x}_ k + \vec{D}_d \vec{u}_ k+{\vec{\nu}_1}_k. 
+%\end{align}
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{Controllable canonical form} \label{sec:reachable}
