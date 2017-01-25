@@ -166,7 +166,7 @@ in real-world systems.
 We describe and evaluate two approaches for synthesizing digital controllers for state-space physical plants, 
 both based on the CounterExample Guided Inductive Synthesis (CEGIS)~\cite{sketch} architecture, recently of wide use for program synthesis.   
 We provide two alternative automated procedures to synthesise safe digital state-feedback controls, 
-and alongside completeness we prove their soundness by encompassing errors due to digitalisation and quantisation effects that are present in the digital controller interacting with the continuous plant. 
+and alongside completeness \todo{are we actually complete? for instance, abstraction refinement might not be successful (we do TO)} we prove their soundness by encompassing errors due to digitalisation and quantisation effects that are present in the digital controller interacting with the continuous plant. 
 % computations and representations of dynamics, providing sufficient conditions for sound and complete safe solutions for the state feedback control problem.
 
 {\em The first approach} uses a {\em naive}
@@ -198,7 +198,7 @@ We provide experimental results
 showing that both approaches are able to efficiently synthesize stable and safe controllers 
 for a set of intricate physical plant models taken from the digital 
 control literature: the median runtime for our benchmark
-set is $7.9$s, i.e., most controllers can be synthesized in less
+set is $7.9$ seconds, and most controllers can be synthesized in less
 than $17.2$ seconds.
 
 \subsection*{Contributions} 
@@ -231,6 +231,8 @@ than $17.2$ seconds.
   continuous-digital domain.
 %
 \end{enumerate}
+
+\todo{Have we clarified anywhere the time domain of validity of our claims? CT vs DT? }
 
 %We use a combination of a synthesis engine with a control
 %verification tool that addresses the challenges presented in the
@@ -597,7 +599,7 @@ Furthermore, it is practically relevant to consider constraints on the input
 signal $u_{k}$ and bounds on the initial states $x_0$,
 which we assume have given bounds. %%  $\overline{u}$, $\underline{u}$
 %% and $\overline{x_0}$, $\underline{x_0}$, respectively.
-We refer to these constraints as $\phi_{init}$:
+We refer to these constraints as $\phi_{init}$: \todo{input constraints should not be called 'init'}
 $$\phi_{init} = {\forall k.\underline{u} \leq u_{k} \leq \overline{u}} 
 \wedge \bigwedge_{i=1}^{n} \underline{x_{i,0}} \leq x_{i,0} \leq \overline{x_{i,0}}.$$  
 In the first case, this means that the control input saturates in view of
@@ -618,7 +620,7 @@ physical constraints.
 
 
 The models we consider have two sources of error due to numeric representation. 
-The first is the numeric error introduced by the fixed-point numbers employed to model the plant, i.e., to represent the plant dynamics $A_d$, $B_d$ and its states. 
+The first is the numeric error introduced by the fixed-point numbers employed to model the plant, i.e., to represent the plant dynamics $A_d$, $B_d$ and $x_k$. 
 The second is the quantization error introduced by the digital controller, 
 which performs operations in the domain of fixed-point numbers. 
 In this section we formally outline the errors introduced by the fixed-point representation of numbers~\cite{DBLP:conf/arith/BrainTRW15}. 
@@ -630,15 +632,15 @@ The following approximation errors will arise:
 \begin{enumerate}
 \item {\bf Truncation:}
 Let $x$ be a real number, and $\mathcal{F}_{\langle I,F \rangle}(x)$ be the same number represented in a fixed-point domain as above. 
-Then $\mathcal{F}_{\langle I,F \rangle}(x) = x-\delta_T : \delta_T=x\ \%_{c_m}\ \tilde x$, where $\%_{c_m}$ is the modulus operation performed on the last bit.
+Then $\mathcal{F}_{\langle I,F \rangle}(x) = x-\delta_T$ where the error $ \delta_T=x\ \%_{c_m}\ \tilde x$, and $\%_{c_m}$ is the modulus operation performed on the last bit.
 
 So $\delta_T$ is the truncation error and it will propagate across operations.
 \item {\bf Rounding:}
 The following errors appear in simple operations. Let $c_1, c_2$ and $c_3$ be real numbers, and $\delta_{T1}$ and $\delta_{T2}$ be the truncation errors caused by representing $c_1$ and $c_2$ in the fixed-point domain as above.
 \begin{enumerate}
 \item Addition/Subtraction: these operations only propagate errors coming from truncation of the operands, namely 
-$\mathcal{F}_{\langle I,F \rangle}(c_1) \pm \mathcal{F}_{\langle I,F \rangle}(c_2) = c_3 + \delta_3 :|\delta_3| \leq |\delta_{T1}| + |\delta_{T2}|$.
-\item Multiplication: $\mathcal{F}_{\langle I,F \rangle}(c_1) * \mathcal{F}_{\langle I,F \rangle}(c_2) =  c_3 + \delta_3 :|\delta_3| \leq |\delta_{T1}*\mathcal{F}_{\langle I,F \rangle}(c_2)| + |\delta_{T2}*\mathcal{F}_{\langle I,F \rangle}(c_1)| + c_m$, where $c_m=2^{-F}$ as above.
+$\mathcal{F}_{\langle I,F \rangle}(c_1) \pm \mathcal{F}_{\langle I,F \rangle}(c_2) = c_3 + \delta_3$ with $|\delta_3| \leq |\delta_{T1}| + |\delta_{T2}|$.
+\item Multiplication: $\mathcal{F}_{\langle I,F \rangle}(c_1) * \mathcal{F}_{\langle I,F \rangle}(c_2) =  c_3 + \delta_3$ with $|\delta_3| \leq |\delta_{T1}*\mathcal{F}_{\langle I,F \rangle}(c_2)| + |\delta_{T2}*\mathcal{F}_{\langle I,F \rangle}(c_1)| + c_m$, where $c_m=2^{-F}$ as above.
 \item Division: the operations performed by our controllers in the FWL domain do not include division, so these bounds are inconsequential to this paper. 
 \end{enumerate}
 
@@ -679,8 +681,7 @@ zeros positions, degrading the closed-loop dynamics, causing steady-state
 errors (see the Appendix~\ref{sec:appendix:LTIbackground} for details) 
 and eventually destabilizing  the system~\cite{Bessa16}. However, since 
 in this paper we require stability only as a precursor to safety, it is 
-sufficient to check the (perturbed, noisy) model converges to a point 
-within the safe states.  
+sufficient to check that the (perturbed, noisy) model converges to a neighbourhood of the equilibrium within the safe set.  
 
 In the following, we shall disregard these steady-state errors (caused by FWL effects)
  when the stability is ensured by synthesis, and then verify its safety accounting for the finite-precision errors. 
@@ -953,10 +954,11 @@ Name $v_i$ its vertexes, where $i=1,\ldots, 2^n$.
 Thus any point $x \in X_0$ can be expressed by convexity as $x = \sum_{i=1}^{2^n} \alpha_i v_i$, 
 where $\sum_{i=1}^{2^n} \alpha_i =1$. Then if $x_0=x$, we obtain 
 \begin{align*}
-x_k   &= (A_d - B_d K)^k x = (A_d - B_d K)^k \sum_{i=1}^{2^n} \alpha_i v_i \\
-      &= \sum_{i=1}^{2^n} \alpha_i (A_d - B_d K)^k v_i = \sum_{i=1}^{2^n} \alpha_i x_k^i, 
+x_k   &= (A_d - B_d K)^k x = (A_d - B_d K)^k \sum_{i=1}^{2^n} \alpha_i v_i 
+      = \sum_{i=1}^{2^n} \alpha_i (A_d - B_d K)^k v_i = \sum_{i=1}^{2^n} \alpha_i x_k^i, 
  \end{align*}     
-where $x_k^i$ denotes the trajectories obtained from the single vertexes $v_i$. 
+where $x_k^i$ denotes the trajectories obtained from the single vertex $v_i$. 
+We conclude that any $k$-step trajectory is encompassed, within a convex set, by those generated from the vertices. 
 
 \item The second {\sc verify} stage, {\sc precision}, 
  restores soundness with respect to the plant's precision
@@ -967,19 +969,19 @@ operations performed by the previous stage.
 current $k$ is large enough to ensure that the boundaries are not
 violated for any $k'{>}k$.  For this purpose, we compute the
 completeness threshold $\overline{k}$ for the current candidate $K$
-and check that $k{\leq}\overline{k}$. This is done according to the following argument.  
+and check that $k{\leq}\overline{k}$. This is done according to the following argument, depicted in Fig \ref{fig:ct}.  
 
 A stable control system is known to have converging dynamics. 
 Assume the closed-loop matrix eigenvalues are not repeated (which is sensible to do, since we select them). 
-The distance of trajectories from the reference point (in this case the origin) decreases over time within subspaces related to real-valued eigenvalues. 
-However, this in general not the case when dealing with complex eigenvalues.  
-Consider the matrix $(A_d - B_d K)$, which updates the states every time step, and select eigenvalue with smallest (non trivial) imaginary value.  
-call such value $\vartheta$. 
-At every time interval $kT_s, (k+1)T_s$ ($T_s$ being the sampling time), 
+The distance of trajectories from the reference point (in this case the origin) decreases over time within subspaces related to real-valued eigenvalues;  
+however, this in general not the case when dealing with complex eigenvalues.  
+Consider the closed-loop matrix, which updates the states every discrete time step, 
+and select the eigenvalue with smallest (non trivial) imaginary value -- call such value $\vartheta$. 
+At every consecutive time steps $kT_s, (k+1)T_s$ ($T_s$ being the sampling time), 
 the dynamics projected on the corresponding eigenspace rotate of $\vartheta T_s$ radiants.  
-So surely taking $k$ as the ceiling of $\frac{2\pi}{\vartheta T_s}$, 
-after $k$ steps we have completed a rotation. 
-This is the completeness threshold. 
+So taking $k$ as the ceiling of $\frac{2\pi}{\vartheta T_s}$, 
+surely after $k$ steps we have completed a full rotation, which results in a point that is closer to the origin. 
+This $k$ is then taken to be the completeness threshold. 
 
 
 \begin{figure*}[t]
@@ -987,6 +989,7 @@ This is the completeness threshold.
 \includegraphics[width=0.7\textwidth]{ct.eps}
 \vspace{0.1cm}
 \caption{Completeness threshold for multi-staged verification.}
+\label{fig:ct}
 \end{figure*}
 
 \end{enumerate}
@@ -1644,23 +1647,23 @@ The following remark is worth mentioning regarding the above.
 The witnessed maximum amplitude of the discrete signals $x_k,y_k$ may be smaller to that of $x(t),y(t)$ due to synchronism at fraction-frequency sampling.
 This means that reasoning about the state-space must consider the effects of this possibility as well of the case of maximal inputs from the continuous specification.
 \end{remark}
- Since \eqref{eq:discretization} is a bi-simulation of \eqref{eq:ode}, we may use the semantics in section \ref{sec:model_semantics} to model continuous dynamical systems.
+%  Since \eqref{eq:discretization} is a bi-simulation of \eqref{eq:ode}, we may use the semantics in section \ref{sec:model_semantics} to model continuous dynamical systems.
 
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{Overapproximating continuous space dynamics using discrete models}
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-Let us recall equation \ref{eq:discretize}. The discrete representation of the system dynamics discretized with sample time $T_1$ is ruled by the formula
-$\vec{A}_1 = e^{\vec{A} T_1}$. From matrix theory, we have 
-\begin{equation}
-\vec{A}_1 = \mat{S}_1\mat{J}_1\mat{S}_1^{-1}= \mat{S}_1e^{\mat{J} T_1}\mat{S}_1^{-1}.
-\end{equation}
-Let $\mat{J}$ be a diagonal matrix, such that ${\lambda_1}_i=e^{\lambda_i T_1}, \forall \lambda \in \mat{J}$.
-Let us now take a different sample rate $T_2$, such that ${\lambda_2}_i=e^{\lambda_i T_2}, \forall \lambda \in \mat{J}$. We can then say that 
-\begin{equation}
-{\lambda_2}_i=e^{\lambda_i T_1 T_2/T_1}={\lambda_1}_i^{T_2/T_1} \Rightarrow A_2=A_1^{\frac{T_2}{T_1}}
-\end{equation}
-We have also shown in the previous section that $x_k=A^nx_0$ is a witness of $x(t): \dot{x}(t)=Ax(t)$ at time $kT_s$. Applying this notion to multiple sample times, we can state that $x_{k_i}=A_i^nx_0$ are a set of witnesses at times $kT_i$, and by extension the set $\{x=A_i^nx_0 : \forall n \in \mathbb{R} \}$ witnesses all states visited by the continuous system in time $t \in [0,\infty)$. This applies to any arbitrary sample time $T_i$.
-Since the controller output is fed to a Zero Order Holder, the progression of the system between times $kT_s$ and $(k+1)T_s$ is $\mat{A}^n\vec{x}_k+\mat{B}\vec{u}_k : n \in (0,1)$. We therefore obtain a reach tube for the continuous dynamics of a time sampled system to be contained within the abstract reach tube $\mathcal{A}^1\mathcal{M}X_0+\mathcal{BK}^1\mathcal{M}X_0=\mathcal{M}X_0$
+% %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+% \subsection{Overapproximating continuous space dynamics using discrete models}
+% %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+% Let us recall equation \ref{eq:discretize}. The discrete representation of the system dynamics discretized with sample time $T_1$ is ruled by the formula
+% $\vec{A}_1 = e^{\vec{A} T_1}$. From matrix theory, we have 
+% \begin{equation}
+% \vec{A}_1 = \mat{S}_1\mat{J}_1\mat{S}_1^{-1}= \mat{S}_1e^{\mat{J} T_1}\mat{S}_1^{-1}.
+% \end{equation}
+% Let $\mat{J}$ be a diagonal matrix, such that ${\lambda_1}_i=e^{\lambda_i T_1}, \forall \lambda \in \mat{J}$.
+% Let us now take a different sample rate $T_2$, such that ${\lambda_2}_i=e^{\lambda_i T_2}, \forall \lambda \in \mat{J}$. We can then say that 
+% \begin{equation}
+% {\lambda_2}_i=e^{\lambda_i T_1 T_2/T_1}={\lambda_1}_i^{T_2/T_1} \Rightarrow A_2=A_1^{\frac{T_2}{T_1}}
+% \end{equation}
+% We have also shown in the previous section that $x_k=A^nx_0$ is a witness of $x(t): \dot{x}(t)=Ax(t)$ at time $kT_s$. Applying this notion to multiple sample times, we can state that $x_{k_i}=A_i^nx_0$ are a set of witnesses at times $kT_i$, and by extension the set $\{x=A_i^nx_0 : \forall n \in \mathbb{R} \}$ witnesses all states visited by the continuous system in time $t \in [0,\infty)$. This applies to any arbitrary sample time $T_i$.
+% Since the controller output is fed to a Zero Order Holder, the progression of the system between times $kT_s$ and $(k+1)T_s$ is $\mat{A}^n\vec{x}_k+\mat{B}\vec{u}_k : n \in (0,1)$. We therefore obtain a reach tube for the continuous dynamics of a time sampled system to be contained within the abstract reach tube $\mathcal{A}^1\mathcal{M}X_0+\mathcal{BK}^1\mathcal{M}X_0=\mathcal{M}X_0$
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{Modelling quantization as noise} \label{appendix:quantization-noise}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1776,31 +1779,31 @@ the reachability matrix of the canonical form. Then
 \end{equation}
 
 
-%-------------------------------
-\section{Extensions}
-\label{sec:extensions}
-%-------------------------------
+% %-------------------------------
+% \section{Extensions}
+% \label{sec:extensions}
+% %-------------------------------
 
-%-------------------------------
-\subsection{LTI systems with output} 
-\label{ssec:LTI}
-%-------------------------------
+% %-------------------------------
+% \subsection{LTI systems with output} 
+% \label{ssec:LTI}
+% %-------------------------------
 
-LTI models in the form: 
-%
-\begin{align}
-\dot{\vec{x}}(t)&=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)\ \ :\ \ \vec{x} \in \mathbb{R}^{n}, \vec{u} \in \mathbb{R}^m, \mat{A} \in \mathbb{R}^{n \times n},\mat{B} \in \mathbb{R}^{n \times m}\\
-\vec{y}(t)&=\mat{C}\vec{x}(t)+\mat{D}\vec{u}(t)\ \ :\ \ \vec{y} \in \mathbb{R}^{o}, \mat{C} \in \mathbb{R}^{o \times n}, \mat{D}  \in \mathbb{R}^{o \times m}\nonumber
-\end{align}
-\noindent where $\dot{\vec{x}}(t)$ describes the state evolution equation; 
-$\vec{y}(t)$ represents an instantaneous output equation; and $\mat{A}$, $\mat{B}$, $\mat{C}$, and $\mat{D}$ are matrices that fully specify 
-a continuous plant. Eq.~\eqref{eq:ode} is soundly discretized 
-(as shown in the appendix) into
-%
-\begin{align}
-\vec{x}_{k+1}&=\mat{A}_d\vec{x}_k+\mat{B}_d\vec{u}_k\\
-\vec{y}_k&=\mat{C}_d\vec{x}_k+\mat{D}_d\vec{u}_k .\nonumber
-\end{align}
+% LTI models in the form: 
+% %
+% \begin{align}
+% \dot{\vec{x}}(t)&=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)\ \ :\ \ \vec{x} \in \mathbb{R}^{n}, \vec{u} \in \mathbb{R}^m, \mat{A} \in \mathbb{R}^{n \times n},\mat{B} \in \mathbb{R}^{n \times m}\\
+% \vec{y}(t)&=\mat{C}\vec{x}(t)+\mat{D}\vec{u}(t)\ \ :\ \ \vec{y} \in \mathbb{R}^{o}, \mat{C} \in \mathbb{R}^{o \times n}, \mat{D}  \in \mathbb{R}^{o \times m}\nonumber
+% \end{align}
+% \noindent where $\dot{\vec{x}}(t)$ describes the state evolution equation; 
+% $\vec{y}(t)$ represents an instantaneous output equation; and $\mat{A}$, $\mat{B}$, $\mat{C}$, and $\mat{D}$ are matrices that fully specify 
+% a continuous plant. Eq.~\eqref{eq:ode} is soundly discretized 
+% (as shown in the appendix) into
+% %
+% \begin{align}
+% \vec{x}_{k+1}&=\mat{A}_d\vec{x}_k+\mat{B}_d\vec{u}_k\\
+% \vec{y}_k&=\mat{C}_d\vec{x}_k+\mat{D}_d\vec{u}_k .\nonumber
+% \end{align}
 %
 
 %-------------------------------
