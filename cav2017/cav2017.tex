@@ -190,10 +190,7 @@ Additionally, the second approach uses
 regardless of the complexity of the overall dynamics, and only expand to more
 complex models when a solution cannot be found.
 
-%% we substitute the second step by employing abstract
-%% acceleration to unfold the dynamics forward, instead of symbolically
-%% unwinding the transition relation~\cite{cattaruzza2015unbounded}.
-%\todo{We need to emphasize the derivation of errors for soundness. Can we claim completeness already?}
+Both models synthesise sound safe controllers given a discrete-time model of the closed-loop system.
 
 We provide experimental results 
 showing that both approaches are able to efficiently synthesize stable and safe controllers 
@@ -235,8 +232,6 @@ multi-staged approach.
   continuous-digital domain.
 %
 \end{enumerate}
-
-\todo{Have we clarified anywhere the time domain of validity of our claims? CT vs DT? }
 
 %We use a combination of a synthesis engine with a control
 %verification tool that addresses the challenges presented in the
@@ -1458,11 +1453,11 @@ numerically sound, considering various error sources in the implementation
 of the digital control algorithm and in the computational modeling of plant dynamics. 
 %
 Our experimental results show that both approaches are able
-to synthesize stable controllers in most benchmarks within a small 
-amount of time automatically.  In particular, both approaches 
-complement each other and together solve all benchmarks, which have been derived from the control literature.  
+to synthesize stable controllers in most benchmarks within a reasonable
+amount of time fully automatically.  In particular, both approaches
+complement each other and together solve all benchmarks , which have been derived from the control literature.
 
-Future work will focus the extension of these approaches to output-based control architectures (hinging on the use of observers), 
+Future work will focus the extension of these approaches to the continuous time case with output-based control architectures (hinging on the use of observers), 
 and to considering performance requirements (alongside safety) in the synthesis of digital controllers.  
 
 
