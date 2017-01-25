@@ -1038,7 +1038,7 @@ std::string Synthesiser<scalar>::makeCEGISIterations(std::string &existing)
   AbstractPolyhedra<scalar> bounds=m_closedLoop.synthesiseDynamicBounds(m_inputType,m_safeReachTube.getPolyhedra(eEigenSpace));
   powerList counterexamples;
   bool fail=m_closedLoop.findCounterExampleIterations(counterexamples,bounds);
-  if (fail && counterexamples.empty()) counterexamples[0]=1;
+  if (fail && counterexamples.empty()) counterexamples[1]=0;
   if (!counterexamples.empty()) {
     result << "#define POINTS_PER_ITER\n";
     result << "#define _NUM_ITERATIONS " << counterexamples.size() << "\n";
