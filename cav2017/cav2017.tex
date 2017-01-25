@@ -143,26 +143,28 @@ which are typically introduced by Analogue-to-Digital (ADC) and
 Digital-to-Analogue (DAC) conversion.  While research on digital control is
 well developed~\cite{astrom1997computer}, automated and sound control
 synthesis is challenging, particularly when the synthesis objective goes
-beyond classical stability or tracking requirements.  Beyond stability,
-recently reachability tools have been developed~\cite{FLD+11,Fre05}, however
-they have not been employed towards control synthesis.  The problem of
-safety is an important one, since the synthesis of a stable controller does
-not ensure that the system will not transitively visit an unsafe state which
-may result in an unrecoverable failure.
+beyond classical stability.  There are recent methods for verifying more
+general reachability properties of a given controller~\cite{FLD+11,Fre05}. 
+However, these methods have not been generalized to control synthesis. 
+We~remark that a synthesis algorithm that guarantees satability does not
+ensure safety: the system might transitively visit an unsafe state that
+results in an unrecoverable failure.
 
-In this work, we propose the synthesis of \emph{safe} control algorithms for
-LTI models taking into consideration the continuous dynamics of the plant, 
-alongside the discrete dynamics of the controller and the effects of its 
-implementation, as well as the hybrid elements that relate them.  
+We propose a novel algorithm for the synthesis of control algorithms for LTI
+models that are guaranteed to be both stable and safe, considering both the
+continuous dynamics of the plant and the finite-precision discrete dynamics
+of the controller, as well as the hybrid elements that connect them.
+%
 %% In this paper, we synthesize controllers for hybrid
 %% closed-loop systems, i.e., software-implemented embedded controllers along
 %% with a model of their physical environment (the plant), that are
 %% \emph{safe}.
-Due to the complexity of such systems, in this work we focus 
-on linear models with known  implementation features (e.g., number of bits, fixed-point
-arithmetic). We specify the safety requirement over the state space. This is a property often 
-overlooked in feedback control synthesis, but which plays an important role 
-in real-world systems.
+%
+Due to the complexity of such systems, we focus on linear models with known
+implementation features (e.g., number of bits, fixed-point arithmetic). 
+We~expect a safety requirement given as a reachability property.  Safety
+requirements are frequently overlooked in conventional feedback control
+synthesis, but play an important role in systems engineering.
 
 We describe and evaluate two approaches for synthesizing digital controllers
 for state-space physical plants, both based on the CounterExample Guided
