@@ -1708,7 +1708,7 @@ During any given ADC conversion, the continuous signal will be sampled in the re
 $$\mathcal{F}\langle I_{c},F_{c} \rangle(y(t)) = y_k : y_k \in \left[y(t)-\frac{q_{c}}{2}\ \ \ \ y(t)+\frac{q_{c}}{2}\right]$$
 If we denote the error in the conversion as $\nu_k=y_k-y(t) : t=nk$ then we may define some bounds for it $\nu_k \in [-\frac{q_{c}}{2}\ \ \frac{q_{c}}{2}]$.
 
-We will assume, for the purposes of this analysis, that the domain of the ADC is that of the digital controller (\emph{ie} the quantizer includes any digital gain added in the code).
+We will assume, for the purposes of this analysis, that the domain of the ADC is that of the digital controller (i.e, the quantizer includes any digital gain added in the code).
 The process of quantization in the DAC is similar except that it is calculating $\mathcal{F}\langle I_{dac},F_{dac} \rangle (\mathcal{F}\langle I_{c},F_{c} \rangle (x)) $. If these domains are the same ($I_{c}=I_{dac},F_{c}=F_{dac}$), or if the DAC resolution in higher than the ADCs, then the DAC quantization error is equal to zero.
 From the above equations we can now define the ADC and DAC quantization noises, ${\nu_1}_k \in [-\frac{q_1}{2}\ \ \frac{q_1}{2}], {\nu_2}_k \in [-\frac{q_2}{2}\ \ \frac{q_2}{2}]$ where $q_1=q_{c} \wedge q_2=q_{dac}$. Note that this is shown in fig. \ref{ssec:statefeedbackcontrol} where $Q_1$ is the quantizer of the ADC and $Q_2$ the quantizer for the DAC.
 These bounds hold irrespective of whether the noise is correlated, hence we may use them to over-approximate the effect of the noise on the state space progression over time.
