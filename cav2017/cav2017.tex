@@ -174,7 +174,7 @@ the number of iterations required to sufficiently unwind
 the closed-loop state-space system such
 that the boundaries are not violated for any larger number of iterations.
 As it requires explicit unfolding up to the completeness
-threshold, this approach may result in state space explosion.
+threshold, this approach may suffer from state space explosion.
 
 Instead of explicitly unfolding the dynamics, {\em the second approach} 
 employs {\em abstract acceleration}~\cite{cattaruzza2015unbounded} to implicitly
@@ -217,10 +217,10 @@ than \textcolor{red}{$XXX$} seconds.
   explicit unfolding of the system's dynamics up to the completeness
   threshold, whilst the second one is abstraction-based and leverages
   the concepts of abstraction refinement and acceleration to increase 
-  speed whilst retaining soundness. Both approaches provide sound and 
-  complete synthesis of state feedback systems considering the various
-  errors sources in the implementation of control algorithm and in the
-  computational modeling of plant dynamics.
+  speed whilst retaining soundness. Both approaches provide sound
+  synthesis of state feedback systems considering the various
+  error sources in the implementation of the control algorithm and in the
+  computational modelling of plant dynamics.
 %
 \item We develop a model for different sources quantization and their
   effect on the state space progression, for which we find safe bounds
