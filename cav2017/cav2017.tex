@@ -966,22 +966,25 @@ by using interval arithmetic \cite{moore1966interval} to validate the
 operations performed by the previous stage. 
 
 \item The third {\sc verify} stage, {\sc complete}, checks that the
-current $k$ is large enough to ensure that the boundaries are not
-violated for any $k'{>}k$.  For this purpose, we compute the
+current $k$ is large enough to ensure that boundaries are not
+violated for any $k'{>}k$.  Here, we compute the
 completeness threshold $\overline{k}$ for the current candidate $K$
-and check that $k{\leq}\overline{k}$. This is done according to the following argument, depicted in Fig \ref{fig:ct}.  
+and check that $k{\leq}\overline{k}$. This is done according to the following argument, 
+shown in Fig~\ref{fig:ct}.  
 
 A stable control system is known to have converging dynamics. 
-Assume the closed-loop matrix eigenvalues are not repeated (which is sensible to do, since we select them). 
-The distance of trajectories from the reference point (in this case the origin) decreases over time within subspaces related to real-valued eigenvalues;  
+Assume the closed-loop matrix eigenvalues are not repeated 
+(which is sensible to do, since we select them). 
+The trajectories distance from the reference point (in this case the origin) 
+decreases over time within subspaces related to real-valued eigenvalues;  
 however, this in general not the case when dealing with complex eigenvalues.  
 Consider the closed-loop matrix, which updates the states every discrete time step, 
-and select the eigenvalue with smallest (non trivial) imaginary value -- call such value $\vartheta$. 
+and select the eigenvalue with smallest (non-trivial) imaginary value -- call such value $\vartheta$. 
 At every consecutive time steps $kT_s, (k+1)T_s$ ($T_s$ being the sampling time), 
 the dynamics projected on the corresponding eigenspace rotate of $\vartheta T_s$ radiants.  
 So taking $k$ as the ceiling of $\frac{2\pi}{\vartheta T_s}$, 
-surely after $k$ steps we have completed a full rotation, which results in a point that is closer to the origin. 
-This $k$ is then taken to be the completeness threshold. 
+after $k$ steps we have completed a full rotation, which results in a point that is closer to the origin. 
+This $k$ is taken to be the completeness threshold. 
 
 
 \begin{figure*}[t]
