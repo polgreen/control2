@@ -1543,11 +1543,22 @@ and can their stability and safety be confirmed outside of our model?
 \subsection{Results}
 %-------------------------------
 
+We give the run-times required to synthesize a stable controller for each
+benchmark in Table~\ref{tab:results}.  
+Here \textit{Benchmark} is the name of the employed
+benchmark, $\mathcal{F}_{\langle I_p,F_p \rangle}$ is the fixed-point precision used to model the plant, while \textit{Time}
+is the total time (in seconds) required to synthesize a stable controller
+for the given plant, for approach 1 and approach 2. The precision for the controller, $\mathcal{F}_{\langle I_c,F_c \rangle}$, is always chosen to be $I_c = 8, F_c = 8$.
+
+For the majority of our benchmarks, the conjecture stands that the Acceleration back-end is faster than the basic multi-staged verification approach. However, it does fail to find solutions to XXX benchmarks, where the numbers given in the discretization matrices are really small.  
+
+The basic multi-staged verification approach finds X / X benchmarks, albeit in an expected slower time. The solutions that are not found are due to time-out or XXXX
+
 \begin{table}
 
 \begin{tabular}{| r | c | l | r | r |}
 \hline
-\# & Benchmark  & $\mathcal{F}_{\langle I_c,F_c \rangle}$ & time for approach 1  & time for approach 2 \\\hline
+\# & Benchmark  & $\mathcal{F}_{\langle I_p,F_p \rangle}$ & time for approach 1  & time for approach 2 \\\hline
 1 & Ball Maglev & & & \\
 2 & Cruise Control & & & \\
 3 & DC Motor& & & \\
@@ -1563,9 +1574,20 @@ and can their stability and safety be confirmed outside of our model?
 13 & Satellite & & & \\\hline
 
 \end{tabular}
-\caption{Experimental results}
+\caption{Experimental results \label{tab:results}}
 \end{table}
 
+he median runtime for our benchmark set is XXXX.  Overall,
+the average synthesis time amounts to approximately XXX minutes.  We
+consider these times short enough to be of practical use to control
+engineers, and thus affirm RQ1.  
+
+The
+synthesized controllers were confirmed to be stable outside of our model
+representation using MATLAB, positively answering RQ2.  A~link to the full
+experimental environment, including scripts to reproduce the results, all
+benchmarks and the tool, is provided in the
+footnote.\footnote{\url{url.here.}}
 
 
 %-------------------------------
