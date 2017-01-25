@@ -203,22 +203,6 @@ set is $7.9$ seconds, and most controllers can be synthesized in less
 than $17.2$ seconds.
 
 
-We implemented both our approaches and provide experimental proof 
-that, while the naive approach does manage to synthesize 
-stable and sound controllers for the majority of our benchmarks
-for a set of intricate physical plant models taken from the digital 
-control literature
- 
-it is an order of magniture slower than the abstraction-based one. 
-
-
-showing that both approaches are able to efficiently synthesize stable and safe controllers 
-for a set of intricate physical plant models taken from the digital 
-control literature: the median runtime for our benchmark
-set is $7.9$ seconds, and most controllers can be synthesized in less
-than $17.2$ seconds.
-
-
 \subsection*{Contributions} 
 
 \begin{enumerate}
@@ -578,8 +562,7 @@ less than one~\cite{astrom1997computer}.  In this paper, we express the
 stability specification $\phi_{stability}$ in terms of a check known as
 Jury's criterion~\cite{fadali}: this is an easy algebraic formula to select
 the entries of matrix $K$, so that the closed-loop dynamics are shaped as
-desired.  A detailed description of this specification can be found in
-Appendix~\ref{sec:appendix-stability}.
+desired (see Appendix~\ref{sec:appendix-stability} for details.
 
 
 %-------------------------------
@@ -1414,10 +1397,11 @@ $\mathcal{F}_{\langle I_c,F_c \rangle}$, is always chosen to be $I_c = 8, F_c = 
 For the majority of our benchmarks, the conjecture stands that the abstraction-based back-end
 is faster than the basic multi-staged verification approach. However, it does fail to
 find solutions to 3 benchmarks, as compared to 2 with the multi-staged back-end, where
-the numbers given in the discretization matrices are too small. In direct comparison the
-abstraction-based is able to find a solution in approximately 35\% of the time required
-using the multi-staged back-end. The two back-ends complement each other well in their
-benchmark coverage and together solve all benchmarks provided in the set.
+the numbers given in the discretization matrices are too small. In direct comparison, the
+abstraction-based approach is on average able to find a solution in approximately 35\% of
+the time required using the multi-staged back-end, and has a median runtime 1.15\,s, which is
+seven times smaller than the multi-staged approach. The two back-ends complement each other
+in benchmark coverage and together solve all benchmarks in the set.
 
 \begin{table}
 \centering
