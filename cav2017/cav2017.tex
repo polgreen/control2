@@ -509,8 +509,8 @@ Later, we will deal with the issue of variable quantization, as introduced by th
 Models \eqref{eq:ode} and \eqref{eq:plant} depend on external non-determinism in the form of input signals $u (t), u_k$, respectively. 
 Feedback architectures can be employed to manipulate the properties and behaviors of the continuous process (the plant).   
 %reduce the effect of parametric uncertainties and attenuate the effects of noise and disturbance. 
-We are interested in the synthesis of digital feedback, 
-as implemented on modern FPGAs or ICs. 
+We are interested in the synthesis of digital feedback control algorithm, 
+as implemented on modern FPGAs or DSPs. 
 The most basic feedback architecture is the state feedback, 
 where the control action $u_k$ (notice we work with the discretized signal) is computed by: 
 %
@@ -519,7 +519,7 @@ where the control action $u_k$ (notice we work with the discretized signal) is c
 u_k = r_{k} - K x_k. 
 \end{equation}
 %
-Here $K \in \mathbb{R}^{m \times n}$ is a feedback gain matrix, 
+Here $K \in \mathbb{R}^{m \times n}$ is a state feedback gain matrix, 
 and $r_{k}$ is a reference signal (again digital).   
 %
 The closed-loop model then takes the form 
@@ -527,8 +527,8 @@ The closed-loop model then takes the form
 \label{eq:closedloopss}
 x_{k+1} = ( A_d - B_d K ) x_k + B_d r_k.
 \end{align}
-The gain matrix $K$ can be set so that the closed-loop digitalized dynamics are shaped as desired, 
-for instance according to a specific stability goal or around a specific dynamical behaviour \cite{astrom1997computer}. 
+The gain matrix $K$ can be set so that the closed-loop discrete dynamics are shaped as desired, 
+for instance according to a specific stability goal or around a specific dynamical behavior \cite{astrom1997computer}. 
 As argued later in this work, we will target more complex objectives, such as quantitative safety requirements that are not typical in the digital control literature. 
 Further, we will encompass the digital nature of the controller, which manipulates quantities with finite precision. 
 
@@ -1604,7 +1604,7 @@ footnote.\footnote{\url{url.here.}}
 %-------------------------------
 We report an assessment of both our approaches over a diverse set of real-world benchmarks. Nevertheless, this set of benchmarks is limited within the scope of this paper and the performance may not generalize to other benchmarks. 
 
-Our algorithm to select suitable FWL word widths to model plant behaviour employs a heuristic based on user-provided controller word-width specifications. For the first approach, where we may need to increase the precision of the time discretization, we select the time steps for the discretizations on a similar basis. This works sufficiently well for our benchmarks, but performance may suffer in some cases, for example if the completeness threshold is high. 
+Our algorithm to select suitable FWL word widths to model plant behavior employs a heuristic based on user-provided controller word-width specifications. For the first approach, where we may need to increase the precision of the time discretization, we select the time steps for the discretizations on a similar basis. This works sufficiently well for our benchmarks, but performance may suffer in some cases, for example if the completeness threshold is high. 
 
 The performance gain from abstract acceleration may not hold for more complex properties than stability, for instance ``eventually always reaches a certain safe set''. 
 
