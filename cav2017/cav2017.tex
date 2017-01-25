@@ -1115,7 +1115,7 @@ $P_a(z) = z^n+\sum_{i=1}^p{(a_i-k_i)z^{n-i}}$.
 \item Calculate the noise set $N$ from the quantizer resolutions and estimated round-off errors: %($\frac{q_1}{2},\frac{q_2}{2},q_3$)
 $$N=\left \{ \nu_1+\nu_2+ \nu_3 : \nu_1 \in \left[-\frac{q1}{2}\ \ \frac{q1}{2}\right] 
 \wedge \nu_2 \in \left[-\frac{q2}{2}\ \ \frac{q2}{2}\right]  \wedge \nu_3 \in \left[-q3\ \ q3\right]  \right \}\nonumber$$
-where $q3$ is the maximum truncation and rounding error of $u_k=-K\hat{x}_k$ as discussed in section \ref{sec:numeric_rep}.
+where  $q_1$ is the error introduced by the truncation by the ADC, $q_2$ is the error introduced by the DAC and $q3$ is the maximum truncation and rounding error of $u_k=-K\hat{x}_k$ as discussed in section \ref{sec:numeric_rep}. We consider the error introduced by the DAC to be equal to zero, since the domain of the plant is at a higher precision than the controller.
 %More details on how to model quantization as noise are given in the 
 %Appendix~\ref{appendix:quantization-noise}.
 \item Calculate a set of initial bounds on $K$, $\phi_{init}^{K}$, based on the input constraints. Note that these bounds will be used by the {\sc synthesize} phase to reduce the size of the solution space.
