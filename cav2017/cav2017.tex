@@ -1320,9 +1320,10 @@ and employed for validating our methodology.
 %\end{equation}
 %
 Table~\ref{table:State-space benchmarks} summarizes 
-all our benchmarks, which are SISO models (cf. section~\ref{sec:preliminaries}). 
-\todo{they are not: we do not have a 1d output map (SO= single output), rather get access to all variables. so the output map (C) is the identity, if you will. 
-this is a good point to clarify this, mention possible extensions to observer-based feedback architectures. }
+all our benchmarks, which are SISO models (cf. section~\ref{sec:preliminaries}). In the Table~\ref{table:State-space benchmarks}, the Inverted Pendulum appears to be a two output system but it was treated as two SISO systems during the experiments. For the sake of simplicity all the states measurements are assumed available. In practice, state estimators should be designed in order to obtain an estimate of the states from the single output. Further extensions of this work can include state observers synthesis.
+
+%\todo{they are not: we do not have a 1d output map (SO= single output), rather get access to all variables. so the output map (C) is the identity, if you will. 
+%this is a good point to clarify this, mention possible extensions to observer-based feedback architectures. }
 
 \textit{DC Motor Position and Rate} plants describes the angular position and 
 velocity of a DC Motor, respectively. 
