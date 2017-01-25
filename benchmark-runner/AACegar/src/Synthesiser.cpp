@@ -1037,7 +1037,8 @@ std::string Synthesiser<scalar>::makeCEGISIterations(std::string &existing)
   m_closedLoop.getRefinedDynamics(4);
   AbstractPolyhedra<scalar> bounds=m_closedLoop.synthesiseDynamicBounds(m_inputType,m_safeReachTube.getPolyhedra(eEigenSpace));
   powerList counterexamples;
-  m_closedLoop.findCounterExampleIterations(counterexamples,bounds);
+  bool fail=m_closedLoop.findCounterExampleIterations(counterexamples,bounds);
+  if (fail && counterexamples.empty()) counterexamples[0]=1;
   if (!counterexamples.empty()) {
     result << "#define POINTS_PER_ITER\n";
     result << "#define _NUM_ITERATIONS " << counterexamples.size() << "\n";
@@ -1076,6 +1077,9 @@ std::string Synthesiser<scalar>::makeCEGISIterations(std::string &existing)
       if (!found) result << "{-1,-1}";
     }
     result << "};\n";
+  }
+  else if (fail) {
+    return "#define FAILED\n";
   }
   return result.str();
 }
