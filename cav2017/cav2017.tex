@@ -567,7 +567,7 @@ controllers -- a well known task in the literature on digital control system
 automated.  More specifically, we require that the closed-loop system
 \eqref{eq:closedloopss} meets given safety specifications.  A safety
 specification raises a requirement on the states of the model, such that the
-feedback controller (namely the choice of the gains in $K$) must ensure that
+feedback controller (namely the choice of the gains matrix $K$) must ensure that
 the states never exit such requirement.  Note that a stable, closed-loop
 system is not necessarily a safe system: indeed, the state values may leave
 the safe space whilst they converge to the equilibrium, which is typical in
@@ -637,11 +637,11 @@ $\mathcal{F}_{\langle I,F \rangle}(c_1) \pm \mathcal{F}_{\langle I,F \rangle}(c_
 \end{enumerate}
 
 \item {\bf Overflow:}
-The maximum size of a real number $x$ that can be represented in a fixed point domain as $\mathcal{F}_{\langle I,F \rangle}(x)$ is $\pm (2^{I-1}+1-2^{-F})$. Numbers outside this range cannot be represented by the domain. We assume no saturation (where any overflow is represented as the largest or smallest possible number), and check that overflow does not occur.
+The maximum size of a real number $x$ that can be represented in a fixed point domain as $\mathcal{F}_{\langle I,F \rangle}(x)$ is $\pm (2^{I-1}+1-2^{-F})$. Numbers outside this range cannot be represented by the domain. We check that overflow does not occur.
 
 \end{enumerate}
 
-We will use $\mathcal{F}_{\langle I_c,F_c \rangle}(x)$ to denote a real number $x$ represented in the fixed-point precision level of the controller, and $\mathcal{F}_{\langle I_p,F_p \rangle}(x)$ to denote a real number $x$ represented in the fixed-point precision level of the plant model ($I_p \geq I_c \wedge F_p \geq F_c$).
+We will use $\mathcal{F}_{\langle I_c,F_c \rangle}(x)$ to denote a real number $x$ represented in the fixed-point precision level of the controller, and $\mathcal{F}_{\langle I_p,F_p \rangle}(x)$ to denote a real number $x$ represented in the fixed-point precision level of the plant computational model ($I_p \geq I_c \wedge F_p \geq F_c$).
 Thus any mathematical operations occurring in the digital controller will occur in the range of $\mathcal{F}_{\langle I_c,F_c \rangle}$, and all other calculations will be carried out in the range of $\mathcal{F}_{\langle I_p,F_p \rangle}$. The physical plant operates in the reals, which means our verification phase must account for calculation errors in the model.
 
 \subsubsection{Effect on safety specification and stability}
@@ -668,13 +668,16 @@ x_{k+1} &=\mathcal{F}_{\langle I_p,F_p \rangle}(A_d) \mathcal{F}_{\langle I_p,F_
 
 We address this last error by use of interval arithmetic~\cite{moore1966interval} in the verification phase.
 
-We note that the effect on stability due to the fixed-word-length error is that the system may, 
-instead of converging to the desired equilibrium point, 
-converge to a neighbourhood around the desired equilibrium point (see Appendix for details). 
-However, since In this paper we require stability only as a precursor to safety, 
-it is sufficient to check the (perturbed, noisy) model converges to a point within the safe states. 
-In the following, we shall disregard these errors when we synthesise a stable controller, 
-and then verify its safety accounting for the finite-precision errors. 
+Previous studies~\cite{gangli1} show that the FWL affects the poles and 
+zeros positions, degrading the closed-loop dynamics, causing steady-state 
+errors (see the Appendix~\ref{sec:appendix:LTIbackground} for details) 
+and eventually destabilizing  the system~\cite{Bessa16}. However, since 
+in this paper we require stability only as a precursor to safety, it is 
+sufficient to check the (perturbed, noisy) model converges to a point 
+within the safe states.  
+
+In the following, we shall disregard these steady-state errors (caused by FWL effects)
+ when the stability is ensured by synthesis, and then verify its safety accounting for the finite-precision errors. 
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \section{CEGIS of Safe Controllers for LTI Systems} 
