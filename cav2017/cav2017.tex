@@ -630,15 +630,15 @@ The following approximation errors will arise:
 \begin{enumerate}
 \item {\bf Truncation:}
 Let $x$ be a real number, and $\mathcal{F}_{\langle I,F \rangle}(x)$ be the same number represented in a fixed-point domain as above. 
-Then $\mathcal{F}_{\langle I,F \rangle}(x) = x-\delta_T : \delta_T=x\ \%_{c_m}\ \tilde x$, where $\%_{c_m}$ is the modulus operation performed on the last bit.
+Then $\mathcal{F}_{\langle I,F \rangle}(x) = x-\delta_T$ where the error $ \delta_T=x\ \%_{c_m}\ \tilde x$, and $\%_{c_m}$ is the modulus operation performed on the last bit.
 
 So $\delta_T$ is the truncation error and it will propagate across operations.
 \item {\bf Rounding:}
 The following errors appear in simple operations. Let $c_1, c_2$ and $c_3$ be real numbers, and $\delta_{T1}$ and $\delta_{T2}$ be the truncation errors caused by representing $c_1$ and $c_2$ in the fixed-point domain as above.
 \begin{enumerate}
 \item Addition/Subtraction: these operations only propagate errors coming from truncation of the operands, namely 
-$\mathcal{F}_{\langle I,F \rangle}(c_1) \pm \mathcal{F}_{\langle I,F \rangle}(c_2) = c_3 + \delta_3 :|\delta_3| \leq |\delta_{T1}| + |\delta_{T2}|$.
-\item Multiplication: $\mathcal{F}_{\langle I,F \rangle}(c_1) * \mathcal{F}_{\langle I,F \rangle}(c_2) =  c_3 + \delta_3 :|\delta_3| \leq |\delta_{T1}*\mathcal{F}_{\langle I,F \rangle}(c_2)| + |\delta_{T2}*\mathcal{F}_{\langle I,F \rangle}(c_1)| + c_m$, where $c_m=2^{-F}$ as above.
+$\mathcal{F}_{\langle I,F \rangle}(c_1) \pm \mathcal{F}_{\langle I,F \rangle}(c_2) = c_3 + \delta_3$ with $|\delta_3| \leq |\delta_{T1}| + |\delta_{T2}|$.
+\item Multiplication: $\mathcal{F}_{\langle I,F \rangle}(c_1) * \mathcal{F}_{\langle I,F \rangle}(c_2) =  c_3 + \delta_3$ with $|\delta_3| \leq |\delta_{T1}*\mathcal{F}_{\langle I,F \rangle}(c_2)| + |\delta_{T2}*\mathcal{F}_{\langle I,F \rangle}(c_1)| + c_m$, where $c_m=2^{-F}$ as above.
 \item Division: the operations performed by our controllers in the FWL domain do not include division, so these bounds are inconsequential to this paper. 
 \end{enumerate}
 
