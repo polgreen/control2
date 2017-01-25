@@ -1359,13 +1359,9 @@ the approach described in the Appendix~\ref{sec:appendix}.
 All experiments were performed considering $\underline{x_{i}}=-1$ and 
 $\overline{x_{i}}=1$ and the inputs $u_{k}=0, \forall k>0$.
 We have conducted the experimental evaluation on a 12-core 2.40 GHz
-Intel Xeon E5-2440 with 96 GB of RAM and Linux OS. 
-
-\textcolor{red}{Pascal, Can you please describe our we measure time?
-All times given are wall clock time in seconds as measured by the UNIX date command.}
-
-\textcolor{red}{Pascal, can you please describe the timeout?}
-
+Intel Xeon E5-2440 with 96 GB of RAM and Linux OS. We used the Linux \emph{times} command
+to measure CPU time used for each benchmark. The experimental runtime was limited to
+one hour per benchmark.
 %
 \begin{table}[htb]
 \centering
@@ -1559,20 +1555,27 @@ and can their stability and safety be confirmed outside of our model?
 We give the run-times required to synthesize a stable controller for each
 benchmark in Table~\ref{tab:results}.  
 Here \textit{Benchmark} is the name of the employed
-benchmark, $\mathcal{F}_{\langle I_p,F_p \rangle}$ is the fixed-point precision used to model the plant, while \textit{Time}
-is the total time (in seconds) required to synthesize a stable controller
-for the given plant, for approach 1 and approach 2. The precision for the controller, $\mathcal{F}_{\langle I_c,F_c \rangle}$, is always chosen to be $I_c = 8, F_c = 8$.
+benchmark, $\mathcal{F}_{\langle I_p,F_p \rangle}$ is the fixed-point precision used
+to model the plant, while \textit{Time}
+is the total time (in milliseconds) required to synthesize a stable controller
+for the given plant, for CEGIS with multi-staged verification as well as
+abstraction-based CEGIS. The precision for the controller,
+$\mathcal{F}_{\langle I_c,F_c \rangle}$, is always chosen to be $I_c = 8, F_c = 8$.
 
-For the majority of our benchmarks, the conjecture stands that the Acceleration back-end is faster than the basic multi-staged verification approach. However, it does fail to find solutions to XXX benchmarks, where the numbers given in the discretization matrices are really small.  
-
-The basic multi-staged verification approach finds X / X benchmarks, albeit in an expected slower time. The solutions that are not found are due to time-out or XXXX
+For the majority of our benchmarks, the conjecture stands that the abstraction-based back-end
+is faster than the basic multi-staged verification approach. However, it does fail to
+find solutions to 3 benchmarks, as compared to 2 with the multi-staged back-end, where
+the numbers given in the discretization matrices are too small. In direct comparison the
+abstraction-based is able to find a solution in approximately 35\% of the time required
+using the multi-staged back-end. The two back-ends complement each other well in their
+benchmark coverage and together solve all benchmarks provided in the set.
 
 \begin{table}
 \centering
 \begin{tabular}{| r | c | c | r | c | r |}
 \hline
-\# & Benchmark  & \multicolumn{2}{|c|}{Multi-stage}                 & \multicolumn{2}{|c|}{Abstraction} \\
-   &            & $\mathcal{F}_{\langle I_p,F_p \rangle}$ & Runtime & $\mathcal{F}_{\langle I_p,F_p \rangle}$ & Runtime \\\hline
+\# & Benchmark  & \multicolumn{2}{|c|}{Multi-staged}                 & \multicolumn{2}{|c|}{Abstraction} \\
+   &            & \multicolumn{1}{|c|}{$\mathcal{F}_{\langle I_p,F_p \rangle}$} & \multicolumn{1}{|c|}{Time} & \multicolumn{1}{|c|}{$\mathcal{F}_{\langle I_p,F_p \rangle}$} & \multicolumn{1}{|c|}{Time} \\\hline
 1  & Cruise Control      & 8,16   & 6875   & 16,16  & 241    \\
 2  & DC Motor            & 8,16   & 8103   & 20,20  & 5376   \\
 3  & Helicopter          & \xmark & \xmark & 16,16  & 2120   \\
@@ -1585,11 +1588,11 @@ The basic multi-staged verification approach finds X / X benchmarks, albeit in a
 10 & Satellite           & 8,16   & 8975   & \xmark & \xmark \\\hline
 
 \end{tabular}
-\caption{Experimental results \label{tab:results}}
+\caption{Experimental results with runtime in milliseconds \label{tab:results}}
 \end{table}
 
-he median runtime for our benchmark set is XXXX.  Overall,
-the average synthesis time amounts to approximately XXX minutes.  We
+The median runtime for our benchmark set is 7.9\,s.  Overall,
+the average synthesis time amounts to approximately 17.2\,s.  We
 consider these times short enough to be of practical use to control
 engineers, and thus affirm RQ1.  
 
