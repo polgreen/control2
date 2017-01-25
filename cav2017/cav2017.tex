@@ -1408,10 +1408,15 @@ The median runtime for our benchmark set is 7.9\,s.  Overall,
 the average synthesis time amounts to approximately 17.2\,s.  We
 consider these times short enough to be of practical use to control
 engineers, and thus affirm RQ1.  
-There are several cases for which the system may fail to find a controller. In the naive approach,
-there is the risk of the completeness threshold being too large, thus causing a timeout.
-In the abstraction case, there is the risk of requiring a very precise abstraction, resulting in too many refinements which may timeout.
-Other sources for incompleness are the inability of the {\sc synthesize} phase to use a large enough precision for the plant model in a given problem.
+
+There are several cases for which the system
+may fail to find a controller. For the naive approach, 
+the completeness threshold may be too large, thus causing a
+timeout.  On the other hand, the abstraction-based approach may
+require a very precise abstraction, resulting in too many refinements
+and, consequently, a timeout.  Yet another source of incompleness is the inability
+of the {\sc synthesize} phase to use a large enough precision for the
+plant model in a given problem.
 
 The synthesized controllers were confirmed to be stable outside of our model
 representation using MATLAB, positively answering RQ2.  A~link to the full
