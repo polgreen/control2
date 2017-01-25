@@ -578,7 +578,7 @@ safety requirements with an overall approach that is sound and automated.
 More specifically, we require that the closed-loop system
 \eqref{eq:closedloopss} meets given safety specifications.  A safety
 specification raises a requirement on the states of the model, such that the
-feedback controller (namely the choice of the gains matrix $K$) must ensure
+feedback controller (namely the choice of the gains matrix~$K$) must ensure
 that the states never exit such requirement.  Note that a stable,
 closed-loop system is not necessarily a safe system: indeed, the state
 values may leave the safe space whilst they converge to the equilibrium,
@@ -621,23 +621,41 @@ physical constraints.
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
-The models we consider have two sources of error due to numeric representation. 
-The first is the numeric error introduced by the fixed-point numbers employed to model the plant, i.e., to represent the plant dynamics $A_d$, $B_d$ and $x_k$. 
-The second is the quantization error introduced by the digital controller, 
-which performs operations on fixed-point numbers. 
-In this section we outline the notation for the fixed-point representation of numbers, and briefly describe the errors introduced. A formal outline is in Appendix~\ref{appendix:numerical_errors}.
+The models we consider have two sources of error due to numeric
+representation.  The first is the numeric error introduced by the
+fixed-point numbers employed to model the plant, i.e., to represent the
+plant dynamics $A_d$, $B_d$ and $x_k$.  The second is the quantization error
+introduced by the digital controller, which performs operations on
+fixed-point numbers.  In this section we outline the notation for the
+fixed-point representation of numbers, and briefly describe the errors
+introduced.  A formal discussion is in
+Appendix~\ref{appendix:numerical_errors}.
 
-Let $\mathcal{F}_{\langle I,F \rangle}(x)$ denote a real number $x$ represented in a fixed point domain, with $I$ bits representing the integer part and $F$ bits representing the decimal part. The smallest number that can be represented in this domain is $c_m=2^{-F}$. Any mathematical operations performed at the precision $\mathcal{F}_{\langle I,F \rangle}(x)$ will introduce errors, that can be upper bounded~\cite{DBLP:conf/arith/BrainTRW15}. 
+Let $\mathcal{F}_{\langle I,F \rangle}(x)$ denote a real number $x$
+represented in a fixed point domain, with $I$ bits representing the integer
+part and $F$ bits representing the decimal part.  The smallest number that
+can be represented in this domain is $c_m=2^{-F}$.  Any mathematical
+operations performed at the precision $\mathcal{F}_{\langle I,F \rangle}(x)$
+will introduce errors, that can be upper
+bounded~\cite{DBLP:conf/arith/BrainTRW15}.
 
-We will use $\mathcal{F}_{\langle I_c,F_c \rangle}(x)$ to denote a real number $x$ represented in the fixed-point precision level of the controller, and $\mathcal{F}_{\langle I_p,F_p \rangle}(x)$ to denote a real number $x$ represented in the fixed-point precision level of the plant computational model ($I_p \geq I_c \wedge F_p \geq F_c$).
-Thus any mathematical operations occurring in the digital controller will occur in the range of $\mathcal{F}_{\langle I_c,F_c \rangle}$, and all other calculations will be carried out in the range of $\mathcal{F}_{\langle I_p,F_p \rangle}$. The physical plant operates in the reals, which means our verification phase must account for calculation errors in the model.
+We will use $\mathcal{F}_{\langle I_c,F_c \rangle}(x)$ to denote a real
+number $x$ represented in the fixed-point precision level of the controller,
+and $\mathcal{F}_{\langle I_p,F_p \rangle}(x)$ to denote a real number $x$
+represented in the fixed-point precision level of the plant computational
+model ($I_p \geq I_c \wedge F_p \geq F_c$).  Thus any mathematical
+operations occurring in the digital controller will occur in the range of
+$\mathcal{F}_{\langle I_c,F_c \rangle}$, and all other calculations will be
+carried out in the range of $\mathcal{F}_{\langle I_p,F_p \rangle}$.  The
+physical plant operates in the reals, which means our verification phase
+must account for calculation errors in the model.
 
 \subsubsection{Effect on safety specification and stability}
 
 Let us first consider the effect of the quantization errors on safety. 
-Within the controller, 
-state values are manipulated at low precision, 
-alongside the vector multiplication $Kx$.   
+Within the controller, state values are manipulated at low precision,
+alongside the vector multiplication $Kx$.
+%
 %computed considering the error introduced by the digital controller caused by performing the vector multiplication $Kx$ at low digital precision.
 The inputs are computed using the following equation: 
 %
@@ -645,10 +663,11 @@ The inputs are computed using the following equation:
 u_{k}&=-(\mathcal{F}_{\langle I_c,F_c \rangle}(K)\cdot\mathcal{F}_{\langle I_c,F_c \rangle}(x_{k})). 
 \end{align*}
 
-This induces two types of the errors detailed above:  
-first, the truncation error due to representing $x_k$ as $\mathcal{F}{\langle I_c,F_c \rangle}(x_{k})$; 
-and second, the rounding error introduced by the multiplication operation. 
-We represent these errors as non-deterministic noise.
+This induces two types of the errors detailed above: first, the truncation
+error due to representing $x_k$ as $\mathcal{F}{\langle I_c,F_c
+\rangle}(x_{k})$; and second, the rounding error introduced by the
+multiplication operation.  We represent these errors as non-deterministic
+noise.
 
 An additional error is caused by the representation of the plant dynamics, namely 
 %
@@ -656,17 +675,21 @@ An additional error is caused by the representation of the plant dynamics, namel
 x_{k+1} &=\mathcal{F}_{\langle I_p,F_p \rangle}(A_d) \mathcal{F}_{\langle I_p,F_p \rangle}(x_{k}) + \mathcal{F}_{\langle I_p,F_p \rangle}(B_d)\mathcal{F}_{\langle I_p,F_p \rangle}(u_{k}).
 \end{align*}
 
-We address this last error by use of interval arithmetic~\cite{moore1966interval} in the verification phase.
+We address this last error by use of interval
+arithmetic~\cite{moore1966interval} in the verification phase.
 
-Previous studies~\cite{gangli1} show that the FWL affects the poles and 
-zeros positions, degrading the closed-loop dynamics, causing steady-state 
-errors (see the Appendix~\ref{sec:appendix:LTIbackground} for details) 
-and eventually destabilizing  the system~\cite{Bessa16}. However, since 
-in this paper we require stability only as a precursor to safety, it is 
-sufficient to check that the (perturbed, noisy) model converges to a neighborhood of the equilibrium within the safe set.  
+Previous studies~\cite{gangli1} show that the FWL affects the poles and
+zeros positions, degrading the closed-loop dynamics, causing steady-state
+errors (see the Appendix~\ref{sec:appendix:LTIbackground} for details) and
+eventually destabilizing the system~\cite{Bessa16}.  However, since in this
+paper we require stability only as a precursor to safety, it is sufficient
+to check that the (perturbed, noisy) model converges to a neighborhood of
+the equilibrium within the safe set.
 
-In the following, we shall disregard these steady-state errors (caused by FWL effects)
- when the stability is ensured by synthesis, and then verify its safety accounting for the finite-precision errors. 
+In the following, we shall disregard these steady-state errors (caused by
+FWL effects) when the stability is ensured by synthesis, and then verify its
+safety accounting for the finite-precision errors.
+
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \section{CEGIS of Safe Controllers for LTI Systems} 
 \label{sec:CEGARIS} 
