@@ -222,7 +222,7 @@ multi-staged approach.
   speed whilst retaining soundness. Both approaches provide sound
   synthesis of state feedback systems considering the various
   error sources in the implementation of the control algorithm and in the
-  computational modelling of plant dynamics.
+  computational modeling of plant dynamics.
 %
 \item We develop a model for different sources quantization and their
   effect on the state space progression, for which we find safe bounds
@@ -361,7 +361,7 @@ based on the error of the digital dynamics ensures that the deviation
 introduced by FWL does not make the digital system unstable.  A~more recent
 approach~\cite{DBLP:journals/automatica/WuLCC09} uses $\mu$ calculus to
 directly model the digital controller so that the selected parameters are
-stable by design.  The analyses in~\cite{DBLP:conf/hybrid/RouxJG15,
+stable by design.  The analysis in~\cite{DBLP:conf/hybrid/RouxJG15,
 DBLP:conf/hybrid/WangGRJF16} rely on an invariant computation on the
 discrete system dynamics using Semi-Definite Programming (SDP).  While the
 former uses bounded-input and bounded-output (BIBO) properties to determine stability, 
@@ -654,7 +654,7 @@ zeros positions, degrading the closed-loop dynamics, causing steady-state
 errors (see the Appendix~\ref{sec:appendix:LTIbackground} for details) 
 and eventually destabilizing  the system~\cite{Bessa16}. However, since 
 in this paper we require stability only as a precursor to safety, it is 
-sufficient to check that the (perturbed, noisy) model converges to a neighbourhood of the equilibrium within the safe set.  
+sufficient to check that the (perturbed, noisy) model converges to a neighborhood of the equilibrium within the safe set.  
 
 In the following, we shall disregard these steady-state errors (caused by FWL effects)
  when the stability is ensured by synthesis, and then verify its safety accounting for the finite-precision errors. 
@@ -726,7 +726,7 @@ initial state $x_0$, reference signal $r_k$ and input $u_k$
 as defined in Sec.~\ref{ssec:safety}. 
 We consider non-deterministic initial states within a specified range, 
 the reference signal to be set to zero, 
-saturations on the inputs, 
+saturation on the inputs, 
 and account for digitalization and quantization errors introduced by the controller.  
 
 When mapping back to the notation used for describing the general architecture of the program synthesizer, 
@@ -861,7 +861,7 @@ compute a candidate solution $K$
 that satisfies both the stability criteria detailed in 
 Sec.~\ref{ssec:stability} and the safety specification in Sec.~\ref{ssec:safety}.
 To synthesize a controller that satisfies the stability criteria, we require that
-a computed characteristic polynomial satisifies Jury's criteria. The details of this
+a computed characteristic polynomial satisfies Jury's criteria. The details of this
 calculation can be found in the Appendix.
 
  %\todo{unclear next: it seems like to select a single initial state here, rather than considering the set thereof - clarify. also, clarify relationship btw k and soundness. }
@@ -1356,7 +1356,7 @@ and can their stability and safety be confirmed outside of our model?
 \subsection{Results}
 %-------------------------------
 
-We give the runtimes required to synthesize a stable controller for each
+We give the run-times required to synthesize a stable controller for each
 benchmark in Table~\ref{tab:results}.  
 Here \textit{Benchmark} is the name of the respective
 benchmark, $\mathcal{F}_{\langle I_p,F_p \rangle}$ is the fixed-point precision used
@@ -1371,7 +1371,7 @@ is faster than the basic multi-staged verification approach. However, it does fa
 find solutions to 3 benchmarks, as compared to 2 with the multi-staged back-end, where
 the numbers given in the discretization matrices are too small. In direct comparison, the
 abstraction-based approach is on average able to find a solution in approximately 35\% of
-the time required using the multi-staged back-end, and has a median runtime 1.15\,s, which is
+the time required using the multi-staged back-end, and has a median run-time 1.15\,s, which is
 seven times smaller than the multi-staged approach. The two back-ends complement each other
 in benchmark coverage and together solve all benchmarks in the set.
 
@@ -1397,7 +1397,7 @@ in benchmark coverage and together solve all benchmarks in the set.
 \caption{Experimental results with runtime in milliseconds. \label{tab:results}}
 \end{table}
 
-The median runtime for our benchmark set is 7.9\,s.  Overall,
+The median run-time for our benchmark set is 7.9\,s.  Overall,
 the average synthesis time amounts to approximately 17.2\,s.  We
 consider these times short enough to be of practical use to control
 engineers, and thus affirm RQ1.  
@@ -1407,7 +1407,7 @@ may fail to find a controller. For the naive approach,
 the completeness threshold may be too large, thus causing a
 timeout.  On the other hand, the abstraction-based approach may
 require a very precise abstraction, resulting in too many refinements
-and, consequently, a timeout.  Yet another source of incompleness is the inability
+and, consequently, a timeout.  Yet another source of incompleteness is the inability
 of the {\sc synthesize} phase to use a large enough precision for the
 plant model in a given problem.
 
