@@ -1817,23 +1817,23 @@ The following remark is worth mentioning regarding the above.
 The witnessed maximum amplitude of the discrete signals $x_k,y_k$ may be smaller to that of $x(t),y(t)$ due to synchronism at fraction-frequency sampling.
 This means that reasoning about the state-space must consider the effects of this possibility as well of the case of maximal inputs from the continuous specification.
 \end{remark}
- Since \eqref{eq:discretization} is a bi-simulation of \eqref{eq:ode}, we may use the semantics in section \ref{sec:model_semantics} to model continuous dynamical systems.
+%  Since \eqref{eq:discretization} is a bi-simulation of \eqref{eq:ode}, we may use the semantics in section \ref{sec:model_semantics} to model continuous dynamical systems.
 
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{Overapproximating continuous space dynamics using discrete models}
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-Let us recall equation \ref{eq:discretize}. The discrete representation of the system dynamics discretized with sample time $T_1$ is ruled by the formula
-$\vec{A}_1 = e^{\vec{A} T_1}$. From matrix theory, we have 
-\begin{equation}
-\vec{A}_1 = \mat{S}_1\mat{J}_1\mat{S}_1^{-1}= \mat{S}_1e^{\mat{J} T_1}\mat{S}_1^{-1}.
-\end{equation}
-Let $\mat{J}$ be a diagonal matrix, such that ${\lambda_1}_i=e^{\lambda_i T_1}, \forall \lambda \in \mat{J}$.
-Let us now take a different sample rate $T_2$, such that ${\lambda_2}_i=e^{\lambda_i T_2}, \forall \lambda \in \mat{J}$. We can then say that 
-\begin{equation}
-{\lambda_2}_i=e^{\lambda_i T_1 T_2/T_1}={\lambda_1}_i^{T_2/T_1} \Rightarrow A_2=A_1^{\frac{T_2}{T_1}}
-\end{equation}
-We have also shown in the previous section that $x_k=A^nx_0$ is a witness of $x(t): \dot{x}(t)=Ax(t)$ at time $kT_s$. Applying this notion to multiple sample times, we can state that $x_{k_i}=A_i^nx_0$ are a set of witnesses at times $kT_i$, and by extension the set $\{x=A_i^nx_0 : \forall n \in \mathbb{R} \}$ witnesses all states visited by the continuous system in time $t \in [0,\infty)$. This applies to any arbitrary sample time $T_i$.
-Since the controller output is fed to a Zero Order Holder, the progression of the system between times $kT_s$ and $(k+1)T_s$ is $\mat{A}^n\vec{x}_k+\mat{B}\vec{u}_k : n \in (0,1)$. We therefore obtain a reach tube for the continuous dynamics of a time sampled system to be contained within the abstract reach tube $\mathcal{A}^1\mathcal{M}X_0+\mathcal{BK}^1\mathcal{M}X_0=\mathcal{M}X_0$
+% %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+% \subsection{Overapproximating continuous space dynamics using discrete models}
+% %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+% Let us recall equation \ref{eq:discretize}. The discrete representation of the system dynamics discretized with sample time $T_1$ is ruled by the formula
+% $\vec{A}_1 = e^{\vec{A} T_1}$. From matrix theory, we have 
+% \begin{equation}
+% \vec{A}_1 = \mat{S}_1\mat{J}_1\mat{S}_1^{-1}= \mat{S}_1e^{\mat{J} T_1}\mat{S}_1^{-1}.
+% \end{equation}
+% Let $\mat{J}$ be a diagonal matrix, such that ${\lambda_1}_i=e^{\lambda_i T_1}, \forall \lambda \in \mat{J}$.
+% Let us now take a different sample rate $T_2$, such that ${\lambda_2}_i=e^{\lambda_i T_2}, \forall \lambda \in \mat{J}$. We can then say that 
+% \begin{equation}
+% {\lambda_2}_i=e^{\lambda_i T_1 T_2/T_1}={\lambda_1}_i^{T_2/T_1} \Rightarrow A_2=A_1^{\frac{T_2}{T_1}}
+% \end{equation}
+% We have also shown in the previous section that $x_k=A^nx_0$ is a witness of $x(t): \dot{x}(t)=Ax(t)$ at time $kT_s$. Applying this notion to multiple sample times, we can state that $x_{k_i}=A_i^nx_0$ are a set of witnesses at times $kT_i$, and by extension the set $\{x=A_i^nx_0 : \forall n \in \mathbb{R} \}$ witnesses all states visited by the continuous system in time $t \in [0,\infty)$. This applies to any arbitrary sample time $T_i$.
+% Since the controller output is fed to a Zero Order Holder, the progression of the system between times $kT_s$ and $(k+1)T_s$ is $\mat{A}^n\vec{x}_k+\mat{B}\vec{u}_k : n \in (0,1)$. We therefore obtain a reach tube for the continuous dynamics of a time sampled system to be contained within the abstract reach tube $\mathcal{A}^1\mathcal{M}X_0+\mathcal{BK}^1\mathcal{M}X_0=\mathcal{M}X_0$
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{Modelling quantization as noise} \label{appendix:quantization-noise}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
