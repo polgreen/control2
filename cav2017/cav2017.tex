@@ -36,7 +36,7 @@
 \usetikzlibrary{positioning, automata, shapes.arrows, calc, shapes, arrows}
 \usetikzlibrary{patterns}
 
-
+\renewcommand{\baselinestretch}{0.975}
 \newcommand{\addtodo}[1]{{\color{red} TODO: #1}}
 \newcommand{\commentib}[1]{{\color{blue} [IB: #1]}}
 \newcommand{\mat}[1]{\boldsymbol{#1}}
@@ -1320,20 +1320,6 @@ A set of state-space models for different classes of
 systems were extracted from the 
 literature~\cite{Franklin15,maglev,converters,CTMS} 
 and employed for validating our methodology. 
-%All systems are SISO models of the following form:
-%
-%\begin{equation}
-%\left\lbrace\begin{array}{c}
-%\dot{\textbf{x}}(t)=\textbf{A}\textbf{x}(t)+\textbf{B}u(t)\\
-%y(t)=\textbf{C}\textbf{x}(t)+\textbf{D}u(t)
-%\end{array}\right.
-%\end{equation}
-%
-Table~\ref{table:State-space benchmarks} summarizes 
-all our benchmarks, which are SISO models (cf. section~\ref{sec:preliminaries}). In the Table~\ref{table:State-space benchmarks}, the Inverted Pendulum appears to be a two output system but it was treated as two SISO systems during the experiments. For the sake of simplicity all the states measurements are assumed available. In practice, state estimators should be designed in order to obtain an estimate of the states from the single output. Further extensions of this work can include state observers synthesis.
-
-%\todo{they are not: we do not have a 1d output map (SO= single output), rather get access to all variables. so the output map (C) is the identity, if you will. 
-%this is a good point to clarify this, mention possible extensions to observer-based feedback architectures. }
 
 \textit{DC Motor Position and Rate} plants describes the angular position and 
 velocity of a DC Motor, respectively. 
@@ -1351,8 +1337,17 @@ and allows relative motion between both parts.
 \textit{Computer Tape Driver} plant describes a physical model to read and write data 
 on a storage device in the computer.
 
+Section~\ref{sec:BenchmarksforStateSpace} in the appendix summarizes 
+all our benchmarks, which are SISO models (cf. section~\ref{sec:preliminaries}). 
+The Inverted Pendulum appears to be a two output system, but it was treated as two 
+SISO systems during the experiments. For the sake of simplicity all the states 
+measurements are assumed available. In practice, state estimators should be designed 
+in order to obtain an estimate of the states from the single output. 
+Further extensions of this work can include 
+state observers synthesis.
+
 All benchmarks were discretized with different sample times using 
-the approach described in the Appendix~\ref{sec:appendix}. 
+the approach described in the Appendix~\ref{sec:appendix:LTIbackground}. 
 All experiments were performed considering $\underline{x_{i}}=-1$ and 
 $\overline{x_{i}}=1$ and the inputs $u_{k}=0, \forall k>0$.
 We have conducted the experimental evaluation on a 12-core 2.40 GHz
@@ -1360,171 +1355,6 @@ Intel Xeon E5-2440 with 96 GB of RAM and Linux OS. We used the Linux \emph{times
 to measure CPU time used for each benchmark. The experimental runtime was limited to
 one hour per benchmark.
 %
-\begin{table}[htb]
-\centering
-\footnotesize
-\caption{Benchmarks for State-Space Physical Plants.}
-\label{table:State-space benchmarks}
-\begin{tabular}{|c|c|c|c|c|}
-\hline
-%\textbf{ID \#} & 
-\textbf{System}                                                               & \textbf{A} & \textbf{B} & \textbf{C} & \textbf{D} \\ \hline
-%1              & 
-\begin{tabular}[c]{@{}c@{}}DC Motor\\ Position\end{tabular}                   & $\left[\begin{array}{ccc}
-0		& 1 		& 0						\\
-0 		& -1.087	& 8587					\\
-0		& -9964		& -1.455\times 10^{6}	\\
-\end{array}\right]$ & $\left[\begin{array}{c}
-0 \\ 0 \\ -1.455\times10^{6}
-\end{array}\right]$           & $\left[\begin{array}{ccc}
-1 & 0 & 0\\
-\end{array}\right]$ & 0 \\  \hline
-%2              & 
-% \begin{tabular}[c]{@{}c@{}}Aircraft \\ Pitch\\ Dynamics\end{tabular} & $\left[\begin{array}{ccc}
-% -0.313	& 56.7 		& 0		\\
-% -0.0139	& -0.426	& 0		\\
-% 0		& 56.7		& 0		\\
-% \end{array}\right]$ & $\left[\begin{array}{c}
-% 0.232 \\ 0.0203 \\ 0
-% \end{array}\right]$ & $\left[\begin{array}{ccc}
-% 1 & 0 & 0\\
-% \end{array}\right]$ & 0 \\ \hline
-%3            & 
-\begin{tabular}[c]{@{}c@{}}Ball\\ Magnetic\\ Levitation\end{tabular} & $\left[\begin{array}{ccc}
-0		& 1 		& 0		\\
-1752	& 0			& -34.07\\
-0		& 0			& -38.27\\
-\end{array}\right]$ & $\left[\begin{array}{c}
-0 \\ 0 \\ 1.923
-\end{array}\right]$ & $\left[\begin{array}{ccc}
-1 & 0 & 0\\
-\end{array}\right]$ & 0 \\ \hline
-%4              & 
-% \begin{tabular}[c]{@{}c@{}}Buck\\ Converter\end{tabular}                      & $\left[\begin{array}{cc}
-% 0		& -500 \\
-% 4545	& -1515\\
-% \end{array}\right]$ & $\left[\begin{array}{c}
-% 125 \\ 0 \\
-% \end{array}\right]$ & $\left[\begin{array}{cc}
-%  0 & 1\\
-% \end{array}\right]$ & 0 \\ \hline
-%5              & 
-% \begin{tabular}[c]{@{}c@{}}Boost\\ Converter\end{tabular} & $\left[\begin{array}{cc}
-% 0		& -375 \\
-% 3409	& -1515\\
-% \end{array}\right]$ & $\left[\begin{array}{c}
-% 500 \\ 0 \\
-% \end{array}\right]$ &  $\left[\begin{array}{cc}
-% 0 & 1\\
-% \end{array}\right]$  & 0        \\ \hline
-%6              & 
-% \begin{tabular}[c]{@{}c@{}}Buck-boost\\ Converter\end{tabular} & $\left[\begin{array}{cc}
-% 0		& 375 \\
-% -3409	& -1515\\
-% \end{array}\right]$ & $\left[\begin{array}{c}
-% 125 \\ 0 \\
-% \end{array}\right]$ & $\left[\begin{array}{cc}
-% 0 & 1\\
-% \end{array}\right]$ & 0 \\ \hline
-%7              & 
-\begin{tabular}[c]{@{}c@{}}Automotive\\ Cruise\\ System\end{tabular} & -0.05 & 0.03125 & 0.032 & 0 \\ \hline
-%8              & 
-\begin{tabular}[c]{@{}c@{}}DC Motor\\ Rate\end{tabular} & $\left[\begin{array}{cc}
--1000		& -13 \\
--8			& 0\\
-\end{array}\right]$ & $\left[\begin{array}{c}
-4 \\ 0 \\
-\end{array}\right]$ & $\left[\begin{array}{cc}
-0 & 6.25\\
-\end{array}\right]$ & 0 \\ \hline
-%9              & 
-\begin{tabular}[c]{@{}c@{}}Helicopter\\ Longitudinal\\ Motion\end{tabular}    & $\left[\begin{array}{ccc}
--0.42		& 0.0168		& -0.396	\\
-0.5			& 0				& 0			\\
-0			& 0.5 			& 0			
-\end{array}\right]$ & $\left[\begin{array}{c}
-16 \\ 0 \\ 0
-\end{array}\right]$ & $~
-\left[\begin{array}{ccc}
-0.6125	& -0.6125	& 15.44 \\
-\end{array}\right]$ & 0 \\ \hline
-%10             & 
-Pendulum   & $\left[\begin{array}{cc}
-0		& -2.453	\\
-4		& 0			\\	
-\end{array}\right]$ & $\left[\begin{array}{c}
-4 \\ 0
-\end{array}\right]$ & $\left[\begin{array}{cc}
--1.225	& -2.15 	\\
-\end{array}\right]$           & 9.8           \\ \hline
-%11             & 
-\begin{tabular}[c]{@{}c@{}}Inverted\\ Pendulum\end{tabular} & $\left[\begin{array}{cccc}
-0		& 1		& 0 	& 0	\\
-1		& 0		& 0		& 0	\\
-0		& 1 	& 0		& 0 \\
-0		& 0		& 1 	& 0 \\	
-\end{array}\right]$ & $\left[\begin{array}{c}
-1 \\ 0 \\ 0 \\ 0
-\end{array}\right]$  & $\left[\begin{array}{cccc}
-0	& 0	& 1 & -0.75 \\
-0	& 1	& 0	& 0		
-\end{array}\right]$ & $\left[\begin{array}{c}
-0 \\
-0 \end{array}\right]$ \\ \hline
-%12             & 
-\begin{tabular}[c]{@{}c@{}}Magnetic\\ Suspension\end{tabular} & $\left[\begin{array}{cc}
-0		& 31.25	\\
-32		& 0		\\	
-\end{array}\right]$ & $\left[\begin{array}{c}
-8 \\ 0
-\end{array}\right]$ & $\left[\begin{array}{cc}
-0	& 9.766 	\\
-\end{array}\right]$ & 0 \\ \hline
-%13             & 
-\begin{tabular}[c]{@{}c@{}}Magnetic\\ Pointer \end{tabular} & $\left[\begin{array}{ccc}
--0.271		& -0.05336	& 0	\\
-0.03125		& 0			& 0	\\
-0			& 0.01562 	& 0	\\	
-\end{array}\right]$ & $\left[\begin{array}{c}
-1 \\ 0 \\ 0
-\end{array}\right]$ & $\left[\begin{array}{ccc}
-0	& -0.5888	& -0.2562 \\
-\end{array}\right]$ & 0           \\ \hline
-%14             & 
-\begin{tabular}[c]{@{}c@{}}1/4 Car\\ Suspension\end{tabular} & $
-\left[\begin{array}{cccc}
--516.1	& -222.1& -79.75& -33.06	\\
-256		& 0		& 0		& 0			\\
-0		& 64 	& 0		& 0 \\
-0		& 0		& 32 	& 0 \\	
-\end{array}\right]$ & $\left[\begin{array}{c}
-8 \\ 0 \\ 0 \\ 0
-\end{array}\right]$ & $\left[\begin{array}{cccc}
-0	& 0	& 9.969 & 4.133 \\
-\end{array}\right]$ & 0 \\ \hline
-%15             & 
-\begin{tabular}[c]{@{}c@{}}Computer\\ Tape\\ Driver\end{tabular} & $\left[\begin{array}{ccc}
--1760		& -976.6	& -457.8	\\
-1024		& 0			& 0			\\
-0			& 512 		& 0			\\	
-\end{array}\right]$ & $\left[\begin{array}{c}
-8 \\ 0 \\ 0
-\end{array}\right]$ & $\left[\begin{array}{ccc}
-1.5	& 2.051	& 1.144 \\
-\end{array}\right]$ & 0           \\ \hline
-%16             & 
-% \begin{tabular}[c]{@{}c@{}}USCG \\ Cutter\\ Tampa\\ Heading\\ Angle\end{tabular} & $\left[\begin{array}{ccc}
-% -0.271		& -0.05336	& 0	\\
-% 0.03125		& 0			& 0			\\
-% 0			& 0.01562 	& 0			\\	
-% \end{array}\right]$ & $\left[\begin{array}{c}
-% 1 \\ 0 \\ 0
-% \end{array}\right]$ & $\left[\begin{array}{ccc}
-% 0	& -0.5888	& -0.2562 \\
-% \end{array}\right]$ & 0 \\ \hline
-\end{tabular}
-\end{table}
-
 
 %-------------------------------
 \subsection{Objectives}
@@ -1972,4 +1802,175 @@ a continuous plant. Eq.~\eqref{eq:ode} is soundly discretized
 \vec{y}_k&=\mat{C}_d\vec{x}_k+\mat{D}_d\vec{u}_k .\nonumber
 \end{align}
 %
+
+%-------------------------------
+\section{Benchmarks for State-Space Physical Plants}
+\label{sec:BenchmarksforStateSpace}
+%-------------------------------
+
+\begin{table}[htb]
+\centering
+\footnotesize
+\caption{Benchmarks for State-Space Physical Plants.}
+\label{table:State-space-benchmarks}
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+%\textbf{ID \#} & 
+\textbf{System}                                                               & \textbf{A} & \textbf{B} & \textbf{C} & \textbf{D} \\ \hline
+%1              & 
+\begin{tabular}[c]{@{}c@{}}DC Motor\\ Position\end{tabular}                   & $\left[\begin{array}{ccc}
+0		& 1 		& 0						\\
+0 		& -1.087	& 8587					\\
+0		& -9964		& -1.455\times 10^{6}	\\
+\end{array}\right]$ & $\left[\begin{array}{c}
+0 \\ 0 \\ -1.455\times10^{6}
+\end{array}\right]$           & $\left[\begin{array}{ccc}
+1 & 0 & 0\\
+\end{array}\right]$ & 0 \\  \hline
+%2              & 
+% \begin{tabular}[c]{@{}c@{}}Aircraft \\ Pitch\\ Dynamics\end{tabular} & $\left[\begin{array}{ccc}
+% -0.313	& 56.7 		& 0		\\
+% -0.0139	& -0.426	& 0		\\
+% 0		& 56.7		& 0		\\
+% \end{array}\right]$ & $\left[\begin{array}{c}
+% 0.232 \\ 0.0203 \\ 0
+% \end{array}\right]$ & $\left[\begin{array}{ccc}
+% 1 & 0 & 0\\
+% \end{array}\right]$ & 0 \\ \hline
+%3            & 
+\begin{tabular}[c]{@{}c@{}}Ball\\ Magnetic\\ Levitation\end{tabular} & $\left[\begin{array}{ccc}
+0		& 1 		& 0		\\
+1752	& 0			& -34.07\\
+0		& 0			& -38.27\\
+\end{array}\right]$ & $\left[\begin{array}{c}
+0 \\ 0 \\ 1.923
+\end{array}\right]$ & $\left[\begin{array}{ccc}
+1 & 0 & 0\\
+\end{array}\right]$ & 0 \\ \hline
+%4              & 
+% \begin{tabular}[c]{@{}c@{}}Buck\\ Converter\end{tabular}                      & $\left[\begin{array}{cc}
+% 0		& -500 \\
+% 4545	& -1515\\
+% \end{array}\right]$ & $\left[\begin{array}{c}
+% 125 \\ 0 \\
+% \end{array}\right]$ & $\left[\begin{array}{cc}
+%  0 & 1\\
+% \end{array}\right]$ & 0 \\ \hline
+%5              & 
+% \begin{tabular}[c]{@{}c@{}}Boost\\ Converter\end{tabular} & $\left[\begin{array}{cc}
+% 0		& -375 \\
+% 3409	& -1515\\
+% \end{array}\right]$ & $\left[\begin{array}{c}
+% 500 \\ 0 \\
+% \end{array}\right]$ &  $\left[\begin{array}{cc}
+% 0 & 1\\
+% \end{array}\right]$  & 0        \\ \hline
+%6              & 
+% \begin{tabular}[c]{@{}c@{}}Buck-boost\\ Converter\end{tabular} & $\left[\begin{array}{cc}
+% 0		& 375 \\
+% -3409	& -1515\\
+% \end{array}\right]$ & $\left[\begin{array}{c}
+% 125 \\ 0 \\
+% \end{array}\right]$ & $\left[\begin{array}{cc}
+% 0 & 1\\
+% \end{array}\right]$ & 0 \\ \hline
+%7              & 
+\begin{tabular}[c]{@{}c@{}}Automotive\\ Cruise\\ System\end{tabular} & -0.05 & 0.03125 & 0.032 & 0 \\ \hline
+%8              & 
+\begin{tabular}[c]{@{}c@{}}DC Motor\\ Rate\end{tabular} & $\left[\begin{array}{cc}
+-1000		& -13 \\
+-8			& 0\\
+\end{array}\right]$ & $\left[\begin{array}{c}
+4 \\ 0 \\
+\end{array}\right]$ & $\left[\begin{array}{cc}
+0 & 6.25\\
+\end{array}\right]$ & 0 \\ \hline
+%9              & 
+\begin{tabular}[c]{@{}c@{}}Helicopter\\ Longitudinal\\ Motion\end{tabular}    & $\left[\begin{array}{ccc}
+-0.42		& 0.0168		& -0.396	\\
+0.5			& 0				& 0			\\
+0			& 0.5 			& 0			
+\end{array}\right]$ & $\left[\begin{array}{c}
+16 \\ 0 \\ 0
+\end{array}\right]$ & $~
+\left[\begin{array}{ccc}
+0.6125	& -0.6125	& 15.44 \\
+\end{array}\right]$ & 0 \\ \hline
+%10             & 
+Pendulum   & $\left[\begin{array}{cc}
+0		& -2.453	\\
+4		& 0			\\	
+\end{array}\right]$ & $\left[\begin{array}{c}
+4 \\ 0
+\end{array}\right]$ & $\left[\begin{array}{cc}
+-1.225	& -2.15 	\\
+\end{array}\right]$           & 9.8           \\ \hline
+%11             & 
+\begin{tabular}[c]{@{}c@{}}Inverted\\ Pendulum\end{tabular} & $\left[\begin{array}{cccc}
+0		& 1		& 0 	& 0	\\
+1		& 0		& 0		& 0	\\
+0		& 1 	& 0		& 0 \\
+0		& 0		& 1 	& 0 \\	
+\end{array}\right]$ & $\left[\begin{array}{c}
+1 \\ 0 \\ 0 \\ 0
+\end{array}\right]$  & $\left[\begin{array}{cccc}
+0	& 0	& 1 & -0.75 \\
+0	& 1	& 0	& 0		
+\end{array}\right]$ & $\left[\begin{array}{c}
+0 \\
+0 \end{array}\right]$ \\ \hline
+%12             & 
+\begin{tabular}[c]{@{}c@{}}Magnetic\\ Suspension\end{tabular} & $\left[\begin{array}{cc}
+0		& 31.25	\\
+32		& 0		\\	
+\end{array}\right]$ & $\left[\begin{array}{c}
+8 \\ 0
+\end{array}\right]$ & $\left[\begin{array}{cc}
+0	& 9.766 	\\
+\end{array}\right]$ & 0 \\ \hline
+%13             & 
+\begin{tabular}[c]{@{}c@{}}Magnetic\\ Pointer \end{tabular} & $\left[\begin{array}{ccc}
+-0.271		& -0.05336	& 0	\\
+0.03125		& 0			& 0	\\
+0			& 0.01562 	& 0	\\	
+\end{array}\right]$ & $\left[\begin{array}{c}
+1 \\ 0 \\ 0
+\end{array}\right]$ & $\left[\begin{array}{ccc}
+0	& -0.5888	& -0.2562 \\
+\end{array}\right]$ & 0           \\ \hline
+%14             & 
+\begin{tabular}[c]{@{}c@{}}1/4 Car\\ Suspension\end{tabular} & $
+\left[\begin{array}{cccc}
+-516.1	& -222.1& -79.75& -33.06	\\
+256		& 0		& 0		& 0			\\
+0		& 64 	& 0		& 0 \\
+0		& 0		& 32 	& 0 \\	
+\end{array}\right]$ & $\left[\begin{array}{c}
+8 \\ 0 \\ 0 \\ 0
+\end{array}\right]$ & $\left[\begin{array}{cccc}
+0	& 0	& 9.969 & 4.133 \\
+\end{array}\right]$ & 0 \\ \hline
+%15             & 
+\begin{tabular}[c]{@{}c@{}}Computer\\ Tape\\ Driver\end{tabular} & $\left[\begin{array}{ccc}
+-1760		& -976.6	& -457.8	\\
+1024		& 0			& 0			\\
+0			& 512 		& 0			\\	
+\end{array}\right]$ & $\left[\begin{array}{c}
+8 \\ 0 \\ 0
+\end{array}\right]$ & $\left[\begin{array}{ccc}
+1.5	& 2.051	& 1.144 \\
+\end{array}\right]$ & 0           \\ \hline
+%16             & 
+% \begin{tabular}[c]{@{}c@{}}USCG \\ Cutter\\ Tampa\\ Heading\\ Angle\end{tabular} & $\left[\begin{array}{ccc}
+% -0.271		& -0.05336	& 0	\\
+% 0.03125		& 0			& 0			\\
+% 0			& 0.01562 	& 0			\\	
+% \end{array}\right]$ & $\left[\begin{array}{c}
+% 1 \\ 0 \\ 0
+% \end{array}\right]$ & $\left[\begin{array}{ccc}
+% 0	& -0.5888	& -0.2562 \\
+% \end{array}\right]$ & 0 \\ \hline
+\end{tabular}
+\end{table}
+
 \end{document}
