@@ -680,7 +680,7 @@ arithmetic~\cite{moore1966interval} in the verification phase.
 
 Previous studies~\cite{gangli1} show that the FWL affects the poles and
 zeros positions, degrading the closed-loop dynamics, causing steady-state
-errors (see the Appendix~\ref{sec:appendix:LTIbackground} for details) and
+errors (see Appendix~\ref{sec:appendix:LTIbackground} for details) and
 eventually destabilizing the system~\cite{Bessa16}.  However, since in this
 paper we require stability only as a precursor to safety, it is sufficient
 to check that the (perturbed, noisy) model converges to a neighborhood of
@@ -695,14 +695,15 @@ safety accounting for the finite-precision errors.
 \label{sec:CEGARIS} 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-In this section, we describe our technique for synthesizing safe
-digital feedback controllers using CEGIS.  For this purpose, we first
-provide the synthesizer's general architecture, followed by describing
-our two approaches to synthesizing safe controllers:
-the first one is a baseline approach which relies on a naive explicit
-unwinding of the transition relation, whereas the second uses an
-abstraction to implicitly evaluate all possible progressions of the
-system simultaneously. % on an infinite time horizon.
+In this section, we describe our technique for synthesizing safe digital
+feedback controllers using CEGIS.  For this purpose, we first provide the
+synthesizer's general architecture, followed by describing our two
+approaches to synthesizing safe controllers: the first one is a baseline
+approach that relies on a naive explicit unwinding of the transition
+relation, whereas the second uses abstraction to implicitly evaluate all
+possible progressions of the system simultaneously.
+
+% on an infinite time horizon.
 
 %% We outline the general architecture of the program synthesizer used in both approaches \todo{which approaches - pls recall or clarify}. 
 %% We then give the details of both methods of solution generalization \todo{define ``solution generalization''} that we compare.  
@@ -719,7 +720,7 @@ $\exists P .  \forall x.  \sigma(x, P)$,
 where $P$ ranges over functions, 
 $x$ ranges over ground terms, 
 and $\sigma$ is a quantifier-free formula.  
-We interpret the ground terms over some finite domain $\mathcal{D}$.
+We interpret the ground terms over some finite domain~$\mathcal{D}$.
 %
 The design of our synthesizer consists of two phases, an inductive
 synthesis phase and a validation phase, which interact via a finite
