@@ -148,18 +148,18 @@ The problem of safety is an important one, since the synthesis of a stable contr
 that the system will not transitively visit an unsafe state which may result in an unrecoverable failure. 
 
 In this work, we propose the synthesis of \emph{safe} control algorithms for
-LTI models taking into consideration the continuous domain of the plant, 
-alongside the discrete domain of the controller, 
-as well as the hybrid elements that relate them.  
+LTI models taking into consideration the continuous dynamics of the plant, 
+alongside the discrete dynamics of the controller and the effects of its 
+implementation, as well as the hybrid elements that relate them.  
 %% In this paper, we synthesize controllers for hybrid
 %% closed-loop systems, i.e., software-implemented embedded controllers along
 %% with a model of their physical environment (the plant), that are
 %% \emph{safe}.
 Due to the complexity of such systems, in this work we focus 
 on linear models with known  implementation features (e.g., number of bits, fixed-point
-arithmetic), and perform 
-synthesis of safe digital controllers -- the extension to more general
-quantitative properties is left to future work.
+arithmetic), and perform synthesis of safe digital controllers, a property often 
+overlooked in feedback control synthesis, but which plays an important role 
+in real-world systems.
 
 We describe and evaluate two approaches for synthesising digital controllers
 for state-space physical plants, both based on CounterExample
