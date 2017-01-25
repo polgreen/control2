@@ -1443,23 +1443,24 @@ The performance gain from abstract acceleration may not hold for more complex pr
 \section{Conclusions}
 %-------------------------------
 
-We have presented two approaches to synthesize state feedback controllers 
+We have presented two automated approaches to synthesize digital state-feedback controllers 
 that ensure both stability and safety over the state-space representation.
-The first approach relies on explicit unfolding of the system's dynamics 
-up to the completeness threshold, whilst the second one applies abstraction 
+The first approach relies on explicit unfolding of the closed-loop model dynamics 
+up to a completeness threshold, whilst the second one applies abstraction 
 refinement and acceleration to increase speed whilst retaining soundness.
-Both approaches are novel in the control system literature in that it puts
+%
+Both approaches are novel within the control literature: they put 
 forward a fully automated synthesis approach that is algorithmically and
-numerically sound, considering the various error sources in the implementation 
-of the control algorithm and in the computational modeling of plant dynamics.
+numerically sound, considering various error sources in the implementation 
+of the digital control algorithm and in the computational modeling of plant dynamics. 
+%
 Our experimental results show that both approaches are able
-to synthesize stable controllers in most benchmarks within a reasonable
-amount of time fully automatically.  In particular, both approaches
-complement each other and together solve all benchmarks provided in the set.
-Future work will be the extension of these approaches to consider performance 
-requirements while synthesizing digital controllers and the application of them
-for synthesizing state observers that generally appears in state feedback 
-architecture.
+to synthesize stable controllers in most benchmarks within a small 
+amount of time automatically.  In particular, both approaches 
+complement each other and together solve all benchmarks, which have been derived from the control literature.  
+
+Future work will focus the extension of these approaches to output-based control architectures (hinging on the use of observers), 
+and to considering performance requirements (alongside safety) in the synthesis of digital controllers.  
 
 
 \newpage
@@ -1587,7 +1588,7 @@ The convergence to a finite value, however, will not make it asymptomatically st
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{Discretizing continuous space dynamics}
+\subsection{Time discretization of continuous-space dynamics}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 A dynamical system is a system in which a function describes the progression of a state over time. 
