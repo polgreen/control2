@@ -200,7 +200,9 @@ showing that both approaches are able to efficiently synthesize stable and safe 
 for a set of intricate physical plant models taken from the digital 
 control literature: the median runtime for our benchmark
 set is $7.9$ seconds, and most controllers can be synthesized in less
-than $17.2$ seconds.
+than $17.2$ seconds. We further show that, in a direct comparison, the abstraction-based
+approach lowers the median runtime of our benchmarks by a factor of seven over the
+multi-staged approach.
 
 
 \subsection*{Contributions} 
@@ -347,7 +349,7 @@ However, Pessoa does not have native inclusion of the quantization error
 introduced by Digital-to-Analogue/Analogue-to-Digital conversion needed for
 synthesizing fixed-point digital controllers.
 
-\todo{Have we covered all the literature by Feron et al?}  
+%\todo{Have we covered all the literature by Feron et al?}  
 
 \paragraph{Discretization Effects}
 
@@ -369,8 +371,8 @@ directly model the digital controller so that the selected parameters are
 stable by design.  The analyses in~\cite{DBLP:conf/hybrid/RouxJG15,
 DBLP:conf/hybrid/WangGRJF16} rely on an invariant computation on the
 discrete system dynamics using Semi-Definite Programming (SDP).  While the
-former uses BIBO properties to determine stability, the latter uses
-Lyapunov-based quadratic invariants.  In both cases, the SDP solver uses
+former uses bounded-input and bounded-output (BIBO) properties to determine stability, 
+the latter uses Lyapunov-based quadratic invariants.  In both cases, the SDP solver uses
 floating-point arithmetic and soundness is checked by bounding the error. 
 An alternative approach is taken by~\cite{park2016scalable}, where the
 verification of given control code is performed against a known model by
@@ -1119,11 +1121,11 @@ $P_a(z) = z^n+\sum_{i=1}^p{(a_i-k_i)z^{n-i}}$.
 \item Calculate the noise set $N$ from the quantizer resolutions and estimated round-off errors: %($\frac{q_1}{2},\frac{q_2}{2},q_3$)
 $$N=\left \{ \nu_1+\nu_2+ \nu_3 : \nu_1 \in \left[-\frac{q1}{2}\ \ \frac{q1}{2}\right] 
 \wedge \nu_2 \in \left[-\frac{q2}{2}\ \ \frac{q2}{2}\right]  \wedge \nu_3 \in \left[-q3\ \ q3\right]  \right \}\nonumber$$
-where $q3$ is the maximum truncation and rounding error of $u_k=-K\hat{x}_k$ as discussed in section \ref{sec:numeric_rep}
+where $q3$ is the maximum truncation and rounding error of $u_k=-K\hat{x}_k$ as discussed in section \ref{sec:numeric_rep}.
 More details on how to model quantization as noise are given in the 
 Appendix~\ref{appendix:quantization-noise}.
 \item Calculate a set of initial bounds on $K$, $\phi_{init}^{K}$, based on the input constraints. Note that these bounds will be used by the {\sc synthesize} phase to reduce the size of the solution space.
-$$(\phi_{init} \wedge u_k=-K x_k) \Rightarrow \phi_{init}^{K}$$
+$$(\phi_{init} \wedge \phi_{input} \wedge u_k=-K x_k) \Rightarrow \phi_{init}^{K}$$
 
 \end{enumerate}
 \item In the {\sc synthesize} phase, we synthesise a candidate controller
@@ -1186,7 +1188,7 @@ where $\mathcal{A}=\bigcup_{k=1}^\infty (A_d-B_dK)t^k, \mathcal{B}_{n}=\bigcup_{
 We next evaluate $\hat{X}^\# \models \phi_{safety}$. If the verification holds we have a solution, and exit the loop. Otherwise, 
 we find a counterexample iteration $k$ and corresponding initial point $x_0$ for which the property does not hold, which we use to locally refine the abstraction.
 When the abstraction cannot be further refined, we provide them to the {\sc abstract} phase.
-\todo{we should have a better argument here.}
+%\todo{we should have a better argument here.}
 %\end{enumerate} 
 \item If we reach the {\sc abstract} phase, it means that the candidate solution is not valid,
   in which case we must refine the abstraction used by the synthesizer.
@@ -1408,9 +1410,12 @@ The median runtime for our benchmark set is 7.9\,s.  Overall,
 the average synthesis time amounts to approximately 17.2\,s.  We
 consider these times short enough to be of practical use to control
 engineers, and thus affirm RQ1.  
+There are several cases for which the system may fail to find a controller. In the naive approach,
+there is the risk of the completeness threshold being too large, thus causing a timeout.
+In the abstraction case, there is the risk of requiring a very precise abstraction, resulting in too many refinements which may timeout.
+Other sources for incompleness are the inability of the {\sc synthesize} phase to use a large enough precision for the plant model in a given problem.
 
-The
-synthesized controllers were confirmed to be stable outside of our model
+The synthesized controllers were confirmed to be stable outside of our model
 representation using MATLAB, positively answering RQ2.  A~link to the full
 experimental environment, including scripts to reproduce the results, all
 benchmarks and the tool, is provided in the
@@ -1836,15 +1841,15 @@ the reachability matrix of the canonical form. Then
 %\textbf{ID \#} & 
 \textbf{System}                                                               & \textbf{A} & \textbf{B} & \textbf{C} & \textbf{D} \\ \hline
 %1              & 
-\begin{tabular}[c]{@{}c@{}}DC Motor\\ Position\end{tabular}                   & $\left[\begin{array}{ccc}
-0		& 1 		& 0						\\
-0 		& -1.087	& 8587					\\
-0		& -9964		& -1.455\times 10^{6}	\\
-\end{array}\right]$ & $\left[\begin{array}{c}
-0 \\ 0 \\ -1.455\times10^{6}
-\end{array}\right]$           & $\left[\begin{array}{ccc}
-1 & 0 & 0\\
-\end{array}\right]$ & 0 \\  \hline
+%\begin{tabular}[c]{@{}c@{}}DC Motor\\ Position\end{tabular}                   & $\left[\begin{array}{ccc}
+%0		& 1 		& 0						\\
+%0 		& -1.087	& 8587					\\
+%0		& -9964		& -1.455\times 10^{6}	\\
+%\end{array}\right]$ & $\left[\begin{array}{c}
+%0 \\ 0 \\ -1.455\times10^{6}
+%\end{array}\right]$           & $\left[\begin{array}{ccc}
+%1 & 0 & 0\\
+%\end{array}\right]$ & 0 \\  \hline
 %2              & 
 % \begin{tabular}[c]{@{}c@{}}Aircraft \\ Pitch\\ Dynamics\end{tabular} & $\left[\begin{array}{ccc}
 % -0.313	& 56.7 		& 0		\\
@@ -1896,12 +1901,12 @@ the reachability matrix of the canonical form. Then
 \begin{tabular}[c]{@{}c@{}}Automotive\\ Cruise\\ System\end{tabular} & -0.05 & 0.03125 & 0.032 & 0 \\ \hline
 %8              & 
 \begin{tabular}[c]{@{}c@{}}DC Motor\\ Rate\end{tabular} & $\left[\begin{array}{cc}
--1000		& -13 \\
--8			& 0\\
+-1000		& -104 \\
+1			& 0\\
 \end{array}\right]$ & $\left[\begin{array}{c}
-4 \\ 0 \\
+1 \\ 0 \\
 \end{array}\right]$ & $\left[\begin{array}{cc}
-0 & 6.25\\
+0 & 200\\
 \end{array}\right]$ & 0 \\ \hline
 %9              & 
 \begin{tabular}[c]{@{}c@{}}Helicopter\\ Longitudinal\\ Motion\end{tabular}    & $\left[\begin{array}{ccc}
