@@ -1357,9 +1357,9 @@ and can their stability and safety be confirmed outside of our model?
 \subsection{Results}
 %-------------------------------
 
-We give the run-times required to synthesize a stable controller for each
+We give the runtimes required to synthesize a stable controller for each
 benchmark in Table~\ref{tab:results}.  
-Here \textit{Benchmark} is the name of the employed
+Here \textit{Benchmark} is the name of the respective
 benchmark, $\mathcal{F}_{\langle I_p,F_p \rangle}$ is the fixed-point precision used
 to model the plant, while \textit{Time}
 is the total time (in milliseconds) required to synthesize a stable controller
@@ -1379,10 +1379,10 @@ in benchmark coverage and together solve all benchmarks in the set.
 \begin{table}
 \centering
 \scriptsize
-\begin{tabular}{| r | c | c | r | c | r |}
+\begin{tabular}{| c | l | c | r | c | r |}
 \hline
-\# & Benchmark  & \multicolumn{2}{|c|}{Multi-staged}                 & \multicolumn{2}{|c|}{Abstraction} \\
-   &            & \multicolumn{1}{|c|}{$\mathcal{F}_{\langle I_p,F_p \rangle}$} & \multicolumn{1}{|c|}{Time} & \multicolumn{1}{|c|}{$\mathcal{F}_{\langle I_p,F_p \rangle}$} & \multicolumn{1}{|c|}{Time} \\\hline
+\# & \multicolumn{1}{|c|}{Benchmark}  & \multicolumn{2}{|c|}{Multi-staged}                 & \multicolumn{2}{|c|}{Abstraction} \\
+   &                                  & \multicolumn{1}{|c|}{$\mathcal{F}_{\langle I_p,F_p \rangle}$} & \multicolumn{1}{|c|}{Time} & \multicolumn{1}{|c|}{$\mathcal{F}_{\langle I_p,F_p \rangle}$} & \multicolumn{1}{|c|}{Time} \\\hline
 1  & Cruise Control      & 8,16   & 6875   & 16,16  & 241    \\
 2  & DC Motor            & 8,16   & 8103   & 20,20  & 5376   \\
 3  & Helicopter          & \xmark & \xmark & 16,16  & 2120   \\
@@ -1424,7 +1424,7 @@ footnote.\footnote{\url{https://drive.google.com/open?id=0ByIexo3Z5N91eDludEdWdW
 %-------------------------------
 We report an assessment of both our approaches over a diverse set of real-world benchmarks. Nevertheless, this set of benchmarks is limited within the scope of this paper and the performance may not generalize to other benchmarks. 
 %
-Our algorithm to select suitable FWL word widths to model plant behavior employs a heuristic based on user-provided controller word-width specifications. For the first approach, where we may need to increase the precision of the time discretization, we select the time steps for the discretizations on a similar basis. This works sufficiently well for our benchmarks, but performance may suffer in some cases, for example if the completeness threshold is high. 
+Our algorithm to select suitable FWL word widths to model the plant behavior employs a heuristic based on user-provided controller word-width specifications. For the first approach, where we may need to increase the precision of the time discretization, we select the time steps for the discretizations on a similar basis. This works sufficiently well for our benchmarks, but performance may suffer in some cases, for example if the completeness threshold is high. 
 %
 The performance gain from abstract acceleration may not hold for more complex properties than stability, for instance ``eventually always reaches a certain safe set''. 
 
