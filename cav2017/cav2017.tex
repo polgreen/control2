@@ -339,11 +339,11 @@ synthesizing fixed-point digital controllers.
 \paragraph{Discretization Effects}
 
 The classical approach to control synthesis has often disregarded
-quantization, thus resulting in general to unsound digital controllers. 
-Modern techniques focus on different elements of discretization effects,
-including delayed response~\cite{Duggirala2015}, and Finite Word Length
-(FWL) semantics, with the goal either to verify (e.g.,~\cite{daes20161}) or
-to optimize (e.g.,~\cite{oudjida2014design}) given implementations.
+quantization, thus sacrificing soundness.  Modern techniques focus on
+different aspects of discretization, including delayed
+response~\cite{Duggirala2015} and Finite Word Length (FWL) semantics, with
+the goal either to verify (e.g.,~\cite{daes20161}) or to optimize
+(e.g.,~\cite{oudjida2014design}) given implementations.
 
 There are two different problems that arise from FWL semantics.  The first
 is the error in the dynamics caused by the inability to represent the exact
@@ -353,7 +353,7 @@ based on the error of the digital dynamics ensures that the deviation
 introduced by FWL does not make the digital system unstable.  A~more recent
 approach~\cite{DBLP:journals/automatica/WuLCC09} uses $\mu$-calculus to
 directly model the digital controller so that the selected parameters are
-stable by design.  The analysis in~\cite{DBLP:conf/hybrid/RouxJG15,
+stable by design.  The analyses in~\cite{DBLP:conf/hybrid/RouxJG15,
 DBLP:conf/hybrid/WangGRJF16} rely on an invariant computation on the
 discrete system dynamics using Semi-Definite Programming (SDP).  While the
 former uses bounded-input and bounded-output (BIBO) properties to determine
@@ -384,28 +384,34 @@ and non-linear systems.
 \label{ssec:ssrepresentation}
 %-------------------------------
 
-We consider models of physical plants expressed as ordinary differential equations (ODEs), 
-which we assume to be controllable and under full state information (namely where we have access to all the model variables):  
+We consider models of physical plants expressed as ordinary differential
+equations (ODEs), which we assume to be controllable and under full state
+information (i.e., we have access to all the model variables):
 %
 \begin{align}
 \label{eq:ode}
 \dot{x}(t) = Ax(t)+ B u(t), \quad x \in \mathbb{R}^{n}, u \in \mathbb{R}^m, A \in \mathbb{R}^{n \times n}, B \in \mathbb{R}^{n \times m}, 
 \end{align}
-where $t \in \mathbb R_0^+$, 
-where $A$ and $B$ are matrices that fully specify the continuous plant, 
-and with initial states set as $x(0)$. 
-Whilst we ideally would like to work on the continuous-time plant, 
-in this work Eq.~\eqref{eq:ode} is soundly discretized in time (as shown in Appendix~\ref{sec:appendix:LTIbackground}) into %\textcolor{red}{What is subscript ``d''?}
+%
+where $t \in \mathbb R_0^+$, where $A$ and $B$ are matrices that fully
+specify the continuous plant, and with initial states set as $x(0)$.  While
+we ideally would like to work on the continuous-time plant, in this work
+Eq.~\eqref{eq:ode} is soundly discretized in time (as shown in
+Appendix~\ref{sec:appendix:LTIbackground}) into
+%
+%\textcolor{red}{What is subscript ``d''?}
 %
 \begin{align}
 \label{eq:plant}
 x_{k+1} = A_d x_k+ B_d u_k. 
 \end{align} 
-where $k \in \mathbb N$, 
-and with initial state $x_{0}=x(0)$. $A_d$ and $B_d$ denote the matrices that describes the discretized plant dynamics and $A$ and $B$ the continuous plant dynamics. 
-Later, we will deal with the issue of variable quantization, as introduced by the ADC/DAC conversion blocks.  
-
 %
+where $k \in \mathbb N$ and with initial state $x_{0}=x(0)$.  $A_d$ and
+$B_d$ denote the matrices that describe the discretized plant dynamics and
+$A$ and $B$ the continuous plant dynamics.  Later, we will address the
+issue of variable quantization, as introduced by the ADC/DAC conversion
+blocks (Fig.~\ref{fig:digitalsystem}).
+
 \begin{figure*}[htb]
 \centering
 
@@ -497,9 +503,10 @@ Later, we will deal with the issue of variable quantization, as introduced by th
   \path (Kd.north) edge (circle.south);
  \end{tikzpicture}
 }
- \caption{Closed-loop digital control system. 
+ \caption{Closed-loop digital control system 
  \label{fig:digitalsystem}}
 \end{figure*}
+
 %-------------------------------
 \subsection{Controller synthesis via state feedback}
 \label{ssec:statefeedbackcontrol}
@@ -526,10 +533,14 @@ The closed-loop model then takes the form
 \label{eq:closedloopss}
 x_{k+1} = ( A_d - B_d K ) x_k + B_d r_k.
 \end{align}
-The gain matrix $K$ can be set so that the closed-loop discrete dynamics are shaped as desired, 
-for instance according to a specific stability goal or around a specific dynamical behavior \cite{astrom1997computer}. 
-As argued later in this work, we will target more complex objectives, such as quantitative safety requirements that are not typical in the digital control literature. 
-Further, we will encompass the digital nature of the controller, which manipulates quantities with finite precision. 
+%
+The gain matrix $K$ can be set so that the closed-loop discrete dynamics are
+shaped as desired, for instance according to a specific stability goal or
+around a specific dynamical behavior \cite{astrom1997computer}.  As argued
+later in this work, we will target more complex objectives, such as
+quantitative safety requirements, which are not typical in the digital
+control literature.  Further, we will embrace the digital nature of the
+controller, which manipulates quantities with finite precision.
 
 %-------------------------------
 \subsection{Stability of closed-loop systems}
@@ -537,11 +548,13 @@ Further, we will encompass the digital nature of the controller, which manipulat
 %-------------------------------
 
 
-Asymptotic stability implies convergence to an equilibrium point from any states in its neighborhood. This stability concept is stronger than the Lyapunov and BIBO stability researched by previous works~\cite{DBLP:conf/emsoft/RavanbakhshS16,DBLP:journals/corr/AbateBCCDKK16,DBLP:conf/hybrid/RouxJG15,
-DBLP:conf/hybrid/WangGRJF16}. In the case of linear systems as 
-in~\eqref{eq:closedloopss}, the equilibrium point for zero-input 
-response is always the  origin.  Here, we consider systems with 
-a zero reference signal.
+Asymptotic stability implies convergence to an equilibrium point from any
+states in its neighborhood.  This stability concept is stronger than the
+Lyapunov and BIBO stability researched by previous
+works~\cite{DBLP:conf/emsoft/RavanbakhshS16,DBLP:journals/corr/AbateBCCDKK16,DBLP:conf/hybrid/RouxJG15,
+DBLP:conf/hybrid/WangGRJF16}.  In the case of linear systems as
+in~\eqref{eq:closedloopss}, the equilibrium point for zero-input response is
+always the origin.  Here, we consider systems with a zero reference signal.
 
 A discrete-time LTI system as \eqref{eq:closedloopss} is asymptotically stable
 \textit{iff} all the roots of the characteristic polynomial (i.e., the
@@ -559,19 +572,19 @@ desired (see Appendix~\ref{sec:appendix-stability} for details).
 \label{ssec:safety}
 %-------------------------------
 
-In this study, we are not limited to the synthesis of digital stabilizing
-controllers -- a well known task in the literature on digital control system
--- but target safety requirements with an overall approach that is sound and
-automated.  More specifically, we require that the closed-loop system
+We are not limited to the synthesis of digital stabilizing controllers -- a
+well known task in the literature on digital control system -- but target
+safety requirements with an overall approach that is sound and automated. 
+More specifically, we require that the closed-loop system
 \eqref{eq:closedloopss} meets given safety specifications.  A safety
 specification raises a requirement on the states of the model, such that the
-feedback controller (namely the choice of the gains matrix $K$) must ensure that
-the states never exit such requirement.  Note that a stable, closed-loop
-system is not necessarily a safe system: indeed, the state values may leave
-the safe space whilst they converge to the equilibrium, which is typical in
-the case of oscillatory dynamics.  However, a safe system will always be
-stable.  In~this work, the safety property represented by $\phi_\mathit{safety}$ is
-encoded as follows:
+feedback controller (namely the choice of the gains matrix $K$) must ensure
+that the states never exit such requirement.  Note that a stable,
+closed-loop system is not necessarily a safe system: indeed, the state
+values may leave the safe space whilst they converge to the equilibrium,
+which is typical in the case of oscillatory dynamics.  However, a safe
+system will always be stable.  In~this work, the safety property represented
+by $\phi_\mathit{safety}$ is encoded as follows:
 %
 \begin{equation}
 \label{eq:safetyliteral}
