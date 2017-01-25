@@ -1715,93 +1715,93 @@ The maximum size of a real number $x$ that can be represented in a fixed point d
 %y_k &= \vec{C}_d \vec{x}_ k + \vec{D}_d \vec{u}_ k+{\vec{\nu}_1}_k. 
 %\end{align}
 
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{Controllable canonical form} \label{sec:reachable}
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-Let us have a discrete time SISO system with an $n^{th},m^{th} : n\geq m$ order armax model
-$$y[k]=\sum_{i=1}^n a_iy[k-i]+\sum_{i=0}^m b_iu[k-i],$$
-where $y$ is the output of the system and $u$ its input.
-The equivalent LTI dynamics of such a model are:
-\begin{align}
-\label{eq:cf_SISO}
-\vec{x}_{k+1}=&\mat{A}_{cf}\vec{x}_k+\mat{B}_{cf}u_k : \vec{x}_k=[y_{k-n}\ \hdots y_{k-1}\ y_{k}]^T\\
-y_k=&\mat{C}_{cf}\vec{x}_k + b_0u_k\nonumber\\
-\mat{A}_{cf}=&\left[
-\begin{array}{ccccc}
-0&1&0&\cdots&0\\
-0&0&1&\cdots&0\\
-\vdots&\vdots&\vdots&\ddots&\vdots\\
-0&0&0&\cdots&1\\
--a_n&-a_{n-1}&-a_{n-2}&\cdots&-a_1
-\end{array}\right],
-\mat{B}_{cf}=\left[
-\begin{array}{c}
-0\\0\\ \vdots\\ 0\\ 1
-\end{array}\right]\nonumber\\
-\mat{C}_{cf}=&[\begin{array}{ccccc}b_n-a_nb_0&b_{n-1}-a_{n-1}b_0&\cdots&b_1-a_1b_0\end{array}] : b_{i \in (m\ n]}=0\nonumber
-\end{align}
-
-where the coefficients $a_i$ describe the characteristic polynomial of the system. This matrix shape is
-called a Controllable Canonical Form because the dynamics of the feedback are directly related to these
-coefficients. Specifically, given a feedback controller $\mat{K}$ for this system, the closed loop dynamics
-will have the shape
-\begin{align}
-\mat{A}_{cf}+\mat{B}_{cf}\mat{K}_{cf}=&\left[
-\begin{array}{ccccc}
-0&1&0&\cdots&0\\
-0&0&1&\cdots&0\\
-\vdots&\vdots&\vdots&\ddots&\vdots\\
-0&0&0&\cdots&1\\
-k_n-a_n&k_{n-1}-a_{n-1}&k_{n-2}-a_{n-2}&\cdots&k_1-a_1
-\end{array}\right]
-\label{eq:cf_SISO_fb}
-\end{align}
-which means we can directly modify each coefficient by selecting a controller parameter.
-In the MIMO case, the Controllable Canonical Form has the following shape:
-\begin{align}
-\mat{A}_{cf}=&\left[
-\begin{array}{ccccc}
-0&\mat{I}_{n-1}&0&\cdots&0\\
-0&0&\mat{I}_{n-2}&\cdots&0\\
-\vdots&\vdots&\vdots&\ddots&\vdots\\
-0&0&0&\cdots&1\\
--\mat{a_n}\mat{M}_n&-\mat{a_{n-1}}\mat{M}_{n-1}&-\mat{a_{n-2}}\mat{M}_{n-2}&\cdots&-\mat{a_1}\mat{M}_{1}
-\end{array}\right],
-\mat{B}_{cf}=\left[
-\begin{array}{c}
-0\\0\\ \vdots\\ 0\\ \mat{M}_0
-\end{array}\right]\nonumber\\
-\mat{C}_{cf}=&[\begin{array}{ccccc}\mat{\eta}_n&\mat{\eta}_{n-1}&\cdots&\mat{\eta}_1\end{array}] :
-\mat{I}_i,\mat{M}_i \in \mathbb{R}^{q_i \times q_i} \wedge \mat{a}_i \in \mathbb{R}^{q \times q_i} \wedge \mat{\eta}_i \in \mathbb{R}^o \wedge  \mat{\eta}_{i \in (m\ n]}=0 \nonumber
-\label{eq:cf_MIMO}
-\end{align}
-where $q$ is the number of inputs, $q_i$ the number of inputs with a transfer function of order of at least $i$, $\mat{I}_i$ an identity matrix, $\mat{M}_i$ an upper triangular matrix with 1s in its diagonal, $\mat{a_i}$ a matrix of coefficients of the $i^th$ order on its diagonal, and $o$ the number of outputs. Ideally we aim for $\mat{M}_i=\mat{I}_i, \forall i>0$
-
-Any LTI system can be transformed into a controllable canonical form by a matrix $\mat{T} : \vec{x}=\mat{T}\hat{\vec{x}}$
-Then the dynamics of the controllable form are
-\begin{align}
-\hat{\vec{x}}_{k+1}=&\mat{A}_{cf}\hat{\vec{x}}_k+\mat{B}_{cf}u_k : \mat{A}_{cf}=\mat{T}\mat{A}\mat{T}^{-1} \wedge \mat{B}_{cf}=\mat{T}\mat{B}\\
-y_k=&\mat{C}_{cf}\hat{\vec{x}}_k + b_0u_k : \mat{C}_{cf}=\mat{C}\mat{T}^{-1}\nonumber
-\end{align}
-where $\mat{T}$ can be calculated as follows:
-
-Let 
-\begin{equation}
-\mat{R}=[\begin{array}{ccccc}\mat{B}&\mat{A}\mat{B}&\mat{A}^2\mat{B}&\hdots&\mat{A}^{n-1}\mat{B}\end{array}]
-\label{eq:rncf}
-\end{equation}
-be the reachability matrix of the system, and
-\begin{equation}
-\mat{R}_{cf}=\left[\begin{array}{ccccc}1&a_1&a_2&\hdots&a_{n-1}\\0&1&a_1&\hdots&a_{n-2}\\ \vdots&\ddots&\ddots&\ddots&\ddots\end{array}\right]
-\label{eq:rcf}
-\end{equation}
-the reachability matrix of the canonical form. Then 
-\begin{equation}
-\mat{T}=\mat{R}_{cf}\mat{R}^{-1}
-\label{eq:to_cf}
-\end{equation}
-
+%%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+%\subsection{Controllable canonical form} \label{sec:reachable}
+%%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+%
+%Let us have a discrete time SISO system with an $n^{th},m^{th} : n\geq m$ order armax model
+%$$y[k]=\sum_{i=1}^n a_iy[k-i]+\sum_{i=0}^m b_iu[k-i],$$
+%where $y$ is the output of the system and $u$ its input.
+%The equivalent LTI dynamics of such a model are:
+%\begin{align}
+%\label{eq:cf_SISO}
+%\vec{x}_{k+1}=&\mat{A}_{cf}\vec{x}_k+\mat{B}_{cf}u_k : \vec{x}_k=[y_{k-n}\ \hdots y_{k-1}\ y_{k}]^T\\
+%y_k=&\mat{C}_{cf}\vec{x}_k + b_0u_k\nonumber\\
+%\mat{A}_{cf}=&\left[
+%\begin{array}{ccccc}
+%0&1&0&\cdots&0\\
+%0&0&1&\cdots&0\\
+%\vdots&\vdots&\vdots&\ddots&\vdots\\
+%0&0&0&\cdots&1\\
+%-a_n&-a_{n-1}&-a_{n-2}&\cdots&-a_1
+%\end{array}\right],
+%\mat{B}_{cf}=\left[
+%\begin{array}{c}
+%0\\0\\ \vdots\\ 0\\ 1
+%\end{array}\right]\nonumber\\
+%\mat{C}_{cf}=&[\begin{array}{ccccc}b_n-a_nb_0&b_{n-1}-a_{n-1}b_0&\cdots&b_1-a_1b_0\end{array}] : b_{i \in (m\ n]}=0\nonumber
+%\end{align}
+%
+%where the coefficients $a_i$ describe the characteristic polynomial of the system. This matrix shape is
+%called a Controllable Canonical Form because the dynamics of the feedback are directly related to these
+%coefficients. Specifically, given a feedback controller $\mat{K}$ for this system, the closed loop dynamics
+%will have the shape
+%\begin{align}
+%\mat{A}_{cf}+\mat{B}_{cf}\mat{K}_{cf}=&\left[
+%\begin{array}{ccccc}
+%0&1&0&\cdots&0\\
+%0&0&1&\cdots&0\\
+%\vdots&\vdots&\vdots&\ddots&\vdots\\
+%0&0&0&\cdots&1\\
+%k_n-a_n&k_{n-1}-a_{n-1}&k_{n-2}-a_{n-2}&\cdots&k_1-a_1
+%\end{array}\right]
+%\label{eq:cf_SISO_fb}
+%\end{align}
+%which means we can directly modify each coefficient by selecting a controller parameter.
+%In the MIMO case, the Controllable Canonical Form has the following shape:
+%\begin{align}
+%\mat{A}_{cf}=&\left[
+%\begin{array}{ccccc}
+%0&\mat{I}_{n-1}&0&\cdots&0\\
+%0&0&\mat{I}_{n-2}&\cdots&0\\
+%\vdots&\vdots&\vdots&\ddots&\vdots\\
+%0&0&0&\cdots&1\\
+%-\mat{a_n}\mat{M}_n&-\mat{a_{n-1}}\mat{M}_{n-1}&-\mat{a_{n-2}}\mat{M}_{n-2}&\cdots&-\mat{a_1}\mat{M}_{1}
+%\end{array}\right],
+%\mat{B}_{cf}=\left[
+%\begin{array}{c}
+%0\\0\\ \vdots\\ 0\\ \mat{M}_0
+%\end{array}\right]\nonumber\\
+%\mat{C}_{cf}=&[\begin{array}{ccccc}\mat{\eta}_n&\mat{\eta}_{n-1}&\cdots&\mat{\eta}_1\end{array}] :
+%\mat{I}_i,\mat{M}_i \in \mathbb{R}^{q_i \times q_i} \wedge \mat{a}_i \in \mathbb{R}^{q \times q_i} \wedge \mat{\eta}_i \in \mathbb{R}^o \wedge  \mat{\eta}_{i \in (m\ n]}=0 \nonumber
+%\label{eq:cf_MIMO}
+%\end{align}
+%where $q$ is the number of inputs, $q_i$ the number of inputs with a transfer function of order of at least $i$, $\mat{I}_i$ an identity matrix, $\mat{M}_i$ an upper triangular matrix with 1s in its diagonal, $\mat{a_i}$ a matrix of coefficients of the $i^th$ order on its diagonal, and $o$ the number of outputs. Ideally we aim for $\mat{M}_i=\mat{I}_i, \forall i>0$
+%
+%Any LTI system can be transformed into a controllable canonical form by a matrix $\mat{T} : \vec{x}=\mat{T}\hat{\vec{x}}$
+%Then the dynamics of the controllable form are
+%\begin{align}
+%\hat{\vec{x}}_{k+1}=&\mat{A}_{cf}\hat{\vec{x}}_k+\mat{B}_{cf}u_k : \mat{A}_{cf}=\mat{T}\mat{A}\mat{T}^{-1} \wedge \mat{B}_{cf}=\mat{T}\mat{B}\\
+%y_k=&\mat{C}_{cf}\hat{\vec{x}}_k + b_0u_k : \mat{C}_{cf}=\mat{C}\mat{T}^{-1}\nonumber
+%\end{align}
+%where $\mat{T}$ can be calculated as follows:
+%
+%Let 
+%\begin{equation}
+%\mat{R}=[\begin{array}{ccccc}\mat{B}&\mat{A}\mat{B}&\mat{A}^2\mat{B}&\hdots&\mat{A}^{n-1}\mat{B}\end{array}]
+%\label{eq:rncf}
+%\end{equation}
+%be the reachability matrix of the system, and
+%\begin{equation}
+%\mat{R}_{cf}=\left[\begin{array}{ccccc}1&a_1&a_2&\hdots&a_{n-1}\\0&1&a_1&\hdots&a_{n-2}\\ \vdots&\ddots&\ddots&\ddots&\ddots\end{array}\right]
+%\label{eq:rcf}
+%\end{equation}
+%the reachability matrix of the canonical form. Then 
+%\begin{equation}
+%\mat{T}=\mat{R}_{cf}\mat{R}^{-1}
+%\label{eq:to_cf}
+%\end{equation}
+%
 
 % %-------------------------------
 % \section{Extensions}
@@ -1830,10 +1830,16 @@ the reachability matrix of the canonical form. Then
 % \end{align}
 %
 
+\newpage
+
 %-------------------------------
 \section{Benchmarks for State-Space Physical Plants}
 \label{sec:BenchmarksforStateSpace}
 %-------------------------------
+
+We have derived a number of benchmarks from the control literature, which we report below. 
+As discussed, in this paper, we disregard the presence of output signals, that is the effect of matrices $\textbf{C}, \textbf{D}$. 
+%
 
 \begin{table}[htb]
 \centering
