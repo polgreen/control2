@@ -180,12 +180,12 @@ the number of iterations required to sufficiently unwind
 the closed-loop state-space system such
 that the boundaries are not violated for any larger number of iterations.
 As it requires explicit unfolding up to the completeness
-threshold, this approach may suffer from state space explosion.
+threshold, this approach may suffer from state-space explosion.
 
 Instead of explicitly unfolding the dynamics, {\em the second approach} 
 employs {\em abstract acceleration}~\cite{cattaruzza2015unbounded} to implicitly
 evaluate all possible progressions of the system simultaneously and thus avoid
-the state space explosion problem.
+the state-space explosion problem.
 Additionally, the second approach uses
 {\em abstraction refinement} enabling us to always start with a very simple description
 regardless of the complexity of the overall dynamics, and only expand to more
@@ -206,12 +206,12 @@ first approach based on the unfolding of the dynamics.
 \begin{enumerate}
 %
 \item In this paper we extend the problem of digital control synthesis 
-  from a transfer function representation into a state space representation. 
+  from a transfer function representation into a state-space representation. 
   Such representation allows to study the  input-to-state dynamics, while 
   transfer functions represents only input-output relations and cannot be 
   enough to ensure deeper properties, e.g., the safety property.
 %
-\item We proposes a synthesis of state feedback controllers that ensures 
+\item We proposes a synthesis of state-feedback controllers that ensures 
   safety properties, that is only  possible in state-space representation. 
   In addition to the already existing stability conditions which is a much 
   harder problem.
@@ -221,12 +221,12 @@ first approach based on the unfolding of the dynamics.
   threshold, whilst the second one is abstraction-based and leverages
   the concepts of abstraction refinement and acceleration to increase 
   speed whilst retaining soundness. Both approaches provide sound
-  synthesis of state feedback systems considering the various
+  synthesis of state-feedback systems considering the various
   error sources in the implementation of the control algorithm and in the
   computational modeling of plant dynamics.
 %
 \item We develop a model for different sources quantization and their
-  effect on the state space progression, for which we find safe bounds
+  effect on the state-space progression, for which we find safe bounds
   that ensure the safety of our controllers in a hybrid
   continuous-digital domain.
 %
@@ -336,7 +336,7 @@ computation of reachability properties over the finite-state machine.  Based
 on this safety specification over state values, Pessoa can synthesize
 embedded controller software for a range of properties.
 The embedded controller software can be more complicated than
-the state feedback control we synthesized, and the properties 
+the state-feedback control we synthesized, and the properties 
 available cover more detail.
 %based on a safety specification over state values, as well as specification on characteristic functions of the controller. 
 However, Pessoa does not have native inclusion of the quantization error
@@ -526,7 +526,7 @@ where the control action $u_k$ (notice we work with the discretized signal) is c
 u_k = r_{k} - K x_k. 
 \end{equation}
 %
-Here $K \in \mathbb{R}^{m \times n}$ is a state feedback gain matrix, 
+Here $K \in \mathbb{R}^{m \times n}$ is a state-feedback gain matrix, 
 and $r_{k}$ is a reference signal (again digital).   
 %
 The closed-loop model then takes the form 
