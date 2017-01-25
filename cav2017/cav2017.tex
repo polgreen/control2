@@ -1592,53 +1592,59 @@ The convergence to a finite value, however, will not make it asymptomatically st
 A dynamical system is a system in which a function describes the progression of a state over time. 
 In a continuous domain with linear dynamics, it is described by a first order Ordinary Differential Equation (ODE).
 \begin{equation}
-\dot{x}(t)=\vec{A}\vec{x}(t)+\vec{B}\vec{u}(t) +\vec{w}(t).
+\dot{x}(t)=Ax(t)+Bu(t).
 \label{eq:dynamical}
 \end{equation}
-
-\noindent with $\vec{w} \sim \mathcal{N}(0,Q)$.\\
-Furthermore, a control system may have a derived output that is a linear combination of its states and inputs, 
-which may restrict the observability of the state-space from the output space.
-\begin{equation}
-\vec{y}(t)=\vec{C}\vec{x}(t)+\vec{D}\vec{u}(t).
-\end{equation}
+%Furthermore, a control system may have a derived output that is a linear combination of its states and inputs, 
+%which may restrict the observability of the state-space from the output space.
+%\begin{equation}
+%\vec{y}(t)=\vec{C}\vec{x}(t)+\vec{D}\vec{u}(t).
+%\end{equation}
 
 Discretization of an continuous dynamical system turns the ODE into a difference equation, assuming zero-order hold
-for the input $\vec{u}$ and continuous integration for the noise $\vec{w}$, to
+for the input $u$, 
+%and continuous integration for the noise $\vec{w}$, 
+to
 \begin{align}
 \label{eq:discretization}
-\vec{x}_{k+1} &= \vec{A}_d\vec{x}_k+\vec{B}_d\vec{u}_k + \vec{w}_k,\\
-y_k &= \vec{C}_d \vec{x}_ k + \vec{D}_d \vec{u}_ k. 
+x_{k+1} &= A_d x_k+B_d u_k,
+%\\y_k &= \vec{C}_d \vec{x}_ k + \vec{D}_d \vec{u}_ k. 
 \end{align}
-with covariance for $\vec{w}_k \sim \mathcal{N}(0,Q_d)$,
+%with covariance for $\vec{w}_k \sim \mathcal{N}(0,Q_d)$,
 where
 \begin{align}
 \label{eq:discretize}
-\vec{A}_d &= e^{\vec{A} T_s} = \mathcal{L}^{-1} { ( s \vec{I} - \vec{A} )^{-1} }_{t = T_s},\\
-\vec{B}_d &= \int_{0}^{T_s} e^{\vec{A} t} dt\ \vec{B} = \vec{A}^{-1} ( \vec{A}_d - \vec{I} ) \vec{B},\\
-\vec{C}_d &= \vec{C},\\
-\vec{D}_d &= \vec{D},\\
-Q_d &= \int_{0}^{T_s} e^{\vec{A} t} Q e^{\vec{A}^T t} dt.
+A_d &= e^{A T_s} = \mathcal{L}^{-1} { ( s I - A )^{-1} }_{t = T_s},\\
+B_d &= \int_{0}^{T_s} e^{A t} dt\ B = A^{-1} ( A_d - I ) B,
+%\\
+%\vec{C}_d &= \vec{C},\\
+%\vec{D}_d &= \vec{D},\\
+%Q_d &= \int_{0}^{T_s} e^{\vec{A} t} Q e^{\vec{A}^T t} dt.
 \end{align}
 and $T_s$ is the sample time. Then
-\begin{align*}
-x(kT_s)=x_k \wedge y(kT_s) = y_k, \forall k.
-\end{align*}
-Let $g_d(k)=\mathcal{G}(t,g(t),T)$ be a function that performs the discretization described above, where $g(t)$
-represents the continuous dynamics and $g_d(k)$ the corresponding discrete dynamics. 
-Let $G(s)=\mathcal{L}(g(t))$ and $G_d(z)=\mathcal{Z}(g_d(k))$ be the corresponding Laplace and Z-transforms
-of $g(t)$ and $g_d(k)$. Given this relation, we have 
-$$G_d(z)=G(z)|_{z=e^{sT}} : g_d(k)=\mathcal{G}(t,g(t),T) \wedge T < \frac{1}{.5f_s},$$
-where $.5f_s$ is the Nyquist frequency of $g(t)$. This last restriction is introduced to avoid the effects of aliasing
-which could cause ``phantom poles'' to appear otherwise. 
-The eigenvalues of $\vec{A}_d$ corresponding to the poles of $G_d(z)$, and those of $\vec{A}$ corresponding to the poles of $G(s)$ are similarly related.
-$\hat{\lambda}_i=e^{-\lambda_iT} : \hat{\lambda}_i \in \sigma(\vec{A}_d) \wedge \lambda_i \in \sigma(\vec{A})$
+$x(kT_s)=x_k 
+%\wedge y(kT_s) = y_k, 
+\forall k \in \mathbb N$.
+%\end{align*}
+%Let $g_d(k)=\mathcal{G}(t,g(t),T)$ be a function that performs the discretization described above, where $g(t)$
+%represents the continuous dynamics and $g_d(k)$ the corresponding discrete dynamics. 
+%Let $G(s)=\mathcal{L}(g(t))$ and $G_d(z)=\mathcal{Z}(g_d(k))$ be the corresponding Laplace and Z-transforms
+%of $g(t)$ and $g_d(k)$. Given this relation, we have 
+%$$G_d(z)=G(z)|_{z=e^{sT}} : g_d(k)=\mathcal{G}(t,g(t),T) \wedge T < \frac{1}{.5f_s},$$
+%where $.5f_s$ is the Nyquist frequency of $g(t)$. This last restriction is introduced to avoid the effects of aliasing
+%which could cause ``phantom poles'' to appear otherwise. 
+The eigenvalues of $A_d$ 
+%corresponding to the poles of $G_d(z)$, 
+are related to those of $A$:  
+% corresponding to the poles of $G(s)$ are similarly related.
+$\hat{\lambda}_i=e^{-\lambda_iT_s}$, where $\hat{\lambda}_i \in \sigma(A_d) \wedge \lambda_i \in \sigma(A)$
 where $\sigma(\cdot)$ is the spectrum of a matrix.
-The following remark is worth mentioning regarding the above.
-\begin{remark}
-The witnessed maximum amplitude of the discrete signals $x_k,y_k$ may be smaller to that of $x(t),y(t)$ due to synchronism at fraction-frequency sampling.
-This means that reasoning about the state-space must consider the effects of this possibility as well of the case of maximal inputs from the continuous specification.
-\end{remark}
+
+%The following remark is worth mentioning regarding the above.
+%\begin{remark}
+%The witnessed maximum amplitude of the discrete signals $x_k,y_k$ may be smaller to that of $x(t),y(t)$ due to synchronism at fraction-frequency sampling.
+%This means that reasoning about the state-space must consider the effects of this possibility as well of the case of maximal inputs from the continuous specification.
+%\end{remark}
 
 \subsection{Errors due to numerical representation} \label{appendix:numerical_errors}
 
