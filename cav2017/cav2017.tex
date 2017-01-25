@@ -141,20 +141,11 @@ the effects of finite-precision arithmetic, time discretization, and quantizatio
 by Analogue-to-Digital (ADC) and Digital-to-Analogue (DAC) conversion.  
 While research on digital control is well developed~\cite{astrom1997computer}, 
 automated and sound control synthesis is challenging, 
-%Thus, the programming is a key barrier to broad adoption of digital control, 
-%and requires considerable expertise.
-%Whilst there is a vast literature on validation of control systems,
-%the subject of control synthesis has been somewhat restricted in the properties it explores.  
-%Traditionally, this focuses mainly on stability %, working typically on continuous domains
 particularly when the synthesis objective goes beyond classical stability or tracking requirements. 
-%\cite{DBLP:journals/corr/AbateBCCDKK16,sadabadi2016static}, or using switched
-%models~\cite{DBLP:conf/emsoft/RavanbakhshS16}. 
-Beyond stability, recently reachability tools have been developed [cite
-SPACEx, Phaver, and others], however they have not been employed towards
+Beyond stability, recently reachability tools have been developed \cite{FLD+11,Fre05}, however they have not been employed towards
 control synthesis.
-%\todo{why do we cite this paper \cite{cimatti2013parameter}?what is the relationship with our work? }
-% when discretising the state-space for verification and
-%parameter synthesis~\cite{cimatti2013parameter}. 
+The problem of safety is an important one, since the synthesis of a stable controller does not ensure
+that the system will not transitively visit an unsafe state which may result in an unrecoverable failure. 
 
 In this work, we propose the synthesis of \emph{safe} control algorithms for
 LTI models taking into consideration the continuous domain of the plant, 
@@ -626,10 +617,8 @@ The following errors appear in simple operations. Let $c_1, c_2$ and $c_3$ be re
 \begin{enumerate}
 \item Addition/Subtraction: these operations only propagate errors coming from truncation of the operands, namely 
 $\mathcal{F}_{\langle I,F \rangle}(c_1) \pm \mathcal{F}_{\langle I,F \rangle}(c_2) = c_3 + \delta_3 :|\delta_3| \leq |\delta_{T1}| + |\delta_{T2}|$.
-
-
 \item Multiplication: $\mathcal{F}_{\langle I,F \rangle}(c_1) * \mathcal{F}_{\langle I,F \rangle}(c_2) =  c_3 + \delta_3 :|\delta_3| \leq |\delta_{T1}*\mathcal{F}_{\langle I,F \rangle}(c_2)| + |\delta_{T2}*\mathcal{F}_{\langle I,F \rangle}(c_1)| + c_m$, where $c_m=2^{-F}$ as above.
-\item In this implementation we only need to divide by positive numbers(where it is needed for checking stability) \todo{so: what does that imply? pls clarify explicitly.}. 
+\item Division: the operations performed by our controllers in the FWL domain do not include division, so these bounds are inconsequential to this paper. 
 \end{enumerate}
 
 \item {\bf Overflow:}
@@ -637,9 +626,8 @@ The maximum size of a real number $x$ that can be represented in a fixed point d
 
 \end{enumerate}
 
-We will use $\mathcal{F}_{\langle I_c,F_c \rangle}(x)$ to denote a real number $x$ represented in the fixed-point precision level of the controller, and $\mathcal{F}_{\langle I_p,F_p \rangle}(x)$ to denote a real number $x$ represented in the fixed-point precision level of the plant model ($I_p \geq I_c \wedge F_p \geq F_c$). 
-\todo{Should we include a discussion on the fact that the plant is physical? So for example, a reviewer may ask what is the meaning of the model with time derivative, with variables over a Euclidean space. }
-Thus any mathematical operations occurring in the digital controller will occur in the range of $\mathcal{F}_{\langle I_c,F_c \rangle}$, and all other calculations will be carried out in the range of $\mathcal{F}_{\langle I_p,F_p \rangle}$.
+We will use $\mathcal{F}_{\langle I_c,F_c \rangle}(x)$ to denote a real number $x$ represented in the fixed-point precision level of the controller, and $\mathcal{F}_{\langle I_p,F_p \rangle}(x)$ to denote a real number $x$ represented in the fixed-point precision level of the plant model ($I_p \geq I_c \wedge F_p \geq F_c$).
+Thus any mathematical operations occurring in the digital controller will occur in the range of $\mathcal{F}_{\langle I_c,F_c \rangle}$, and all other calculations will be carried out in the range of $\mathcal{F}_{\langle I_p,F_p \rangle}$. The physical plant operates in the reals, which means our verification phase must account for calculation errors in the model.
 
 \subsubsection{Effect on safety specification and stability}
 
@@ -663,7 +651,7 @@ An additional error is caused by the representation of the plant dynamics, namel
 x_{k+1} &=\mathcal{F}_{\langle I_p,F_p \rangle}(A_d) \mathcal{F}_{\langle I_p,F_p \rangle}(x_{k}) + \mathcal{F}_{\langle I_p,F_p \rangle}(B_d)\mathcal{F}_{\langle I_p,F_p \rangle}(u_{k}).
 \end{align*}
 
-\todo{You mean the second one, or both? Please clarify.} We address these errors by use of a final verification check that uses interval arithmetic~\cite{moore1966interval}.
+We address this last error by use of interval arithmetic~\cite{moore1966interval} in the verification phase.
 
 We note that the effect on stability due to the fixed-word-length error is that the system may, 
 instead of converging to the desired equilibrium point, 
@@ -1181,8 +1169,7 @@ the reach-tube, i.e., the set of all reachable states at all times given an init
 X_0 =&\left \{x : x \models \phi_{init} \right\}\nonumber
 \end{align}
 %
-where $\mathcal{A}=\bigcup_{k=1}^\infty (A_d-B_dK)t^k, \mathcal{B}_{n}=\bigcup_{k=1}^\infty \sum_{i=0}^k(A_d-B_dK)^iB_{n}$ are abstract matrices for the closed-loop system,
-whereas the set N is non-deterministically chosen. \todo{add citation to SAS article, readers will be lost. }
+where $\mathcal{A}=\bigcup_{k=1}^\infty (A_d-B_dK)t^k, \mathcal{B}_{n}=\bigcup_{k=1}^\infty \sum_{i=0}^k(A_d-B_dK)^iB_{n}$ are abstract matrices for the closed-loop system \cite{cattaruzza2015unbounded}, whereas the set N is non-deterministically chosen.
 
 We next evaluate $\hat{X}^\# \models \phi_{safety}$. If the verification holds we have a solution, and exit the loop. Otherwise, 
 we find a counterexample iteration $k$ and corresponding initial point $x_0$ for which the property does not hold, which we use to locally refine the abstraction.
@@ -1202,8 +1189,8 @@ $z^n+\sum_{i=1}^n(a_i-k_i)z^{n-i}=\prod_{i=1}^n (z-\lambda_i) : |\lambda_i|<1 \w
 \end{enumerate} 
 \end{enumerate}
 
-\paragraph{Illustrative Example}
-
+\subsubsection{Illustrative Example}
+%
 Let us take the Helicopter example in Table \ref{table:State-space benchmarks} with discretized dynamics
 $$A_d = \left[\begin{array}{ccc}2.6207&-1.1793&0.65705\\2&0&0\\0&0.5&0\end{array}\right], B_d = \left [\begin{array}{c}8\\0\\0\end{array}\right]$$
 Using an initial state $\bigwedge -.9 \leq x_{0,i} \leq .9$, inputs $-10 \leq u \leq 10$, and a safety specification $\bigwedge -.92 \leq x_i \leq .92$, the {\sc synthesize} phase in Fig.~\ref{fig:CEGARIS} synthesises an initial candidate controller $K=[\begin{array}{ccc}0.24609375&-0.125&0.1484375\end{array}]$.
