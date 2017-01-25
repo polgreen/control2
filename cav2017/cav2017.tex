@@ -347,7 +347,7 @@ However, Pessoa does not have native inclusion of the quantization error
 introduced by Digital-to-Analogue/Analogue-to-Digital conversion needed for
 synthesizing fixed-point digital controllers.
 
-\todo{Have we covered all the literature by Feron et al?}  
+%\todo{Have we covered all the literature by Feron et al?}  
 
 \paragraph{Discretization Effects}
 
@@ -369,8 +369,8 @@ directly model the digital controller so that the selected parameters are
 stable by design.  The analyses in~\cite{DBLP:conf/hybrid/RouxJG15,
 DBLP:conf/hybrid/WangGRJF16} rely on an invariant computation on the
 discrete system dynamics using Semi-Definite Programming (SDP).  While the
-former uses BIBO properties to determine stability, the latter uses
-Lyapunov-based quadratic invariants.  In both cases, the SDP solver uses
+former uses bounded-input and bounded-output (BIBO) properties to determine stability, 
+the latter uses Lyapunov-based quadratic invariants.  In both cases, the SDP solver uses
 floating-point arithmetic and soundness is checked by bounding the error. 
 An alternative approach is taken by~\cite{park2016scalable}, where the
 verification of given control code is performed against a known model by
