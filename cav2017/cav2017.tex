@@ -1698,29 +1698,26 @@ The maximum size of a real number $x$ that can be represented in a fixed point d
 \subsection{Modelling quantization as noise} \label{appendix:quantization-noise}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-During any given ADC conversion, the continuous signal will be sampled in the real domain and transformed by $\mathcal{F}\langle I_{c},F_{c} \rangle (x)$. this sampling uses a threshold which is defined by the less significant bit ($q_{adc}=2^{-F_{adc}}$) of the ADC and some non-linearities of the circuitry. The overall conversion is
-$$\mathcal{F}\langle I_{c},F_{c} \rangle(y(t)) = y_k : y_k \in \left[y(t)-\frac{q_{c}}{2}\ \ \ \ y(t)+\frac{q_{adc}}{2}\right]$$
+During any given ADC conversion, the continuous signal will be sampled in the real domain and transformed by $\mathcal{F}\langle I_{c},F_{c} \rangle (x)$ (assuming the ADC discretization is the same as the digital implementation). This sampling uses a threshold which is defined by the less significant bit ($q_{c}=2^{-F_c}$) of the ADC and some non-linearities of the circuitry. The overall conversion is
+$$\mathcal{F}\langle I_{c},F_{c} \rangle(y(t)) = y_k : y_k \in \left[y(t)-\frac{q_{c}}{2}\ \ \ \ y(t)+\frac{q_{c}}{2}\right]$$
 If we denote the error in the conversion as $\nu_k=y_k-y(t) : t=nk$ then we may define some bounds for it $\nu_k \in [-\frac{q_{c}}{2}\ \ \frac{q_{c}}{2}]$.
 
-We will assume, for the purposes of this analysis, that the domain of the ADC is that of the digital controller (\emph{ie} the quantizer includes any digital gain added in the code).
+We will assume, for the purposes of this analysis, that the domain of the ADC is that of the digital controller (i.e, the quantizer includes any digital gain added in the code).
 The process of quantization in the DAC is similar except that it is calculating $\mathcal{F}\langle I_{dac},F_{dac} \rangle (\mathcal{F}\langle I_{c},F_{c} \rangle (x)) $. If these domains are the same ($I_{c}=I_{dac},F_{c}=F_{dac}$), or if the DAC resolution in higher than the ADCs, then the DAC quantization error is equal to zero.
-From the above equations we can now infer that $\nu_1 \in [-\frac{q_1}{2}\ \ \frac{q_1}{2}], \nu_2 \in [-\frac{q_2}{2}\ \ \frac{q_2}{2}] : q_1=q_{c} \wedge q_2=q_{dac}$.
-Note that these bounds hold irrespective of whether the noise is correlated, hence we may use them to over-approximate the effect of the noise on the state space progression over time.
+From the above equations we can now define the ADC and DAC quantization noises, ${\nu_1}_k \in [-\frac{q_1}{2}\ \ \frac{q_1}{2}], {\nu_2}_k \in [-\frac{q_2}{2}\ \ \frac{q_2}{2}]$ where $q_1=q_{c} \wedge q_2=q_{dac}$. Note that this is shown in fig. \ref{ssec:statefeedbackcontrol} where $Q_1$ is the quantizer of the ADC and $Q_2$ the quantizer for the DAC.
+These bounds hold irrespective of whether the noise is correlated, hence we may use them to over-approximate the effect of the noise on the state space progression over time.
 The resulting dynamics are:
 \begin{align}
 \label{eq:pre_quantization}
-\vec{x}_{k+1} &= \vec{A}_d\vec{x}_k+\vec{B}_d(\vec{u}_k+{\vec{\nu}_2}_k),\\
-u_k&=-K\vec{x}_{k}+{\vec{\nu}_1}_k. 
+{x}_{k+1} &= {A}_d{x}_k+{B}_d({u}_k+{{\nu}_2}_k),\\
+u_k&=-K{x}_{k}+{{\nu}_1}_k. 
 \end{align}
 
-%During any given ADC conversion, the continuous signal will be sampled in the real domain and transformed into a $\mathcal{F}_{\langle I_c,F_c \rangle}$ value. This sampling uses a threshold which is defined by the less significant bit of the ADC. We will assume, for the purposes of this analysis, that the domain of the ADC is that of the digital controller (i.e., the quantizer includes any digital gain added in the code), and so we will denote this error $q_{c}=2^{-F_{c}}$). We omit the effect of non-linearities of the circuitry. The overall conversion is
-%$$\mathcal{F}\langle I_{c},F_{c} \rangle(y(t)) = y_k : y_k \in \left[y(t)-\frac{q_{c}}{2}\ \ \ \ y(t)+\frac{q_{c}}{2}\right]$$.
-%If we denote the error in the conversion as noise $\nu_k=y_k-y(t) : t=nk$ then we may define some bounds for it $\nu_k \in [-\frac{q_{c}}{2}\ \ \frac{q_{c}}{2}]$.
 
 which give the closed loop dynamics:
 \begin{align}
 \label{eq:quantization}
-\vec{x}_{k+1} &= (\vec{A}_d-\vec{B}_d\mat{K}_d) \vec{x}_k+\vec{B}_d{\vec{\nu}_2}_k +{\vec{\nu}_1}_k. 
+{x}_{k+1} &= ({A}_d-{B}_d{K}_d) {x}_k+{B}_d{{\nu}_2}_k +{{\nu}_1}_k. 
 \end{align}
 
 %The process of quantization in the DAC is similar except that it is going from $\mathcal{F}_{\langle I_c,F_c \rangle}  \rightarrow \mathcal{F}_{\langle I_p,F_p \rangle}$. If these domains are the same ($I_{p}=I_{c},F_{p}=F_{c}$), or if the DAC resolution in higher than the ADCs, then the DAC quantization error is equal to zero.
