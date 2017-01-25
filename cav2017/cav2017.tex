@@ -974,21 +974,20 @@ shown in Fig~\ref{fig:ct}.
 A stable control system is known to have converging dynamics. 
 Assume the closed-loop matrix eigenvalues are not repeated 
 (which is sensible to do, since we select them). 
-The trajectories distance from the reference point (in this case the origin) 
+The trajectories distance from the reference point (origin) 
 decreases over time within subspaces related to real-valued eigenvalues;  
 however, this in general not the case when dealing with complex eigenvalues.  
 Consider the closed-loop matrix, which updates the states every discrete time step, 
-and select the eigenvalue with smallest (non-trivial) imaginary value -- call such value $\vartheta$. 
-At every consecutive time steps $kT_s, (k+1)T_s$ ($T_s$ being the sampling time), 
+and select the eigenvalue $\vartheta$ with smallest (non-trivial) imaginary value. 
+At every consecutive time steps $kT_s, (k+1)T_s$, 
 the dynamics projected on the corresponding eigenspace rotate of $\vartheta T_s$ radiants.  
-So taking $k$ as the ceiling of $\frac{2\pi}{\vartheta T_s}$, 
-after $k$ steps we have completed a full rotation, which results in a point that is closer to the origin. 
-This $k$ is taken to be the completeness threshold. 
+So taking $k{\leq}\overline{k}$ as the ceiling of $\frac{2\pi}{\vartheta T_s}$, 
+after $k{\leq}\overline{k}$ steps we have completed a full rotation, which results in a point closer to the origin, and it is the completeness threshold. 
 
 
 \begin{figure*}[t]
 \centering
-\includegraphics[width=0.7\textwidth]{ct.eps}
+\includegraphics[width=0.6\textwidth]{ct.eps}
 \vspace{0.1cm}
 \caption{Completeness threshold for multi-staged verification.}
 \label{fig:ct}
@@ -1384,8 +1383,9 @@ and can their stability and safety be confirmed outside of our model?
 \subsection{Results}
 %-------------------------------
 
-We give the run-times required to synthesize a stable controller for all our
-benchmarks. Here \textit{Benchmark} is the name of the employed
+We give the run-times required to synthesize a stable controller for each
+benchmark in Table~\ref{tab:results}.  
+Here \textit{Benchmark} is the name of the employed
 benchmark, $\mathcal{F}_{\langle I_p,F_p \rangle}$ is the fixed-point precision used
 to model the plant, while \textit{Time}
 is the total time (in milliseconds) required to synthesize a stable controller
