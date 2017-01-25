@@ -166,8 +166,9 @@ We describe and evaluate two approaches for synthesizing digital controllers for
 both based on the Counter-Example Guided Inductive Synthesis (CEGIS)~\cite{sketch} architecture, recently of wide use for program synthesis.   
 We provide two alternative automated procedures to synthesize safe 
 digital state-feedback controls
-and prove their soundness by encompassing errors due to digitalization and quantization effects that are present in the digital controller interacting with the continuous plant. 
-% computations and representations of dynamics, providing sufficient conditions for sound and complete safe solutions for the state feedback control problem.
+and prove their soundness by encompassing errors due to digitalization and quantization 
+effects that are present in the digital controller interacting with the continuous plant. 
+Both models synthesize sound safe controllers given a discrete-time model of the closed-loop system.
 
 {\em The first approach} uses a {\em naive}
 technique that starts by devising a digital controller that stabilizes the system
@@ -189,15 +190,13 @@ Additionally, the second approach uses
 regardless of the complexity of the overall dynamics, and only expand to more
 complex models when a solution cannot be found.
 
-Both models synthesise sound safe controllers given a discrete-time model of the closed-loop system.
-
 We provide experimental results 
 showing that both approaches are able to efficiently synthesize stable and safe controllers 
 for a set of intricate physical plant models taken from the digital 
-control literature: the median runtime for our benchmark
+control literature: the median run-time for our benchmark
 set is $7.9$ seconds, and most controllers can be synthesized in less
 than $17.2$ seconds. We further show that, in a direct comparison, the abstraction-based
-approach lowers the median runtime of our benchmarks by a factor of seven over the
+approach lowers the median run-time of our benchmarks by a factor of seven over the
 multi-staged approach.
 
 
