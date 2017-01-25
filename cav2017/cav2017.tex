@@ -200,7 +200,9 @@ showing that both approaches are able to efficiently synthesize stable and safe 
 for a set of intricate physical plant models taken from the digital 
 control literature: the median runtime for our benchmark
 set is $7.9$ seconds, and most controllers can be synthesized in less
-than $17.2$ seconds.
+than $17.2$ seconds. We further show that, in a direct comparison, the abstraction-based
+approach lowers the median runtime of our benchmarks by a factor of seven over the
+multi-staged approach.
 
 
 \subsection*{Contributions} 
@@ -1119,7 +1121,7 @@ $P_a(z) = z^n+\sum_{i=1}^p{(a_i-k_i)z^{n-i}}$.
 \item Calculate the noise set $N$ from the quantizer resolutions and estimated round-off errors: %($\frac{q_1}{2},\frac{q_2}{2},q_3$)
 $$N=\left \{ \nu_1+\nu_2+ \nu_3 : \nu_1 \in \left[-\frac{q1}{2}\ \ \frac{q1}{2}\right] 
 \wedge \nu_2 \in \left[-\frac{q2}{2}\ \ \frac{q2}{2}\right]  \wedge \nu_3 \in \left[-q3\ \ q3\right]  \right \}\nonumber$$
-where $q3$ is the maximum truncation and rounding error of $u_k=-K\hat{x}_k$ as discussed in section \ref{sec:numeric_rep}
+where $q3$ is the maximum truncation and rounding error of $u_k=-K\hat{x}_k$ as discussed in section \ref{sec:numeric_rep}.
 More details on how to model quantization as noise are given in the 
 Appendix~\ref{appendix:quantization-noise}.
 \item Calculate a set of initial bounds on $K$, $\phi_{init}^{K}$, based on the input constraints. Note that these bounds will be used by the {\sc synthesize} phase to reduce the size of the solution space.
@@ -1408,9 +1410,12 @@ The median runtime for our benchmark set is 7.9\,s.  Overall,
 the average synthesis time amounts to approximately 17.2\,s.  We
 consider these times short enough to be of practical use to control
 engineers, and thus affirm RQ1.  
+There are several cases for which the system may fail to find a controller. In the naive approach,
+there is the risk of the completeness threshold being too large, thus causing a timeout.
+In the abstraction case, there is the risk of requiring a very precise abstraction, resulting in too many refinements which may timeout.
+Other sources for incompleness are the inability of the {\sc synthesize} phase to use a large enough precision for the plant model in a given problem.
 
-The
-synthesized controllers were confirmed to be stable outside of our model
+The synthesized controllers were confirmed to be stable outside of our model
 representation using MATLAB, positively answering RQ2.  A~link to the full
 experimental environment, including scripts to reproduce the results, all
 benchmarks and the tool, is provided in the
@@ -1547,8 +1552,8 @@ x_{k+1} &= A_d * x_{k} -(\mathcal{F}_{\langle I_c,F_c \rangle}(K)\cdot\mathcal{F
 x_{k+1} &= (A_d  - B_dK)*x_k + B_dK\delta
 %\\ x_{k+1}&=A_d x_{k} + B_du_{k}
 \end{align*}
-where $\delta$ is the maximum error that can be introduced by the FWL controller in one step, i.e., by reading the states values once and multiplying by $K$ once. We derive the closed form expression for $x_n$
-
+where $\delta$ is the maximum error that can be introduced by the FWL controller in one step, i.e., by reading the states values once and multiplying by $K$ once. 
+We derive the closed form expression for $x_n$ as follows: 
 \begin{align*}
 x_{1} &= (A_d  - B_dK)x_0 + B_dK\delta \\
 x_{2} &= (A_d  - B_dK)((A_d  - B_dK)x_0 + B_dK\delta ) + B_dK\delta \\
@@ -1560,22 +1565,21 @@ x_{n} &= (A_d  - B_dK)^nx_0 + (A_d  - B_dK)^{n-1}B_dK\delta + ... + (A_d  - B_dK
 
 The definition of asymptotic stability is that the system converges to a reference signal, in this case we use no
 reference signal so an asymptotically stable system will converge to the origin. We know that the original system
-with an infinite precision controller is stable, because we have synthesized it to meet Jury's criteria. Hence
+with an infinite-precision controller is stable, because we have synthesized it to meet Jury's criterion. Hence, 
 $(A_d  - B_dK)^n*x_0$ must converge to zero. 
 
-To show that a fixed point implementation of the same controller will converge to a steady value, we need to show that the infinite sum converges.
-
-A known result is that a power series of matrices converges~\cite{horn1990matrix} iff the eigenvalues of the matrix are less than 1, to the following:
+To show that a fixed-point implementation of the same controller will converge to a finite value, 
+we need to show that the infinite sum converges.
+A known result is that a power series of matrices converges~\cite{horn1990matrix}, iff the eigenvalues of the matrix are less than 1, as follows:
+%\begin{align*}
+$\sum_{i=0}^{\infty}T^i  = (I - T)^{-1}$, 
+%\end{align*}
+where $I$ is the identity matrix and $T$ is a square matrix. Thus, our system will converge to the value 
 \begin{align*}
-\sum_{i=0}^{\infty}T^i  &= (I - T)^{-1}
+0 + (I - A_d + B_dK)^{-1}B_dk\delta. 
 \end{align*}
-Where $I$ is the identity matrix and $T$ is a square matrix. Thus, our system will converge
-
-\begin{align*}
-x_{\infty} &= 0 + (I - A_d + B_dK)^{-1}B_dk\delta
-\end{align*}
-
-Hence, provided $(I - A_d + B_dK)^{-1}B_dk\delta$ is within the safe space, our fixed point controller system is stable, in that it converges to a finite value, although not asymptomatically stable because it doesn't converge to the origin.
+As a result, if the value $(I - A_d + B_dK)^{-1}B_dk\delta$ is within the safe space, then the synthesized fixed-point controller results in a safe closed-loop model. 
+The convergence to a finite value, however, will not make it asymptomatically stable.
 
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
