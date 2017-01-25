@@ -170,7 +170,7 @@ and prove their soundness by encompassing errors due to digitalization and quant
 effects that are present in the digital controller interacting with the continuous plant. 
 Both models synthesize sound safe controllers given a discrete-time model of the closed-loop system.
 
-{\em The first approach} uses a {\em naive}
+{\em The first approach} uses a {\em na\"ive}
 technique that starts by devising a digital controller that stabilizes the system
 whilst remaining safe for a 
 pre-selected time horizon and a single initial state; then, it verifies its potential safety by unfolding
@@ -196,8 +196,8 @@ for a set of intricate physical plant models taken from the digital
 control literature: the median run-time for our benchmark
 set is $7.9$ seconds, and most controllers can be synthesized in less
 than $17.2$ seconds. We further show that, in a direct comparison, the abstraction-based
-approach lowers the median run-time of our benchmarks by a factor of seven over the
-multi-staged approach.
+approach (second) lowers the median run-time of our benchmarks by a factor of seven over the
+first approach based on the unfolding of the dynamics. 
 
 
 \subsection*{Contributions} 
@@ -392,7 +392,7 @@ This technique works for both linear and non-linear systems.
 %-------------------------------
 
 We consider models of physical plants expressed as ordinary differential equations (ODEs), 
-with full state information (namely where we have access to all the model variables):  
+which we assume to be controllable and under full state information (namely where we have access to all the model variables):  
 %
 \begin{align}
 \label{eq:ode}
@@ -401,7 +401,8 @@ with full state information (namely where we have access to all the model variab
 where $t \in \mathbb R_0^+$, 
 where $A$ and $B$ are matrices that fully specify the continuous plant, 
 and with initial states set as $x(0)$. 
-Eq.~\eqref{eq:ode} is soundly discretized in time (as shown in the Appendix~\ref{sec:appendix:LTIbackground}) into %\textcolor{red}{What is subscript ``d''?}
+Whilst we ideally would like to work on the continuous-time plant, 
+in this work Eq.~\eqref{eq:ode} is soundly discretized in time (as shown in the Appendix~\ref{sec:appendix:LTIbackground}) into %\textcolor{red}{What is subscript ``d''?}
 %
 \begin{align}
 \label{eq:plant}
@@ -1455,7 +1456,8 @@ to synthesize stable controllers in most benchmarks within a reasonable
 amount of time fully automatically.  In particular, both approaches
 complement each other and together solve all benchmarks , which have been derived from the control literature.
 
-Future work will focus the extension of these approaches to the continuous time case with output-based control architectures (hinging on the use of observers), 
+Future work will focus the extension of these approaches to the continuous time case, 
+to models with output-based control architectures (hinging on the use of observers), 
 and to considering performance requirements (alongside safety) in the synthesis of digital controllers.  
 
 
