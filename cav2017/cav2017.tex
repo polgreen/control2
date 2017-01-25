@@ -557,7 +557,7 @@ less than one~\cite{astrom1997computer}.  In this paper, we express the
 stability specification $\phi_{stability}$ in terms of a check known as
 Jury's criterion~\cite{fadali}: this is an easy algebraic formula to select
 the entries of matrix $K$, so that the closed-loop dynamics are shaped as
-desired (see Appendix~\ref{sec:appendix-stability} for details.
+desired (see Appendix~\ref{sec:appendix-stability} for details).
 
 
 %-------------------------------
@@ -618,9 +618,9 @@ The models we consider have two sources of error due to numeric representation.
 The first is the numeric error introduced by the fixed-point numbers employed to model the plant, i.e., to represent the plant dynamics $A_d$, $B_d$ and $x_k$. 
 The second is the quantization error introduced by the digital controller, 
 which performs operations in the domain of fixed-point numbers. 
-In this section we formally outline the errors introduced by the fixed-point representation of numbers. 
-% 
-Let $\mathcal{F}_{\langle I,F \rangle}(x)$ denote a real number $x$ represented in a fixed point domain, with $I$ bits representing the integer part and $F$ bits representing the decimal part. The smallest number that can be represented in this domain is $c_m=2^{-F}$. Any mathematical operations performed at the precision $\mathcal{F}_{\langle I,F \rangle}(x)$ will introduce errors, that can be upper bounded~\cite{DBLP:conf/arith/BrainTRW15}. Further details are in Appendix~\ref{appendix:numerical_errors}.
+In this section we outline the notation for the fixed-point representation of numbers, and briefly describe the errors introduced. A formal outline is in Appendix~\ref{appendix:numerical_errors}.
+
+Let $\mathcal{F}_{\langle I,F \rangle}(x)$ denote a real number $x$ represented in a fixed point domain, with $I$ bits representing the integer part and $F$ bits representing the decimal part. The smallest number that can be represented in this domain is $c_m=2^{-F}$. Any mathematical operations performed at the precision $\mathcal{F}_{\langle I,F \rangle}(x)$ will introduce errors, that can be upper bounded~\cite{DBLP:conf/arith/BrainTRW15}. 
 
 We will use $\mathcal{F}_{\langle I_c,F_c \rangle}(x)$ to denote a real number $x$ represented in the fixed-point precision level of the controller, and $\mathcal{F}_{\langle I_p,F_p \rangle}(x)$ to denote a real number $x$ represented in the fixed-point precision level of the plant computational model ($I_p \geq I_c \wedge F_p \geq F_c$).
 Thus any mathematical operations occurring in the digital controller will occur in the range of $\mathcal{F}_{\langle I_c,F_c \rangle}$, and all other calculations will be carried out in the range of $\mathcal{F}_{\langle I_p,F_p \rangle}$. The physical plant operates in the reals, which means our verification phase must account for calculation errors in the model.
@@ -893,7 +893,7 @@ checks that all these assumptions are sound are performed by subsequent
 \Function{$safetyCheck()$}{}
 \State assert($ \underline{u}  \leq u \leq \overline{u}$)
  \State set $x_0$ to be a vertex state, e.g., $[\underline{x_0},\underline{x_0}]$	
-\While ($c=0; c < 2^{Num_States}; c++$)
+\For ($c=0; c < 2^{Num_States}; c++$)
   %\State assert($ \underline{x_0}  \leq x_0 \leq \overline{x_0}$)
 	\While{$i=0; i< k; i++$}
 		%\State $u = (\langle I_p,F_p\rangle)((\langle I_c,F_c\rangle)K * (\langle I_c,F_c\rangle) x)$
@@ -902,7 +902,7 @@ checks that all these assumptions are sound are performed by subsequent
 		\State assert($\underline{x} \leq x \leq \overline{x}$ )
   	\EndWhile
   	\State set $x_0$ to be a new vertex state
-  	\EndWhile
+  	\EndFor
   %\State Return $K$
 \EndFunction
 \end{algorithmic}
@@ -1114,7 +1114,7 @@ $P_a(z) = z^n+\sum_{i=1}^p{(a_i-k_i)z^{n-i}}$.
 \item Calculate the noise set $N$ from the quantizer resolutions and estimated round-off errors: %($\frac{q_1}{2},\frac{q_2}{2},q_3$)
 $$N=\left \{ \nu_1+\nu_2+ \nu_3 : \nu_1 \in \left[-\frac{q1}{2}\ \ \frac{q1}{2}\right] 
 \wedge \nu_2 \in \left[-\frac{q2}{2}\ \ \frac{q2}{2}\right]  \wedge \nu_3 \in \left[-q3\ \ q3\right]  \right \}\nonumber$$
-where $q3$ is the maximum truncation and rounding error of $u_k=-K\hat{x}_k$ as discussed in section \ref{sec:numeric_rep}.
+where  $q_1$ is the error introduced by the truncation by the ADC, $q_2$ is the error introduced by the DAC and $q3$ is the maximum truncation and rounding error of the mathematical operation $u_k=-K\hat{x}_k$ as discussed in section \ref{sec:numeric_rep}. We consider the error introduced by the DAC to be equal to zero, since the domain of the plant is at a higher precision than the controller.
 %More details on how to model quantization as noise are given in the 
 %Appendix~\ref{appendix:quantization-noise}.
 \item Calculate a set of initial bounds on $K$, $\phi_{init}^{K}$, based on the input constraints. Note that these bounds will be used by the {\sc synthesize} phase to reduce the size of the solution space.
@@ -1198,7 +1198,7 @@ $z^n+\sum_{i=1}^n(a_i-k_i)z^{n-i}=\prod_{i=1}^n (z-\lambda_i) : |\lambda_i|<1 \w
 
 \subsubsection{Illustrative Example}
 %
-Let us take the Helicopter example in Table \ref{table:State-space benchmarks} with discretized dynamics
+Let us take the Helicopter example in Table \ref{table:State-space-benchmarks} with discretized dynamics
 $$A_d = \left[\begin{array}{ccc}2.6207&-1.1793&0.65705\\2&0&0\\0&0.5&0\end{array}\right], B_d = \left [\begin{array}{c}8\\0\\0\end{array}\right]$$
 Using the initial state bounds $\underline{x_{0}}=-0.9$ and $\overline{x_{0}}=0.9$, the input bounds $\underline{u}=-10$ and $\overline{u}=10$, and safety specifications 
 $\underline{x_{i}}=-0.92$ and $\overline{x_{i}}=0.92$, the {\sc synthesize} phase in Fig.~\ref{fig:CEGARIS} synthesizes an initial candidate controller $K=[\begin{array}{ccc}0.24609375&-0.125&0.1484375\end{array}]$.
@@ -1356,9 +1356,9 @@ and can their stability and safety be confirmed outside of our model?
 \subsection{Results}
 %-------------------------------
 
-We give the run-times required to synthesize a stable controller for each
+We give the runtimes required to synthesize a stable controller for each
 benchmark in Table~\ref{tab:results}.  
-Here \textit{Benchmark} is the name of the employed
+Here \textit{Benchmark} is the name of the respective
 benchmark, $\mathcal{F}_{\langle I_p,F_p \rangle}$ is the fixed-point precision used
 to model the plant, while \textit{Time}
 is the total time (in milliseconds) required to synthesize a stable controller
@@ -1378,10 +1378,10 @@ in benchmark coverage and together solve all benchmarks in the set.
 \begin{table}
 \centering
 \scriptsize
-\begin{tabular}{| r | c | c | r | c | r |}
+\begin{tabular}{| c | l | c | r | c | r |}
 \hline
-\# & Benchmark  & \multicolumn{2}{|c|}{Multi-staged}                 & \multicolumn{2}{|c|}{Abstraction} \\
-   &            & \multicolumn{1}{|c|}{$\mathcal{F}_{\langle I_p,F_p \rangle}$} & \multicolumn{1}{|c|}{Time} & \multicolumn{1}{|c|}{$\mathcal{F}_{\langle I_p,F_p \rangle}$} & \multicolumn{1}{|c|}{Time} \\\hline
+\# & \multicolumn{1}{|c|}{Benchmark}  & \multicolumn{2}{|c|}{Multi-staged}                 & \multicolumn{2}{|c|}{Abstraction} \\
+   &                                  & \multicolumn{1}{|c|}{$\mathcal{F}_{\langle I_p,F_p \rangle}$} & \multicolumn{1}{|c|}{Time} & \multicolumn{1}{|c|}{$\mathcal{F}_{\langle I_p,F_p \rangle}$} & \multicolumn{1}{|c|}{Time} \\\hline
 1  & Cruise Control      & 8,16   & 6875   & 16,16  & 241    \\
 2  & DC Motor            & 8,16   & 8103   & 20,20  & 5376   \\
 3  & Helicopter          & \xmark & \xmark & 16,16  & 2120   \\
@@ -1421,11 +1421,11 @@ footnote.\footnote{\url{https://drive.google.com/open?id=0ByIexo3Z5N91eDludEdWdW
 %-------------------------------
 \subsection{Threats to validity}
 %-------------------------------
-We report an assessment of both our approaches over a diverse set of real-world benchmarks. Nevertheless, this set of benchmarks is limited within the scope of this paper and the performance may not generalize to other benchmarks. 
+\textit{Benchmark selection:} We report an assessment of both our approaches over a diverse set of real-world benchmarks. Nevertheless, this set of benchmarks is limited within the scope of this paper and the performance may not generalize to other benchmarks.\\ 
 %
-Our algorithm to select suitable FWL word widths to model plant behavior employs a heuristic based on user-provided controller word-width specifications. For the first approach, where we may need to increase the precision of the time discretization, we select the time steps for the discretizations on a similar basis. This works sufficiently well for our benchmarks, but performance may suffer in some cases, for example if the completeness threshold is high. 
+\textit{Plant precision and discretization heuristic:} Our algorithm to select suitable FWL word widths to model the plant behavior employs a heuristic based on user-provided controller word-width specifications. For the first approach, where we may need to increase the precision of the time discretization, we select the time steps for the discretizations on a similar basis. This works sufficiently well for our benchmarks, but performance may suffer in some cases, for example if the completeness threshold is high.\\ 
 %
-The performance gain from abstract acceleration may not hold for more complex properties than stability, for instance ``eventually always reaches a certain safe set''. 
+\textit{Abstraction on other properties:} The performance gain from abstract acceleration may not hold for more complex properties than stability, for instance ``eventually always reaches a certain safe set''. 
 
 
 %% %-------------------------------
@@ -1646,7 +1646,7 @@ where $\sigma(\cdot)$ is the spectrum of a matrix.
 
 \subsection{Errors due to numerical representation} \label{appendix:numerical_errors}
 
-Let $\mathcal{F}_{\langle I,F \rangle}(x)$ denote a real number $x$ represented in a fixed point domain, with $I$ bits representing the integer part and $F$ bits representing the decimal part. The smallest number that can be represented in this domain is $c_m=2^{-F}$.
+We have  used $\mathcal{F}_{\langle I,F \rangle}(x)$ denote a real number $x$ represented in a fixed point domain, with $I$ bits representing the integer part and $F$ bits representing the decimal part. The smallest number that can be represented in this domain is $c_m=2^{-F}$.
 The following approximation errors will arise in mathematical operations and representation:
 \begin{enumerate}
 \item {\bf Truncation:}
@@ -1713,93 +1713,93 @@ The maximum size of a real number $x$ that can be represented in a fixed point d
 %y_k &= \vec{C}_d \vec{x}_ k + \vec{D}_d \vec{u}_ k+{\vec{\nu}_1}_k. 
 %\end{align}
 
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{Controllable canonical form} \label{sec:reachable}
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-Let us have a discrete time SISO system with an $n^{th},m^{th} : n\geq m$ order armax model
-$$y[k]=\sum_{i=1}^n a_iy[k-i]+\sum_{i=0}^m b_iu[k-i],$$
-where $y$ is the output of the system and $u$ its input.
-The equivalent LTI dynamics of such a model are:
-\begin{align}
-\label{eq:cf_SISO}
-\vec{x}_{k+1}=&\mat{A}_{cf}\vec{x}_k+\mat{B}_{cf}u_k : \vec{x}_k=[y_{k-n}\ \hdots y_{k-1}\ y_{k}]^T\\
-y_k=&\mat{C}_{cf}\vec{x}_k + b_0u_k\nonumber\\
-\mat{A}_{cf}=&\left[
-\begin{array}{ccccc}
-0&1&0&\cdots&0\\
-0&0&1&\cdots&0\\
-\vdots&\vdots&\vdots&\ddots&\vdots\\
-0&0&0&\cdots&1\\
--a_n&-a_{n-1}&-a_{n-2}&\cdots&-a_1
-\end{array}\right],
-\mat{B}_{cf}=\left[
-\begin{array}{c}
-0\\0\\ \vdots\\ 0\\ 1
-\end{array}\right]\nonumber\\
-\mat{C}_{cf}=&[\begin{array}{ccccc}b_n-a_nb_0&b_{n-1}-a_{n-1}b_0&\cdots&b_1-a_1b_0\end{array}] : b_{i \in (m\ n]}=0\nonumber
-\end{align}
-
-where the coefficients $a_i$ describe the characteristic polynomial of the system. This matrix shape is
-called a Controllable Canonical Form because the dynamics of the feedback are directly related to these
-coefficients. Specifically, given a feedback controller $\mat{K}$ for this system, the closed loop dynamics
-will have the shape
-\begin{align}
-\mat{A}_{cf}+\mat{B}_{cf}\mat{K}_{cf}=&\left[
-\begin{array}{ccccc}
-0&1&0&\cdots&0\\
-0&0&1&\cdots&0\\
-\vdots&\vdots&\vdots&\ddots&\vdots\\
-0&0&0&\cdots&1\\
-k_n-a_n&k_{n-1}-a_{n-1}&k_{n-2}-a_{n-2}&\cdots&k_1-a_1
-\end{array}\right]
-\label{eq:cf_SISO_fb}
-\end{align}
-which means we can directly modify each coefficient by selecting a controller parameter.
-In the MIMO case, the Controllable Canonical Form has the following shape:
-\begin{align}
-\mat{A}_{cf}=&\left[
-\begin{array}{ccccc}
-0&\mat{I}_{n-1}&0&\cdots&0\\
-0&0&\mat{I}_{n-2}&\cdots&0\\
-\vdots&\vdots&\vdots&\ddots&\vdots\\
-0&0&0&\cdots&1\\
--\mat{a_n}\mat{M}_n&-\mat{a_{n-1}}\mat{M}_{n-1}&-\mat{a_{n-2}}\mat{M}_{n-2}&\cdots&-\mat{a_1}\mat{M}_{1}
-\end{array}\right],
-\mat{B}_{cf}=\left[
-\begin{array}{c}
-0\\0\\ \vdots\\ 0\\ \mat{M}_0
-\end{array}\right]\nonumber\\
-\mat{C}_{cf}=&[\begin{array}{ccccc}\mat{\eta}_n&\mat{\eta}_{n-1}&\cdots&\mat{\eta}_1\end{array}] :
-\mat{I}_i,\mat{M}_i \in \mathbb{R}^{q_i \times q_i} \wedge \mat{a}_i \in \mathbb{R}^{q \times q_i} \wedge \mat{\eta}_i \in \mathbb{R}^o \wedge  \mat{\eta}_{i \in (m\ n]}=0 \nonumber
-\label{eq:cf_MIMO}
-\end{align}
-where $q$ is the number of inputs, $q_i$ the number of inputs with a transfer function of order of at least $i$, $\mat{I}_i$ an identity matrix, $\mat{M}_i$ an upper triangular matrix with 1s in its diagonal, $\mat{a_i}$ a matrix of coefficients of the $i^th$ order on its diagonal, and $o$ the number of outputs. Ideally we aim for $\mat{M}_i=\mat{I}_i, \forall i>0$
-
-Any LTI system can be transformed into a controllable canonical form by a matrix $\mat{T} : \vec{x}=\mat{T}\hat{\vec{x}}$
-Then the dynamics of the controllable form are
-\begin{align}
-\hat{\vec{x}}_{k+1}=&\mat{A}_{cf}\hat{\vec{x}}_k+\mat{B}_{cf}u_k : \mat{A}_{cf}=\mat{T}\mat{A}\mat{T}^{-1} \wedge \mat{B}_{cf}=\mat{T}\mat{B}\\
-y_k=&\mat{C}_{cf}\hat{\vec{x}}_k + b_0u_k : \mat{C}_{cf}=\mat{C}\mat{T}^{-1}\nonumber
-\end{align}
-where $\mat{T}$ can be calculated as follows:
-
-Let 
-\begin{equation}
-\mat{R}=[\begin{array}{ccccc}\mat{B}&\mat{A}\mat{B}&\mat{A}^2\mat{B}&\hdots&\mat{A}^{n-1}\mat{B}\end{array}]
-\label{eq:rncf}
-\end{equation}
-be the reachability matrix of the system, and
-\begin{equation}
-\mat{R}_{cf}=\left[\begin{array}{ccccc}1&a_1&a_2&\hdots&a_{n-1}\\0&1&a_1&\hdots&a_{n-2}\\ \vdots&\ddots&\ddots&\ddots&\ddots\end{array}\right]
-\label{eq:rcf}
-\end{equation}
-the reachability matrix of the canonical form. Then 
-\begin{equation}
-\mat{T}=\mat{R}_{cf}\mat{R}^{-1}
-\label{eq:to_cf}
-\end{equation}
-
+%%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+%\subsection{Controllable canonical form} \label{sec:reachable}
+%%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+%
+%Let us have a discrete time SISO system with an $n^{th},m^{th} : n\geq m$ order armax model
+%$$y[k]=\sum_{i=1}^n a_iy[k-i]+\sum_{i=0}^m b_iu[k-i],$$
+%where $y$ is the output of the system and $u$ its input.
+%The equivalent LTI dynamics of such a model are:
+%\begin{align}
+%\label{eq:cf_SISO}
+%\vec{x}_{k+1}=&\mat{A}_{cf}\vec{x}_k+\mat{B}_{cf}u_k : \vec{x}_k=[y_{k-n}\ \hdots y_{k-1}\ y_{k}]^T\\
+%y_k=&\mat{C}_{cf}\vec{x}_k + b_0u_k\nonumber\\
+%\mat{A}_{cf}=&\left[
+%\begin{array}{ccccc}
+%0&1&0&\cdots&0\\
+%0&0&1&\cdots&0\\
+%\vdots&\vdots&\vdots&\ddots&\vdots\\
+%0&0&0&\cdots&1\\
+%-a_n&-a_{n-1}&-a_{n-2}&\cdots&-a_1
+%\end{array}\right],
+%\mat{B}_{cf}=\left[
+%\begin{array}{c}
+%0\\0\\ \vdots\\ 0\\ 1
+%\end{array}\right]\nonumber\\
+%\mat{C}_{cf}=&[\begin{array}{ccccc}b_n-a_nb_0&b_{n-1}-a_{n-1}b_0&\cdots&b_1-a_1b_0\end{array}] : b_{i \in (m\ n]}=0\nonumber
+%\end{align}
+%
+%where the coefficients $a_i$ describe the characteristic polynomial of the system. This matrix shape is
+%called a Controllable Canonical Form because the dynamics of the feedback are directly related to these
+%coefficients. Specifically, given a feedback controller $\mat{K}$ for this system, the closed loop dynamics
+%will have the shape
+%\begin{align}
+%\mat{A}_{cf}+\mat{B}_{cf}\mat{K}_{cf}=&\left[
+%\begin{array}{ccccc}
+%0&1&0&\cdots&0\\
+%0&0&1&\cdots&0\\
+%\vdots&\vdots&\vdots&\ddots&\vdots\\
+%0&0&0&\cdots&1\\
+%k_n-a_n&k_{n-1}-a_{n-1}&k_{n-2}-a_{n-2}&\cdots&k_1-a_1
+%\end{array}\right]
+%\label{eq:cf_SISO_fb}
+%\end{align}
+%which means we can directly modify each coefficient by selecting a controller parameter.
+%In the MIMO case, the Controllable Canonical Form has the following shape:
+%\begin{align}
+%\mat{A}_{cf}=&\left[
+%\begin{array}{ccccc}
+%0&\mat{I}_{n-1}&0&\cdots&0\\
+%0&0&\mat{I}_{n-2}&\cdots&0\\
+%\vdots&\vdots&\vdots&\ddots&\vdots\\
+%0&0&0&\cdots&1\\
+%-\mat{a_n}\mat{M}_n&-\mat{a_{n-1}}\mat{M}_{n-1}&-\mat{a_{n-2}}\mat{M}_{n-2}&\cdots&-\mat{a_1}\mat{M}_{1}
+%\end{array}\right],
+%\mat{B}_{cf}=\left[
+%\begin{array}{c}
+%0\\0\\ \vdots\\ 0\\ \mat{M}_0
+%\end{array}\right]\nonumber\\
+%\mat{C}_{cf}=&[\begin{array}{ccccc}\mat{\eta}_n&\mat{\eta}_{n-1}&\cdots&\mat{\eta}_1\end{array}] :
+%\mat{I}_i,\mat{M}_i \in \mathbb{R}^{q_i \times q_i} \wedge \mat{a}_i \in \mathbb{R}^{q \times q_i} \wedge \mat{\eta}_i \in \mathbb{R}^o \wedge  \mat{\eta}_{i \in (m\ n]}=0 \nonumber
+%\label{eq:cf_MIMO}
+%\end{align}
+%where $q$ is the number of inputs, $q_i$ the number of inputs with a transfer function of order of at least $i$, $\mat{I}_i$ an identity matrix, $\mat{M}_i$ an upper triangular matrix with 1s in its diagonal, $\mat{a_i}$ a matrix of coefficients of the $i^th$ order on its diagonal, and $o$ the number of outputs. Ideally we aim for $\mat{M}_i=\mat{I}_i, \forall i>0$
+%
+%Any LTI system can be transformed into a controllable canonical form by a matrix $\mat{T} : \vec{x}=\mat{T}\hat{\vec{x}}$
+%Then the dynamics of the controllable form are
+%\begin{align}
+%\hat{\vec{x}}_{k+1}=&\mat{A}_{cf}\hat{\vec{x}}_k+\mat{B}_{cf}u_k : \mat{A}_{cf}=\mat{T}\mat{A}\mat{T}^{-1} \wedge \mat{B}_{cf}=\mat{T}\mat{B}\\
+%y_k=&\mat{C}_{cf}\hat{\vec{x}}_k + b_0u_k : \mat{C}_{cf}=\mat{C}\mat{T}^{-1}\nonumber
+%\end{align}
+%where $\mat{T}$ can be calculated as follows:
+%
+%Let 
+%\begin{equation}
+%\mat{R}=[\begin{array}{ccccc}\mat{B}&\mat{A}\mat{B}&\mat{A}^2\mat{B}&\hdots&\mat{A}^{n-1}\mat{B}\end{array}]
+%\label{eq:rncf}
+%\end{equation}
+%be the reachability matrix of the system, and
+%\begin{equation}
+%\mat{R}_{cf}=\left[\begin{array}{ccccc}1&a_1&a_2&\hdots&a_{n-1}\\0&1&a_1&\hdots&a_{n-2}\\ \vdots&\ddots&\ddots&\ddots&\ddots\end{array}\right]
+%\label{eq:rcf}
+%\end{equation}
+%the reachability matrix of the canonical form. Then 
+%\begin{equation}
+%\mat{T}=\mat{R}_{cf}\mat{R}^{-1}
+%\label{eq:to_cf}
+%\end{equation}
+%
 
 % %-------------------------------
 % \section{Extensions}
@@ -1828,10 +1828,16 @@ the reachability matrix of the canonical form. Then
 % \end{align}
 %
 
+\newpage
+
 %-------------------------------
 \section{Benchmarks for State-Space Physical Plants}
 \label{sec:BenchmarksforStateSpace}
 %-------------------------------
+
+We have derived a number of benchmarks from the control literature, which we report below. 
+As discussed, in this paper, we disregard the presence of output signals, that is the effect of matrices $\textbf{C}, \textbf{D}$. 
+%
 
 \begin{table}[htb]
 \centering
