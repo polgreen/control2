@@ -173,18 +173,24 @@ quantitative properties is left to future work.
 We describe and evaluate two approaches for synthesising digital controllers
 for state-space physical plants, both based on CounterExample
 Guided Inductive Synthesis (CEGIS)~\cite{sketch}.
-{\em The first approach} uses a naive
+
+{\em The first approach} uses a {\em naive}
 technique that starts by devising a digital controller that stabilizes the system
 whilst remaining safe for a 
 pre-selected time horizon; then, it verifies its potential safety by unfolding
-the dynamics of the system and checking for a completeness threshold.
-As it requires explicit unfolding up to a completeness
-threshold, this approach may result in a state space explosion.
+the dynamics of the system and checking for a {\em completeness threshold}, i.e.,
+the number of iterations required to sufficiently unwind
+the closed-loop state-space system such
+that the boundaries are not violated for any larger number of iterations.
+As it requires explicit unfolding up to the completeness
+threshold, this approach may result in state space explosion.
+
 Instead of explicitly unfolding the dynamics, {\em the second approach} 
-employs abstract acceleration~\cite{cattaruzza2015unbounded} to implicitly
-evaluate all possible progressions of the system simultaneously.
+employs {\em abstract acceleration}~\cite{cattaruzza2015unbounded} to implicitly
+evaluate all possible progressions of the system simultaneously and thus avoid
+the state space explosion problem.
 Additionally, the second approach uses
-abstraction refinement enabling us to always start with a very simple description
+{\em abstraction refinement} enabling us to always start with a very simple description
 regardless of the complexity of the overall dynamics, and only expand to more
 complex models when a solution cannot be found.
 
@@ -210,10 +216,10 @@ than \textcolor{red}{$XXX$} seconds.
   in addition to the already existing stability conditions which is a
   much harder problem.
 %
-\item We develop two approaches: the first, naive one relies on
-  explicit unfolding of the system's dynamics up to a completeness
+\item We develop two approaches: the first, naive, one relies on
+  explicit unfolding of the system's dynamics up to the completeness
   threshold, whilst the second one is abstraction-based and leverages
-  on the concept of abstraction refinement and acceleration to increase speed whilst retaining
+  the concepts of abstraction refinement and acceleration to increase speed whilst retaining
   soundness.
 %
 \item We develop a model for different sources quantization and their
