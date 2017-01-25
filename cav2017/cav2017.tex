@@ -1700,7 +1700,7 @@ The maximum size of a real number $x$ that can be represented in a fixed point d
 
 During any given ADC conversion, the continuous signal will be sampled in the real domain and transformed by $\mathcal{F}\langle I_{c},F_{c} \rangle (x)$ (assuming the ADC discretization is the same as the digital implementation). This sampling uses a threshold which is defined by the less significant bit ($q_{c}=2^{-F_c}$) of the ADC and some non-linearities of the circuitry. The overall conversion is
 $$\mathcal{F}\langle I_{c},F_{c} \rangle(y(t)) = y_k : y_k \in \left[y(t)-\frac{q_{c}}{2}\ \ \ \ y(t)+\frac{q_{c}}{2}\right]$$
-If we denote the error in the conversion as $\nu_k=y_k-y(t) : t=nk$ then we may define some bounds for it $\nu_k \in [-\frac{q_{c}}{2}\ \ \frac{q_{c}}{2}]$.
+If we denote the error in the conversion as $\nu_k=y_k-y(t)$ where $t$ is the non-descretized time $nk$, then we may define some bounds for it $\nu_k \in [-\frac{q_{c}}{2}\ \ \frac{q_{c}}{2}]$.
 
 We will assume, for the purposes of this analysis, that the domain of the ADC is that of the digital controller (i.e, the quantizer includes any digital gain added in the code).
 The process of quantization in the DAC is similar except that it is calculating $\mathcal{F}\langle I_{dac},F_{dac} \rangle (\mathcal{F}\langle I_{c},F_{c} \rangle (x)) $. If these domains are the same ($I_{c}=I_{dac},F_{c}=F_{dac}$), or if the DAC resolution in higher than the ADCs, then the DAC quantization error is equal to zero.
