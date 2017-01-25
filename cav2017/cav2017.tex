@@ -284,16 +284,16 @@ substantial progress in recent years.  One such
 approach~\cite{itzhaky2010simple} inductively synthesizes invariants to
 generate the desired programs.
 
-Program synthesizers are an ideal fit for synthesis of %parametric digital
-controllers, since the semantics of programs capture effects such as FWL
+Program synthesizers are an ideal fit for synthesis of controllers, since
+the semantics of programs capture the effects of finite-precision arithmetic
 precisely.  In~\cite{DBLP:conf/cdc/RavanbakhshS15}, the authors use CEGIS
 for the synthesis of switching controllers for stabilizing continuous-time
-plants with polynomial dynamics.  The work extends to affine systems,
-finding a major challenge in the hardness of solving linear arithmetic with
-the state-of-the-art SMT solvers.  Since this approach uses switching models
-instead of linear dynamics for the digital controller, it entirely
-circumvents the FWL problem, but potentially incurs state-space explosion
-issues.  Moreover, in \cite{DBLP:conf/emsoft/RavanbakhshS16} the same
+plants with polynomial dynamics.  The work extends to affine systems, but is
+limited by the capacity of the state-of-the-art SMT solvers for solving
+linear arithmetic.  Since this approach uses switching models instead of
+linear dynamics for the digital controller, it avoids problems related to
+finite precision problem, but potentially suffers from state-space
+explosion.  Moreover, in \cite{DBLP:conf/emsoft/RavanbakhshS16} the same
 authors use a CEGIS-based approach for synthesizing continuous-time
 switching controllers that guarantee \emph{reach-while-stay} properties of
 closed-loop systems, i.e., properties that specify a set of goal states and
@@ -303,28 +303,25 @@ switching controllers with a guaranteed minimum dwell time in each mode.
 However, both approaches are not suitable for the kind of control we seek to
 synthesize.
 
-The work in~\cite{DBLP:journals/corr/AbateBCCDKK16} investigates the
-synthesis of stabilizing controllers for continuous plants described as
-transfer functions, by exploiting bit-accurate verification of
-software-implemented digital controllers~\cite{IsmailBCFF15,Bessa16}.  While
-this work also makes use of a CEGIS-based technique, the approach is
-restricted to synthesizing digital controllers for stable closed-loop
-systems described via transfer function models.  By contrast, in the current
+The work in~\cite{DBLP:journals/corr/AbateBCCDKK16} synthesizes stabilizing
+controllers for continuous plants given as transfer functions by exploiting
+bit-accurate verification of software-implemented digital
+controllers~\cite{IsmailBCFF15, Bessa16}.  While this work also uses CEGIS,
+their approach is restricted to digital controllers for stable closed-loop
+systems given as transfer function models.  By contrast, in the current
 paper we consider a state-space representation of the physical system, which
-is known to present various advantages over transfer function
-representation~\cite{Astrom08}: (i)~easy to generalize for the multivariate
-systems (i.e., with multiple inputs and outputs); (ii)~shows the
-state-to-input relationships offering an internal model of the system; and
-(iii)~allows to synthesize control systems with guarantees about the
-internal dynamics, e.g., to synthesize controllers that make the closed-loop
-system \emph{safe}.  This work focuses on the \emph{safety} of internal
-states, such property is usually overlooked in the previous cited works, but
-plays an important role in real world systems, where system variables cannot
-assume arbitrary real values.  Moreover, our work integrates an
+has known advantages over the transfer function
+representation~\cite{Astrom08}: (i)~it generalizes to multivariate systems
+(i.e., with multiple inputs and outputs); (ii)~gives the state-to-input
+relationships, offering an internal model of the system; and (iii)~allows to
+synthesize control systems with guarantees on the internal dynamics, e.g.,
+to synthesize controllers that make the closed-loop system \emph{safe}.  Our
+work focuses on the \emph{safety} of internal states, which is usually
+overlooked in the literature.  Moreover, our work integrates an
 abstraction/refinement step inside the main CEGIS loop.
 
 The tool Pessoa~\cite{mazo2010pessoa} synthesizes correct-by-design embedded
-control software, in a Matlab toolbox.  It is based on the abstraction of a
+control software in a Matlab toolbox.  It is based on the abstraction of a
 physical system to an equivalent finite-state machine and on the computation
 of reachability properties over the finite-state machine.  Based on this
 safety specification, Pessoa can synthesize embedded controller software for
