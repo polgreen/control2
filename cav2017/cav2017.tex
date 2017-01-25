@@ -204,30 +204,24 @@ based on the unfolding of the dynamics.
 
 \begin{enumerate}
 %
-\item In this paper we extend the problem of digital control synthesis 
-  from a transfer function representation into a state-space representation. 
-  Such representation allows to study the  input-to-state dynamics, while 
-  transfer functions represents only input-output relations and cannot be 
-  enough to ensure deeper properties, e.g., the safety property.
+\item  We give a novel synthesis algorithm for generating
+  state-feedback controllers that are provably stable and in addition
+  guaranteee a given safety property. Existing methods for controller
+  synthesis rely on transfer function representations, which are
+  insufficient to prove safety requirements.
 %
-\item We proposes a synthesis of state-feedback controllers that guarantees 
-  safety properties, that is only  possible in state-space representation. 
-  In addition to the already existing stability conditions which is a much 
-  harder problem.
+\item We give two algorithms: the first, naive one, relies on
+  an unfolding of the system's dynamics up to a completeness threshold,
+  while the second one is abstraction-based and leverages abstraction
+  refinement and acceleration to improve the scalability of the analysis
+  while retaining soundness.  Both approaches provide sound synthesis of
+  state-feedback systems and consider the various sources of imprecision in
+  the implementation of the control algorithm and in the computational
+  modeling of plant dynamics.
 %
-\item We develop two approaches: the first, naive, one relies on
-  explicit unfolding of the system's dynamics up to the completeness
-  threshold, whilst the second one is abstraction-based and leverages
-  the concepts of abstraction refinement and acceleration to increase 
-  speed whilst retaining soundness. Both approaches provide sound
-  synthesis of state-feedback systems considering the various
-  error sources in the implementation of the control algorithm and in the
-  computational modeling of plant dynamics.
-%
-\item We develop a model for different sources quantization and their
-  effect on the state-space progression, for which we find safe bounds
-  that ensure the safety of our controllers in a hybrid
-  continuous-digital domain.
+\item We develop a model for different sources of quantization errors and
+  their effect on reachability properties.  We give bounds that ensure the
+  safety of our controllers in a hybrid continuous-digital domain.
 %
 \end{enumerate}
 
