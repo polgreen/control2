@@ -1689,12 +1689,12 @@ The maximum size of a real number $x$ that can be represented in a fixed point d
 % We have also shown in the previous section that $x_k=A^nx_0$ is a witness of $x(t): \dot{x}(t)=Ax(t)$ at time $kT_s$. Applying this notion to multiple sample times, we can state that $x_{k_i}=A_i^nx_0$ are a set of witnesses at times $kT_i$, and by extension the set $\{x=A_i^nx_0 : \forall n \in \mathbb{R} \}$ witnesses all states visited by the continuous system in time $t \in [0,\infty)$. This applies to any arbitrary sample time $T_i$.
 % Since the controller output is fed to a Zero Order Holder, the progression of the system between times $kT_s$ and $(k+1)T_s$ is $\mat{A}^n\vec{x}_k+\mat{B}\vec{u}_k : n \in (0,1)$. We therefore obtain a reach tube for the continuous dynamics of a time sampled system to be contained within the abstract reach tube $\mathcal{A}^1\mathcal{M}X_0+\mathcal{BK}^1\mathcal{M}X_0=\mathcal{M}X_0$
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{Modelling quantization as noise} \label{appendix:quantization-noise}
+%\subsection{Modelling quantization as noise} \label{appendix:quantization-noise}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
 
-During any given ADC conversion, the continuous signal will be sampled in the real domain and transformed into a $\mathcal{F}_{\langle I_c,F_c \rangle}$ value. This sampling uses a threshold which is defined by the less significant bit of the ADC. We will assume, for the purposes of this analysis, that the domain of the ADC is that of the digital controller (i.e., the quantizer includes any digital gain added in the code), and so we will denote this error $q_{c}=2^{-F_{c}}$). We omit the effect of non-linearities of the circuitry. The overall conversion is
+%During any given ADC conversion, the continuous signal will be sampled in the real domain and transformed into a $\mathcal{F}_{\langle I_c,F_c \rangle}$ value. This sampling uses a threshold which is defined by the less significant bit of the ADC. We will assume, for the purposes of this analysis, that the domain of the ADC is that of the digital controller (i.e., the quantizer includes any digital gain added in the code), and so we will denote this error $q_{c}=2^{-F_{c}}$). We omit the effect of non-linearities of the circuitry. The overall conversion is
 %$$\mathcal{F}\langle I_{c},F_{c} \rangle(y(t)) = y_k : y_k \in \left[y(t)-\frac{q_{c}}{2}\ \ \ \ y(t)+\frac{q_{c}}{2}\right]$$.
 %If we denote the error in the conversion as noise $\nu_k=y_k-y(t) : t=nk$ then we may define some bounds for it $\nu_k \in [-\frac{q_{c}}{2}\ \ \frac{q_{c}}{2}]$.
 
