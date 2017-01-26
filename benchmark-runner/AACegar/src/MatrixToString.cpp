@@ -15,7 +15,7 @@ std::string defaultSeparator=" , ";
 std::string dimensionMismatch="Dimensions do not match";
 std::string loadError="Load error";
 std::string processingError="Process error";
-std::string version="1.0";
+std::string version="1.1";
 
 namespace abstract {
 
