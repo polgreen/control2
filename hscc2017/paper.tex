@@ -760,10 +760,10 @@ represented as an additive output noise~$\nu(z)$.
 In Figure~\ref{fig:digsystem1}, two sources of uncertainty are illustrated:
 parametric uncertainties related to modeling errors, and uncertainties
 introduced by quantizations in sampling and holding process, i.e., ADC and
-DAC conversions.  Assuming linearity and independence between these sources,
-the uncertain model may be rewritten as a vector of coefficients in the
-z-domain using equations (\ref{eq:coefficients}) and
-(\ref{eq:delta_coefficients})
+DAC conversions.  These sources are assumed to be non-deterministic, 
+which poses no further restriction to our model, thus, the uncertain model
+may be rewritten as a vector of coefficients in the z-domain using equations
+(\ref{eq:coefficients}) and (\ref{eq:delta_coefficients})
 %
 \begin{equation}
 \label{eq:complete_unc_model}
@@ -776,6 +776,14 @@ quantization effects on the plant model, {\it i.e.} $\Delta_q \vec{G}$ is
 a model that incorporates the effects of $\nu$ in $\vec{\hat{G}}$ to 
 investigate the consequences in the stability of system, once our stability 
 analysis is based on polynomial coefficients and not over signals.
+
+The parametric uncertainties in the plant are assumed to have the same
+order as the plant model, since tolerances of higher order would invalidate
+feedback model (even tiny errors of higher order can move the poles by a
+large amount preventing any single controller from stabilizing such a collection).
+This is a reasonable assumption since most tolerances do not change the 
+architecture of the plant, and models subject to such effects are simply
+inadequate as a proposed solution.
 
 %\red{[next figure is a bit unnecessary, does not ad much to the previous one.]} Figure~\ref{fig:digsystem2} shows the digital closed loop systems with $\Delta G_{P}(z)$ and $\Delta G_{Q}(z)$.
 
