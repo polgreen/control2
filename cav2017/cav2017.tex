@@ -647,15 +647,15 @@ will introduce errors, for which an upper bound can be
 given~\cite{DBLP:conf/arith/BrainTRW15}.
 
 We will use $\mathcal{F}_{\langle I_c,F_c \rangle}(x)$ to denote a real
-number $x$ represented in the fixed-point precision level of the controller,
-and $\mathcal{F}_{\langle I_p,F_p \rangle}(x)$ to denote a real number $x$
-represented in the fixed-point precision level of the plant computational
-model ($I_p \geq I_c \wedge\allowbreak F_p \geq F_c$).  Thus any mathematical
-operations occurring in the digital controller will occur in the range of
-$\mathcal{F}_{\langle I_c,F_c \rangle}$, and all other calculations will be
-carried out in the range of $\mathcal{F}_{\langle I_p,F_p \rangle}$.  The
-physical plant operates in the reals, which means our verification phase
-must account for calculation errors in the model.
+number $x$ represented at the fixed-point precision of the controller, and
+$\mathcal{F}_{\langle I_p,F_p \rangle}(x)$ to denote a real number $x$
+represented at the fixed-point precision of the plant model ($I_p \geq I_c
+\wedge\allowbreak F_p \geq F_c$).  Thus any mathematical operations in the
+digital controller will be in the range of $\mathcal{F}_{\langle I_c,F_c
+\rangle}$, and all other calculations will be carried out in the range of
+$\mathcal{F}_{\langle I_p,F_p \rangle}$.  The physical plant operates in the
+reals, which means our verification phase must account for calculation
+errors in the model.
 
 \subsubsection{Effect on safety specification and stability}
 
