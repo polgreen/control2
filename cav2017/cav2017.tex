@@ -359,18 +359,17 @@ discrete system dynamics using Semi-Definite Programming (SDP).  While the
 former uses bounded-input and bounded-output (BIBO) properties to determine
 stability, the latter uses Lyapunov-based quadratic invariants.  In both
 cases, the SDP solver uses floating-point arithmetic and soundness is
-checked by bounding the error.  An alternative approach is taken
-by~\cite{park2016scalable}, where the verification of given control code is
-performed against a known model by extracting an LTI model of the code
-through symbolic execution.  In order to account for rounding errors, an
-upper bound is introduced in the verification phase.  The work in
-\cite{picasso2003stabilization, picasso2002construction} introduces
-attractive invariant sets as a mechanism to bound the quantization error
-effect on stabilization as an invariant set that always converges toward the
-controllable set.  In a similar fashion, \cite{liberzon2003hybrid} evaluates
-the dynamics of the quantization error and bounds its trajectory to a known
-region over a finite period of time.  This technique works for both linear
-and non-linear systems.
+checked by bounding the error.  An alternative is~\cite{park2016scalable},
+where the verification of given control code is performed against a known
+model by extracting an LTI model of the code by symbolic execution. 
+To~account for rounding errors, an upper bound is introduced in the
+verification phase.  The work in \cite{picasso2003stabilization,
+picasso2002construction} introduces attractive invariant sets as a mechanism
+to bound the quantization error effect on stabilization as an invariant set
+that always converges toward the controllable set.  In a similar fashion,
+\cite{liberzon2003hybrid} evaluates the dynamics of the quantization error
+and bounds its trajectory to a known region over a finite period of time. 
+This technique works for both linear and non-linear systems.
 
 %\addtodo{[Move material from \ref{sec:rw} here]}
 
