@@ -907,18 +907,11 @@ disturbances from the FWL effects, with roundoffs in coefficients that may
 change closed-loop poles and zeros position, and consequently affect its
 stability, as argued in~\cite{Bessa16}.
 
-Let $\hat{C}(z)$ be the digital controller transfer function
-represented using this FWL with integer size $I$ and fractional size~$F$;
-$I$ affects the representation range and is set to avoid overflows, 
-while $F$ affects the precision and the truncation process after the 
-arithmetic operations. These variables are chosen depending on 
-hardware features.  In general-purpose processors and
-DSP's, $I$ is minimized to avoid overflows and $F$ is employed for the
-remaining bit representation. Other flexible hardware structures
-(e.g., FPGAs) allow the design of $F$ and $I$, which affects directly
-the number of logical gates.
-
-We shall denote the FWL domain of coefficients as $\mathbb{R}\langle I,F
+Let $\hat{C}(z)$ be the digital controller transfer function represented
+using this FWL with integer size $I$ and fractional size~$F$; $I$ affects
+the range of the representation and is set to avoid overflows, while $F$
+affects the precision and the truncation after arithmetic operations.
+We shall denote the FWL domain of the coefficients by $\mathbb{R}\langle I,F
 \rangle$
 %
 %Since the controller is implemented in the $\mathbb{R}\langle I,F \rangle$ 
