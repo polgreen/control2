@@ -303,7 +303,7 @@ switching controllers with a guaranteed minimum dwell time in each mode.
 However, both approaches are not suitable for the kind of control we seek to
 synthesize.
 
-The work in~\cite{DBLP:journals/corr/AbateBCCDKK16} synthesizes stabilizing
+The work in~\cite{hscc-paper} synthesizes stabilizing
 controllers for continuous plants given as transfer functions by exploiting
 bit-accurate verification of software-implemented digital
 controllers~\cite{IsmailBCFF15, Bessa16}.  While this work also uses CEGIS,
@@ -543,24 +543,24 @@ control literature.  Further, we will embrace the digital nature of the
 controller, which manipulates quantities with finite precision.
 
 %-------------------------------
-\subsection{Stability of closed-loop systems}
+\subsection{Stability of Closed-loop Systems}
 \label{ssec:stability}
 %-------------------------------
-
 
 Asymptotic stability implies convergence to an equilibrium point from any
 states in its neighborhood.  This stability concept is stronger than the
 Lyapunov and BIBO stability researched by previous
-works~\cite{DBLP:conf/emsoft/RavanbakhshS16,DBLP:journals/corr/AbateBCCDKK16,DBLP:conf/hybrid/RouxJG15,
-DBLP:conf/hybrid/WangGRJF16}.  In the case of linear systems as
-in~\eqref{eq:closedloopss}, the equilibrium point for zero-input response is
-always the origin.  Here, we consider systems with a zero reference signal.
+work~\cite{DBLP:conf/emsoft/RavanbakhshS16, hscc-paper,
+DBLP:conf/hybrid/RouxJG15, DBLP:conf/hybrid/WangGRJF16}.  In the case of
+linear systems as in~\eqref{eq:closedloopss}, the equilibrium point for
+zero-input response is always the origin.  Here, we consider systems with a
+zero reference signal.
 
-A discrete-time LTI system as \eqref{eq:closedloopss} is asymptotically stable
-\textit{iff} all the roots of the characteristic polynomial (i.e., the
-eigenvalues of the closed-loop matrix $A_d - B_d K$) are inside the unity
-circle in the complex plane, i.e., \textit{iff} their absolute values are
-less than one~\cite{astrom1997computer}.  In this paper, we express the
+A discrete-time LTI system as \eqref{eq:closedloopss} is asymptotically
+stable \textit{iff} all the roots of the characteristic polynomial (i.e.,
+the eigenvalues of the closed-loop matrix $A_d - B_d K$) are inside the
+unity circle in the complex plane, i.e., \textit{iff} their absolute values
+are less than one~\cite{astrom1997computer}.  In this paper, we express the
 stability specification $\phi_{stability}$ in terms of a check known as
 Jury's criterion~\cite{fadali}: this is an easy algebraic formula to select
 the entries of matrix $K$, so that the closed-loop dynamics are shaped as
@@ -1522,20 +1522,22 @@ P(z)= \det( z I_{n} - A_d + B_d K ),
 \end{equation}
 where $I_{n}$ is the n-th order identity matrix. 
 
-Jury's criterion provides necessary and sufficient conditions for the eigenvalues 
-to be within the unit circle and, consequently, for the system is stable.  
-It is a known stability test from the control system literature~\cite{fadali}.  
-Given a 
-polynomial $P(z)$ of the form
+Jury's criterion provides necessary and sufficient conditions for the
+eigenvalues to be within the unit circle and, consequently, for the system
+is stable~\cite{fadali}.  Given a polynomial $P(z)$ of the form
+%
 $$
 P(z) = a_{0}z^{N} + a_{1}z^{N-1} + ... a_{N-1}z + a_{N} = 0, \;\; a_{0}\neq 0,
 $$
-Jury's criterion explores solely the coefficients ($a_{0},a_{1},...,a_{N-1}$) 
-of $P(z)$ for checking stability, which we encompass as property $\phi_{stability}$, as detailed below. 
+%
+Jury's criterion explores solely the coefficients
+$a_{0},a_{1},\ldots,a_{N-1}$ of $P(z)$ for checking stability, which we
+capture as property $\phi_{stability}$, as detailed below.
 
-This study limits itself to explain the encoding of Jury's criterion for formal synthesis.  
-For the stability  test procedure, the following matrix 
-$M=[m_{ij}]_{(2N-2)\times N}$ is built  from $P(z)$ coefficients:
+This study limits itself to explain the encoding of Jury's criterion for
+formal synthesis.  For the stability test procedure, the following matrix
+$M=[m_{ij}]_{(2N-2)\times N}$ is built from the coefficients of $P(z)$:
+%
 $$
 M=\left[
 \begin{matrix}
@@ -1568,25 +1570,32 @@ four propositions hold:
 \item $R_{3}$: $\vert{a_{0}}\vert <a_{N}$;
 \item $R_{4}$: $m_{11}>0\iff (m_{31}>0)\wedge (m_{51}>0)\wedge \dots \wedge (m_{(2N-3)(1)>0)}$.
 \end{itemize}
-In conclusion, the stability property $\phi_{stability}$ is encoded as the following formula:
+%
+The stability property $\phi_\mathit{stability}$ is encoded as the following formula:
 $$
-\phi_{stability}\iff \ (R_{1} \wedge R_{2} \wedge R_{3} \wedge R_{4}).
+\phi_\mathit{stability}\iff \ (R_{1} \wedge R_{2} \wedge R_{3} \wedge R_{4}).
 $$
 
 %-------------------------------
-\subsection{Stability of closed-loop systems with fixed-point controller error}
+\subsection{Stability of Closed-loop Systems with Fixed-point Controller Error}
 %-------------------------------
 
-The proof above relies on the fact that the relationship between states and next states is defined by
-$x_{k+1} = (A_d  - B_dK)*x_k$, all computed at infinite precision. In fact, when we employ a FWL digital controller, 
-the operation becomes:
+The proof above relies on the fact that the relationship between states and
+next states is defined by $x_{k+1} = (A_d - B_dK) \cdot x_k$, all computed
+at infinite precision.  When we employ a FWL digital controller, the
+operation becomes:
+%
 \begin{align*}
-x_{k+1} &= A_d * x_{k} -(\mathcal{F}_{\langle I_c,F_c \rangle}(K)\cdot\mathcal{F}_{\langle I_c,F_c \rangle}(x_{k})).  \\
-x_{k+1} &= (A_d  - B_dK)*x_k + B_dK\delta
+x_{k+1} &= A_d \cdot x_{k} -(\mathcal{F}_{\langle I_c,F_c \rangle}(K)\cdot\mathcal{F}_{\langle I_c,F_c \rangle}(x_{k})).  \\
+x_{k+1} &= (A_d  - B_dK) \cdot x_k + B_dK\delta
 %\\ x_{k+1}&=A_d x_{k} + B_du_{k}
 \end{align*}
-where $\delta$ is the maximum error that can be introduced by the FWL controller in one step, i.e., by reading the states values once and multiplying by $K$ once. 
-We derive the closed form expression for $x_n$ as follows: 
+%
+where $\delta$ is the maximum error that can be introduced by the FWL
+controller in one step, i.e., by reading the states values once and
+multiplying by $K$ once.  We derive the closed form expression for $x_n$ as
+follows:
+%
 \begin{align*}
 x_{1} &= (A_d  - B_dK)x_0 + B_dK\delta \\
 x_{2} &= (A_d  - B_dK)((A_d  - B_dK)x_0 + B_dK\delta ) + B_dK\delta \\
@@ -1596,24 +1605,33 @@ x_{n} &= (A_d  - B_dK)^nx_0 + (A_d  - B_dK)^{n-1}B_dK\delta + ... + (A_d  - B_dK
   &= (A_d - B_dK)^nx_0 + \sum_{i=0}^{i=n-1}(A_d - B_dK)^iB_dk\delta
 \end{align*}
 
-The definition of asymptotic stability is that the system converges to a reference signal, in this case we use no
-reference signal so an asymptotically stable system will converge to the origin. We know that the original system
-with an infinite-precision controller is stable, because we have synthesized it to meet Jury's criterion. Hence, 
-$(A_d  - B_dK)^n*x_0$ must converge to zero. 
+The definition of asymptotic stability is that the system converges to a
+reference signal, in this case we use no reference signal so an
+asymptotically stable system will converge to the origin.  We know that the
+original system with an infinite-precision controller is stable, because we
+have synthesized it to meet Jury's criterion.  Hence, $(A_d - B_dK)^n \cdot
+x_0$ must converge to zero.
 
-To show that a fixed-point implementation of the same controller will converge to a finite value, 
-we need to show that the infinite sum converges.
-A known result is that a power series of matrices converges~\cite{horn1990matrix}, iff the eigenvalues of the matrix are less than 1, as follows:
+To show that a fixed-point implementation of the same controller will
+converge to a finite value, we need to show that the infinite sum converges. 
+A known result is that a power series of matrices
+converges~\cite{horn1990matrix}, iff the eigenvalues of the matrix are less
+than~1, as follows:
+%
 %\begin{align*}
 $\sum_{i=0}^{\infty}T^i  = (I - T)^{-1}$, 
 %\end{align*}
+%
 where $I$ is the identity matrix and $T$ is a square matrix. Thus, our system will converge to the value 
+%
 \begin{align*}
 0 + (I - A_d + B_dK)^{-1}B_dk\delta. 
 \end{align*}
-As a result, if the value $(I - A_d + B_dK)^{-1}B_dk\delta$ is within the safe space, then the synthesized fixed-point controller results in a safe closed-loop model. 
-The convergence to a finite value, however, will not make it asymptomatically stable.
-
+%
+As a result, if the value $(I - A_d + B_dK)^{-1}B_dk\delta$ is within the
+safe space, then the synthesized fixed-point controller results in a safe
+closed-loop model.  The convergence to a finite value, however, will not
+make it asymptomatically stable.
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \section{LTI system Transformations and Equivalences} \label{sec:appendix:LTIbackground}
@@ -1690,14 +1708,33 @@ Let $x$ be a real number, and $\mathcal{F}_{\langle I,F \rangle}(x)$ be the same
 Then $\mathcal{F}_{\langle I,F \rangle}(x) = x-\delta_T$ where the error $ \delta_T=x\ \%_{c_m}\ \tilde x$, and $\%_{c_m}$ is the modulus operation performed on the last bit.
 
 So $\delta_T$ is the truncation error and it will propagate across operations.
-\item {\bf Rounding:}
-The following errors appear in basic operations. Let $c_1, c_2$ and $c_3$ be real numbers, and $\delta_{T1}$ and $\delta_{T2}$ be the truncation errors caused by representing $c_1$ and $c_2$ in the fixed-point domain as above.
+%
+\item {\bf Rounding:} The following errors appear in basic operations.  Let
+$c_1, c_2$ and $c_3$ be real numbers, and $\delta_{T1}$ and $\delta_{T2}$ be
+the truncation errors caused by representing $c_1$ and $c_2$ in the
+fixed-point domain as above.
+%
 \begin{enumerate}
-\item Addition/Subtraction: these operations only propagate errors coming from truncation of the operands, namely 
-$\mathcal{F}_{\langle I,F \rangle}(c_1) \pm \mathcal{F}_{\langle I,F \rangle}(c_2) = c_3 + \delta_3$ with $|\delta_3| \leq |\delta_{T1}| + |\delta_{T2}|$.
-\item Multiplication: $\mathcal{F}_{\langle I,F \rangle}(c_1) * \mathcal{F}_{\langle I,F \rangle}(c_2) =  c_3 + \delta_3$ with $|\delta_3| \leq |\delta_{T1}*\mathcal{F}_{\langle I,F \rangle}(c_2)| + |\delta_{T2}*\mathcal{F}_{\langle I,F \rangle}(c_1)| + c_m$, where $c_m=2^{-F}$ as above.
-\item Division: the operations performed by our controllers in the FWL domain do not include division. However, we do use division in computations at the precision of the plant. Here the error depends on whether the divisor is greater or smaller than the dividend. 
-$\mathcal{F}_{\langle I,F \rangle}(c_1) / \mathcal{F}_{\langle I,F \rangle}(c_2) =  c_3 + \delta_{T3}$ where $\delta_{T3}$ is $(\delta_{T2}*c_1 - \delta_{T1}*c_2)/(\delta_{T2}^2 - \delta_{T2} c_2)$,
+%
+\item Addition/Subtraction: these operations only propagate errors coming
+from truncation of the operands, namely $\mathcal{F}_{\langle I,F
+\rangle}(c_1) \pm \mathcal{F}_{\langle I,F \rangle}(c_2) = c_3 + \delta_3$
+with $|\delta_3| \leq |\delta_{T1}| + |\delta_{T2}|$.
+%
+\item Multiplication: $\mathcal{F}_{\langle I,F \rangle}(c_1) \cdot
+\mathcal{F}_{\langle I,F \rangle}(c_2) =  c_3 + \delta_3$ with $|\delta_3|
+\leq |\delta_{T1}\cdot\mathcal{F}_{\langle I,F \rangle}(c_2)| +
+|\delta_{T2}\cdot\mathcal{F}_{\langle I,F \rangle}(c_1)| + c_m$, where
+$c_m=2^{-F}$ as above.
+%
+\item Division: the operations performed by our controllers in the FWL
+domain do not include division.  However, we do use division in computations
+at the precision of the plant.  Here the error depends on whether the
+divisor is greater or smaller than the dividend.  $\mathcal{F}_{\langle I,F
+\rangle}(c_1) / \mathcal{F}_{\langle I,F \rangle}(c_2) = c_3 + \delta_{T3}$
+where $\delta_{T3}$ is $(\delta_{T2}\cdot c_1 - \delta_{T1}\cdot
+c_2)/(\delta_{T2}^2 - \delta_{T2} c_2)$,
+%
 %$\mathcal{F}_{\langle I,F \rangle}(c_1) / \mathcal{F}_{\langle I,F \rangle}(c_2) =  (c_1 - \delta_{T1})/ (c_2 + \delta_{T2}) + c_m $, where $c_m=2^{-F}$ as above.
 \end{enumerate}
 
