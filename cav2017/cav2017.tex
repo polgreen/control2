@@ -1625,7 +1625,7 @@ $\sum_{i=0}^{\infty}T^i  = (I - T)^{-1}$,
 where $I$ is the identity matrix and $T$ is a square matrix. Thus, our system will converge to the value 
 %
 \begin{align*}
-0 + (I - A_d + B_dK)^{-1}B_dk\delta. 
+0 + (I - A_d + B_dK)^{-1}B_dk\delta \,. 
 \end{align*}
 %
 As a result, if the value $(I - A_d + B_dK)^{-1}B_dk\delta$ is within the
@@ -1641,10 +1641,12 @@ make it asymptomatically stable.
 \subsection{Time discretization of continuous-space dynamics}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-A dynamical system is a system in which a function describes the progression of a state over time. 
-In a continuous domain with linear dynamics, it is described by a first order Ordinary Differential Equation (ODE).
+A dynamical system is a system in which a function describes the progression
+of a state over time.  In a continuous domain with linear dynamics, it is
+described by a first-order Ordinary Differential Equation (ODE).
+%
 \begin{equation}
-\dot{x}(t)=Ax(t)+Bu(t).
+\dot{x}(t)=Ax(t)+Bu(t) \,.
 \label{eq:dynamical}
 \end{equation}
 %Furthermore, a control system may have a derived output that is a linear combination of its states and inputs, 
@@ -1653,26 +1655,28 @@ In a continuous domain with linear dynamics, it is described by a first order Or
 %\vec{y}(t)=\vec{C}\vec{x}(t)+\vec{D}\vec{u}(t).
 %\end{equation}
 
-Discretization of an continuous dynamical system turns the ODE into a difference equation, assuming zero-order hold
-for the input $u$, 
+Discretization of an continuous dynamical system turns the ODE into a
+difference equation, assuming zero-order hold for the input $u$,
+%
 %and continuous integration for the noise $\vec{w}$, 
 to
 \begin{align}
 \label{eq:discretization}
-x_{k+1} &= A_d x_k+B_d u_k,
+x_{k+1} &= A_d x_k+B_d u_k \,,
 %\\y_k &= \vec{C}_d \vec{x}_ k + \vec{D}_d \vec{u}_ k. 
 \end{align}
 %with covariance for $\vec{w}_k \sim \mathcal{N}(0,Q_d)$,
 where
 \begin{align}
 \label{eq:discretize}
-A_d &= e^{A T_s} = \mathcal{L}^{-1} { ( s I - A )^{-1} }_{t = T_s},\\
-B_d &= \int_{0}^{T_s} e^{A t} dt\ B = A^{-1} ( A_d - I ) B,
+A_d &= e^{A T_s} = \mathcal{L}^{-1} { ( s I - A )^{-1} }_{t = T_s}\\
+B_d &= \int_{0}^{T_s} e^{A t} dt\ B = A^{-1} ( A_d - I ) B \,,
 %\\
 %\vec{C}_d &= \vec{C},\\
 %\vec{D}_d &= \vec{D},\\
 %Q_d &= \int_{0}^{T_s} e^{\vec{A} t} Q e^{\vec{A}^T t} dt.
 \end{align}
+%
 and $T_s$ is the sample time. Then
 $x(kT_s)=x_k 
 %\wedge y(kT_s) = y_k, 
@@ -1689,8 +1693,10 @@ The eigenvalues of $A_d$
 %corresponding to the poles of $G_d(z)$, 
 are related to those of $A$:  
 % corresponding to the poles of $G(s)$ are similarly related.
-$\hat{\lambda}_i=e^{-\lambda_iT_s}$, where $\hat{\lambda}_i \in \sigma(A_d) \wedge \lambda_i \in \sigma(A)$
-where $\sigma(\cdot)$ is the spectrum of a matrix.
+%
+$\hat{\lambda}_i=e^{-\lambda_iT_s}$, where $\hat{\lambda}_i \in \sigma(A_d)
+\wedge \lambda_i \in \sigma(A)$ where $\sigma(\cdot)$ is the spectrum of a
+matrix.
 
 %The following remark is worth mentioning regarding the above.
 %\begin{remark}
