@@ -793,7 +793,7 @@ $(x_0, u_k)$ represents $x$.
 %% %
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{Naive approach: CEGIS with multi-staged verification}
+\subsection{Naive Approach: CEGIS with Multi-staged Verification}
 \label{sec:CEGIS-precision-incrementation}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -873,41 +873,45 @@ $(x_0, u_k)$ represents $x$.
 
 %\subsubsection{Controller synthesis}
 
-The controller synthesis is described in
+An overview of the controller synthesis is given in
 Fig.~\ref{fig:CEGIS-precision-increment}.  One important observation is
 that, for this approach, we verify and synthesize a controller over $k$ time
 steps.  We~then compute a completeness threshold, $\overline{k}$, for this
-controller, and verify the controller correctness to $\overline{k}$ time
-steps.  Essentially, $\overline{k}$ represents the number of iterations
-required to sufficiently unwind the closed-loop state-space system such that
-the boundaries are not violated for any $k{>}\overline{k}$ (i.e., it is
+controller, and verify correctness for $\overline{k}$ time steps. 
+Essentially, $\overline{k}$ is the number of iterations required to
+sufficiently unwind the closed-loop state-space system such that the
+boundaries are not violated for any $k{>}\overline{k}$ (i.e., it is
 sufficient to unwind the closed-loop state-space system up to $\overline{k}$
-in order to ensure that $\phi_{safety}$ holds).
+in order to ensure that $\phi_\mathit{safety}$ holds).
 
 \medskip
 
 Next, we describe the different phases in Fig.~\ref{fig:CEGIS-precision-increment}
-(blocks 1 to 4):
+(blocks 1 to 4) in detail.
 
 %\todo{please eventually itemize next}
 \begin{enumerate}
+
 \item The inductive synthesis phase (i.e., {\sc synthesize}) uses BMC to
-compute a candidate solution $K$
-that satisfies both the stability criteria detailed in 
-Sec.~\ref{ssec:stability} and the safety specification in Sec.~\ref{ssec:safety}.
-To synthesize a controller that satisfies the stability criteria, we require that
-a computed characteristic polynomial satisfies Jury's criteria. The details of this
-calculation can be found in the Appendix.
+compute a candidate solution $K$ that satisfies both the stability criteria
+(Sec.~\ref{ssec:stability}) and the safety specification
+(Sec.~\ref{ssec:safety}).  To synthesize a controller that satisfies the
+stability criteria, we require that a computed characteristic polynomial
+satisfies Jury's criteria.  The details of this calculation can be found in
+the Appendix.
 
  %\todo{unclear next: it seems like to select a single initial state here, rather than considering the set thereof - clarify. also, clarify relationship btw k and soundness. }
-Regarding the second requirement, we synthesize a safe controller by unwinding the transition system
-$k$ steps and by picking a controller $K$ and a single initial state,  such that the states at each step do
-not violate the safety criteria. That is, we ask the bounded model checker if there exists a $K$ that is safe for at least one $x_0$ in our set of all possible initial states. This is sound if the current $k$ is below the
-completeness threshold, which we assume to be true in the {\sc synthesize} phase.
-We also assume some
-precision $\langle I_p,F_p\rangle$ for the plant and a sampling rate.  The
-checks that all these assumptions are sound are performed by subsequent
-{\sc verify} stages.
+
+Regarding the second requirement, we synthesize a safe controller by
+unwinding the transition system $k$ steps and by picking a controller $K$
+and a single initial state, such that the states at each step do not violate
+the safety criteria.  That is, we ask the bounded model checker if there
+exists a $K$ that is safe for at least one $x_0$ in our set of all possible
+initial states.  This is sound if the current $k$ is below the completeness
+threshold, which we assume to be true in the {\sc synthesize} phase.  We
+also assume some precision $\langle I_p,F_p\rangle$ for the plant and a
+sampling rate.  The checks that these assumptions hold are performed by
+subsequent {\sc verify} stages.
 
 %\begin{algorithm}[]
 %\scriptsize
@@ -925,10 +929,10 @@ checks that all these assumptions are sound are performed by subsequent
 \begin{algorithm}[]
 \scriptsize
 \begin{algorithmic}[1]
-\Function{$safetyCheck()$}{}
+\Function{$\mathit{safetyCheck}()$}{}
 \State assert($ \underline{u}  \leq u \leq \overline{u}$)
  \State set $x_0$ to be a vertex state, e.g., $[\underline{x_0},\underline{x_0}]$	
-\For {($c=0; c < 2^{Num_States}; c++$)}
+\For {($c=0; c < 2^\mathit{Num\_States}; c++$)}
   %\State assert($ \underline{x_0}  \leq x_0 \leq \overline{x_0}$)
 	\While{$i=0; i< k; i++$}
 		%\State $u = (\langle I_p,F_p\rangle)((\langle I_c,F_c\rangle)K * (\langle I_c,F_c\rangle) x)$
@@ -966,39 +970,41 @@ where $\sum_{i=1}^{2^n} \alpha_i =1$. Then if $x_0=x$, we obtain
 x_k   &= (A_d - B_d K)^k x = (A_d - B_d K)^k \sum_{i=1}^{2^n} \alpha_i v_i 
       = \sum_{i=1}^{2^n} \alpha_i (A_d - B_d K)^k v_i = \sum_{i=1}^{2^n} \alpha_i x_k^i, 
  \end{align*}     
-where $x_k^i$ denotes the trajectories obtained from the single vertex $v_i$. 
-We conclude that any $k$-step trajectory is encompassed, within a convex set, by those generated from the vertices. 
+%
+where $x_k^i$ denotes the trajectories obtained from the single vertex
+$v_i$.  We~conclude that any $k$-step trajectory is encompassed, within a
+convex set, by those generated from the vertices.
 
 \item The second {\sc verify} stage, {\sc precision}, 
  restores soundness with respect to the plant's precision
 by using interval arithmetic \cite{moore1966interval} to validate the 
 operations performed by the previous stage. 
 
-\item The third {\sc verify} stage, {\sc complete}, checks that the
-current $k$ is large enough to ensure safety for any $k'{>}k$.  Here, we compute the
-completeness threshold $\overline{k}$ for the current candidate $K$
-and check that $k{\leq}\overline{k}$. This is done according to the following argument, 
-shown in Fig~\ref{fig:ct}.  
+\item The third {\sc verify} stage, {\sc complete}, checks that the current
+$k$ is large enough to ensure safety for any $k'{>}k$.  Here, we compute the
+completeness threshold $\overline{k}$ for the current candidate $K$ and
+check that $k{\leq}\overline{k}$.  This is done according to the following
+argument, illustrated in Fig.~\ref{fig:ct}.
 
-A stable control system is known to have converging dynamics. 
-Assume the closed-loop matrix eigenvalues are not repeated 
-(which is sensible to do, since we select them). 
-The trajectories distance from the reference point (origin) 
-decreases over time within subspaces related to real-valued eigenvalues;  
-however, this in general not the case when dealing with complex eigenvalues.  
-Consider the closed-loop matrix, which updates the states every discrete time step, 
-and select the eigenvalue $\vartheta$ with smallest (non-trivial) imaginary value. 
-At every consecutive time steps $kT_s, (k+1)T_s$, 
-the dynamics projected on the corresponding eigenspace rotate of $\vartheta T_s$ radiants.  
-So taking $k{\leq}\overline{k}$ as the ceiling of $\frac{2\pi}{\vartheta T_s}$, 
-after $k{\leq}\overline{k}$ steps we have completed a full rotation, which results in a point closer to the origin, and it is the completeness threshold. 
-
+A stable control system is known to have converging dynamics.  Assume the
+closed-loop matrix eigenvalues are not repeated (which is sensible to do,
+since we select them).  The distance of the trajectory from the reference
+point (origin) decreases over time within subspaces related to real-valued
+eigenvalues; however, this in general not the case when dealing with complex
+eigenvalues.  Consider the closed-loop matrix, which updates the states
+every discrete time step, and select the eigenvalue $\vartheta$ with
+smallest (non-trivial) imaginary value.  At every consecutive time steps
+$kT_s, (k+1)T_s$, the dynamics projected on the corresponding eigenspace
+rotate of $\vartheta T_s$ radiants.  So taking $k{\leq}\overline{k}$ as the
+ceiling of $\frac{2\pi}{\vartheta T_s}$, after $k{\leq}\overline{k}$ steps
+we have completed a full rotation, which results in a point closer to the
+origin, and it is the completeness threshold.
 
 \begin{figure*}[t]
 \centering
 \includegraphics[width=0.6\textwidth]{ct.eps}
 \vspace{0.1cm}
-\caption{Completeness threshold for multi-staged verification.}
+\caption{Completeness threshold for multi-staged verification}
 \label{fig:ct}
 \end{figure*}
 
