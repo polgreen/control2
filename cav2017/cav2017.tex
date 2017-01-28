@@ -1561,22 +1561,24 @@ requirements (alongside safety) in the synthesis of digital controllers.
 
 For a closed-loop system as~\eqref{eq:closedloopss}, 
 the characteristic polynomial $P(z)$ should be computed as follows:
+%
 \begin{equation}
-P(z)= \det( z I_{n} - A_d + B_d K ),
+P(z)= \det( z I_{n} - A_d + B_d K ) \,,
 \end{equation}
-where $I_{n}$ is the n-th order identity matrix. 
+%
+where $I_{n}$ is the $n$-th order identity matrix. 
 
 Jury's criterion provides necessary and sufficient conditions for the
 eigenvalues to be within the unit circle and, consequently, for the system
 is stable~\cite{fadali}.  Given a polynomial $P(z)$ of the form
 %
 $$
-P(z) = a_{0}z^{N} + a_{1}z^{N-1} + ... a_{N-1}z + a_{N} = 0, \;\; a_{0}\neq 0,
+P(z) = a_{0}z^{N} + a_{1}z^{N-1} + ... a_{N-1}z + a_{N} = 0, \;\; a_{0}\neq 0 \,,
 $$
 %
 Jury's criterion explores solely the coefficients
 $a_{0},a_{1},\ldots,a_{N-1}$ of $P(z)$ for checking stability, which we
-capture as property $\phi_{stability}$, as detailed below.
+capture as property $\phi_\mathit{stability}$, as detailed below.
 
 This study limits itself to explain the encoding of Jury's criterion for
 formal synthesis.  For the stability test procedure, the following matrix
