@@ -1004,7 +1004,7 @@ eigenvalues.  Consider the closed-loop matrix, which updates the states
 every discrete time step, and select the eigenvalue $\vartheta$ with
 smallest (non-trivial) imaginary value.  At every consecutive time steps
 $kT_s, (k+1)T_s$, the dynamics projected on the corresponding eigenspace
-rotate of $\vartheta T_s$ radiants.  So taking $k{\leq}\overline{k}$ as the
+rotate of $\vartheta T_s$ radiants.  Thus, taking $k{\leq}\overline{k}$ as the
 ceiling of $\frac{2\pi}{\vartheta T_s}$, after $k{\leq}\overline{k}$ steps
 we have completed a full rotation, which results in a point closer to the
 origin, and it is the completeness threshold.
@@ -1761,14 +1761,23 @@ matrix.
 
 \subsection{Errors due to numerical representation} \label{appendix:numerical_errors}
 
-We have  used $\mathcal{F}_{\langle I,F \rangle}(x)$ denote a real number $x$ represented in a fixed point domain, with $I$ bits representing the integer part and $F$ bits representing the decimal part. The smallest number that can be represented in this domain is $c_m=2^{-F}$.
-The following approximation errors will arise in mathematical operations and representation:
+We have  used $\mathcal{F}_{\langle I,F \rangle}(x)$ denote a real number
+$x$ represented in a fixed point domain, with $I$ bits representing the
+integer part and $F$ bits representing the decimal part.  The smallest
+number that can be represented in this domain is $c_m=2^{-F}$.  The
+following approximation errors will arise in mathematical operations and
+representation:
+%
 \begin{enumerate}
-\item {\bf Truncation:}
-Let $x$ be a real number, and $\mathcal{F}_{\langle I,F \rangle}(x)$ be the same number represented in a fixed-point domain as above. 
-Then $\mathcal{F}_{\langle I,F \rangle}(x) = x-\delta_T$ where the error $ \delta_T=x\ \%_{c_m}\ \tilde x$, and $\%_{c_m}$ is the modulus operation performed on the last bit.
 
-So $\delta_T$ is the truncation error and it will propagate across operations.
+\item {\bf Truncation:} Let $x$ be a real number, and $\mathcal{F}_{\langle
+I,F \rangle}(x)$ be the same number represented in a fixed-point domain as
+above.  Then $\mathcal{F}_{\langle I,F \rangle}(x) = x-\delta_T$ where the
+error $ \delta_T=x\ \%_{c_m}\ \tilde x$, and $\%_{c_m}$ is the modulus
+operation performed on the last bit.
+
+Thus, $\delta_T$ is the truncation error and it will propagate across
+operations.
 %
 \item {\bf Rounding:} The following errors appear in basic operations.  Let
 $c_1, c_2$ and $c_3$ be real numbers, and $\delta_{T1}$ and $\delta_{T2}$ be
