@@ -707,7 +707,7 @@ In this section, we describe our technique for synthesizing safe digital
 feedback controllers using CEGIS.  For this purpose, we first provide the
 synthesizer's general architecture, followed by describing our two
 approaches to synthesizing safe controllers: the first one is a baseline
-approach that relies on a naive explicit unwinding of the transition
+approach that relies on a naive explicit unfolding of the transition
 relation, whereas the second uses abstraction to implicitly evaluate all
 possible progressions of the system simultaneously.
 
@@ -869,7 +869,7 @@ $(x_0, u_k)$ represents $x$.
    (verif2.north) edge node[align=center] {} ([xshift=0cm]aux6)
    ([xshift=0cm]aux6) edge node[align=center] {Increase Precision} (aux5)
    (verif3.north) edge node[align=center] {} ([xshift=6.7cm]aux4)
-   ([xshift=6.7cm]aux4) edge node[align=center] {Increase Completeness Threshold} (aux3);
+   ([xshift=6.7cm]aux4) edge node[align=center] {Increase Unfolding Bound} (aux3);
    %(verif4.north) edge node[align=center] {} ([xshift=10.5cm]aux2)
    %([xshift=10.5cm]aux2) edge node[align=center] {Increase Sampling Rate} (aux1);
 
@@ -911,7 +911,7 @@ the Appendix.
  %\todo{unclear next: it seems like to select a single initial state here, rather than considering the set thereof - clarify. also, clarify relationship btw k and soundness. }
 
 Regarding the second requirement, we synthesize a safe controller by
-unwinding the transition system $k$ steps and by picking a controller $K$
+unfolding the transition system $k$ steps and by picking a controller $K$
 and a single initial state, such that the states at each step do not violate
 the safety criteria.  That is, we ask the bounded model checker if there
 exists a $K$ that is safe for at least one $x_0$ in our set of all possible
@@ -957,10 +957,12 @@ subsequent {\sc verify} stages.
 \end{algorithm}
 
 \item The first {\sc verify} stage, {\sc safety}, checks that candidate
-solution $K$, which we synthesized to be safe for at least one initial state, is safe for \emph{all} possible initial states, i.e., does not reach an unsafe
-state within $k$ steps where we assume $k$ to be under the completeness threshold. 
-After unwinding the transition system corresponding to the previously synthesized controller
-$k$ steps, we check that the safety specification holds for any initial state. 
+solution $K$, which we synthesized to be safe for at least one initial
+state, is safe for \emph{all} possible initial states, i.e., does not reach
+an unsafe state within $k$ steps where we assume $k$ to be under the
+completeness threshold.  After unfolding the transition system corresponding
+to the previously synthesized controller $k$ steps, we check that the safety
+specification holds for any initial state.
 
 This is relatively computationally expensive if the bounds on the
 allowed initial states are large.  However, we can show that, if the
