@@ -1324,50 +1324,46 @@ This refinement allows {\sc synthesize} to find a controller {\footnotesize $K=[
 \section{Experimental Evaluation}
 %-------------------------------
 
-
 %-------------------------------
-\subsection{Description of the benchmarks}
+\subsection{Description of the Benchmarks}
 \label{experimental-setup}
 %-------------------------------
 
-A set of state-space models for different classes of 
-systems were extracted from the 
-literature~\cite{Franklin15,maglev,converters,CTMS} 
-and employed for validating our methodology. 
+A set of state-space models for different classes of systems was extracted
+from the literature~\cite{Franklin15, maglev, converters, CTMS} and employed
+for validating our methodology.
 
 \textit{DC Motor Rate} plants describes the angular velocity of a DC Motor, respectively. 
-\textit{Automotive Cruise System} plant represents the speed of a motor vehicle. 
-\textit{Helicopter Longitudinal Motion} plant provides the longitudinal motion model 
+The \textit{Automotive Cruise System} plant represents the speed of a motor vehicle. 
+The \textit{Helicopter Longitudinal Motion} plant provides the longitudinal motion model 
 of a helicopter. 
-\textit{Inverted Pendulum} plant describes a pendulum model
+The \textit{Inverted Pendulum} plant describes a pendulum model
 with its center of mass above its pivot point. 
-\textit{Magnetic Suspension} plant provides a physical model for which 
+The \textit{Magnetic Suspension} plant provides a physical model for which 
 a given object is suspended via magnetic field. 
-\textit{Magnetized Pointer} plant describes a physical model employed in analogue gauges 
+The \textit{Magnetized Pointer} plant describes a physical model employed in analogue gauges 
 and indicators that is rotated through interaction with magnetic fields.
-\textit{1/4 Car Suspension} plant presents a physical model that connects a car to its wheels 
+The \textit{1/4 Car Suspension} plant presents a physical model that connects a car to its wheels 
 and allows relative motion between both parts.
-\textit{Computer Tape Driver} plant describes a system to read and write data 
+The \textit{Computer Tape Driver} plant describes a system to read and write data 
 on a storage device in the computer.
 
-Section~\ref{sec:BenchmarksforStateSpace} in the appendix summarizes 
-all our benchmarks, which are SISO models (cf. section~\ref{sec:preliminaries}). 
-The Inverted Pendulum appears to be a two output system, but it was treated as two 
-SISO systems during the experiments. For the sake of simplicity all the states 
-measurements are assumed available. In practice, state estimators should be designed 
-in order to obtain an estimate of the states from the single output. 
-Further work can include 
-state observers synthesis.
+Section~\ref{sec:BenchmarksforStateSpace} in the appendix summarizes all our
+benchmarks, which are SISO models (Section~\ref{sec:preliminaries}).  The
+Inverted Pendulum appears to be a two output system, but it was treated as
+two SISO systems during the experiments.  For the sake of simplicity all the
+state measurements are assumed available.  In practice, state estimators
+should be designed in order to obtain an estimate of the states from the
+single output.  Further work can include state observers synthesis.
 
 All benchmarks were discretized with different sample times using 
 the approach described in Appendix~\ref{sec:appendix:LTIbackground}. 
 All experiments were performed considering $\underline{x_{i}}=-1$ and 
 $\overline{x_{i}}=1$ and the inputs $u_{k}=0, \forall k>0$.
-We have conducted the experimental evaluation on a 12-core 2.40\,GHz
-Intel Xeon E5-2440 with 96\,GB of RAM and Linux OS. We used the Linux \emph{times} command
-to measure CPU time used for each benchmark. The experimental runtime was limited to
-one hour per benchmark.
-%
+We have conducted the experimental evaluation on a 12-core 2.40\,GHz Intel
+Xeon E5-2440 with 96\,GB of RAM and Linux OS.  We used the Linux
+\emph{times} command to measure CPU time used for each benchmark.  The
+runtime was limited to one hour per benchmark.
 
 %-------------------------------
 \subsection{Objectives}
@@ -1392,59 +1388,60 @@ and can their stability and safety be confirmed outside of our model?
 %-------------------------------
 
 We give the run-times required to synthesize a stable controller for each
-benchmark in Table~\ref{tab:results}.  
-Here \textit{Benchmark} is the name of the respective
-benchmark, $\mathcal{F}_{\langle I_p,F_p \rangle}$ is the fixed-point precision used
-to model the plant, while \textit{Time}
-is the total time (in milliseconds) required to synthesize a stable controller
-for the given plant, for CEGIS with multi-staged verification as well as
-abstraction-based CEGIS. The precision for the controller,
-$\mathcal{F}_{\langle I_c,F_c \rangle}$, is always chosen to be $I_c = 8, F_c = 8$.
+benchmark in Table~\ref{tab:results}.  Here \textit{Benchmark} is the name
+of the respective benchmark, $\mathcal{F}_{\langle I_p,F_p \rangle}$ is the
+fixed-point precision used to model the plant, while \textit{Time} is the
+total time required to synthesize a stable controller for the given plant,
+for CEGIS with multi-staged verification as well as abstraction-based CEGIS. 
+The precision for the controller, $\mathcal{F}_{\langle I_c,F_c \rangle}$,
+is always chosen to be $I_c = 8, F_c = 8$.
 
-For the majority of our benchmarks, the conjecture stands that the abstraction-based back-end
-is faster than the basic multi-staged verification approach. However, it does fail to
-find solutions to 3 benchmarks, as compared to 2 with the multi-staged back-end, where
-the numbers given in the discretization matrices are too small. In direct comparison, the
-abstraction-based approach is on average able to find a solution in approximately 35\% of
-the time required using the multi-staged back-end, and has a median run-time 1.15\,s, which is
-seven times smaller than the multi-staged approach. The two back-ends complement each other
-in benchmark coverage and together solve all benchmarks in the set.
+For the majority of our benchmarks, we observe that the abstraction-based
+back-end is faster than the basic multi-staged verification approach. 
+However, it fails to find solutions to three benchmarks, as compared to two
+with the multi-staged back-end, where the numbers given in the
+discretization matrices are too small.  In direct comparison, the
+abstraction-based approach is on average able to find a solution in
+approximately 35\% of the time required using the multi-staged back-end, and
+has a median run-time 1.15\,s, which is seven times smaller than the
+multi-staged approach.  The two back-ends complement each other in benchmark
+coverage and together solve all benchmarks in the set.
 
 \begin{table}
 \centering
 \scriptsize
 \begin{tabular}{| c | l | c | r | c | r |}
+%
 \hline
 \# & \multicolumn{1}{|c|}{Benchmark}  & \multicolumn{2}{|c|}{Multi-staged}                 & \multicolumn{2}{|c|}{Abstraction} \\
    &                                  & \multicolumn{1}{|c|}{$\mathcal{F}_{\langle I_p,F_p \rangle}$} & \multicolumn{1}{|c|}{Time} & \multicolumn{1}{|c|}{$\mathcal{F}_{\langle I_p,F_p \rangle}$} & \multicolumn{1}{|c|}{Time} \\\hline
-1  & Cruise Control      & 8,16   & 6875   & 16,16  & 241    \\
-2  & DC Motor            & 8,16   & 8103   & 20,20  & 5376   \\
-3  & Helicopter          & \xmark & \xmark & 16,16  & 2120   \\
-4  & Inverted Pendulum   & 8,16   & 7813   & 16,16  & 387    \\
-5  & Magnetic Pointer    & \xmark & \xmark & 28,28  & 132845 \\
-6  & Magnetic Suspension & 12,20  & 8727   & 32,32  & 7854   \\
-7  & Pendulum            & 8,16   & 9008   & 20,20  & 1150   \\
-8  & Suspension          & 12,20  & 49410  & \xmark & \xmark \\
-9  & Tape Driver         & 8,16   & 9177   & \xmark & \xmark \\
-10 & Satellite           & 8,16   & 8975   & \xmark & \xmark \\\hline
-
+1  & Cruise Control      & 8,16   & 6.88\,s & 16,16  & 241    \\
+2  & DC Motor            & 8,16   & 8.10\,s & 20,20  & 5376   \\
+3  & Helicopter          & \xmark & \xmark  & 16,16  & 2120   \\
+4  & Inverted Pendulum   & 8,16   & 7.81\,s & 16,16  & 387    \\
+5  & Magnetic Pointer    & \xmark & \xmark  & 28,28  & 132845 \\
+6  & Magnetic Suspension & 12,20  & 8.73\,s & 32,32  & 7854   \\
+7  & Pendulum            & 8,16   & 9.01\,s & 20,20  & 1150   \\
+8  & Suspension          & 12,20  &49.41\,s & \xmark & \xmark \\
+9  & Tape Driver         & 8,16   & 9.18\,s & \xmark & \xmark \\
+10 & Satellite           & 8,16   & 8.98\,s & \xmark & \xmark \\\hline
+%
 \end{tabular}
-\caption{Experimental results with runtime in milliseconds. \label{tab:results}}
+\caption{Experimental results\label{tab:results}}
 \end{table}
 
-The median run-time for our benchmark set is 7.9\,s.  Overall,
-the average synthesis time amounts to approximately 17.2\,s.  We
-consider these times short enough to be of practical use to control
-engineers, and thus affirm RQ1.  
+The median run-time for our benchmark set is 7.9\,s.  Overall, the average
+synthesis time amounts to approximately 17.2\,s.  We consider these times
+short enough to be of practical use to control engineers, and thus affirm
+RQ1.
 
-There are several cases for which the system
-may fail to find a controller. For the naive approach, 
-the completeness threshold may be too large, thus causing a
-timeout.  On the other hand, the abstraction-based approach may
-require a very precise abstraction, resulting in too many refinements
-and, consequently, a timeout.  Yet another source of incompleteness is the inability
-of the {\sc synthesize} phase to use a large enough precision for the
-plant model in a given problem.
+There are several cases for which the system may fail to find a controller. 
+For the naive approach, the completeness threshold may be too large, thus
+causing a timeout.  On the other hand, the abstraction-based approach may
+require a very precise abstraction, resulting in too many refinements and,
+consequently, a timeout.  Yet another source of incompleteness is the
+inability of the {\sc synthesize} phase to use a large enough precision for
+the plant model in a given problem.
 
 The synthesized controllers were confirmed to be stable outside of our model
 representation using MATLAB, positively answering RQ2.  A~link to the full
@@ -1456,12 +1453,24 @@ footnote.\footnote{\url{https://drive.google.com/open?id=0ByIexo3Z5N91eDludEdWdW
 %-------------------------------
 \subsection{Threats to validity}
 %-------------------------------
-\textit{Benchmark selection:} We report an assessment of both our approaches over a diverse set of real-world benchmarks. Nevertheless, this set of benchmarks is limited within the scope of this paper and the performance may not generalize to other benchmarks.\\ 
-%
-\textit{Plant precision and discretization heuristic:} Our algorithm to select suitable FWL word widths to model the plant behavior employs a heuristic based on user-provided controller word-width specifications. For the first approach, where we may need to increase the precision of the time discretization, we select the time steps for the discretizations on a similar basis. This works sufficiently well for our benchmarks, but performance may suffer in some cases, for example if the completeness threshold is high.\\ 
-%
-\textit{Abstraction on other properties:} The performance gain from abstract acceleration may not hold for more complex properties than safety, for instance ``eventually always reaches a certain safe set''. 
 
+\textit{Benchmark selection:} We report an assessment of both our approaches
+over a diverse set of real-world benchmarks.  Nevertheless, this set of
+benchmarks is limited within the scope of this paper and the performance may
+not generalize to other benchmarks.\\
+%
+\textit{Plant precision and discretization heuristic:} Our algorithm to
+select suitable FWL word widths to model the plant behavior employs a
+heuristic based on user-provided controller word-width specifications.  For
+the first approach, where we may need to increase the precision of the time
+discretization, we select the time steps for the discretizations on a
+similar basis.  This works sufficiently well for our benchmarks, but
+performance may suffer in some cases, for example if the completeness
+threshold is high.\\
+%
+\textit{Abstraction on other properties:} The performance gain from abstract
+acceleration may not hold for more complex properties than safety, for
+instance ``eventually always reaches a certain safe set''.
 
 %% %-------------------------------
 %% \section{Related Work}
