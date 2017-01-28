@@ -592,12 +592,12 @@ that the states never exit such requirement.  Note that a stable,
 closed-loop system is not necessarily a safe system: indeed, the state
 values may leave the safe space whilst they converge to the equilibrium,
 which is typical in the case of oscillatory dynamics.  However, a safe
-system will always be stable.  In~this work, the safety property represented
-by $\phi_\mathit{safety}$ is encoded as follows:
+system will always be stable.  In~this work, the safety property 
+is modeled as follows:
 %
 \begin{equation}
 \label{eq:safetyliteral}
-\phi_\mathit{safety}\iff \forall k\geq 0, \bigwedge_{i=1}^{n}{\underline{x_{i}} \leq x_{i,k} \leq \overline{x_{i}}},
+\phi_\mathit{safety}\iff \forall k\ge 0.\, \bigwedge_{i=1}^{n}{\underline{x_{i}} \leq x_{i,k} \leq \overline{x_{i}}},
 \end{equation}
 %
 %\addtodo{We consider $x_{i}^{-}$ and $x_{i}^{+}$ to be -1 and 1, respectively.}
@@ -1800,7 +1800,10 @@ c_2)/(\delta_{T2}^2 - \delta_{T2} c_2)$,
 \end{enumerate}
 
 \item {\bf Overflow:}
-The maximum size of a real number $x$ that can be represented in a fixed point domain as $\mathcal{F}_{\langle I,F \rangle}(x)$ is $\pm (2^{I-1}+1-2^{-F})$. Numbers outside this range cannot be represented by the domain. We check that overflow does not occur.
+The maximum size of a real number $x$ that can be represented in a fixed
+point domain as $\mathcal{F}_{\langle I,F \rangle}(x)$ is $\pm
+(2^{I-1}+1-2^{-F})$.  Numbers outside this range cannot be represented by
+the domain.  We check that overflow does not occur.
 
 \end{enumerate}
 
