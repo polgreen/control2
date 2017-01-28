@@ -1153,13 +1153,23 @@ $P_a(z) = z^n+\sum_{i=1}^p{(a_i-k_i)z^{n-i}}$.
 %\end{align*}
 
 \item Calculate the noise set $N$ from the quantizer resolutions and estimated round-off errors: %($\frac{q_1}{2},\frac{q_2}{2},q_3$)
+%
 $$N=\left \{ \nu_1+\nu_2+ \nu_3 : \nu_1 \in \left[-\frac{q_1}{2}\ \ \frac{q_1}{2}\right] 
 \wedge \nu_2 \in \left[-\frac{q_2}{2}\ \ \frac{q_2}{2}\right]  \wedge \nu_3 \in \left[-q_3\ \ q_3\right]  \right \}\nonumber$$
-where  $q_1$ is the error introduced by the truncation by the ADC, $q_2$ is the error introduced by the DAC and $q_3$ is the maximum truncation and rounding error of the mathematical operation $u_k=-K*\mathcal{F}_{\langle I_c,F_c \rangle}(x_k)$ as discussed in section \ref{sec:numeric_rep}. 
-More details on how to model quantization as noise are given in the 
+%
+where  $q_1$ is the error introduced by the truncation by the ADC, $q_2$ is
+the error introduced by the DAC and $q_3$ is the maximum truncation and
+rounding error in $u_k=-K \cdot \mathcal{F}_{\langle I_c,F_c \rangle}(x_k)$ as
+discussed in Section~\ref{sec:numeric_rep}.  More details on how to model
+quantization as noise are given in
 Appendix~\ref{appendix:quantization-noise}.
-\item Calculate a set of initial bounds on $K$, $\phi_\mathit{init}^{K}$, based on the input constraints. Note that these bounds will be used by the {\sc synthesize} phase to reduce the size of the solution space.
-$$(\phi_\mathit{init} \wedge \phi_\mathit{input} \wedge u_k=-K x_k) \Rightarrow \phi_\mathit{init}^{K}$$
+
+\item Calculate a set of initial bounds on $K$, $\phi_\mathit{init}^{K}$,
+based on the input constraints.  Note that these bounds will be used by the
+{\sc synthesize} phase to reduce the size of the solution space. 
+%
+$$(\phi_\mathit{init} \wedge \phi_\mathit{input} \wedge u_k=-K x_k)
+\Rightarrow \phi_\mathit{init}^{K}$$
 
 \end{enumerate}
 \item In the {\sc synthesize} phase, we synthesize a candidate controller
@@ -1207,9 +1217,12 @@ x=&(A_d-B_dK)^kx_0
 %+\sum_{i=0}^{k-1} \mat{A}_t^i \mat{B}_{t} r_i
 +\sum_{i=0}^{k-1} (A_d-B_dK)^i B_{n}(\nu_1+\nu_2+\nu_3) : B_n= [1\ 1 \cdots \ 1 ]^T
 \end{align}
-As this still requires us to verify the system for every $k$ up to infinity, 
-we use abstract acceleration again to obtain
-the reach-tube, i.e., the set of all reachable states at all times given an initial set $\phi_\mathit{init}$:
+%
+As this still requires us to verify the system for every $k$ up to infinity,
+we use abstract acceleration again to obtain the reach-tube, i.e., the set
+of all reachable states at all times given an initial set
+$\phi_\mathit{init}$:
+%
 \begin{align}
 \label{eq:aa_observer_LTI_cf}
 \hat{X}^\#
@@ -1217,11 +1230,18 @@ the reach-tube, i.e., the set of all reachable states at all times given an init
 X_0 =&\left \{x : x \models \phi_\mathit{init} \right\}\nonumber
 \end{align}
 %
-where $\mathcal{A}=\bigcup_{k=1}^\infty (A_d-B_dK)t^k, \mathcal{B}_{n}=\bigcup_{k=1}^\infty \sum_{i=0}^k(A_d-B_dK)^iB_{n}$ are abstract matrices for the closed-loop system \cite{cattaruzza2015unbounded}, whereas the set N is non-deterministically chosen.
+where $\mathcal{A}=\bigcup_{k=1}^\infty (A_d-B_dK)t^k,
+\mathcal{B}_{n}=\bigcup_{k=1}^\infty \sum_{i=0}^k(A_d-B_dK)^iB_{n}$ are
+abstract matrices for the closed-loop system~\cite{cattaruzza2015unbounded},
+whereas the set $N$ is non-deterministically chosen.
 
-We next evaluate $\hat{X}^\# \models \phi_{safety}$. If the verification holds we have a solution, and exit the loop. Otherwise, 
-we find a counterexample iteration $k$ and corresponding initial point $x_0$ for which the property does not hold, which we use to locally refine the abstraction.
-When the abstraction cannot be further refined, we provide them to the {\sc abstract} phase.
+We next evaluate $\hat{X}^\# \models \phi_\mathit{safety}$.  If the
+verification holds we have a solution, and exit the loop.  Otherwise, we
+find a counterexample iteration $k$ and corresponding initial point $x_0$
+for which the property does not hold, which we use to locally refine the
+abstraction.  When the abstraction cannot be further refined, we provide
+them to the {\sc abstract} phase.
+%
 %\todo{we should have a better argument here.}
 %\end{enumerate} 
 \item If we reach the {\sc abstract} phase, it means that the candidate solution is not valid,
@@ -1239,14 +1259,28 @@ $z^n+\sum_{i=1}^n(a_i-k_i)z^{n-i}=\prod_{i=1}^n (z-\lambda_i) : |\lambda_i|<1 \w
 
 \subsubsection{Illustrative Example}
 %
-Let us take the Helicopter example in Table \ref{table:State-space-benchmarks} with discretized dynamics
-$$A_d = \left[\begin{array}{ccc}2.6207&-1.1793&0.65705\\2&0&0\\0&0.5&0\end{array}\right], B_d = \left [\begin{array}{c}8\\0\\0\end{array}\right]$$
-Using the initial state bounds $\underline{x_{0}}=-0.9$ and $\overline{x_{0}}=0.9$, the input bounds $\underline{u}=-10$ and $\overline{u}=10$, and safety specifications 
-$\underline{x_{i}}=-0.92$ and $\overline{x_{i}}=0.92$, the {\sc synthesize} phase in Fig.~\ref{fig:CEGARIS} synthesizes an initial candidate controller $K=[\begin{array}{ccc}0.24609375&-0.125&0.1484375\end{array}]$.
-Although this candidate is stable, the {\sc verify} phase finds it to be unsafe and returns a list of iterations with an example initial state that fails the safety specification
-{\footnotesize $(k,x_0) {\in} \{ (2, [\begin{array}{ccc}0.9&-0.9&0.9\end{array}]), (3, [\begin{array}{ccc}0.9&-0.9&-0.9\end{array}])\}$}.
-This allows the {\sc abstract} phase to create a new safety specification that considers these iterations for these initial states to constrain the solution space.
-This refinement allows {\sc synthesize} to find a controller {\footnotesize $K=[\begin{array}{ccc}0.23828125&-0.17578125&0.109375\end{array}]$}, which this time passes the verification phase, resulting in a safe system.
+Let us consider the Helicopter example in Table
+\ref{table:State-space-benchmarks} with discretized dynamics
+%
+$$A_d = \left[\begin{array}{ccc}2.6207&-1.1793&0.65705\\2&0&0\\0&0.5&0\end{array}\right],
+\quad B_d = \left [\begin{array}{c}8\\0\\0\end{array}\right]$$
+%
+Using the initial state bounds $\underline{x_{0}}=-0.9$ and
+$\overline{x_{0}}=0.9$, the input bounds $\underline{u}=-10$ and
+$\overline{u}=10$, and safety specifications $\underline{x_{i}}=-0.92$ and
+$\overline{x_{i}}=0.92$, the {\sc synthesize} phase in
+Fig.~\ref{fig:CEGARIS} synthesizes an initial candidate controller
+$K=[\begin{array}{ccc}0.24609375&-0.125&0.1484375\end{array}]$.
+Although this candidate is stable, the {\sc verify} phase finds it to be
+unsafe and returns a list of iterations with an example initial state that
+fails the safety specification {\footnotesize $(k,x_0) {\in}
+\{ (2, [\begin{array}{ccc}0.9&-0.9&0.9\end{array}]),\allowbreak (3,
+[\begin{array}{ccc}0.9&-0.9&-0.9\end{array}])\}$}.  This allows the {\sc
+abstract} phase to create a new safety specification that considers these
+iterations for these initial states to constrain the solution space.  This
+refinement allows {\sc synthesize} to find a controller {\footnotesize
+$K=[\begin{array}{ccc}0.23828125&-0.17578125&0.109375\end{array}]$}, which
+this time passes the verification phase, resulting in a safe system.
 
 %% Note that the abstraction refinement is a constraint on the proposed model which can increase or decrease the parameter space at any time, whereas the concrete counterexample passed to the synthesizer is monotonically decreasing. The former improves the speed of the tool, whereas the second ensures convergence.
 
