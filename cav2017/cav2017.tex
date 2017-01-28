@@ -1436,14 +1436,14 @@ and can their stability and safety be confirmed outside of our model?
 \subsection{Results}
 %-------------------------------
 
-We give the run-times required to synthesize a stable controller for each
-benchmark in Table~\ref{tab:results}.  Here \textit{Benchmark} is the name
-of the respective benchmark, $\mathcal{F}_{\langle I_p,F_p \rangle}$ is the
-fixed-point precision used to model the plant, while \textit{Time} is the
-total time required to synthesize a stable controller for the given plant,
-for CEGIS with multi-staged verification as well as abstraction-based CEGIS. 
-The precision for the controller, $\mathcal{F}_{\langle I_c,F_c \rangle}$,
-is always chosen to be $I_c = 8, F_c = 8$.
+We give the results in Table~\ref{tab:results}.  Here \textit{Benchmark} is
+the name of the respective benchmark, $\mathcal{F}_{\langle I_p,F_p
+\rangle}$ is the fixed-point precision used to model the plant, while
+\textit{Time} is the total time required to synthesize a stable controller
+for the given plant, for CEGIS with multi-staged verification as well as
+abstraction-based CEGIS.  Timeouts are indicated by~\xmark.  The precision
+for the controller, $\mathcal{F}_{\langle I_c,F_c \rangle}$, is chosen to be
+$I_c = 8$, $F_c = 8$.
 
 For the majority of our benchmarks, we observe that the abstraction-based
 back-end is faster than the basic multi-staged verification approach. 
@@ -1459,7 +1459,7 @@ coverage and together solve all benchmarks in the set.
 \begin{table}
 \centering
 %\scriptsize
-\begin{tabular}{| c | l | c | r | c | r |}
+\begin{tabular}{| r | l | c | r | c | r |}
 %
 \hline
 \# & \multicolumn{1}{|c|}{Benchmark}  & \multicolumn{2}{|c|}{Multi-staged}                 & \multicolumn{2}{|c|}{Abstraction} \\
