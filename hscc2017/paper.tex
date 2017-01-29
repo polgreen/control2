@@ -257,7 +257,7 @@ In summary, this paper makes the following original contributions.
 \item We provide experimental results showing that \tool is able to
   efficiently synthesize stable controllers for a set of intricate
   benchmarks taken from the literature: the median runtime for our benchmark
-  set is $197$s, i.e., half of the controllers can be synthesized in less
+  set is $197$\,s, i.e., half of the controllers can be synthesized in less
   than five minutes.
 
 %% \item We exploit a CEGIS-based approach that uses inductive synthesis
@@ -780,10 +780,10 @@ analysis is based on polynomial coefficients and not over signals.
 The parametric uncertainties in the plant are assumed to have the same
 order as the plant model, since tolerances of higher order would invalidate
 feedback model (even tiny errors of higher order can move the poles by a
-large amount preventing any single controller from stabilizing such a collection).
+large amount preventing any single controller from stabilizing such a setup).
 This is a reasonable assumption since most tolerances do not change the 
-architecture of the plant, and models subject to such effects are simply
-inadequate as a proposed solution.
+architecture of the plant, and models subject to such effects are
+inadequate.
 
 %\red{[next figure is a bit unnecessary, does not ad much to the previous one.]} Figure~\ref{fig:digsystem2} shows the digital closed loop systems with $\Delta G_{P}(z)$ and $\Delta G_{Q}(z)$.
 
@@ -907,18 +907,11 @@ disturbances from the FWL effects, with roundoffs in coefficients that may
 change closed-loop poles and zeros position, and consequently affect its
 stability, as argued in~\cite{Bessa16}.
 
-Let $\hat{C}(z)$ be the digital controller transfer function
-represented using this FWL with integer size $I$ and fractional size~$F$;
-$I$ affects the representation range and is set to avoid overflows, 
-while $F$ affects the precision and the truncation process after the 
-arithmetic operations. These variables are chosen depending on 
-hardware features.  In general-purpose processors and
-DSP's, $I$ is minimized to avoid overflows and $F$ is employed for the
-remaining bit representation. Other flexible hardware structures
-(e.g., FPGAs) allow the design of $F$ and $I$, which affects directly
-the number of logical gates.
-
-We shall denote the FWL domain of coefficients as $\mathbb{R}\langle I,F
+Let $\hat{C}(z)$ be the digital controller transfer function represented
+using this FWL with integer size $I$ and fractional size~$F$; $I$ affects
+the range of the representation and is set to avoid overflows, while $F$
+affects the precision and the truncation after arithmetic operations.
+We shall denote the FWL domain of the coefficients by $\mathbb{R}\langle I,F
 \rangle$
 %
 %Since the controller is implemented in the $\mathbb{R}\langle I,F \rangle$ 
@@ -2293,16 +2286,16 @@ since it presents an infinite phase margin and a gain margin of $17.8$\,dB.
     \centering
     \begin{subfigure}[b]{0.4\textwidth}
         \includegraphics[width=\textwidth]{figures/runningexample_bd0.pdf}
-        \caption{Original controller~\cite{DBLP:conf/hybrid/WangGRJF16}.}
+        \caption{Original controller~\cite{DBLP:conf/hybrid/WangGRJF16}}
         \label{fig:original}
     \end{subfigure}
     ~
     \begin{subfigure}[b]{0.4\textwidth}
         \includegraphics[width=\textwidth]{figures/runningexample_bd2.pdf}
-        \caption{Controller synthesized by \tool.}
+        \caption{Controller synthesized by \tool}
         \label{fig:cegiscontroller}
     \end{subfigure}
-    \caption{Bode diagram for original~\cite{DBLP:conf/hybrid/WangGRJF16} and synthesized closed-loop systems.}\label{fig:bode}
+    \caption{Bode diagram for original~\cite{DBLP:conf/hybrid/WangGRJF16} and synthesized closed-loop systems}\label{fig:bode}
 \end{figure}
 
 Figure~\ref{fig:step} illustrates the step responses of the closed-loop
@@ -2661,7 +2654,7 @@ is the error in the dynamics caused by the inability to represent the exact
 state of the physical system while the second relates to rounding errors
 during computation.  In~\cite{fialho1994stability}, a stability measure
 based on the error of the digital dynamics ensures that the deviation
-introduced by FWL does not make the digital system unstable.  A more recent
+introduced by FWL does not make the digital system unstable.  A~recent
 approach~\cite{DBLP:journals/automatica/WuLCC09} uses the $\mu$-calculus to
 directly model the digital controller so that the selected parameters are
 stable by design.  Most work in verification focuses on finding a correct
