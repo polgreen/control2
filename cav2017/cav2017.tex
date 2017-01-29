@@ -1312,13 +1312,13 @@ this time passes the verification phase, resulting in a safe system.
        %\node[draw=none] (NKL) at ([xshift=2cm,yshift=1cm]synth)  {\sc $P_a$};
    \& \node[fill=gray!20,align=center, minimum width=4cm] (verify) {\sc 3. verify ($\phi$)};
        %\node[draw=none] (VUNS) at ([xshift=.6cm,yshift=1cm]verify)  {\sc SAT};
-       \node[draw=none] (SAT) at ([xshift=2.7cm,yshift=-.3cm]verify)  {\sc SAT};
+       \node[draw=none] (SAT) at ([xshift=2.7cm,yshift=-.3cm]verify)  {\sc PASS};
    \& \node[ellipse, fill=gray!20] (done) {{\sc Done}};\\
    \&
    \& complexnode/.pic={
      \coordinate (auxsynth);
      \node[draw,rectangle,align=center] (KSAT) at ([xshift=0cm]auxsynth.center) {Program\\Search};
-     \node[draw=none] (SATK) at ([xshift=-.7cm,yshift=1.5cm]KSAT)  {{\sc Inputs}};
+     \node[draw=none] (SATK) at ([xshift=-.7cm,yshift=1.5cm]KSAT)  {{$\phi(K,k)$}};
      \node[draw=none] (K) at ([xshift=.4cm,yshift=1.5cm]KSAT)  {$K$};
     }
    \& complexnode/.pic={
@@ -1330,7 +1330,7 @@ this time passes the verification phase, resulting in a safe system.
    \& complexnode/.pic={
      \coordinate (UNSAT);
      \coordinate (KUNSAT)  at ([xshift=0cm]UNSAT.center);
-     \node[draw=none] (UNSATB) at ([xshift=1.6cm,yshift=.3cm]UNSAT)  {\sc UNSAT};
+     \node[draw=none] (UNSATB) at ([xshift=1.6cm,yshift=.3cm]UNSAT)  {\sc UNSAT\\ (No Candidate Found)};
   }
   \& \& \coordinate (FAIL);\\
   };
