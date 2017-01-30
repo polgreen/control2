@@ -106,6 +106,8 @@ Pascal Kesseli \and
 Daniel Kroening \and
 Elizabeth Polgreen}
 
+\authorrunning{Abate et al.}
+
 \institute{}
 
 \maketitle
@@ -1279,16 +1281,16 @@ Using the initial state bounds $\underline{x_{0}}=-0.9$ and
 $\overline{x_{0}}=0.9$, the input bounds $\underline{u}=-10$ and
 $\overline{u}=10$, and safety specifications $\underline{x_{i}}=-0.92$ and
 $\overline{x_{i}}=0.92$, the {\sc synthesize} phase in
-Fig.~\ref{fig:CEGARIS} synthesizes an initial candidate controller
+Fig.~\ref{fig:CEGARIS} generates an initial candidate controller
 $K=[\begin{array}{ccc}0.24609375&-0.125&0.1484375\end{array}]$.
-Although this candidate is stable, the {\sc verify} phase finds it to be
-unsafe and returns a list of iterations with an example initial state that
+This candidate is stable, but the {\sc verify} phase finds it to be
+unsafe and returns a list of iterations with an initial state that
 fails the safety specification {\footnotesize $(k,x_0) {\in}
 \{ (2, [\begin{array}{ccc}0.9&-0.9&0.9\end{array}]),\allowbreak (3,
 [\begin{array}{ccc}0.9&-0.9&-0.9\end{array}])\}$}.  This allows the {\sc
 abstract} phase to create a new safety specification that considers these
 iterations for these initial states to constrain the solution space.  This
-refinement allows {\sc synthesize} to find a controller {\footnotesize
+refinement allows {\sc synthesize} to find a new controller {\footnotesize
 $K=[\begin{array}{ccc}0.23828125&-0.17578125&0.109375\end{array}]$}, which
 this time passes the verification phase, resulting in a safe system.
 
