@@ -1303,24 +1303,16 @@ this time passes the verification phase, resulting in a safe system.
    \coordinate (aux1);
    \& \coordinate (aux2);
    \& ;\\
-   \&\node[fill=gray!20,align=center] (pre) {{\sc 1. pre-}\\{\sc processing}};
+   \&\node[fill=gray!20,align=center,xshift=-1.5cm] (pre) {{\sc 1. pre-}\\{\sc processing}};
    \& \node[fill=gray!20,align=center] (abstract) {\sc 4. abstract};
-   \& \coordinate (aux); \\ % \node[fill=yellow!20,align=center] (counter) {\sc counterexample};\\
-   \& 
+   \& \coordinate (aux); \\ 
+   \&
    \& \node[fill=gray!20,align=center] (synth) {\sc 2. synthesize};
-       %\node[draw=none] (KL) at ([xshift=2.5cm,yshift=-.25cm]synth)  {\sc $\mat{K},\mat{L}$};
-       %\node[draw=none] (NKL) at ([xshift=2cm,yshift=1cm]synth)  {\sc $P_a$};
    \& \node[fill=gray!20,align=center, minimum width=4cm] (verify) {\sc 3. verify ($\phi$)};
-       %\node[draw=none] (VUNS) at ([xshift=.6cm,yshift=1cm]verify)  {\sc SAT};
-       \node[draw=none] (SAT) at ([xshift=2.7cm,yshift=-.3cm]verify)  {\sc PASS};
+      \node[draw=none] (SAT) at ([xshift=2.7cm,yshift=-.3cm]verify)  {\sc PASS};
    \& \node[ellipse, fill=gray!20] (done) {{\sc Done}};\\
    \&
-   \& complexnode/.pic={
-     \coordinate (auxsynth);
-     \node[draw,rectangle,align=center] (KSAT) at ([xshift=0cm]auxsynth.center) {Program\\Search};
-     \node[draw=none] (SATK) at ([xshift=-.7cm,yshift=1.5cm]KSAT)  {{$\phi(K,k)$}};
-     \node[draw=none] (K) at ([xshift=.4cm,yshift=1.5cm]KSAT)  {$K$};
-    }
+   \& \node[draw,rectangle,align=center] (KSAT) {Program \\ Search};
    \& complexnode/.pic={
      \coordinate (AA);
      \node[draw,rectangle,align=center] (AAV) at ([xshift=-1.5cm]AA.center) {Abstract\\Acceleration};
@@ -1337,27 +1329,15 @@ this time passes the verification phase, resulting in a safe system.
   \path
     (pre.east) edge node[align=center] {$P_a$, $N$,\\ $\phi_\mathit{init}^k$} (abstract.west)
     (abstract.south) edge node{$(\phi(K), \vec{k})$} (synth.north)
-    %([yshift=2em]synth.east) edge node {Candidate} ([yshift=2em]verif.west)
-    %([yshift=-2em]verif.west) edge node {New input} ([yshift=-2em]synth.east)
-    %([yshift=2em]synth.east) edge node[xshift=-0.7em] {Candidate} ([yshift=2em]verif.west)
-    %([yshift=-2em]verif.west) edge node[xshift=-0.7em] {New input} ([yshift=-2em]synth.east)
     ([yshift=1em]synth.east) edge node {$K$} ([yshift=1em]verify.west)
-    %([yshift=-1em]verify.west) edge node {$P_a$} ([yshift=-1em]synth.east)
     (aux) edge (abstract.east) 
     (verify.east) edge (done.west);
   \path
-    ([xshift=+.6cm]KSAT.north) edge ([xshift=0.6cm]synth.south) 
-    ([xshift=-.6cm]synth.south) edge ([xshift=-.6cm]KSAT.north)
-    %(AAC) edge[bend right] node[align=center] {$k$} (AAI.north)
-    %([xshift=-4.9cm]verify.south) edge node[align=center] {$\mat{A},\mat{B}$\\$\phi$} (AAI.north)
-    %(AAI.east) edge (AAV.west)
+    ([xshift=+.6cm]KSAT.north) edge[left,xshift=-3cm] node {$K$} ([xshift=0.6cm]synth.south) 
+    ([xshift=-.6cm]synth.south) edge node[align=center,xshift=.3cm] {$(\phi(K),\vec{k})$} ([xshift=-.6cm]KSAT.north)
     ([yshift=.5cm]AAV.east) edge node{\sl $\hat{X}^\#$} ([yshift=.5cm]AAC.west)
     ([yshift=-.5cm]AAC.west) edge node{$(k,x_0)$} ([yshift=-.5cm]AAV.east)
     (AAC.north) edge node{\sl $\hat{X}^\#$} ([xshift=4.9cm]verify.south)
-    %(AAC.west) edge (AB.west)
-    %(verify.north) edge (counter.south)
-    %(counter.west) edge (abstract.east)
-    %(counter.south west) edge (synth.north east)
     (FAIL.north) edge (done.south)
     ([xshift=-5cm]verify.south) edge node{$K$} (AAV.north);
   \path[-] 
