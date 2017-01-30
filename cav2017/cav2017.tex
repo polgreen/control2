@@ -1297,7 +1297,6 @@ this time passes the verification phase, resulting in a safe system.
 \begin{figure}
 \centering
 {\scriptsize
-\hspace*{-1cm}
 \begin{tikzpicture}[scale=0.3,->,>=stealth',shorten >=.2pt,auto, semithick, ampersand replacement=\&,]
   \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center},row sep=.8cm, column sep=.2cm] {
    \coordinate (aux1);
@@ -1318,13 +1317,6 @@ this time passes the verification phase, resulting in a safe system.
      \node[draw,rectangle,align=center] (AAV) at ([xshift=-1.5cm]AA.center) {Abstract\\Acceleration};
      \node[draw,rectangle,align=center] (AAC) at ([xshift=1.5cm]AA.center) {Abstraction \\ Verifier};
     }\\
-   \&
-   \& complexnode/.pic={
-     \coordinate (UNSAT);
-     \coordinate (KUNSAT)  at ([xshift=0cm]UNSAT.center);
-     \node[draw=none] (UNSATB) at ([xshift=1.6cm,yshift=.3cm]UNSAT)  {\sc UNSAT\\ (No Candidate Found)};
-  }
-  \& \& \coordinate (FAIL);\\
   };
   \path
     (pre.east) edge node[align=center] {$P_a$, $N$,\\ $\phi_\mathit{init}^k$} (abstract.west)
@@ -1333,16 +1325,13 @@ this time passes the verification phase, resulting in a safe system.
     (aux) edge (abstract.east) 
     (verify.east) edge (done.west);
   \path
-    ([xshift=+.6cm]KSAT.north) edge[left,xshift=-3cm] node {$K$} ([xshift=0.6cm]synth.south) 
+    ([xshift=+.6cm]KSAT.north) edge[left] node[xshift=-.3cm] {$K$} ([xshift=0.6cm]synth.south) 
     ([xshift=-.6cm]synth.south) edge node[align=center,xshift=.3cm] {$(\phi(K),k)$} ([xshift=-.6cm]KSAT.north)
     ([yshift=.5cm]AAV.east) edge node{\sl $\hat{X}^\#$} ([yshift=.5cm]AAC.west)
     ([yshift=-.5cm]AAC.west) edge node{$(k,x_0)$} ([yshift=-.5cm]AAV.east)
     (AAC.north) edge node{\sl $\hat{X}^\#$} ([xshift=4.9cm]verify.south)
-    (FAIL.north) edge (done.south)
     ([xshift=-5cm]verify.south) edge node{$K$} (AAV.north);
   \path[-] 
-     (KSAT.south) edge (KUNSAT.north)
-     (KUNSAT.east) edge (FAIL.west)
      (verify.north) edge node {$(k,x_0)$} (aux);
 \end{tikzpicture}
 }
