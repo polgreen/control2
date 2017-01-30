@@ -838,7 +838,7 @@ $(x_0, u_k)$ represents $x$.
    } 
    \& \node[ellipse, fill=gray!20] (done) {{\sc Done}};\\
    \& \\
-   \node[minimum height=0cm] (gp) {\sf Closed-loop \\ System Search};
+   \node[minimum height=0cm] (gp) {\sf Program Search};
    \&
    complexnode/.pic={ 
      \coordinate (aux);
@@ -861,7 +861,7 @@ $(x_0, u_k)$ represents $x$.
     ([xshift=5em]verif3.south) edge node[align=center] {$K$} ([xshift=5em]sv.north)
     %([xshift=5em]verif4.south) edge node[align=center] {$K$} ([xshift=5em]cv.north)
     ([xshift=-5em]bmc.north) edge node[align=center]  {UNSAT/\\model} ([xshift=-5em]verif1.south)
-    (verif) edge node {} (done)
+    (verif) edge node {PASS} (done)
     ([xshift=5em]synth.south) edge node[align=center] {Inputs} ([xshift=5em]gp.north)
     ([xshift=-5em]gp.north) edge node[align=center] {UNSAT/\\$K$} ([xshift=-5em]synth.south)
     (aux3) edge (synth.north);
