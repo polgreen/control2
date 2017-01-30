@@ -478,6 +478,7 @@ int verify_stability_closedloop_using_dslib(void)
   //std::cout << "ans=";
   print_poly(ans_den_bot,ans_den_top, ans_den_size);
   if (return_value2 == 0) return 10;
+  return 0;
 #endif
 }
 

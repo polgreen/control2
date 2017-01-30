@@ -111,7 +111,8 @@ else
 
  #dkr12
  if [ "$1" == "dkr12" ]; then
-  benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/magneticpointer_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/invpendulum_cartpos_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/suspension_ss/')
+  #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/magneticpointer_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/invpendulum_cartpos_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/suspension_ss/')
+  benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/magneticpointer_ss/')
  fi
 
  #dkr13
