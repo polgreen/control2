@@ -890,9 +890,30 @@ steps.  We~then compute a completeness threshold, $\overline{k}$, for this
 controller, and verify correctness for $\overline{k}$ time steps. 
 Essentially, $\overline{k}$ is the number of iterations required to
 sufficiently unwind the closed-loop state-space system such that the
-boundaries are not violated for any $k{>}\overline{k}$ (i.e., it is
+boundaries are not violated for any $k{>}\overline{k}$.
+
+\begin{lemma} There exists a $\overline{k}$ such that it is
 sufficient to unwind the closed-loop state-space system up to $\overline{k}$
-in order to ensure that $\phi_\mathit{safety}$ holds).
+in order to ensure that $\phi_\mathit{safety}$ holds. 
+\end{lemma}
+
+\begin{proof}
+A stable control system is known to have converging dynamics.  Assume the
+closed-loop matrix eigenvalues are not repeated (which is sensible to do,
+since we select them).  The distance of the trajectory from the reference
+point (origin) decreases over time within subspaces related to real-valued
+eigenvalues; however, this in general not the case when dealing with complex
+eigenvalues.  Consider the closed-loop matrix, which updates the states
+every discrete time step, and select the eigenvalue $\vartheta$ with
+smallest (non-trivial) imaginary value.  At every consecutive time steps
+$kT_s, (k+1)T_s$, the dynamics projected on the corresponding eigenspace
+rotate of $\vartheta T_s$ radiants.  Thus, taking $k{\leq}\overline{k}$ as the
+ceiling of $\frac{2\pi}{\vartheta T_s}$, after $k{\leq}\overline{k}$ steps
+we have completed a full rotation, which results in a point closer to the
+origin, and it is the completeness threshold.
+\end{proof}
+
+
 
 \medskip
 
@@ -910,7 +931,6 @@ stability criteria, we require that a computed characteristic polynomial
 satisfies Jury's criteria.  The details of this calculation can be found in
 the Appendix.
 
- %\todo{unclear next: it seems like to select a single initial state here, rather than considering the set thereof - clarify. also, clarify relationship btw k and soundness. }
 
 Regarding the second requirement, we synthesize a safe controller by
 unfolding the transition system $k$ steps and by picking a controller $K$
@@ -966,15 +986,43 @@ completeness threshold.  After unfolding the transition system corresponding
 to the previously synthesized controller $k$ steps, we check that the safety
 specification holds for any initial state.
 
-This is relatively computationally expensive if the bounds on the
-allowed initial states are large.  However, we can show that, if the
-controller is safe for each of the corner cases of our hypercube of
-allowed initial states, it is safe for any initial state in the
-hypercube. Thus we only need to check $2^n$ initial states, where $n$
-is the dimension of the state space (number of continuous variables). 
+\item The second {\sc verify} stage, {\sc precision}, 
+ restores soundness with respect to the plant's precision
+by using interval arithmetic \cite{moore1966interval} to validate the 
+operations performed by the previous stage. 
 
-To argue for this sufficient check, 
-consider the set of initial states, $X_0$, which we assume to be convex since it's a hypercube. 
+\item The third {\sc verify} stage, {\sc complete}, checks that the current
+$k$ is large enough to ensure safety for any $k'{>}k$.  Here, we compute the
+completeness threshold $\overline{k}$ for the current candidate $K$ and
+check that $k{\leq}\overline{k}$.  This is done according to the argument given above
+and illustrated in Fig.~\ref{fig:ct}.
+
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.6\textwidth]{ct.eps}
+\vspace{0.1cm}
+\caption{Completeness threshold for multi-staged verification}
+\label{fig:ct}
+\end{figure*}
+
+\end{enumerate}
+
+
+Checking that the safety specification holds for any initial state can be 
+computationally expensive if the bounds on the
+allowed initial states are large. 
+
+\begin{lemma} 
+If a controller is safe for each of the corner cases of our hypercube of
+allowed initial states, it is safe for any initial state in the
+hypercube. 
+\end{lemma}
+
+Thus we only need to check $2^n$ initial states, where $n$
+is the dimension of the state space (number of continuous variables). 
+\begin{proof}
+Consider the set of initial states, $X_0$, which we assume to be convex since it's a hypercube. 
 Name $v_i$ its vertexes, where $i=1,\ldots, 2^n$.  
 Thus any point $x \in X_0$ can be expressed by convexity as $x = \sum_{i=1}^{2^n} \alpha_i v_i$, 
 where $\sum_{i=1}^{2^n} \alpha_i =1$. Then if $x_0=x$, we obtain 
@@ -986,41 +1034,7 @@ x_k   &= (A_d - B_d K)^k x = (A_d - B_d K)^k \sum_{i=1}^{2^n} \alpha_i v_i
 where $x_k^i$ denotes the trajectories obtained from the single vertex
 $v_i$.  We~conclude that any $k$-step trajectory is encompassed, within a
 convex set, by those generated from the vertices.
-
-\item The second {\sc verify} stage, {\sc precision}, 
- restores soundness with respect to the plant's precision
-by using interval arithmetic \cite{moore1966interval} to validate the 
-operations performed by the previous stage. 
-
-\item The third {\sc verify} stage, {\sc complete}, checks that the current
-$k$ is large enough to ensure safety for any $k'{>}k$.  Here, we compute the
-completeness threshold $\overline{k}$ for the current candidate $K$ and
-check that $k{\leq}\overline{k}$.  This is done according to the following
-argument, illustrated in Fig.~\ref{fig:ct}.
-
-A stable control system is known to have converging dynamics.  Assume the
-closed-loop matrix eigenvalues are not repeated (which is sensible to do,
-since we select them).  The distance of the trajectory from the reference
-point (origin) decreases over time within subspaces related to real-valued
-eigenvalues; however, this in general not the case when dealing with complex
-eigenvalues.  Consider the closed-loop matrix, which updates the states
-every discrete time step, and select the eigenvalue $\vartheta$ with
-smallest (non-trivial) imaginary value.  At every consecutive time steps
-$kT_s, (k+1)T_s$, the dynamics projected on the corresponding eigenspace
-rotate of $\vartheta T_s$ radiants.  Thus, taking $k{\leq}\overline{k}$ as the
-ceiling of $\frac{2\pi}{\vartheta T_s}$, after $k{\leq}\overline{k}$ steps
-we have completed a full rotation, which results in a point closer to the
-origin, and it is the completeness threshold.
-
-\begin{figure*}[t]
-\centering
-\includegraphics[width=0.6\textwidth]{ct.eps}
-\vspace{0.1cm}
-\caption{Completeness threshold for multi-staged verification}
-\label{fig:ct}
-\end{figure*}
-
-\end{enumerate}
+\end{proof}
 
 \subsubsection{Illustrative Example} \label{sec:running-ex}
 
