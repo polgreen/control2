@@ -2336,121 +2336,136 @@ obtained on the benchmarks with our tool \tool.
 \label{experimental-setup}
 %---------------------------------
 
-The first set of benchmarks uses the discrete plant of a cruise control
+The first set of benchmarks uses the discrete plant $G_1(z)$ of a cruise control
 model for a car, and accounts for rolling friction, aerodynamic drag, and
-the gravitational disturbance force~\cite{Astrom08}. The plant model is
-given as follows:
-%
-\begin{equation}
-\label{cruise-control-c1}
-G_1(z)=\frac{0.0264}{z-0.998} \nonumber
-\end{equation} 
-
-%Two proportional-integral (PI) controllers are designed by Wang {\it et al.} 
-%for the cruise control plant $G(z)$~\cite{DBLP:conf/hybrid/WangGRJF16}, 
-%which has the following mathematical model
+the gravitational disturbance force~\cite{Astrom08}. 
+%The plant model is given as follows:
 %
 %\begin{equation}
-%\label{cruise-control-g1}
-%C_{1}(z)=\frac{1.51z-1.3586}{z-1}, \nonumber
+%\label{cruise-control-c1}
+%G_1(z)=\frac{0.0264}{z-0.998} \nonumber
 %\end{equation} 
+%
+The second set of benchmarks considers the discrete plant $G_2(z)$ 
+of a simple spring-mass damper~\cite{DBLP:conf/hybrid/WangGRJF16}. 
+%where the discrete 
+%plant dynamics is represented by the following $z$-expression:
 %
 %\begin{equation}
-%\label{cruise-control-g2}
-%C_{2}(z)=\frac{2.72z^2 - 4.153z + 1.896}{1.0z^2 - 1.844z + 0.8496}. \nonumber
+%\label{spring-mass-damper-g}
+%G_2(z)=\frac{5\times{10^{-5}}z + 5\times{10^{-5}}}{z^2 - 2z + 1.0001}. \nonumber
 %\end{equation} 
-
-The second set of benchmarks considers a simple spring-mass 
-damper~\cite{DBLP:conf/hybrid/WangGRJF16}, where the discrete 
-plant dynamics is represented by the following $z$-expression:
 %
-%where both discrete 
-%plant dynamics and controller are represented by the following 
-%z-expression, resp.
-%
-\begin{equation}
-\label{spring-mass-damper-g}
-G_2(z)=\frac{5\times{10^{-5}}z + 5\times{10^{-5}}}{z^2 - 2z + 1.0001}. \nonumber
-\end{equation} 
-%
-%\begin{equation}
-%\label{spring-mass-damper-c}
-%C_3(z)=\frac{1.28\times{10^{3}}z^2 - 1.354240\times{10^{3}}z + 0.074879\times{10^{3}}}{z^2 - 1.4990z + 0.4995}. \nonumber
-%\end{equation} 
-
-A third set of benchmarks uses a physical plant for satellite
+A third set of benchmarks uses the discrete plant $G_{3}(z)$ for satellite
 applications~\cite{Franklin15}.  Satellites require attitude (pose) control
 for orientation of antennas and sensors w.r.t.~earth.  The satellite
 attitude control is typically used for three-axis attitude tracking, but
-here we consider only one axis at a time.  The motion equation for the
-one-axis system, disregarding disturbance torques, is given by
-%
-\begin{equation}
-\label{eq:satelliteode}
-I\cdot \ddot{\theta} = \tau_{C}, 
-\end{equation}
-%
-\noindent where $I$ is the satellite inertia moment about its mass
-center, $\tau_{C}$ is the control torque applied by the thrusters, and
-$\theta$ is the controlled attitude angle.  Normalizing
-Eq.~\eqref{eq:satelliteode} by defining the control signal
-$u=\frac{\tau_{C}}{I}$ and taking the Laplace transform, the following
-$s$-domain transfer function $G(s)$ is obtained:
-%
-\begin{equation}
-\label{eq:satellitetf}
-G_{3}(s)=\frac{\theta(s)}{u(s)}=\frac{1}{s^2},
-\end{equation}
-%
-\noindent Using the ZOH discretization defined in Eq.~\eqref{eq:pulsetf}, 
-we get the following $z$-domain model:
-%
-\begin{equation}
-G_{3}(z)= \frac{T^{2}}{2} \frac{z+1}{(z+1)^{2}}. \nonumber
-\end{equation}
-
-%The discrete controllers $C_{4}$ and $C_{5}$ for the satellite plant $G_{3}$, discretized with sample time $1s$ and $2s$ respectively, 
-%are represented by the following z-expression:
+here we consider only one axis at a time.  
+%The motion equation for the
+%one-axis system, disregarding disturbance torques, is given by
 %
 %\begin{equation}
-%\label{satellite-b2}
-%C_{4}(z)=\frac{2.88z^2 - 4.896z + 2.074}{1.0z^2 - 0.42z - 0.3465 - 0.03915}. \nonumber
-%\end{equation} 
+%\label{eq:satelliteode}
+%I\cdot \ddot{\theta} = \tau_{C}, 
+%\end{equation}
+%
+%\noindent where $I$ is the satellite inertia moment about its mass
+%center, $\tau_{C}$ is the control torque applied by the thrusters, and
+%$\theta$ is the controlled attitude angle.  Normalizing
+%Eq.~\eqref{eq:satelliteode} by defining the control signal
+%$u=\frac{\tau_{C}}{I}$ and taking the Laplace transform, the following
+%$s$-domain transfer function $G(s)$ is obtained:
 %
 %\begin{equation}
-%\label{satellite-c2}
-%C_{5}(z)=\frac{0.43z^2 - 0.2408z - 0.1316}{1.0z^2 + 1.5z + 0.97 + 0.183}. \nonumber
-%\end{equation} 
+%\label{eq:satellitetf}
+%G_{3}(s)=\frac{\theta(s)}{u(s)}=\frac{1}{s^2},
+%\end{equation}
+%
+%\noindent Using the ZOH discretization defined in Eq.~\eqref{eq:pulsetf}, 
+%we get the following $z$-domain model:
+%
+%\begin{equation}
+%G_{3}(z)= \frac{T^{2}}{2} \frac{z+1}{(z+1)^{2}}. \nonumber
+%\end{equation}
+%
+The fourth set of benchmarks considers the discrete plant $G_{4}(z)$
+that is typically used for evaluating stability
+margins~\cite{bhattacharyya97, keel_Bhattacharyya_examples}.
+%
+%\begin{equation}
+%\label{exampleA}
+%G_{4}(s)=\frac{s-1}{s^{2}-s-2},
+%\end{equation}
+%
+%\noindent We can obtain $G_{4}(z)$ using the ZOH discretization defined
+%in Eq.~\eqref{eq:pulsetf} with three different sample times ($0.1$, $0.05$,
+%and $0.03$ seconds), respectively, as follows:
+%
+%\begin{equation}
+%\label{exampleA-sampletime1}
+%G_{4a}(z)=\frac{0.100342181002722z - 0.110876810062963}{1.0z^{2} - 2.12624017619613z + 1.10517091807565}, \nonumber
+%\end{equation}
+%
+%
+%\begin{equation}
+%\label{exampleA-sampletime2}
+%G_{4b}(z)=\frac{0.0500422033454653z - 0.0526068264456340}{1.0^{2} - 2.05640034257636z + 1.05127109637602}, \nonumber
+%\end{equation}
+%
+%\begin{equation}
+%\label{exampleA-sampletime3}
+%G_{4c}(z)=\frac{0.0300090687252212z - 0.0309228417953966}{1.0^{2} - 2.03228208009387z + 1.03045453395352}. \nonumber
+%\end{equation}
 
-The fourth (and last) set of benchmarks considers the following description
-for the plant $G_{4}(s)$, which is typically used for evaluating stability
-margins~\cite{bhattacharyya97, keel_Bhattacharyya_examples}:
+The fifth set of benchmarks contains the \textit{DC Motor Rate} discrete plant $G_{5}(z)$, which 
+describes the angular velocity of a DC Motor~\cite{Franklin15}. 
 %
-\begin{equation}
-\label{exampleA}
-G_{4}(s)=\frac{s-1}{s^{2}-s-2},
-\end{equation}
+%\begin{equation}
+%\label{DC-Motor-Rate}
+%G_{5}(z)=\frac{ 0.1898z + 1.8027\times{10^{-4}}}{1.0z^{2} -0.9012z -1.0006\times{10^{-16}}}. \nonumber
+%\end{equation}
 %
-\noindent We can obtain $G_{4}(z)$ using the ZOH discretization defined
-in Eq.~\eqref{eq:pulsetf} with three different sample times ($0.1$, $0.05$,
-and $0.03$ seconds), respectively, as follows:
+The sixth set of benchmarks contains the \textit{Helicopter Longitudinal Motion} discrete plant $G_{6}(z)$,
+which provides the longitudinal motion model of a helicopter~\cite{Franklin15}. 
 %
-\begin{equation}
-\label{exampleA-sampletime1}
-G_{4a}(z)=\frac{0.100342181002722z - 0.110876810062963}{1.0z^{2} - 2.12624017619613z + 1.10517091807565}, \nonumber
-\end{equation}
+%\begin{equation}
+%\label{Helicopter-Longitudinal-Motion}
+%G_{6}(z)=\frac{15.1315z^{2} + 17.8600z + 17.4549}{z^{3} -2.6207z^{2} + 2.3586z -0.6570}. \nonumber
+%\end{equation}
 %
+The seventh set of benchmarks contains the \textit{Inverted Pendulum} discrete plant $G_{7}(z)$, which 
+describes a pendulum model with its center of mass above its pivot point~\cite{Franklin15}. 
 %
-\begin{equation}
-\label{exampleA-sampletime2}
-G_{4b}(z)=\frac{0.0500422033454653z - 0.0526068264456340}{1.0^{2} - 2.05640034257636z + 1.05127109637602}, \nonumber
-\end{equation}
+%\begin{equation}
+%\label{Inverted-Pendulum}
+%G_{7}(z)=\frac{0.0263z^{2} + 0.0143z -0.0383}{z^{4} -4.2553z^{3} + 6.5105z^{2} -4.2553z + 1}. \nonumber
+%\end{equation}
 %
+The eighth set of benchmarks contains the \textit{Magnetic Suspension} discrete plant $G_{8}(z)$,
+which provides a model for which a given object is suspended via magnetic field~\cite{Franklin15}. 
 %
-\begin{equation}
-\label{exampleA-sampletime3}
-G_{4c}(z)=\frac{0.0300090687252212z - 0.0309228417953966}{1.0^{2} - 2.03228208009387z + 1.03045453395352}. \nonumber
-\end{equation}
+%\begin{equation}
+%\label{Magnetic-Suspension}
+%G_{8}(z)=\frac{6.769\times{10^{13}}z + 6.784\times{10^{13}}}{z^{2} -5.415\times{10^{13}}z + 4.23\times{10^{11}}}. \nonumber
+%\end{equation}
+
+The ninth set of benchmarks contains the \textit{1/4 Car Suspension} discrete plant $G_{9}(z)$,
+which presents a model that connects a car to its wheels and allows relative motion between both parts~\cite{Franklin15}.
+%
+%\begin{equation}
+%\label{Car-Suspension}
+%G_{8}(z)=\frac{0.25z^{3} + 0.5z^{3} + 0.25z -5.7065\times{10^{-10}}}{z^{3} + 6.8455\times{10^{-9}}z^{2} + 3.3925\times{10^{-17}}z - 3.4667\times%{10^{-94}}}. \nonumber
+%\end{equation}
+%
+The tenth set of benchmarks contains the \textit{Computer Tape Driver} discrete plant $G_{10}(z)$, which 
+describes a system to read and write data on a storage device in the computer~\cite{Franklin15}.
+%
+%\begin{equation}
+%\label{Computer-Tape-Driver}
+%G_{10}(z)=\frac{0.0200z -3.8303\times{10^{-176}}}{1.0z -4.6764\times{10^{-166}}}. \nonumber
+%\end{equation}
+The last two set of benchmarks describe discrete plants $G_{11}(z)$ and $G_{12}(z)$ 
+for a DC servo motor application (e.g., velocity control)~\cite{exampleCAD,Tan01}.
 
 All experiments were conducted on a 12-core 2.40\,GHz Intel Xeon E5-2440
 with 96\,GB of RAM and Linux OS.  All times given are wall clock time in
