@@ -467,6 +467,7 @@ additive terms, resulting in an uncertain model $\hat{G}(z)$, such that:
 \hat{G}(z)=\frac{G_n(z)+\Delta G_n(z)}{G_d(z)+\Delta G_d(z)},
 \end{equation}
 %
+\red{[what is the relationship between the deltas in this formula, and those in the previous paragraph? please clarify and hopefully simplify formulae. ]}
 which will be represented by the following transfer function:
 %
 \begin{equation}
@@ -615,7 +616,9 @@ respective coefficients $\vec{G}$, $\vec{C}$ in vector form.
 
 A typical digital control system with a continuous plant and a discrete
 controller is illustrated in Figure~\ref{fig:sampledsystem}.  The DAC and
-ADC converters introduce quantization errors which are modeled as noises
+ADC converters introduce quantization errors 
+\red{[why is the DAC introducing a quantisation error again?]}
+which are modeled as noises
 $\nu_{1}(z)$ and $\nu_{2}(z)$, $G(s)$ is the continuous-time plant model
 with parametric additive uncertainty $\Delta_p{G}_n(s)$ and
 $\Delta_p{G}_d(s)$, $R(z)$ is the reference signal, $U(z)$ is the control
@@ -756,7 +759,7 @@ represented as an additive output noise~$\nu(z)$.
 In Figure~\ref{fig:digsystem1}, two sources of uncertainty are illustrated:
 parametric uncertainties related to modeling errors, and uncertainties
 introduced by quantizations in sampling and holding process, i.e., ADC and
-DAC conversions.  These sources are assumed to be non-deterministic, 
+DAC conversions \red{[but the sample-and-hold happens only in the DAC, not in the ADC - right?]}.  These sources are assumed to be non-deterministic, 
 which poses no further restriction to our model, thus, the uncertain model
 may be rewritten as a vector of coefficients in the z-domain using equations
 (\ref{eq:coefficients}) and (\ref{eq:delta_coefficients})
@@ -769,7 +772,7 @@ may be rewritten as a vector of coefficients in the z-domain using equations
 where $\Delta_p \vec{G}$ is the term that corresponds to the parametric
 uncertainties and $\Delta_q \vec{G}$ is the term that reflects the
 quantization effects on the plant model, {\it i.e.} $\Delta_q \vec{G}$ is 
-a model that incorporates the effects of $\nu$ in $\vec{\hat{G}}$ to 
+a model that incorporates the effects of $\nu$ \red{[undefined, see above]} in $\vec{\hat{G}}$ to 
 investigate the consequences in the stability of system, once our stability 
 analysis is based on polynomial coefficients and not over signals.
 
@@ -898,7 +901,9 @@ inadequate.
 %\red{[The previous statement is confusing and I must disagree here: I want hard error bounds on a specific value of T.]}
 %\green{[You are correct. It was absolutely wrong. Hopefully this explanation is clear. We use MATLAB, but still don't know the details of their implementation, so I don't have hard data on how this error is calculated.}
 
-Since the controller is implemented using a FWL, $C(z)$ also suffers
+\smallskip
+
+Since the controller is implemented using finite representation, $C(z)$ also suffers
 disturbances from the FWL effects, with roundoffs in coefficients that may
 change closed-loop poles and zeros position, and consequently affect its
 stability, as argued in~\cite{Bessa16}.
@@ -906,7 +911,8 @@ stability, as argued in~\cite{Bessa16}.
 Let $\hat{C}(z)$ be the digital controller transfer function represented
 using this FWL with integer size $I$ and fractional size~$F$; $I$ affects
 the range of the representation and is set to avoid overflows, while $F$
-affects the precision and the truncation after arithmetic operations.
+affects the precision and the truncation after arithmetic operations. 
+\red{[we ought to align the following notations with those use in the CAV submission.]}
 We shall denote the FWL domain of the coefficients by $\mathbb{R}\langle I,F
 \rangle$
 %
@@ -938,7 +944,7 @@ using FWL, $\hat{C}(z) \equiv C(z)$.
 %\textcolor{green}{[DC: I changed it to a separate section to differentiate the effects, so we should keep both]}
 
 %------------------------------------
-\subsection{Stability under FWL and Noise}
+\subsection{Stability under Finite Representation and Quantisation Noise}
 \label{sec:stability}
 %------------------------------------
 
@@ -948,7 +954,7 @@ system.  Let the quantizer $Q1$ be the source of a white noise $\nu_{1}$ and
 $Q2$ be the source of a white noise $\nu_{2}$.  The following equation
 models the system in Figure~\ref{fig:sampledsystem}, encompassing the
 parametric uncertainties $\Delta \vec{G}$ and the FWL effects on
-the controller ($\hat{C}(z)$):
+the controller $\hat{C}(z)$:
 %
 \begin{equation}
 \hat{Y}(z)=\nu_{1}(z)+\hat{G}(z)\cdot C(z)\cdot R(z)+\hat{G}(z)\cdot\nu_{2}(z)-\hat{G}(z)\cdot \hat{C}(z)\cdot \hat{Y}(z)
@@ -966,19 +972,19 @@ The above can be rewritten as follows:
 %
 where
 %
-\begin{equation}
+\begin{equation*}
 H_{1}(z)=\frac{1}{1+\hat{G}(z)\cdot \hat{C}(z)}
-\end{equation}
+\end{equation*}
 %
-\begin{equation}
+\begin{equation*}
 H_{2}(z)=\frac{\hat{G}(z)}{1+\hat{G}(z)\cdot \hat{C}(z)}
-\end{equation}
+\end{equation*}
 %
 and
 %
-\begin{equation}
+\begin{equation*}
 H_{3}(z)=\frac{\hat{G}(z)\cdot \hat{C}(z)}{1+\hat{G}(z)\cdot \hat{C}(z)}
-\end{equation}
+\end{equation*}
 
 \begin{myassumption}
 \label{whitenoise}
@@ -987,8 +993,7 @@ The quantization noises $\nu_{1}$ (from $Q1$) and $\nu_{2}$ (from $Q2$) are
 uncorrelated white noises and their amplitudes are always bounded by the
 half of quantization step~\cite{astrom1997computer}, i.e., $\vert \nu_{1}
 \vert \leq \frac{q_{1}}{2}$ and $\vert \nu_{2} \vert \leq \frac{q_{2}}{2}$,
-where $q_{1}$ and $q_{2}$, respectively, are the quantization steps of ADC
-and DAC.
+where $q_{1}$ and $q_{2}$ are the quantization steps of ADC and DAC, respectively.
 % 
 \end{myassumption}
 
@@ -1054,10 +1059,10 @@ A discrete-time linear system is said to be Bounded-Input and Bounded-Output
 (BIBO) stable if and only if every pole of its transfer function lies inside
 the unit circle \cite{Astrom08}.  Analyzing Eq.~\eqref{eq:outputfunctions},
 the following proposition gives necessary conditions for the closed-loop system 
-BIBO stability in Figure~\ref{fig:sampledsystem}, since the
-exogenous signals $R(z)$, $\nu_{1}$, and $\nu_{2}$ are bounded.
+BIBO stability in Figure~\ref{fig:sampledsystem}, with regards to the 
+exogenous signals $R(z)$, $\nu_{1}$, and $\nu_{2}$, which are bounded.
 
-\begin{myprop}{\cite{fadali,Bessa16}}
+\begin{myprop}{\cite{Bessa16,fadali}}
 \label{prop:eq_int_stab} 
 %
 Consider a feedback closed-loop control system as given in
@@ -1065,8 +1070,10 @@ Figure~\ref{fig:sampledsystem} with a FWL implementation of the digital
 controller $\hat{C}(z) =\mathit{FWL}_{M_C,N_C}[C(z)]$ and uncertain discrete
 model of the plant
 %
-$$\hat{G}(z) =\frac{\hat{G}_n(z)}{\hat{G}_d(z)}: \vec{\hat{G}}=\vec{G}+\Delta_p \vec{G}+\Delta_q
-\vec{G} \text{\quad(from~\ref{eq:coefficients},\ref{eq:delta_coefficients})}$$
+$$
+\hat{G}(z) =\frac{\hat{G}_n(z)}{\hat{G}_d(z)}: \vec{\hat{G}}=\vec{G}+\Delta_p \vec{G}+\Delta_q 
+\vec{G} \text{\quad(from~\ref{eq:coefficients},\ref{eq:delta_coefficients})}.
+$$
 %
 Then $\hat{G}(z)$ is BIBO-stable if and only if:
 %
@@ -1080,7 +1087,7 @@ S(z)=\mathit{FWL}_{M_C}[C_n(z)]\hat{G}_n(z)+\mathit{FWL}_{N_C}[C_d(z)]\hat{G}_d(
 \end{itemize}
 \end{myprop}
 
-Proposition~\ref{prop:eq_int_stab} provides the necessary conditions for the
+Proposition~\ref{prop:eq_int_stab} provides necessary (and sufficient) conditions for the
 controller to stabilize the closed-loop system, considering plant
 parametric uncertainties (i.e., $\Delta_p \vec{G}$), quantization noises
 ($\nu_{1}$ and $\nu_{2}$) and FWL effects in the control software.  Note
