@@ -2540,35 +2540,49 @@ benchmarks is the two-stage one.
    & 1-step & 2-step
     \\\hline\hline
 1  & $G_1$  & CrsControl02
-            &   4 &  16 & 17\,s   & \xmark     \\
+            &   4 &  16 & 12\,s   & 67\,s     \\
 2  & $G_1$  & CrsControl02$^\dagger$
-            &   4 &  16 & 46\,s   & \xmark     \\
+            &   4 &  16 & 14600\,s   & 52\,s     \\
 3  & $G_2$  & SpgMsDamper
-            &  15 &  16 & 28\,s   & \xmark     \\
+            &  15 &  16 & 52\,s   & 318\,s     \\
 4  & $G_2$  & SpgMsDamper$^\dagger$
             &  15 &  16 & \xmark  & \xmark    \\
 5  & $G_3$  & SatelliteB2
-            &   3 &   7 & 7\,s    & \xmark     \\
+            &   3 &   7 & 36,s    & \xmark     \\
 6  & $G_3$  & SatelliteB2$^\dagger$
-            &   3 &   7 & \xmark  & 6601\,s  \\
+            &   3 &   7 & \xmark  & 4111\,s  \\
 7  & $G_3$  & SatelliteC2
-            &   3 &   5 & 2\,s    & \xmark    \\
+            &   3 &   5 & 3\,s    & 205\,s    \\
 8  & $G_3$  & SatelliteC2$^\dagger$
-            &   3 &   5 & \xmark  & 76\,s    \\
-9  & $G_4a$ & a\_ST1\_IMPL1
-            &  16 &   4 & 2704\,s & \xmark   \\
-10 & $G_4a$ & a\_ST1\_IMPL2
-            &  16 &   8 & 538\,s  & \xmark   \\
-11 & $G_4a$ & a\_ST1\_IMPL3
-            &  16 &  12 & 12\,s   & \xmark   \\
-12 & $G_4b$ & a\_ST2\_IMPL1
-            &  16 &   4 & 318\,s  & \xmark   \\
-13 & $G_4b$ & a\_ST2\_IMPL2
-            &  16 &   8 & 967\,s  & \xmark    \\
-14 & $G_4b$ & a\_ST2\_IMPL3
-            &  16 &  12 & 9798\,s & \xmark   \\ 
-15 & $G_4c$ & a\_ST3\_IMPL1
-            &  16 &   4 & 6304\,s & \xmark   \\\hline
+            &   3 &   5 & 50\,s  & 1315\,s    \\
+9  & $G_3$  & Cruise
+            &   3 &   7 & 1\,s  & 1\,s    \\
+10 & $G_3$  & DC Motor
+            &   3 &   7 & 1\,s  & 10\,s    \\
+11 & $G_3$  & DC servomotor
+            &   4 &  11 & 46\,s  & \xmark    \\
+12 & $G_3$  & Doyleetal
+            &   4 &  11 & 8769\,s  & \xmark    \\
+13 & $G_3$  & Helicopter
+            &   3 &   7 & 44\,s  & \xmark    \\
+14 & $G_3$  & Pendulum
+            &   3 &   7 & 1\,s  & 14826\,s    \\
+15 & $G_3$  & Suspension
+            &   3 &   7 & 1\,s  & 5\,s    \\
+16 & $G_4a$ & a\_ST1\_IMPL1
+            &  16 &   4 & 11748\,s & \xmark   \\
+17 & $G_4a$ & a\_ST1\_IMPL2
+            &  16 &   8 & 351\,s  & \xmark   \\
+18 & $G_4a$ & a\_ST1\_IMPL3
+            &  16 &  12 & 8772\,s   & \xmark   \\
+19 & $G_4b$ & a\_ST2\_IMPL1
+            &  16 &   4 & 1128\,s  & \xmark   \\
+20 & $G_4b$ & a\_ST2\_IMPL2
+            &  16 &   8 & \xmark  & \xmark    \\
+21 & $G_4b$ & a\_ST2\_IMPL3
+            &  16 &  12 & 15183\,s & \xmark   \\ 
+22 & $G_4c$ & a\_ST3\_IMPL1
+            &  16 &   4 & \xmark & \xmark   \\\hline
 \end{tabular}
 
 \vspace{0.5em}
@@ -2579,23 +2593,23 @@ benchmarks is the two-stage one.
 \end{table}
 %---------------------------------
 
-The median runtime for our benchmark set is $197$\,s, implying that \tool
-can synthesize half of the controllers in less than $5$ minutes.  Overall,
-the average synthesis time amounts to approximately $30$ minutes.  We
+The median runtime for our benchmark set is $50$\,s, implying that \tool
+can synthesize half of the controllers in less than one minute.  Overall,
+the average synthesis time amounts to approximately $45$ minutes.  We
 consider these times short enough to be of practical use to control
 engineers, and thus affirm RQ1.  We further observe that the approach using
 the two-stage verification engine is able to synthesize stable controllers
-in $12$ out of the $15$ benchmarks, and can be complemented using the
-one-stage engine for two additional benchmarks, where the inductive
+in $18$ out of the $22$ benchmarks, and can be complemented using the
+one-stage engine for additional benchmarks, where the inductive
 conjectures fail.  Both verification engines together enable controller
-synthesis for $14$ out of $15$ benchmarks.  For the one remaining benchmark
+synthesis for $19$ out of $22$ benchmarks.  For the remaining benchmarks
 our approach failed to synthesize a stable controller within the time
-limits.  This can be addressed by either increasing the fixed-point word
-widths considered or using floating-point arithmetic instead.  The
-synthesized controllers were confirmed to be stable outside of our model
-representation using MATLAB, positively answering RQ2.  A~link to the full
-experimental environment, including scripts to reproduce the results, all
-benchmarks and the \tool tool, is provided in the
+limits.  This can be addressed by either increasing either the time limit
+or the fixed-point word widths considered, or by using floating-point
+arithmetic instead.  The synthesized controllers were confirmed to be stable
+outside of our model representation using MATLAB, positively answering RQ2.
+A~link to the full experimental environment, including scripts to reproduce
+the results, all benchmarks and the \tool tool, is provided in the
 footnote.\footnote{\url{https://drive.google.com/file/d/0ByIexo3Z5N91QkhrMi1rdkZFTWc/view}}
 
 \subsection{Threats to validity}
