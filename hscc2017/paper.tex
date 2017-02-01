@@ -2562,33 +2562,35 @@ benchmarks is the two-stage one.
             &   3 &   5 & 3\,s    & 205\,s    \\
 8  & $G_3$  & SatelliteC2$^\dagger$
             &   3 &   5 & 50\,s  & 1315\,s    \\
-9  & $G_3$  & Cruise
+9  & $G_4$  & Cruise
             &   3 &   7 & 1\,s  & 1\,s    \\
-10 & $G_3$  & DC Motor
+10 & $G_5$  & DC Motor
             &   3 &   7 & 1\,s  & 10\,s    \\
-11 & $G_3$  & DC servomotor
+11 & $G_6$  & DC servomotor
             &   4 &  11 & 46\,s  & \xmark    \\
-12 & $G_3$  & Doyleetal
+12 & $G_7$  & Doyleetal
             &   4 &  11 & 8769\,s  & \xmark    \\
-13 & $G_3$  & Helicopter
+13 & $G_8$  & Helicopter
             &   3 &   7 & 44\,s  & \xmark    \\
-14 & $G_3$  & Pendulum
+14 & $G_9$  & Pendulum
             &   3 &   7 & 1\,s  & 14826\,s    \\
-15 & $G_3$  & Suspension
+15 & $G_10$  & Suspension
             &   3 &   7 & 1\,s  & 5\,s    \\
-16 & $G_4a$ & a\_ST1\_IMPL1
+16 & $G_11$  & Tapedriver
+            &   3 &   7 & 1\,s  & 1\,s    \\
+17 & $G_12a$ & a\_ST1\_IMPL1
             &  16 &   4 & 11748\,s & \xmark   \\
-17 & $G_4a$ & a\_ST1\_IMPL2
+18 & $G_12a$ & a\_ST1\_IMPL2
             &  16 &   8 & 351\,s  & \xmark   \\
-18 & $G_4a$ & a\_ST1\_IMPL3
+19 & $G_12a$ & a\_ST1\_IMPL3
             &  16 &  12 & 8772\,s   & \xmark   \\
-19 & $G_4b$ & a\_ST2\_IMPL1
+20 & $G_12b$ & a\_ST2\_IMPL1
             &  16 &   4 & 1128\,s  & \xmark   \\
-20 & $G_4b$ & a\_ST2\_IMPL2
+21 & $G_12b$ & a\_ST2\_IMPL2
             &  16 &   8 & \xmark  & \xmark    \\
-21 & $G_4b$ & a\_ST2\_IMPL3
+22 & $G_12b$ & a\_ST2\_IMPL3
             &  16 &  12 & 15183\,s & \xmark   \\ 
-22 & $G_4c$ & a\_ST3\_IMPL1
+23 & $G_12c$ & a\_ST3\_IMPL1
             &  16 &   4 & \xmark & \xmark   \\\hline
 \end{tabular}
 
@@ -2600,16 +2602,16 @@ benchmarks is the two-stage one.
 \end{table}
 %---------------------------------
 
-The median runtime for our benchmark set is $50$\,s, implying that \tool
+The median runtime for our benchmark set is $48$\,s, implying that \tool
 can synthesize half of the controllers in less than one minute.  Overall,
-the average synthesis time amounts to approximately $45$ minutes.  We
+the average synthesis time amounts to approximately $42$ minutes.  We
 consider these times short enough to be of practical use to control
 engineers, and thus affirm RQ1.  We further observe that the approach using
 the two-stage verification engine is able to synthesize stable controllers
-in $18$ out of the $22$ benchmarks, and can be complemented using the
+in $19$ out of the $23$ benchmarks, and can be complemented using the
 one-stage engine for additional benchmarks, where the inductive
 conjectures fail.  Both verification engines together enable controller
-synthesis for $19$ out of $22$ benchmarks.  For the remaining benchmarks
+synthesis for $20$ out of $23$ benchmarks.  For the remaining benchmarks
 our approach failed to synthesize a stable controller within the time
 limits.  This can be addressed by either increasing either the time limit
 or the fixed-point word widths considered, or by using floating-point
