@@ -2118,30 +2118,36 @@ for the {\sc verify} phase as one-stage and two-stage, respectively.
 \subsection{Soundness}
 %-----------------------------
 
-The soundness of the model is ensured by the {\sc verify} phase. 
-The {\sc synthesise} phase is only concerned with providing a candidate 
-solution that is not ensured to work for any of the plant models. 
-However, it is increasingly likely to be correct as the system loops 
-through counterexamples. The overall result is that if a candidate solution 
-is validated by the verifier, it is necessarily sound; otherwise, we may simply 
-not find a valid solution in the given time. The {\sc verify} phase looks at 
-two separate elements for soundness. The first corresponds to the controller fitness 
-for all plant models. This phase ensures that there exists no counterexample plant 
-that would create a closed-loop with unstable poles. The controller fixed word length 
-is not relevant at this point since the parameters have already been chosen to fit 
-this criteria (i.e., the candidate solution is FWL). The model is verified using 
-the SAT solver backend in CBMC, which looks for the satisfiability of a plant 
-with an unstable closed-loop. If no counterexample is found, then the controller 
-is necessarily stable for all plants in the collection. The limitation of this approach 
-is the data type used by the verifier to perform the evaluation. Since the actual plant 
-works in the reals, whereas we use fixed/floating point arithmetic to evaluate it, 
-we need to ensure that the rounding errors in the calculations do not cause the solution 
-to be unsound. For this reason the second verification phase uses interval arithmetic 
-with outward rounding to ensure that these errors do not exceed critical bounds that 
-could make some (or all) plant(s) unstable. This means that whilst the solution may not be complete, 
-it is sound for evaluating any collection of real plants with a defined FWL controller for all of them. 
-The need for two verification phases is because whereas this second phase can ensure 
-the stability of all plants in the collection, it is unable to provide a counterexample.
+While the {\sc synthesise} phase searches for potentially unsound 
+candidate solutions, the soundness of the model is ensured by the {\sc verify} phase.  
+If a candidate solution is validated by the verifier, it is necessarily
+sound. 
+
+Through its two stages, the {\sc verify} phase looks at two separate elements for
+soundness.
+% The first ensures that there exists no
+% counterexample plant that would create a closed-loop with unstable
+% poles. The fixed word length of the controller is not relevant at this
+% point since the parameters have already been chosen to fit this
+% criteria (i.e., the candidate solution is FWL).
+The first stage ensures that no counterexample
+plant with an unstable closed loop exists with % If no such
+% system exists, then the controller is stable for all
+% plants in the collection with
+the limitations given by the data
+type used by the verifier. Since the actual
+plant works in the reals, whereas we use fixed/floating point
+arithmetic to evaluate it, we need to ensure that the rounding errors
+in the caculations do not cause the solution to be unsound.
+
+For this reason the second verification stage uses interval arithmetic with
+outward rounding to ensure that these errors do not exceed critical
+bounds that could make some (or all) plant(s) unstable. This means
+that whilst the solution may not be complete, it is sound for
+evaluating any collection of real plants with a defined FWL controller
+for all of them. We require two verification stages because,
+while the second phase can ensure the stability of all plants in
+the collection, it is unable to provide a counterexample.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Illustrative Example} \label{sec:running-ex}
