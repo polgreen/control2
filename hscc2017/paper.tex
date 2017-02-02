@@ -2542,7 +2542,7 @@ and can their stability be confirmed outside of our model?
 \label{experimental-results}
 %---------------------------------
 
-We give the runtimes required to synthesize a stable controller for each
+We give the run-times required to synthesize a stable controller for each
 benchmark in Table~\ref{tab:results}.  Here, \textit{Plant} is the discrete
 or continuous plant model, \textit{Benchmark} is the name of the employed
 benchmark, \textit{I} and \textit{F} represent the number of integer and
@@ -2556,19 +2556,18 @@ engine %inductive back-end
 is able to find a stable solution in less than five minutes.  This is possible if the
 inductive solutions need to be refined with few counterexamples and
 increases of the fixed-point precision.  However, two benchmarks in our set
-required too many counterexamples to refine their solution (marked with $^*$
-in Table~\ref{tab:results}).  In these cases, the one-stage engine 
-%interval arithmetic back-end 
-is able to complement the two-stage approach and synthesize a solution
-instead, albeit with significantly larger runtimes.  This performance
-difference is due to the fact that the one-stage verification engine does
+required too many counterexamples to refine their solution \textcolor{red}{
+(marked with $^*$ in Table~\ref{tab:results})}.  
+In these cases, the one-stage engine is able to complement the two-stage 
+approach and synthesize a solution instead, albeit with significantly larger run-times.  
+This performance difference is due to the fact that the one-stage verification engine does
 not take advantage of the inductive conjecture inherent to CEGIS, but
 instead fully explores the counterexample space.  The result is a
 performance difference of at least two orders of magnitude in our
 experiments, leading to the one-stage engine timing out on the majority of
-our benchmarks.  Table~\ref{tab:results} only lists the faster of the two
+our benchmarks. \textcolor{red}{Table~\ref{tab:results} only lists the faster of the two
 verification engines for each benchmark, which in $12$ out of $15$
-benchmarks is the two-stage one.
+benchmarks is the two-stage one}.
 
 \begin{table}
 \centering
@@ -2631,7 +2630,7 @@ uncertainty)
 \end{table}
 %---------------------------------
 
-The median runtime for our benchmark set is $48$\,s, implying that \tool
+The median run-time for our benchmark set is $48$\,s, implying that \tool
 can synthesize half of the controllers in less than one minute.  Overall,
 the average synthesis time amounts to approximately $42$ minutes.  We
 consider these times short enough to be of practical use to control
@@ -2650,7 +2649,9 @@ A~link to the full experimental environment, including scripts to reproduce
 the results, all benchmarks and the \tool tool, is provided in the
 footnote.\footnote{\url{https://drive.google.com/file/d/0ByIexo3Z5N91QkhrMi1rdkZFTWc/view}}\footnote{CBMC version: \url{https://github.com/diffblue/cbmc/archive/7a6cec1dd0eb8843559591105235f1f2c4678801.zip}}
 
+%--------------------------------------
 \subsection{Threats to validity}
+%--------------------------------------
 
 We report a favourable assessment of \tool over a diverse set of real-world
 benchmarks. Nevertheless, this set of benchmarks is limited within the
