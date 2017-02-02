@@ -2561,18 +2561,21 @@ Section~\ref{synthesis-elements} holds and the two-stage verification
 engine is able to find a stable solution in less than one minute for half
 of the benchmarks. This is possible if the inductive solutions need to be 
 refined with few counterexamples and increases of the fixed-point precision.  
-\textcolor{red}{However, two benchmarks in our set required too many counterexamples 
-to refine their solution (marked with $^*$ in Table~\ref{tab:results}).  
-In these cases, the one-stage engine is able to complement the two-stage 
-approach and synthesize a solution instead, albeit with significantly larger run-times.  
-This performance difference is due to the fact that the one-stage verification engine does
-not take advantage of the inductive conjecture inherent to CEGIS, but
-instead fully explores the counterexample space.  The result is a
-performance difference of at least two orders of magnitude in our
-experiments, leading to the one-stage engine timing out on the majority of
-our benchmarks. Table~\ref{tab:results} only lists the faster of the two
-verification engines for each benchmark, which in $12$ out of $15$
-benchmarks is the two-stage one}.
+However, the benchmark \emph{SatelliteB2} with uncertainty
+required too many counterexamples to refine its solution.  
+For this particular case, the one-stage engine is able to complement the
+two-stage approach and synthesize a solution instead.  It is important to
+reiterate that the one-stage verification engine does not take advantage of
+the inductive conjecture inherent to CEGIS, but instead fully explores the
+counterexample space in one SAT instance.  As expected, this approach is
+significantly slower on average and is only useful for benchmarks where
+the CEGIS approach requires too many counterexample refinement iterations
+such that exploring all counterexamples in a single SAT instance performs better.
+Our results suggest an average performance difference of at least two orders
+of magnitude between the two engines, leading to the one-stage engine timing
+out on the majority of our benchmarks.  Table~\ref{tab:results}
+lists the results for both engines independently, where in $16$ out of $23$
+benchmarks the two-stage engine is faster.
 
 \begin{table}
 \centering
@@ -2580,7 +2583,7 @@ benchmarks is the two-stage one}.
 \begin{tabular}{| r | c | l | r r || r | r |}
 \hline
 \# & Plant  & Benchmark                  & $I$ & $F$
-   & 1-step & 2-step
+   & 2-step & 1-step
     \\\hline\hline
 1  & $G_1$  & CrsControl02
             &   4 &  16 & 12\,s   & 67\,s     \\
