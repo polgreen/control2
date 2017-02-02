@@ -2552,12 +2552,11 @@ for the given plant.
 
 For the majority of our benchmarks, the conjecture explained in
 Section~\ref{synthesis-elements} holds and the two-stage verification 
-engine %inductive back-end 
-is able to find a stable solution in less than five minutes.  This is possible if the
-inductive solutions need to be refined with few counterexamples and
-increases of the fixed-point precision.  However, two benchmarks in our set
-required too many counterexamples to refine their solution \textcolor{red}{
-(marked with $^*$ in Table~\ref{tab:results})}.  
+engine is able to find a stable solution in less than one minute for half
+of the benchmarks. This is possible if the inductive solutions need to be 
+refined with few counterexamples and increases of the fixed-point precision.  
+\textcolor{red}{However, two benchmarks in our set required too many counterexamples 
+to refine their solution (marked with $^*$ in Table~\ref{tab:results}).  
 In these cases, the one-stage engine is able to complement the two-stage 
 approach and synthesize a solution instead, albeit with significantly larger run-times.  
 This performance difference is due to the fact that the one-stage verification engine does
@@ -2565,7 +2564,7 @@ not take advantage of the inductive conjecture inherent to CEGIS, but
 instead fully explores the counterexample space.  The result is a
 performance difference of at least two orders of magnitude in our
 experiments, leading to the one-stage engine timing out on the majority of
-our benchmarks. \textcolor{red}{Table~\ref{tab:results} only lists the faster of the two
+our benchmarks. Table~\ref{tab:results} only lists the faster of the two
 verification engines for each benchmark, which in $12$ out of $15$
 benchmarks is the two-stage one}.
 
@@ -2586,7 +2585,7 @@ benchmarks is the two-stage one}.
 4  & $G_2$  & SpgMsDamper$^\dagger$
             &  15 &  16 & \xmark  & \xmark    \\
 5  & $G_3$  & SatelliteB2
-            &   3 &   7 & 36,s    & \xmark     \\
+            &   3 &   7 & 36\,s    & \xmark     \\
 6  & $G_3$  & SatelliteB2$^\dagger$
             &   3 &   7 & \xmark  & 4111\,s  \\
 7  & $G_3$  & SatelliteC2
@@ -2617,11 +2616,11 @@ benchmarks is the two-stage one}.
             &  16 &  12 & 8772\,s   & \xmark   \\
 20 &$G_{12b}$& a\_ST2\_IMPL1
             &  16 &   4 & 1128\,s  & \xmark   \\
-21 &$G_{12b}$& a\_ST2\_IMPL2
+21 &$G_{12b}$& a\_ST2\_IMPL2$^{*}$
             &  16 &   8 & \xmark  & \xmark    \\
 22 &$G_{12b}$& a\_ST2\_IMPL3
             &  16 &  12 & 15183\,s & \xmark   \\ 
-23 &$G_{12c}$& a\_ST3\_IMPL1
+23 &$G_{12c}$& a\_ST3\_IMPL1$^{*}$
             &  16 &   4 & \xmark & \xmark   \\\hline
 \end{tabular}}\\[0.2ex]
 \caption{\tool results ({\xmark} = time-out, $\dagger$ = 
