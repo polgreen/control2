@@ -2587,49 +2587,49 @@ benchmarks the two-stage engine is faster.
    & 2-stage & 1-stage
     \\\hline\hline
 1  & $G_{1a}$  & CrsControl02
-            &   4 &  16 & 12\,s   & 67\,s     \\
+            &   4 &  16 & \textbf{12\,s}   & 67\,s     \\
 2  & $G_{1b}$  & CrsControl02$^\dagger$
-            &   4 &  16 & 14600\,s   & 52\,s     \\
+            &   4 &  16 & 14600\,s   & \textbf{52\,s}     \\
 3  & $G_{2a}$  & SpgMsDamper
-            &  15 &  16 & 52\,s   & 318\,s     \\
+            &  15 &  16 & \textbf{52\,s}   & 318\,s     \\
 4  & $G_{2b}$  & SpgMsDamper$^\dagger$
             &  15 &  16 & \xmark  & \xmark    \\
 5  & $G_{3a}$  & SatelliteB2
-            &   3 &   7 & 36\,s    & \xmark     \\
+            &   3 &   7 & \textbf{36\,s}    & \xmark     \\
 6  & $G_{3b}$  & SatelliteB2$^\dagger$
-            &   3 &   7 & \xmark  & 4111\,s  \\
+            &   3 &   7 & \xmark  & \textbf{4111\,s}  \\
 7  & $G_{3c}$  & SatelliteC2
-            &   3 &   5 & 3\,s    & 205\,s    \\
+            &   3 &   5 & \textbf{3\,s}    & 205\,s    \\
 8  & $G_{3d}$  & SatelliteC2$^\dagger$
-            &   3 &   5 & 50\,s  & 1315\,s    \\
+            &   3 &   5 & \textbf{50\,s}  & 1315\,s    \\
 9  & $G_4$  & Cruise
             &   3 &   7 & 1\,s  & 1\,s    \\
 10 & $G_5$  & DC Motor
-            &   3 &   7 & 1\,s  & 10\,s    \\
+            &   3 &   7 & \textbf{1\,s}  & 10\,s    \\
 11 & $G_6$  & DC servomotor
-            &   4 &  11 & 46\,s  & \xmark    \\
+            &   4 &  11 & \textbf{46\,s}  & \xmark    \\
 12 & $G_7$  & Doyleetal
-            &   4 &  11 & 8769\,s  & \xmark    \\
+            &   4 &  11 & \textbf{8769\,s}  & \xmark    \\
 13 & $G_8$  & Helicopter
-            &   3 &   7 & 44\,s  & \xmark    \\
+            &   3 &   7 & \textbf{44\,s}  & \xmark    \\
 14 & $G_9$  & Pendulum
-            &   3 &   7 & 1\,s  & 14826\,s    \\
+            &   3 &   7 & \textbf{1\,s}  & 14826\,s    \\
 15 &$G_{10}$& Suspension
-            &   3 &   7 & 1\,s  & 5\,s    \\
+            &   3 &   7 & \textbf{1\,s}  & 5\,s    \\
 16 &$G_{11}$& Tapedriver
             &   3 &   7 & 1\,s  & 1\,s    \\
 17 &$G_{12a}$& a\_ST1\_IMPL1
-            &  16 &   4 & 11748\,s & \xmark   \\
+            &  16 &   4 & \textbf{11748\,s} & \xmark   \\
 18 &$G_{12a}$& a\_ST1\_IMPL2
-            &  16 &   8 & 351\,s  & \xmark   \\
+            &  16 &   8 & \textbf{351\,s}  & \xmark   \\
 19 &$G_{12a}$& a\_ST1\_IMPL3
-            &  16 &  12 & 8772\,s   & \xmark   \\
+            &  16 &  12 & \textbf{8772\,s}   & \xmark   \\
 20 &$G_{12b}$& a\_ST2\_IMPL1
-            &  16 &   4 & 1128\,s  & \xmark   \\
+            &  16 &   4 & \textbf{1128\,s}  & \xmark   \\
 21 &$G_{12b}$& a\_ST2\_IMPL2$^{*}$
             &  16 &   8 & \xmark  & \xmark    \\
 22 &$G_{12b}$& a\_ST2\_IMPL3
-            &  16 &  12 & 15183\,s & \xmark   \\ 
+            &  16 &  12 & \textbf{15183\,s} & \xmark   \\ 
 23 &$G_{12c}$& a\_ST3\_IMPL1$^{*}$
             &  16 &   4 & \xmark & \xmark   \\\hline
 \end{tabular}}\\[0.2ex]
@@ -2639,10 +2639,10 @@ uncertainty)
 \end{table}
 %---------------------------------
 
-The median run-time for our benchmark set with the two-stage verification engine is 
-$52$\,s, implying that \tool
-can synthesize half of the controllers in less than one minute. Overall,
-the average synthesis time amounts to approximately $42$ minutes.  We
+Considering the faster engine for each benchmark (marked as bold in Table~\ref{tab:results}), 
+the median run-time amounts to $48$\,s, implying that \tool can synthesize half of the controllers 
+in less than one minute. Overall, the average fastest synthesis time considering
+both engines is approximately $42$ minutes.  We
 consider these times short enough to be of practical use to control
 engineers, and thus affirm RQ1.  We further observe that the approach using
 the two-stage verification engine is able to synthesize stable controllers
