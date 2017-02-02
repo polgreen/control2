@@ -246,9 +246,8 @@ In summary, this paper makes the following original contributions.
 
 \item Experimental results show that \tool is able to efficiently synthesize
   stable controllers for a set of intricate benchmarks taken from the
-  literature: the median runtime for our benchmark set with the two-stage 
-  verification engine is $52$\,s, i.e.,
-  half of the controllers can be synthesized in less than five minutes.
+  literature: the median runtime for our benchmark set considering the faster 
+	engine is $48$\,s, i.e., half of the controllers can be synthesized in less than one minute.
 
 %% \item We exploit a CEGIS-based approach that uses inductive synthesis
 %% together with a bit-precise formal verification algorithm for synthesizing
@@ -461,19 +460,20 @@ additive terms, resulting in an uncertain model $\hat{G}(z)$, such that:
 \hat{G}(z)=\frac{G_n(z)+\Delta G_n(z)}{G_d(z)+\Delta G_d(z)},
 \end{equation}
 %
-\red{[what is the relationship between the deltas in this formula, and those in the previous paragraph? please clarify and hopefully simplify formulae. ]}
+%\red{[what is the relationship between the deltas in this formula, and those in the previous paragraph? please clarify and hopefully simplify formulae. ]}
 which will be represented by the following transfer function:
 %
 \begin{equation}
 \hat{G}(z)=\frac{\hat{b}_{0}+\hat{b}_{1}z^{-1}+...+\hat{b}_{M_G}z^{-M_G}}{\hat{a}_{0}+\hat{a}_{1}z^{-1}+...+\hat{a}_{N_G}z^{-N_G}} : N_G \geq M_G .
 \end{equation}
 %
-\red{[why is this condition on the order of the polynomials raised only now? how is it used later?]}
+%\red{[why is this condition on the order of the polynomials raised only now? how is it used later?]}
 Due to the nature of the methods we use for the stability check, we require
 that the parametric errors in the plant have the same polynomial order as
 the plant itself (\blue{all other errors described in this paper are ensured to
-fulfil this property in our implementation}\red{[have we later argued that this is indeed the case?]}) 
-\blue{and that enter the plant linearly}.
+fulfil this property in our implementation}
+%\red{[have we later argued that this is indeed the case?]}) 
+%\blue{and that enter the plant linearly}.
 
 We employ a notation based on the polynomials coefficients to simplify 
 the presentation.  Let $\mathcal{P}^{N}$ be the space of polynomials of order $N$. 
