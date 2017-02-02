@@ -2562,8 +2562,8 @@ Section~\ref{synthesis-elements} holds and the two-stage verification
 engine is able to find a stable solution in less than one minute for half
 of the benchmarks. This is possible if the inductive solutions need to be 
 refined with few counterexamples and increases of the fixed-point precision.  
-However, the benchmark \emph{SatelliteB2} with uncertainty (represented by $G_{3b}$
-in Table~\ref{tab:results}) required too many counterexamples to refine its solution.  
+However, the benchmark \emph{SatelliteB2} with uncertainty ($G_{3b}$)
+required too many counterexamples to refine its solution.  
 For this particular case, the one-stage engine is able to complement the
 two-stage approach and synthesize a solution instead.  It is important to
 reiterate that the one-stage verification engine does not take advantage of
@@ -2586,9 +2586,9 @@ benchmarks the two-stage engine is faster.
 \# & Plant  & Benchmark                  & $I$ & $F$
    & 2-stage & 1-stage
     \\\hline\hline
-1  & $G_{1a}$  & CrsControl02
+1  & $G_{1a}$  & CruiseControl02
             &   4 &  16 & \textbf{12\,s}   & 67\,s     \\
-2  & $G_{1b}$  & CrsControl02$^\dagger$
+2  & $G_{1b}$  & CruiseControl02$^\dagger$
             &   4 &  16 & 14600\,s   & \textbf{52\,s}     \\
 3  & $G_{2a}$  & SpgMsDamper
             &  15 &  16 & \textbf{52\,s}   & 318\,s     \\
@@ -2604,9 +2604,9 @@ benchmarks the two-stage engine is faster.
             &   3 &   5 & \textbf{50\,s}  & 1315\,s    \\
 9  & $G_4$  & Cruise
             &   3 &   7 & 1\,s  & 1\,s    \\
-10 & $G_5$  & DC Motor
+10 & $G_5$  & DCMotor
             &   3 &   7 & \textbf{1\,s}  & 10\,s    \\
-11 & $G_6$  & DC servomotor
+11 & $G_6$  & DCServomotor
             &   4 &  11 & \textbf{46\,s}  & \xmark    \\
 12 & $G_7$  & Doyleetal
             &   4 &  11 & \textbf{8769\,s}  & \xmark    \\
@@ -2626,11 +2626,11 @@ benchmarks the two-stage engine is faster.
             &  16 &  12 & \textbf{8772\,s}   & \xmark   \\
 20 &$G_{12b}$& a\_ST2\_IMPL1
             &  16 &   4 & \textbf{1128\,s}  & \xmark   \\
-21 &$G_{12b}$& a\_ST2\_IMPL2$^{*}$
+21 &$G_{12b}$& a\_ST2\_IMPL2
             &  16 &   8 & \xmark  & \xmark    \\
 22 &$G_{12b}$& a\_ST2\_IMPL3
             &  16 &  12 & \textbf{15183\,s} & \xmark   \\ 
-23 &$G_{12c}$& a\_ST3\_IMPL1$^{*}$
+23 &$G_{12c}$& a\_ST3\_IMPL1
             &  16 &   4 & \xmark & \xmark   \\\hline
 \end{tabular}}\\[0.2ex]
 \caption{\tool results ({\xmark} = time-out, $\dagger$ = 
@@ -2647,7 +2647,7 @@ consider these times short enough to be of practical use to control
 engineers, and thus affirm RQ1.  We further observe that the approach using
 the two-stage verification engine is able to synthesize stable controllers
 in $19$ out of the $23$ benchmarks, and can be complemented using the
-one-stage engine for additional benchmarks, where the inductive
+one-stage engine, which is faster for two benchmarks where the inductive
 conjectures fail.  Both verification engines together enable controller
 synthesis for $20$ out of $23$ benchmarks.  For the remaining benchmarks
 our approach failed to synthesize a stable controller within the time
