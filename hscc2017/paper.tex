@@ -2394,10 +2394,11 @@ of a simple spring-mass damper plant~\cite{DBLP:conf/hybrid/WangGRJF16}.
 %\end{equation} 
 %
 A third set of benchmarks uses the discrete model $G_{3}(z)$ for satellite attitude 
-dynamics~\cite{Franklin15}.  Satellites require attitude (pose) control
-for orientation of antennas and sensors w.r.t.~earth.  The satellite
-attitude control is typically used for three-axis attitude tracking, but
-here we consider only one axis at a time.  
+dynamics~\cite{Franklin15}, which require attitude (pose) control
+for orientation of antennas and sensors w.r.t.~earth.  
+%The satellite
+%attitude control is typically used for three-axis attitude tracking, but
+%here we consider only one axis at a time.  
 %The motion equation for the
 %one-axis system, disregarding disturbance torques, is given by
 %
@@ -2425,9 +2426,6 @@ here we consider only one axis at a time.
 %G_{3}(z)= \frac{T^{2}}{2} \frac{z+1}{(z+1)^{2}}. \nonumber
 %\end{equation}
 %
-The fourth set of benchmarks considers the discrete model $G_{4}(z)$
-that is typically used for evaluating stability
-margins and controller fragility~\cite{bhattacharyya97, keel_Bhattacharyya_examples}.
 %
 %\begin{equation}
 %\label{exampleA}
@@ -2454,15 +2452,22 @@ margins and controller fragility~\cite{bhattacharyya97, keel_Bhattacharyya_examp
 %G_{4c}(z)=\frac{0.0300090687252212z - 0.0309228417953966}{1.0^{2} - 2.03228208009387z + 1.03045453395352}. \nonumber
 %\end{equation}
 
-The fifth set of benchmarks contains the \textit{DC Motor Rate} discrete model $G_{5}(z)$, which 
-describes the angular velocity of a DC Motor plant~\cite{Franklin15}. 
+The fifth and sixth set of benchmarks describe the discrete model 
+of a DC servo motor velocity dynamics~\cite{exampleCAD,Tan01}. 
+
+The seventh set of benchmarks contains the discrete well-studied 
+non-minimal phase model $G_{7}(z)$. Non-minimal phase model offers 
+additional difficulties for the controller design~\cite{Doyle:1991:FCT:574259}.
+
+%The fifth set of benchmarks contains the \textit{DC Motor Rate} discrete model $G_{5}(z)$, which 
+%describes the angular velocity of a DC Motor plant~\cite{Franklin15}. 
 %
 %\begin{equation}
 %\label{DC-Motor-Rate}
 %G_{5}(z)=\frac{ 0.1898z + 1.8027\times{10^{-4}}}{1.0z^{2} -0.9012z -1.0006\times{10^{-16}}}. \nonumber
 %\end{equation}
 %
-The sixth set of benchmarks contains the \textit{Helicopter Longitudinal Motion} discrete model $G_{6}(z)$,
+The eighth set of benchmarks contains the \textit{Helicopter Longitudinal Motion} discrete model $G_{8}(z)$,
 which provides the longitudinal motion dynamics of a helicopter~\cite{Franklin15}. 
 %
 %\begin{equation}
@@ -2470,7 +2475,7 @@ which provides the longitudinal motion dynamics of a helicopter~\cite{Franklin15
 %G_{6}(z)=\frac{15.1315z^{2} + 17.8600z + 17.4549}{z^{3} -2.6207z^{2} + 2.3586z -0.6570}. \nonumber
 %\end{equation}
 %
-The seventh set of benchmarks contains the \textit{Inverted Pendulum} discrete model $G_{7}(z)$, which 
+The ninth  set of benchmarks contains the \textit{Inverted Pendulum} discrete model $G_{9}(z)$, which 
 describes a pendulum dynamics with its center of mass above its pivot point~\cite{Franklin15}. 
 %
 %\begin{equation}
@@ -2478,36 +2483,37 @@ describes a pendulum dynamics with its center of mass above its pivot point~\cit
 %G_{7}(z)=\frac{0.0263z^{2} + 0.0143z -0.0383}{z^{4} -4.2553z^{3} + 6.5105z^{2} -4.2553z + 1}. \nonumber
 %\end{equation}
 %
-The eighth set of benchmarks contains the \textit{Magnetic Suspension} discrete model $G_{8}(z)$, which describes the dynamics of a mass that levitates with support only of a magnetic field~\cite{Franklin15}. 
+The tenth set of benchmarks contains the \textit{Magnetic Suspension} discrete model $G_{10}(z)$, which describes the dynamics of a mass that levitates with support only of a magnetic field~\cite{Franklin15}. 
 %
 %\begin{equation}
 %\label{Magnetic-Suspension}
 %G_{8}(z)=\frac{6.769\times{10^{13}}z + 6.784\times{10^{13}}}{z^{2} -5.415\times{10^{13}}z + 4.23\times{10^{11}}}. \nonumber
 %\end{equation}
 
-The ninth set of benchmarks contains the \textit{1/4 Car Suspension} discrete model $G_{9}(z)$,
-which represents the dynamics of a single wheel suspension plant, {\it i.e.}, a system that connects a car to a wheel and allows relative motion between both parts~\cite{Franklin15}.
+%The ninth set of benchmarks contains the \textit{1/4 Car Suspension} discrete model $G_{9}(z)$,
+%which represents the dynamics of a single wheel suspension plant, {\it i.e.}, a system that connects a car to a wheel and allows relative motion between both %parts~\cite{Franklin15}.
 %
 %\begin{equation}
 %\label{Car-Suspension}
 %G_{8}(z)=\frac{0.25z^{3} + 0.5z^{3} + 0.25z -5.7065\times{10^{-10}}}{z^{3} + 6.8455\times{10^{-9}}z^{2} + 3.3925\times{10^{-17}}z - 3.4667\times%{10^{-94}}}. \nonumber
 %\end{equation}
 %
-The tenth set of benchmarks contains the \textit{Computer Tape Driver} discrete model $G_{10}(z)$, which 
+The eleventh set of benchmarks contains the \textit{Computer Tape Driver} discrete model $G_{11}(z)$, which 
 describes a system to read and write data on a storage device~\cite{Franklin15}.
 %
 %\begin{equation}
 %\label{Computer-Tape-Driver}
 %G_{10}(z)=\frac{0.0200z -3.8303\times{10^{-176}}}{1.0z -4.6764\times{10^{-166}}}. \nonumber
 %\end{equation}
-The eleventh benchmark describe the discrete model of a DC servo motor velocity dynamics~\cite{exampleCAD,Tan01}. 
-
-The last benchmark contains the discrete well-studied non-minimal phase model $G_{12}(z)$. Non-minimal phase model offers additional difficulties for the controller design~\cite{Doyle:1991:FCT:574259}.
+%
+The last set of benchmarks considers the discrete model $G_{12}(z)$
+that is typically used for evaluating stability
+margins and controller fragility~\cite{bhattacharyya97, keel_Bhattacharyya_examples}.
 
 All experiments were conducted on a 12-core 2.40\,GHz Intel Xeon E5-2440
 with 96\,GB of RAM and Linux OS.  All times given are wall clock time in
 seconds as measured by the UNIX date command.  For the two-stage verification 
-engine we apply a timeout of 8 hours per benchmark, and 24 hours for the approach 
+engine we apply a timeout of $8$ hours per benchmark, and $24$ hours for the approach 
 using a one-stage engine.
 
 %---------------------------------
