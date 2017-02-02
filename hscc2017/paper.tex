@@ -564,7 +564,7 @@ respective coefficients $\vec{G}$, $\vec{C}$ in vector form.
      \node[draw=none] (q2t)  at ([xshift=1cm,yshift=-.65cm]adc.center) {{\sc Q1}};
    \node[draw=none] (v1)  at ([xshift=1cm,yshift=1.5cm]adc.center) {$\nu_1(z)$};
    \& \coordinate (aux1);
-   \& \node[draw=none] (yz) {$\hat{Y}(z)$};\\
+   \& \node[draw=none] (yz) {$\tilde {Y}(z)$};\\
    \& \coordinate (aux3); 
    \&
    \&
@@ -755,12 +755,12 @@ represented as an additive output noise~$\nu(z)$.
 \label{fig:digsystem1}}
 \end{figure}
 
-\red{[why is the output in Figure 2 tilde, whereas that in  figure 1 hat?]}
+%\red{[why is the output in Figure 2 tilde, whereas that in  figure 1 hat?]}
 %
 In Figure~\ref{fig:digsystem1}, two sources of uncertainty are illustrated:
 parametric uncertainties related to modeling errors, and uncertainties
 introduced by quantizations in sampling and holding process, i.e., ADC and
-DAC conversions \red{[but the sample-and-hold happens only in the DAC, not in the ADC - right?]}.  These sources are assumed to be non-deterministic, 
+DAC conversions \red{[but the sample-and-hold happens only in the DAC, not in the ADC - right?]}\blue{[the sample-and-hold is on the ADC, the DAC is ZOH. I would just put `quantizations in the ADC and DAC conversions']}.  These sources are assumed to be non-deterministic, 
 which poses no further restriction to our model, thus, the uncertain model
 may be rewritten as a vector of coefficients in the z-domain using equations
 (\ref{eq:coefficients}) and (\ref{eq:delta_coefficients})
@@ -773,7 +773,7 @@ may be rewritten as a vector of coefficients in the z-domain using equations
 where $\Delta_p \vec{G}$ is the term that corresponds to the parametric
 uncertainties and $\Delta_q \vec{G}$ is the term that reflects the
 quantization effects on the plant model, {\it i.e.} $\Delta_q \vec{G}$ is 
-a model that incorporates the effects of $\nu$ \red{[undefined, see above]} in $\vec{\hat{G}}$ to 
+a model that incorporates the effects of $\nu_1,\nu_2$ in $\vec{\hat{G}}$ to 
 investigate the consequences in the stability of system, once our stability 
 analysis is based on polynomial coefficients and not over signals.
 
