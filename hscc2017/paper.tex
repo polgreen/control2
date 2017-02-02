@@ -42,6 +42,9 @@
 \newcommand{\blue}[1]{{\color{blue}#1}}
 \newcommand{\red}[1]{{\color{red}#1}}
 \newcommand{\green}[1]{{\color{green}#1}}
+%\newcommand{\blue}[1]{}
+%\newcommand{\red}[1]{}
+%\newcommand{\green}[1]{}
 
 \newtheorem{myassumption}{Assumption}
 \newtheorem{mylemma}{Lemma}
@@ -232,22 +235,19 @@ In summary, this paper makes the following original contributions.
 %
 \begin{itemize}
 
-\item We design and implement an automatic approach in our tool \tool  
-  for generating {\em correct-by-construction} digital controllers that is
-  based on state-of-the-art inductive synthesis techniques.  Our application
-  of program synthesis is non-trivial and requires addressing challenges
-  specific to embedded control systems, such as the effects of quantizers
-  and FWL.  In particular, we have found that a two-stage verification
-  engine that continuously refines the precision of the fixed-point
-  representation of the plant is key to the performance of our approach
-  yielding, in most cases, a speed-up of at least two orders of magnitude
-  over a conventional one-stage verification engine.
+\item We automatically generate {\em correct-by-construction} digital
+  controllers using inductive synthesis.  Our application of program
+  synthesis is non-trivial and addresses challenges specific to control
+  systems, such as the effects of quantizers and FWL.  In particular, we
+  have found that a two-stage verification engine that continuously refines
+  the precision of the fixed-point representation of the plant yields a
+  speed-up of two orders of magnitude over a conventional one-stage
+  verification engine.
 
-\item We provide experimental results showing that \tool is able to
-  efficiently synthesize stable controllers for a set of intricate
-  benchmarks taken from the literature: the median runtime for our benchmark
-  set is $197$\,s, i.e., half of the controllers can be synthesized in less
-  than five minutes.
+\item Experimental results show that \tool is able to efficiently synthesize
+  stable controllers for a set of intricate benchmarks taken from the
+  literature: the median runtime for our benchmark set is $197$\,s, i.e.,
+  half of the controllers can be synthesized in less than five minutes.
 
 %% \item We exploit a CEGIS-based approach that uses inductive synthesis
 %% together with a bit-precise formal verification algorithm for synthesizing
@@ -307,8 +307,7 @@ Section~\ref{sec:synthesis}: we present our CEGIS-based algorithm for
 generating stable controllers for a given plant model.  Our experimental
 setup and experimental results are given in Section~\ref{sec:experiments},
 and we discuss how we extend the state-of-the-art beyond the existing
-literature in Section~\ref{sec:related}. We conclude and describe future
-work in Section~\ref{sec:conclusions}.
+literature in Section~\ref{sec:related}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Preliminaries}\label{sec:preliminaries}
@@ -368,27 +367,21 @@ work in Section~\ref{sec:conclusions}.
 
 The digital controllers synthesized using the algorithm we present in this
 paper are typically used in closed loops with continuous (physical) plants. 
-Thus, the proposed approach considers dynamics of continuous parts of
-the system (i.e., the plant) and of discrete parts (i.e., the digital
-controller).  To obtain a joint model, we fully discretize the continuous
-plant.  We briefly recall the standard foundations of this step.
+Thus, we consider continuous dynamics (the plant) and discrete parts (the
+digital controller).  To obtain a joint model, we fully discretize the
+continuous plant.  We briefly recall the standard foundations of this step.
 
-We only consider transfer function models, and require a $z$-domain
-transfer function $G(z)$ that captures all aspects of the continuous plant (with a
-Laplace domain transfer function $G(s)$) and the sampling and hold process.
-%Note that $G(z)$ is a discrete model of a physical, continuous
-%plant, i.e., 
-The continuous model of the plant must be discretized to obtain the corresponding 
-%discrete equivalent 
-coefficients of $G(z)$.
-%via ZOH discretization.
+We only consider transfer function models, and require a $z$-domain transfer
+function $G(z)$ that captures all aspects of the continuous plant with a
+Laplace domain transfer function $G(s)$ and the sampling and hold process. 
+The continuous model of the plant must be discretized to obtain the
+corresponding coefficients of $G(z)$.
 
 %\red{[why do we discuss the ZOH at this point?]}
 
-Among the discretization methods available in the
-literature~\cite{Franklin15}, the zero-order hold (ZOH) discretization is
-considered suitable for representing the sample and hold processes that are
-typically employed in complex systems~\cite{istepanian2012digital}.  The ZOH
+Among the discretization methods in the literature~\cite{Franklin15}, the
+zero-order hold (ZOH) discretization is suitable for representing the sample
+and hold processes in complex systems~\cite{istepanian2012digital}.  The ZOH
 discretization models the exact effect of sampling and DAC interpolation
 over the plant.
 
