@@ -144,15 +144,14 @@ $^{2}$\affaddr{Federal University of Amazonas, Manaus, Brazil}
 
 \begin{abstract}
 %
-Modern control is implemented with digital microcontrollers, which are
-designed to work in an embedded environment, within a dynamical plant that
-represents physical components.
+Modern control is implemented with digital microcontrollers, embedded within
+a dynamical plant that represents physical components.
 %
 We present a new algorithm based on counter\-example guided inductive
 synthesis that automates the design of digital controllers that are
 correct by construction.  The synthesis result is sound with respect to the
 complete range of approximations, including time discretization,
-quantization effects, and finite-precision arithmetic and their related
+quantization effects, and finite-precision arithmetic and its
 rounding errors.
 %
 We have implemented our new algorithm in a tool called \tool, and are able
@@ -169,7 +168,7 @@ models taken from the literature within minutes.
 % We no longer use \terms command
 %\terms{Theory}
 
-\keywords{Control synthesis, CEGIS, finite word length, time sampling, quantization, interval analysis}
+\keywords{Control synthesis, CEGIS, finite word length, time sampling, quantization}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
@@ -178,7 +177,7 @@ Modern implementations of embedded control systems have proliferated with the
 availability of low-cost devices that can perform highly non-trivial control
 tasks, with significant impact in numerous application areas such as
 environmental control and robotics~\cite{astrom1997computer, Franklin15}.
-Correct and sound control is non-trivial, however. The problem is exacerbated by
+Correct control is non-trivial, however. The problem is exacerbated by
 artefacts specific to digital control, such as the effects of
 finite-precision arithmetic, time discretization, and quantization noise
 introduced by A/D and D/A conversion.  Thus, the programming is a key
@@ -200,11 +199,11 @@ candidate programs.  The candidate programs are iteratively refined to match
 the specification more closely.  Program synthesizers that implement
 Counter-Example Guided Inductive Synthesis (CEGIS)~\cite{sketch} are now
 able to generate programs for highly non-trivial specifications with a very
-high degree of automation.  Modern CEGIS engines combine automated testing,
-genetic algorithms and SMT-based automated
-reasoning~\cite{DBLP:conf/lpar/DavidKL15, DBLP:conf/cav/0001A14}.
+high degree of automation.  Modern synthesis engines combine automated
+testing, genetic algorithms and SMT-based automated
+reasoning~\cite{DBLP:conf/lpar/DavidKL15, DBLP:journals/corr/AlurFSS16a}.
 
-By applying a state-of-the-art CEGIS engine we are now able to present a
+By applying a state-of-the-art synthesis engine we are now able to present a
 tool that automatically \emph{generates} digital controllers for a given
 continuous plant model that are correct by construction.  This approach
 promises to reduce the cost and time of development of digital control
