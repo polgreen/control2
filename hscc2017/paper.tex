@@ -488,12 +488,15 @@ For a vector of coefficients
 and an uncertainty vector 
 %
 \begin{equation}
-\Delta{\vec{P}}=[\Delta{n}_{0}\ \Delta{n}_{1}\ \hdots \ \Delta{n}_{M}\ \Delta{d}_{0}\ \Delta{d}_{1}\ \hdots\ \Delta{d}_{N}\ ]^T \; 
+\Delta{\vec{P}}\in \mathbb{R}^{N+M+2}=[\Delta{n}_{0}\ \hdots \ \Delta{n}_{M}\ \Delta{d}_{0}\ \hdots\ \Delta{d}_{N}\ ]^T \; 
 \label{eq:delta_coefficients}
 \end{equation}
 %
-we write $\vec{\hat{G}}=\vec{G}+\Delta{\vec{G}}$.  
-\red{[confusing: we mix notations on abstract polynomials with those used for the plant above - the orders of the two are different ($N$ vs $N_G$) - please use the latter.]}
+we write $\vec{\hat{G}}=\vec{G}+\Delta{\vec{G}}$, with
+\begin{align*}
+\vec{G} \in \mathbb{R}^{N_G+M_G+2}&=[b_{0}\ \hdots \ b_{M_G}\ a_{0}\ \hdots\ a_{N_G}\ ]^T\\
+\Delta{\vec{G}}\in \mathbb{R}^{N_G+M_G+2}&=[\Delta{b}_{0}\ \hdots \ \Delta{b}_{M_G}\ \Delta{a}_{0}\ \hdots\ \Delta{a}_{N_G}\ ]^T 
+\end{align*}
 In the following we will
 either use the functions $G(z)$, $C(z)$ directly, or work over their
 respective coefficients $\vec{G}$, $\vec{C}$ in vector form.
