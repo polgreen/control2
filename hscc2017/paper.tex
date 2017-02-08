@@ -2786,27 +2786,26 @@ representation of the continuous dynamics.
 %In \cite{DBLP:journals/corr/PakmehrWJVF13}, Pakmehr et al.  design a control software verification framework for gas turbine engines.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Conclusions} \label{sec:conclusions}
+\section{Conclusions}\label{sec:conclusions}
 
 We have presented a CEGIS-based approach implemented in a tool called \tool,
 which uses inductive synthesis in conjunction with an algorithm for
 verifying robust closed-loop stability that addresses plant variations as
 interval sets as well as FWL uncertainties in digital controllers.  The
-present approach is novel in the control system literature in that it puts
-forward a fully automated synthesis approach that is algorithmically and
-numerically sound.  In particular, \tool marks the first use of the CEGIS
-paradigm, which handles plants with uncertain models and FWL effects over
-the digital controller.  Note that implementing this architecture
-efficiently requires adjusting the traditional CEGIS refinement loop to the
-use of a two-stage verification engine: here the first stage performs fast,
-but potentially unsound fixed-point operations, whereas the second stage
-restores soundness by validating the operations performed by the first stage
-using interval arithmetic.  Our experimental results show that \tool is able
-to synthesize stable controllers in most benchmarks within a reasonable
-amount of time fully automatically.  Future work will be the extension of
-this CEGIS-based approach to further classes of systems, including those
-with state space.  We will also consider performance requirements while
-synthesizing the digital controller.
+novelty in our approach is that it is fully automated and algorithmically
+and numerically sound.  In particular, \tool marks the first use of the
+CEGIS that handles plants with uncertain models and FWL effects over the
+digital controller.  Implementing this architecture efficiently requires
+adjusting the traditional CEGIS refinement loop to the use of a two-stage
+verification engine: here, the first stage performs fast, but potentially
+unsound fixed-point operations, whereas the second stage restores soundness
+by validating the operations performed by the first stage using interval
+arithmetic.  Our experimental results show that \tool is able to synthesize
+stable controllers in most benchmarks within a reasonable amount of time
+fully automatically.  Future work will be the extension of this CEGIS-based
+approach to further classes of systems, including those with state space. 
+We will also consider performance requirements while synthesizing the
+digital controller.
 
 \bibliographystyle{abbrv}
 \bibliography{paper}  
