@@ -903,8 +903,8 @@ We shall denote the FWL domain of the coefficients by $\mathbb{R}\langle I,F
 %size $F$, we shall denote this domain as $\mathbb{R}\langle I,F \rangle$ 
 %
 and assume that there exists a function
-$\mathit{FWL}_n[\cdot]:\mathcal{P}^{n}\rightarrow \mathcal{P}^{n}\langle I,F \rangle$,
-which applies the FWL effects to a polynomial, with an equivalent $\mathit{FWL}_{n,m}[\cdot]:\mathcal{P}^{n,m}\rightarrow \mathcal{P}^{n,m}\langle I,F \rangle$ that applies the same effect to a ratio of polynomials, where
+$\mathcal{F}_n\langle I,F \rangle(\cdot):\mathcal{P}^{n}\rightarrow \mathcal{P}^{n}\langle I,F \rangle$,
+which applies the FWL effects to a polynomial, with an equivalent $\mathcal{F}_{n,m}\langle I,F \rangle(\cdot):\mathcal{P}^{n,m}\rightarrow \mathcal{P}^{n,m}\langle I,F \rangle$ that applies the same effect to a ratio of polynomials, where
 $\mathcal{P}^{n}$ is the
 space of polynomials of $n$-th order, $\mathcal{P}^{n}\langle I,F
 \rangle$ is the space of polynomials with coefficients in
@@ -915,7 +915,7 @@ Thus, the perturbed controller model $\hat{C}(z)$ may be obtained from the
 original model $C(z)=\frac{C_{n}(z)}{C_{d}(z)}$ as follows:
 %
 \begin{equation}
-\hat{C}(z)=\mathit{FWL}_{M_C,N_C}[C(z)]=\frac{\mathit{FWL}_{M_C}[C_n(z)]}{\mathit{FWL}_{N_C}[C_d(z)]}.
+\hat{C}(z)=\mathcal{F}_{M_C,N_C}\langle I,F \rangle(C(z))=\frac{\mathcal{F}_{M_C}\langle I,F \rangle(C_n(z))}{\mathcal{F}_{N_C}\langle I,F \rangle(C_d(z))}.
 \end{equation}
 %
 In the case of a synthesized controller, because the synthesis is performed
@@ -1049,7 +1049,7 @@ exogenous signals $R(z)$, $\nu_{1}$, and $\nu_{2}$, which are bounded.
 %
 Consider a feedback closed-loop control system as given in
 Figure~\ref{fig:sampledsystem} with a FWL implementation of the digital
-controller $\hat{C}(z) =\mathit{FWL}_{M_C,N_C}[C(z)]$ and uncertain discrete
+controller $\hat{C}(z) =\mathcal{F}_{M_C,N_C}\langle I,F \rangle(C(z))$ and uncertain discrete
 model of the plant
 %
 $$
@@ -1063,9 +1063,9 @@ Then $\hat{G}(z)$ is BIBO-stable if and only if:
 \item  the roots of characteristic polynomial $S(z)$ are inside the open unit circle, where $S(z)$ is:
 \begin{equation}
 \label{eq:internal_stab_lemma}
-S(z)=\mathit{FWL}_{M_C}[C_n(z)]\hat{G}_n(z)+\mathit{FWL}_{N_C}[C_d(z)]\hat{G}_d(z);
+S(z)=\mathcal{F}_{M_C}\langle I,F \rangle(C_n(z))\hat{G}_n(z)+\mathcal{F}_{N_C}\langle I,F \rangle(C_d(z))\hat{G}_d(z);
 \end{equation}
-\item the direct loop product $\mathit{FWL}_{M_C,N_C}[C(z)]\cdot \hat{G}(z)$ has no pole-zero cancellation on or outside the unit circle.
+\item the direct loop product $\mathcal{F}_{M_C,N_C}\langle I,F \rangle(C(z))\cdot \hat{G}(z)$ has no pole-zero cancellation on or outside the unit circle.
 \end{itemize}
 \end{myprop}
 
@@ -1186,9 +1186,9 @@ coefficients as discussed in detail in Section~\ref{synthesis-elements}.
 % by the function $f$ (cf.~Eq.~\eqref{FWL_tf})
 %In Step A, DSVerifier constructs a non-deterministic model to represent the
 %plant family $\mathfrak{G}$ using $g_0$ and $\Delta{g}\%$, which are
-%provided in Step $1$.  DSVerifier then formulates $\mathit{FWL}[\cdot]$ in
+%provided in Step $1$.  DSVerifier then formulates $\mathcal{F}\langle I,F \rangle(\cdot)$ in
 %Step B using implementation details provided from Steps $2$ and $3$, and
-%then computes $\mathit{FWL}[c_0]$ in Step C.  Thus, DSVerifier builds an
+%then computes $\mathcal{F}\langle I,F \rangle(c_0)$ in Step C.  Thus, DSVerifier builds an
 %intermediate ANSI-C code for the digital system implementation, which is
 %used as input for the model-checker, as pointed in Step D.
 
@@ -1920,11 +1920,13 @@ However, given a real plant $\hat{G}(z)$, and a discretizing function
 \begin{align}
 \small
 \label{FWL_tf}
-&f^p : \mathbb{R} \rightarrow  \mathbb{R}\langle I_p,F_p \rangle \triangleq \tilde x = f^p(x) : \tilde x=x-(x\bmod\tilde x)\\
-&\mathit{FWL}_n^p[P \in \mathcal{P}] = \tilde P \in \mathcal{P}^{n}\langle I_p,F_p \rangle : c_i \in \vec{P} \wedge \tilde c_i \in \vec{\tilde{P}}=f^p(c_i)  \nonumber
+\mathcal{F}&\langle I_p,F_p \rangle : \mathbb{R} \rightarrow  \mathbb{R}\langle I_p,F_p \rangle\\
+&\triangleq \tilde x = \mathcal{F}\langle I_p,F_p \rangle(x) : \tilde x=x-(x\bmod\tilde x)\nonumber\\
+\mathcal{F}_n&\langle I_p,F_p \rangle(P \in \mathcal{P}) \\
+&=\tilde P \in \mathcal{P}^{n}\langle I_p,F_p \rangle : c_i \in \vec{P} \wedge \tilde c_i \in \vec{\tilde{P}}=\mathcal{F}\langle I_p,F_p \rangle(c_i)  \nonumber
 \end{align}
 %
-we calculate $\tilde G(z)=\mathit{FWL}_{M_G,N_G}^p(\hat{G}(z))$
+we calculate $\tilde G(z)=\mathcal{F}_{M_G,N_G}\langle I_p,F_p \rangle(\hat{G}(z))$
 %
 \begin{align}
 % \label{digital_controller_tf}
