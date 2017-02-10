@@ -281,15 +281,7 @@ solution (i.e., $\vec{P}$ satisfies the specification $\sigma(\vec{x},
 If this is the case, then the algorithm terminates.  Otherwise, additional
 information is provided to the {\sc synthesize} phase in the form of a new
 counterexample that is added to the {\sc inputs} set and the loop iterates
-again (note that, for now, we ignore the second feedback signal ``Increase
-Precision'' provided by the {\sc Verify} phase in Figure~\ref{fig:CEGIS} as it
-is specific to control synthesis and will be described in the next section).
-
-It is worth noting that each iteration of the loop adds a new input to
-the finite set $\text{\sc inputs}$ that is used for synthesis.  Given
-that the full set of inputs $\mathcal{D}$ is finite, this means that
-the refinement loop can only iterate a potentially very large, but
-finite number of times.
+again.
 
 %
 \begin{figure*}[htb]
@@ -365,6 +357,6 @@ arithmetic instead.  The synthesized controllers were confirmed to be stable
 outside of our model representation using MATLAB.
 
 \bibliographystyle{abbrv}
-%\bibliography{paper}  
+\bibliography{paper}  
 
 \end{document}
