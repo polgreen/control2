@@ -432,7 +432,7 @@ the pulse transfer function~\eqref{eq:pulsetf} will also present the same number
 
 CEGIS-based control synthesis requires a formal verifier to check whether a
 candidate controller meets the requirements when combined with the plant. 
-We use the Digital-System Verifier (DSVerifier)~\cite{IsmailBCFF15} for this
+We use the Digital-System Verifier (DSVerifier)~\cite{IsmailBCFF15} \red{[unclear difference btw dssynth and dsverifier]} for this
 purpose.  It checks the stability of closed-loop control systems and
 considers finite-word length (FWL) effects in the digital controller, and
 uncertainty parameters in the plant model (plant intervals)~\cite{Bessa16}. 
@@ -1794,9 +1794,9 @@ finite number of times.
 
 Next, we describe the specific property that we pass to the program
 synthesizer as the specification $\sigma$.  There are two different
-algorithms in DSVerifier that can be used for stability
+algorithms in \red{DSVerifier} that can be used for stability
 verification~\cite{daes20161, Bessa16}, one based on Schur's decomposition
-and another one based on Jury's criteria~\cite{astrom1997computer}.  Here,
+and another one based on Jury's criterion~\cite{astrom1997computer}.  Here,
 we choose Jury's method~\cite{astrom1997computer}, due to its efficiency,
 and we use this method to check the stability in the $z$-domain for the
 characteristic polynomial $S(z)$ defined in~\eqref{eq:internal_stab_lemma}.
@@ -1809,16 +1809,14 @@ characteristic polynomial $S(z)$ defined in~\eqref{eq:internal_stab_lemma}.
 %
 We~consider the following form for $S(z)$:
 %
-$$
-S(z) = a_0z^N+a_1z^{N-1}+\cdots+a_{N-1}z+a_N=0, a_0\neq0
-$$
-%
+\begin{equation*}
+S(z) = a_0z^N+a_1z^{N-1}+\cdots+a_{N-1}z+a_N=0, a_0\neq0. 
+\end{equation*}
 %\cdsay{is this for the matrix $\left( \begin{array}{c} Y \\ U \end{array}\right)$?}
 
 % Assuming that $\hat{G}(z) = \frac{\hat{N_G}(z)}{\hat{D_G}(z)}$
 % and $\hat{C}(z) = \frac{\hat{N_C}(z)}{\hat{D_C}(z)}$, then:
 % $$S(z) = FWL[N_C(z)] \times \hat{N_G}(z) + FWL[D_C(z)] \times \hat{D_G}(z)$$
-
 Next, the following Jury matrix
 $M = [m_{ij}]_{(2N-2)\times N}$ is built from $S(z)$ coefficients:
 %
@@ -1921,7 +1919,9 @@ transfer functions represented using fixed-point bit-vectors.
 Since the controller is synthesized in the $\mathbb{R}\langle I,F \rangle$
 domain,
 %
-$$\forall i \leq N_C, j \leq M_C\ \  \tilde \beta_{i} \equiv \beta_{i} \wedge \tilde \alpha_{j} \equiv \alpha_{j} \Leftrightarrow \tilde C(z) \equiv C(z)$$
+$$
+\forall i \leq N_C, j \leq M_C\ \  \tilde \beta_{i} \equiv \beta_{i} \wedge \tilde \alpha_{j} \equiv \alpha_{j}, \text{ that is } \tilde C(z) \equiv C(z). 
+$$
 %
 However, given a real plant $\hat{G}(z)$, and a discretizing function
 %
@@ -1934,7 +1934,7 @@ However, given a real plant $\hat{G}(z)$, and a discretizing function
 &=\tilde P \in \mathcal{P}^{n}\langle I_p,F_p \rangle : c_i \in \vec{P} \wedge \tilde c_i \in \vec{\tilde{P}}=\mathcal{F}\langle I_p,F_p \rangle(c_i)  \nonumber
 \end{align}
 %
-we calculate $\tilde G(z)=\mathcal{F}_{M_G,N_G}\langle I_p,F_p \rangle(\hat{G}(z))$
+we calculate $\tilde G(z)=\mathcal{F}_{M_G,N_G}\langle I_p,F_p \rangle(\hat{G}(z))$, where 
 %
 \begin{align}
 % \label{digital_controller_tf}
@@ -1943,11 +1943,11 @@ we calculate $\tilde G(z)=\mathcal{F}_{M_G,N_G}\langle I_p,F_p \rangle(\hat{G}(z
 %
 \label{digital_plant_tf}
 \tilde G(z)&=\frac{(\hat{b}_{0}+\Delta_b \hat{b}_{0}) +...+(\hat{b}_{M_G}+\Delta_b \hat{b}_{M_G})z^{-M_G}}{(\hat{a}_{0}+\Delta_b \hat{a}_{0})+...+(\hat{a}_{N_G}+\Delta_b \hat{a}_{N_G})z^{-N_G}} \nonumber \\
-&\Rightarrow \vec{\tilde G} =\vec{\hat{G}}+\Delta_b{\vec{G}}=\vec{G}+\Delta_p{\vec{G}}+\Delta_b{\vec{G}}.
+&\Rightarrow \vec{\tilde G} =\vec{\hat{G}}+\Delta_b{\vec{G}}=\vec{G}+\Delta_p{\vec{G}}+\Delta_b{\vec{G}}, 
 \end{align}
 %
-where $\Delta_b\hat{c}_i=\hat{c}_i\bmod \tilde{c}_i$
-and $\Delta_b{G}$ represent the plant uncertainty caused by
+where $\Delta_b\hat{c}_i=\hat{c}_i\bmod \tilde{c}_i$, 
+and $\Delta_b{G}$ represents the plant uncertainty caused by
 the rounding off effect.  We encompass all the uncertainty as
 $\Delta{\vec{G}}=\Delta_p{\vec{G}}+\Delta_b{\vec{G}}$. 
 %
@@ -1955,7 +1955,7 @@ As the cost of SAT solving increases with in the size of the problem
 instance, our algorithm tries to solve the problem first for small $I_p$,
 $F_p$, iteratively increasing the precision if it is insufficient.
 
-\paragraph{Our synthesis problem}
+\paragraph{The synthesis problem}
 The synthesis problem we are trying to solve is the following:
 find a digital controller $C(z)$ %denoted by  $N_c$ and $D_c$ 
 that makes the closed-loop system stable 
@@ -1995,7 +1995,7 @@ to represent the coefficients
 $[{c}_i-\Delta_p{c}_i-\Delta_b{c}_i,\,\allowbreak
 {c}_i+\Delta_p{c}_i-\Delta_b{c}_i+(2^{-F_p})]$ 
 and rounds operations outwards during calculations.  This effectively allows
-us to simultaneously evaluate the whole collection of plants $\mathfrak{G}$
+us to simultaneously evaluate the whole collection of plants $\mathfrak{G}$ \red{[weird new notation needed? used elsewhere?]}
 plus the effects of numeric calculations in the engine.  Synthesized
 controllers using this verifier will always be stable for all plants in the
 family.
