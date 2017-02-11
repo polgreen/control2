@@ -360,7 +360,7 @@ literature in Section~\ref{sec:related}.
 %}
 
 %------------------------------------
-\subsection{Discretizing the Plant}
+\subsection{Discretization of the Plant}
 \label{ssec:SandH}
 %------------------------------------
 
@@ -388,18 +388,18 @@ the ZOH discretization models the exact effect of sampling and DAC interpolation
 
 \begin{myassumption}
 %
-The sample and hold effects of the ADC and the ZOH of the DAC are synchronized,
-i.e., there is no delay between sampling the plant output at ADC and
+The sample-and-hold effects of the ADC and the presence of the ZOH of the DAC are synchronized,
+namely there is no delay between sampling the plant output at the ADC and
 updating the DAC accordingly.  The DAC interpolator is an ideal ZOH. 
 %
 \end{myassumption}
 
 \begin{mylemma}\cite{astrom1997computer}
 %
-Given a synchronized ZOH input and sample-and-hold output on the plant with
-a sample time $T$ satisfying the Nyquist criterion, the discrete pulse
-transfer function $G(z,T)$ is an exact z-domain representation of $G(s)$
-that can be computed using the following formula:
+Given a synchronized ZOH input and sample-and-hold output on the plant, 
+with a sample time $T$ satisfying the Nyquist criterion, the discrete pulse
+transfer function $G(z,T)$ is an exact z-domain representation of $G(s)$, 
+and can be computed using the following formula:
 %
 \begin{equation}
 \label{eq:pulsetf}
@@ -411,11 +411,12 @@ G(z,T) = %\mathcal{ZOH}\left\lbrace{G(s)}\right\rbrace =
 %
 For the sake of brevity, we will use the notation $G(z)$ to represent the
 pulse transfer function $G(z,T)$.
-
+% 
 Lemma~\ref{eq:pulsetf} ensures that the poles and zeros match under the
 $\mathcal{Z}\left\lbrace{\mathcal{L}^{-1}\left\lbrace{\cdot}\right\rbrace_{t=kT}}\right\rbrace$
-operations, and it includes the ZOH dynamics in the $(1-z^{-1})$ term, which
-is sufficient for stability studies over $G(s)$~\cite{fadali}, {\it i.e.}, if there is any unstable pole domain ($\Re\{s\}\geq 0$), the pulse transfer function~\ref{eq:pulsetf} will also present the same number of unstable poles ($|z|<1$)~\cite{Franklin15}.
+operations, and it includes the ZOH dynamics in the $(1-z^{-1})$ term. 
+This is sufficient for stability studies over $G(s)$~\cite{fadali}, {\it i.e.}, if there is any unstable pole (in the complex domain $\Re\{s\} > 0$), 
+the pulse transfer function~\eqref{eq:pulsetf} will also present the same number of unstable poles ($|z| > 1$)~\cite{Franklin15}.
 
 %------------------------------------
 \subsection{Verifying Closed-loop Control Systems}
@@ -435,7 +436,8 @@ We use the Digital-System Verifier (DSVerifier)~\cite{IsmailBCFF15} for this
 purpose.  It checks the stability of closed-loop control systems and
 considers finite-word length (FWL) effects in the digital controller, and
 uncertainty parameters in the plant model (plant intervals)~\cite{Bessa16}. 
-Let $C(z)$ be a digital controller and $G(z)$ be a plant model given as
+Let $C(z)$ be a digital controller and $G(z)$ be a digital representation of the plant, 
+given as
 %
 \begin{align}
 \small
@@ -445,17 +447,17 @@ C(z)&=\frac{C_n(z)}{C_d(z)}=\frac{\beta_{0}+\beta_{1}z^{-1}+...+\beta_{M_C}z^{-M
 G(z)&=\frac{G_n(z)}{G_d(z)}=\frac{b_{0}+b_{1}z^{-1}+...+b_{M_G}z^{-M_G}}{a_{0}+a_{1}z^{-1}+...+a_{N_G}z^{-N_G}}.
 \end{align}
 %
-\noindent where $\vec{\beta}$ and $\vec{\alpha}$ are vectors containing the
+where $\vec{\beta}$ and $\vec{\alpha}$ are vectors containing the
 controller's coefficients; similarly, $\vec{b}$ and $\vec{a}$ denote the
-plant's coefficients; and $N_{(\cdot)}$ and $M_{(\cdot)}$ indicate the order
-of the polynomials. 
-% of the corresponding block.
+plant's coefficients; 
+and finally $N_{(\cdot)}$ and $M_{(\cdot)}$ indicate the order of the polynomials,  
+and we require in particular that $N_G \geq M_G$. 
 
-Uncertainties in $G(z)$ may appear due to uncertainties in $G(s)$ (i.e.,
-$\Delta_p{G}_n(s),\Delta_p{G}_d(s)$, which arise from tolerances/imprecision
-in the original model), errors in the numeric calculations, or roundoffs in
-the quantization.  These uncertainties are parametrically expressed by
-additive terms, resulting in an uncertain model $\hat{G}(z)$, such that:
+Uncertainties in $G(z)$ may appear due to: 
+1. uncertainties in $G(s)$ (we denote them $\Delta_p{G}_n(s),\Delta_p{G}_d(s)$) arising from tolerances/imprecision in the original model; 
+2. errors in the numerical calculations (\red{denoted \ldots}); 
+and 3. roundoffs in the quantization (\red{denoted \ldots}).  
+These uncertainties are parametrically expressed by additive terms, eventually resulting in an uncertain model $\hat{G}(z)$, such that:
 %
 \begin{equation}
 \hat{G}(z)=\frac{G_n(z)+\Delta G_n(z)}{G_d(z)+\Delta G_d(z)},
@@ -465,18 +467,18 @@ additive terms, resulting in an uncertain model $\hat{G}(z)$, such that:
 which will be represented by the following transfer function:
 %
 \begin{equation}
-\hat{G}(z)=\frac{\hat{b}_{0}+\hat{b}_{1}z^{-1}+...+\hat{b}_{M_G}z^{-M_G}}{\hat{a}_{0}+\hat{a}_{1}z^{-1}+...+\hat{a}_{N_G}z^{-N_G}} : N_G \geq M_G .
+\hat{G}(z)=\frac{\hat{b}_{0}+\hat{b}_{1}z^{-1}+...+\hat{b}_{M_G}z^{-M_G}}{\hat{a}_{0}+\hat{a}_{1}z^{-1}+...+\hat{a}_{N_G}z^{-N_G}}. 
 \end{equation}
 %
 %\red{[why is this condition on the order of the polynomials raised only now? how is it used later?]}
-Due to the nature of the methods we use for the stability check, we require
+Notice that, due to the nature of the methods we use for the stability check, we require
 that the parametric errors in the plant have the same polynomial order as
-the plant itself (\blue{all other errors described in this paper are ensured to
-fulfil this property in our implementation}
+the plant itself (\blue{indeed, all other errors described in this paper are ensured to
+fulfil this property in our implementation}). 
 %\red{[have we later argued that this is indeed the case?]}) 
 %\blue{and that enter the plant linearly}.
 
-We employ a notation based on the polynomials coefficients to simplify 
+We introduce next a notation based on the polynomials coefficients to simplify 
 the presentation.  Let $\mathcal{P}^{N}$ be the space of polynomials of order $N$. 
 Let $P \in \mathcal{P}^{M,N}$ be a rational polynomial 
 $\frac{P_n}{P_d}$, where $P_n \in \mathcal{P}^{M}$ and $P_d \in \mathcal{P}^{N}$.  
@@ -499,11 +501,12 @@ we write
 \label{eq:hatgvector}
 \vec{\hat{G}}&=\vec{G}+\Delta{\vec{G}}\\
 \vec{G} \in \mathbb{R}^{N_G+M_G+2}&=[b_{0}\ \hdots \ b_{M_G}\ a_{0}\ \hdots\ a_{N_G}\ ]^T\nonumber \\
-\Delta{\vec{G}}\in \mathbb{R}^{N_G+M_G+2}&=[\Delta{b}_{0}\ \hdots \ \Delta{b}_{M_G}\ \Delta{a}_{0}\ \hdots\ \Delta{a}_{N_G}\ ]^T\nonumber
+\Delta{\vec{G}}\in \mathbb{R}^{N_G+M_G+2}&=[\Delta{b}_{0}\ \hdots \ \Delta{b}_{M_G}\ \Delta{a}_{0}\ \hdots\ \Delta{a}_{N_G}\ ]^T. \nonumber
 \end{align}
-In the following we will
-either use the functions $G(z)$, $C(z)$ directly, or work over their
-respective coefficients $\vec{G}$, $\vec{C}$ in vector form.
+In the following we will either manipulate the transfer functions $G(z)$, $C(z)$ directly, 
+or work over their respective coefficients $\vec{G}$, $\vec{C}$ in vector form.
+
+\medskip
 
 \begin{figure*}[htb]
 \centering
