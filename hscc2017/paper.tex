@@ -367,22 +367,24 @@ literature in Section~\ref{sec:related}.
 The digital controllers synthesized using the algorithm we present in this
 paper are typically used in closed loops with continuous (physical) plants. 
 Thus, we consider continuous dynamics (the plant) and discrete parts (the
-digital controller).  To obtain a joint model, we fully discretize the
-continuous plant.  We briefly recall the standard foundations of this step.
+digital controller). In order to obtain an overall model, we discretize the
+continuous plant and look at the plant dynamics from the perspective of the digital controller. 
+%We briefly recall the standard foundations of this step.
 
-We only consider transfer function models, and require a $z$-domain transfer
-function $G(z)$ that captures all aspects of the continuous plant with a
-Laplace domain transfer function $G(s)$ and the sampling and hold process. 
+As we only consider transfer function models, and require a $z$-domain transfer
+function $G(z)$ that captures all aspects of the continuous plant, 
+which is naturally described via a Laplace-domain transfer function $G(s)$. 
+% and the sampling and hold process. 
 The continuous model of the plant must be discretized to obtain the
 corresponding coefficients of $G(z)$.
 
 %\red{[why do we discuss the ZOH at this point?]}
 
-Among the discretization methods in the literature~\cite{Franklin15}, the
-zero-order hold (ZOH) discretization is suitable for representing the sample
-and hold processes in complex systems~\cite{istepanian2012digital}.  The ZOH
-discretization models the exact effect of sampling and DAC interpolation
-over the plant.
+Among the discretization methods in the literature~\cite{Franklin15}, 
+%the zero-order hold (ZOH) discretization is suitable for representing 
+we consider the sample-and-hold processes in complex systems~\cite{istepanian2012digital}.  
+On the other hand, 
+the ZOH discretization models the exact effect of sampling and DAC interpolation over the plant.
 
 \begin{myassumption}
 %
