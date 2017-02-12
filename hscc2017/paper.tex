@@ -1924,19 +1924,22 @@ transfer functions represented using fixed-point bit-vectors.
 \end{align}
  
 Since the controller is synthesized in the $\mathbb{R}\langle I,F \rangle$
-domain,
+domain, 
+\red{[confusing? (related to observation above.)]}
 %
 $$
 \forall i \leq N_C, j \leq M_C\ \  \tilde \beta_{i} \equiv \beta_{i} \wedge \tilde \alpha_{j} \equiv \alpha_{j}, \text{ that is } \tilde C(z) \equiv C(z). 
 $$
 %
-However, given a real plant $\hat{G}(z)$, and a discretizing function
+However, given a real plant $\hat{G}(z)$, and a discretizing function 
+\red{[the function has been defined over a space of polynomials, but it is now applied to a real number x? ]}
 %
 \begin{align}
 \small
-\label{FWL_tf}
+%\label{FWL_tf}
 \mathcal{F}&\langle I_p,F_p \rangle : \mathbb{R} \rightarrow  \mathbb{R}\langle I_p,F_p \rangle\\
-&\triangleq \tilde x = \mathcal{F}\langle I_p,F_p \rangle(x) : \tilde x=x-(x\bmod\tilde x)\nonumber\\
+&\triangleq \tilde x = \mathcal{F}\langle I_p,F_p \rangle(x) : \tilde x=x-(x\bmod\tilde x)\nonumber\\ 
+\red{\text{above: circular definition?}}\\
 \mathcal{F}_n&\langle I_p,F_p \rangle(P \in \mathcal{P}) \\
 &=\tilde P \in \mathcal{P}^{n}\langle I_p,F_p \rangle : c_i \in \vec{P} \wedge \tilde c_i \in \vec{\tilde{P}}=\mathcal{F}\langle I_p,F_p \rangle(c_i)  \nonumber
 \end{align}
