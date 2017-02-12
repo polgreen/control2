@@ -748,6 +748,7 @@ seen as additive noise.
 
 %\red{[why is the output in Figure 2 tilde, whereas that in  figure 1 hat?]}
 %
+\textcolor{cyan}{[rearrange next paragraph - param and quant]}
 In Figure~\ref{fig:digsystem1}, two sources of uncertainty are illustrated:
 parametric uncertainties related to modeling errors  
 (which are represented by~$\Delta_p \vec{G}$),  
@@ -896,15 +897,17 @@ architecture of the plant.
 
 \smallskip
 
+\textcolor{cyan}{[next discussion on fwl]} 
+
 Since the controller is implemented using finite representation, $C(z)$ also suffers
 disturbances from the FWL effects, with roundoffs in coefficients that may
 change closed-loop poles and zeros position, and consequently affect its
 stability, as argued in~\cite{Bessa16}.
 
 Let $\hat{C}(z)$ be the digital controller transfer function represented
-using this FWL with integer size $I$ and fractional size~$F$; $I$ affects
-the range of the representation and is set to avoid overflows, while $F$
-affects the precision and the truncation after arithmetic operations. 
+using this FWL with integer size $I$ and fractional size~$F$. 
+The term $I$ affects the range of the representation and is set to avoid overflows, 
+while $F$ affects the precision and the truncation after arithmetic operations. 
 We shall denote the FWL domain of the coefficients by $\mathbb{R}\langle I,F
 \rangle$
 %
@@ -928,7 +931,7 @@ original model $C(z)=\frac{C_{n}(z)}{C_{d}(z)}$ as follows:
 \hat{C}(z)=\mathcal{F}_{M_C,N_C}\langle I,F \rangle(C(z))=\frac{\mathcal{F}_{M_C}\langle I,F \rangle(C_n(z))}{\mathcal{F}_{N_C}\langle I,F \rangle(C_d(z))}.
 \end{equation}
 %
-\blue{[not confusing next?]}
+\blue{[ next statement is potentially quite confusing, especially since you used the hatted variables next. ]}
 In the case of a synthesized controller, because the synthesis is performed
 using FWL, $\hat{C}(z) \equiv C(z)$.
 
