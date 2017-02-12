@@ -419,7 +419,7 @@ This is sufficient for stability studies over $G(s)$~\cite{fadali}, {\it i.e.}, 
 the pulse transfer function~\eqref{eq:pulsetf} will also present the same number of unstable poles ($|z| > 1$)~\cite{Franklin15}.
 
 %------------------------------------
-\subsection{Verifying Closed-loop Control Systems \\ \blue{Under the Effect of Imprecisions, Quantization, and Finite Word Length Representation}}
+\subsection{Verifying Closed-loop Control Systems \\ \blue{Model Imprecision, Quantization Effects, and Finite Word Length Representation}}
 \label{verifying-closed-loop-control-systems}
 %------------------------------------
 
@@ -769,12 +769,13 @@ which means it does not enter parametrically in the transfer function.
 Instead, we later show that the system is stable given these non-deterministic noise inputs. 
 
 The parametric uncertainties in the plant are assumed to have the same
-order as the plant model, since tolerances of higher order would invalidate
-feedback model (even tiny errors of higher order can move the poles by a
-large amount preventing any single controller from stabilizing such a setup).
+order as the plant model, since 
+%tolerances of higher order would invalidate the feedback model (even tiny 
+errors of higher order can move the closed-loop poles by large amounts, 
+thus preventing any given controller from stabilizing such a setup. 
 This is a reasonable assumption since most tolerances do not change the 
-architecture of the plant, and models subject to such effects are
-inadequate.
+architecture of the plant. 
+%, and models subject to such effects are inadequate.
 
 %\red{[next figure is a bit unnecessary, does not ad much to the previous one.]} Figure~\ref{fig:digsystem2} shows the digital closed loop systems with $\Delta G_{P}(z)$ and $\Delta G_{Q}(z)$.
 
