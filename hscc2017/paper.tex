@@ -419,7 +419,7 @@ This is sufficient for stability studies over $G(s)$~\cite{fadali}, {\it i.e.}, 
 the pulse transfer function~\eqref{eq:pulsetf} will also present the same number of unstable poles ($|z| > 1$)~\cite{Franklin15}.
 
 %------------------------------------
-\subsection{Verifying Closed-loop Control Systems \\ \blue{Effects of Imprecisions, Quantization, and Finite Word Length Representation}}
+\subsection{Verifying Closed-loop Control Systems \\ \blue{Under the Effect of Imprecisions, Quantization, and Finite Word Length Representation}}
 \label{verifying-closed-loop-control-systems}
 %------------------------------------
 
@@ -432,8 +432,8 @@ the pulse transfer function~\eqref{eq:pulsetf} will also present the same number
 
 CEGIS-based control synthesis requires a formal verifier to check whether a
 candidate controller meets the requirements when combined with the plant. 
-We use the Digital-System Verifier (DSVerifier)~\cite{IsmailBCFF15} \red{[unclear difference btw dssynth and dsverifier]} for this
-purpose.  It checks the stability of closed-loop control systems and
+We use the Digital-System Verifier (DSVerifier)~\cite{IsmailBCFF15} in the
+verification module for \tool.  It checks the stability of closed-loop control systems and
 considers finite-word length (FWL) effects in the digital controller, and
 uncertainty parameters in the plant model (plant intervals)~\cite{Bessa16}. 
 Let $C(z)$ be a digital controller and $G(z)$ be a digital representation of the plant, 
@@ -455,8 +455,8 @@ and we require in particular that $N_G \geq M_G$.
 
 Uncertainties in $G(z)$ may appear due to: 
 1. uncertainties in $G(s)$ (we denote them $\Delta_p{G}_n(s),\Delta_p{G}_d(s)$) arising from tolerances/imprecision in the original model; 
-2. errors in the numerical calculations (\red{denoted \ldots}); 
-and 3. roundoffs in the quantization (\red{denoted \ldots}).  
+2. errors in the numerical calculations (equal to $0$ since we introduce them as external noises $\nu_1$ and $\nu_2$); 
+and 3. roundoffs in the quantization (denoted $\Delta_b{G}_n(s),\Delta_b{G}_d(s)$).  
 These uncertainties are parametrically expressed by additive terms, eventually resulting in an uncertain model $\hat{G}(z)$, such that:
 %
 \begin{equation}
@@ -752,7 +752,7 @@ In Figure~\ref{fig:digsystem1}, two sources of uncertainty are illustrated:
 parametric uncertainties related to modeling errors  
 (which are represented by~$\Delta_p \vec{G}$),  
 and uncertainties introduced by quantizations in the ADC and
-DAC conversions \red{[how are these denoted?]}.  
+DAC conversions ($\nu_1$ and $\nu_2$).  
 These sources are assumed to be non-deterministic \blue{[here you mean specifically the quantization effects?]}:  
 %which poses no further restriction to our model, 
 thus, 
@@ -904,7 +904,6 @@ Let $\hat{C}(z)$ be the digital controller transfer function represented
 using this FWL with integer size $I$ and fractional size~$F$; $I$ affects
 the range of the representation and is set to avoid overflows, while $F$
 affects the precision and the truncation after arithmetic operations. 
-\red{[we ought to align the following notations with those use in the CAV submission.]}
 We shall denote the FWL domain of the coefficients by $\mathbb{R}\langle I,F
 \rangle$
 %
@@ -937,14 +936,14 @@ using FWL, $\hat{C}(z) \equiv C(z)$.
 %\textcolor{green}{[DC: I changed it to a separate section to differentiate the effects, so we should keep both]}
 
 %------------------------------------
-\subsection{Stability under FWL Representation and under Quantisation Noise \blue{(and params uncertainties?)}}
+\subsection{Stability under FWL Representation, Quantisation Noise and Parametric Uncertainties}
 \label{sec:stability}
 %------------------------------------
 
 Sound synthesis of the digital controller requires the consideration of the effect of FWL on the controller, 
 and of quantization noises in the closed-loop system.  
-Let the quantizer $Q1$ \blue{[new notation- needed really?] (DAC)} be the source of a white noise $\nu_{1}$, 
-and $Q2$ \blue{[ditto] (ADC)} be the source of a white noise $\nu_{2}$.  The following equation
+Let the quantizer $Q1$ (ADC) be the source of a white noise $\nu_{1}$, 
+and $Q2$ (DAC) be the source of a white noise $\nu_{2}$.  The following equation
 models the system in Figure~\ref{fig:sampledsystem}, encompassing the
 parametric uncertainties $\Delta \vec{G}$ and the FWL effects on
 the controller $\hat{C}(z)$:
@@ -977,7 +976,7 @@ H_{3}(z)=\frac{\hat{G}(z)\cdot \hat{C}(z)}{1+\hat{G}(z)\cdot \hat{C}(z)}.
 \begin{myassumption}
 \label{whitenoise}
 %
-The quantization noises $\nu_{1}$ \blue{(from $Q1$)} and $\nu_{2}$ \blue{(from $Q2$)} are
+The quantization noises $\nu_{1}$ (from $Q1$) and $\nu_{2}$ (from $Q2$) are
 uncorrelated white noises and their amplitudes are always bounded by the
 half of quantization step~\cite{astrom1997computer}, i.e., $\vert \nu_{1}
 \vert \leq \frac{q_{1}}{2}$ and $\vert \nu_{2} \vert \leq \frac{q_{2}}{2}$,
@@ -1794,8 +1793,8 @@ finite number of times.
 
 Next, we describe the specific property that we pass to the program
 synthesizer as the specification $\sigma$.  There are two different
-algorithms in \red{DSVerifier} that can be used for stability
-verification~\cite{daes20161, Bessa16}, one based on Schur's decomposition
+algorithms in our verification engine that can be used for stability
+~\cite{daes20161, Bessa16}, one based on Schur's decomposition
 and another one based on Jury's criterion~\cite{astrom1997computer}.  Here,
 we choose Jury's method~\cite{astrom1997computer}, due to its efficiency,
 and we use this method to check the stability in the $z$-domain for the
@@ -1995,7 +1994,7 @@ to represent the coefficients
 $[{c}_i-\Delta_p{c}_i-\Delta_b{c}_i,\,\allowbreak
 {c}_i+\Delta_p{c}_i-\Delta_b{c}_i+(2^{-F_p})]$ 
 and rounds operations outwards during calculations.  This effectively allows
-us to simultaneously evaluate the whole collection of plants $\mathfrak{G}$ \red{[weird new notation needed? used elsewhere?]}
+us to simultaneously evaluate the whole collection of plants $\hat{G}(s)$
 plus the effects of numeric calculations in the engine.  Synthesized
 controllers using this verifier will always be stable for all plants in the
 family.
