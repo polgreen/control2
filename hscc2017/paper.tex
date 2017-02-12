@@ -416,7 +416,7 @@ Lemma~\ref{eq:pulsetf} ensures that the poles and zeros match under the
 $\mathcal{Z}\left\lbrace{\mathcal{L}^{-1}\left\lbrace{\cdot}\right\rbrace_{t=kT}}\right\rbrace$
 operations, and it includes the ZOH dynamics in the $(1-z^{-1})$ term. 
 This is sufficient for stability studies over $G(s)$~\cite{fadali}, {\it i.e.}, if there is any unstable pole (in the complex domain $\Re\{s\} > 0$), 
-the pulse transfer function~\eqref{eq:pulsetf} will also present the same number of unstable poles ($|z| > 1$)~\cite{Franklin15}.
+the pulse transfer function in~\eqref{eq:pulsetf} will also present the same number of unstable poles ($|z| > 1$)~\cite{Franklin15}.
 
 %------------------------------------
 \subsection{Verifying Closed-loop Control Systems \\ \blue{Model Imprecision, Quantization Effects, and Finite Word Length Representation}}
@@ -435,7 +435,9 @@ candidate controller meets the requirements when combined with the plant.
 We use the Digital-System Verifier (DSVerifier)~\cite{IsmailBCFF15} in the
 verification module for \tool.  It checks the stability of closed-loop control systems and
 considers finite-word length (FWL) effects in the digital controller, and
-uncertainty parameters in the plant model (plant intervals)~\cite{Bessa16}. 
+uncertainty parameters in the plant model (plant intervals)~\cite{Bessa16}.  
+
+
 Let $C(z)$ be a digital controller and $G(z)$ be a digital representation of the plant, 
 given as
 %
@@ -499,8 +501,8 @@ and an uncertainty vector
 we write
 \begin{align}
 \label{eq:hatgvector}
-\vec{\hat{G}}&=\vec{G}+\Delta{\vec{G}}\\
-\vec{G} \in \mathbb{R}^{N_G+M_G+2}&=[b_{0}\ \hdots \ b_{M_G}\ a_{0}\ \hdots\ a_{N_G}\ ]^T\nonumber \\
+\vec{\hat{G}}&=\vec{G}+\Delta{\vec{G}}, \text{ where} \\
+\vec{G} \in \mathbb{R}^{N_G+M_G+2}&=[b_{0}\ \hdots \ b_{M_G}\ a_{0}\ \hdots\ a_{N_G}\ ]^T, \nonumber \\
 \Delta{\vec{G}}\in \mathbb{R}^{N_G+M_G+2}&=[\Delta{b}_{0}\ \hdots \ \Delta{b}_{M_G}\ \Delta{a}_{0}\ \hdots\ \Delta{a}_{N_G}\ ]^T. \nonumber
 \end{align}
 In the following we will either manipulate the transfer functions $G(z)$, $C(z)$ directly, 
@@ -757,12 +759,12 @@ DAC conversions ($\nu_1$ and $\nu_2$).
 These sources are assumed to be non-deterministic \blue{[here you mean specifically the quantization effects?]}:  
 %which poses no further restriction to our model, 
 thus, 
-the uncertain model may be rewritten as a vector of coefficients in the z-domain using equation (\ref{eq:hatgvector}) as 
+the uncertain model may be rewritten as a vector of coefficients in the z-domain using equation \eqref{eq:hatgvector} as  
 %
-\begin{equation}
-\label{eq:complete_unc_model}
-\vec{\hat{G}}=\vec{G}+\Delta_p \vec{G}. 
-\end{equation}
+%\begin{equation}
+%\label{eq:complete_unc_model}
+$\vec{\hat{G}}=\vec{G}+\Delta_p \vec{G}$. 
+%\end{equation}
 %
 %where $\Delta_p \vec{G}$ is the term that corresponds to the parametric uncertainties. 
 Recall that we discussed how the quantization noise is encompassed as an additive term, 
@@ -1797,12 +1799,12 @@ finite number of times.
 \paragraph{Specification of the stability property}
 
 Next, we describe the specific property that we pass to the program
-synthesizer as the specification $\sigma$.  There are two different
-algorithms in our verification engine that can be used for stability
-~\cite{daes20161, Bessa16}, one based on Schur's decomposition
-and another one based on Jury's criterion~\cite{astrom1997computer}.  Here,
-we choose Jury's method~\cite{astrom1997computer}, due to its efficiency,
-and we use this method to check the stability in the $z$-domain for the
+synthesizer as the specification $\sigma$.  There are a number of 
+algorithms in our verification engine that can be used for stability analysis~\cite{daes20161, Bessa16}.  
+%one based on Schur's decomposition
+%and another one based on Jury's criterion~\cite{astrom1997computer}.  
+Here we choose Jury's criterion~\cite{astrom1997computer} in view of its efficiency: 
+we employ this method to check the stability in the $z$-domain for the
 characteristic polynomial $S(z)$ defined in~\eqref{eq:internal_stab_lemma}.
 %
 % of the matrix $\left( \begin{array}{c} Y \\ U \end{array}\right)$, where $Y(z)$ is the closed-loop system output and U(z) is the controller output. 
@@ -1821,7 +1823,7 @@ S(z) = a_0z^N+a_1z^{N-1}+\cdots+a_{N-1}z+a_N=0, a_0\neq0.
 % Assuming that $\hat{G}(z) = \frac{\hat{N_G}(z)}{\hat{D_G}(z)}$
 % and $\hat{C}(z) = \frac{\hat{N_C}(z)}{\hat{D_C}(z)}$, then:
 % $$S(z) = FWL[N_C(z)] \times \hat{N_G}(z) + FWL[D_C(z)] \times \hat{D_G}(z)$$
-Next, the following Jury matrix
+Next, the following matrix
 $M = [m_{ij}]_{(2N-2)\times N}$ is built from $S(z)$ coefficients:
 %
 $$
@@ -1856,7 +1858,8 @@ v_{(1)(N-j+1)}^{k},& \texttt{if}~j\leq n-k ~\texttt{and}~i=2\\
 \right.
 $$
 %
-where $k \in \mathbb{Z}$, such that $0 < k < N - 2$. 
+and where $k \in \mathbb{Z}$ is such that $0 < k < N - 2$. 
+We have that~\cite{astrom1997computer} 
 $S(z)$ is the
 characteristic polynomial of a stable system if and only if the following four conditions hold:
 %\begin{itemize}
@@ -1947,7 +1950,7 @@ we calculate $\tilde G(z)=\mathcal{F}_{M_G,N_G}\langle I_p,F_p \rangle(\hat{G}(z
 %
 \label{digital_plant_tf}
 \tilde G(z)&=\frac{(\hat{b}_{0}+\Delta_b \hat{b}_{0}) +...+(\hat{b}_{M_G}+\Delta_b \hat{b}_{M_G})z^{-M_G}}{(\hat{a}_{0}+\Delta_b \hat{a}_{0})+...+(\hat{a}_{N_G}+\Delta_b \hat{a}_{N_G})z^{-N_G}} \nonumber \\
-&\Rightarrow \vec{\tilde G} =\vec{\hat{G}}+\Delta_b{\vec{G}}=\vec{G}+\Delta_p{\vec{G}}+\Delta_b{\vec{G}}, 
+\vec{\tilde G} &=\vec{\hat{G}}+\Delta_b{\vec{G}}=\vec{G}+\Delta_p{\vec{G}}+\Delta_b{\vec{G}}, 
 \end{align}
 %
 where $\Delta_b\hat{c}_i=\hat{c}_i\bmod \tilde{c}_i$, 
@@ -1965,7 +1968,7 @@ find a digital controller $C(z)$ %denoted by  $N_c$ and $D_c$
 that makes the closed-loop system stable 
 for all possible uncertainties 
 %$\Delta{\vec{p}}$ (\ref{eq:uncertainty}).
-$\tilde G(z)$ (\ref{digital_plant_tf}).
+$\tilde G(z)$ \eqref{digital_plant_tf}.
 %, where we precisely describe 
 %$(\Delta N_G, \Delta D_G)$. 
 % Note that, similar to the rest of the paper, we use the notation 
@@ -1999,7 +2002,7 @@ to represent the coefficients
 $[{c}_i-\Delta_p{c}_i-\Delta_b{c}_i,\,\allowbreak
 {c}_i+\Delta_p{c}_i-\Delta_b{c}_i+(2^{-F_p})]$ 
 and rounds operations outwards during calculations.  This effectively allows
-us to simultaneously evaluate the whole collection of plants $\hat{G}(s)$
+us to simultaneously evaluate \blue{[unclear:] the whole collection of plants $\hat{G}(s)$}
 plus the effects of numeric calculations in the engine.  Synthesized
 controllers using this verifier will always be stable for all plants in the
 family.
@@ -2719,8 +2722,8 @@ robustly stable in a continuous space.
 Researchers in formal verification of control systems have studied various
 effects of discretizing the dynamics, including delayed
 response~\cite{Duggirala2015}, and Finite Word Length (FWL) semantics with
-the goal to either verify (e.g.~\cite{daes20161}) or optimize
-(e.g.~\cite{oudjida2014design}) given implementations.
+the goal to either verify~\cite{daes20161} or to optimize~\cite{oudjida2014design} 
+given implementations.
 
 There are two different problems that arise from FWL semantics.  The first
 is the error in the dynamics caused by the inability to represent the exact
@@ -2734,7 +2737,7 @@ stable by design.  Most work in verification focuses on finding a correct
 variant of a known controller, looking for optimal parameter
 representations using FWL, but ignore the effects of rounding errors due to
 issues of mathematical tractability.  The analyses
-in~\cite{DBLP:conf/hybrid/WangGRJF16, DBLP:conf/hybrid/RouxJG15} rely on an
+in~\cite{DBLP:conf/hybrid/RouxJG15,DBLP:conf/hybrid/WangGRJF16} rely on an
 invariant computation on the discrete system dynamics using Semi-Definite
 Programming (SDP).  While the former uses BIBO properties to determine
 stability, the latter uses Lyapunov-based quadratic invariants.  In both
@@ -2769,7 +2772,7 @@ synthesizes word lengths for known control problems~\cite{jha2013swati};
 however, this provides neither an optimal result nor a comprehensive
 solution for the problem.
 
-\paragraph{CEGIS}
+\paragraph{The CEGIS Architecture}
 
 Program synthesis is the problem of computing correct-by-design programs
 from high-level specifications, and algorithms for this problem have made
