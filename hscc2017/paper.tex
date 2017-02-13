@@ -2027,10 +2027,10 @@ therefore designed a second approach, which we describe below.
 Our experimental results described in Section~\ref{sec:experiments}
 %try both approaches and provide the time for the fastest. 
 show that the speedup yielded by the second approach 
-is in most cases of at least two orders of magnitude.
+is in most cases of at least two orders of magnitude. 
 
 The second approach is illustrated in Figure~\ref{fig:CEGIS} and uses a
-two-stage verification: the first stage performs potentially unsound
+two-stage verification approach: the first stage performs potentially unsound
 fixed-point operations assuming a plant precision \param{I_p}{F_p}, and the
 second stage restores soundness by validating these operations using
 interval arithmetic on the synthesized controller.
@@ -2190,32 +2190,31 @@ $z$-domain transfer function:
 C(z) = \frac{2.72z^2 - 4.153z + 1.896}{z^2 - 1.844z + 0.8496}.
 \end{equation}
 %
-The authors of~\cite{DBLP:conf/hybrid/WangGRJF16} claim that this controller
-$C(z)$ (Eq.~\eqref{Eq:running-example-controller}) stabilizes the
-closed-loop system for the discrete plant model $G(z)$
-(Eq.~\ref{Eq:running-example-plant}).  However, if the effects of
-finite-precision arithmetic are considered (e.g., fixed-point arithmetic and
+The authors of~\cite{DBLP:conf/hybrid/WangGRJF16} claim that the controller
+$C(z)$ in~\eqref{Eq:running-example-controller} stabilizes the
+closed-loop system for the discrete plant model $G(z)$ in~\ref{Eq:running-example-plant}.  
+However, if the effects of finite-precision arithmetic are considered (e.g., fixed-point arithmetic and
 word-length), then this closed-loop system becomes unstable.
 %
-For instance, an implementation of $C(z)$ using \param{4}{16} fixed-point
+For instance, an implementation of $C(z)$ using \blue{[align with notation introduced earlier]} \param{4}{16} fixed-point
 numbers (i.e., $4$ bits for the integer part and $16$ bits for the
 fractional part) can be modeled as:
 %
+\red{[new notation for controller with FWL?]}
 \begin{equation}
 \label{Eq:running-example-controller-quantized}
 \resizebox{.47\textwidth}{!}{
 $C_{q}(z) {:=} \frac{2.7199859619140625z^2{-}4.1529998779296875z
-{+}1.89599609375}{z^2{-}1.843994140625z+0.8495941162109375}$
+{+}1.89599609375}{z^2{-}1.843994140625z+0.8495941162109375}$. 
 }
 \end{equation} 
 %
 The resulting system using the typical series loop configuration, where
 $C_{q}(z)$ and $G(z)$ are in the forward path, is unstable. 
 Figure~\ref{fig:original} gives the Bode diagram for the digital controller
-represented by Eq.~\eqref{Eq:running-example-controller}.  The phase margin
-is negative, which means that the controller represented by
-Eq.~\eqref{Eq:running-example-controller} is unstable, considering FWL
-effects.
+represented in~\eqref{Eq:running-example-controller}: 
+as the phase margin is negative, 
+the controller is unstable when considering the above FWL effects.
 
 \subsection{Program Synthesis for the Example}
 %
@@ -2223,7 +2222,8 @@ We now demonstrate how our approach solves the synthesis problem for the
 example given in the previous section.  We start with the candidate solution
 with all coefficients zero, as given below, and a precision of $I_p=16$,
 $F_p=24$.  The digital controller is designed with standard techniques for
-control systems~\cite{Kuo:2002:ACS:579453, Ogata:1987:DCS:26170}.
+control systems~\cite{Kuo:2002:ACS:579453, Ogata:1987:DCS:26170}. 
+\red{[Add comment on the next candidate solution - generated automatically, or selected manually?]}
 %
 %\red{[Be more explicit, write out spurious candidate solution with zero coefficients. KISS - you don't want to lose the control audience here.]}.
 %
@@ -2233,12 +2233,15 @@ control systems~\cite{Kuo:2002:ACS:579453, Ogata:1987:DCS:26170}.
 %D_C(z) {=} 0z^2{+}0z{+}0\\
 %\end{array}
 %$$
-$$ C(z)=\frac{0z^2{+}0z{+}0}{0z^2{+}0z{+}0} $$
-
+$$ 
+C(z)=\frac{0z^2{+}0z{+}0}{0z^2{+}0z{+}0}. 
+$$
 In the first {\sc verify} stage, the {\sc uncertainty} 
 check finds the following counterexample:
 %
-$$ \tilde G(z) = \frac{0.026506}{1.000610z+1.002838} $$
+$$ 
+\tilde G(z) = \frac{0.026506}{1.000610z+1.002838}. 
+$$
 
 %$$
 %\begin{array}{ll}
@@ -2252,9 +2255,8 @@ phase, where we obtain the following candidate solution:
 %
 %\red{[ How is the order of the candidate solution chosen here?]}
 $$
-C(z)=\frac{12.402664z^2{-}11.439667z{+}0.596756}{4.003906z^2{-}0.287949z{+}0.015625}
-$$
-
+C(z)=\frac{12.402664z^2{-}11.439667z{+}0.596756}{4.003906z^2{-}0.287949z{+}0.015625}. 
+$$ 
 This time, the {\sc uncertainty} check does not find any
 counterexample and we pass the current candidate solution to the {\sc
 precision} verification stage.
@@ -2269,7 +2271,7 @@ insufficient.  Consequently, we increase our precision to $I_p=20$, $F_p=28$.
 Since the previous counterexamples were obtained at lower precision, we
 remove them from the set of counterexamples.  Back in the {\sc synthesize}
 phase, we re-start the process with a candidate solution with all
-coefficients $0$.  Next, the {\sc uncertainty} verification stage provides
+coefficients $0$, as above.  Next, the {\sc uncertainty} verification stage provides
 the first counterexample at higher precision:
 %
 %$$
@@ -2342,7 +2344,8 @@ since it presents an infinite phase margin and a gain margin of $17.8$\,dB.
         \caption{Controller synthesized by \tool}
         \label{fig:cegiscontroller}
     \end{subfigure}
-    \caption{Bode diagram for original~\cite{DBLP:conf/hybrid/WangGRJF16} and synthesized closed-loop systems}\label{fig:bode}
+    \caption{Bode diagram for original controller in~\cite{DBLP:conf/hybrid/WangGRJF16}, 
+    and for newly synthesized closed-loop system}\label{fig:bode}
 \end{figure}
 
 Figure~\ref{fig:step} illustrates the step responses of the closed-loop
