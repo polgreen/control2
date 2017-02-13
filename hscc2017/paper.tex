@@ -307,66 +307,18 @@ In summary, this paper makes the following original contributions.
 % \caption{Closed-Loop System. \label{fig:closed-system}}
 %\end{figure}
 
-\textcolor{cyan}{[if space is needed, the next paragraph can be cut. ]}
-We cover preliminaries on plant discretization, the verification of
-closed-loop control systems, and stability in
-Section~\ref{sec:preliminaries}.  Our core contribution is in
-Section~\ref{sec:synthesis}: we present our CEGIS-based algorithm for
-generating stable controllers for a given plant model.  Our experimental
-setup and experimental results are given in Section~\ref{sec:experiments},
-and we discuss how we extend the state-of-the-art beyond the existing
-literature in Section~\ref{sec:related}.
+%\textcolor{cyan}{[if space is needed, the next paragraph can be cut. ]}
+%We cover preliminaries on plant discretization, the verification of
+%closed-loop control systems, and stability in
+%Section~\ref{sec:preliminaries}.  Our core contribution is in
+%Section~\ref{sec:synthesis}: we present our CEGIS-based algorithm for
+%generating stable controllers for a given plant model.  Our experimental
+%setup and experimental results are given in Section~\ref{sec:experiments},
+%and we discuss how we extend the state-of-the-art beyond the existing
+%literature in Section~\ref{sec:related}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Preliminaries}\label{sec:preliminaries}
-
-%\blue{Please insert a figure clearly distinguishing between continuous and discretised/quantised plant - a template is in a picture sent out by Lucas late last week. Please introduced signals on the plot. 
-
-%Let us straighten the notations next. 
-%We should have 
-%\begin{itemize}
-%\item 
-%$G(s) = \frac{s^{M_G}b_{0}+s^{M_G-1}b_{1}+...+b_{M_G}}{s^{N_G}a_{0}+s^{N_G-1}a_{1}+...+a_{N_G}}$ -- this is the physical plant, which is focus of interest and to which we refer our specifications/properties 
-%\item 
-%$G(z, T) = \frac{\bar b_{0}+\bar b_{1}z^{-1}+...+\bar b_{M_G}z^{-M_G}}{\bar a_{0}+\bar a_{1}z^{-1}+...+\bar a_{N_G}z^{-N_G}}$ -- this is the time-discretised plant (notice the notation encompasses explicitly the sample time $T$; please write out explicitly the relationship between the $a_i$ and the $\bar a_i$ and likewise for the numerator's coefficients 
-%(in particular, are the orders $M_G, N_G$ the same? 
-%\item 
-%we have $Y(z) = G(z,T) U(z)$; then, we introduce $\hat Y(z) \doteq Y(z) + \nu (z)$, so that 
-%$$
-%\frac{\hat Y(z)}{U(z)} = G(z,T) + \frac{\nu (z)}{U(z)} = G(z,T) + \Delta G_Q(z) \doteq \hat G(z) ,  
-%$$ 
-%where $\Delta G_Q(z)$ is an error term accounting for the quantization effects 
-%\item 
-%finally, we encompass the errors resulting from employing finite parameters representation, 
-%which we encompass in a term $\Delta G_P(z)$: is this error additive, so that we would get to a 
-%$$
-%\tilde G(z) \doteq \hat G(z) + \Delta G_P(z) = G(z,T) + \Delta G_Q(z) + \Delta G_P(z)?  
-%$$ 
-%Dario, can you write it out explicitly? In other words, if 
-%$$
-%\hat G(z) = G(z,T) + \Delta G_Q(z) = \frac{\hat b_{0}+\hat b_{1}z^{-1}+...+\hat b_{M_G}z^{-M_G}}{\hat a_{0}+\hat a_{1}z^{-1}+...+\hat a_{N_G}z^{-N_G}},  
-%$$ 
-%then what is the explicit expression of 
-%$$
-%\tilde G(z) = \frac{\tilde b_{0}+\tilde b_{1}z^{-1}+...+\tilde b_{M_G}z^{-M_G}}{\tilde a_{0}+\tilde a_{1}z^{-1}+...+\tilde a_{N_G}z^{-N_G}}?
-%$$
-%(Notice that the orders $M_G, N_G$ need to be properly taken care of.)
-%\item 
-%Now, it's over the transfer function $\tilde G(z)$ that we want to synthesise the parameters of a template $C(z)$. 
-%This controller's transfer function will be subject to the same quantization and precision limits as the plant's: 
-%we need to argue that the way we do synthesis affects manipulation of quantities that relate to specific errors and be explicit about these. 
-%\item[]
-%\item 
-%An additional source of error can be related to the fact that a plant transfer function, 
-%per se a physical entity, is actually represented in a program imprecisely: 
-%this would mean that $G(s)$ is actually 
-%$$
-%G^\ast (s) \doteq \frac{s^{M_G^\ast}b_{0}+s^{M_G^\ast-1}b_{1}+...+b_{M_G}}{s^{N_G^\ast}a_{0}+s^{N_G^\ast-1}a_{1}+...+a_{N_G}}, 
-%$$ 
-%which perhaps can indeed be re-written as $G^\ast (s) = G(s) + \Delta G_P(s)$? (This proof should come from that above.) 
-%We should argue that this error is encompassed by the one derived above (or isn't it?). 
-%\end{itemize}
-%}
 
 %------------------------------------
 \subsection{Discretization of the Plant}
@@ -378,19 +330,14 @@ paper are typically used in closed loops with continuous (physical) plants.
 Thus, we consider continuous dynamics (the plant) and discrete parts (the
 digital controller). In order to obtain an overall model, we discretize the
 continuous plant and look at the plant dynamics from the perspective of the digital controller. 
-%We briefly recall the standard foundations of this step.
 
 As we only consider transfer function models, and require a $z$-domain transfer
 function $G(z)$ that captures all aspects of the continuous plant, 
 which is naturally described via a Laplace-domain transfer function $G(s)$. 
-% and the sampling and hold process. 
 The continuous model of the plant must be discretized to obtain the
 corresponding coefficients of $G(z)$.
 
-%\red{[why do we discuss the ZOH at this point?]}
-
 Among the discretization methods in the literature~\cite{Franklin15}, 
-%the zero-order hold (ZOH) discretization is suitable for representing 
 we consider the sample-and-hold processes in complex systems~\cite{istepanian2012digital}.  
 On the other hand, 
 the ZOH discretization models the exact effect of sampling and DAC interpolation over the plant.
@@ -432,13 +379,6 @@ the pulse transfer function in~\eqref{eq:pulsetf} will also present the same num
 \label{verifying-closed-loop-control-systems}
 %------------------------------------
 
-%\red{[This section and the next should be merged into a crisp section with the background on DSVerifier, if not included in previous work? 
-%Please stick to the introduced notations. Please clarify what the function FWL does, compared to the general approximations introduced above.]}
-
-%\red{Alessandro, I've made the changes as requested. Please let me know if this is good enough or if I made it too short}
-
-%\textcolor{blue}{[IB: I'm proposing some changes in this section based on Alessandro's comments and trying to obtain a simpler and uniform notation.]}
-
 CEGIS-based control synthesis requires a formal verifier to check whether a
 candidate controller meets the requirements when combined with the plant. 
 We use the Digital-System Verifier (DSVerifier)~\cite{IsmailBCFF15} in the
@@ -446,8 +386,7 @@ verification module for \tool.  It checks the stability of closed-loop control s
 considers finite-word length (FWL) effects in the digital controller, and
 uncertainty parameters in the plant model (plant intervals)~\cite{Bessa16}.  
 
-
-Let $C(z)$ be a digital controller and $G(z)$ be a digital representation of the plant, 
+Let $C(z)$ be a digital controller and $G(z)$ be a discrete-time representation of the plant, 
 given as
 %
 \begin{align}
@@ -465,7 +404,7 @@ and finally $N_{(\cdot)}$ and $M_{(\cdot)}$ indicate the order of the polynomial
 and we require in particular that $N_G \geq M_G$. 
 
 Uncertainties in $G(z)$ may appear due to: 
-1. uncertainties in $G(s)$ (we denote them $\Delta_p{G}_n(s),\Delta_p{G}_d(s)$) arising from tolerances/imprecision in the original model; 
+1. uncertainties in $G(s)$ (we denote $\hat{G}(s)=\frac{G_n(s)+\Delta_p{G}_n(s)}{G_d(s)+\Delta_p{G}_d(s)}$) arising from tolerances/imprecision in the original model; 
 2. errors in the numerical calculations due to FWL effects (e.g., coefficient truncation and round-off, which will be denoted as $\Delta_b{G}_n(s),\Delta_b{G}_d(s)$);    
 and 
 3. errors caused by quantization (which we model later as as external noises $\nu_1$ and $\nu_2$). 
@@ -548,7 +487,7 @@ or work over their respective coefficients $\vec{G}$, $\vec{C}$ in vector form.
    \& \node[rectangle,draw,
 	minimum width=1cm,
 	minimum height=1cm,
-        label=\textbf{Controller}] (cz) {{\sc C(z)}};
+        label=\textbf{Controller}] (cz) {\sc $\hat{C}(z)$};
    \node[draw=none] (ud) at ([xshift=1cm,yshift=.15cm]cz)  {$U(z)$};
      
    \& complexnode/.pic={ 
@@ -578,7 +517,7 @@ or work over their respective coefficients $\vec{G}$, $\vec{C}$ in vector form.
      \node[draw=none] (q2t)  at ([xshift=1cm,yshift=-.65cm]adc.center) {{\sc Q1}};
    \node[draw=none] (v1)  at ([xshift=1cm,yshift=1.5cm]adc.center) {$\nu_1(z)$};
    \& \coordinate (aux1);
-   \& \node[draw=none] (yz) {$\tilde {Y}(z)$};\\
+   \& \node[draw=none] (yz) {$\hat {Y}(z)$};\\
    \& \coordinate (aux3); 
    \&
    \&
@@ -612,7 +551,6 @@ A typical digital control system with a continuous plant and a discrete
 controller is illustrated in Figure~\ref{fig:sampledsystem}.  The DAC and
 ADC converters introduce quantization errors (notice that each of them
 may have a different FWL representation than the controller),
-%\red{[why is the DAC introducing a quantisation error again?]}
 which are modeled as noises
 $\nu_{1}(z)$ and $\nu_{2}(z)$;  
 $G(s)$ is the continuous-time plant model
@@ -620,7 +558,6 @@ with parametric additive uncertainty $\Delta_p{G}_n(s)$ and $\Delta_p{G}_d(s)$ (
 $R(z)$ is a given reference signal; 
 $U(z)$ is the control signal; 
 and $\hat{Y}(z)$ is the output signal affected by the noises and uncertainties in the closed-loop system 
-\red{[notice we have tilde outputs in the two figures! these need to be explained here.]}. 
 %
 %
 %
@@ -660,7 +597,7 @@ seen as additive noise.
    \& \node[rectangle,draw,
 	minimum width=1cm,
 	minimum height=1cm,
-        label=\textbf{Controller}] (cz) {{\sc C(z)}};
+        label=\textbf{Controller}] (cz) {\sc $\hat{C}(z)$};
    \node[draw=none] (ud) at ([xshift=1cm,yshift=.15cm]cz)  {$U(z)$};
    \& \node[circle,add={}{+}{+}{}] (circle2) {};
    \node[draw=none] (nu2) at ([yshift=1cm]circle2)  {$\nu_2(z)$};
@@ -668,12 +605,12 @@ seen as additive noise.
 	minimum width=1cm,
 	minimum height=1cm,
         label=\textbf{Plant}] (gs) {{\sc $\hat{G}(z)$}};
-   \node[draw=none] (y) at ([xshift=2cm,yshift=.15cm]gs)  {$Y(z)$};
+%   \node[draw=none] (y) at ([xshift=2cm,yshift=.15cm]gs)  {$Y(z)$};
 
    \& \node[circle,add={}{+}{+}{}] (circle3) {};
    \node[draw=none] (nu1) at ([yshift=1cm]circle3)  {$\nu_1(z)$};
    \& \coordinate (aux1);
-   \& \node[draw=none] (yz) {$\tilde Y(z)$};\\
+   \& \node[draw=none] (yz) {$\hat Y(z)$};\\
    \& \coordinate (aux3); 
    \&
    \& 
@@ -1698,7 +1635,7 @@ $
 
 \paragraph{The synthesis problem}
 The synthesis problem we are trying to solve is the following:
-find a digital controller $C(z)$ %denoted by  $N_c$ and $D_c$ 
+find a digital controller $\tilde C(z)$ %denoted by  $N_c$ and $D_c$ 
 that makes the closed-loop system stable 
 for all possible uncertainties 
 %$\Delta{\vec{p}}$ (\ref{eq:uncertainty}).
@@ -1709,10 +1646,10 @@ $\tilde G(z)$ \eqref{digital_plant_tf}.
 % $\tilda{N_G}(z) = N_G(z) + \Delta N_G(z)$ and 
 % $\hat{N_C}(z) = N_C(z) + \Delta N_C(z)$.
 When mapping back to the notation used for describing the general architecture 
-of the program synthesizer, the controller $C(z)$ denotes $P$ and 
+of the program synthesizer, the controller $\tilde C(z)$ denotes $P$ and 
 $\tilde G(z)$ represents $x$. 
 
-As mentioned above, we compute the coefficients for $C(z)$ 
+As mentioned above, we compute the coefficients for $\tilde C(z)$ 
 %$N_c$ and $D_c$ 
 in the domain $\mathbb{R}\param{I}{F}$, 
 %and $\mathbb{R}^{m_C}\param{I}{F}$, respectively, 
@@ -1726,18 +1663,14 @@ $\mathbb{R}\langle I_p,F_p \rangle \supseteq \mathbb{R}\langle I,F \rangle$.
 \subsection{The {\sc Synthesize} and {\sc Verify} phases}
 
 The {\sc synthesize} phase uses BMC to 
-compute a solution $C(z)$. % An important remark is that this 
-% controller is synthesised in the $\mathbb{R}\langle I,F \rangle$
-% domain.
+compute a solution $\tilde C(z)$.
 There are two approaches for the {\sc verify} phase.
-% based on the described model.  
 The first approach uses interval arithmetic \cite{moore1966interval}
 to represent the coefficients
 $[{c}_i-\Delta_p{c}_i-\Delta_b{c}_i,\,\allowbreak
 {c}_i+\Delta_p{c}_i-\Delta_b{c}_i+(2^{-F_p})]$ 
 and rounds operations outwards during calculations.  This effectively allows
 us to simultaneously evaluate the whole collection of plants $\hat{G}(s)$ (\emph{ie} all concrete plants $G(s)$ in the range $G(s) \pm \Delta_pG(s)$)
-\aabatecmt{[unclear:] }
 plus the effects of numeric calculations in the engine.  Synthesized
 controllers using this verifier will always be stable for all plants in the
 family.
@@ -1935,7 +1868,7 @@ $\hat{C}(z) {:=} \frac{2.7199859619140625z^2{-}4.1529998779296875z
 \end{equation} 
 %
 The resulting system using the typical series loop configuration, where
-$C_{q}(z)$ and $G(z)$ are in the forward path, is unstable. 
+$\hat{C}(z)$ and $G(z)$ are in the forward path, is unstable. 
 Figure~\ref{fig:original} gives the Bode diagram for the digital controller
 represented in~\eqref{Eq:running-example-controller}: 
 as the phase margin is negative, 
