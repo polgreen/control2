@@ -192,7 +192,7 @@ fixed-point arithmetic and the word length used:
 \cite{Bessa16} exploit advances in bit-accurate verification of C
 programs to obtain a verifier for software-implemented digital control.
 
-By contrast, we leverage a very recent step-change in the scalability of
+By contrast, we leverage a very recent step-change in the automation and scalability of 
 \emph{program synthesis}.  Program synthesis engines use a program
 specification as the starting point, and subsequently generate a sequence of
 candidate programs from a given template.  
@@ -204,39 +204,44 @@ high degree of automation.  Modern synthesis engines combine automated testing,
 genetic algorithms, 
 and SMT-based automated reasoning~\cite{DBLP:journals/corr/AlurFSS16a,DBLP:conf/lpar/DavidKL15}.
 
-By applying a state-of-the-art synthesis engine we are now able to present a
-tool that automatically \emph{generates} digital controllers for a given
-continuous plant model that are correct by construction.  This approach
-promises to reduce the cost and time of development of digital control
-dramatically, and requires considerably less expertise than methodologies
-driven by verification.  Specifically, we synthesize controllers for hybrid
-closed-loop systems, i.e., software-implemented embedded controllers along
-with a model of their physical environment (the plant), that are
-\emph{stable}.  Due to the complexity of such systems, in this work we focus
-on linear models with known configurations and perform parametric synthesis
-of stabilizing digital controllers.
+By combining and applying state-of-the-art synthesis engines we present a 
+tool that automatically generates digital controllers for a given 
+continuous plant model that are correct by construction.  
+This approach presents a high degree of autonomy, 
+promises to reduce the cost and time of development of digital control dramatically, 
+and requires considerably less expertise than a-posteriori verification methodologies.   
+Specifically, we synthesize stable,  
+%controllers for hybrid closed-loop systems, i.e., 
+software-implemented embedded controllers along with a model of a physical plant. 
+%, that are \emph{stable}.  
+Due to the complexity of such closed-loop systems, in this work we focus
+on linear models with known configurations, and perform parametric synthesis
+of stabilizing digital controllers (further closed-loop requirements are left to future work). 
 
 Our work addresses challenging aspects of the control synthesis problem.  We
 perform digital control synthesis over a hybrid model, where the plant
 exhibits continuous behavior whereas the controller operates in discrete
 time and over a quantized domain.  Inspired by a classical
 approach~\cite{astrom1997computer}, we translate the problem into a single
-digital domain.  Given our primary interest in stability despite
-digitization effects, we have modeled a digital equivalent of the plant by
-evaluating the effects of the quantizers (A/D and D/A converters) as time
-discretization elements with quantization noise.  The resulting closed-loop
-system is a program loop that operates on bit-vectors encoded using
-fixed-point arithmetic with finite word length (FWL).  The deterministic
-effects of the FWL and quantization errors are incorporated into the model
-as an additive uncertainty, which is taken into account during the
-CEGIS-based synthesis of the control software for the plant.
+digital domain.  
+Towards our goal of closed-loop stability, 
+% despite digitization effects, 
+we have modeled a digital equivalent of the continuous plant by evaluating the effects of the quantizers (A/D and D/A converters) and of time
+discretization. 
+% elements with quantization noise.  
+We further account for uncertainties on the plant models. 
+The resulting closed-loop system is a program loop that operates on bit-vectors encoded using
+fixed-point arithmetic with finite word length (FWL). 
+The effects of the both the FWL and quantization errors are incorporated into the model, 
+%as an additive uncertainty, 
+and are taken into account during the CEGIS-based synthesis of the control software for the plant.
 
 In summary, this paper makes the following original contributions.
 %
 \begin{itemize}
 
 \item We automatically generate {\em correct-by-construction} digital
-  controllers using inductive synthesis.  Our application of program
+  controllers using an inductive synthesis approach.  Our application of program
   synthesis is non-trivial and addresses challenges specific to control
   systems, such as the effects of quantizers and FWL.  In particular, we
   have found that a two-stage verification engine that continuously refines
@@ -300,6 +305,7 @@ In summary, this paper makes the following original contributions.
 % \caption{Closed-Loop System. \label{fig:closed-system}}
 %\end{figure}
 
+\textcolor{cyan}{[if space is needed, the next paragraph can be cut. ]}
 We cover preliminaries on plant discretization, the verification of
 closed-loop control systems, and stability in
 Section~\ref{sec:preliminaries}.  Our core contribution is in
