@@ -39,7 +39,7 @@
 %\usetikzlibrary{decorations}
 %\usetikzlibrary{decorations.pathmorphing}
 
-\newcommand{\aabatecmt}[1]{{\color{blue}#1}}
+\newcommand{\aabatecmt}[1]{}%{{\color{blue}#1}}
 \newcommand{\blue}[1]{{\color{blue}#1}}
 \newcommand{\red}[1]{{\color{red}#1}}
 \newcommand{\green}[1]{{\color{green}#1}}
@@ -487,8 +487,7 @@ Notice that, due to the nature of the methods we use for the stability check, we
 that the parametric errors in the plant have the same polynomial order as
 the plant itself (indeed, all other errors described in this paper are ensured to
 fulfil this property in our implementation). 
-%\red{[have we later argued that this is indeed the case?]}) 
-%\blue{and that enter the plant linearly}.
+We also note that due to the digital implementation, there are no parametric errors in the controller($\Delta_pC_n(z)=\Delta_pC_d(z)$). Thus $\hat{C}(z) \equiv C(z)$.
 
 We introduce next a notation based on the polynomials coefficients to simplify 
 the presentation.  Let $\mathcal{P}^{N}$ be the space of polynomials of order $N$. 
@@ -609,26 +608,6 @@ or work over their respective coefficients $\vec{G}$, $\vec{C}$ in vector form.
  \caption{Closed-loop digital control system \aabatecmt{[has this hatted notation for the continuous-frequency plant ever been introduced?]} \label{fig:sampledsystem}}
 \end{figure*}
 
-%\begin{equation}
-%\Delta{\vec{p}}=\begin{bmatrix}
-%\hat{b_{0}} - b_{0}\\
-%\hat{b_{1}} - b_{1}\\
-%\vdots \\
-%\hat{b}_{M_G} - b_{M_{G}}\\
-%\hat{a_{0}} - a_{0}\\
-%\hat{a_{1}} - a_{1}\\
-%\vdots\\
-%\hat{a}_{N_G} - a_{N_{G}}\\
-%\end{bmatrix}=\begin{bmatrix}
-%\vec{\hat{b}}\\
-%\vec{\hat{a}}
-%\end{bmatrix}-\begin{bmatrix}
-%\vec{b}\\
-%\vec{a}
-%\end{bmatrix}
-%\label{eq:uncertainty}
-%\end{equation}
-
 A typical digital control system with a continuous plant and a discrete
 controller is illustrated in Figure~\ref{fig:sampledsystem}.  The DAC and
 ADC converters introduce quantization errors (notice that each of them
@@ -652,39 +631,6 @@ where
 % the parametric uncertainties are represented by~$\Delta_p \vec{G}$ and 
 the effect of $\nu_{1}$ and $\nu_{2}$ in the output $Y(z)$ is
 seen as additive noise.  
-
-%The system in equation~\ref{controller_plant_tf} (disregarding the $\Delta{G}_{P}(z)$ may be represented by the following difference equation model:
-%\begin{equation}
-%\begin{split}
-%y(k)=-a_{1}y(k-1)-a_{2}y(k-2)-\cdots - a_{N}y(k-N)\\
-%+b_{0}u(k)+b_{1}u(k-1)+b_{2}u(k-2)+\cdots+b_{M}u(k-M),
-%\end{split}
-%\end{equation}
-%and consequently $\hat{y}(k)$ may be represented by the following difference equation:
-%\begin{equation}
-%\label{eq:differencewithnoise}
-%\begin{split}
-%\hat{y}(k)=-a_{1}y(k-1)-a_{2}y(k-2)-\cdots - a_{N_{G}}y(k-N_{G})\\
-%+b_{0}u(k)+b_{1}u(k-1)+b_{2}u(k-2)+\cdots+b_{M_{G}}u(k-M_{G})+\nu(k).
-%\end{split}
-%\end{equation}
-%
-%The z-transform of~\eqref{eq:differencewithnoise} is:
-%\begin{equation}
-%\begin{split}
-%\hat{Y}(z)=(-a_{1}z^{-1}-a_{2}z^{-2}-\cdots-a_{N_{G}}z^{-N_{G}})Y(z)\\
-%+(b_{0}+b_{1}z^{-1}+b_{2}z^{-2}+\cdots+b_{M_{G}}z^{-M_{G}})U(z)+\nu(z),
-%\end{split}
-%\end{equation}
-%dividing both sides by $U(z)$, it is equivalent to:
-%\begin{equation}
-%\frac{\hat{Y}(z)}{U(z)}=[1-D_{G}(z)]G(z)+U(z)D_{G}(z)+\frac{\nu(z)}{U(z)}=G(z)+\Delta{G}_{Q}(z),
-%\end{equation}
-
-%Considering the quantization noise $\nu(k)$ as an output error in discrete plant model, we may represent it as an additive noise in the plant output $y(k)$ resulting in the noisy output $\hat{y}(k)$:
-%\begin{equation}
-%
-%\end{equation}
 
 \begin{figure}[ht]
 \centering
@@ -758,158 +704,30 @@ seen as additive noise.
 \label{fig:digsystem1}}
 \end{figure}
 
-%\red{[why is the output in Figure 2 tilde, whereas that in  figure 1 hat?]}
-%
-\textcolor{cyan}{[rearrange next paragraph - param and quant]}
 In Figure~\ref{fig:digsystem1}, two sources of uncertainty are illustrated:
 parametric uncertainties related to modeling errors  
 (which are represented by~$\Delta_p \vec{G}$),  
 and uncertainties introduced by quantizations in the ADC and
-DAC conversions ($\nu_1$ and $\nu_2$) which are assumed to be non-deterministic.
-% \blue{[here you mean specifically the quantization effects?]}:  
-%which poses no further restriction to our model, 
-Thus, the uncertain model may be rewritten as a vector of coefficients in the 
-z-domain using equation \eqref{eq:hatgvector} as  
-%
-%\begin{equation}
-%\label{eq:complete_unc_model}
-$\vec{\hat{G}}=\vec{G}+\Delta_p \vec{G}$. 
-%\end{equation}
-%
-%where $\Delta_p \vec{G}$ is the term that corresponds to the parametric uncertainties. 
+DAC conversions ($\nu_1$ and $\nu_2$) which are assumed to be non-deterministic. 
 Recall that we discussed how the quantization noise is encompassed as an additive term, 
 which means it does not enter parametrically in the transfer function. 
 Instead, we later show that the system is stable given these non-deterministic noise inputs. 
 
+The uncertain model may be rewritten as a vector of coefficients in the 
+z-domain using equation \eqref{eq:hatgvector} as  
+$\vec{\hat{G}}=\vec{G}+\Delta_p \vec{G}$.
 The parametric uncertainties in the plant are assumed to have the same
 order as the plant model, since 
-%tolerances of higher order would invalidate the feedback model (even tiny 
 errors of higher order can move the closed-loop poles by large amounts, 
 thus preventing any given controller from stabilizing such a setup. 
 This is a reasonable assumption since most tolerances do not change the 
 architecture of the plant. 
-%, and models subject to such effects are inadequate.
-
-%\red{[next figure is a bit unnecessary, does not ad much to the previous one.]} Figure~\ref{fig:digsystem2} shows the digital closed loop systems with $\Delta G_{P}(z)$ and $\Delta G_{Q}(z)$.
 
 
-%\begin{figure}[ht]
-%\centering
-%
-%\tikzset{add/.style n args={4}{
-%    minimum width=6mm,
-%    path picture={
-%        \draw[circle] 
-%            (path picture bounding box.south east) -- (path picture bounding box.north west)
-%            (path picture bounding box.south west) -- (path picture bounding box.north east);
-%        \node[draw=none] at ($(path picture bounding box.south)+(0,0.13)$)     {\small #1};
-%        \node[draw=none] at ($(path picture bounding box.west)+(0.13,0)$)      {\small #2};
-%        \node[draw=none] at ($(path picture bounding box.north)+(0,-0.13)$)    {\small #3};
-%        \node[draw=none] at ($(path picture bounding box.east)+(-0.13,0)$)     {\small #4};
-%        }
-%    }
-% }
-%
-%\resizebox{.5\textwidth}{!}{
-% \begin{tikzpicture}[scale=0.3,-,>=stealth',shorten >=.2pt,auto,
-%     semithick, initial text=, ampersand replacement=\&,]
-%
-%  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center}, row sep=.6cm, column sep=.3cm] {
-%  %
-%	\& 
-%	\&
-%	\& \coordinate (aux7); 
-%	\& \node[rectangle,draw,
-%	minimum width=1cm,
-%	minimum height=1cm] (deltag2) {{\sc $\Delta G_{Q}(z)$}};
-%	\& \coordinate (aux8);\\
-%    \node[draw=none] (r) {$R(z)$};
-%%   \& \coordinate (aux0);
-%   \& \node[circle,add={-}{+}{}{}] (circle) {};
-%   \node[draw=none] (ez) at ([xshift=1cm,yshift=.15cm]circle)  {$e(z)$};
-%   \& \node[rectangle,draw,
-%	minimum width=1cm,
-%	minimum height=1cm,
-%        label=\textbf{Controller}] (cz) {{\sc C(z)}};
-%   \node[draw=none] (ud) at ([xshift=1cm,yshift=.15cm]cz)  {$U(z)$};
-%   \& \coordinate (aux4);
-%   \& \node[rectangle,draw,
-%	minimum width=1cm,
-%	minimum height=1cm,
-%        label=\textbf{Plant}] (gs) {{\sc G(z)}};
-%   \node[draw=none] (y) at ([xshift=1cm,yshift=.15cm]gs)  {$Y(z)$};
-%   \& \node[circle,add={+}{+}{+}{}] (circle2) {};
-%%   \node[draw=none] (tyz) at ([xshift=-1cm,yshift=.15cm]circle2)  {$Y(z)$};
-%%   \node[draw=none] (nu) at ([yshift=1cm]circle2)  {$\nu(z)$};
-%   \& \coordinate (aux1);
-%   \& \node[draw=none] (yz) {$\hat{Y}(z)$};\\
-%   \& 
-%   \&
-%   \& \coordinate (aux5); 
-%   \& \node[rectangle,draw,
-%	minimum width=1cm,
-%	minimum height=1cm] (deltag) {{\sc $\Delta G_{P}(z)$}};
-%   \& \coordinate (aux6);\\
-%   \& \coordinate (aux3); 
-%   \&
-%   \& 
-%   \& 
-%   \&
-%   \& \coordinate (aux2);\\
-%  };
-%
-%
-%%  \path[->] (v1) edge (q1.north);
-%%  \path[->] (v2) edge (q2.north);
-%  \path[->] (r) edge (circle.west);
-%%  \path[->] (nu) edge (circle2.north);
-%  \path[->] (aux1) edge (yz);
-%  \path  
-%   (aux4.north) edge (aux5.south)
-%   (aux4.north) edge (aux7.south)
-%   (aux5.east) edge (deltag.west)
-%   (aux7.east) edge (deltag2.west)
-%   (deltag.east) edge (aux6.west)
-%   (deltag2.east) edge (aux8.west)
-%   (circle.east) edge (cz)
-%   (cz.east) edge (gs.west)
-%   (circle2.east) edge (aux1.west)
-%   (aux1.south) edge (aux2.north)
-%   (aux2.west) edge (aux3.east); 
-%  \path[->] (aux8.south) edge (circle2.north); 
-%  \path[->] (aux6.south) edge (circle2.south);
-%  \path[->] (gs.east) edge (circle2.west);
-%  \path[->] (aux3.north) edge (circle.south);
-% \end{tikzpicture}
-%}
-% \caption{Digital system with additive uncertainties $\Delta G_{P}(z)$ and $\Delta G_{Q}(z)$. \label{fig:digsystem2}}
-%\end{figure}
-
-%\textcolor{blue}{[IB: I propose to exchange the following paragraphs by the previous blue]}
-
-%\textcolor{green}{DC: I believe Alessandro wanted to be more specific about the nature of the modelling error which is why I was trying to explain it. In this case I believe there are also two separate sources for $\Delta{G}_p(z)$. The first is $\Delta{G}_p(s)$ (which is basically a known tolerance that may come from G(t)), while the second is the error introduced by the calculations in the $\mathcal{Z}$ transform. Alessandro, do you want to address this second term (possibly as explained below) or just leave the blue section as is?}
-
-
-%Since $G(z)$ is an approximation of $G(s)$ we introduce an error term caused during its calculation as $\Delta{G}_P$
-%
-%%
-%\begin{align}
-%\small
-%\label{parametric_plant_tf}
-%\hat{G}(z)&=\frac{(b_{0}+\Delta_p b_{0}) +...+(b_{M_G}+\Delta_p b_{M_G})z^{-M_G}}{(a_{0}+\Delta_p a_{0})+...+(a_{N_G}+\Delta_p a_{N_G})z^{-N_G}} \nonumber \\
-%&=G(z)+\Delta{G}_P(z).
-%\end{align}
-%%
-%Note that $\Delta{G}_P$ is undefined and upper bound by a user defined
-%value such that $\hat{G}(z)$ corresponds to the set of
-%possible polynomial forms of $G(z, T)$ that overapproximate $G(s)$.
-%This calculation is performed outside of the scope of this work since it depends on the nature of the tool used to obtain the $\mathcal{Z}$ form. The error comes from the bounded horizon and mathematical precision used to calculate the $\mathcal{Z}$ transform, which will be tool and user dependent.
-%\red{[The previous statement is confusing and I must disagree here: I want hard error bounds on a specific value of T.]}
-%\green{[You are correct. It was absolutely wrong. Hopefully this explanation is clear. We use MATLAB, but still don't know the details of their implementation, so I don't have hard data on how this error is calculated.}
 
 \smallskip
 
-\textcolor{cyan}{[next discussion on fwl]} 
+\paragraph{Using a Fixed-point Controller}
 
 Since the controller is implemented using finite representation, $C(z)$ also suffers
 disturbances from the FWL effects, with roundoffs in coefficients that may
@@ -921,36 +739,75 @@ using this FWL with integer size $I$ and fractional size~$F$.
 The term $I$ affects the range of the representation and is set to avoid overflows, 
 while $F$ affects the precision and the truncation after arithmetic operations. 
 We shall denote the FWL domain of the coefficients by $\mathbb{R}\langle I,F
-\rangle$
-%
-%Since the controller is implemented in the $\mathbb{R}\langle I,F \rangle$ 
-%domain, {\it i.e.} a Fixed-Point Finite Word Length with integer size $I$ and fractional
-%size $F$, we shall denote this domain as $\mathbb{R}\langle I,F \rangle$ 
-%
-and assume that there exists a function
-$\mathcal{F}_n\langle I,F \rangle(\cdot):\mathcal{P}^{n}\rightarrow \mathcal{P}^{n}\langle I,F \rangle$,
-which applies the FWL effects to a polynomial, with an equivalent $\mathcal{F}_{n,m}\langle I,F \rangle(\cdot):\mathcal{P}^{n,m}\rightarrow \mathcal{P}^{n,m}\langle I,F \rangle$ that applies the same effect to a ratio of polynomials, where
-$\mathcal{P}^{n}$ is the
-space of polynomials of $n$-th order, $\mathcal{P}^{n}\langle I,F
-\rangle$ is the space of polynomials with coefficients in
-$\mathbb{R}\langle I,F \rangle$, and $\mathcal{P}^{n,m}$,  $\mathcal{P}^{n,m}\langle I,F
-\rangle$ are their rational equivalent.
+\rangle$ and define a function
+\begin{align}
+\small
+%\label{FWL_tf}
+\mathcal{F}_n&\param{I}{F}(P \in \mathcal{P}):\mathcal{P}^{n}\rightarrow \mathcal{P}^{n}\param{I}{F} \\
+&\triangleq \tilde P \in \mathcal{P}^{n}\param{I}{F} : c_i \in \vec{P} \wedge \tilde c_i \in \vec{\tilde{P}}=\mathcal{F}_0\param{I}{F}(c_i)  \nonumber
+\end{align}
+where $\mathcal{P}^{n}$ is the space of polynomials of $n$-th order,
+$\mathcal{P}^{n}\param{I}{F}$ is the space of polynomials with coefficients in
+$\mathbb{R}\param{I}{F}$ and $\mathcal{F}_0\param{I}{F}(x)$ returns the
+element $\tilde{x} \in \mathbb{R}\param{I}{F}$ that is closest to $x$.
 
-Thus, the perturbed controller model $\hat{C}(z)$ may be obtained from the
+Similarly, $\mathcal{F}_{n,m}\langle I,F \rangle(\cdot):\mathcal{P}^{n,m}\rightarrow \mathcal{P}^{n,m}\langle I,F \rangle$ applies the same effect to a ratio of polynomials, where $\mathcal{P}^{n,m}$,  $\mathcal{P}^{n,m}\langle I,F
+\rangle$ are rational polynomial domains.
+
+Thus, the perturbed controller model $\tilde{C}(z)$ may be obtained from the
 original model $C(z)=\frac{C_{n}(z)}{C_{d}(z)}$ as follows:
 %
 \begin{equation}
-\hat{C}(z)=\mathcal{F}_{M_C,N_C}\langle I,F \rangle(C(z))=\frac{\mathcal{F}_{M_C}\langle I,F \rangle(C_n(z))}{\mathcal{F}_{N_C}\langle I,F \rangle(C_d(z))}.
+\tilde{C}(z)=\mathcal{F}_{M_C,N_C}\param{I}{F}(C(z))=\frac{\mathcal{F}_{M_C}\param{I}{F} (\hat{C}_n(z))}{\mathcal{F}_{N_C}\param{I}{F}(\hat{C}_d(z))}.
 \end{equation}
 %
-\aabatecmt{[ next statement is potentially quite confusing, especially since you used the hatted variables next. ]}
 In the case of a synthesized controller, because the synthesis is performed
-using FWL, $\hat{C}(z) \equiv C(z)$ (\emph{ie} we synthesise a controller that is already in the domain $\mathbb{R} \langle I,F \rangle$ and has therefore no uncertanties. $\Delta_pC_n(z)=\Delta_pC_d(z)=\Delta_bC_n(z)=\Delta_bC_d(z)=0$).
-\aabatecmt{[discuss relationship with introduced terms $\Delta_b{G}_n(s),\Delta_b{G}_d(s)$?]}
+using FWL, $\tilde{C}(z) \equiv \hat{C}(z) \equiv C(z)$ (\emph{ie} we synthesise a controller that is already in the domain $\mathbb{R} \param{I}{F}$ and has therefore no uncertanties. $\Delta_bC_n(z)=\Delta_bC_d(z)=0$).
 
-%\textcolor{blue}{[IB: And I propose to exchange the remaining paragraphs by the previous blue]}
+
+\paragraph{Fixed-point computation in program synthesis}
+
+The program synthesis engine uses fixed-point arithmetic.  Specifically, we
+use the domain $\mathbb{R}\param{I}{F}$ for the controller's coefficients
+and the domain $\mathbb{R}\param{I_p}{F_p}$ for the plant's coefficients,
+where $I$ and $F$, as well as $I_p$ and $F_p$, denote the number of bits for
+the integer and fractional parts, respectively, and $\mathbb{R}\param{
+I_p}{F_p} \supseteq \mathbb{R}\param{I}{F}$.
+
+
+Given the use of fixed-point arithmetic, we examine the discretization effect 
+during these operations. Let $\tilde C(z)$ and $\tilde G(z)$ be 
+transfer functions represented using fixed-point bit-vectors.
 %
-%\textcolor{green}{[DC: I changed it to a separate section to differentiate the effects, so we should keep both]}
+\begin{align}
+\small
+\label{digital_controller_plant_tf}
+\tilde C(z)&=\frac{\tilde \beta_{0}+\tilde \beta_{1}z^{-1}+...+\tilde \beta_{M_C}z^{-M_C}}{\tilde \alpha_{0}+\tilde \alpha_{1}z^{-1}+...+\tilde \alpha_{N_C}z^{-N_C}}, \\
+%\label{plant_tf}
+\tilde G(z)&=\frac{\tilde b_{0}+\tilde b_{1}z^{-1}+...+\tilde b_{M_G}z^{-M_G}}{\tilde a_{0}+\tilde a_{1}z^{-1}+...+\tilde a_{N_G}z^{-N_G}}.
+\end{align}
+ 
+Since the controller is synthesized in the $\mathbb{R}\param {I}{F}$
+domain, $\tilde{C}(z) \equiv \hat{C}(z) \equiv C(z)$
+
+However, given a real plant collection $\hat{G}(z)$,
+%
+we calculate $\tilde G(z)=\mathcal{F}_{M_G,N_G}\param {I_p}{F_p}(\hat{G}(z))$, where 
+%
+\begin{align}
+\label{digital_plant_tf}
+\tilde G(z)&=\frac{(\hat{b}_{0}+\Delta_b \hat{b}_{0}) +...+(\hat{b}_{M_G}+\Delta_b \hat{b}_{M_G})z^{-M_G}}{(\hat{a}_{0}+\Delta_b \hat{a}_{0})+...+(\hat{a}_{N_G}+\Delta_b \hat{a}_{N_G})z^{-N_G}} \nonumber \\
+\vec{\tilde G} &=\vec{\hat{G}}+\Delta_b{\vec{G}}=\vec{G}+\Delta_p{\vec{G}}+\Delta_b{\vec{G}}, 
+\end{align}
+%
+where $\Delta_bc_i=\tilde{c}_i-\hat{c}_i$, 
+and $\Delta_b{G}$ represents the plant uncertainty caused by
+the rounding off effect.  We encompass all the uncertainty as
+$\Delta{\vec{G}}=\Delta_p{\vec{G}}+\Delta_b{\vec{G}}$. 
+
+As the cost of SAT solving increases with in the size of the problem
+instance, our algorithm tries to solve the problem first for small $I_p$,
+$F_p$, iteratively increasing the precision if it is insufficient.
 
 %------------------------------------
 \subsection{Stability under FWL Representation, Quantisation Noise and Parametric Uncertainties}
@@ -1000,64 +857,6 @@ half of quantization step~\cite{astrom1997computer}, i.e., $\vert \nu_{1}
 where $q_{1}$ and $q_{2}$ are the quantization steps of ADC and DAC, respectively.
 % 
 \end{myassumption}
-
-%\begin{mylemma}
-%\label{lemma:variance}
-%%
-%In particular, Widrow \cite{widrow1956} models the quantization noise as a
-%Gaussian model in which the second moment (variance) of the probability
-%density function (PDF) of the quantization noise is given by
-%%
-%\begin{equation}
-%\label{eq:variancelemma}
-%\sigma_{Q}^{2}=\frac{q^{2}}{12},
-%\end{equation}
-%where $q$ is the step size of quantiser. (Proof is on \cite{widrow1956})
-%\end{mylemma}
-%
-%\begin{mylemma}
-%\label{lemma:boundednoise}
-%%
-%The power spectral density of the quantization noise (supposed white)
-%$S_{\nu}(z)$ is bounded and may be computed through the z-transform of
-%autocorrelation function of $\nu(k)$, thus:
-%%
-%\begin{equation}
-%S_{\nu}(z)= \sigma_{Q}^{2}=\frac{q^{2}}{12}.
-%\end{equation}
-%\end{mylemma}
-%
-%\begin{proof}
-%%
-%Considering $\nu(k)$ a random process, where $\nu(k)$ is independent from
-%$\nu(k+i)$ for every integer $k\neq 0$.  The autocorrelation function of
-%$\nu(k)$, {\it i.e.} $R_{\nu\nu}(\tau)$ may be computed as follows:
-%%
-%\begin{equation}
-%R_{\nu\nu}(\tau)=E[\nu(t+\tau)\nu(t)]=\sigma_{Q}^{2}\cdot \delta(\tau),
-%\end{equation}
-%%
-%where $\delta(\tau)$ is the Dirac delta function at delay time $\tau$.
-%
-%By definition~\cite{poularikas2000transforms}, the power spectral density of
-%$\nu(k)$ is the z-transform of $R_{\nu\nu}(\tau)$, thus
-%%
-%\begin{equation}
-%S_{\nu}(z)=  \sum\limits_{k=-\infty}^{\infty}{R_{\nu\nu}(k)z^{-k}} = \sigma_{Q}^{2},
-%\end{equation}
-%considering the Lemma~\ref{lemma:variance}:
-%\begin{equation}
-%S_{\nu}(z)=  \frac{q^{2}}{12}.
-%\end{equation}
-%\end{proof}
-%
-%Finally, the quantization noise spectrum may be considered a energy-bounded
-%(Lemma~\ref{lemma:boundednoise}), and consequently the Parseval's theorem
-%ensures that the quantization noise is also energy-bounded in time-domain. 
-%Thus $\hat{Y}(z)$ will be bounded and the closed-loop system stable if the
-%conditions in Lemma~\ref{lemma:eq_int_stab} are followed.
-
-%\red{[Add remark on bound (q/2) for signal. We need a bounded signal to be able to leverage BIBO stability results. ]}
 
 A discrete-time dynamical system is said to be Bounded-Input and Bounded-Output
 (BIBO) stable if bounded inputs necessarily result in bounded outputs. 
@@ -1896,83 +1695,6 @@ $
 
 % \red{[clear elucidation of the mapping between this and the domains used 
 % in the general description of the synthesiser]}
-
-\paragraph{Fixed-point computation in program synthesis}
-
-The program synthesis engine uses fixed-point arithmetic.  Specifically, we
-use the domain $\mathbb{R}\param{I}{F}$ for the controller's coefficients
-and the domain $\mathbb{R}\param{I_p}{F_p}$ for the plant's coefficients,
-where $I$ and $F$, as well as $I_p$ and $F_p$, denote the number of bits for
-the integer and fractional parts, respectively, and $\mathbb{R}\langle
-I_p,F_p \rangle \supseteq \mathbb{R}\langle I,F \rangle$.
-%
-%the coefficients for $C(z)$ 
-%$N_c$ and $D_c$ 
-%in the domain $\mathbb{R}\param{I}{F}$, 
-%and $\mathbb{R}^{m_C}\param{I}{F}$, respectively, 
-%where $n_C$ and $m_C$ denote the order of the corresponding polynomials
-%where $I$ and $F$ denote the integer and fractional size, respectively.
-%Regarding the plant, its coefficients are this is synthesised over the 
-%domain $\mathbb{R}^{n_G+m_G}\param{I_p}{F_p}$, where $n_G$ and $m_G$ 
-%denote the order of the polynomials representing the 
-%numerator and denominator of the plant's transfer function, respectively. 
-%Again, $I_p$ and $F_p$ denote the integer and fractional size, respectively, with
-%$\mathbb{R}\langle I_p,F_p \rangle \supseteq \mathbb{R}\langle I,F \rangle$.
-%
-Given the use of fixed-point arithmetic, we examine the discretization effect 
-during these operations. Let $\tilde C(z)$ and $\tilde G(z)$ be 
-transfer functions represented using fixed-point bit-vectors.
-%  with integer size $I_p$ and fractional
-% size $F_p$, whose domain is $\mathbb{R}\langle I_p,F_p \rangle \supseteq \mathbb{R}\langle I,F \rangle$.
-%
-\begin{align}
-\small
-\label{digital_controller_plant_tf}
-\tilde C(z)&=\frac{\tilde \beta_{0}+\tilde \beta_{1}z^{-1}+...+\tilde \beta_{M_C}z^{-M_C}}{\tilde \alpha_{0}+\tilde \alpha_{1}z^{-1}+...+\tilde \alpha_{N_C}z^{-N_C}}, \\
-%\label{plant_tf}
-\tilde G(z)&=\frac{\tilde b_{0}+\tilde b_{1}z^{-1}+...+\tilde b_{M_G}z^{-M_G}}{\tilde a_{0}+\tilde a_{1}z^{-1}+...+\tilde a_{N_G}z^{-N_G}}.
-\end{align}
- 
-Since the controller is synthesized in the $\mathbb{R}\langle I,F \rangle$
-domain, 
-%
-$$
-\forall i \leq N_C, j \leq M_C\ \  \tilde \beta_{i} \equiv \beta_{i} \wedge \tilde \alpha_{j} \equiv \alpha_{j}, \text{ that is } \tilde C(z) \equiv C(z). 
-$$
-%
-However, given a real plant $\hat{G}(z)$, and a discretizing function 
-\red{[the function has been defined over a space of polynomials, but it is now applied to a real number x? ]}
-%
-\begin{align}
-\small
-%\label{FWL_tf}
-\mathcal{F}&\langle I_p,F_p \rangle : \mathbb{R} \rightarrow  \mathbb{R}\langle I_p,F_p \rangle\\
-&\triangleq \tilde x = \mathcal{F}\langle I_p,F_p \rangle(x) : \tilde x=x-(x\bmod\tilde x)\nonumber\\ 
-\red{\text{above: circular definition?}}\\
-\mathcal{F}_n&\langle I_p,F_p \rangle(P \in \mathcal{P}) \\
-&=\tilde P \in \mathcal{P}^{n}\langle I_p,F_p \rangle : c_i \in \vec{P} \wedge \tilde c_i \in \vec{\tilde{P}}=\mathcal{F}\langle I_p,F_p \rangle(c_i)  \nonumber
-\end{align}
-%
-we calculate $\tilde G(z)=\mathcal{F}_{M_G,N_G}\langle I_p,F_p \rangle(\hat{G}(z))$, where 
-%
-\begin{align}
-% \label{digital_controller_tf}
-% \tilde C(z)&=\frac{(\hat{\beta}_{0}+\Delta_q \hat{\beta}_{0}) +...+(\hat{\beta}_{M_C}+\Delta_b \hat{\beta}_{M_C})z^{-M_C}}{(\hat{\alpha}_{0}+\Delta_q \hat{\alpha}_{0})+...+(\hat{\alpha}_{N_C}+\Delta_q \hat{\alpha}_{N_C})z^{-N_G}} \nonumber \\
-% &= C(z) =\hat{C}(z) + \Delta{C}_b(z)\\
-%
-\label{digital_plant_tf}
-\tilde G(z)&=\frac{(\hat{b}_{0}+\Delta_b \hat{b}_{0}) +...+(\hat{b}_{M_G}+\Delta_b \hat{b}_{M_G})z^{-M_G}}{(\hat{a}_{0}+\Delta_b \hat{a}_{0})+...+(\hat{a}_{N_G}+\Delta_b \hat{a}_{N_G})z^{-N_G}} \nonumber \\
-\vec{\tilde G} &=\vec{\hat{G}}+\Delta_b{\vec{G}}=\vec{G}+\Delta_p{\vec{G}}+\Delta_b{\vec{G}}, 
-\end{align}
-%
-where $\Delta_b\hat{c}_i=\hat{c}_i\bmod \tilde{c}_i$, 
-and $\Delta_b{G}$ represents the plant uncertainty caused by
-the rounding off effect.  We encompass all the uncertainty as
-$\Delta{\vec{G}}=\Delta_p{\vec{G}}+\Delta_b{\vec{G}}$. 
-%
-As the cost of SAT solving increases with in the size of the problem
-instance, our algorithm tries to solve the problem first for small $I_p$,
-$F_p$, iteratively increasing the precision if it is insufficient.
 
 \paragraph{The synthesis problem}
 The synthesis problem we are trying to solve is the following:
