@@ -39,6 +39,7 @@
 %\usetikzlibrary{decorations}
 %\usetikzlibrary{decorations.pathmorphing}
 
+\newcommand{\aabatecmt}[1]{}%{{\color{blue}#1}}
 \newcommand{\blue}[1]{{\color{blue}#1}}
 \newcommand{\red}[1]{{\color{red}#1}}
 \newcommand{\green}[1]{{\color{green}#1}}
@@ -232,7 +233,7 @@ discretization.
 We further account for uncertainties on the plant models. 
 The resulting closed-loop system is a program loop that operates on bit-vectors encoded using
 fixed-point arithmetic with finite word length (FWL). 
-\blue{[match list ordering with later one.]}
+\aabatecmt{[match list ordering with later one.]}
 The three effects of 1. uncertaities, 2. FWL representation, and 3. quantization errors are incorporated into the model, 
 %as an additive uncertainty, 
 and are taken into account during the CEGIS-based synthesis of the control software for the plant.
@@ -465,8 +466,11 @@ and we require in particular that $N_G \geq M_G$.
 
 Uncertainties in $G(z)$ may appear due to: 
 1. uncertainties in $G(s)$ (we denote them $\Delta_p{G}_n(s),\Delta_p{G}_d(s)$) arising from tolerances/imprecision in the original model; 
-2. errors in the numerical calculations (which we model later as as external noises $\nu_1$ and $\nu_2$ \red{[no, these are the quantisation ones!]}); 
-and 3. roundoffs in the quantization (denoted $\Delta_b{G}_n(s),\Delta_b{G}_d(s)$ \red{[these are related to FWL - we introduce them as such, but then use other operators in equation 10 - very confusing]}).  
+2. errors in the numerical calculations including FWL effects (denoted $\Delta_b{G}_n(s),\Delta_b{G}_d(s)$)
+\aabatecmt{[these are related to FWL - we introduce them as such, but then use other operators in equation 10 - very confusing]}.  
+and 
+3. errors caused by quantization (which we model later as as external noises $\nu_1$ and $\nu_2$);
+\aabatecmt{[no, these are the quantisation ones!]}
 These uncertainties are parametrically expressed by additive terms, eventually resulting in an uncertain model $\hat{G}(z)$, such that:
 %
 \begin{equation}
@@ -564,7 +568,7 @@ or work over their respective coefficients $\vec{G}$, $\vec{C}$ in vector form.
 	minimum height=1cm,
         label=\textbf{Plant}] (gs) {{\sc $\hat{G}(s)$}};
    \node[draw=none] (ud) at ([xshift=-2cm,yshift=.15cm]gs)  {$U(s)$};
-   \node[draw=none] (y) at ([xshift=2cm,yshift=.15cm]gs)  {$Y(s)$};
+   \node[draw=none] (y) at ([xshift=2cm,yshift=.15cm]gs)  {$\hat{Y}(s)$};
    \& complexnode/.pic={ 
      \node[rectangle,draw,
 	minimum width=4cm,
@@ -604,7 +608,7 @@ or work over their respective coefficients $\vec{G}$, $\vec{C}$ in vector form.
   \path[->]  (aux3.north) edge (circle.south);
  \end{tikzpicture}
 }
- \caption{Closed-loop digital control system \red{[has this hatted notation for the continuous-frequency plant ever been introduced?]} \label{fig:sampledsystem}}
+ \caption{Closed-loop digital control system \aabatecmt{[has this hatted notation for the continuous-frequency plant ever been introduced?]} \label{fig:sampledsystem}}
 \end{figure*}
 
 %\begin{equation}
@@ -763,11 +767,11 @@ In Figure~\ref{fig:digsystem1}, two sources of uncertainty are illustrated:
 parametric uncertainties related to modeling errors  
 (which are represented by~$\Delta_p \vec{G}$),  
 and uncertainties introduced by quantizations in the ADC and
-DAC conversions ($\nu_1$ and $\nu_2$).  
-These sources are assumed to be non-deterministic \blue{[here you mean specifically the quantization effects?]}:  
+DAC conversions ($\nu_1$ and $\nu_2$) which are assumed to be non-deterministic.
+% \blue{[here you mean specifically the quantization effects?]}:  
 %which poses no further restriction to our model, 
-thus, 
-the uncertain model may be rewritten as a vector of coefficients in the z-domain using equation \eqref{eq:hatgvector} as  
+Thus, the uncertain model may be rewritten as a vector of coefficients in the 
+z-domain using equation \eqref{eq:hatgvector} as  
 %
 %\begin{equation}
 %\label{eq:complete_unc_model}
@@ -941,10 +945,10 @@ original model $C(z)=\frac{C_{n}(z)}{C_{d}(z)}$ as follows:
 \hat{C}(z)=\mathcal{F}_{M_C,N_C}\langle I,F \rangle(C(z))=\frac{\mathcal{F}_{M_C}\langle I,F \rangle(C_n(z))}{\mathcal{F}_{N_C}\langle I,F \rangle(C_d(z))}.
 \end{equation}
 %
-\blue{[ next statement is potentially quite confusing, especially since you used the hatted variables next. ]}
+\aabatecmt{[ next statement is potentially quite confusing, especially since you used the hatted variables next. ]}
 In the case of a synthesized controller, because the synthesis is performed
-using FWL, $\hat{C}(z) \equiv C(z)$.
-\red{[discuss relationship with introduced terms $\Delta_b{G}_n(s),\Delta_b{G}_d(s)$?]}
+using FWL, $\hat{C}(z) \equiv C(z)$ (\emph{ie} we synthesise a controller that is already in the domain $\mathbb{R} \langle I,F \rangle$ and has therefore no uncertanties. $\Delta_pC_n(z)=\Delta_pC_d(z)=\Delta_bC_n(z)=\Delta_bC_d(z)=0$).
+\aabatecmt{[discuss relationship with introduced terms $\Delta_b{G}_n(s),\Delta_b{G}_d(s)$?]}
 
 %\textcolor{blue}{[IB: And I propose to exchange the remaining paragraphs by the previous blue]}
 %
@@ -2013,7 +2017,8 @@ to represent the coefficients
 $[{c}_i-\Delta_p{c}_i-\Delta_b{c}_i,\,\allowbreak
 {c}_i+\Delta_p{c}_i-\Delta_b{c}_i+(2^{-F_p})]$ 
 and rounds operations outwards during calculations.  This effectively allows
-us to simultaneously evaluate \blue{[unclear:] the whole collection of plants $\hat{G}(s)$}
+us to simultaneously evaluate the whole collection of plants $\hat{G}(s)$ (\emph{ie} all concrete plants $G(s)$ in the range $G(s) \pm \Delta_pG(s)$)
+\aabatecmt{[unclear:] }
 plus the effects of numeric calculations in the engine.  Synthesized
 controllers using this verifier will always be stable for all plants in the
 family.
@@ -2196,15 +2201,17 @@ closed-loop system for the discrete plant model $G(z)$ in~\ref{Eq:running-exampl
 However, if the effects of finite-precision arithmetic are considered (e.g., fixed-point arithmetic and
 word-length), then this closed-loop system becomes unstable.
 %
-For instance, an implementation of $C(z)$ using \blue{[align with notation introduced earlier]} \param{4}{16} fixed-point
+For instance, an implementation of $C(z)$ using
+\aabatecmt{[align with notation introduced earlier]} 
+\param{4}{16} fixed-point
 numbers (i.e., $4$ bits for the integer part and $16$ bits for the
 fractional part) can be modeled as:
 %
-\red{[new notation for controller with FWL?]}
+\aabatecmt{[new notation for controller with FWL?]}
 \begin{equation}
 \label{Eq:running-example-controller-quantized}
 \resizebox{.47\textwidth}{!}{
-$C_{q}(z) {:=} \frac{2.7199859619140625z^2{-}4.1529998779296875z
+$\hat{C}(z) {:=} \frac{2.7199859619140625z^2{-}4.1529998779296875z
 {+}1.89599609375}{z^2{-}1.843994140625z+0.8495941162109375}$. 
 }
 \end{equation} 
@@ -2219,11 +2226,11 @@ the controller is unstable when considering the above FWL effects.
 \subsection{Program Synthesis for the Example}
 %
 We now demonstrate how our approach solves the synthesis problem for the
-example given in the previous section.  We start with the candidate solution
+example given in the previous section.  We start with an a priori candidate solution
 with all coefficients zero, as given below, and a precision of $I_p=16$,
 $F_p=24$.  The digital controller is designed with standard techniques for
 control systems~\cite{Kuo:2002:ACS:579453, Ogata:1987:DCS:26170}. 
-\red{[Add comment on the next candidate solution - generated automatically, or selected manually?]}
+\aabatecmt{[Add comment on the next candidate solution - generated automatically, or selected manually?]}
 %
 %\red{[Be more explicit, write out spurious candidate solution with zero coefficients. KISS - you don't want to lose the control audience here.]}.
 %
