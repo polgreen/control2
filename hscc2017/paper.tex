@@ -232,7 +232,8 @@ discretization.
 We further account for uncertainties on the plant models. 
 The resulting closed-loop system is a program loop that operates on bit-vectors encoded using
 fixed-point arithmetic with finite word length (FWL). 
-The effects of the both the FWL and quantization errors are incorporated into the model, 
+\blue{[match list ordering with later one.]}
+The three effects of 1. uncertaities, 2. FWL representation, and 3. quantization errors are incorporated into the model, 
 %as an additive uncertainty, 
 and are taken into account during the CEGIS-based synthesis of the control software for the plant.
 
@@ -2088,7 +2089,7 @@ interval arithmetic on the synthesized controller.
 
  \end{tikzpicture}
 }
-\caption{Counterexample-Guided Inductive Synthesis of Closed-loop Systems (Step~D)
+\caption{Counterexample-Guided Inductive Synthesis of Closed-loop Systems (Step~D) in Figure~\ref{DSSynth_process}
 \label{fig:CEGIS}}
 \end{figure*}
 %
@@ -2133,10 +2134,10 @@ for the {\sc verify} phase as one-stage and two-stage, respectively.
 \subsection{Soundness}
 %-----------------------------
 
-While the {\sc synthesise} phase searches for potentially unsound 
+Within the scheme in Figure \ref{fig:CEGIS}, 
+while the {\sc synthesise} phase searches for potentially unsound 
 candidate solutions, the soundness of the model is ensured by the {\sc verify} phase.  
-If a candidate solution is validated by the verifier, it is necessarily
-sound. 
+If a candidate solution is successfully verified, it is necessarily sound. 
 
 Through its two stages, the {\sc verify} phase looks at two separate elements for
 soundness.
@@ -2154,15 +2155,16 @@ type used by the verifier. Since the actual
 plant works in the reals, whereas we use fixed/floating point
 arithmetic to evaluate it, we need to ensure that the rounding errors
 in the caculations do not cause the solution to be unsound.
-
+% 
 For this reason the second verification stage uses interval arithmetic with
 outward rounding to ensure that these errors do not exceed critical
-bounds that could make some (or all) plant(s) unstable. This means
-that whilst the solution may not be complete, it is sound for
-evaluating any collection of real plants with a defined FWL controller
-for all of them. We require two verification stages because,
-while the second phase can ensure the stability of all plants in
-the collection, it is unable to provide a counterexample.
+bounds that could make some (or all) plant(s) unstable. 
+
+This means that whilst the solution may not be complete, it is sound for
+evaluating any collection of real plants with a defined FWL controller. 
+We require two verification stages because,
+while the second phase can ensure the stability of all plants in the collection, 
+it is unable to provide a counterexample.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Illustrative Example} \label{sec:running-ex}
