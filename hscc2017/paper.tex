@@ -1935,7 +1935,6 @@ transfer functions represented using fixed-point bit-vectors.
  
 Since the controller is synthesized in the $\mathbb{R}\langle I,F \rangle$
 domain, 
-\red{[confusing? (related to observation above.)]}
 %
 $$
 \forall i \leq N_C, j \leq M_C\ \  \tilde \beta_{i} \equiv \beta_{i} \wedge \tilde \alpha_{j} \equiv \alpha_{j}, \text{ that is } \tilde C(z) \equiv C(z). 
@@ -2195,13 +2194,12 @@ C(z) = \frac{2.72z^2 - 4.153z + 1.896}{z^2 - 1.844z + 0.8496}.
 %
 The authors of~\cite{DBLP:conf/hybrid/WangGRJF16} claim that the controller
 $C(z)$ in~\eqref{Eq:running-example-controller} stabilizes the
-closed-loop system for the discrete plant model $G(z)$ in~\ref{Eq:running-example-plant}.  
+closed-loop system for the discrete plant model $G(z)$ in~\eqref{Eq:running-example-plant}.  
 However, if the effects of finite-precision arithmetic are considered (e.g., fixed-point arithmetic and
 word-length), then this closed-loop system becomes unstable.
 %
-For instance, an implementation of $C(z)$ using
-\aabatecmt{[align with notation introduced earlier]} 
-\param{4}{16} fixed-point
+For instance, an implementation of $C(z)$ using 
+$\mathbb R \langle 4, 16 \rangle$ fixed-point
 numbers (i.e., $4$ bits for the integer part and $16$ bits for the
 fractional part) can be modeled as:
 %
