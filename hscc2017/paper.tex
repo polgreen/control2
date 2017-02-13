@@ -39,7 +39,7 @@
 %\usetikzlibrary{decorations}
 %\usetikzlibrary{decorations.pathmorphing}
 
-\newcommand{\aabatecmt}[1]{}%{{\color{blue}#1}}
+\newcommand{\aabatecmt}[1]{{\color{blue}#1}}
 \newcommand{\blue}[1]{{\color{blue}#1}}
 \newcommand{\red}[1]{{\color{red}#1}}
 \newcommand{\green}[1]{{\color{green}#1}}
@@ -428,7 +428,7 @@ This is sufficient for stability studies over $G(s)$~\cite{fadali}, {\it i.e.}, 
 the pulse transfer function in~\eqref{eq:pulsetf} will also present the same number of unstable poles ($|z| > 1$)~\cite{Franklin15}.
 
 %------------------------------------
-\subsection{Verifying Closed-loop Control Systems \\ \blue{Model Imprecision, Quantization Effects, and Finite Word Length Representation}}
+\subsection{Model Imprecision, Finite Word Length Representation, and Quantization Effects}
 \label{verifying-closed-loop-control-systems}
 %------------------------------------
 
@@ -466,11 +466,9 @@ and we require in particular that $N_G \geq M_G$.
 
 Uncertainties in $G(z)$ may appear due to: 
 1. uncertainties in $G(s)$ (we denote them $\Delta_p{G}_n(s),\Delta_p{G}_d(s)$) arising from tolerances/imprecision in the original model; 
-2. errors in the numerical calculations including FWL effects (denoted $\Delta_b{G}_n(s),\Delta_b{G}_d(s)$)
-\aabatecmt{[these are related to FWL - we introduce them as such, but then use other operators in equation 10 - very confusing]}.  
+2. errors in the numerical calculations due to FWL effects (e.g., coefficient truncation and round-off, which will be denoted as $\Delta_b{G}_n(s),\Delta_b{G}_d(s)$);    
 and 
-3. errors caused by quantization (which we model later as as external noises $\nu_1$ and $\nu_2$);
-\aabatecmt{[no, these are the quantisation ones!]}
+3. errors caused by quantization (which we model later as as external noises $\nu_1$ and $\nu_2$). 
 These uncertainties are parametrically expressed by additive terms, eventually resulting in an uncertain model $\hat{G}(z)$, such that:
 %
 \begin{equation}
@@ -487,8 +485,8 @@ which will be represented by the following transfer function:
 %\red{[why is this condition on the order of the polynomials raised only now? how is it used later?]}
 Notice that, due to the nature of the methods we use for the stability check, we require
 that the parametric errors in the plant have the same polynomial order as
-the plant itself (\blue{indeed, all other errors described in this paper are ensured to
-fulfil this property in our implementation}). 
+the plant itself (indeed, all other errors described in this paper are ensured to
+fulfil this property in our implementation). 
 %\red{[have we later argued that this is indeed the case?]}) 
 %\blue{and that enter the plant linearly}.
 
