@@ -2242,14 +2242,12 @@ check finds the following counterexample:
 $$ 
 \tilde G(z) = \frac{0.026506}{1.000610z+1.002838}. 
 $$
-
 %$$
 %\begin{array}{ll}
 %\Delta N_G(z) = 0.026506\\
 %\Delta D_G(z) = 1.000610z+1.002838
 %\end{array}
-%$$
-
+%$$ 
 We add this counterexample to {\sc inputs} and initiate the {\sc synthesize}
 phase, where we obtain the following candidate solution:
 %
@@ -2280,12 +2278,15 @@ the first counterexample at higher precision:
 %\Delta D_G(z) {=} 0.999024z{-}1.004785
 %\end{array}
 %$$
-$$ \tilde G(z) = \frac{0.026314}{0.999024z{-}1.004785} $$
-
+$$ 
+\tilde G(z) = \frac{0.026314}{0.999024z{-}1.004785}. 
+$$
 In the {\sc synthesize} phase, we get a new candidate solution that
 eliminates the new, higher precision counterexample:
 %
-$$ C(z)=\frac{11.035202z^2{+}5.846100z{+}4.901855}{1.097901z^2{+}0.063110z{+}0.128357} $$
+$$ 
+C(z)=\frac{11.035202z^2{+}5.846100z{+}4.901855}{1.097901z^2{+}0.063110z{+}0.128357}. 
+$$
 %
 %$$
 %\begin{array}{ll}
@@ -2353,13 +2354,14 @@ system with the original controller represented by
 Eq.~\eqref{Eq:running-example-controller} (Figure~\ref{fig:step0}), the
 first (Figure~\ref{fig:step1}) and final (Figure~\ref{fig:step2}) candidate
 solutions provided by \tool.  The step response in Figure~\ref{fig:step0}
-confirms the stability loss if we consider FWL effects.  However,
+confirms the stability loss if we consider FWL effects.  
 Figure~\ref{fig:step1} shows that the first candidate controller is able to
 stabilize the closed-loop system without uncertainties, but it is rejected
 during the {\sc precision} phase by \tool since this solution is not
 considered to be sound.  Finally, Figure~\ref{fig:step2} shows a stable
 behavior for the final (sound) solution, which presents a lower settling
-time.
+time. 
+\blue{[explain why 6b is continuous, but not 6c.]}
 
 \begin{figure*}
     \centering
@@ -2420,8 +2422,8 @@ of a simple spring-mass damper plant~\cite{DBLP:conf/hybrid/WangGRJF16}.
 %\end{equation} 
 %
 A third set of benchmarks uses the discrete model $G_{3}(z)$ for satellite attitude 
-dynamics~\cite{Franklin15}, which require attitude (pose) control
-for orientation of antennas and sensors w.r.t.~earth.
+dynamics~\cite{Franklin15}, which require attitude control
+for orientation of antennas and sensors w.r.t.~Earth.
 The fourth set of benchmarks presents an alternative discrete model $G_4(z)$ 
 of a cruise control system~\cite{DBLP:conf/hybrid/WangGRJF16}. 
 %The satellite
@@ -2482,10 +2484,10 @@ of a cruise control system~\cite{DBLP:conf/hybrid/WangGRJF16}.
 %
 The fifth and sixth set of benchmarks describe the discrete model 
 of a DC servo motor velocity dynamics~\cite{exampleCAD,Tan01}. 
-
-The seventh set of benchmarks contains the discrete well-studied 
-non-minimal phase model $G_{7}(z)$. Non-minimal phase model offers 
-additional difficulties for the controller design~\cite{Doyle:1991:FCT:574259}.
+%
+The seventh set of benchmarks contains a well-studied discrete  
+non-minimal phase model $G_{7}(z)$. As known, non-minimal phase model offers 
+additional difficulties for the design of stable controllers~\cite{Doyle:1991:FCT:574259}. 
 %
 %The fifth set of benchmarks contains the \textit{DC Motor Rate} discrete model $G_{5}(z)$, which 
 %describes the angular velocity of a DC Motor plant~\cite{Franklin15}. 
@@ -2495,7 +2497,7 @@ additional difficulties for the controller design~\cite{Doyle:1991:FCT:574259}.
 %G_{5}(z)=\frac{ 0.1898z + 1.8027\times{10^{-4}}}{1.0z^{2} -0.9012z -1.0006\times{10^{-16}}}. \nonumber
 %\end{equation}
 %
-The eighth set of benchmarks contains the \textit{Helicopter Longitudinal Motion} discrete model $G_{8}(z)$,
+The eighth set of benchmarks describes the discrete model $G_{8}(z)$ for the \textit{Helicopter Longitudinal Motion},
 which provides the longitudinal motion dynamics of a helicopter~\cite{Franklin15}. 
 %
 %\begin{equation}
@@ -2503,7 +2505,7 @@ which provides the longitudinal motion dynamics of a helicopter~\cite{Franklin15
 %G_{6}(z)=\frac{15.1315z^{2} + 17.8600z + 17.4549}{z^{3} -2.6207z^{2} + 2.3586z -0.6570}. \nonumber
 %\end{equation}
 %
-The ninth  set of benchmarks contains the \textit{Inverted Pendulum} discrete model $G_{9}(z)$, which 
+The ninth  set of benchmarks contains the discrete model $G_{9}(z)$ for the known \textit{Inverted Pendulum}, which 
 describes a pendulum dynamics with its center of mass above its pivot point~\cite{Franklin15}. 
 %
 %\begin{equation}
@@ -2517,7 +2519,6 @@ The tenth set of benchmarks contains the \textit{Magnetic Suspension} discrete m
 %\label{Magnetic-Suspension}
 %G_{8}(z)=\frac{6.769\times{10^{13}}z + 6.784\times{10^{13}}}{z^{2} -5.415\times{10^{13}}z + 4.23\times{10^{11}}}. \nonumber
 %\end{equation}
-
 %The ninth set of benchmarks contains the \textit{1/4 Car Suspension} discrete model $G_{9}(z)$,
 %which represents the dynamics of a single wheel suspension plant, {\it i.e.}, a system that connects a car to a wheel and allows relative motion between both %parts~\cite{Franklin15}.
 %
@@ -2534,15 +2535,15 @@ describes a system to read and write data on a storage device~\cite{Franklin15}.
 %G_{10}(z)=\frac{0.0200z -3.8303\times{10^{-176}}}{1.0z -4.6764\times{10^{-166}}}. \nonumber
 %\end{equation}
 %
-The last set of benchmarks considers the discrete model $G_{12}(z)$
+The last set of benchmarks considers a discrete model $G_{12}(z)$ 
 that is typically used for evaluating stability
 margins and controller fragility~\cite{bhattacharyya97, keel_Bhattacharyya_examples}.
 
-All experiments were conducted on a 12-core 2.40\,GHz Intel Xeon E5-2440
-with 96\,GB of RAM and Linux OS.  All times given are wall clock time in
-seconds as measured by the UNIX date command.  For the two-stage verification 
-engine we apply a timeout of $8$ hours per benchmark, and $24$ hours for the approach 
-using a one-stage engine.
+All experiments have been conducted on a 12-core 2.40\,GHz Intel Xeon E5-2440
+with 96\,GB of RAM and Linux OS.  All times given are wall clock times in
+seconds, as measured by the UNIX date command.  For the two-stage verification 
+engine in Figure~\ref{fig:CEGIS} we have applied a timeout of $8$ hours per benchmark, 
+whereas $24$ hours have been set for the approach using a one-stage engine. 
 
 %---------------------------------
 \subsection{Objectives}
@@ -2572,23 +2573,23 @@ We give the run-times required to synthesize a stable controller for each
 benchmark in Table~\ref{tab:results}.  Here, \textit{Plant} is the discrete
 or continuous plant model, \textit{Benchmark} is the name of the employed
 benchmark, \textit{I} and \textit{F} represent the number of integer and
-fractional bits of the stable controller, respectively, while \textit{Time}
-is the total time (in seconds) required to synthesize a stable controller
-for the given plant.
+fractional bits of the stable controller, respectively, 
+while the two right columns display the total time (in seconds) required to synthesize a stable controller
+for the given plant. 
 
-For the majority of our benchmarks, the conjecture explained in
+For the majority of the benchmarks, the conjecture explained in
 Section~\ref{synthesis-elements} holds and the two-stage verification 
 engine is able to find a stable solution in less than one minute for half
 of the benchmarks. This is possible if the inductive solutions need to be 
-refined with few counterexamples and increases of the fixed-point precision.  
-However, the benchmark \emph{SatelliteB2} with uncertainty ($G_{3b}$)
+refined with few counterexamples and increments of the fixed-point precision.  
+However, the benchmark \emph{SatelliteB2} with uncertainty ($G_{3b}$) has 
 required too many counterexamples to refine its solution.  
 For this particular case, the one-stage engine is able to complement the
 two-stage approach and synthesize a solution instead.  It is important to
 reiterate that the one-stage verification engine does not take advantage of
 the inductive conjecture inherent to CEGIS, but instead fully explores the
-counterexample space in one SAT instance.  As expected, this approach is
-significantly slower on average and is only useful for benchmarks where
+counterexample space in one SAT instance.  As expected, this approach is 
+significantly slower on average and is only useful for benchmarks where 
 the CEGIS approach requires too many counterexample refinement iterations
 such that exploring all counterexamples in a single SAT instance performs better.
 Our results suggest an average performance difference of at least two orders
@@ -2658,6 +2659,8 @@ uncertainty)
 \end{table}
 %---------------------------------
 
+\blue{[The presence of uncertainty is not explained in this description and should be clearly elaborated and commented over the results in the Table.]}
+
 Considering the faster engine for each benchmark (marked as bold in Table~\ref{tab:results}), 
 the median run-time amounts to $48$\,s, implying that \tool can synthesize half of the controllers 
 in less than one minute. Overall, the average fastest synthesis time considering
@@ -2672,11 +2675,11 @@ synthesis for $20$ out of $23$ benchmarks.  For the remaining benchmarks
 our approach failed to synthesize a stable controller within the time
 limits.  This can be addressed by either increasing either the time limit
 or the fixed-point word widths considered, or by using floating-point
-arithmetic instead.  The synthesized controllers were confirmed to be stable
-outside of our model representation using MATLAB, positively answering RQ2.
+arithmetic instead.  The synthesized controllers have been confirmed to be stable
+outside of our model representation using MATLAB, positively answering RQ2. 
 A~link to the full experimental environment, including scripts to reproduce
 the results, all benchmarks and the \tool tool, is provided in the
-footnote.\footnote{\url{http://www.cprover.org/DSSynth/experiment.tar.gz}}\footnote{CBMC version: 7a6cec1dd0eb8843559591105235f1f2c4678801}
+footnote.\footnote{\url{http://www.cprover.org/DSSynth/experiment.tar.gz}\\ \red{[what does this alpha-numerical code mean?]}CBMC version: 7a6cec1dd0eb8843559591105235f1f2c4678801}
 
 %--------------------------------------
 \subsection{Threats to Validity}
