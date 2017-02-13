@@ -2603,7 +2603,7 @@ Our results suggest an average performance difference of at least two orders
 of magnitude between the two engines, leading to the one-stage engine timing
 out on the majority of our benchmarks.  Table~\ref{tab:results}
 lists the results for both engines, where in $16$ out of $23$
-benchmarks the two-stage engine is faster.
+benchmarks, the two-stage engine is faster.
 
 \begin{table}
 \centering
@@ -2666,12 +2666,13 @@ uncertainty)
 \end{table}
 %---------------------------------
 
-\blue{[The presence of uncertainty is not explained in this description and should be clearly elaborated and commented over the results in the Table.]}
-
-Considering the faster engine for each benchmark (marked as bold in Table~\ref{tab:results}), 
-the median run-time amounts to $48$\,s, implying that \tool can synthesize half of the controllers 
-in less than one minute. Overall, the average fastest synthesis time considering
-both engines is approximately $42$ minutes.  We
+The presence of uncertainty in some particular benchmarks ($2$, $4$, $6$, and $8$) 
+leads to harder verification conditions to be checked 
+by the {\sc verify} phase, which thus influences the overall synthesis time. 
+However, considering the faster engine for each benchmark (marked as bold in Table~\ref{tab:results}), 
+the median run-time amounts to $48$\,s, implying that \tool can synthesize 
+half of the controllers in less than one minute. Overall, the average fastest synthesis 
+time considering both engines is approximately $42$ minutes.  We
 consider these times short enough to be of practical use to control
 engineers, and thus affirm RQ1.  We further observe that the approach using
 the two-stage verification engine is able to synthesize stable controllers
