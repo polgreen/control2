@@ -154,7 +154,6 @@ CEGIS-based synthesis of the control software for the plant.
 
 \begin{figure*}[h!tb]
 \centering
-
 \tikzset{add/.style n args={4}{
     minimum width=6mm,
     path picture={
@@ -169,7 +168,7 @@ CEGIS-based synthesis of the control software for the plant.
     }
  }
 
-\resizebox{1.0\textwidth}{!}{
+\resizebox{0.62\textwidth}{!}{
  \begin{tikzpicture}[scale=0.6,-,>=stealth',shorten >=.2pt,auto,
      semithick, initial text=, ampersand replacement=\&,]
 
@@ -244,7 +243,7 @@ CEGIS-based synthesis of the control software for the plant.
 %
 \begin{figure*}[h!tb]
 \centering
-%\resizebox{1\textwidth}{!}
+\resizebox{0.55\textwidth}{!}
 {
  \begin{tikzpicture}[scale=0.3,->,>=stealth',shorten >=.2pt,auto, semithick, initial text=, ampersand replacement=\&,]
   \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center
@@ -314,34 +313,116 @@ techniques in order to synthesise a candidate solution. This solution is neither
 The candidate is then fed to a formal verifier, which will prove its universality for the collection of plant models (considering the tolerances). If the verifier finds a counterexample, it will be fed back to the synthesiser, which will use it as a guideline for future synthesis, thus slicing away candidate solutions that are not likely to be universal. If no counter-example is found by the verifier, it enters a second phase in which it restores soundness by evaluating the result using interval arithmetic. If this check fails, the loop returns to the synthesis phase, requiring higher precision in order to minimise rounding errors. If the check passes, we have found a sound stabilizing controller.
 %
 
-\paragraph{Architecture of the Program Synthesizer}
-\label{synthesizer-general}
+%\paragraph{Architecture of the Program Synthesizer}
+%\label{synthesizer-general}
+%%
+%The input specification provided to the program synthesizer is of the form
+%$\exists \vec{P} .  \forall \vec{x}.  \sigma(\vec{x}, \vec{P})$ where
+%$\vec{P}$ ranges over functions, $\vec{x}$ ranges over ground terms and
+%$\sigma$ is a quantifier-free formula.  We interpret the ground terms over
+%some finite domain $\mathcal{D}$.
 %
-The input specification provided to the program synthesizer is of the form
-$\exists \vec{P} .  \forall \vec{x}.  \sigma(\vec{x}, \vec{P})$ where
-$\vec{P}$ ranges over functions, $\vec{x}$ ranges over ground terms and
-$\sigma$ is a quantifier-free formula.  We interpret the ground terms over
-some finite domain $\mathcal{D}$.
+%The design of our synthesizer is given in Figure~\ref{fig:CEGIS} and consists
+%of two phases, {\sc Synthesize} and {\sc Verify}, which interact via a
+%finite set of test vectors {\sc inputs} that is updated incrementally. 
+%Given the aforementioned specification $\sigma$, the {\sc synth} procedure
+%tries to find an existential witness $\vec{P}$ satisfying the specification
+%$\sigma(\vec{x}, \vec{P})$ for all $\vec{x}$ in {\sc inputs} (as opposed to
+%all $\vec{x} \in \mathcal{D}$).
+%%
+%If {\sc synthesize} succeeds in finding a witness~$\vec{P}$, this witness
+%is a candidate solution to the full synthesis formula.  We pass this
+%candidate solution to {\sc verify}, which checks whether it is a full
+%solution (i.e., $\vec{P}$ satisfies the specification $\sigma(\vec{x},
+%\vec{P})$ for all $\vec{x}\in\mathcal{D}$).
+%%
+%If this is the case, then the algorithm terminates.  Otherwise, additional
+%information is provided to the {\sc synthesize} phase in the form of a new
+%counterexample that is added to the {\sc inputs} set and the loop iterates
+%again.
 
-The design of our synthesizer is given in Figure~\ref{fig:CEGIS} and consists
-of two phases, {\sc Synthesize} and {\sc Verify}, which interact via a
-finite set of test vectors {\sc inputs} that is updated incrementally. 
-Given the aforementioned specification $\sigma$, the {\sc synth} procedure
-tries to find an existential witness $\vec{P}$ satisfying the specification
-$\sigma(\vec{x}, \vec{P})$ for all $\vec{x}$ in {\sc inputs} (as opposed to
-all $\vec{x} \in \mathcal{D}$).
-%
-If {\sc synthesize} succeeds in finding a witness~$\vec{P}$, this witness
-is a candidate solution to the full synthesis formula.  We pass this
-candidate solution to {\sc verify}, which checks whether it is a full
-solution (i.e., $\vec{P}$ satisfies the specification $\sigma(\vec{x},
-\vec{P})$ for all $\vec{x}\in\mathcal{D}$).
-%
-If this is the case, then the algorithm terminates.  Otherwise, additional
-information is provided to the {\sc synthesize} phase in the form of a new
-counterexample that is added to the {\sc inputs} set and the loop iterates
-again.
+\paragraph{Case Study} \label{sec:running-ex}
 
+We illustrate our approach with a classical cruise control example,
+extracted from the literature~\cite{Astrom08}.  The example highlights the
+challenges that arise when using finite-precision arithmetic in digital
+control.  Given a discrete plant model:
+%
+\begin{equation}
+\label{Eq:running-example-plant}
+\resizebox{.15\textwidth}{!}{
+$G(z) = \frac{0.0264}{z-0.9998}$.
+}
+\end{equation}
+
+classic techniques produce a stabilizing controller:
+%
+\begin{equation}
+\label{Eq:running-example-controller}
+\resizebox{.25\textwidth}{!}{
+$C(z) = \frac{2.72z^2 - 4.153z + 1.896}{z^2 - 1.844z + 0.8496}$.
+}
+\end{equation}
+%
+However, given an implementation of this controller using 20bit fixed-point arithmetic 
+($I=4$,$F=16$) the coefficients change, giving us:
+%
+\begin{equation}
+\label{Eq:running-example-controller-quantized}
+\resizebox{.47\textwidth}{!}{
+$\tilde{C}(z) {:=} \frac{2.7199859619140625z^2{-}4.1529998779296875z
+{+}1.89599609375}{z^2{-}1.843994140625z+0.8495941162109375}$. 
+}
+\end{equation} 
+%
+The resulting system using the typical series loop configuration, where
+$\tilde{C}(z)$ and $G(z)$ are in the forward path, is unstable. 
+
+We now demonstrate how our approach solves the synthesis problem for this
+example.  We start with an a priori candidate solution
+with all coefficients zero, and a precision for the verifier of 40bits ($I_p=16$,$F_p=24$).
+In the first {\sc verify} stage, the {\sc uncertainty} 
+check finds the following counterexample:
+%
+$$ 
+\resizebox{.2\textwidth}{!}{
+$\tilde G(z) = \frac{0.026506}{1.000610z+1.002838}$. 
+}
+$$
+We add this counterexample to {\sc inputs} and initiate the {\sc synthesize}
+phase, where we obtain the following candidate solution:
+%
+$$
+\resizebox{.3\textwidth}{!}{
+$\tilde{C}(z)=\frac{12.402664z^2{-}11.439667z{+}0.596756}{4.003906z^2{-}0.287949z{+}0.015625}.$
+}
+$$ 
+This time, the {\sc uncertainty} check does not find any
+counterexample and we pass the current candidate solution to the {\sc
+precision} verification stage.
+
+We obtain the result $\mathit{false}$, meaning that the current precision is
+insufficient.  Consequently, we increase our precision to 48bits ($I_p=20$,$F_p=28$).
+%
+Since the previous counterexamples were obtained at lower precision, we
+remove them from the set of counterexamples.  Back in the {\sc synthesize}
+phase, we re-start the process with a candidate solution with all
+coefficients $0$, as above.  Next, the {\sc uncertainty} verification stage provides
+the first counterexample at higher precision:
+$$ 
+\resizebox{.2\textwidth}{!}{
+$\tilde G(z) = \frac{0.026314}{0.999024z{-}1.004785}$. 
+}$$
+In the {\sc synthesize} phase, we get a new candidate solution that
+eliminates the new, higher precision counterexample:
+%
+$$ 
+\resizebox{.3\textwidth}{!}{
+$\tilde{C}(z)=\frac{11.035202z^2{+}5.846100z{+}4.901855}{1.097901z^2{+}0.063110z{+}0.128357}$. 
+}$$
+
+This candidate solution is validated  as the final solution by both stages
+{\sc uncertainty} and {\sc precision} in the {\sc verify} phase. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{Experimental Evaluation}\label{sec:experiments}
@@ -349,11 +430,7 @@ again.
 The median run-time amounts to $48$\,s, implying that \tool can synthesize half of the controllers 
 in less than one minute. We consider these times short enough to be of practical use to control
 engineers.  We further observe that the approach is able to synthesize stable controllers
-in $20$ out of the $23$ benchmarks.  For the remaining benchmarks
-our approach failed to synthesize a stable controller within the time
-limits.  This can be addressed by either increasing either the time limit
-or the fixed-point word widths considered, or by using floating-point
-arithmetic instead.  The synthesized controllers were confirmed to be stable
+in $20$ out of the $23$ benchmarks.  The synthesized controllers were confirmed to be stable
 outside of our model representation using MATLAB.
 
 \bibliographystyle{abbrv}

@@ -39,6 +39,9 @@
 %\usetikzlibrary{decorations}
 %\usetikzlibrary{decorations.pathmorphing}
 
+\newcommand{\aabatecmt}[1]{}%{{\color{red}#1}}
+\newcommand{\dariocmt}[1]{}%{{\color{blue}#1}}
+
 \newcommand{\blue}[1]{{\color{blue}#1}}
 \newcommand{\red}[1]{{\color{red}#1}}
 \newcommand{\green}[1]{{\color{green}#1}}
@@ -741,7 +744,7 @@ $\Delta{\vec{G}}=\Delta_p{\vec{G}}+\Delta_b{\vec{G}}$.
 \label{sec:stability}
 %------------------------------------
 
-\red{[Dario: please go through this section again, and clarify what sources of imprecision we consider where, distinguishing between plant and controller. also comment on why we operate on hat G rather than on tilde G - as we discussed yesterday. ]}
+\aabatecmt{[Dario: please go through this section again, and clarify what sources of imprecision we consider where, distinguishing between plant and controller. also comment on why we operate on hat G rather than on tilde G - as we discussed yesterday. ]}
 
 Sound synthesis of the digital controller requires the consideration of the effect of FWL on the controller, 
 and of quantization disturbances in the closed-loop system.  
@@ -749,10 +752,10 @@ Let the quantizer $Q1$ (ADC) be the source of a white noise $\nu_{1}$,
 and $Q2$ (DAC) be the source of a white noise $\nu_{2}$.  The following equation
 models the system in Figure~\ref{fig:sampledsystem}, encompassing the
 parametric uncertainties $\Delta \vec{G}$ and the FWL effects on
-the controller $\hat{C}(z)$:
+the controller $\tilde{C}(z)$:
 %
 \begin{equation}
-\hat{Y}(z)=\nu_{1}(z)+\hat{G}(z)C(z)R(z)+\hat{G}(z)\nu_{2}(z)-\hat{G}(z)\hat{C}(z)\hat{Y}(z). 
+\hat{Y}(z)=\nu_{1}(z)+\hat{G}(z)\tilde{C}(z)R(z)+\hat{G}(z)\nu_{2}(z)-\hat{G}(z)\tilde{C}(z)\hat{Y}(z). 
 \end{equation}
 %
 The above can be rewritten as follows:
@@ -765,15 +768,15 @@ The above can be rewritten as follows:
 where
 %
 \begin{equation*}
-H_{1}(z)=\frac{1}{1+\hat{G}(z) \hat{C}(z)}, 
+H_{1}(z)=\frac{1}{1+\hat{G}(z) \tilde{C}(z)}, 
 \end{equation*}
 %
 \begin{equation*}
-H_{2}(z)=\frac{\hat{G}(z)}{1+\hat{G}(z) \hat{C}(z)}, 
+H_{2}(z)=\frac{\hat{G}(z)}{1+\hat{G}(z) \tilde{C}(z)}, 
 \end{equation*}
 %
 \begin{equation*}
-H_{3}(z)=\frac{\hat{G}(z) \hat{C}(z)}{1+\hat{G}(z) \hat{C}(z)}. 
+H_{3}(z)=\frac{\hat{G}(z) \tilde{C}(z)}{1+\hat{G}(z) \tilde{C}(z)}. 
 \end{equation*}
 
 \begin{myassumption}
@@ -826,10 +829,13 @@ parametric uncertainties (i.e., $\Delta_p \vec{G}$), quantization noises
 ($\nu_{1}$ and $\nu_{2}$) and FWL effects in the control software.  
 In particular, 
 note that the model for quantization noise enters as a signal to be stabilized: 
-in practice, 
-if the quantization noise is bounded, 
+in practice, if the quantization noise is bounded, 
 the noise may be disregarded if the conditions on
 Proposition~\ref{prop:eq_int_stab} are satisfied.  
+
+If the verification is performed using FWL arithmetic, 
+we note that the above equations must use $\tilde{G}(z)$ instead of $\hat{G}(z)$. 
+The former will provide sufficient conditions for the latter to be stabilized.
 
 %\red{[first: lemmae precede theorems. ]}
 
@@ -1861,7 +1867,7 @@ For instance, an implementation of $C(z)$ using
 $\mathbb R \param {4}{16}$ fixed-point
 numbers (i.e., $4$ bits for the integer part and $16$ bits for the
 fractional part) can be modeled as: 
-\red{[wait I'm confused: to be precise, the next should be a tilde in view of the preceding comments on FWL!!] notice we are indeed approximating a C, so the equality comments from above do not apply! correct?}
+\aabatecmt{[wait I'm confused: to be precise, the next should be a tilde in view of the preceding comments on FWL!!] notice we are indeed approximating a C, so the equality comments from above do not apply! correct?}
 %
 \begin{equation}
 \label{Eq:running-example-controller-quantized}
@@ -1873,7 +1879,8 @@ $\tilde{C}(z) {:=} \frac{2.7199859619140625z^2{-}4.1529998779296875z
 %
 The resulting system using the typical series loop configuration, where
 $\tilde{C}(z)$ and $G(z)$ are in the forward path, is unstable. 
-\red{[hang in there - did we not consider FWL on $G(z)$? why not?]}
+\aabatecmt{[hang in there - did we not consider FWL on $G(z)$? why not?]}
+\dariocmt{we are explaining the case where a real plant (no FWL) is not correctly stabilized by $\tilde{C}$, so although our analysis might evaluate $\tilde{G}(z)$, the problem statement is over $G(z)$}
 Figure~\ref{fig:original} gives the Bode diagram for the digital controller
 represented in~\eqref{Eq:running-example-controller}: 
 as the phase margin is negative, 
@@ -1889,14 +1896,6 @@ control systems~\cite{Kuo:2002:ACS:579453, Ogata:1987:DCS:26170}.
 }
 We start with an a-priori candidate solution with all coefficients zero: 
 %
-%\red{[Be more explicit, write out spurious candidate solution with zero coefficients. KISS - you don't want to lose the control audience here.]}.
-%
-%$$
-%\begin{array}{ll}
-%N_C(z) {=} 0z^2{+}0z{+}0\\
-%D_C(z) {=} 0z^2{+}0z{+}0\\
-%\end{array}
-%$$
 $$ 
 \tilde{C}(z)=\frac{0z^2{+}0z{+}0}{0z^2{+}0z{+}0}. 
 $$
