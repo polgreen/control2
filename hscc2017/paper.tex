@@ -2209,6 +2209,10 @@ The last set of benchmarks considers a discrete model $G_{12}(z)$
 that is typically used for evaluating stability
 margins and controller fragility~\cite{bhattacharyya97, keel_Bhattacharyya_examples}.
 
+\textcolor{green}{
+Additional benchmarks were created for the \textit{Cruise Control System}, \textit{Springer-mass damper}, and \textit{Satellite} considering parametric additive in the nominal plant model (represented by $\Delta_{p}\vec{G}$ in Eq.~\eqref{digital_plant_tf}). These uncertain models are respectively represented by $G_{1b}(z)$, $G_{2b}(z)$, $G_{3b}(z)$, and $G_{3d}(z)$.
+}
+
 All experiments have been conducted on a 12-core 2.40\,GHz Intel Xeon E5-2440
 with 96\,GB of RAM and Linux OS.  All times given are wall clock times in
 seconds, as measured by the UNIX date command.  For the two-stage verification 
@@ -2329,10 +2333,10 @@ uncertainty)
 \end{table}
 %---------------------------------
 
-The presence of uncertainty in some particular benchmarks ($2$, $4$, $6$, and $8$) 
+The presence of uncertainty in some particular benchmarks ($2$, $4$, $6$, and $8$)  
 leads to harder verification conditions to be checked 
 by the {\sc verify} phase, which thus influences the overall synthesis time.  
-\blue{[great, all good: how much uncertainty have you introduced? where precisely? in the coefficients or as an exogenous disturbance? ]}
+\blue{[great, all good: how much uncertainty have you introduced? where precisely? in the coefficients or as an exogenous disturbance? \textcolor{green}{It is addressed in Sec \ref{experimental-setup}}]}
 However, considering the faster engine for each benchmark (marked as bold in Table~\ref{tab:results}), 
 the median run-time amounts to $48$\,s, implying that \tool can synthesize 
 half of the controllers in less than one minute. Overall, the average fastest synthesis 
