@@ -752,28 +752,28 @@ parametric uncertainties $\Delta \vec{G}$ and the FWL effects on
 the controller $\hat{C}(z)$:
 %
 \begin{equation}
-\hat{Y}(z)=\nu_{1}(z)+\hat{G}(z)\cdot C(z)\cdot R(z)+\hat{G}(z)\cdot\nu_{2}(z)-\hat{G}(z)\cdot \hat{C}(z)\cdot \hat{Y}(z). 
+\hat{Y}(z)=\nu_{1}(z)+\hat{G}(z)C(z)R(z)+\hat{G}(z)\nu_{2}(z)-\hat{G}(z)\hat{C}(z)\hat{Y}(z). 
 \end{equation}
 %
 The above can be rewritten as follows:
 %
 \begin{equation}
 \label{eq:outputfunctions}
-\hat{Y}(z)=H_{1}(z)\cdot\nu_{1}(z)+H_{2}(z)\cdot\nu_{2}(z)+H_{3}(z)\cdot R(z),
+\hat{Y}(z)=H_{1}(z)\nu_{1}(z)+H_{2}(z)\nu_{2}(z)+H_{3}(z) R(z),
 \end{equation}
 %
 where
 %
 \begin{equation*}
-H_{1}(z)=\frac{1}{1+\hat{G}(z)\cdot \hat{C}(z)}, 
+H_{1}(z)=\frac{1}{1+\hat{G}(z) \hat{C}(z)}, 
 \end{equation*}
 %
 \begin{equation*}
-H_{2}(z)=\frac{\hat{G}(z)}{1+\hat{G}(z)\cdot \hat{C}(z)}, 
+H_{2}(z)=\frac{\hat{G}(z)}{1+\hat{G}(z) \hat{C}(z)}, 
 \end{equation*}
 %
 \begin{equation*}
-H_{3}(z)=\frac{\hat{G}(z)\cdot \hat{C}(z)}{1+\hat{G}(z)\cdot \hat{C}(z)}. 
+H_{3}(z)=\frac{\hat{G}(z) \hat{C}(z)}{1+\hat{G}(z) \hat{C}(z)}. 
 \end{equation*}
 
 \begin{myassumption}
@@ -801,7 +801,7 @@ Assumption~\ref{whitenoise}).
 %
 Consider a feedback closed-loop control system as given in
 Figure~\ref{fig:sampledsystem} with a FWL implementation of the digital
-controller $\hat{C}(z) =\mathcal{F}_{M_C,N_C}\langle I,F \rangle(C(z))$ and uncertain discrete
+controller $\tilde{C}(z) =\mathcal{F}_{M_C,N_C}\param {I}{F}(C(z))$ and uncertain discrete
 model of the plant from~\eqref{eq:coefficients},\eqref{eq:delta_coefficients} 
 %
 $$
@@ -814,9 +814,9 @@ Then $\hat{G}(z)$ is BIBO-stable if and only if:
 \item  the roots of characteristic polynomial $S(z)$ are inside the open unit circle, where $S(z)$ is:
 \begin{equation}
 \label{eq:internal_stab_lemma}
-\hspace{-3ex} S(z)=\mathcal{F}_{M_C}\langle I,F \rangle(C_n(z))\hat{G}_n(z)+\mathcal{F}_{N_C}\langle I,F \rangle(C_d(z))\hat{G}_d(z);
+\hspace{-3ex} S(z)=\tilde{C}_n(z)\hat{G}_n(z)+\tilde{C}_d(z)\hat{G}_d(z);
 \end{equation}
-\item the direct loop product $\mathcal{F}_{M_C,N_C}\langle I,F \rangle(C(z))\cdot \hat{G}(z)$ has no pole-zero cancellation on or outside the unit circle.
+\item the direct loop product $\tilde{C}(z) \hat{G}(z)$ has no pole-zero cancellation on or outside the unit circle.
 \end{itemize}
 \end{myprop}
 
@@ -1866,13 +1866,13 @@ fractional part) can be modeled as:
 \begin{equation}
 \label{Eq:running-example-controller-quantized}
 \resizebox{.47\textwidth}{!}{
-$\hat{C}(z) {:=} \frac{2.7199859619140625z^2{-}4.1529998779296875z
+$\tilde{C}(z) {:=} \frac{2.7199859619140625z^2{-}4.1529998779296875z
 {+}1.89599609375}{z^2{-}1.843994140625z+0.8495941162109375}$. 
 }
 \end{equation} 
 %
 The resulting system using the typical series loop configuration, where
-$\hat{C}(z)$ and $G(z)$ are in the forward path, is unstable. 
+$\tilde{C}(z)$ and $G(z)$ are in the forward path, is unstable. 
 \red{[hang in there - did we not consider FWL on $G(z)$? why not?]}
 Figure~\ref{fig:original} gives the Bode diagram for the digital controller
 represented in~\eqref{Eq:running-example-controller}: 
@@ -1898,7 +1898,7 @@ We start with an a-priori candidate solution with all coefficients zero:
 %\end{array}
 %$$
 $$ 
-C(z)=\frac{0z^2{+}0z{+}0}{0z^2{+}0z{+}0}. 
+\tilde{C}(z)=\frac{0z^2{+}0z{+}0}{0z^2{+}0z{+}0}. 
 $$
 \blue{[here recall that indeed this C equates to the tilde version, because \ldots ]}
 In the first {\sc verify} stage, the {\sc uncertainty} 
@@ -1918,7 +1918,7 @@ phase, where we obtain the following candidate solution:
 %
 %\red{[ How is the order of the candidate solution chosen here?]}
 $$
-C(z)=\frac{12.402664z^2{-}11.439667z{+}0.596756}{4.003906z^2{-}0.287949z{+}0.015625}. 
+\tilde{C}(z)=\frac{12.402664z^2{-}11.439667z{+}0.596756}{4.003906z^2{-}0.287949z{+}0.015625}. 
 $$ 
 This time, the {\sc uncertainty} check does not find any
 counterexample and we pass the current candidate solution to the {\sc
@@ -1950,7 +1950,7 @@ In the {\sc synthesize} phase, we get a new candidate solution that
 eliminates the new, higher precision counterexample:
 %
 $$ 
-C(z)=\frac{11.035202z^2{+}5.846100z{+}4.901855}{1.097901z^2{+}0.063110z{+}0.128357}. 
+\tilde{C}(z)=\frac{11.035202z^2{+}5.846100z{+}4.901855}{1.097901z^2{+}0.063110z{+}0.128357}. 
 $$
 %
 %$$
@@ -2025,8 +2025,7 @@ stabilize the closed-loop system without uncertainties, but it is rejected
 during the {\sc precision} phase by \tool since this solution is not
 considered to be sound.  Finally, Figure~\ref{fig:step2} shows a stable
 behavior for the final (sound) solution, which presents a lower settling
-time. 
-\blue{[explain why 6b is continuous, but not 6c.]}
+time (hence the noticeable digitazion effect).
 
 \begin{figure*}
     \centering
