@@ -232,8 +232,7 @@ discretization.
 % elements with quantization noise.  
 We further account for uncertainties on the plant models. 
 The resulting closed-loop system is a program loop that operates on bit-vectors encoded using
-fixed-point arithmetic with finite word length (FWL). 
-\aabatecmt{[match list ordering with later one.]}
+fixed-point arithmetic with finite word length (FWL).  
 The three effects of 1. uncertaities, 2. FWL representation, and 3. quantization errors are incorporated into the model, 
 %as an additive uncertainty, 
 and are taken into account during the CEGIS-based synthesis of the control software for the plant.
@@ -379,12 +378,14 @@ the pulse transfer function in~\eqref{eq:pulsetf} will also present the same num
 \label{verifying-closed-loop-control-systems}
 %------------------------------------
 
+\red{[This part should be removed, or moved to a later place - it does not have anything to do with the material discussed in this section.]
 CEGIS-based control synthesis requires a formal verifier to check whether a
 candidate controller meets the requirements when combined with the plant. 
 We use the Digital-System Verifier (DSVerifier)~\cite{IsmailBCFF15} in the
 verification module for \tool.  It checks the stability of closed-loop control systems and
 considers finite-word length (FWL) effects in the digital controller, and
-uncertainty parameters in the plant model (plant intervals)~\cite{Bessa16}.  
+uncertainty parameters in the plant model (plant intervals)~\cite{Bessa16}.   
+}
 
 Let $C(z)$ be a digital controller and $G(z)$ be a discrete-time representation of the plant, 
 given as
@@ -404,7 +405,7 @@ and finally $N_{(\cdot)}$ and $M_{(\cdot)}$ indicate the order of the polynomial
 and we require in particular that $N_G \geq M_G$. 
 
 Uncertainties in $G(z)$ may appear due to: 
-1. uncertainties in $G(s)$ (we denote $\hat{G}(s)=\frac{G_n(s)+\Delta_p{G}_n(s)}{G_d(s)+\Delta_p{G}_d(s)}$) arising from tolerances/imprecision in the original model; 
+1. uncertainties in $G(s)$ (we denote the uncertain continuous plant by $\hat{G}(s)=\frac{G_n(s)+\Delta_p{G}_n(s)}{G_d(s)+\Delta_p{G}_d(s)}$) arising from tolerances/imprecision in the original model; 
 2. errors in the numerical calculations due to FWL effects (e.g., coefficient truncation and round-off, which will be denoted as $\Delta_b{G}_n(s),\Delta_b{G}_d(s)$);    
 and 
 3. errors caused by quantization (which we model later as as external noises $\nu_1$ and $\nu_2$). 
@@ -544,7 +545,7 @@ or work over their respective coefficients $\vec{G}$, $\vec{C}$ in vector form.
   \path[->]  (aux3.north) edge (circle.south);
  \end{tikzpicture}
 }
- \caption{Closed-loop digital control system \aabatecmt{[has this hatted notation for the continuous-frequency plant ever been introduced?]} \label{fig:sampledsystem}}
+ \caption{Closed-loop digital control system \label{fig:sampledsystem}}
 \end{figure*}
 
 A typical digital control system with a continuous plant and a discrete
@@ -664,7 +665,7 @@ architecture of the plant.
 
 \smallskip
 
-\paragraph{Using a Fixed-point Controller}
+\paragraph{Use of a fixed-point controller}
 
 Since the controller is implemented using finite representation, $C(z)$ also suffers
 disturbances from the FWL effects, with roundoffs in coefficients that may
@@ -742,12 +743,14 @@ and $\Delta_b{G}$ represents the plant uncertainty caused by
 the rounding off effect.  We encompass all the uncertainty as
 $\Delta{\vec{G}}=\Delta_p{\vec{G}}+\Delta_b{\vec{G}}$. 
 
+\red{[This part should be removed, or moved to a later place - it does not have anything to do with the material discussed in this section.]
 As the cost of SAT solving increases with in the size of the problem
 instance, our algorithm tries to solve the problem first for small $I_p$,
 $F_p$, iteratively increasing the precision if it is insufficient.
+}
 
 %------------------------------------
-\subsection{Stability under FWL Representation, Quantisation Noise and Parametric Uncertainties}
+\subsection{Closed-Loop Stability Verification under Parametric Uncertainties FWL Representation, and Quantisation Noise}
 \label{sec:stability}
 %------------------------------------
 
@@ -1542,7 +1545,7 @@ finite number of times.
 \subsection{Synthesis for Control}
 \label{synthesis-elements}
 
-\paragraph{Specification of the stability property}
+\paragraph{Formal specification of the stability property}
 
 Next, we describe the specific property that we pass to the program
 synthesizer as the specification $\sigma$.  There are a number of 
