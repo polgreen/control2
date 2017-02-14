@@ -1870,8 +1870,6 @@ For instance, an implementation of $C(z)$ using
 $\mathbb R \param {4}{16}$ fixed-point
 numbers (i.e., $4$ bits for the integer part and $16$ bits for the
 fractional part) can be modeled as: 
-\aabatecmt{[wait I'm confused: to be precise, the next should be a tilde in view of the preceding comments on FWL!!] notice we are indeed approximating a C, so the equality comments from above do not apply! correct?}
-\dariocmt{yes, I changed all C(z) below for tildes}
 %
 \begin{equation}
 \label{Eq:running-example-controller-quantized}
@@ -1895,18 +1893,11 @@ the controller is unstable when considering the above FWL effects.
 We now demonstrate how our approach solves the synthesis problem for the
 example given in the previous section.  
 Assuming a precision of $I_p=16$, $F_p=24$,  
-\aabatecmt{[so you mean we're not using Jury's criterion? pllease clarify.] 
-%the digital controller is designed with standard techniques for 
-%control systems~\cite{Kuo:2002:ACS:579453, Ogata:1987:DCS:26170}. 
-}
-\dariocmt{I'm just removing this. Not even sure what it means}
 we start with an a-priori candidate solution with all coefficients zero (note that the controller is in the FWL domain, hence we use $\tilde{C}(z)$): 
 %
 $$ 
 \tilde{C}(z)=\frac{0z^2{+}0z{+}0}{0z^2{+}0z{+}0}. 
 $$
-\aabatecmt{[here recall that indeed this C equates to the tilde version, because \ldots ]}
-\dariocmt{addressed above}
 In the first {\sc verify} stage, the {\sc uncertainty} 
 check finds the following counterexample:
 %
@@ -2031,7 +2022,7 @@ stabilize the closed-loop system without uncertainties, but it is rejected
 during the {\sc precision} phase by \tool since this solution is not
 considered to be sound.  Finally, Figure~\ref{fig:step2} shows a stable
 behavior for the final (sound) solution, which presents a lower settling
-time (hence the noticeable digitazion effect).
+time (hence the noticeable digitazion effects).
 
 \begin{figure*}
     \centering
@@ -2209,9 +2200,7 @@ The last set of benchmarks considers a discrete model $G_{12}(z)$
 that is typically used for evaluating stability
 margins and controller fragility~\cite{bhattacharyya97, keel_Bhattacharyya_examples}.
 
-\textcolor{green}{
-Additional benchmarks were created for the \textit{Cruise Control System}, \textit{Springer-mass damper}, and \textit{Satellite} considering parametric additive in the nominal plant model  (represented by $\Delta_{p}\vec{G}$ in Eq.~\eqref{digital_plant_tf}). The uncertainties are deviations bounded to a maximum magnitude of $0.5$ in each coefficient. These uncertain models are respectively represented by $G_{1b}(z)$, $G_{2b}(z)$, $G_{3b}(z)$, and $G_{3d}(z)$.
-}
+Additional benchmarks were created for the \textit{Cruise Control System}, \textit{Springer-mass damper}, and \textit{Satellite} considering parametric additive in the nominal plant model  (represented by $\Delta_{p}\vec{G}$ in Eq.~\eqref{digital_plant_tf}). The uncertainties are deviations bounded to a maximum magnitude of $0.5$ in each coefficient. These uncertain models are respectively represented by $G_{1b}(z)$, $G_{2b}(z)$, $G_{3b}(z)$, and $G_{3d}(z)$. 
 
 All experiments have been conducted on a 12-core 2.40\,GHz Intel Xeon E5-2440
 with 96\,GB of RAM and Linux OS.  All times given are wall clock times in
@@ -2335,8 +2324,7 @@ uncertainty)
 
 The presence of uncertainty in some particular benchmarks ($2$, $4$, $6$, and $8$)  
 leads to harder verification conditions to be checked 
-by the {\sc verify} phase, which thus influences the overall synthesis time.  
-\blue{[great, all good: how much uncertainty have you introduced? where precisely? in the coefficients or as an exogenous disturbance? \textcolor{green}{It is addressed in Sec \ref{experimental-setup}}]}
+by the {\sc verify} phase, which thus influences the overall synthesis time.   
 However, considering the faster engine for each benchmark (marked as bold in Table~\ref{tab:results}), 
 the median run-time amounts to $48$\,s, implying that \tool can synthesize 
 half of the controllers in less than one minute. Overall, the average fastest synthesis 
@@ -2418,8 +2406,8 @@ robustly stable in a continuous space.
 
 Researchers in formal verification of control systems have studied various
 effects of discretizing the dynamics, including delayed
-response~\cite{Duggirala2015}, and Finite Word Length (FWL) semantics with
-the goal to either verify~\cite{daes20161} or to optimize~\cite{oudjida2014design} 
+response~\cite{Duggirala2015}, and Finite Word Length (FWL) semantics \cite{Anta:2010:AVC:1879021.1879024} 
+with the goal to either verify~\cite{daes20161} or to optimize~\cite{oudjida2014design} 
 given implementations.
 
 There are two different problems that arise from FWL semantics.  The first
