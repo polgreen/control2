@@ -1549,7 +1549,7 @@ synthesizer as the specification $\sigma$.  There are a number of
 algorithms in our verification engine that can be used for stability analysis~\cite{daes20161, Bessa16}.  
 %one based on Schur's decomposition
 %and another one based on Jury's criterion~\cite{astrom1997computer}.  
-Here we choose Jury's criterion~\cite{astrom1997computer} in view of its efficiency: 
+Here we choose Jury's criterion~\cite{astrom1997computer} in view of its efficiency \blue{[check correctness] and ease of integration within \tool}: 
 we employ this method to check the stability in the $z$-domain for the
 characteristic polynomial $S(z)$ defined in~\eqref{eq:internal_stab_lemma}.
 %
@@ -1659,7 +1659,7 @@ $\mathbb{R}\langle I_p,F_p \rangle$.
 While the controller's precision $\param{I}{F}$ is given, 
 we can vary $\param{I_p}{F_p}$ such that 
 $\mathbb{R}\langle I_p,F_p \rangle \supseteq \mathbb{R}\langle I,F \rangle$.
-
+%
 As the cost of SAT solving increases with in the size of the problem
 instance, our algorithm tries to solve the problem first for small $I_p$,
 $F_p$, iteratively increasing the precision if it is insufficient.
@@ -1855,12 +1855,13 @@ The authors of~\cite{DBLP:conf/hybrid/WangGRJF16} claim that the controller
 $C(z)$ in~\eqref{Eq:running-example-controller} stabilizes the
 closed-loop system for the discrete plant model $G(z)$ in~\eqref{Eq:running-example-plant}.  
 However, if the effects of finite-precision arithmetic are considered (e.g., fixed-point arithmetic and
-word-length), then this closed-loop system becomes unstable.
+FWL), then this closed-loop system becomes unstable.
 %
 For instance, an implementation of $C(z)$ using 
 $\mathbb R \param {4}{16}$ fixed-point
 numbers (i.e., $4$ bits for the integer part and $16$ bits for the
-fractional part) can be modeled as:
+fractional part) can be modeled as: 
+\red{[wait I'm confused: the next should be a tilde!!]}
 %
 \begin{equation}
 \label{Eq:running-example-controller-quantized}
@@ -1872,6 +1873,7 @@ $\hat{C}(z) {:=} \frac{2.7199859619140625z^2{-}4.1529998779296875z
 %
 The resulting system using the typical series loop configuration, where
 $\hat{C}(z)$ and $G(z)$ are in the forward path, is unstable. 
+\red{[hang in there - did we not consider FWL on $G(z)$? why not?]}
 Figure~\ref{fig:original} gives the Bode diagram for the digital controller
 represented in~\eqref{Eq:running-example-controller}: 
 as the phase margin is negative, 
