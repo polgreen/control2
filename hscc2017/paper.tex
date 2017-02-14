@@ -398,7 +398,7 @@ Uncertainties in $G(z)$ may appear due to:
 1. uncertainties in $G(s)$ (we denote the uncertain continuous plant by $\hat{G}(s)=\frac{G_n(s)+\Delta_p{G}_n(s)}{G_d(s)+\Delta_p{G}_d(s)}$ to explicitly encompass the effects of the uncertainty terms $\Delta_p{G}_{(\cdot)}(s)$) arising from tolerances/imprecision in the original model; 
 2. errors in the numerical calculations due to FWL effects (e.g., coefficient truncation and round-off, which will be denoted as $\Delta_b{G}_n(s),\Delta_b{G}_d(s)$);    
 and 
-3. errors caused by quantization (which we model later as as external noises $\nu_1$ and $\nu_2$). 
+3. errors caused by quantization (which we model later as as external disturbances $\nu_1$ and $\nu_2$). 
 These uncertainties are parametrically expressed by additive terms, eventually resulting in an uncertain model $\hat{G}(z)$, such that:
 %
 \begin{equation}
@@ -544,13 +544,13 @@ A typical digital control system with a continuous plant and a discrete
 controller is illustrated in Figure~\ref{fig:sampledsystem}.  The DAC and
 ADC converters introduce quantization errors (notice that each of them
 may have a different FWL representation than the controller),
-which are modeled as noises
+which are modeled as disturbances 
 $\nu_{1}(z)$ and $\nu_{2}(z)$;  
 $G(s)$ is the continuous-time plant model
 with parametric additive uncertainty $\Delta_p{G}_n(s)$ and $\Delta_p{G}_d(s)$ (as mentioned above);  
 $R(z)$ is a given reference signal; 
 $U(z)$ is the control signal; 
-and $\hat{Y}(z)$ is the output signal affected by the noises and uncertainties in the closed-loop system 
+and $\hat{Y}(z)$ is the output signal affected by the disturbances and uncertainties in the closed-loop system 
 %
 %
 %
@@ -641,7 +641,7 @@ and uncertainties introduced by quantizations in the ADC and
 DAC conversions ($\nu_1$ and $\nu_2$) which are assumed to be non-deterministic. 
 Recall that we discussed how the quantization noise is encompassed as an additive term, 
 which means it does not enter parametrically in the transfer function. 
-Instead, we later show that the system is stable given these non-deterministic noise inputs. 
+Instead, we later show that the system is stable given these non-deterministic disturbance inputs. 
 
 The uncertain model may be rewritten as a vector of coefficients in the 
 z-domain using equation \eqref{eq:hatgvector} as  
@@ -744,7 +744,7 @@ $\Delta{\vec{G}}=\Delta_p{\vec{G}}+\Delta_b{\vec{G}}$.
 \red{[Dario: please go through this section again, and clarify what sources of imprecision we consider where, distinguishing between plant and controller. also comment on why we operate on hat G rather than on tilde G - as we discussed yesterday. ]}
 
 Sound synthesis of the digital controller requires the consideration of the effect of FWL on the controller, 
-and of quantization noises in the closed-loop system.  
+and of quantization disturbances in the closed-loop system.  
 Let the quantizer $Q1$ (ADC) be the source of a white noise $\nu_{1}$, 
 and $Q2$ (DAC) be the source of a white noise $\nu_{2}$.  The following equation
 models the system in Figure~\ref{fig:sampledsystem}, encompassing the
