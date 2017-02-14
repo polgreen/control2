@@ -405,7 +405,7 @@ and finally $N_{(\cdot)}$ and $M_{(\cdot)}$ indicate the order of the polynomial
 and we require in particular that $N_G \geq M_G$. 
 
 Uncertainties in $G(z)$ may appear due to: 
-1. uncertainties in $G(s)$ (we denote the uncertain continuous plant by $\hat{G}(s)=\frac{G_n(s)+\Delta_p{G}_n(s)}{G_d(s)+\Delta_p{G}_d(s)}$) arising from tolerances/imprecision in the original model; 
+1. uncertainties in $G(s)$ (we denote the uncertain continuous plant by $\hat{G}(s)=\frac{G_n(s)+\Delta_p{G}_n(s)}{G_d(s)+\Delta_p{G}_d(s)}$ to explicitly encompass the effects of the uncertainty terms $\Delta_p{G}_{(\cdot)}(s)$) arising from tolerances/imprecision in the original model; 
 2. errors in the numerical calculations due to FWL effects (e.g., coefficient truncation and round-off, which will be denoted as $\Delta_b{G}_n(s),\Delta_b{G}_d(s)$);    
 and 
 3. errors caused by quantization (which we model later as as external noises $\nu_1$ and $\nu_2$). 
@@ -427,7 +427,9 @@ Notice that, due to the nature of the methods we use for the stability check, we
 that the parametric errors in the plant have the same polynomial order as
 the plant itself (indeed, all other errors described in this paper are ensured to
 fulfil this property in our implementation). 
-We also note that due to the digital implementation, there are no parametric errors in the controller($\Delta_pC_n(z)=\Delta_pC_d(z)$). Thus $\hat{C}(z) \equiv C(z)$.
+We also remark that, due to its native digital implementation, 
+there are no parametric errors ($\Delta_pC_n(z), \Delta_pC_d(z)$) entering in the controller. 
+Thus $\hat{C}(z) \equiv C(z)$.
 
 We introduce next a notation based on the polynomials coefficients to simplify 
 the presentation.  Let $\mathcal{P}^{N}$ be the space of polynomials of order $N$. 
