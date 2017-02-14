@@ -74,7 +74,6 @@ $^{2}$\affaddr{Federal University of Amazonas, Manaus, Brazil}
 
 \maketitle
 
-\begin{abstract}
 %
 Modern control is implemented with digital microcontrollers, embedded within
 a dynamical plant that represents physical components. Correct control is
@@ -94,6 +93,8 @@ synthesize controllers for hybrid closed-loop systems, i.e., software-implemente
 embedded controllers along with a model of their physical environment (the plant),
 that are \emph{stable}, taking into consideration the effects of time-discretization
 (sampling), quantization (A/D and D/A converters), and the use of finite-precision arithmetic.
+
+This work has been accepted at HSCC 2017 \cite{DBLP:journals/corr/AbateBCCDKK16}.
 
 \paragraph{Problem Statement}
 We only consider linear transfer function models, and require a $z$-domain transfer
@@ -149,24 +150,9 @@ effects of the FWL and quantization errors are incorporated into the model
 as an additive uncertainty, which is taken into account during the
 CEGIS-based synthesis of the control software for the plant.
 
-\paragraph{Our Synthesis Approach}
-We have implemented our new algorithm in a tool called \tool, and are able
-to automatically generate stable controllers for a set of intricate plant
-models taken from the literature within minutes.
-The tool uses a two stage approach. 
-As the cost of SAT solving increases with in the size of the problem
-instance, our algorithm tries to solve the problem first for small word length,
-iteratively increasing the precision if it is insufficient.
-The initial phase uses SAT-solving
-techniques in order to synthesise a candidate solution. This solution is neither sound nor universal.
-The candidate is then fed to a formal verifier, which will prove its universality for the collection of plant models (considering the tolerances). If the verifier finds a counterexample, it will be fed back to the synthesiser, which will use it as a guideline for future synthesis, thus slicing away candidate solutions that are not likely to be universal. If no counter-example is found by the verifier, it enters a second phase in which it restores soundness by evaluating the result using interval arithmetic. If this check fails, the loop returns to the synthesis phase, requiring higher precision in order to minimise rounding errors. If the check passes, we have found a sound stabilizing controller.
-%
-\end{abstract}
-
-
 \printccsdesc
 
-\begin{figure*}[htb]
+\begin{figure*}[h!tb]
 \centering
 
 \tikzset{add/.style n args={4}{
@@ -255,36 +241,8 @@ The candidate is then fed to a formal verifier, which will prove its universalit
  \caption{Closed-loop digital control system\label{fig:sampledsystem}}
 \end{figure*}
 
-\paragraph{Architecture of the Program Synthesizer}
-\label{synthesizer-general}
 %
-The input specification provided to the program synthesizer is of the form
-$\exists \vec{P} .  \forall \vec{x}.  \sigma(\vec{x}, \vec{P})$ where
-$\vec{P}$ ranges over functions, $\vec{x}$ ranges over ground terms and
-$\sigma$ is a quantifier-free formula.  We interpret the ground terms over
-some finite domain $\mathcal{D}$.
-
-The design of our synthesizer is given in Figure~\ref{fig:CEGIS} and consists
-of two phases, {\sc Synthesize} and {\sc Verify}, which interact via a
-finite set of test vectors {\sc inputs} that is updated incrementally. 
-Given the aforementioned specification $\sigma$, the {\sc synth} procedure
-tries to find an existential witness $\vec{P}$ satisfying the specification
-$\sigma(\vec{x}, \vec{P})$ for all $\vec{x}$ in {\sc inputs} (as opposed to
-all $\vec{x} \in \mathcal{D}$).
-%
-If {\sc synthesize} succeeds in finding a witness~$\vec{P}$, this witness
-is a candidate solution to the full synthesis formula.  We pass this
-candidate solution to {\sc verify}, which checks whether it is a full
-solution (i.e., $\vec{P}$ satisfies the specification $\sigma(\vec{x},
-\vec{P})$ for all $\vec{x}\in\mathcal{D}$).
-%
-If this is the case, then the algorithm terminates.  Otherwise, additional
-information is provided to the {\sc synthesize} phase in the form of a new
-counterexample that is added to the {\sc inputs} set and the loop iterates
-again.
-
-%
-\begin{figure*}[htb]
+\begin{figure*}[h!tb]
 \centering
 %\resizebox{1\textwidth}{!}
 {
@@ -343,6 +301,48 @@ again.
 \end{figure*}
 %
 
+\paragraph{Our Synthesis Approach}
+We have implemented our new algorithm in a tool called \tool, and are able
+to automatically generate stable controllers for a set of intricate plant
+models taken from the literature within minutes.
+The tool uses a two stage approach. 
+As the cost of SAT solving increases with in the size of the problem
+instance, our algorithm tries to solve the problem first for small word length,
+iteratively increasing the precision if it is insufficient.
+The initial phase uses SAT-solving
+techniques in order to synthesise a candidate solution. This solution is neither sound nor universal.
+The candidate is then fed to a formal verifier, which will prove its universality for the collection of plant models (considering the tolerances). If the verifier finds a counterexample, it will be fed back to the synthesiser, which will use it as a guideline for future synthesis, thus slicing away candidate solutions that are not likely to be universal. If no counter-example is found by the verifier, it enters a second phase in which it restores soundness by evaluating the result using interval arithmetic. If this check fails, the loop returns to the synthesis phase, requiring higher precision in order to minimise rounding errors. If the check passes, we have found a sound stabilizing controller.
+%
+
+\paragraph{Architecture of the Program Synthesizer}
+\label{synthesizer-general}
+%
+The input specification provided to the program synthesizer is of the form
+$\exists \vec{P} .  \forall \vec{x}.  \sigma(\vec{x}, \vec{P})$ where
+$\vec{P}$ ranges over functions, $\vec{x}$ ranges over ground terms and
+$\sigma$ is a quantifier-free formula.  We interpret the ground terms over
+some finite domain $\mathcal{D}$.
+
+The design of our synthesizer is given in Figure~\ref{fig:CEGIS} and consists
+of two phases, {\sc Synthesize} and {\sc Verify}, which interact via a
+finite set of test vectors {\sc inputs} that is updated incrementally. 
+Given the aforementioned specification $\sigma$, the {\sc synth} procedure
+tries to find an existential witness $\vec{P}$ satisfying the specification
+$\sigma(\vec{x}, \vec{P})$ for all $\vec{x}$ in {\sc inputs} (as opposed to
+all $\vec{x} \in \mathcal{D}$).
+%
+If {\sc synthesize} succeeds in finding a witness~$\vec{P}$, this witness
+is a candidate solution to the full synthesis formula.  We pass this
+candidate solution to {\sc verify}, which checks whether it is a full
+solution (i.e., $\vec{P}$ satisfies the specification $\sigma(\vec{x},
+\vec{P})$ for all $\vec{x}\in\mathcal{D}$).
+%
+If this is the case, then the algorithm terminates.  Otherwise, additional
+information is provided to the {\sc synthesize} phase in the form of a new
+counterexample that is added to the {\sc inputs} set and the loop iterates
+again.
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \paragraph{Experimental Evaluation}\label{sec:experiments}
 
@@ -357,6 +357,6 @@ arithmetic instead.  The synthesized controllers were confirmed to be stable
 outside of our model representation using MATLAB.
 
 \bibliographystyle{abbrv}
-\bibliography{paper}  
+\bibliography{poster}  
 
 \end{document}
