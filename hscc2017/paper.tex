@@ -674,25 +674,28 @@ We shall denote the FWL domain of the coefficients by $\mathbb{R}\langle I,F
 \small
 %\label{FWL_tf}
 \mathcal{F}_n&\param{I}{F}(P \in \mathcal{P}):\mathcal{P}^{n}\rightarrow \mathcal{P}^{n}\param{I}{F} \\
-&\triangleq \tilde P \in \mathcal{P}^{n}\param{I}{F} : c_i \in \vec{P} \wedge \tilde c_i \in \vec{\tilde{P}}=\mathcal{F}_0\param{I}{F}(c_i)  \nonumber
+&\triangleq \tilde P \in \mathcal{P}^{n}\param{I}{F} : c_i \in \vec{P} \wedge \tilde c_i \in \vec{\tilde{P}}=\mathcal{F}_0\param{I}{F}(c_i),  \nonumber
 \end{align}
 where $\mathcal{P}^{n}$ is the space of polynomials of $n$-th order,
-$\mathcal{P}^{n}\param{I}{F}$ is the space of polynomials with coefficients in
-$\mathbb{R}\param{I}{F}$ and $\mathcal{F}_0\param{I}{F}(x)$ returns the
-element $\tilde{x} \in \mathbb{R}\param{I}{F}$ that is closest to $x$.
+$\mathcal{P}^{n}\param{I}{F}$ is the space of polynomials with coefficients in $\mathbb{R}\param{I}{F}$, 
+and (as a special case) $\mathcal{F}_0\param{I}{F}(x)$ returns the element $\tilde{x} \in \mathbb{R}\param{I}{F}$ that is closest to the real parameter $x$. 
 
 Similarly, $\mathcal{F}_{n,m}\langle I,F \rangle(\cdot):\mathcal{P}^{n,m}\rightarrow \mathcal{P}^{n,m}\langle I,F \rangle$ applies the same effect to a ratio of polynomials, where $\mathcal{P}^{n,m}$,  $\mathcal{P}^{n,m}\langle I,F
 \rangle$ are rational polynomial domains.
 
 Thus, the perturbed controller model $\tilde{C}(z)$ may be obtained from the
-original model $C(z)=\frac{C_{n}(z)}{C_{d}(z)}$ as follows:
+original model $\hat{C}(z) = C(z) = \frac{C_{n}(z)}{C_{d}(z)}$ as follows:
 %
 \begin{equation}
 \tilde{C}(z)=\mathcal{F}_{M_C,N_C}\param{I}{F}(C(z))=\frac{\mathcal{F}_{M_C}\param{I}{F} (\hat{C}_n(z))}{\mathcal{F}_{N_C}\param{I}{F}(\hat{C}_d(z))}.
 \end{equation}
 %
-In the case of a synthesized controller, because the synthesis is performed
-using FWL, $\tilde{C}(z) \equiv \hat{C}(z) \equiv C(z)$ (\emph{ie} we synthesise a controller that is already in the domain $\mathbb{R} \param{I}{F}$ and has therefore no uncertanties. $\Delta_bC_n(z)=\Delta_bC_d(z)=0$).
+In the case of a digitally synthesized controller (as it is the case in this work), 
+because the synthesis is performed directly using FWL representation, 
+$\tilde{C}(z) \equiv \hat{C}(z) \equiv C(z)$ 
+(in other words, 
+we synthesise a controller that is already in the domain $\mathbb{R} \param{I}{F}$ and has therefore no uncertainties entering because of FWL representations, 
+that is $\Delta_bC_n(z)=\Delta_bC_d(z)=0$).
 
 
 \paragraph{Fixed-point computation in program synthesis}
