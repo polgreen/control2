@@ -1882,10 +1882,12 @@ the controller is unstable when considering the above FWL effects.
 \subsection{Program Synthesis for the Example}
 %
 We now demonstrate how our approach solves the synthesis problem for the
-example given in the previous section.  We start with an a priori candidate solution
-with all coefficients zero, as given below, and a precision of $I_p=16$,
-$F_p=24$.  The digital controller is designed with standard techniques for
-control systems~\cite{Kuo:2002:ACS:579453, Ogata:1987:DCS:26170}.
+example given in the previous section.  
+Assuming a precision of $I_p=16$, $F_p=24$,  
+\blue{[so you mean we're not using Jury's criterion? pllease clarify.] the digital controller is designed with standard techniques for
+control systems~\cite{Kuo:2002:ACS:579453, Ogata:1987:DCS:26170}. 
+}
+We start with an a-priori candidate solution with all coefficients zero: 
 %
 %\red{[Be more explicit, write out spurious candidate solution with zero coefficients. KISS - you don't want to lose the control audience here.]}.
 %
@@ -1898,6 +1900,7 @@ control systems~\cite{Kuo:2002:ACS:579453, Ogata:1987:DCS:26170}.
 $$ 
 C(z)=\frac{0z^2{+}0z{+}0}{0z^2{+}0z{+}0}. 
 $$
+
 In the first {\sc verify} stage, the {\sc uncertainty} 
 check finds the following counterexample:
 %
@@ -2321,11 +2324,10 @@ uncertainty)
 \end{table}
 %---------------------------------
 
-\blue{[The presence of uncertainty is not explained in this description and should be clearly elaborated and commented over the results in the Table.]}
-
-\textcolor{green}{The presence of uncertainty in some particular benchmarks ($2$, $4$, $6$, and $8$) 
+The presence of uncertainty in some particular benchmarks ($2$, $4$, $6$, and $8$) 
 leads to harder verification conditions to be checked 
-by the {\sc verify} phase, which thus influences the overall synthesis time}. 
+by the {\sc verify} phase, which thus influences the overall synthesis time.  
+\blue{[great, all good: how much uncertainty have you introduced? where precisely? in the coefficients or as an exogenous disturbance? ]}
 However, considering the faster engine for each benchmark (marked as bold in Table~\ref{tab:results}), 
 the median run-time amounts to $48$\,s, implying that \tool can synthesize 
 half of the controllers in less than one minute. Overall, the average fastest synthesis 
@@ -2345,8 +2347,8 @@ outside of our model representation using MATLAB, positively answering RQ2.
 A~link to the full experimental environment, including scripts to reproduce
 the results, all benchmarks and the \tool tool, is provided in the
 footnote.\footnote{\url{http://www.cprover.org/DSSynth/experiment.tar.gz}\\ 
-\red{[what does this alpha-numerical code mean?]}
-\textcolor{green}{CBMC (SHA-1 hash) version:} 7a6cec1dd0eb8843559591105235f1f2c4678801}
+CBMC (SHA-1 hash) version: \\ 
+7a6cec1dd0eb8843559591105235f1f2c4678801}
 
 %--------------------------------------
 \subsection{Threats to Validity and Generalizations}
