@@ -39,7 +39,6 @@
 %\usetikzlibrary{decorations}
 %\usetikzlibrary{decorations.pathmorphing}
 
-\newcommand{\aabatecmt}[1]{{\color{blue}#1}}
 \newcommand{\blue}[1]{{\color{blue}#1}}
 \newcommand{\red}[1]{{\color{red}#1}}
 \newcommand{\green}[1]{{\color{green}#1}}
@@ -377,15 +376,6 @@ the pulse transfer function in~\eqref{eq:pulsetf} will also present the same num
 \subsection{Model Imprecision, Finite Word Length Representation, and Quantization Effects}
 \label{verifying-closed-loop-control-systems}
 %------------------------------------
-
-\red{[This part should be removed, or moved to a later place - it does not have anything to do with the material discussed in this section.]
-CEGIS-based control synthesis requires a formal verifier to check whether a
-candidate controller meets the requirements when combined with the plant. 
-We use the Digital-System Verifier (DSVerifier)~\cite{IsmailBCFF15} in the
-verification module for \tool.  It checks the stability of closed-loop control systems and
-considers finite-word length (FWL) effects in the digital controller, and
-uncertainty parameters in the plant model (plant intervals)~\cite{Bessa16}.   
-}
 
 Let $C(z)$ be a digital controller and $G(z)$ be a discrete-time representation of the plant, 
 given as
@@ -743,12 +733,6 @@ and $\Delta_b{G}$ represents the plant uncertainty caused by
 the rounding off effect.  We encompass all the uncertainty as
 $\Delta{\vec{G}}=\Delta_p{\vec{G}}+\Delta_b{\vec{G}}$. 
 
-\red{[This part should be removed, or moved to a later place - it does not have anything to do with the material discussed in this section.]
-As the cost of SAT solving increases with in the size of the problem
-instance, our algorithm tries to solve the problem first for small $I_p$,
-$F_p$, iteratively increasing the precision if it is insufficient.
-}
-
 %------------------------------------
 \subsection{Closed-Loop Stability Verification under Parametric Uncertainties FWL Representation, and Quantisation Noise}
 \label{sec:stability}
@@ -894,6 +878,14 @@ closed-loop control systems.  A high-level view of the synthesis process is
 given in Figure~\ref{DSSynth_process}.  Steps $1$ to $3$ are performed by
 the user and Steps~A to D are automatically performed by our tool for
 Digital Systems Synthesis, named \tool.
+
+CEGIS-based control synthesis requires a formal verifier to check whether a
+candidate controller meets the requirements when combined with the plant. 
+We use the Digital-System Verifier (DSVerifier)~\cite{IsmailBCFF15} in the
+verification module for \tool.  It checks the stability of closed-loop control systems and
+considers finite-word length (FWL) effects in the digital controller, and
+uncertainty parameters in the plant model (plant intervals)~\cite{Bessa16}.   
+
 %
 %, which accepts the
 %digital controller transfer functions together with the plant model.  For
@@ -1663,6 +1655,10 @@ While the controller's precision $\param{I}{F}$ is given,
 we can vary $\param{I_p}{F_p}$ such that 
 $\mathbb{R}\langle I_p,F_p \rangle \supseteq \mathbb{R}\langle I,F \rangle$.
 
+As the cost of SAT solving increases with in the size of the problem
+instance, our algorithm tries to solve the problem first for small $I_p$,
+$F_p$, iteratively increasing the precision if it is insufficient.
+
 \subsection{The {\sc Synthesize} and {\sc Verify} phases}
 
 The {\sc synthesize} phase uses BMC to 
@@ -1857,11 +1853,10 @@ However, if the effects of finite-precision arithmetic are considered (e.g., fix
 word-length), then this closed-loop system becomes unstable.
 %
 For instance, an implementation of $C(z)$ using 
-$\mathbb R \langle 4, 16 \rangle$ fixed-point
+$\mathbb R \param {4}{16}$ fixed-point
 numbers (i.e., $4$ bits for the integer part and $16$ bits for the
 fractional part) can be modeled as:
 %
-\aabatecmt{[new notation for controller with FWL?]}
 \begin{equation}
 \label{Eq:running-example-controller-quantized}
 \resizebox{.47\textwidth}{!}{
@@ -1883,8 +1878,7 @@ We now demonstrate how our approach solves the synthesis problem for the
 example given in the previous section.  We start with an a priori candidate solution
 with all coefficients zero, as given below, and a precision of $I_p=16$,
 $F_p=24$.  The digital controller is designed with standard techniques for
-control systems~\cite{Kuo:2002:ACS:579453, Ogata:1987:DCS:26170}. 
-\aabatecmt{[Add comment on the next candidate solution - generated automatically, or selected manually?]}
+control systems~\cite{Kuo:2002:ACS:579453, Ogata:1987:DCS:26170}.
 %
 %\red{[Be more explicit, write out spurious candidate solution with zero coefficients. KISS - you don't want to lose the control audience here.]}.
 %
