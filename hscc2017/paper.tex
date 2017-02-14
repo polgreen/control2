@@ -39,8 +39,8 @@
 %\usetikzlibrary{decorations}
 %\usetikzlibrary{decorations.pathmorphing}
 
-\newcommand{\aabatecmt}[1]{}%{{\color{red}#1}}
-\newcommand{\dariocmt}[1]{}%{{\color{blue}#1}}
+\newcommand{\aabatecmt}[1]{{\color{red}#1}}
+\newcommand{\dariocmt}[1]{{\color{blue}#1}}
 
 \newcommand{\blue}[1]{{\color{blue}#1}}
 \newcommand{\red}[1]{{\color{red}#1}}
@@ -745,7 +745,7 @@ $\Delta{\vec{G}}=\Delta_p{\vec{G}}+\Delta_b{\vec{G}}$.
 %------------------------------------
 
 \aabatecmt{[Dario: please go through this section again, and clarify what sources of imprecision we consider where, distinguishing between plant and controller. also comment on why we operate on hat G rather than on tilde G - as we discussed yesterday. ]}
-
+\dariocmt{I added a paragraph at the end of the section that should clarify.}
 Sound synthesis of the digital controller requires the consideration of the effect of FWL on the controller, 
 and of quantization disturbances in the closed-loop system.  
 Let the quantizer $Q1$ (ADC) be the source of a white noise $\nu_{1}$, 
@@ -1868,6 +1868,7 @@ $\mathbb R \param {4}{16}$ fixed-point
 numbers (i.e., $4$ bits for the integer part and $16$ bits for the
 fractional part) can be modeled as: 
 \aabatecmt{[wait I'm confused: to be precise, the next should be a tilde in view of the preceding comments on FWL!!] notice we are indeed approximating a C, so the equality comments from above do not apply! correct?}
+\dariocmt{yes, I changed all C(z) below for tildes}
 %
 \begin{equation}
 \label{Eq:running-example-controller-quantized}
@@ -1891,15 +1892,18 @@ the controller is unstable when considering the above FWL effects.
 We now demonstrate how our approach solves the synthesis problem for the
 example given in the previous section.  
 Assuming a precision of $I_p=16$, $F_p=24$,  
-\blue{[so you mean we're not using Jury's criterion? pllease clarify.] the digital controller is designed with standard techniques for
-control systems~\cite{Kuo:2002:ACS:579453, Ogata:1987:DCS:26170}. 
+\aabatecmt{[so you mean we're not using Jury's criterion? pllease clarify.] 
+%the digital controller is designed with standard techniques for 
+%control systems~\cite{Kuo:2002:ACS:579453, Ogata:1987:DCS:26170}. 
 }
-We start with an a-priori candidate solution with all coefficients zero: 
+\dariocmt{I'm just removing this. Not even sure what it means}
+we start with an a-priori candidate solution with all coefficients zero (note that the controller is in the FWL domain, hence we use $\tilde{C}(z)$): 
 %
 $$ 
 \tilde{C}(z)=\frac{0z^2{+}0z{+}0}{0z^2{+}0z{+}0}. 
 $$
-\blue{[here recall that indeed this C equates to the tilde version, because \ldots ]}
+\aabatecmt{[here recall that indeed this C equates to the tilde version, because \ldots ]}
+\dariocmt{addressed above}
 In the first {\sc verify} stage, the {\sc uncertainty} 
 check finds the following counterexample:
 %
