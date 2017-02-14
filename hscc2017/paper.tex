@@ -657,7 +657,7 @@ architecture of the plant.
 
 \smallskip
 
-\paragraph{Use of a fixed-point controller}
+\paragraph{Direct use of controllers in fixed-point representation}
 
 Since the controller is implemented using finite representation, $C(z)$ also suffers
 disturbances from the FWL effects, with roundoffs in coefficients that may
@@ -704,7 +704,7 @@ The program synthesis engine uses fixed-point arithmetic.  Specifically, we
 use the domain $\mathbb{R}\param{I}{F}$ for the controller's coefficients
 and the domain $\mathbb{R}\param{I_p}{F_p}$ for the plant's coefficients,
 where $I$ and $F$, as well as $I_p$ and $F_p$, denote the number of bits for
-the integer and fractional parts, respectively, and $\mathbb{R}\param{
+the integer and fractional parts, respectively, and where it is practically motivated to consider $\mathbb{R}\param{
 I_p}{F_p} \supseteq \mathbb{R}\param{I}{F}$.
 
 
@@ -719,13 +719,11 @@ transfer functions represented using fixed-point bit-vectors.
 %\label{plant_tf}
 \tilde G(z)&=\frac{\tilde b_{0}+\tilde b_{1}z^{-1}+...+\tilde b_{M_G}z^{-M_G}}{\tilde a_{0}+\tilde a_{1}z^{-1}+...+\tilde a_{N_G}z^{-N_G}}.
 \end{align}
- 
-Since the controller is synthesized in the $\mathbb{R}\param {I}{F}$
-domain, $\tilde{C}(z) \equiv \hat{C}(z) \equiv C(z)$
 
-However, given a real plant collection $\hat{G}(z)$,
-%
-we calculate $\tilde G(z)=\mathcal{F}_{M_G,N_G}\param {I_p}{F_p}(\hat{G}(z))$, where 
+Recall that since the controller is synthesized in the $\mathbb{R}\param {I}{F}$
+domain, $\tilde{C}(z) \equiv \hat{C}(z) \equiv C(z)$. 
+However, given a real plant $\hat{G}(z)$, 
+we need to introduce $\tilde G(z)=\mathcal{F}_{M_G,N_G}\param {I_p}{F_p}(\hat{G}(z))$, where 
 %
 \begin{align}
 \label{digital_plant_tf}
@@ -735,7 +733,7 @@ we calculate $\tilde G(z)=\mathcal{F}_{M_G,N_G}\param {I_p}{F_p}(\hat{G}(z))$, w
 %
 where $\Delta_bc_i=\tilde{c}_i-\hat{c}_i$, 
 and $\Delta_b{G}$ represents the plant uncertainty caused by
-the rounding off effect.  We encompass all the uncertainty as
+the rounding off effect.  We encompass the global uncertainty as
 $\Delta{\vec{G}}=\Delta_p{\vec{G}}+\Delta_b{\vec{G}}$. 
 
 %------------------------------------
