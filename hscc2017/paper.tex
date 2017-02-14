@@ -188,24 +188,24 @@ barrier to broad adoption of correct digital controllers, and requires considera
 knowledge often unusual to the control engineer.  
 
 Beyond classical a-posteriori validation procedures in digital control,
-there has been plenty of previous work aiming at \emph{verifying} a given 
-designed controller, which however broadly lack automation.  
-Recent work has studied the stability of digital controllers with consideration of their implementation aspects, i.e.,
-fixed-point arithmetic and the word length used: 
-\cite{Bessa16} exploit advances in bit-accurate verification of C
-programs to obtain a verifier for software-implemented digital control.
+there has been plenty of previous work aiming at \emph{verifying} a given
+designed controller, which however broadly lack automation.  Recent work has
+studied the stability of digital controllers considering implementation
+aspects, i.e., fixed-point arithmetic and the word length~\cite{Bessa16}. 
+They exploit advances in bit-accurate verification of C programs to obtain a
+verifier for software-implemented digital control.
 
-By contrast, we leverage a very recent step-change in the automation and scalability of 
-\emph{program synthesis}.  Program synthesis engines use a program
+By contrast, we leverage a very recent step-change in the automation and
+scalability of \emph{program synthesis}.  Program synthesis engines use a
 specification as the starting point, and subsequently generate a sequence of
-candidate programs from a given template.  
-The candidate programs are iteratively refined to eventually match the desired program specification.   
-Program synthesizers implementing the 
-Counter-Example Guided Inductive Synthesis (CEGIS)~\cite{sketch} architecture are now
-able to generate programs for highly non-trivial specifications with a very 
-high degree of automation.  Modern synthesis engines combine automated testing, 
-genetic algorithms, 
-and SMT-based automated reasoning~\cite{DBLP:journals/corr/AlurFSS16a,DBLP:conf/lpar/DavidKL15}.
+candidate programs from a given template.  The candidate programs are
+iteratively refined to eventually satisfy the specification.  Program
+synthesizers implementing Counter-Example Guided Inductive Synthesis
+(CEGIS)~\cite{sketch} are now able to generate programs for highly
+non-trivial specifications with a very high degree of automation.  Modern
+synthesis engines combine automated testing, genetic algorithms, and
+SMT-based automated reasoning~\cite{DBLP:journals/corr/AlurFSS16a,
+DBLP:conf/lpar/DavidKL15}.
 
 By combining and applying state-of-the-art synthesis engines we present a 
 tool that automatically generates digital controllers for a given 
@@ -232,10 +232,13 @@ Towards our goal of closed-loop stability,
 we have modeled a digital equivalent of the continuous plant by evaluating the effects of the quantizers (A/D and D/A converters) and of time
 discretization. 
 % elements with quantization noise.  
-We further account for uncertainties on the plant models. 
-The resulting closed-loop system is a program loop that operates on bit-vectors encoded using
-fixed-point arithmetic with finite word length (FWL).  
-The three effects of 1. uncertaities, 2. FWL representation, and 3. quantization errors are incorporated into the model, 
+%
+We further account for uncertainties on the plant models.  The resulting
+closed-loop system is a program loop that operates on bit-vectors encoded
+using fixed-point arithmetic with finite word length (FWL).  The three
+effects of 1.~uncertaities, 2.~FWL representation and 3.~quantization
+errors are incorporated into the model,
+%
 %as an additive uncertainty, 
 and are taken into account during the CEGIS-based synthesis of the control software for the plant.
 
