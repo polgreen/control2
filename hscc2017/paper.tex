@@ -425,11 +425,11 @@ this paper fulfil this property).  We~also remark that, due to its native
 digital implementation, there are no parametric errors ($\Delta_pC_n(z),
 \Delta_pC_d(z)$) in the controller.  Thus $\hat{C}(z) \equiv C(z)$.
 
-We introduce next a notation based on the polynomials coefficients to simplify 
-the presentation.  Let $\mathcal{P}^{N}$ be the space of polynomials of order $N$. 
-Let $P \in \mathcal{P}^{M,N}$ be a rational polynomial 
-$\frac{P_n}{P_d}$, where $P_n \in \mathcal{P}^{M}$ and $P_d \in \mathcal{P}^{N}$.  
-For a vector of coefficients
+We introduce next a notation based on the coefficients of the polynomial to
+simplify the presentation.  Let $\mathcal{P}^{N}$ be the space of
+polynomials of order $N$.  Let $P \in \mathcal{P}^{M,N}$ be a rational
+polynomial $\frac{P_n}{P_d}$, where $P_n \in \mathcal{P}^{M}$ and $P_d \in
+\mathcal{P}^{N}$.  For a vector of coefficients
 %
 \begin{equation}
 \vec{P} \in \mathbb{R}^{N+M+2}=[n_{0}\ n_{1}\ \hdots \ n_{M}\ d_{0}\ d_{1}\ \hdots\ d_{N}\ ]^T
@@ -564,7 +564,7 @@ Figure~\ref{fig:digsystem1},
 where 
 % the parametric uncertainties are represented by~$\Delta_p \vec{G}$ and 
 the effect of $\nu_{1}$ and $\nu_{2}$ in the output $Y(z)$ is
-seen as additive noise.  
+additive noise.  
 
 \begin{figure}[ht]
 \centering
@@ -639,34 +639,31 @@ seen as additive noise.
 \end{figure}
 
 In Figure~\ref{fig:digsystem1}, two sources of uncertainty are illustrated:
-parametric uncertainties related to modeling errors  
-(which are represented by~$\Delta_p \vec{G}$),  
-and uncertainties introduced by quantizations in the ADC and
-DAC conversions ($\nu_1$ and $\nu_2$) which are assumed to be non-deterministic. 
-Recall that we discussed how the quantization noise is encompassed as an additive term, 
-which means it does not enter parametrically in the transfer function. 
-Instead, we later show that the system is stable given these non-deterministic disturbance inputs. 
+parametric uncertainties model the errors (which are represented
+by~$\Delta_p \vec{G}$), and uncertainties for the quantizations in the ADC
+and DAC conversions ($\nu_1$ and $\nu_2$), which are assumed to be
+non-deterministic.  Recall that we discussed how the quantization noise is
+an additive term, which means it does not enter parametrically in the
+transfer function.  Instead, we later show that the system is stable given
+these non-deterministic disturbance.
 
-The uncertain model may be rewritten as a vector of coefficients in the 
-z-domain using equation \eqref{eq:hatgvector} as  
-$\vec{\hat{G}}=\vec{G}+\Delta_p \vec{G}$.
-The parametric uncertainties in the plant are assumed to have the same
-order as the plant model, since 
-errors of higher order can move the closed-loop poles by large amounts, 
-thus preventing any given controller from stabilizing such a setup. 
-This is a reasonable assumption since most tolerances do not change the 
-architecture of the plant. 
-
-
+The uncertain model may be rewritten as a vector of coefficients in the
+z-domain using equation \eqref{eq:hatgvector} as
+$\vec{\hat{G}}=\vec{G}+\Delta_p \vec{G}$.  The parametric uncertainties in
+the plant are assumed to have the same order as the plant model, since
+errors of higher order can move the closed-loop poles by large amounts, thus
+preventing any given controller from stabilizing such a setup.  This is a
+reasonable assumption since most tolerances do not change the architecture
+of the plant.
 
 \smallskip
 
 \paragraph{Direct use of controllers in fixed-point representation}
 
-Since the controller is implemented using finite representation, $C(z)$ also suffers
-disturbances from the FWL effects, with roundoffs in coefficients that may
-change closed-loop poles and zeros position, and consequently affect its
-stability, as argued in~\cite{Bessa16}.
+Since the controller is implemented using finite representation, $C(z)$ also
+suffers disturbances from the FWL effects, with roundoffs in coefficients
+that may change closed-loop poles and zeros position, and consequently
+affect its stability, as argued in~\cite{Bessa16}.
 
 Let $\hat{C}(z)$ be the digital controller transfer function represented
 using this FWL with integer size $I$ and fractional size~$F$. 
@@ -680,9 +677,12 @@ We shall denote the FWL domain of the coefficients by $\mathbb{R}\langle I,F
 \mathcal{F}_n&\param{I}{F}(P \in \mathcal{P}):\mathcal{P}^{n}\rightarrow \mathcal{P}^{n}\param{I}{F} \\
 &\triangleq \tilde P \in \mathcal{P}^{n}\param{I}{F} : c_i \in \vec{P} \wedge \tilde c_i \in \vec{\tilde{P}}=\mathcal{F}_0\param{I}{F}(c_i),  \nonumber
 \end{align}
+%
 where $\mathcal{P}^{n}$ is the space of polynomials of $n$-th order,
-$\mathcal{P}^{n}\param{I}{F}$ is the space of polynomials with coefficients in $\mathbb{R}\param{I}{F}$, 
-and (as a special case) $\mathcal{F}_0\param{I}{F}(x)$ returns the element $\tilde{x} \in \mathbb{R}\param{I}{F}$ that is closest to the real parameter $x$. 
+$\mathcal{P}^{n}\param{I}{F}$ is the space of polynomials with coefficients
+in $\mathbb{R}\param{I}{F}$, and (as a special case)
+$\mathcal{F}_0\param{I}{F}(x)$ returns the element $\tilde{x} \in
+\mathbb{R}\param{I}{F}$ that is closest to the real parameter $x$.
 
 Similarly, $\mathcal{F}_{n,m}\langle I,F \rangle(\cdot):\mathcal{P}^{n,m}\rightarrow \mathcal{P}^{n,m}\langle I,F \rangle$ applies the same effect to a ratio of polynomials, where $\mathcal{P}^{n,m}$,  $\mathcal{P}^{n,m}\langle I,F
 \rangle$ are rational polynomial domains.
@@ -694,13 +694,12 @@ original model $\hat{C}(z) = C(z) = \frac{C_{n}(z)}{C_{d}(z)}$ as follows:
 \tilde{C}(z)=\mathcal{F}_{M_C,N_C}\param{I}{F}(C(z))=\frac{\mathcal{F}_{M_C}\param{I}{F} (\hat{C}_n(z))}{\mathcal{F}_{N_C}\param{I}{F}(\hat{C}_d(z))}.
 \end{equation}
 %
-In the case of a digitally synthesized controller (as it is the case in this work), 
-because the synthesis is performed directly using FWL representation, 
-$\tilde{C}(z) \equiv \hat{C}(z) \equiv C(z)$ 
-(in other words, 
-we synthesise a controller that is already in the domain $\mathbb{R} \param{I}{F}$ and has therefore no uncertainties entering because of FWL representations, 
-that is $\Delta_bC_n(z)=\Delta_bC_d(z)=0$).
-
+In the case of a digitally synthesized controller (as it is the case in this
+work), $\tilde{C}(z) \equiv \hat{C}(z) \equiv C(z)$ because the synthesis is
+performed directly using FWL representation.  In other words, we synthesise
+a controller that is already in the domain $\mathbb{R} \param{I}{F}$ and has
+therefore no uncertainties entering because of FWL representations, that is,
+$\Delta_bC_n(z)=\Delta_bC_d(z)=0$.
 
 \paragraph{Fixed-point computation in program synthesis}
 
@@ -708,8 +707,9 @@ The program synthesis engine uses fixed-point arithmetic.  Specifically, we
 use the domain $\mathbb{R}\param{I}{F}$ for the controller's coefficients
 and the domain $\mathbb{R}\param{I_p}{F_p}$ for the plant's coefficients,
 where $I$ and $F$, as well as $I_p$ and $F_p$, denote the number of bits for
-the integer and fractional parts, respectively, and where it is practically motivated to consider $\mathbb{R}\param{
-I_p}{F_p} \supseteq \mathbb{R}\param{I}{F}$.
+the integer and fractional parts, respectively, and where it is practically
+motivated to consider $\mathbb{R}\param{ I_p}{F_p} \supseteq
+\mathbb{R}\param{I}{F}$.
 
 
 Given the use of fixed-point arithmetic, we examine the discretization effect 
