@@ -176,16 +176,16 @@ models taken from the literature within minutes.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
 
-Modern implementations of embedded control systems have proliferated with the
-availability of low-cost devices that can perform highly non-trivial control
-tasks, with significant impact in numerous application areas such as
+Modern implementations of embedded control systems have proliferated with
+the availability of low-cost devices that can perform highly non-trivial
+control tasks, with significant impact in numerous application areas such as
 environmental control and robotics~\cite{astrom1997computer, Franklin15}. 
-Correct control is non-trivial, however. The problem is exacerbated by
+Correct control is non-trivial, however.  The problem is exacerbated by
 artefacts specific to digital control, such as the effects of
 finite-precision arithmetic, time discretization, and quantization noise
-introduced by A/D and D/A conversion.  Thus, programming expertise is a key 
-barrier to broad adoption of correct digital controllers, and requires considerable
-knowledge often unusual to the control engineer.  
+introduced by A/D and D/A conversion.  Thus, programming expertise is a key
+barrier to broad adoption of correct digital controllers, and requires
+considerable knowledge often unusual to the control engineer.
 
 Beyond classical a-posteriori validation procedures in digital control,
 there has been plenty of previous work aiming at \emph{verifying} a given
@@ -207,40 +207,32 @@ synthesis engines combine automated testing, genetic algorithms, and
 SMT-based automated reasoning~\cite{DBLP:journals/corr/AlurFSS16a,
 DBLP:conf/lpar/DavidKL15}.
 
-By combining and applying state-of-the-art synthesis engines we present a 
-tool that automatically generates digital controllers for a given 
-continuous plant model that are correct by construction.  
-This approach presents a high degree of autonomy, 
-promises to reduce the cost and time of development of digital control dramatically, 
-and requires considerably less expertise than a-posteriori verification methodologies.   
-Specifically, we synthesize stable,  
-%controllers for hybrid closed-loop systems, i.e., 
-software-implemented embedded controllers along with a model of a physical plant. 
-%, that are \emph{stable}.  
-Due to the complexity of such closed-loop systems, in this work we focus
-on linear models with known configurations, and perform parametric synthesis
-of stabilizing digital controllers (further closed-loop requirements are left to future work). 
+By combining and applying state-of-the-art synthesis engines we present a
+tool that automatically generates digital controllers for a given continuous
+plant model that are correct by construction.  This approach presents a high
+degree of autonomy, promises to reduce the cost and time of development of
+digital control dramatically, and requires considerably less expertise than
+a-posteriori verification methodologies.  Specifically, we synthesize
+stable, software-implemented embedded controllers along with a model of a
+physical plant.  Due to the complexity of such closed-loop systems, in this
+work we focus on linear models with known configurations, and perform
+parametric synthesis of stabilizing digital controllers (further closed-loop
+requirements are left to future work).
 
 Our work addresses challenging aspects of the control synthesis problem.  We
 perform digital control synthesis over a hybrid model, where the plant
 exhibits continuous behavior whereas the controller operates in discrete
 time and over a quantized domain.  Inspired by a classical
 approach~\cite{astrom1997computer}, we translate the problem into a single
-digital domain.  
-Towards our goal of closed-loop stability, 
-% despite digitization effects, 
-we have modeled a digital equivalent of the continuous plant by evaluating the effects of the quantizers (A/D and D/A converters) and of time
-discretization. 
-% elements with quantization noise.  
-%
-We further account for uncertainties on the plant models.  The resulting
+digital domain.  Towards our goal of closed-loop stability, we have modeled
+a digital equivalent of the continuous plant by evaluating the effects of
+the quantizers (A/D and D/A converters) and of time discretization.  We
+further account for uncertainties on the plant models.  The resulting
 closed-loop system is a program loop that operates on bit-vectors encoded
 using fixed-point arithmetic with finite word length (FWL).  The three
-effects of 1.~uncertaities, 2.~FWL representation and 3.~quantization
-errors are incorporated into the model,
-%
-%as an additive uncertainty, 
-and are taken into account during the CEGIS-based synthesis of the control software for the plant.
+effects of 1.~uncertaities, 2.~FWL representation and 3.~quantization errors
+are incorporated into the model, and are taken into account during the
+CEGIS-based synthesis of the control software for the plant.
 
 In summary, this paper makes the following original contributions.
 %
@@ -257,8 +249,9 @@ In summary, this paper makes the following original contributions.
 
 \item Experimental results show that \tool is able to efficiently synthesize
   stable controllers for a set of intricate benchmarks taken from the
-  literature: the median runtime for our benchmark set considering the faster 
-	engine is $48$\,s, i.e., half of the controllers can be synthesized in less than one minute.
+  literature: the median runtime for our benchmark set considering the
+  faster engine is $48$\,s, i.e., half of the controllers can be synthesized
+  in less than one minute.
 
 %% \item We exploit a CEGIS-based approach that uses inductive synthesis
 %% together with a bit-precise formal verification algorithm for synthesizing
@@ -543,7 +536,7 @@ or work over their respective coefficients $\vec{G}$, $\vec{C}$ in vector form.
   \path[->]  (aux3.north) edge (circle.south);
  \end{tikzpicture}
 }
- \caption{Closed-loop digital control system (cf. Section \ref{verifying-closed-loop-control-systems} for notations) \label{fig:sampledsystem}}
+ \caption{Closed-loop digital control system (cf.~Section \ref{verifying-closed-loop-control-systems} for notation) \label{fig:sampledsystem}}
 \end{figure*}
 
 A typical digital control system with a continuous plant and a discrete
