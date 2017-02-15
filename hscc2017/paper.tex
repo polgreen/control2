@@ -735,25 +735,26 @@ we need to introduce $\tilde G(z)=\mathcal{F}_{M_G,N_G}\param {I_p}{F_p}(\hat{G}
 \vec{\tilde G} &=\vec{\hat{G}}+\Delta_b{\vec{G}}=\vec{G}+\Delta_p{\vec{G}}+\Delta_b{\vec{G}}, 
 \end{align}
 %
-where $\Delta_bc_i=\tilde{c}_i-\hat{c}_i$, 
-and $\Delta_b{G}$ represents the plant uncertainty caused by
-the rounding off effect.  We encompass the global uncertainty as
-$\Delta{\vec{G}}=\Delta_p{\vec{G}}+\Delta_b{\vec{G}}$. 
+where $\Delta_bc_i=\tilde{c}_i-\hat{c}_i$, and $\Delta_b{G}$ represents the
+plant uncertainty caused by the rounding off effect.  We capture the global
+uncertainty as $\Delta{\vec{G}}=\Delta_p{\vec{G}}+\Delta_b{\vec{G}}$.
 
 %------------------------------------
-\subsection{Closed-Loop Stability Verification under Parametric Uncertainties FWL Representation, and Quantisation Noise}
+\subsection{Closed-Loop Stability Verification under Parametric
+Uncertainties, FWL Representation and Quantisation Noise}
 \label{sec:stability}
 %------------------------------------
 
 \aabatecmt{[Dario: please go through this section again, and clarify what sources of imprecision we consider where, distinguishing between plant and controller. also comment on why we operate on hat G rather than on tilde G - as we discussed yesterday. ]}
 \dariocmt{I added a paragraph at the end of the section that should clarify.}
-Sound synthesis of the digital controller requires the consideration of the effect of FWL on the controller, 
-and of quantization disturbances in the closed-loop system.  
-Let the quantizer $Q1$ (ADC) be the source of a white noise $\nu_{1}$, 
-and $Q2$ (DAC) be the source of a white noise $\nu_{2}$.  The following equation
-models the system in Figure~\ref{fig:sampledsystem}, encompassing the
-parametric uncertainties $\Delta \vec{G}$ and the FWL effects on
-the controller $\tilde{C}(z)$:
+%
+Sound synthesis of the digital controller requires the consideration of the
+effect of FWL on the controller, and of quantization disturbances in the
+closed-loop system.  Let the quantizer $Q1$ (ADC) be the source of a white
+noise $\nu_{1}$, and $Q2$ (DAC) be the source of a white noise~$\nu_{2}$. 
+The following equation models the system in Figure~\ref{fig:sampledsystem},
+including the parametric uncertainties $\Delta \vec{G}$ and the FWL
+effects on the controller $\tilde{C}(z)$:
 %
 \begin{equation}
 \hat{Y}(z)=\nu_{1}(z)+\hat{G}(z)\tilde{C}(z)R(z)+\hat{G}(z)\nu_{2}(z)-\hat{G}(z)\tilde{C}(z)\hat{Y}(z). 
@@ -791,22 +792,24 @@ where $q_{1}$ and $q_{2}$ are the quantization steps of ADC and DAC, respectivel
 % 
 \end{myassumption}
 
-A discrete-time dynamical system is said to be Bounded-Input and Bounded-Output
-(BIBO) stable if bounded inputs necessarily result in bounded outputs. 
-This condition holds true over an LTI model if and only if every pole of its transfer function lies inside the unit circle \cite{Astrom08}.  
-Analyzing Eq.~\eqref{eq:outputfunctions}, 
-the following proposition provides conditions for the BIBO stability of the system in Figure~\ref{fig:sampledsystem}, 
-with regards to the exogenous signals $R(z)$, $\nu_{1}$, and $\nu_{2}$, which are all bounded 
-(in particular, the bound on the quantization noise is given by
-Assumption~\ref{whitenoise}). 
+A discrete-time dynamical system is said to be Bounded-Input and
+Bounded-Output (BIBO) stable if bounded inputs necessarily result in bounded
+outputs.  This condition holds true over an LTI model if and only if every
+pole of its transfer function lies inside the unit circle \cite{Astrom08}. 
+Analyzing Eq.~\eqref{eq:outputfunctions}, the following proposition provides
+conditions for the BIBO stability of the system in
+Figure~\ref{fig:sampledsystem}, with regards to the exogenous signals
+$R(z)$, $\nu_{1}$, and $\nu_{2}$, which are all bounded (in particular, the
+bound on the quantization noise is given by Assumption~\ref{whitenoise}).
 %
 \begin{myprop}{\cite{Bessa16,fadali}}
 \label{prop:eq_int_stab} 
 %
 Consider a feedback closed-loop control system as given in
 Figure~\ref{fig:sampledsystem} with a FWL implementation of the digital
-controller $\tilde{C}(z) =\mathcal{F}_{M_C,N_C}\param {I}{F}(C(z))$ and uncertain discrete
-model of the plant from~\eqref{eq:coefficients},\eqref{eq:delta_coefficients} 
+controller $\tilde{C}(z) =\mathcal{F}_{M_C,N_C}\param {I}{F}(C(z))$ and
+uncertain discrete model of the plant
+from~\eqref{eq:coefficients}, \eqref{eq:delta_coefficients}
 %
 $$
 \hat{G}(z) =\frac{\hat{G}_n(z)}{\hat{G}_d(z)}, \quad \vec{\hat{G}}=\vec{G}+\Delta_p \vec{G}.
@@ -824,19 +827,18 @@ Then $\hat{G}(z)$ is BIBO-stable if and only if:
 \end{itemize}
 \end{myprop}
 
-Proposition~\ref{prop:eq_int_stab} provides necessary (and sufficient) conditions for the
-controller to stabilize the closed-loop system, considering plant
-parametric uncertainties (i.e., $\Delta_p \vec{G}$), quantization noises
-($\nu_{1}$ and $\nu_{2}$) and FWL effects in the control software.  
-In particular, 
-note that the model for quantization noise enters as a signal to be stabilized: 
-in practice, if the quantization noise is bounded, 
-the noise may be disregarded if the conditions on
-Proposition~\ref{prop:eq_int_stab} are satisfied.  
+Proposition~\ref{prop:eq_int_stab} provides necessary (and sufficient)
+conditions for the controller to stabilize the closed-loop system,
+considering plant parametric uncertainties (i.e., $\Delta_p \vec{G}$),
+quantization noises ($\nu_{1}$ and $\nu_{2}$) and FWL effects in the control
+software.  In particular, note that the model for quantization noise enters
+as a signal to be stabilized: in practice, if the quantization noise is
+bounded, the noise may be disregarded if the conditions on
+Proposition~\ref{prop:eq_int_stab} are satisfied.
 
-If the verification is performed using FWL arithmetic, 
-we note that the above equations must use $\tilde{G}(z)$ instead of $\hat{G}(z)$. 
-The former will provide sufficient conditions for the latter to be stabilized.
+If the verification is performed using FWL arithmetic,  the above equations
+must use $\tilde{G}(z)$ instead of $\hat{G}(z)$.  The former will provide
+sufficient conditions for the latter to be stabilized.
 
 %\red{[first: lemmae precede theorems. ]}
 
