@@ -209,14 +209,14 @@ DBLP:conf/lpar/DavidKL15}.
 
 By combining and applying state-of-the-art synthesis engines we present a
 tool that automatically generates digital controllers for a given continuous
-plant model that are correct by construction.  This approach presents a high
-degree of autonomy, promises to reduce the cost and time of development of
+plant model that are correct by construction.  This approach delivers a high
+degree of automation, promises to reduce the cost and time of development of
 digital control dramatically, and requires considerably less expertise than
-a-posteriori verification methodologies.  Specifically, we synthesize
-stable, software-implemented embedded controllers along with a model of a
-physical plant.  Due to the complexity of such closed-loop systems, in this
-work we focus on linear models with known configurations, and perform
-parametric synthesis of stabilizing digital controllers (further closed-loop
+a-posteriori verification.  Specifically, we synthesize stable,
+software-implemented embedded controllers along with a model of a physical
+plant.  Due to the complexity of such closed-loop systems, in this work we
+focus on linear models with known configurations, and perform parametric
+synthesis of stabilizing digital controllers (further closed-loop
 requirements are left to future work).
 
 Our work addresses challenging aspects of the control synthesis problem.  We
@@ -224,15 +224,15 @@ perform digital control synthesis over a hybrid model, where the plant
 exhibits continuous behavior whereas the controller operates in discrete
 time and over a quantized domain.  Inspired by a classical
 approach~\cite{astrom1997computer}, we translate the problem into a single
-digital domain.  Towards our goal of closed-loop stability, we have modeled
-a digital equivalent of the continuous plant by evaluating the effects of
-the quantizers (A/D and D/A converters) and of time discretization.  We
-further account for uncertainties on the plant models.  The resulting
-closed-loop system is a program loop that operates on bit-vectors encoded
-using fixed-point arithmetic with finite word length (FWL).  The three
-effects of 1.~uncertaities, 2.~FWL representation and 3.~quantization errors
-are incorporated into the model, and are taken into account during the
-CEGIS-based synthesis of the control software for the plant.
+digital domain, i.e., we model a digital equivalent of the continuous plant
+by evaluating the effects of the quantizers (A/D and D/A converters) and of
+time discretization.  We further account for uncertainties in the plant
+model.  The resulting closed-loop system is a program with a loop that
+operates on bit-vectors encoded using fixed-point arithmetic with finite
+word length (FWL).  The three effects of 1.~uncertaities, 2.~FWL
+representation and 3.~quantization errors are incorporated into the model,
+and are taken into account during the CEGIS-based synthesis of the control
+software for the plant.
 
 In summary, this paper makes the following original contributions.
 %
@@ -367,9 +367,11 @@ pulse transfer function $G(z,T)$.
 % 
 Lemma~\ref{eq:pulsetf} ensures that the poles and zeros match under the
 $\mathcal{Z}\left\lbrace{\mathcal{L}^{-1}\left\lbrace{\cdot}\right\rbrace_{t=kT}}\right\rbrace$
-operations, and it includes the ZOH dynamics in the $(1-z^{-1})$ term. 
-This is sufficient for stability studies over $G(s)$~\cite{fadali}, {\it i.e.}, if there is any unstable pole (in the complex domain $\Re\{s\} > 0$), 
-the pulse transfer function in~\eqref{eq:pulsetf} will also present the same number of unstable poles ($|z| > 1$)~\cite{Franklin15}.
+operations, and it includes the ZOH dynamics in the $(1-z^{-1})$ term.  This
+is sufficient for stability studies over $G(s)$~\cite{fadali}, i.e., if
+there is any unstable pole (in the complex domain $\Re\{s\} > 0$), the pulse
+transfer function in~\eqref{eq:pulsetf} will also present the same number of
+unstable poles ($|z| > 1$)~\cite{Franklin15}.
 
 %------------------------------------
 \subsection{Model Imprecision, Finite Word Length Representation and Quantization Effects}
