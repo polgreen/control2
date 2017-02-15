@@ -395,12 +395,17 @@ plant's coefficients;
 and finally $N_{(\cdot)}$ and $M_{(\cdot)}$ indicate the order of the polynomials,  
 and we require in particular that $N_G \geq M_G$. 
 
-Uncertainties in $G(z)$ may appear due to: 
-1. uncertainties in $G(s)$ (we denote the uncertain continuous plant by $\hat{G}(s)=\frac{G_n(s)+\Delta_p{G}_n(s)}{G_d(s)+\Delta_p{G}_d(s)}$ to explicitly encompass the effects of the uncertainty terms $\Delta_p{G}_{(\cdot)}(s)$) arising from tolerances/imprecision in the original model; 
-2. errors in the numerical calculations due to FWL effects (e.g., coefficient truncation and round-off, which will be denoted as $\Delta_b{G}_n(s),\Delta_b{G}_d(s)$);    
-and 
-3. errors caused by quantization (which we model later as as external disturbances $\nu_1$ and $\nu_2$). 
-These uncertainties are parametrically expressed by additive terms, eventually resulting in an uncertain model $\hat{G}(z)$, such that:
+Uncertainties in $G(z)$ may appear owing to: 1.~uncertainties in $G(s)$ (we
+denote the uncertain continuous plant by
+$\hat{G}(s)=\frac{G_n(s)+\Delta_p{G}_n(s)}{G_d(s)+\Delta_p{G}_d(s)}$ to
+explicitly encompass the effects of the uncertainty terms
+$\Delta_p{G}_{(\cdot)}(s)$) arising from tolerances/imprecision in the
+original model; 2.~errors in the numerical calculations due to FWL effects
+(e.g., coefficient truncation and round-off, which will be denoted as
+$\Delta_b{G}_n(s),\Delta_b{G}_d(s)$); and 3.~errors caused by quantization
+(which we model later as as external disturbances $\nu_1$ and $\nu_2$). 
+These uncertainties are parametrically expressed by additive terms,
+eventually resulting in an uncertain model $\hat{G}(z)$, such that:
 %
 \begin{equation}
 \hat{G}(z)=\frac{G_n(z)+\Delta G_n(z)}{G_d(z)+\Delta G_d(z)},
@@ -413,14 +418,14 @@ which will be represented by the following transfer function:
 \hat{G}(z)=\frac{\hat{b}_{0}+\hat{b}_{1}z^{-1}+...+\hat{b}_{M_G}z^{-M_G}}{\hat{a}_{0}+\hat{a}_{1}z^{-1}+...+\hat{a}_{N_G}z^{-N_G}}. 
 \end{equation}
 %
-%\red{[why is this condition on the order of the polynomials raised only now? how is it used later?]}
-Notice that, due to the nature of the methods we use for the stability check, we require
-that the parametric errors in the plant have the same polynomial order as
-the plant itself (indeed, all other errors described in this paper are ensured to
-fulfil this property in our implementation). 
-We also remark that, due to its native digital implementation, 
-there are no parametric errors ($\Delta_pC_n(z), \Delta_pC_d(z)$) entering in the controller. 
-Thus $\hat{C}(z) \equiv C(z)$.
+%\red{[why is this condition on the order of the polynomials raised only
+now?  how is it used later?]} Notice that, due to the nature of the methods
+we use for the stability check, we require that the parametric errors in the
+plant have the same polynomial order as the plant itself (indeed, all other
+errors described in this paper fulfil this property).  We
+also remark that, due to its native digital implementation, there are no
+parametric errors ($\Delta_pC_n(z), \Delta_pC_d(z)$) entering in the
+controller.  Thus $\hat{C}(z) \equiv C(z)$.
 
 We introduce next a notation based on the polynomials coefficients to simplify 
 the presentation.  Let $\mathcal{P}^{N}$ be the space of polynomials of order $N$. 
