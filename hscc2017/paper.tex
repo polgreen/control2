@@ -1801,12 +1801,12 @@ The {\sc synthesise} phase generates potentially unsound candidate
 solutions.  The soundness of the model is ensured by the {\sc verify} phase. 
 If a candidate solution passes verification, it is necessarily sound.
 
-The {\sc verify} phase considers two aspects of soundness.  The first stage
-ensures that no counterexample plant with an unstable closed loop exists
-over finite-precision arithmetic.  Since the actual plant uses reals, we
-need to ensure we do not miss a counterexample because of rounding errors. 
-For this reason, the second verification stage uses an overapproximation
-with interval arithmetic with outward rounding. Thus, the first verification
+The {\sc verify} phase has two stages.  The first stage ensures that no
+counterexample plant with an unstable closed loop exists over
+finite-precision arithmetic.  Since the actual plant uses reals, we need to
+ensure we do not miss a counterexample because of rounding errors.  For this
+reason, the second verification stage uses an overapproximation with
+interval arithmetic with outward rounding.  Thus, the first verification
 stage underapproximates and is used to generate counterexamples, and the
 second stage overapproximates and provides proof that no counterexample
 exists.
