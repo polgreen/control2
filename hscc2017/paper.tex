@@ -51,7 +51,7 @@
 \newtheorem{mylemma}{Lemma}
 \newtheorem{myprop}{Proposition}
 
-\renewcommand{\baselinestretch}{0.9857}
+\renewcommand{\baselinestretch}{0.992}
 \allowdisplaybreaks
 \include{macros}
 
@@ -480,15 +480,13 @@ or work over their respective coefficients $\vec{G}$, $\vec{C}$ in vector form.
 
 A typical digital control system with a continuous plant and a discrete
 controller is illustrated in Figure~\ref{fig:sampledsystem}.  The DAC and
-ADC converters introduce quantization errors (notice that each of them
-may have a different FWL representation than the controller),
-which are modeled as disturbances 
-$\nu_{1}(z)$ and $\nu_{2}(z)$;  
-$G(s)$ is the continuous-time plant model
-with parametric additive uncertainty $\Delta_p{G}_n(s)$ and $\Delta_p{G}_d(s)$ (as mentioned above);  
-$R(z)$ is a given reference signal; 
-$U(z)$ is the control signal; 
-and $\hat{Y}(z)$ is the output signal affected by the disturbances and uncertainties in the closed-loop system 
+ADC converters introduce quantization errors (notice that each of them may
+have a different FWL representation than the controller), which are modeled
+as disturbances $\nu_{1}(z)$ and $\nu_{2}(z)$; $G(s)$ is the continuous-time
+plant model with parametric additive uncertainty $\Delta_p{G}_n(s)$ and
+$\Delta_p{G}_d(s)$ (as mentioned above); $R(z)$ is a given reference signal;
+$U(z)$ is the control signal; and $\hat{Y}(z)$ is the output signal affected
+by the disturbances and uncertainties in the closed-loop system
 %
 %
 %
@@ -1931,9 +1929,9 @@ confirms the stability loss if we consider FWL effects.
 Figure~\ref{fig:step1} shows that the first candidate controller is able to
 stabilize the closed-loop system without uncertainties, but it is rejected
 during the {\sc precision} phase by \tool since this solution is not
-considered to be sound.  Finally, Figure~\ref{fig:step2} shows a stable
+sound.  Finally, Figure~\ref{fig:step2} shows a stable
 behavior for the final (sound) solution, which presents a lower settling
-time (hence the noticeable digitization effects).
+time (hence the digitization effects).
 
 \begin{figure*}
     \centering
