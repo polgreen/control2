@@ -148,7 +148,7 @@ a-posteriori verification.  Specifically, we synthesize stable,
 software-implemented embedded controllers along with a model of a physical
 plant.  Due to the complexity of such closed-loop systems, in this work we
 focus on linear models with known configurations, and perform parametric
-synthesis of stabilizing digital controllers (further closed-loop
+synthesis of stabilizing digital controllers (further closed-loop performance
 requirements are left to future work).
 
 Our work addresses challenging aspects of the control synthesis problem.  We
@@ -257,8 +257,9 @@ In summary, this paper makes the following original contributions.
 The digital controllers synthesized using the algorithm we present in this
 paper are typically used in closed loops with continuous (physical) plants. 
 Thus, we consider continuous dynamics (the plant) and discrete parts (the
-digital controller). In order to obtain an overall model, we discretize the
-continuous plant and look at the plant dynamics from the perspective of the digital controller. 
+digital controller). In order to obtain an overall model for the synthesis, 
+we discretize the continuous plant and particularly look at the plant dynamics 
+from the perspective of the digital controller. 
 
 As we only consider transfer function models, and require a $z$-domain transfer
 function $G(z)$ that captures all aspects of the continuous plant, 
@@ -295,7 +296,7 @@ G(z,T) = %\mathcal{ZOH}\left\lbrace{G(s)}\right\rbrace =
 %
 \end{mylemma}
 %
-For the sake of brevity, we will use the notation $G(z)$ to represent the
+In this study, for the sake of brevity, we will use the notation $G(z)$ to represent the
 pulse transfer function $G(z,T)$.
 % 
 Lemma~\ref{eq:pulsetf} ensures that the poles and zeros match under the
