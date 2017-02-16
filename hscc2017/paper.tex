@@ -1746,11 +1746,11 @@ exists.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Illustrative Example} \label{sec:running-ex}
 
-We illustrate our approach with a classical cruise control example,
-extracted from the literature~\cite{Astrom08}.  The example highlights the
-challenges that arise when using finite-precision arithmetic in digital
-control.  We are given a discrete plant model (with a time step of
-$0.2$\,s), which is represented by the following $z$-expression:
+We illustrate our approach with a classical cruise control example from the
+literature~\cite{Astrom08}.  It highlights the challenges that
+arise when using finite-precision arithmetic in digital control.  We are
+given a discrete plant model (with a time step of $0.2$\,s), 
+represented by the following $z$-expression:
 %
 \begin{equation}
 \label{Eq:running-example-plant}
@@ -1768,10 +1768,11 @@ C(z) = \frac{2.72z^2 - 4.153z + 1.896}{z^2 - 1.844z + 0.8496}.
 \end{equation}
 %
 The authors of~\cite{DBLP:conf/hybrid/WangGRJF16} claim that the controller
-$C(z)$ in~\eqref{Eq:running-example-controller} stabilizes the
-closed-loop system for the discrete plant model $G(z)$ in~\eqref{Eq:running-example-plant}.  
-However, if the effects of finite-precision arithmetic are considered (e.g., fixed-point arithmetic and
-FWL), then this closed-loop system becomes unstable.
+$C(z)$ in~\eqref{Eq:running-example-controller} stabilizes the closed-loop
+system for the discrete plant model $G(z)$
+in~\eqref{Eq:running-example-plant}.  However, if the effects of
+finite-precision arithmetic are considered, then this closed-loop system
+becomes unstable.
 %
 For instance, an implementation of $C(z)$ using 
 $\mathbb R \param {4}{16}$ fixed-point
@@ -1795,7 +1796,7 @@ Notice that this is disregarding further approximation effects on the plant caus
 Figure~\ref{fig:original} gives the Bode diagram for the digital controller
 represented in~\eqref{Eq:running-example-controller}: 
 as the phase margin is negative, 
-the controller is unstable when considering the above FWL effects.
+the controller is unstable when considering the FWL effects.
 
 \subsection{Program Synthesis for the Example}
 %
