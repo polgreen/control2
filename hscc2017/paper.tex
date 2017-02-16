@@ -2245,41 +2245,39 @@ uncertainty)
 \end{table}
 %---------------------------------
 
-The presence of uncertainty in some particular benchmarks ($2$, $4$, $6$, and $8$)  
-leads to harder verification conditions to be checked 
-by the {\sc verify} phase, which thus influences the overall synthesis time.   
-However, considering the faster engine for each benchmark (marked as bold in Table~\ref{tab:results}), 
-the median run-time amounts to $48$\,s, implying that \tool can synthesize 
-half of the controllers in less than one minute. Overall, the average fastest synthesis 
-time considering both engines is approximately $42$ minutes.  We
-consider these times short enough to be of practical use to control
-engineers, and thus affirm RQ1.  We further observe that the approach using
-the two-stage verification engine is able to synthesize stable controllers
-in $19$ out of the $23$ benchmarks, and can be complemented using the
-one-stage engine, which is faster for two benchmarks where the inductive
-conjectures fail.  Both verification engines together enable controller
-synthesis for $20$ out of $23$ benchmarks.  For the remaining benchmarks
-our approach failed to synthesize a stable controller within the time
-limits.  This can be addressed by either increasing either the time limit
-or the fixed-point word widths considered, or by using floating-point
-arithmetic instead.  The synthesized controllers have been confirmed to be stable
-outside of our model representation using MATLAB, positively answering RQ2. 
-A~link to the full experimental environment, including scripts to reproduce
-the results, all benchmarks and the \tool tool, is provided in the
-footnote.\footnote{\url{http://www.cprover.org/DSSynth/experiment.tar.gz}\\ 
-CBMC (SHA-1 hash) version: \\ 
-7a6cec1dd0eb8843559591105235f1f2c4678801}
+The presence of uncertainty in some particular benchmarks ($2$, $4$, $6$,
+and $8$) leads to harder verification conditions to be checked by the {\sc
+verify} phase, which impacts the overall synthesis time.  However,
+considering the faster engine for each benchmark (marked in bold in
+Table~\ref{tab:results}), the median run-time is $48$\,s, implying that
+\tool can synthesize half of the controllers in less than one minute. 
+Overall, the average fastest synthesis time considering both engines is
+approximately $42$ minutes.  We consider these times short enough to be of
+practical use to control engineers, and thus affirm RQ1.  We further observe
+that the two-stage verification engine is able to synthesize stable
+controllers for $19$ out of the $23$ benchmarks, and can be complemented
+using the one-stage engine, which is faster for two benchmarks where the
+inductive conjectures fail.  Both verification engines together enable
+controller synthesis for $20$ out of $23$ benchmarks.  For the remaining
+benchmarks our approach failed to synthesize a stable controller within the
+time limits.  This can be addressed by either increasing either the time
+limit or the fixed-point word widths considered, or by using floating-point
+arithmetic instead.  The synthesized controllers have been confirmed to be
+stable outside of our model representation using MATLAB, positively
+answering RQ2.  A~link to the full experimental environment, including
+scripts to reproduce the results, all benchmarks and the \tool tool, is
+provided in the
+footnote.\footnote{\url{http://www.cprover.org/DSSynth/experiment.tar.gz}\\
+CBMC (SHA-1 hash) version: \\ 7a6cec1dd0eb8843559591105235f1f2c4678801}
 
 %--------------------------------------
-\subsection{Threats to Validity and Generalizations}
+\subsection{Threats to Validity}
 %--------------------------------------
 
-We have reported a favorable assessment of \tool over a diverse set of real-world
-benchmarks. Nevertheless, this set of benchmarks is limited within the
-scope of this paper and \tool's performance 
-%may not generalize to other benchmark scenarios. This can 
-needs to be addressed by expanding the benchmarks set
-in future experiments.
+We have reported a favorable assessment of \tool over a diverse set of
+real-world benchmarks.  Nevertheless, this set of benchmarks is limited
+within the scope of this paper and \tool's performance needs to be assessed
+on a larger benchmark set in future work.
 
 Furthermore, our approach to select suitable FWL word widths to model
 plant behavior employs a heuristic based on user-provided controller
