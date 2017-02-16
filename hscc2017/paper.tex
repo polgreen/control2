@@ -2165,25 +2165,24 @@ while the two right columns display the total time (in seconds) required to synt
 for the given plant. 
 
 For the majority of the benchmarks, the conjecture explained in
-Section~\ref{synthesis-elements} holds and the two-stage verification 
-engine is able to find a stable solution in less than one minute for half
-of the benchmarks. This is possible if the inductive solutions need to be 
-refined with few counterexamples and increments of the fixed-point precision.  
-However, the benchmark \emph{SatelliteB2} with uncertainty ($G_{3b}$) has 
-required too many counterexamples to refine its solution.  
-For this particular case, the one-stage engine is able to complement the
-two-stage approach and synthesize a solution instead.  It is important to
-reiterate that the one-stage verification engine does not take advantage of
-the inductive conjecture inherent to CEGIS, but instead fully explores the
-counterexample space in one SAT instance.  As expected, this approach is 
-significantly slower on average and is only useful for benchmarks where 
-the CEGIS approach requires too many counterexample refinement iterations
-such that exploring all counterexamples in a single SAT instance performs better.
-Our results suggest an average performance difference of at least two orders
-of magnitude between the two engines, leading to the one-stage engine timing
-out on the majority of our benchmarks.  Table~\ref{tab:results}
-lists the results for both engines, where in $16$ out of $23$
-benchmarks, the two-stage engine is faster.
+Section~\ref{synthesis-elements} holds and the two-stage verification engine
+is able to find a stable solution in less than one minute for half of the
+benchmarks.  This is possible if the inductive solutions need to be refined
+with few counterexamples and increments of the fixed-point precision. 
+However, the benchmark \emph{SatelliteB2} with uncertainty ($G_{3b}$) has
+required too many counterexamples to refine its solution.  For this
+particular case, the one-stage engine is able to complement the two-stage
+approach and synthesizes a solution.  It is important to reiterate that the
+one-stage verification engine does not take advantage of the inductive
+conjecture inherent to CEGIS, but instead fully explores the counterexample
+space in a single SAT instance.  As expected, this approach is significantly
+slower on average and is only useful for benchmarks where the CEGIS approach
+requires too many refinement iterations such that exploring all
+counterexamples in a single SAT instance performs better.  Our results
+suggest an average performance difference of at least two orders of
+magnitude, leading to the one-stage engine timing out on the majority of our
+benchmarks.  Table~\ref{tab:results} lists the results for both engines,
+where in $16$ out of $23$ benchmarks, the two-stage engine is faster.
 
 \begin{table}
 \centering
