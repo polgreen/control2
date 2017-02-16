@@ -40,8 +40,8 @@
 %\usetikzlibrary{decorations}
 %\usetikzlibrary{decorations.pathmorphing}
 
-\newcommand{\aabatecmt}[1]{{\color{red}#1}}
-\newcommand{\dariocmt}[1]{{\color{blue}#1}}
+\newcommand{\aabatecmt}[1]{}%{{\color{red}#1}}
+\newcommand{\dariocmt}[1]{}%{{\color{blue}#1}}
 
 \newcommand{\blue}[1]{{\color{blue}#1}}
 \newcommand{\red}[1]{{\color{red}#1}}
@@ -1558,7 +1558,9 @@ synthesizer as the specification $\sigma$.  There are a number of
 algorithms in our verification engine that can be used for stability analysis~\cite{daes20161, Bessa16}.  
 %one based on Schur's decomposition
 %and another one based on Jury's criterion~\cite{astrom1997computer}.  
-Here we choose Jury's criterion~\cite{astrom1997computer} in view of its efficiency \blue{[check correctness] and ease of integration within \tool}: 
+Here we choose Jury's criterion~\cite{astrom1997computer} in view of its efficiency 
+\aabatecmt{[check correctness]} 
+and ease of integration within \tool: 
 we employ this method to check the stability in the $z$-domain for the
 characteristic polynomial $S(z)$ defined in~\eqref{eq:internal_stab_lemma}.
 %
