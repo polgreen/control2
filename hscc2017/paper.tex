@@ -2308,20 +2308,20 @@ continuously seek better results for a number of aspects in addition to
 stability.  A vast range of pole placement techniques such as Moore's
 algorithm for eigenstructure assignment~\cite{klein1977eigenvalue} or the
 more recent Linear Quadratic Regulator (LQR)~\cite{bemporad2002explicit}
-have been used in several studies with increasing degrees of success to
-ensure stability.  The latter approach highlights the importance of
-conserving energy during the control process, which results in lower running
-costs.  Since real systems are subject to tolerance and noise as well as the
-need for economy, more recent studies focus on the problem of achieving
-robust stability with minimum gain~\cite{schmid2014unified,
-konigorski2012pole}.  However, when applied with the aim of synthesizing a
-digital controller, many of these techniques lack the ability to produce
-sound or stable results because they disregard the effects of quantization
-and rounding.  Recent papers on implementations/synthesis of LTI digital
-controllers~\cite{das2013lqr, ghosh2013fpga} focus on time discretization,
-failing to account for these error-inducing effects and can result in digital 
-systems that are unstable even though they have been proven to be
-robustly stable in a continuous space.  
+have been used with increasing degrees of success.  The latter approach
+highlights the importance of conserving energy during the control process,
+which results in lower running costs.  Since real systems are subject to
+tolerance and noise as well as the need for economy, more recent studies
+focus on the problem of achieving robust stability with minimum
+gain~\cite{schmid2014unified, konigorski2012pole}.  However, when applied
+with the aim of synthesizing a digital controller, many of these techniques
+lack the ability to produce sound or stable results because they disregard
+the effects of quantization and rounding.  Recent papers on
+implementations/synthesis of LTI digital controllers~\cite{das2013lqr,
+ghosh2013fpga} focus on time discretization, failing to account for these
+error-inducing effects and can result in digital systems that are unstable
+even though they have been proven to be robustly stable in a continuous
+space.
 
 \paragraph{Formal Verification of Linear Digital Controllers} 
 
