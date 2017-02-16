@@ -1801,9 +1801,10 @@ the controller is unstable when considering the FWL effects.
 \subsection{Program Synthesis for the Example}
 %
 We now demonstrate how our approach solves the synthesis problem for the
-example given in the previous section.  
-Assuming a precision of $I_p=16$, $F_p=24$,  
-we start with an a-priori candidate solution with all coefficients zero (note that the controller is in the FWL domain, hence we use $\tilde{C}(z)$): 
+example given in the previous section.  Assuming a precision of $I_p=16$,
+$F_p=24$, we start with an a-priori candidate solution with all coefficients
+zero (the controller performs FWL arithmetic, hence we use
+$\tilde{C}(z)$):
 %
 $$ 
 \tilde{C}(z)=\frac{0z^2{+}0z{+}0}{0z^2{+}0z{+}0}. 
@@ -1972,7 +1973,7 @@ time (hence the noticeable digitization effects).
 \label{experimental-setup}
 %---------------------------------
 
-The first set of benchmarks uses the discrete model $G_1(z)$ of a cruise control
+The first set of benchmarks uses the discrete model $G_1$ of a cruise control
 system for a car, and accounts for rolling friction, aerodynamic drag, and
 the gravitational disturbance force~\cite{Astrom08}. 
 %The plant model is given as follows:
@@ -1982,7 +1983,7 @@ the gravitational disturbance force~\cite{Astrom08}.
 %G_1(z)=\frac{0.0264}{z-0.998} \nonumber
 %\end{equation} 
 %
-The second set of benchmarks considers the discrete model $G_2(z)$ 
+The second set of benchmarks considers the discrete model $G_2$ 
 of a simple spring-mass damper plant~\cite{DBLP:conf/hybrid/WangGRJF16}. 
 %where the discrete 
 %plant dynamics is represented by the following $z$-expression:
@@ -1992,10 +1993,10 @@ of a simple spring-mass damper plant~\cite{DBLP:conf/hybrid/WangGRJF16}.
 %G_2(z)=\frac{5\times{10^{-5}}z + 5\times{10^{-5}}}{z^2 - 2z + 1.0001}. \nonumber
 %\end{equation} 
 %
-A third set of benchmarks uses the discrete model $G_{3}(z)$ for satellite attitude 
+A third set of benchmarks uses the discrete model $G_{3}$ for satellite attitude 
 dynamics~\cite{Franklin15}, which require attitude control
 for orientation of antennas and sensors w.r.t.~Earth.
-The fourth set of benchmarks presents an alternative discrete model $G_4(z)$ 
+The fourth set of benchmarks presents an alternative discrete model $G_4$ 
 of a cruise control system~\cite{DBLP:conf/hybrid/WangGRJF16}. 
 %The satellite
 %attitude control is typically used for three-axis attitude tracking, but
@@ -2033,7 +2034,7 @@ of a cruise control system~\cite{DBLP:conf/hybrid/WangGRJF16}.
 %G_{4}(s)=\frac{s-1}{s^{2}-s-2},
 %\end{equation}
 %
-%\noindent We can obtain $G_{4}(z)$ using the ZOH discretization defined
+%\noindent We can obtain $G_{4}$ using the ZOH discretization defined
 %in Eq.~\eqref{eq:pulsetf} with three different sample times ($0.1$, $0.05$,
 %and $0.03$ seconds), respectively, as follows:
 %
@@ -2056,9 +2057,10 @@ of a cruise control system~\cite{DBLP:conf/hybrid/WangGRJF16}.
 The fifth and sixth set of benchmarks describe the discrete model 
 of a DC servo motor velocity dynamics~\cite{exampleCAD,Tan01}. 
 %
-The seventh set of benchmarks contains a well-studied discrete  
-non-minimal phase model $G_{7}(z)$. As known, non-minimal phase model offers 
-additional difficulties for the design of stable controllers~\cite{Doyle:1991:FCT:574259}. 
+The seventh set of benchmarks contains a well-studied discrete non-minimal
+phase model $G_{7}$.  Non-minimal phase models cause additional
+difficulties for the design of stable
+controllers~\cite{Doyle:1991:FCT:574259}.
 %
 %The fifth set of benchmarks contains the \textit{DC Motor Rate} discrete model $G_{5}(z)$, which 
 %describes the angular velocity of a DC Motor plant~\cite{Franklin15}. 
@@ -2068,23 +2070,27 @@ additional difficulties for the design of stable controllers~\cite{Doyle:1991:FC
 %G_{5}(z)=\frac{ 0.1898z + 1.8027\times{10^{-4}}}{1.0z^{2} -0.9012z -1.0006\times{10^{-16}}}. \nonumber
 %\end{equation}
 %
-The eighth set of benchmarks describes the discrete model $G_{8}(z)$ for the \textit{Helicopter Longitudinal Motion},
-which provides the longitudinal motion dynamics of a helicopter~\cite{Franklin15}. 
+The eighth set of benchmarks describes the discrete model $G_{8}$ for the
+\textit{Helicopter Longitudinal Motion}, which provides the longitudinal
+motion dynamics of a helicopter~\cite{Franklin15}.
 %
 %\begin{equation}
 %\label{Helicopter-Longitudinal-Motion}
 %G_{6}(z)=\frac{15.1315z^{2} + 17.8600z + 17.4549}{z^{3} -2.6207z^{2} + 2.3586z -0.6570}. \nonumber
 %\end{equation}
 %
-The ninth  set of benchmarks contains the discrete model $G_{9}(z)$ for the known \textit{Inverted Pendulum}, which 
-describes a pendulum dynamics with its center of mass above its pivot point~\cite{Franklin15}. 
+The ninth set of benchmarks contains the discrete model $G_{9}$ for the
+known \textit{Inverted Pendulum}, which describes a pendulum dynamics with
+its center of mass above its pivot point~\cite{Franklin15}.
 %
 %\begin{equation}
 %\label{Inverted-Pendulum}
 %G_{7}(z)=\frac{0.0263z^{2} + 0.0143z -0.0383}{z^{4} -4.2553z^{3} + 6.5105z^{2} -4.2553z + 1}. \nonumber
 %\end{equation}
 %
-The tenth set of benchmarks contains the \textit{Magnetic Suspension} discrete model $G_{10}(z)$, which describes the dynamics of a mass that levitates with support only of a magnetic field~\cite{Franklin15}. 
+The tenth set of benchmarks contains the \textit{Magnetic Suspension}
+discrete model $G_{10}$, which describes the dynamics of a mass that
+levitates with support only of a magnetic field~\cite{Franklin15}.
 %
 %\begin{equation}
 %\label{Magnetic-Suspension}
@@ -2098,25 +2104,33 @@ The tenth set of benchmarks contains the \textit{Magnetic Suspension} discrete m
 %G_{8}(z)=\frac{0.25z^{3} + 0.5z^{3} + 0.25z -5.7065\times{10^{-10}}}{z^{3} + 6.8455\times{10^{-9}}z^{2} + 3.3925\times{10^{-17}}z - 3.4667\times%{10^{-94}}}. \nonumber
 %\end{equation}
 %
-The eleventh set of benchmarks contains the \textit{Computer Tape Driver} discrete model $G_{11}(z)$, which 
-describes a system to read and write data on a storage device~\cite{Franklin15}.
+The eleventh set of benchmarks contains the \textit{Computer Tape Driver}
+discrete model $G_{11}$, which describes a system to read and write data
+on a storage device~\cite{Franklin15}.
 %
 %\begin{equation}
 %\label{Computer-Tape-Driver}
 %G_{10}(z)=\frac{0.0200z -3.8303\times{10^{-176}}}{1.0z -4.6764\times{10^{-166}}}. \nonumber
 %\end{equation}
 %
-The last set of benchmarks considers a discrete model $G_{12}(z)$ 
-that is typically used for evaluating stability
-margins and controller fragility~\cite{bhattacharyya97, keel_Bhattacharyya_examples}.
+The last set of benchmarks considers a discrete model $G_{12}$ that is
+typically used for evaluating stability margins and controller
+fragility~\cite{bhattacharyya97, keel_Bhattacharyya_examples}.
 
-Additional benchmarks were created for the \textit{Cruise Control System}, \textit{Spring-mass damper}, and \textit{Satellite} considering parametric additive in the nominal plant model  (represented by $\Delta_{p}\vec{G}$ in Eq.~\eqref{digital_plant_tf}). The uncertainties are deviations bounded to a maximum magnitude of $0.5$ in each coefficient. These uncertain models are respectively represented by $G_{1b}(z)$, $G_{2b}(z)$, $G_{3b}(z)$, and $G_{3d}(z)$. 
+Additional benchmarks were created for the \textit{Cruise Control System},
+\textit{Spring-mass damper}, and \textit{Satellite} considering parametric
+additive in the nominal plant model  (represented by $\Delta_{p}\vec{G}$ in
+Eq.~\eqref{digital_plant_tf}).  The uncertainties are deviations bounded to
+a maximum magnitude of $0.5$ in each coefficient.  These uncertain models
+are respectively represented by $G_{1b}$, $G_{2b}$, $G_{3b}$ and
+$G_{3d}$.
 
-All experiments have been conducted on a 12-core 2.40\,GHz Intel Xeon E5-2440
-with 96\,GB of RAM and Linux OS.  All times given are wall clock times in
-seconds, as measured by the UNIX date command.  For the two-stage verification 
-engine in Figure~\ref{fig:CEGIS} we have applied a timeout of $8$ hours per benchmark, 
-whereas $24$ hours have been set for the approach using a one-stage engine. 
+All experiments have been conducted on a 12-core 2.40\,GHz Intel Xeon
+E5-2440 with 96\,GB of RAM and Linux OS.  All times given are wall clock
+times in seconds, as measured by the UNIX date command.  For the two-stage
+verification engine in Figure~\ref{fig:CEGIS} we have applied a timeout of
+$8$ hours per benchmark, whereas $24$ hours have been set for the approach
+using a one-stage engine.
 
 %---------------------------------
 \subsection{Objectives}
