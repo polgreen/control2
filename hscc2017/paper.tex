@@ -1794,37 +1794,19 @@ for the {\sc verify} phase as one-stage and two-stage, respectively.
 \subsection{Soundness}
 %-----------------------------
 
-Within the scheme in Figure \ref{fig:CEGIS}, 
-while the {\sc synthesise} phase searches for potentially unsound 
-candidate solutions, the soundness of the model is ensured by the {\sc verify} phase.  
-If a candidate solution is successfully verified, it is necessarily sound. 
+The {\sc synthesise} phase generates potentially unsound candidate
+solutions.  The soundness of the model is ensured by the {\sc verify} phase. 
+If a candidate solution passes verification, it is necessarily sound.
 
-Through its two stages, the {\sc verify} phase looks at two separate elements for
-soundness.
-% The first ensures that there exists no
-% counterexample plant that would create a closed-loop with unstable
-% poles. The fixed word length of the controller is not relevant at this
-% point since the parameters have already been chosen to fit this
-% criteria (i.e., the candidate solution is FWL).
-The first stage ensures that no counterexample
-plant with an unstable closed loop exists with % If no such
-% system exists, then the controller is stable for all
-% plants in the collection with
-the limitations given by the data
-type used by the verifier. Since the actual
-plant works in the reals, whereas we use fixed/floating point
-arithmetic to evaluate it, we need to ensure that the rounding errors
-in the caculations do not cause the solution to be unsound.
-% 
-For this reason the second verification stage uses interval arithmetic with
-outward rounding to ensure that these errors do not exceed critical
-bounds that could make some plant unstable. 
-
-This means that whilst the solution may not be complete, it is sound for
-evaluating any collection of real plants with a defined FWL controller. 
-We require two verification stages because,
-while the second one can ensure the stability of all plants in the collection, 
-it is unable to provide a counterexample.
+The {\sc verify} phase considers two aspects of soundness.  The first stage
+ensures that no counterexample plant with an unstable closed loop exists
+over finite-precision arithmetic.  Since the actual plant uses reals, we
+need to ensure we do not miss a counterexample because of rounding errors. 
+For this reason, the second verification stage uses an overapproximation
+with interval arithmetic with outward rounding. Thus, the first verification
+stage underapproximates and is used to generate counterexamples, and the
+second stage overapproximates and provides proof that no counterexample
+exists.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Illustrative Example} \label{sec:running-ex}
