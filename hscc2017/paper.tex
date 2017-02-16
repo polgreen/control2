@@ -181,7 +181,7 @@ the availability of low-cost devices that can perform highly non-trivial
 control tasks, with significant impact in numerous application areas such as
 environmental control and robotics~\cite{astrom1997computer, Franklin15}. 
 Correct control is non-trivial, however.  The problem is exacerbated by
-artefacts specific to digital control, such as the effects of
+artifacts specific to digital control, such as the effects of
 finite-precision arithmetic, time discretization, and quantization noise
 introduced by A/D and D/A conversion.  Thus, programming expertise is a key
 barrier to broad adoption of correct digital controllers, and requires
@@ -229,7 +229,7 @@ by evaluating the effects of the quantizers (A/D and D/A converters) and of
 time discretization.  We further account for uncertainties in the plant
 model.  The resulting closed-loop system is a program with a loop that
 operates on bit-vectors encoded using fixed-point arithmetic with finite
-word length (FWL).  The three effects of 1.~uncertaities, 2.~FWL
+word length (FWL).  The three effects of 1.~uncertainties, 2.~FWL
 representation and 3.~quantization errors are incorporated into the model,
 and are taken into account during the CEGIS-based synthesis of the control
 software for the plant.
@@ -422,7 +422,7 @@ which will be represented by the following transfer function:
 Notice that, due to the nature of the methods we use for the stability
 check, we require that the parametric errors in the plant have the same
 polynomial order as the plant itself (indeed, all other errors described in
-this paper fulfil this property).  We~also remark that, due to its native
+this paper fulfill this property).  We~also remark that, due to its native
 digital implementation, there are no parametric errors ($\Delta_pC_n(z),
 \Delta_pC_d(z)$) in the controller.  Thus $\hat{C}(z) \equiv C(z)$.
 
@@ -697,7 +697,7 @@ original model $\hat{C}(z) = C(z) = \frac{C_{n}(z)}{C_{d}(z)}$ as follows:
 %
 In the case of a digitally synthesized controller (as it is the case in this
 work), $\tilde{C}(z) \equiv \hat{C}(z) \equiv C(z)$ because the synthesis is
-performed directly using FWL representation.  In other words, we synthesise
+performed directly using FWL representation.  In other words, we synthesize
 a controller that is already in the domain $\mathbb{R} \param{I}{F}$ and has
 therefore no uncertainties entering because of FWL representations, that is,
 $\Delta_bC_n(z)=\Delta_bC_d(z)=0$.
@@ -742,7 +742,7 @@ uncertainty as $\Delta{\vec{G}}=\Delta_p{\vec{G}}+\Delta_b{\vec{G}}$.
 
 %------------------------------------
 \subsection{Closed-Loop Stability Verification under Parametric
-Uncertainties, FWL Representation and Quantisation Noise}
+Uncertainties, FWL Representation and Quantization Noise}
 \label{sec:stability}
 %------------------------------------
 
@@ -1996,7 +1996,7 @@ stabilize the closed-loop system without uncertainties, but it is rejected
 during the {\sc precision} phase by \tool since this solution is not
 considered to be sound.  Finally, Figure~\ref{fig:step2} shows a stable
 behavior for the final (sound) solution, which presents a lower settling
-time (hence the noticeable digitazion effects).
+time (hence the noticeable digitization effects).
 
 \begin{figure*}
     \centering
@@ -2325,7 +2325,7 @@ CBMC (SHA-1 hash) version: \\
 \subsection{Threats to Validity and Generalizations}
 %--------------------------------------
 
-We have reported a favourable assessment of \tool over a diverse set of real-world
+We have reported a favorable assessment of \tool over a diverse set of real-world
 benchmarks. Nevertheless, this set of benchmarks is limited within the
 scope of this paper and \tool's performance 
 %may not generalize to other benchmark scenarios. This can 
@@ -2367,7 +2367,7 @@ conserving energy during the control process, which results in lower running
 costs.  Since real systems are subject to tolerance and noise as well as the
 need for economy, more recent studies focus on the problem of achieving
 robust stability with minimum gain~\cite{schmid2014unified,
-konigorski2012pole}.  However, when applied with the aim of synthesising a
+konigorski2012pole}.  However, when applied with the aim of synthesizing a
 digital controller, many of these techniques lack the ability to produce
 sound or stable results because they disregard the effects of quantization
 and rounding.  Recent papers on implementations/synthesis of LTI digital
@@ -2439,7 +2439,7 @@ substantial progress in recent years.  One such
 approach~\cite{itzhaky2010simple} inductively synthesizes invariants to
 generate the desired programs.
 
-Program synthesisers are an ideal fit for synthesis of parametric
+Program synthesizers are an ideal fit for synthesis of parametric
 controllers since the semantics of programs capture effects such as FWL
 precisely.  In~\cite{DBLP:conf/cdc/RavanbakhshS15}, the authors use CEGIS
 for the synthesis of switching controllers for stabilizing continuous-time
