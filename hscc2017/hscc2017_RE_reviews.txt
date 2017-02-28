@@ -1,0 +1,136 @@
+
+
+Dear Daniel Kroening,
+
+I am delighted to report that your Repeatability Package (RP) for your HSCC 2017 paper
+
+Sound and Automated Synthesis of Digital Stabilizing Controllers for Continuous Plants
+
+was deemed "repeatable" by the Repeatability Evaluation Committee (REC).  Your paper will be listed among those judged repeatable at the Repeatability Evaluation website. 
+
+In addition, you will shortly receive a further email with instructions concerning submission of an updated version of your paper with a "repeatability evaluated" badge added on the first page. Please note that you will need to submit a final version by Sunday, March 5.    
+
+On behalf of the REC, thank you for your submission and I hope to see you in Pittsburgh in April!
+
+Thanks,
+Sergiy
+
+
+----------------------- REVIEW 1 ---------------------
+PAPER: 7
+TITLE: Sound and Automated Synthesis of Digital Stabilizing Controllers for Continuous Plants
+AUTHORS: Alessandro Abate, Iury Bessa, Dario Cattaruzza, Lucas Cordeiro, Cristina David, Pascal Kesseli and Daniel Kroening
+
+Coverage: 2
+Instructions: 2
+Quality: 3
+Overall evaluation: -1
+Reviewer's confidence: 4
+
+----------- Overall evaluation -----------
+General notes:
+
+The ending of the submitted software archive
+"HSCC_RE_2017_Software_and_data_archive_7.gz" is incorrect, which
+might be confusing to some users. It should end with ".tar.gz" or
+".tgz", because it is a tar file packed with Gzip.
+
+
+Coverage: Some (falls below expectations / 2): There is at least one
+repeatable element.
+
+The script provided runs the experiments. In turn, for each case study
+a log file is created, and a summary file about the success of
+experiments and their runtime is written as well. As for each
+experiment, there is only a log file created but no systematic
+collection of data, I do not consider this "as [...] data underlying
+those figures or tables be generated in a recognizable format."
+because it requires considerable effort to extract the data from the
+log files and interpret them. It is also not quite clear which of the
+elements of the paper the authors target to be repeat using the
+script.
+
+
+Instructions: Rudimentary (falls below expectations / 2): The
+instructions specify a script or command to run, but little else.
+
+In the description file, there is just a hint about the script which
+runs most of the experiments, as well as a hint how to run additional
+experiments. It is not described how to run only specific experiments.
+The requirements on the execution environment are described. Also
+(cf. "Coverage") from the instructions it seems complicated to rebuild
+the original figures from the paper.
+
+A hint more precise than "very time-consuming" about the expected time
+to run the benchmarks (of course, with a given computer configuration)
+would be appreciated. It is annoying when one wants to reconstruct the
+results but does not know have an idea for how long one will have to
+keep the experiments running. I have been running the experiments for
+several hours now and they have still not completed.
+
+If memory is insufficient (e.g. 1024), the script fails to compile
+certain files. This situation is not detected by the script, which
+continues to compile other files and in the end unsuccessfully tries
+to generate the data. This is quite confusing, as one has to parse the
+output of the script to see what exactly happens. The problem is also
+likely to actually happen e.g. in case one uses a virtual machine
+which one does not want to equip with much memory.
+
+
+Quality: Comprehensive documentation (meets expectations / 3).
+
+Source code files mostly have clear names, etc. Some of the names are
+a bit cryptic, e.g. "one_lsb_error". There are few comments in the
+source files, which makes part of them somewhat hard to
+understand. For the benchmarks given, the documentation is minimal.
+
+
+----------------------- REVIEW 2 ---------------------
+PAPER: 7
+TITLE: Sound and Automated Synthesis of Digital Stabilizing Controllers for Continuous Plants
+AUTHORS: Alessandro Abate, Iury Bessa, Dario Cattaruzza, Lucas Cordeiro, Cristina David, Pascal Kesseli and Daniel Kroening
+
+Coverage: 3
+Instructions: 3
+Quality: 3
+Overall evaluation: 1
+Reviewer's confidence: 4
+
+----------- Overall evaluation -----------
+This paper presents an algorithm that synthesizes stable digital controllers for given continuous plant models. The algorithm is based on the technique called counterexample guided inductive synthesis. To ensure the synthesis result to be sound, they consider the approximation issues in closed-loop systems such as time discretization, quantization effects and finite-precision arithmetic rounding errors. They implement the algorithm in a tool called DSSynth, and demonstrate the tool's performance with a set of benchmarks.
+
+The computational elements of this paper are identified mainly in the experimental evaluation of DSSynth with a set of benchmarks. They ran DSSynth for each benchmark and measured the time that the tool took to synthesize a controller. The result for the experimental evaluation is summarized in Table 1 in the paper.
+
+The RP was submitted as a compressed file of source code and benchmarks. The RP was evaluated on a Ubuntu Linux machine with a 15-core Intel(R) Xeon(R) CPU E5-2667 and 128 GB of RAM. One minor issue in the installation of the tool is that the installation script breaks when there is a white space in the directory path to the tool.
+
+The coverage of the RP "meets expectations." In the repeatability evaluation, most of the benchmarks results were repeatable and similar as those in Table 1 in the paper. However, the results for only two benchmarks were different as follows: The paper says that the controller for the benchmark 'a_ST2_IMPL2_bound_simple' was not synthesized within the time limit, but in the repeatability evaluation, a controller was synthesized in 7365 seconds. Unlike the result of the paper, the controller for the benchmark 'SatelliteB2unc01_range' couldn't be synthesized in the repeatability evaluation. The log file for the former case will be attached to this review, because the log file of the latter benchmark was not generated. 
+
+The instructions of the RP are "complete (i.e., meets expectation)." There is a single command to compile the source code and run all the benchmarks. However, it doesn't provide an instruction on how to create/modify a benchmark for users.
+
+The quality of the RP "meets expectations." The modules/variables in the script are given readable names. The log file which is generated by DSSynth for each benchmark gives a detailed and structured output result of the run of the benchmark.<This review contains an attachment, see the file
+review_2.zip attached to this letter.>
+
+
+----------------------- REVIEW 3 ---------------------
+PAPER: 7
+TITLE: Sound and Automated Synthesis of Digital Stabilizing Controllers for Continuous Plants
+AUTHORS: Alessandro Abate, Iury Bessa, Dario Cattaruzza, Lucas Cordeiro, Cristina David, Pascal Kesseli and Daniel Kroening
+
+Coverage: 4
+Instructions: 3
+Quality: 3
+Overall evaluation: 1
+Reviewer's confidence: 3
+
+----------- Overall evaluation -----------
+Coverage:
+the RP includes material for reproducing the benchmark described in section 4 of the paper and with runtimes listed in Table 1. By default, the 2-stage engine is enabled. The 1-stage engine (with significantly worse performance) can be selected by modifying the main script, but I haven't tried it. The RP contains a main script that, after building the required libraries, runs all the experiments in the benchmark.
+
+Instructions:
+They are clear and complete enough. There is only an inaccuracy regarding the required dependencies to install. On a fresh Ubuntu installation, I had to install packages g++ gcc flex bison make git libz-dev libwww-perl patch libzip-dev, while the instructions indicate only gcc and g++.
+
+Quality (documentation and trustworthiness):
+The C code for the experiments is hard to interpret and not well documented. I don't have any experience with CBMC which I suppose would help in better understanding the code. Despite running on a considerably less powerful execution environment (virtual machine with 1 core and 1.5 GB RAM), my runtimes were closer to those in the paper than I expected.
+
+
+
