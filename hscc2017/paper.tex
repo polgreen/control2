@@ -51,7 +51,7 @@
 \newtheorem{mylemma}{Lemma}
 \newtheorem{myprop}{Proposition}
 
-\renewcommand{\baselinestretch}{0.99}
+\renewcommand{\baselinestretch}{0.991}
 \allowdisplaybreaks
 \include{macros}
 
@@ -146,17 +146,17 @@ automation.  Modern synthesis engines combine automated testing, genetic
 algorithms, and SMT-based automated
 reasoning~\cite{DBLP:journals/corr/AlurFSS16a, DBLP:conf/lpar/DavidKL15}.
 
-By combining and applying state-of-the-art synthesis engines we present a
-tool that automatically generates digital controllers for a given continuous
-plant model that are correct by construction.  This approach delivers a high
+By combining state-of-the-art synthesis engines we present a tool that
+automatically generates digital controllers for a given continuous plant
+model that are correct by construction.  This approach delivers a high
 degree of automation, promises to reduce the cost and time of development of
 digital control dramatically, and requires considerably less expertise than
 a-posteriori verification.  Specifically, we synthesize stable,
 software-implemented embedded controllers along with a model of a physical
 plant.  Due to the complexity of such closed-loop systems, in this work we
 focus on linear models with known configurations, and perform parametric
-synthesis of stabilizing digital controllers (further closed-loop performance
-requirements are left to future work).
+synthesis of stabilizing digital controllers (further closed-loop
+performance requirements are left to future work).
 
 Our work addresses challenging aspects of the control synthesis problem.  We
 perform digital control synthesis over a hybrid model, where the plant
@@ -180,7 +180,7 @@ In summary, this paper makes the following original contributions.
 \item We automatically generate {\em correct-by-construction} digital
   controllers using an inductive synthesis approach.  Our application of program
   synthesis is non-trivial and addresses challenges specific to control
-  systems, such as the effects of quantizers and FWL.  In particular, we
+  systems, such as quantizers and FWL.  In particular, we
   have found that a two-stage verification engine that continuously refines
   the precision of the fixed-point representation of the plant yields a
   speed-up of two orders of magnitude over a conventional one-stage
@@ -2426,6 +2426,7 @@ approach to further classes of systems, including those with state space.
 We will also consider performance requirements while synthesizing the
 digital controller.
 
+\newpage
 \bibliographystyle{abbrv}
 \bibliography{paper}  
 
