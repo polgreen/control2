@@ -86,7 +86,7 @@ correct by construction.
 %
 \end{frame}
 
-\begin{frame}[fragile]{Hybrid Dynamical System}{Continuous Plant and Digital Controller}
+\begin{frame}[fragile]{Cyberphysical System}{Continuous Plant and Digital Controller}
 
 \begin{figure}[htb]
 \centering
@@ -120,21 +120,32 @@ correct by construction.
         label=\textbf{Controller}] (cz) at ([xshift=.5cm,yshift=0cm]circle) {\sc $\hat{C}(z)$};
    \node[draw=none] (ud) at ([xshift=1cm,yshift=.2cm]cz)  {$U(z)$};
  
+ \only<1>{
+ \& \node[rectangle,draw,minimum width=3cm,
+	minimum height=1.6cm,] (bbdac) {\sc DAC};
+ }
+ \only<2->{
    \& complexnode/.pic={ 
       \node[rectangle,draw,
-	minimum width=3cm,
+	minimum width=4cm,
 	minimum height=1.6cm,
 	label=\textbf{DAC},] (dac) {};
      \node[circle,add={}{+}{+}{},fill=gray!20] (q2) at ([xshift=-.65cm]dac.center) {};
      \node[draw=none] (q2t)  at ([xshift=-.65cm,yshift=-.65cm]dac.center) {{\sc Q2}};
      \node[draw=none] (v2)  at ([xshift=-.65cm,yshift=1.5cm]dac.center) {$\nu_2(z)$};
-     \node[fill=gray!20] (zoh) at ([xshift=.65cm]dac.center) {{\sc ZOH}};}   
+     \node[fill=gray!20] (zoh) at ([xshift=.65cm]dac.center) {{\sc ZOH}};} 
+     }
    \& \node[rectangle,draw,
 	minimum width=1cm,
 	minimum height=1cm,
         label=\textbf{Plant}] (gs) {{\sc $\hat{G}(s)$}};
    \node[draw=none] (ud) at ([xshift=-1cm,yshift=.2cm]gs)  {$U(s)$};
    \node[draw=none] (y) at ([xshift=1cm,yshift=.2cm]gs)  {$\hat{Y}(s)$};
+ \only<1>{
+ \& \node[rectangle,draw,minimum width=4cm,
+	minimum height=1.6cm,] (bbadc) {\sc ADC};
+ }   
+ \only<2->{
    \& complexnode/.pic={ 
      \node[rectangle,draw,
 	minimum width=4cm,
@@ -146,6 +157,7 @@ correct by construction.
    \node[circle,add={}{+}{+}{},fill=gray!20] (q1) at ([xshift=1cm]adc.center) {};} 
      \node[draw=none] (q2t)  at ([xshift=1cm,yshift=-.65cm]adc.center) {{\sc Q1}};
    \node[draw=none] (v1)  at ([xshift=1cm,yshift=1.5cm]adc.center) {$\nu_1(z)$};
+   }
    \& \coordinate (aux1);
    \& \node[draw=none] (yz) {$\hat {Y}(z)$};\\
    \& \coordinate (aux3);
@@ -157,18 +169,30 @@ correct by construction.
   };
 
 
-  \path[->] (v1) edge (q1.north);
-  \path[->] (v2) edge (q2.north);
   \path[->] (r) edge (circle.west);
   \path[->] (aux1) edge (yz);
+  \path (circle.east) edge (cz);
+  \only<1> {
+   \path
+     (cz.east) edge (bbdac.west)
+     (bbdac.east) edge (gs.west);
+   \path
+      (gs.east) edge (bbadc.west)
+      (bbadc.east) edge (aux1.west);
+  }
+   \only<2->{
+  \path[->] (v2) edge (q2.north);
   \path  
-   (circle.east) edge (cz)
    (cz.east) edge (q2.west)
    (q2.east) edge (zoh.west)
-   (zoh.east) edge (gs.west)
-   (switch2) edge (q1.west)
-   (q1.east) edge (aux1.west)
+   (zoh.east) edge (gs.west);
+  \path[->] (v1) edge (q1.north);
+  \path
    (gs.east) edge (switch1.west)
+   (switch2) edge (q1.west)
+   (q1.east) edge (aux1.west);
+  }
+  \path
    (aux1.south) edge (aux2.north)
    (aux2.west) edge (aux3.east); 
   \path[->]  (aux3.north) edge (circle.south);
@@ -181,7 +205,7 @@ correct by construction.
 
 %\begin{frame}[fragile]{Discrete Time Model}
 
-\uncover<2->
+\uncover<3->
 {
 \begin{figure}[ht]
 \centering
@@ -252,7 +276,7 @@ correct by construction.
 \end{figure}
 }
 
-\only<2>{
+\only<4>{
 \begin{displaymath}
 \label{eq:pulsetf}
 \hat{G}(z) = (1-z^{-1})\mathcal{Z}\left\lbrace{\mathcal{L}^{-1}\left\lbrace{\frac{\hat{G}(s)}{s}}\right\rbrace_{t=kT}}\right\rbrace
@@ -265,14 +289,14 @@ correct by construction.
 %\end{displaymath}
 %}
 
-\only<3>{
+\only<5>{
 \begin{equation*}
 \label{eq:outputfunctions}
 \hat{Y}(z)=\frac{\nu_{1}(z)}{1+\hat{G}(z) \tilde{C}(z)}+\frac{\nu_{2}(z)\hat{G}(z)}{1+\hat{G}(z) \tilde{C}(z)}+\frac{R(z)\hat{G}(z) \tilde{C}(z)}{1+\hat{G}(z) \tilde{C}(z)}
 \end{equation*}
 }
 
-\uncover<4>{
+\uncover<6>{
 Common denominator:
 $$\hat{G}_n(z) \tilde{C}_n(z)+\hat{G}_d(z) \tilde{C}_d(z)$$
 }
@@ -444,7 +468,7 @@ We seek to synthesise a controller where $\Delta \vec{\beta}=0$ and $\Delta \vec
    } 
    \only<1,22>{\& \node[ellipse, fill=gray!20] (done) {{\sc Done}};}\\
    \& \\
-   \node[minimum height=0.5cm] (gp) {\sf Closed-loop System Search};
+   \node[minimum height=0.5cm] (gp) {\sf Closed-loop System Search\\ \only<2-15>{$\textcolor{blue}{FP=\mathbb{R}\langle16,24\rangle}$}\only<16->{$\textcolor{blue}{FP=\mathbb{R}\langle20,28\rangle}$}};
    \&
    complexnode/.pic={ 
      \coordinate (aux);
