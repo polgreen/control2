@@ -316,9 +316,10 @@ $$\hat{G}_n(z) \tilde{C}_n(z)+\hat{G}_d(z) \tilde{C}_d(z)$$
 
 \end{frame}
 
-\begin{frame}{Jury's Criterion}
+\begin{frame}{Stability Analysis via Jury's Criterion}
+
 \begin{equation*}
-S(z) = \hat{G}_n(z) \tilde{C}_n(z)+\hat{G}_d(z) \tilde{C}_d(z) = \sum_{i=0}^{N_S} c_iz^{N_s-i}, c_0\neq0. 
+S(z) = \hat{G}_n(z) \tilde{C}_n(z)+\hat{G}_d(z) \tilde{C}_d(z) = \sum_{i=0}^{N_S} c_iz^{N_s-i}, c_0 \neq 0 
 \end{equation*}
 
 $$
@@ -341,34 +342,41 @@ v_{1}^{(k-1)}-v_{N_S-j}^{(k-1)} . \frac{v_{1}^{(k-1)}}{v_{N_S-k}^{(k-1)}}, &k>0 
 \right.
 $$
 %
-$S(z)$ is stable iif:
-$$\phi_\mathit{stability} \equiv \textcolor{blue}{S(1) > 0}\ \uncover<2->{\wedge\ \textcolor{blue}{(-1)^{N_S} S(-1) > 0}}\ \uncover<3->{\wedge\ \textcolor{blue}{|c_0| < c_{N_S}}}\ \uncover<4>{\wedge\ \textcolor{blue}{\forall k, v_1^{(k)} > 0}}$$
+$S(z)$ is stable $\Leftrightarrow$
+$$
+%\phi_\mathit{stability} \equiv 
+\textcolor{blue}{S(1) > 0}\ \uncover<2->{\wedge\ \textcolor{blue}{(-1)^{N_S} S(-1) > 0}}\ \uncover<3->{\wedge\ \textcolor{blue}{|c_0| < c_{N_S}}}\ \uncover<4>{\wedge\ \textcolor{blue}{\forall k, v_1^{(k)} > 0}}
+$$
+
 \end{frame}
 
-
 \begin{frame}{Transfer Functions and Uncertainty}
+
 \begin{align*}
 \small
-\label{controller_plant_tf}
 \hat{C}(z)&=\frac{\hat{C}_n(z)}{\hat{C}_d(z)}=\frac{\sum_{i=0}^{M_C}(\beta_{i}+\Delta\beta_{i}) z^{-i}}{\sum_{i=0}^{N_C}(\alpha_{i}+\Delta \alpha_{i}) z^{-i}}, \\
 \\%\label{plant_tf}
 \hat{G}(z)&=\frac{\hat{G}_n(z)}{\hat{G}_d(z)}=\frac{\sum_{i=0}^{M_G}(b_{i}+\Delta b_i) z^{-i}}{\sum_{i=0}^{N_G}(a_{i}+\Delta a_{i}) z^{-i}}.
 \end{align*}
 %
-where $\vec{\beta}$ and $\vec{\alpha}$ are vectors containing the
-controller's coefficients and $\vec{b}$ and $\vec{a}$ denote the
-plant's coefficients. 
+\begin{itemize}
+\item 
+$\vec{\beta}$ and $\vec{\alpha}$ -- vectors containing controller coefficients 
+\item 
+$\vec{b}$ and $\vec{a}$ -- plant coefficients 
+\end{itemize}
 
 \end{frame}
 
 \begin{frame}{Sources of Uncertainty}
 \setbeamertemplate{itemize items}[square]
+
 \begin{itemize}
-\item<1-> Model Parametric Errors (Affect $\Delta G(z)$)
-\item<2-> Quantization Errors in the ADC, DAC, and controller arithmetic. 
-(Modelled as external noise. Do not affect the transfer functions)
-\item<3-> Roundoff Errors in the verification process (Affect $\Delta S(z)$)
-\item<4-> Discretization Errors  (Affect $\Delta G(z)$ and $\Delta C(z)$)
+\item<1->[1.] Model Parametric Errors (affect $\Delta G(z)$)
+\item<2->[2.] Quantisation errors in the ADC, DAC, and controller arithmetics  
+(modelled as external noise, do not affect transfer functions)
+\item<3->[3.] Roundoff errors in verification process (affect $\Delta S(z)$)
+\item<4->[4.] Discretisation errors (affect $\Delta G(z)$ and $\Delta C(z)$) 
 \end{itemize}
 \end{frame}
 
@@ -453,10 +461,14 @@ plant's coefficients.
 
 %
 \begin{frame}{Our Objective}
-We seek to synthesise a controller where $\Delta \vec{\beta}=0$ and $\Delta \vec{\alpha}=0$ and which stabilizes all plants within a given range of $\Delta \vec{b}$ and $\Delta \vec{a}$.
+
+We seek to synthesise a controller where $\Delta \vec{\beta}=0$ and $\Delta \vec{\alpha}=0$ and which stabilizes all plants within a given range of $\Delta \vec{b}$ and $\Delta \vec{a}$. 
+
+
+
 \end{frame}
 
-\begin{frame}[fragile]{Our CEGIS Model}
+\begin{frame}[fragile]{CEGIS Architecture}
 \begin{figure}[htb]
 \centering
 \resizebox{1.0\textwidth}{!}
