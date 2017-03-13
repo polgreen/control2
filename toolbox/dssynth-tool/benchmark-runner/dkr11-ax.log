@@ -1,0 +1,93 @@
+nohup: ignoring input
+/users/pkesseli/documents/control-synthesis/benchmarks/state-space/magsuspension_ss/magsuspension_ss_disc1.ss
+accelerator-ss
+./axelerator -u -p -ii -mpi 256 -synth CEGIS -params "p=2,q=1,f=1,m=256:16:8" -dynamics "[54149865291660.41,-806895.8713;524288,0]" -init "[cube<.5]" -isense "[8388608;0]" -inputs "[1>-1000;1<1000]" -sguard "[cube<1]" -control "[0]"
+Loading System: mpi256
+Loading System: mpi256
+int: 16, radix: 16
+cbmc -D __CPROVER -D _FIXEDBV -D _CONTROL_FLOAT_WIDTH=32 -D _CONTORL_RADIX_WIDTH=16 "/tmp/control_synthesis-ssdkr11/accelerator-ss/FWL_LTI.c" --stop-on-fail >/tmp/control_synthesis-ssdkr11/accelerator-ss/cbmc-tmp.log
+int: 20, radix: 20
+cbmc -D __CPROVER -D _FIXEDBV -D _CONTROL_FLOAT_WIDTH=40 -D _CONTORL_RADIX_WIDTH=20 "/tmp/control_synthesis-ssdkr11/accelerator-ss/FWL_LTI.c" --stop-on-fail >/tmp/control_synthesis-ssdkr11/accelerator-ss/cbmc-tmp.log
+int: 24, radix: 24
+cbmc -D __CPROVER -D _FIXEDBV -D _CONTROL_FLOAT_WIDTH=48 -D _CONTORL_RADIX_WIDTH=24 "/tmp/control_synthesis-ssdkr11/accelerator-ss/FWL_LTI.c" --stop-on-fail >/tmp/control_synthesis-ssdkr11/accelerator-ss/cbmc-tmp.log
+int: 28, radix: 28
+cbmc -D __CPROVER -D _FIXEDBV -D _CONTROL_FLOAT_WIDTH=56 -D _CONTORL_RADIX_WIDTH=28 "/tmp/control_synthesis-ssdkr11/accelerator-ss/FWL_LTI.c" --stop-on-fail >/tmp/control_synthesis-ssdkr11/accelerator-ss/cbmc-tmp.log
+int: 32, radix: 32
+cbmc -D __CPROVER -D _FIXEDBV -D _CONTROL_FLOAT_WIDTH=64 -D _CONTORL_RADIX_WIDTH=32 "/tmp/control_synthesis-ssdkr11/accelerator-ss/FWL_LTI.c" --stop-on-fail >/tmp/control_synthesis-ssdkr11/accelerator-ss/cbmc-tmp.log
+/users/pkesseli/documents/control-synthesis/benchmarks/state-space/magsuspension_ss/magsuspension_ss_disc2.ss
+accelerator-ss
+./axelerator -u -p -ii -mpi 256 -synth CEGIS -params "p=2,q=1,f=1,m=256:16:13" -dynamics "[2.001,-1;1,0]" -init "[cube<.5]" -isense "[0.0625;0]" -inputs "[1>implementation <7,3> states = 2; inputs = 1; outputs = 1; A = [2.001,-1;1,0] B = [0.0625;0] C = [0.020002,0.020002] D = [0] inputs = [1];1<implementation <7,3> states = 2; inputs = 1; outputs = 1; A = [2.001,-1;1,0] B = [0.0625;0] C = [0.020002,0.020002] D = [0] inputs = [1]]" -sguard "[cube<1]" -control "[0]"
+Loading System: mpi256
+Loading System: mpi256
+int: 26, radix: 6
+cbmc -D __CPROVER -D _FIXEDBV -D _CONTROL_FLOAT_WIDTH=32 -D _CONTORL_RADIX_WIDTH=6 "/tmp/control_synthesis-ssdkr11/accelerator-ss/FWL_LTI.c" --stop-on-fail >/tmp/control_synthesis-ssdkr11/accelerator-ss/cbmc-tmp.log
+int: 30, radix: 10
+cbmc -D __CPROVER -D _FIXEDBV -D _CONTROL_FLOAT_WIDTH=40 -D _CONTORL_RADIX_WIDTH=10 "/tmp/control_synthesis-ssdkr11/accelerator-ss/FWL_LTI.c" --stop-on-fail >/tmp/control_synthesis-ssdkr11/accelerator-ss/cbmc-tmp.log
+int: 34, radix: 14
+cbmc -D __CPROVER -D _FIXEDBV -D _CONTROL_FLOAT_WIDTH=48 -D _CONTORL_RADIX_WIDTH=14 "/tmp/control_synthesis-ssdkr11/accelerator-ss/FWL_LTI.c" --stop-on-fail >/tmp/control_synthesis-ssdkr11/accelerator-ss/cbmc-tmp.log
+int: 38, radix: 18
+cbmc -D __CPROVER -D _FIXEDBV -D _CONTROL_FLOAT_WIDTH=56 -D _CONTORL_RADIX_WIDTH=18 "/tmp/control_synthesis-ssdkr11/accelerator-ss/FWL_LTI.c" --stop-on-fail >/tmp/control_synthesis-ssdkr11/accelerator-ss/cbmc-tmp.log
+int: 42, radix: 22
+cbmc -D __CPROVER -D _FIXEDBV -D _CONTROL_FLOAT_WIDTH=64 -D _CONTORL_RADIX_WIDTH=22 "/tmp/control_synthesis-ssdkr11/accelerator-ss/FWL_LTI.c" --stop-on-fail >/tmp/control_synthesis-ssdkr11/accelerator-ss/cbmc-tmp.log
+/users/pkesseli/documents/control-synthesis/benchmarks/state-space/magsuspension_ss/magsuspension_ss_disc3.ss
+accelerator-ss
+./axelerator -u -p -ii -mpi 256 -synth CEGIS -params "p=2,q=1,f=1,m=256:16:13" -dynamics "[7358659.2048,-0.99373;1,0]" -init "[cube<.5]" -isense "[4096;0]" -inputs "[1>-1000;1<1000]" -sguard "[cube<1]" -control "[0]"
+Loading System: mpi256
+Loading System: mpi256
+int: 26, radix: 6
+cbmc -D __CPROVER -D _FIXEDBV -D _CONTROL_FLOAT_WIDTH=32 -D _CONTORL_RADIX_WIDTH=6 "/tmp/control_synthesis-ssdkr11/accelerator-ss/FWL_LTI.c" --stop-on-fail >/tmp/control_synthesis-ssdkr11/accelerator-ss/cbmc-tmp.log
+./axelerator -u -p -ii -mpi 256 -synth CEGIS -params "p=2,q=1,f=1,m=256:16:13" -dynamics "[7358659.2048,-0.99373;1,0]" -init "[cube<.5]" -isense "[4096;0]" -inputs "[1>-1000;1<1000]" -sguard "[cube<1]" -control "[]"
+Loading System: mpi256
+Loading System: mpi256
+int: 30, radix: 10
+cbmc -D __CPROVER -D _FIXEDBV -D _CONTROL_FLOAT_WIDTH=40 -D _CONTORL_RADIX_WIDTH=10 "/tmp/control_synthesis-ssdkr11/accelerator-ss/FWL_LTI.c" --stop-on-fail >/tmp/control_synthesis-ssdkr11/accelerator-ss/cbmc-tmp.log
+./axelerator -u -p -ii -mpi 256 -synth CEGIS -params "p=2,q=1,f=1,m=256:16:13" -dynamics "[7358659.2048,-0.99373;1,0]" -init "[cube<.5]" -isense "[4096;0]" -inputs "[1>-1000;1<1000]" -sguard "[cube<1]" -control "[]"
+Loading System: mpi256
+Loading System: mpi256
+int: 34, radix: 14
+cbmc -D __CPROVER -D _FIXEDBV -D _CONTROL_FLOAT_WIDTH=48 -D _CONTORL_RADIX_WIDTH=14 "/tmp/control_synthesis-ssdkr11/accelerator-ss/FWL_LTI.c" --stop-on-fail >/tmp/control_synthesis-ssdkr11/accelerator-ss/cbmc-tmp.log
+int: 38, radix: 18
+cbmc -D __CPROVER -D _FIXEDBV -D _CONTROL_FLOAT_WIDTH=56 -D _CONTORL_RADIX_WIDTH=18 "/tmp/control_synthesis-ssdkr11/accelerator-ss/FWL_LTI.c" --stop-on-fail >/tmp/control_synthesis-ssdkr11/accelerator-ss/cbmc-tmp.log
+int: 42, radix: 22
+cbmc -D __CPROVER -D _FIXEDBV -D _CONTROL_FLOAT_WIDTH=64 -D _CONTORL_RADIX_WIDTH=22 "/tmp/control_synthesis-ssdkr11/accelerator-ss/FWL_LTI.c" --stop-on-fail >/tmp/control_synthesis-ssdkr11/accelerator-ss/cbmc-tmp.log
+/users/pkesseli/documents/control-synthesis/benchmarks/state-space/magsuspension_ss/magsuspension_ss_disc4.ss
+accelerator-ss
+./axelerator -u -p -ii -mpi 256 -synth CEGIS -params "p=2,q=1,f=1,m=256:16:10" -dynamics "[558.1114,-1;1,0]" -init "[cube<.5]" -isense "[32;0]" -inputs "[1>-1000;1<1000]" -sguard "[cube<1]" -control "[0]"
+Loading System: mpi256
+Loading System: mpi256
+int: 20, radix: 12
+cbmc -D __CPROVER -D _FIXEDBV -D _CONTROL_FLOAT_WIDTH=32 -D _CONTORL_RADIX_WIDTH=12 "/tmp/control_synthesis-ssdkr11/accelerator-ss/FWL_LTI.c" --stop-on-fail >/tmp/control_synthesis-ssdkr11/accelerator-ss/cbmc-tmp.log
+./axelerator -u -p -ii -mpi 256 -synth CEGIS -params "p=2,q=1,f=1,m=256:16:10" -dynamics "[558.1114,-1;1,0]" -init "[cube<.5]" -isense "[32;0]" -inputs "[1>-1000;1<1000]" -sguard "[cube<1]" -control "[17.486328125, -0.05859375 ]"
+Loading System: mpi256
+Loading System: mpi256
+int: 24, radix: 16
+cbmc -D __CPROVER -D _FIXEDBV -D _CONTROL_FLOAT_WIDTH=40 -D _CONTORL_RADIX_WIDTH=16 "/tmp/control_synthesis-ssdkr11/accelerator-ss/FWL_LTI.c" --stop-on-fail >/tmp/control_synthesis-ssdkr11/accelerator-ss/cbmc-tmp.log
+./axelerator -u -p -ii -mpi 256 -synth CEGIS -params "p=2,q=1,f=1,m=256:16:10" -dynamics "[558.1114,-1;1,0]" -init "[cube<.5]" -isense "[32;0]" -inputs "[1>-1000;1<1000]" -sguard "[cube<1]" -control "[17.4853515625, -0.060546875 ]"
+Loading System: mpi256
+Loading System: mpi256
+int: 28, radix: 20
+cbmc -D __CPROVER -D _FIXEDBV -D _CONTROL_FLOAT_WIDTH=48 -D _CONTORL_RADIX_WIDTH=20 "/tmp/control_synthesis-ssdkr11/accelerator-ss/FWL_LTI.c" --stop-on-fail >/tmp/control_synthesis-ssdkr11/accelerator-ss/cbmc-tmp.log
+./axelerator -u -p -ii -mpi 256 -synth CEGIS -params "p=2,q=1,f=1,m=256:16:10" -dynamics "[558.1114,-1;1,0]" -init "[cube<.5]" -isense "[32;0]" -inputs "[1>-1000;1<1000]" -sguard "[cube<1]" -control "[17.4091796875, -0.033203125 ]"
+Loading System: mpi256
+Loading System: mpi256
+int: 32, radix: 24
+cbmc -D __CPROVER -D _FIXEDBV -D _CONTROL_FLOAT_WIDTH=56 -D _CONTORL_RADIX_WIDTH=24 "/tmp/control_synthesis-ssdkr11/accelerator-ss/FWL_LTI.c" --stop-on-fail >/tmp/control_synthesis-ssdkr11/accelerator-ss/cbmc-tmp.log
+./axelerator -u -p -ii -mpi 256 -synth CEGIS -params "p=2,q=1,f=1,m=256:16:10" -dynamics "[558.1114,-1;1,0]" -init "[cube<.5]" -isense "[32;0]" -inputs "[1>-1000;1<1000]" -sguard "[cube<1]" -control "[17.4384765625, -0.0537109375 ]"
+Loading System: mpi256
+Loading System: mpi256
+SYNTHESIS SUCCESSFUL
+<control_synthesis_time>1737</control_synthesis_time>
+<controller>17.4384765625, -0.0537109375 </controller>
+/users/pkesseli/documents/control-synthesis/benchmarks/state-space/invpendulum_pendang_ss/invpendulum_pendang_ss_disc1.ss
+accelerator-ss
+./axelerator -u -p -ii -mpi 256 -synth CEGIS -params "p=2,q=1,f=1,m=256:16:8" -dynamics "[2.2553,-1;1,0]" -init "[cube<.5]" -isense "[0.5;0]" -inputs "[1>-10;1<10]" -sguard "[cube<1]" -control "[0]"
+Loading System: mpi256
+Loading System: mpi256
+int: 16, radix: 16
+cbmc -D __CPROVER -D _FIXEDBV -D _CONTROL_FLOAT_WIDTH=32 -D _CONTORL_RADIX_WIDTH=16 "/tmp/control_synthesis-ssdkr11/accelerator-ss/FWL_LTI.c" --stop-on-fail >/tmp/control_synthesis-ssdkr11/accelerator-ss/cbmc-tmp.log
+./axelerator -u -p -ii -mpi 256 -synth CEGIS -params "p=2,q=1,f=1,m=256:16:8" -dynamics "[2.2553,-1;1,0]" -init "[cube<.5]" -isense "[0.5;0]" -inputs "[1>-10;1<10]" -sguard "[cube<1]" -control "[4.75, -1 ]"
+Loading System: mpi256
+Loading System: mpi256
+SYNTHESIS SUCCESSFUL
+<control_synthesis_time>393</control_synthesis_time>
+<controller>4.75, -1 </controller>

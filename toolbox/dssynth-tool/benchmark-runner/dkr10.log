@@ -1,0 +1,584 @@
+nohup: ignoring input
+/users/pkesseli/documents/control-synthesis/benchmarks/state-space/cruise_ss/cruise_ss_disc1.ss
+completeness-threshold-ss
+int: 8, radix: 16
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=24 -D _CONTORL_RADIX_WIDTH=16 -D NUMBERLOOPS=5 safety_stability.c
+./discrete_step_k_completeness_check 5 -0.31640625
+num_eigenvalues: 1
+eigenvalue: (0.961118,0)
+imag_value: 0
+imaginary_offset: 5.42101e-20
+k_check_result: 0
+./precision_check 5 -0.31640625
+SYNTHESIS SUCCESSFUL
+<control_synthesis_time>6548</control_synthesis_time>
+<controller>-0.31640625 </controller>
+/users/pkesseli/documents/control-synthesis/benchmarks/state-space/dcmotor_ss/dcmotor_ss_disc1.ss
+completeness-threshold-ss
+int: 8, radix: 16
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=24 -D _CONTORL_RADIX_WIDTH=16 -D NUMBERLOOPS=5 safety_stability.c
+./discrete_step_k_completeness_check 5 0.0234375 0.01953125 0.00390625
+num_eigenvalues: 3
+eigenvalue: (0.562631,0)
+imag_value: 0
+imaginary_offset: 5.42101e-20
+eigenvalue: (0.055464,0)
+imag_value: 0
+imaginary_offset: 5.42101e-20
+eigenvalue: (-0.00259536,0)
+imag_value: 0
+imaginary_offset: 5.42101e-20
+k_check_result: 0
+./precision_check 5 0.0234375 0.01953125 0.00390625
+precision_check: safety_stability.c:534: safety_stability: Assertion `check_stability()' failed.
+[DEBUG] the second constraint of Jury criteria failed: (F(-1)*(-1)^n > 0)./completeness-threshold-ss-benchmark-runner.sh: line 140: 10226 Aborted                 (core dumped) ./precision_check ${k_size} ${controller_params}
+int: 12, radix: 20
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=32 -D _CONTORL_RADIX_WIDTH=20 -D NUMBERLOOPS=5 safety_stability.c
+./discrete_step_k_completeness_check 5 0.02734375 0.01953125 0
+num_eigenvalues: 3
+eigenvalue: (0.493142,0)
+imag_value: 0
+imaginary_offset: 5.42101e-20
+eigenvalue: (0.058432,0)
+imag_value: 0
+imaginary_offset: 5.42101e-20
+eigenvalue: (0.00142564,0)
+imag_value: 0
+imaginary_offset: 5.42101e-20
+k_check_result: 0
+./precision_check 5 0.02734375 0.01953125 0
+precision_check: safety_stability.c:534: safety_stability: Assertion `check_stability()' failed.
+[DEBUG] the second constraint of Jury criteria failed: (F(-1)*(-1)^n > 0)./completeness-threshold-ss-benchmark-runner.sh: line 140: 10261 Aborted                 (core dumped) ./precision_check ${k_size} ${controller_params}
+int: 16, radix: 24
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=40 -D _CONTORL_RADIX_WIDTH=24 -D NUMBERLOOPS=5 safety_stability.c
+./discrete_step_k_completeness_check 5 0 0 0.0078125
+num_eigenvalues: 3
+eigenvalue: (0.99976,0)
+imag_value: 0
+imaginary_offset: 5.42101e-20
+eigenvalue: (-0.0196149,0)
+imag_value: 0
+imaginary_offset: 5.42101e-20
+eigenvalue: (0.0103549,0)
+imag_value: 0
+imaginary_offset: 5.42101e-20
+k_check_result: 0
+./precision_check 5 0 0 0.0078125
+precision_check: safety_stability.c:534: safety_stability: Assertion `check_stability()' failed.
+[DEBUG] the second constraint of Jury criteria failed: (F(-1)*(-1)^n > 0)./completeness-threshold-ss-benchmark-runner.sh: line 140: 10296 Aborted                 (core dumped) ./precision_check ${k_size} ${controller_params}
+int: 20, radix: 28
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=48 -D _CONTORL_RADIX_WIDTH=28 -D NUMBERLOOPS=5 safety_stability.c
+./discrete_step_k_completeness_check 5 0.00390625 0 0
+num_eigenvalues: 3
+eigenvalue: (0.938131,0)
+imag_value: 0
+imaginary_offset: 5.42101e-20
+eigenvalue: (-0.00506574,0.00425764)
+imag_value: 0.00425764
+imaginary_offset: 5.42101e-20
+expected_k_size=2.57228
+actual_k_size=5
+eigenvalue: (-0.00506574,-0.00425764)
+imag_value: -0.00425764
+imaginary_offset: 5.42101e-20
+expected_k_size=2.57228
+actual_k_size=5
+k_check_result: 0
+./precision_check 5 0.00390625 0 0
+precision_check: safety_stability.c:534: safety_stability: Assertion `check_stability()' failed.
+[DEBUG] the second constraint of Jury criteria failed: (F(-1)*(-1)^n > 0)./completeness-threshold-ss-benchmark-runner.sh: line 140: 10332 Aborted                 (core dumped) ./precision_check ${k_size} ${controller_params}
+int: 24, radix: 32
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=56 -D _CONTORL_RADIX_WIDTH=32 -D NUMBERLOOPS=5 safety_stability.c
+./discrete_step_k_completeness_check 5 0.01953125 0 -0.0078125
+num_eigenvalues: 3
+eigenvalue: (0.692262,0)
+imag_value: 0
+imaginary_offset: 5.42101e-20
+eigenvalue: (-0.00713089,0.0190043)
+imag_value: 0.0190043
+imaginary_offset: 5.42101e-20
+expected_k_size=3.25593
+actual_k_size=5
+eigenvalue: (-0.00713089,-0.0190043)
+imag_value: -0.0190043
+imaginary_offset: 5.42101e-20
+expected_k_size=3.25593
+actual_k_size=5
+k_check_result: 0
+./precision_check 5 0.01953125 0 -0.0078125
+precision_check: safety_stability.c:534: safety_stability: Assertion `check_stability()' failed.
+[DEBUG] the second constraint of Jury criteria failed: (F(-1)*(-1)^n > 0)./completeness-threshold-ss-benchmark-runner.sh: line 140: 10366 Aborted                 (core dumped) ./precision_check ${k_size} ${controller_params}
+int: 28, radix: 36
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=64 -D _CONTORL_RADIX_WIDTH=36 -D NUMBERLOOPS=5 safety_stability.c
+./discrete_step_k_completeness_check 5 0.0234375 0.00390625 0
+num_eigenvalues: 3
+eigenvalue: (0.618274,0)
+imag_value: 0
+imaginary_offset: 5.42101e-20
+eigenvalue: (-0.00138678,0.00803244)
+imag_value: 0.00803244
+imaginary_offset: 5.42101e-20
+expected_k_size=3.60738
+actual_k_size=5
+eigenvalue: (-0.00138678,-0.00803244)
+imag_value: -0.00803244
+imaginary_offset: 5.42101e-20
+expected_k_size=3.60738
+actual_k_size=5
+k_check_result: 0
+./precision_check 5 0.0234375 0.00390625 0
+precision_check: safety_stability.c:534: safety_stability: Assertion `check_stability()' failed.
+[DEBUG] the second constraint of Jury criteria failed: (F(-1)*(-1)^n > 0)./completeness-threshold-ss-benchmark-runner.sh: line 140: 10400 Aborted                 (core dumped) ./precision_check ${k_size} ${controller_params}
+/users/pkesseli/documents/control-synthesis/benchmarks/state-space/dcmotor_ss/dcmotor_ss_disc2.ss
+completeness-threshold-ss
+int: 16, radix: 16
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=32 -D _CONTORL_RADIX_WIDTH=16 -D NUMBERLOOPS=5 safety_stability.c
+int: 20, radix: 20
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=40 -D _CONTORL_RADIX_WIDTH=20 -D NUMBERLOOPS=5 safety_stability.c
+int: 24, radix: 24
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=48 -D _CONTORL_RADIX_WIDTH=24 -D NUMBERLOOPS=5 safety_stability.c
+int: 28, radix: 28
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=56 -D _CONTORL_RADIX_WIDTH=28 -D NUMBERLOOPS=5 safety_stability.c
+int: 32, radix: 32
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=64 -D _CONTORL_RADIX_WIDTH=32 -D NUMBERLOOPS=5 safety_stability.c
+/users/pkesseli/documents/control-synthesis/benchmarks/state-space/dcmotor_ss/dcmotor_ss_disc3.ss
+completeness-threshold-ss
+int: 16, radix: 16
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=32 -D _CONTORL_RADIX_WIDTH=16 -D NUMBERLOOPS=5 safety_stability.c
+./discrete_step_k_completeness_check 5 0.125 0 0
+num_eigenvalues: 3
+eigenvalue: (0.769723,0)
+imag_value: 0
+imaginary_offset: 5.42101e-20
+eigenvalue: (-0.0386564,0.0826592)
+imag_value: 0.0826592
+imaginary_offset: 5.42101e-20
+expected_k_size=3.1287
+actual_k_size=5
+eigenvalue: (-0.0386564,-0.0826592)
+imag_value: -0.0826592
+imaginary_offset: 5.42101e-20
+expected_k_size=3.1287
+actual_k_size=5
+k_check_result: 0
+./precision_check 5 0.125 0 0
+precision_check: safety_stability.c:534: safety_stability: Assertion `check_stability()' failed.
+[DEBUG] the second constraint of Jury criteria failed: (F(-1)*(-1)^n > 0)./completeness-threshold-ss-benchmark-runner.sh: line 140: 10682 Aborted                 (core dumped) ./precision_check ${k_size} ${controller_params}
+int: 20, radix: 20
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=40 -D _CONTORL_RADIX_WIDTH=20 -D NUMBERLOOPS=5 safety_stability.c
+./discrete_step_k_completeness_check 5 0.25 0 0
+num_eigenvalues: 3
+eigenvalue: (0.555354,0)
+imag_value: 0
+imaginary_offset: 5.42101e-20
+eigenvalue: (-0.0564718,0.0913894)
+imag_value: 0.0913894
+imaginary_offset: 5.42101e-20
+expected_k_size=2.95778
+actual_k_size=5
+eigenvalue: (-0.0564718,-0.0913894)
+imag_value: -0.0913894
+imaginary_offset: 5.42101e-20
+expected_k_size=2.95778
+actual_k_size=5
+k_check_result: 0
+./precision_check 5 0.25 0 0
+precision_check: safety_stability.c:534: safety_stability: Assertion `check_stability()' failed.
+[DEBUG] the second constraint of Jury criteria failed: (F(-1)*(-1)^n > 0)./completeness-threshold-ss-benchmark-runner.sh: line 140: 10717 Aborted                 (core dumped) ./precision_check ${k_size} ${controller_params}
+int: 24, radix: 24
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=48 -D _CONTORL_RADIX_WIDTH=24 -D NUMBERLOOPS=5 safety_stability.c
+./discrete_step_k_completeness_check 5 0.125 0 0
+num_eigenvalues: 3
+eigenvalue: (0.769723,0)
+imag_value: 0
+imaginary_offset: 5.42101e-20
+eigenvalue: (-0.0386564,0.0826592)
+imag_value: 0.0826592
+imaginary_offset: 5.42101e-20
+expected_k_size=3.1287
+actual_k_size=5
+eigenvalue: (-0.0386564,-0.0826592)
+imag_value: -0.0826592
+imaginary_offset: 5.42101e-20
+expected_k_size=3.1287
+actual_k_size=5
+k_check_result: 0
+./precision_check 5 0.125 0 0
+precision_check: safety_stability.c:534: safety_stability: Assertion `check_stability()' failed.
+[DEBUG] the second constraint of Jury criteria failed: (F(-1)*(-1)^n > 0)./completeness-threshold-ss-benchmark-runner.sh: line 140: 10751 Aborted                 (core dumped) ./precision_check ${k_size} ${controller_params}
+int: 28, radix: 28
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=56 -D _CONTORL_RADIX_WIDTH=28 -D NUMBERLOOPS=5 safety_stability.c
+./discrete_step_k_completeness_check 5 0.25 0 0
+num_eigenvalues: 3
+eigenvalue: (0.555354,0)
+imag_value: 0
+imaginary_offset: 5.42101e-20
+eigenvalue: (-0.0564718,0.0913894)
+imag_value: 0.0913894
+imaginary_offset: 5.42101e-20
+expected_k_size=2.95778
+actual_k_size=5
+eigenvalue: (-0.0564718,-0.0913894)
+imag_value: -0.0913894
+imaginary_offset: 5.42101e-20
+expected_k_size=2.95778
+actual_k_size=5
+k_check_result: 0
+./precision_check 5 0.25 0 0
+precision_check: safety_stability.c:534: safety_stability: Assertion `check_stability()' failed.
+[DEBUG] the second constraint of Jury criteria failed: (F(-1)*(-1)^n > 0)./completeness-threshold-ss-benchmark-runner.sh: line 140: 10785 Aborted                 (core dumped) ./precision_check ${k_size} ${controller_params}
+int: 32, radix: 32
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=64 -D _CONTORL_RADIX_WIDTH=32 -D NUMBERLOOPS=5 safety_stability.c
+./discrete_step_k_completeness_check 5 0.25 0 0
+num_eigenvalues: 3
+eigenvalue: (0.555354,0)
+imag_value: 0
+imaginary_offset: 5.42101e-20
+eigenvalue: (-0.0564718,0.0913894)
+imag_value: 0.0913894
+imaginary_offset: 5.42101e-20
+expected_k_size=2.95778
+actual_k_size=5
+eigenvalue: (-0.0564718,-0.0913894)
+imag_value: -0.0913894
+imaginary_offset: 5.42101e-20
+expected_k_size=2.95778
+actual_k_size=5
+k_check_result: 0
+./precision_check 5 0.25 0 0
+precision_check: safety_stability.c:534: safety_stability: Assertion `check_stability()' failed.
+[DEBUG] the second constraint of Jury criteria failed: (F(-1)*(-1)^n > 0)./completeness-threshold-ss-benchmark-runner.sh: line 140: 10821 Aborted                 (core dumped) ./precision_check ${k_size} ${controller_params}
+/users/pkesseli/documents/control-synthesis/benchmarks/state-space/dcmotor_ss/dcmotor_ss_disc4.ss
+completeness-threshold-ss
+int: 16, radix: 16
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=32 -D _CONTORL_RADIX_WIDTH=16 -D NUMBERLOOPS=5 safety_stability.c
+./discrete_step_k_completeness_check 5 -0.125 0.25 0
+num_eigenvalues: 3
+eigenvalue: (0.945378,0)
+imag_value: 0
+imaginary_offset: 5.42101e-20
+eigenvalue: (-0.00197888,0.374587)
+imag_value: 0.374587
+imaginary_offset: 5.42101e-20
+expected_k_size=3.98659
+actual_k_size=5
+eigenvalue: (-0.00197888,-0.374587)
+imag_value: -0.374587
+imaginary_offset: 5.42101e-20
+expected_k_size=3.98659
+actual_k_size=5
+k_check_result: 0
+./precision_check 5 -0.125 0.25 0
+precision_check: safety_stability.c:534: safety_stability: Assertion `check_stability()' failed.
+[DEBUG] the second constraint of Jury criteria failed: (F(-1)*(-1)^n > 0)./completeness-threshold-ss-benchmark-runner.sh: line 140: 10931 Aborted                 (core dumped) ./precision_check ${k_size} ${controller_params}
+int: 20, radix: 20
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=40 -D _CONTORL_RADIX_WIDTH=20 -D NUMBERLOOPS=5 safety_stability.c
+./discrete_step_k_completeness_check 5 0.375 0.375 0.375
+num_eigenvalues: 3
+eigenvalue: (0.439916,0)
+imag_value: 0
+imaginary_offset: 5.42101e-20
+eigenvalue: (0.125752,0.269488)
+imag_value: 0.269488
+imaginary_offset: 5.42101e-20
+expected_k_size=5.53977
+actual_k_size=5
+k_check_result: 2
+int: 20, radix: 20
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=40 -D _CONTORL_RADIX_WIDTH=20 -D NUMBERLOOPS=10 safety_stability.c
+./discrete_step_k_completeness_check 10 1.5 0.125 -0.125
+num_eigenvalues: 3
+eigenvalue: (0.544935,0)
+imag_value: 0
+imaginary_offset: 5.42101e-20
+eigenvalue: (-0.208007,0.507456)
+imag_value: 0.507456
+imaginary_offset: 5.42101e-20
+expected_k_size=3.20602
+actual_k_size=10
+eigenvalue: (-0.208007,-0.507456)
+imag_value: -0.507456
+imaginary_offset: 5.42101e-20
+expected_k_size=3.20602
+actual_k_size=10
+k_check_result: 0
+./precision_check 10 1.5 0.125 -0.125
+precision_check: safety_stability.c:534: safety_stability: Assertion `check_stability()' failed.
+[DEBUG] the second constraint of Jury criteria failed: (F(-1)*(-1)^n > 0)./completeness-threshold-ss-benchmark-runner.sh: line 140: 10990 Aborted                 (core dumped) ./precision_check ${k_size} ${controller_params}
+int: 24, radix: 24
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=48 -D _CONTORL_RADIX_WIDTH=24 -D NUMBERLOOPS=10 safety_stability.c
+./discrete_step_k_completeness_check 10 0.75 0.25 0.25
+num_eigenvalues: 3
+eigenvalue: (0.507298,0)
+imag_value: 0
+imaginary_offset: 5.42101e-20
+eigenvalue: (-0.0016889,0.371872)
+imag_value: 0.371872
+imaginary_offset: 5.42101e-20
+expected_k_size=3.98847
+actual_k_size=10
+eigenvalue: (-0.0016889,-0.371872)
+imag_value: -0.371872
+imaginary_offset: 5.42101e-20
+expected_k_size=3.98847
+actual_k_size=10
+k_check_result: 0
+./precision_check 10 0.75 0.25 0.25
+precision_check: safety_stability.c:534: safety_stability: Assertion `check_stability()' failed.
+[DEBUG] the second constraint of Jury criteria failed: (F(-1)*(-1)^n > 0)./completeness-threshold-ss-benchmark-runner.sh: line 140: 11029 Aborted                 (core dumped) ./precision_check ${k_size} ${controller_params}
+int: 28, radix: 28
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=56 -D _CONTORL_RADIX_WIDTH=28 -D NUMBERLOOPS=10 safety_stability.c
+./discrete_step_k_completeness_check 10 0.5 0 -1
+num_eigenvalues: 3
+eigenvalue: (0.999998,0)
+imag_value: 0
+imaginary_offset: 5.42101e-20
+eigenvalue: (-0.185539,0.590111)
+imag_value: 0.590111
+imaginary_offset: 5.42101e-20
+expected_k_size=3.35027
+actual_k_size=10
+eigenvalue: (-0.185539,-0.590111)
+imag_value: -0.590111
+imaginary_offset: 5.42101e-20
+expected_k_size=3.35027
+actual_k_size=10
+k_check_result: 0
+./precision_check 10 0.5 0 -1
+precision_check: safety_stability.c:534: safety_stability: Assertion `check_stability()' failed.
+[DEBUG] the second constraint of Jury criteria failed: (F(-1)*(-1)^n > 0)./completeness-threshold-ss-benchmark-runner.sh: line 140: 11065 Aborted                 (core dumped) ./precision_check ${k_size} ${controller_params}
+int: 32, radix: 32
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=64 -D _CONTORL_RADIX_WIDTH=32 -D NUMBERLOOPS=10 safety_stability.c
+./discrete_step_k_completeness_check 10 0.75 -0.25 1
+num_eigenvalues: 3
+eigenvalue: (0.463147,0.251627)
+imag_value: 0.251627
+imaginary_offset: 5.42101e-20
+expected_k_size=12.6249
+actual_k_size=10
+k_check_result: 2
+int: 32, radix: 32
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=64 -D _CONTORL_RADIX_WIDTH=32 -D NUMBERLOOPS=20 safety_stability.c
+./discrete_step_k_completeness_check 20 0.75 -0.125 0.25
+num_eigenvalues: 3
+eigenvalue: (0.713228,0)
+imag_value: 0
+imaginary_offset: 5.42101e-20
+eigenvalue: (-0.104654,0.295652)
+imag_value: 0.295652
+imaginary_offset: 5.42101e-20
+expected_k_size=3.28789
+actual_k_size=20
+eigenvalue: (-0.104654,-0.295652)
+imag_value: -0.295652
+imaginary_offset: 5.42101e-20
+expected_k_size=3.28789
+actual_k_size=20
+k_check_result: 0
+./precision_check 20 0.75 -0.125 0.25
+precision_check: safety_stability.c:534: safety_stability: Assertion `check_stability()' failed.
+[DEBUG] the second constraint of Jury criteria failed: (F(-1)*(-1)^n > 0)./completeness-threshold-ss-benchmark-runner.sh: line 140: 11126 Aborted                 (core dumped) ./precision_check ${k_size} ${controller_params}
+/users/pkesseli/documents/control-synthesis/benchmarks/state-space/dcmotor_ss/dcmotor_ss_disc5.ss
+completeness-threshold-ss
+int: 16, radix: 16
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=32 -D _CONTORL_RADIX_WIDTH=16 -D NUMBERLOOPS=5 safety_stability.c
+int: 20, radix: 20
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=40 -D _CONTORL_RADIX_WIDTH=20 -D NUMBERLOOPS=5 safety_stability.c
+int: 24, radix: 24
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=48 -D _CONTORL_RADIX_WIDTH=24 -D NUMBERLOOPS=5 safety_stability.c
+int: 28, radix: 28
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=56 -D _CONTORL_RADIX_WIDTH=28 -D NUMBERLOOPS=5 safety_stability.c
+int: 32, radix: 32
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=64 -D _CONTORL_RADIX_WIDTH=32 -D NUMBERLOOPS=5 safety_stability.c
+./discrete_step_k_completeness_check 5 0.875 -1 1.25
+num_eigenvalues: 3
+eigenvalue: (0.721575,0)
+imag_value: 0
+imaginary_offset: 5.42101e-20
+eigenvalue: (0.419487,0.335033)
+imag_value: 0.335033
+imaginary_offset: 5.42101e-20
+expected_k_size=9.32319
+actual_k_size=5
+k_check_result: 2
+int: 32, radix: 32
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=64 -D _CONTORL_RADIX_WIDTH=32 -D NUMBERLOOPS=10 safety_stability.c
+/users/pkesseli/documents/control-synthesis/benchmarks/state-space/dcmotor_ss/dcmotor_ss_disc6.ss
+completeness-threshold-ss
+int: 16, radix: 16
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=32 -D _CONTORL_RADIX_WIDTH=16 -D NUMBERLOOPS=5 safety_stability.c
+./discrete_step_k_completeness_check 5 1 -1.25 0.25
+num_eigenvalues: 3
+eigenvalue: (1.00003,0)
+imag_value: 0
+imaginary_offset: 5.42101e-20
+eigenvalue: (0.642183,0.399802)
+imag_value: 0.399802
+imaginary_offset: 5.42101e-20
+expected_k_size=11.2835
+actual_k_size=5
+k_check_result: 2
+int: 16, radix: 16
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=32 -D _CONTORL_RADIX_WIDTH=16 -D NUMBERLOOPS=10 safety_stability.c
+int: 20, radix: 20
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=40 -D _CONTORL_RADIX_WIDTH=20 -D NUMBERLOOPS=10 safety_stability.c
+int: 24, radix: 24
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=48 -D _CONTORL_RADIX_WIDTH=24 -D NUMBERLOOPS=10 safety_stability.c
+./discrete_step_k_completeness_check 10 1.5 -2.25 1
+num_eigenvalues: 3
+eigenvalue: (0.831092,0)
+imag_value: 0
+imaginary_offset: 5.42101e-20
+eigenvalue: (0.695404,0.303601)
+imag_value: 0.303601
+imaginary_offset: 5.42101e-20
+expected_k_size=15.2638
+actual_k_size=10
+k_check_result: 2
+int: 24, radix: 24
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=48 -D _CONTORL_RADIX_WIDTH=24 -D NUMBERLOOPS=20 safety_stability.c
+int: 28, radix: 28
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=56 -D _CONTORL_RADIX_WIDTH=28 -D NUMBERLOOPS=20 safety_stability.c
+./discrete_step_k_completeness_check 20 1.5 -2 0.625
+num_eigenvalues: 3
+eigenvalue: (0.943959,0)
+imag_value: 0
+imaginary_offset: 5.42101e-20
+eigenvalue: (0.638971,0.385088)
+imag_value: 0.385088
+imaginary_offset: 5.42101e-20
+expected_k_size=11.5845
+actual_k_size=20
+eigenvalue: (0.638971,-0.385088)
+imag_value: -0.385088
+imaginary_offset: 5.42101e-20
+expected_k_size=11.5845
+actual_k_size=20
+k_check_result: 0
+./precision_check 20 1.5 -2 0.625
+precision_check: safety_stability.c:534: safety_stability: Assertion `check_stability()' failed.
+./completeness-threshold-ss-benchmark-runner.sh: line 140: 11582 Aborted                 (core dumped) ./precision_check ${k_size} ${controller_params}
+int: 32, radix: 32
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=64 -D _CONTORL_RADIX_WIDTH=32 -D NUMBERLOOPS=20 safety_stability.c
+/users/pkesseli/documents/control-synthesis/benchmarks/state-space/dcmotor_ss/dcmotor_ss_disc7.ss
+completeness-threshold-ss
+int: 16, radix: 16
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=32 -D _CONTORL_RADIX_WIDTH=16 -D NUMBERLOOPS=5 safety_stability.c
+int: 20, radix: 20
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=40 -D _CONTORL_RADIX_WIDTH=20 -D NUMBERLOOPS=5 safety_stability.c
+int: 24, radix: 24
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=48 -D _CONTORL_RADIX_WIDTH=24 -D NUMBERLOOPS=5 safety_stability.c
+int: 28, radix: 28
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=56 -D _CONTORL_RADIX_WIDTH=28 -D NUMBERLOOPS=5 safety_stability.c
+int: 32, radix: 32
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=64 -D _CONTORL_RADIX_WIDTH=32 -D NUMBERLOOPS=5 safety_stability.c
+/users/pkesseli/documents/control-synthesis/benchmarks/state-space/dcmotor_ss/dcmotor_ss_disc8.ss
+completeness-threshold-ss
+int: 16, radix: 16
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=32 -D _CONTORL_RADIX_WIDTH=16 -D NUMBERLOOPS=5 safety_stability.c
+int: 20, radix: 20
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=40 -D _CONTORL_RADIX_WIDTH=20 -D NUMBERLOOPS=5 safety_stability.c
+int: 24, radix: 24
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=48 -D _CONTORL_RADIX_WIDTH=24 -D NUMBERLOOPS=5 safety_stability.c
+int: 28, radix: 28
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=56 -D _CONTORL_RADIX_WIDTH=28 -D NUMBERLOOPS=5 safety_stability.c
+int: 32, radix: 32
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=64 -D _CONTORL_RADIX_WIDTH=32 -D NUMBERLOOPS=5 safety_stability.c
+/users/pkesseli/documents/control-synthesis/benchmarks/state-space/helicopter_ss/helicopter_ss_disc1.ss
+completeness-threshold-ss
+int: 8, radix: 16
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=24 -D _CONTORL_RADIX_WIDTH=16 -D NUMBERLOOPS=5 safety_stability.c
+int: 12, radix: 20
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=32 -D _CONTORL_RADIX_WIDTH=20 -D NUMBERLOOPS=5 safety_stability.c
+int: 16, radix: 24
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=40 -D _CONTORL_RADIX_WIDTH=24 -D NUMBERLOOPS=5 safety_stability.c
+int: 20, radix: 28
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=48 -D _CONTORL_RADIX_WIDTH=28 -D NUMBERLOOPS=5 safety_stability.c
+int: 24, radix: 32
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=56 -D _CONTORL_RADIX_WIDTH=32 -D NUMBERLOOPS=5 safety_stability.c
+int: 28, radix: 36
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=64 -D _CONTORL_RADIX_WIDTH=36 -D NUMBERLOOPS=5 safety_stability.c
+/users/pkesseli/documents/control-synthesis/benchmarks/state-space/helicopter_ss/helicopter_ss_disc2.ss
+completeness-threshold-ss
+int: 16, radix: 16
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=32 -D _CONTORL_RADIX_WIDTH=16 -D NUMBERLOOPS=5 safety_stability.c
+int: 20, radix: 20
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=40 -D _CONTORL_RADIX_WIDTH=20 -D NUMBERLOOPS=5 safety_stability.c
+int: 24, radix: 24
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=48 -D _CONTORL_RADIX_WIDTH=24 -D NUMBERLOOPS=5 safety_stability.c
+int: 28, radix: 28
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=56 -D _CONTORL_RADIX_WIDTH=28 -D NUMBERLOOPS=5 safety_stability.c
+int: 32, radix: 32
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=64 -D _CONTORL_RADIX_WIDTH=32 -D NUMBERLOOPS=5 safety_stability.c
+/users/pkesseli/documents/control-synthesis/benchmarks/state-space/helicopter_ss/helicopter_ss_disc3.ss
+completeness-threshold-ss
+int: 16, radix: 16
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=32 -D _CONTORL_RADIX_WIDTH=16 -D NUMBERLOOPS=5 safety_stability.c
+int: 20, radix: 20
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=40 -D _CONTORL_RADIX_WIDTH=20 -D NUMBERLOOPS=5 safety_stability.c
+int: 24, radix: 24
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=48 -D _CONTORL_RADIX_WIDTH=24 -D NUMBERLOOPS=5 safety_stability.c
+int: 28, radix: 28
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=56 -D _CONTORL_RADIX_WIDTH=28 -D NUMBERLOOPS=5 safety_stability.c
+int: 32, radix: 32
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=64 -D _CONTORL_RADIX_WIDTH=32 -D NUMBERLOOPS=5 safety_stability.c
+/users/pkesseli/documents/control-synthesis/benchmarks/state-space/helicopter_ss/helicopter_ss_disc4.ss
+completeness-threshold-ss
+int: 16, radix: 16
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=32 -D _CONTORL_RADIX_WIDTH=16 -D NUMBERLOOPS=5 safety_stability.c
+int: 20, radix: 20
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=40 -D _CONTORL_RADIX_WIDTH=20 -D NUMBERLOOPS=5 safety_stability.c
+int: 24, radix: 24
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=48 -D _CONTORL_RADIX_WIDTH=24 -D NUMBERLOOPS=5 safety_stability.c
+int: 28, radix: 28
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=56 -D _CONTORL_RADIX_WIDTH=28 -D NUMBERLOOPS=5 safety_stability.c
+int: 32, radix: 32
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=64 -D _CONTORL_RADIX_WIDTH=32 -D NUMBERLOOPS=5 safety_stability.c
+/users/pkesseli/documents/control-synthesis/benchmarks/state-space/helicopter_ss/helicopter_ss_disc5.ss
+completeness-threshold-ss
+int: 16, radix: 16
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=32 -D _CONTORL_RADIX_WIDTH=16 -D NUMBERLOOPS=5 safety_stability.c
+int: 20, radix: 20
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=40 -D _CONTORL_RADIX_WIDTH=20 -D NUMBERLOOPS=5 safety_stability.c
+int: 24, radix: 24
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=48 -D _CONTORL_RADIX_WIDTH=24 -D NUMBERLOOPS=5 safety_stability.c
+int: 28, radix: 28
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=56 -D _CONTORL_RADIX_WIDTH=28 -D NUMBERLOOPS=5 safety_stability.c
+int: 32, radix: 32
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=64 -D _CONTORL_RADIX_WIDTH=32 -D NUMBERLOOPS=5 safety_stability.c
+/users/pkesseli/documents/control-synthesis/benchmarks/state-space/helicopter_ss/helicopter_ss_disc6.ss
+completeness-threshold-ss
+int: 16, radix: 16
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=32 -D _CONTORL_RADIX_WIDTH=16 -D NUMBERLOOPS=5 safety_stability.c
+int: 20, radix: 20
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=40 -D _CONTORL_RADIX_WIDTH=20 -D NUMBERLOOPS=5 safety_stability.c
+int: 24, radix: 24
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=48 -D _CONTORL_RADIX_WIDTH=24 -D NUMBERLOOPS=5 safety_stability.c
+int: 28, radix: 28
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=56 -D _CONTORL_RADIX_WIDTH=28 -D NUMBERLOOPS=5 safety_stability.c
+int: 32, radix: 32
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=64 -D _CONTORL_RADIX_WIDTH=32 -D NUMBERLOOPS=5 safety_stability.c
+/users/pkesseli/documents/control-synthesis/benchmarks/state-space/helicopter_ss/helicopter_ss_disc7.ss
+completeness-threshold-ss
+int: 16, radix: 16
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=32 -D _CONTORL_RADIX_WIDTH=16 -D NUMBERLOOPS=5 safety_stability.c
+int: 20, radix: 20
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=40 -D _CONTORL_RADIX_WIDTH=20 -D NUMBERLOOPS=5 safety_stability.c
+int: 24, radix: 24
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=48 -D _CONTORL_RADIX_WIDTH=24 -D NUMBERLOOPS=5 safety_stability.c
+int: 28, radix: 28
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=56 -D _CONTORL_RADIX_WIDTH=28 -D NUMBERLOOPS=5 safety_stability.c
+int: 32, radix: 32
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=64 -D _CONTORL_RADIX_WIDTH=32 -D NUMBERLOOPS=5 safety_stability.c
+/users/pkesseli/documents/control-synthesis/benchmarks/state-space/helicopter_ss/helicopter_ss_disc8.ss
+completeness-threshold-ss
+int: 16, radix: 16
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=32 -D _CONTORL_RADIX_WIDTH=16 -D NUMBERLOOPS=5 safety_stability.c
+int: 20, radix: 20
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=40 -D _CONTORL_RADIX_WIDTH=20 -D NUMBERLOOPS=5 safety_stability.c
+int: 24, radix: 24
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=48 -D _CONTORL_RADIX_WIDTH=24 -D NUMBERLOOPS=5 safety_stability.c
+int: 28, radix: 28
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=56 -D _CONTORL_RADIX_WIDTH=28 -D NUMBERLOOPS=5 safety_stability.c
+int: 32, radix: 32
+cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=64 -D _CONTORL_RADIX_WIDTH=32 -D NUMBERLOOPS=5 safety_stability.c

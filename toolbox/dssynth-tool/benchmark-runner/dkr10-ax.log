@@ -1,0 +1,50 @@
+nohup: ignoring input
+/users/pkesseli/documents/control-synthesis/benchmarks/state-space/cruise_ss/cruise_ss_disc1.ss
+accelerator-ss
+./axelerator -u -p -ii -mpi 256 -synth CEGIS -params "p=1,q=1,f=1,m=256:16:8" -dynamics "[0.95123]" -init "[cube<.5]" -isense "[0.03125]" -inputs "[1>-1;1<1]" -sguard "[cube<1]" -control "[0]"
+Loading System: mpi256
+Loading System: mpi256
+int: 16, radix: 16
+cbmc -D __CPROVER -D _FIXEDBV -D _CONTROL_FLOAT_WIDTH=32 -D _CONTORL_RADIX_WIDTH=16 "/tmp/control_synthesis-ssdkr10/accelerator-ss/FWL_LTI.c" --stop-on-fail >/tmp/control_synthesis-ssdkr10/accelerator-ss/cbmc-tmp.log
+./axelerator -u -p -ii -mpi 256 -synth CEGIS -params "p=1,q=1,f=1,m=256:16:8" -dynamics "[0.95123]" -init "[cube<.5]" -isense "[0.03125]" -inputs "[1>-1;1<1]" -sguard "[cube<1]" -control "[-0.875 ]"
+Loading System: mpi256
+Loading System: mpi256
+SYNTHESIS SUCCESSFUL
+<control_synthesis_time>235</control_synthesis_time>
+<controller>-0.875 </controller>
+/users/pkesseli/documents/control-synthesis/benchmarks/state-space/dcmotor_ss/dcmotor_ss_disc1.ss
+accelerator-ss
+./axelerator -u -p -ii -mpi 256 -synth CEGIS -params "p=3,q=1,f=1,m=256:16:8" -dynamics "[0.9905,0.075687,0.021033;0.125,0,0;0,0.015625,0]" -init "[cube<.5]" -isense "[16;0;0]" -inputs "[1>-1;1<1]" -sguard "[cube<1]" -control "[0]"
+Loading System: mpi256
+Loading System: mpi256
+int: 16, radix: 16
+cbmc -D __CPROVER -D _FIXEDBV -D _CONTROL_FLOAT_WIDTH=32 -D _CONTORL_RADIX_WIDTH=16 "/tmp/control_synthesis-ssdkr10/accelerator-ss/FWL_LTI.c" --stop-on-fail >/tmp/control_synthesis-ssdkr10/accelerator-ss/cbmc-tmp.log
+./axelerator -u -p -ii -mpi 256 -synth CEGIS -params "p=3,q=1,f=1,m=256:16:8" -dynamics "[0.9905,0.075687,0.021033;0.125,0,0;0,0.015625,0]" -init "[cube<.5]" -isense "[16;0;0]" -inputs "[1>-1;1<1]" -sguard "[cube<1]" -control "[-0.05078125, -0.39453125, 0.18359375 ]"
+Loading System: mpi256
+Loading System: mpi256
+int: 20, radix: 20
+cbmc -D __CPROVER -D _FIXEDBV -D _CONTROL_FLOAT_WIDTH=40 -D _CONTORL_RADIX_WIDTH=20 "/tmp/control_synthesis-ssdkr10/accelerator-ss/FWL_LTI.c" --stop-on-fail >/tmp/control_synthesis-ssdkr10/accelerator-ss/cbmc-tmp.log
+./axelerator -u -p -ii -mpi 256 -synth CEGIS -params "p=3,q=1,f=1,m=256:16:8" -dynamics "[0.9905,0.075687,0.021033;0.125,0,0;0,0.015625,0]" -init "[cube<.5]" -isense "[16;0;0]" -inputs "[1>-1;1<1]" -sguard "[cube<1]" -control "[0, -0.24609375, 0 ]"
+Loading System: mpi256
+Loading System: mpi256
+int: 24, radix: 24
+cbmc -D __CPROVER -D _FIXEDBV -D _CONTROL_FLOAT_WIDTH=48 -D _CONTORL_RADIX_WIDTH=24 "/tmp/control_synthesis-ssdkr10/accelerator-ss/FWL_LTI.c" --stop-on-fail >/tmp/control_synthesis-ssdkr10/accelerator-ss/cbmc-tmp.log
+./axelerator -u -p -ii -mpi 256 -synth CEGIS -params "p=3,q=1,f=1,m=256:16:8" -dynamics "[0.9905,0.075687,0.021033;0.125,0,0;0,0.015625,0]" -init "[cube<.5]" -isense "[16;0;0]" -inputs "[1>-1;1<1]" -sguard "[cube<1]" -control "[0.015625, 0, -0.7578125 ]"
+Loading System: mpi256
+Loading System: mpi256
+SYNTHESIS SUCCESSFUL
+<control_synthesis_time>17346</control_synthesis_time>
+<controller>0.015625, 0, -0.7578125 </controller>
+/users/pkesseli/documents/control-synthesis/benchmarks/state-space/helicopter_ss/helicopter_ss_disc1.ss
+accelerator-ss
+./axelerator -u -p -ii -mpi 256 -synth CEGIS -params "p=3,q=1,f=1,m=256:16:8" -dynamics "[2.6207,-1.1793,0.65705;2,0,0;0,0.5,0]" -init "[cube<.5]" -isense "[8;0;0]" -inputs "[1>-1;1<1]" -sguard "[cube<1]" -control "[0]"
+Loading System: mpi256
+Loading System: mpi256
+int: 16, radix: 16
+cbmc -D __CPROVER -D _FIXEDBV -D _CONTROL_FLOAT_WIDTH=32 -D _CONTORL_RADIX_WIDTH=16 "/tmp/control_synthesis-ssdkr10/accelerator-ss/FWL_LTI.c" --stop-on-fail >/tmp/control_synthesis-ssdkr10/accelerator-ss/cbmc-tmp.log
+./axelerator -u -p -ii -mpi 256 -synth CEGIS -params "p=3,q=1,f=1,m=256:16:8" -dynamics "[2.6207,-1.1793,0.65705;2,0,0;0,0.5,0]" -init "[cube<.5]" -isense "[8;0;0]" -inputs "[1>-1;1<1]" -sguard "[cube<1]" -control "[0.234375, -0.1484375, 0.078125 ]"
+Loading System: mpi256
+Loading System: mpi256
+SYNTHESIS SUCCESSFUL
+<control_synthesis_time>2112</control_synthesis_time>
+<controller>0.234375, -0.1484375, 0.078125 </controller>
