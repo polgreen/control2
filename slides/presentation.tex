@@ -58,12 +58,14 @@
 
 \frame{\maketitle}
 
-\begin{frame}{Cyber-Physical Systems}
-%
+\begin{frame}{Cyber-Physical Systems (CPS)}
+
 \begin{itemize}
 \item 
 modern controls are implemented with digital microcontrollers, 
 embedded within dynamical plants representing physical components 
+\item 
+digital control literature: success and limitations 
 \end{itemize} 
 
 \begin{figure}
@@ -85,13 +87,17 @@ embedded within dynamical plants representing physical components
     \end{subfigure}
 \end{figure}
 
-\tool uses counter\-example guided inductive
-synthesis to automate the design of digital controllers that are
-correct by construction.
-%
+\pause 
+
+\begin{itemize}
+\item 
+use of counter\-example guided inductive synthesis (CEGIS)\\ 
+to automate design of sound digital controllers 
+\end{itemize} 
+
 \end{frame}
 
-\begin{frame}[fragile]{Cyberphysical System}{Continuous Plant and Digital Controller}
+\begin{frame}[fragile]{CPS Setup: Continuous Plant and Digital Controller}
 
 \begin{figure}[htb]
 \centering
@@ -283,7 +289,6 @@ correct by construction.
 
 \only<4>{
 \begin{displaymath}
-\label{eq:pulsetf}
 \hat{G}(z) = (1-z^{-1})\mathcal{Z}\left\lbrace{\mathcal{L}^{-1}\left\lbrace{\frac{\hat{G}(s)}{s}}\right\rbrace_{t=kT}}\right\rbrace
 \end{displaymath}
 }
@@ -296,14 +301,17 @@ correct by construction.
 
 \only<5>{
 \begin{equation*}
-\label{eq:outputfunctions}
-\hat{Y}(z)=\frac{\nu_{1}(z)}{1+\hat{G}(z) \tilde{C}(z)}+\frac{\nu_{2}(z)\hat{G}(z)}{1+\hat{G}(z) \tilde{C}(z)}+\frac{R(z)\hat{G}(z) \tilde{C}(z)}{1+\hat{G}(z) \tilde{C}(z)}
+\hat{Y}(z) = 
+\frac{\hat{G}(z) \tilde{C}(z)}{1+\hat{G}(z) \tilde{C}(z)}R(z) + 
+\frac{1}{1+\hat{G}(z) \tilde{C}(z)} \nu_{1}(z) + 
+\frac{\hat{G}(z)}{1+\hat{G}(z) \tilde{C}(z)} \nu_{2}(z) 
 \end{equation*}
 }
 
 \uncover<6>{
 Common denominator:
-$$\hat{G}_n(z) \tilde{C}_n(z)+\hat{G}_d(z) \tilde{C}_d(z)$$
+$$\hat{G}_n(z) \tilde{C}_n(z)+\hat{G}_d(z) \tilde{C}_d(z)$$ 
+\textcolor{red}{clarify use of tilde C and of hat C }
 }
 
 \end{frame}
