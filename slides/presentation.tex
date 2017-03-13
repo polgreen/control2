@@ -342,11 +342,11 @@ v_{1}^{(k-1)}-v_{N_S-j}^{(k-1)} . \frac{v_{1}^{(k-1)}}{v_{N_S-k}^{(k-1)}}, &k>0 
 \right.
 $$
 %
-$S(z)$ is stable $\Leftrightarrow$
-$$
+\begin{eqnarray*}
+&S(z) \text{ is stable } \Leftrightarrow& \\ 
 %\phi_\mathit{stability} \equiv 
-\textcolor{blue}{S(1) > 0}\ \uncover<2->{\wedge\ \textcolor{blue}{(-1)^{N_S} S(-1) > 0}}\ \uncover<3->{\wedge\ \textcolor{blue}{|c_0| < c_{N_S}}}\ \uncover<4>{\wedge\ \textcolor{blue}{\forall k, v_1^{(k)} > 0}}
-$$
+&\textcolor{blue}{S(1) > 0}\ \uncover<2->{\wedge\ \textcolor{blue}{(-1)^{N_S} S(-1) > 0}}\ \uncover<3->{\wedge\ \textcolor{blue}{|c_0| < c_{N_S}}}\ \uncover<4>{\wedge\ \textcolor{blue}{\forall k, v_1^{(k)} > 0}}&
+\end{eqnarray*}
 
 \end{frame}
 
@@ -460,11 +460,17 @@ $\vec{b}$ and $\vec{a}$ -- plant coefficients
 \end{frame}
 
 %
-\begin{frame}{Our Objective}
+\begin{frame}{Objective}
 
 We seek to synthesise a controller where $\Delta \vec{\beta}=0$ and $\Delta \vec{\alpha}=0$ and which stabilizes all plants within a given range of $\Delta \vec{b}$ and $\Delta \vec{a}$. 
 
+\textcolor{red}{Copy here CEGIS architecture scheme.}
 
+\end{frame}
+
+\begin{frame}{Case Study}
+
+\textcolor{red}{Introduce details of case study. }
 
 \end{frame}
 
@@ -623,33 +629,38 @@ We seek to synthesise a controller where $\Delta \vec{\beta}=0$ and $\Delta \vec
 %represented in~\eqref{Eq:running-example-controller}: 
 %as the phase margin is negative, 
 %the controller is unstable when considering the FWL effects.
-%
-%
-\begin{frame}[fragile]{Step Response for the Candidate Solutions}
+
+\begin{frame}[fragile]{Outcomes: Step Response}
 \begin{figure}
     \centering
     \begin{subfigure}[b]{0.3\textwidth}
         \includegraphics[width=\textwidth]{figures/runningexample_step0.pdf}
-        \caption{Original controller}
+        \caption{Original\\ controller}
         \label{fig:step0}
     \end{subfigure}
     ~
     \begin{subfigure}[b]{0.3\textwidth}
         \includegraphics[width=\textwidth]{figures/runningexample_step1.pdf}
-        \caption{First solution by \tool}
+        \caption{Controller (first step)}
         \label{fig:step1}
     \end{subfigure}
     ~
     \begin{subfigure}[b]{0.3\textwidth}
         \includegraphics[width=\textwidth]{figures/runningexample_step2.pdf}
-        \caption{Final solution by \tool}
+        \caption{Controller (final step)}
         \label{fig:step2}
     \end{subfigure}
 \end{figure}
-The Original Controller was synthesised ignoring FWL effects and as can be seen, it becomes unstable over time.
+
+\begin{itemize} 
+\item 
+original controller was synthesised ignoring FWL effects (becomes unstable over time) 
+\end{itemize}
+
 \end{frame}
-%
-\begin{frame}[fragile]{Synthesised Results}
+
+
+\begin{frame}[fragile]{Outcomes: Controller Order}
 \begin{figure}
  \begin{tikzpicture}
 \begin{axis}[ylabel=order,xlabel=time,xmode=log
@@ -660,7 +671,7 @@ The Original Controller was synthesised ignoring FWL effects and as can be seen,
 \end{figure}
 \end{frame}
 
-\begin{frame}[fragile]{Synthesised Results}
+\begin{frame}[fragile]{Outcomes: Benchmark}
 
 \begin{table}
 \centering
