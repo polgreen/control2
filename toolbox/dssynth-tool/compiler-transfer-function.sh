@@ -7,7 +7,7 @@ cd "${cbmc_directory}/src"
 export PATH="${PATH}:/${cbmc_directory}/src/cbmc:/${cbmc_directory}/src/cegis"
 
 # Run experiments
-echo -e "\nRunning benchmarks..."
+echo -e "\nRunning Synthesis..."
 benchmark_runner_directory="${experiment_base_directory}/benchmark-runner"
 cd "${benchmark_runner_directory}"
 ./benchmark-runner.sh simple

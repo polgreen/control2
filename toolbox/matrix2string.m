@@ -6,7 +6,7 @@ function output = matrix2string( matrix )
 %  poly: the matrix format, in a MATLAB matrix.
 %
 % Author: Lennon Chaves
-% Federal University of Amazonas
+% 
 % March 2017
 %
 

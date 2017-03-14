@@ -1,4 +1,15 @@
 function synthParse(ds, type)
+% Translate the digital plant designed as transfer-function or state-space for an ANSI-C file
+%
+% Function: synthParse(plant, type)
+%
+%  plant: digital plant with specifications about plant, implementation and dynamical ranges;
+%  type: 'ss' for state-space or 'tf' for transfer-fuction;
+%
+% Author: Lennon Chaves
+% 
+% March 2017
+%
 
 if strcmp(type,'ss')
 
@@ -6,7 +17,6 @@ A = ds.system.A;
 B = ds.system.B;
 C = ds.system.C;
 D = ds.system.D;
-inputs = ds.inputs;
 
 [rA,cA] = size(A);
 nStates = rA;
@@ -14,6 +24,8 @@ nStates = rA;
 nInputs = cB;
 [rC,cC] = size(C);
 nOutputs = rC;
+
+inputs = ones(1,nInputs);
 
 frac_bits = ds.impl.frac_bits;
 int_bits = ds.impl.int_bits;
@@ -79,7 +91,7 @@ fprintf(fid,'%s %d,\n\t','.b_size = ', nBp);
 fprintf(fid,'%s %s },\n\t','.a = { ', poly2strc(ap));
 uncertainty_a = zeros(1,nAp);
 fprintf(fid,'%s %s },\n\t','.a_uncertainty = { ', poly2strc(uncertainty_a));
-fprintf(fid,'%s %d \n\t','.a_size = ', nAp);
+fprintf(fid,'%s %d ,\n\t','.a_size = ', nAp);
 fprintf(fid,'%s\n\n','};');
 fclose(fid);
 

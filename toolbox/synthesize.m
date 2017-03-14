@@ -1,39 +1,47 @@
-function y = synthesize(system, intBits, fracBits, rangeMax, rangeMin, property)
+function controller = synthesize(system, intBits, fracBits, rangeMax, rangeMin)
+% Synthesize Digital Controllers given a plant in transfer-function or state-space, numerical representation (integer and fractional bits), and the dynamic ranges (maximum and minimum ranges).
+%
+% Function: controller = SYNTHESIZE(system, intBits, fracBits, rangeMax, rangeMin)
+%
+%  system: plant designed as transfer-function or state-space representation (See also TF and SS.)
+%  intBits: represents the integer bits part;
+%  fracBits: represents the fractionary bits part;
+%  rangeMax: represents the maximum dynamical range;
+%  rangeMin: represents the minimum dynamical range;
+%
+%
+%  Example of Usage:
+%
+%   plant = tf([1.0 0.865],(1.76 -0.9876),0.02);
+%
+%   controller = synthesize(plant, 8, 8, 1, -1);
+%
+% Author: Lennon Chaves
+% 
+% March 2017
+%
 
-% system - tf or ss format (use class command to identify the type of input
+ type = class(system);
+ path = pwd;
 
-% property: stability? quantization error?
+ if (strcmp(type,'tf'))
+    ds.plant = system;
+    ds.controller = system;
+ elseif (strcmp(type,'ss'))
+    ds.system = system;
+ end
 
-%- get the paraments from the plant and implementation, and then translate in a ANSI-C file;
-%- call the command line for TF-synthesis and execute the synthesis (prepare a shell script to execute DSSynth);
-%- get .log file generated, and extract the controller synthesized by DSSynth;
-%- Print the system synthesized in Worskpace (and save in a .MAT file?)
+  ds.impl.frac_bits = fracBits;
+  ds.impl.int_bits = intBits;
+  ds.range.max = rangeMax;
+  ds.range.min = rangeMin;
 
+  synthParse(ds,type);
 
-%Order of the Scripts:
+  synthExecute(type);
 
-%synthParse (translate ANSI-C File)
-%synthExecute (call DSSynth)
-%synthExtract (extract controller from .log file)
-%synthReport (print controller synthesized and outputs generated)
+  synthExtract(path, type);
 
-type = class(system);
-
-if (strcmp(type,'tf'))
-
-ds.plant = system;
-ds.controller = system;
-ds.impl.frac_bits = fracBits;
-ds.impl.int_bits = intBits;
-ds.range.max = rangeMax;
-ds.range.min = rangeMin;
-
-synthParse(ds,'tf');
-
-end
-
-
-
-y = 0;
+  controller = synthReport(ds,type);
 
 end

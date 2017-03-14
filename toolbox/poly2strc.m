@@ -6,7 +6,7 @@ function output = poly2strc( poly )
 %  poly: the polynomial format, in a MATLAB vector.
 %
 % Author: Lennon Chaves
-% Federal University of Amazonas
+% 
 % March 2017
 %
 
