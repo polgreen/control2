@@ -20,7 +20,7 @@ if [ -z $OUTPUT_FILE ]; then
 	exit 1;
 fi
 
-NUMERATOR=$(cat $OUTPUT_FILE | grep "    .num={" | cut -d "=" -f2 | sed 's/{//' | sed 's/}//' | sed 's/.num_uncertainty//' | tr ',' ' ');
-DENOMINATOR=$(cat $OUTPUT_FILE | grep "  controller={ .den={ " | cut -d "=" -f3 | sed 's/{//' | sed 's/}//' | sed 's/.den_uncertainty//' | tr ',' ' ');
+CONTROLLER=$(cat $OUTPUT_FILE | grep "K = " | cut -d "=" -f2 | sed 's/(//g' | sed 's/)//g' | sed -r 's/fxp//g' );
 
-echo $NUMERATOR "\n" $DENOMINATOR > controller.out;
+
+echo $CONTROLLER > controller.out;

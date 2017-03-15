@@ -25,8 +25,6 @@ nInputs = cB;
 [rC,cC] = size(C);
 nOutputs = rC;
 
-inputs = ones(1,nInputs);
-
 frac_bits = ds.impl.frac_bits;
 int_bits = ds.impl.int_bits;
 max_range = ds.range.max;
@@ -34,7 +32,6 @@ min_range = ds.range.min;
 
 fid = fopen('system.ss', 'wt' );
 fprintf(fid,'implementation <%d,%d>\n', int_bits, frac_bits);
-fprintf(fid,'range [%d,%d]\n', max_range, min_range);
 fprintf(fid,'states = %d;\n', nStates);
 fprintf(fid,'inputs = %d;\n', nInputs);
 fprintf(fid,'outputs = %d;\n', nOutputs);
@@ -42,7 +39,7 @@ fprintf(fid,'A = %s \n', matrix2string(A));
 fprintf(fid,'B = %s \n', matrix2string(B));
 fprintf(fid,'C = %s \n', matrix2string(C));
 fprintf(fid,'D = %s \n', matrix2string(D));
-fprintf(fid,'inputs = %s \n', matrix2string(inputs));
+fprintf(fid,'inputs = [%d,%d] \n', min_range, max_range);
 fclose(fid);
 
 elseif strcmp(type, 'tf')

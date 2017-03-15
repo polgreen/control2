@@ -10,13 +10,22 @@ function synthExtract(path, type)
 % 
 % March 2017
 %
+user = userpath;
+
+if strfind(user,'/Documents/MATLAB') %default folder installation
+    install_folder = [user '/Add-Ons/Toolboxes/DSSynth/code'];
+else
+    install_folder = [user '/Toolboxes/DSSynth/code'];
+end
 
 if (strcmp(type, 'tf'))
  logfile = 'system_bound_simple.log';
- command = ['sh dssynth-tf-extract.sh ' logfile];
+ runner = [install_folder '/dssynth-tf-extract.sh'];
+ command = ['sh ' runner ' ' logfile];
 elseif (strcmp(type, 'ss'))
  logfile = 'system_completeness-threshold-ss.log';
- command = ['sh dssynth-ss-extract.sh ' logfile];
+ runner = [install_folder '/dssynth-ss-extract.sh'];
+ command = ['sh ' runner ' ' logfile];
 end 
 
 system(command);

@@ -20,10 +20,18 @@ if (strcmp(type,'tf'))
  denLine = fgetl(fid);
  denominator = str2num(denLine);
  sample = ds.plant.Ts;
- controller = tf(numerator, denominator, sample);
+ if (isempty(numerator) | isempty(denominator))
+   controller = '';
+ else
+   controller = tf(numerator, denominator, sample);
+ end
 
 elseif (strcmp(type,'ss'))
- controller = str2num(fgetl(fid));
+ valueLine = fgetl(fid);
+ controller = str2num(valueLine);
+ if (isempty(valueLine))
+   controller = '';
+ end
 end
 
 fclose(fid);

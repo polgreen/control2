@@ -91,30 +91,7 @@ function get_current_cpu_millis {
 }
 
 if [ -z "$1" ]; then
- benchmark_dirs=("${experiment_base_directory}/benchmarks/state-space/pendulum_ss/") #ok
-else
- #benchmark_dirs=("$1")
- working_directory_base_suffix="$1"
- #dkr10
- if [ "$1" == "dkr10" ]; then
-  benchmark_dirs=("${experiment_base_directory}/benchmarks/state-space/cruise_ss/" "${experiment_base_directory}/benchmarks/state-space/dcmotor_ss/" "${experiment_base_directory}/benchmarks/state-space/helicopter_ss/")
- fi
-
- #dkr11
- if [ "$1" == "dkr11" ]; then
-  #benchmark_dirs=("${experiment_base_directory}/benchmarks/state-space/ballmaglev_ss/" "${experiment_base_directory}/benchmarks/state-space/magsuspension_ss/" "${experiment_base_directory}/benchmarks/state-space/invpendulum_pendang_ss/")
-  benchmark_dirs=("${experiment_base_directory}/benchmarks/state-space/magsuspension_ss/" "${experiment_base_directory}/benchmarks/state-space/invpendulum_pendang_ss/")
- fi
-
- #dkr12
- if [ "$1" == "dkr12" ]; then
-  benchmark_dirs=("${experiment_base_directory}/benchmarks/state-space/magneticpointer_ss/" "${experiment_base_directory}/benchmarks/state-space/invpendulum_cartpos_ss/" "${experiment_base_directory}/benchmarks/state-space/suspension_ss/")
- fi
-
- #dkr13
- if [ "$1" == "dkr13" ]; then
-  benchmark_dirs=("${experiment_base_directory}/benchmarks/state-space/satellite_ss/" "${experiment_base_directory}/benchmarks/state-space/tapedriver_ss/" "${experiment_base_directory}/benchmarks/state-space/pendulum_ss/" "${experiment_base_directory}/benchmarks/state-space/uscgtampa_ss/")
- fi
+ benchmark_dirs=("${experiment_base_directory}/benchmarks/system/") #ok
 fi
 
 working_directory_base="/tmp/control_synthesis-ss-${working_directory_base_suffix}"
