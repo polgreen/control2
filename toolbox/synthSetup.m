@@ -1,5 +1,5 @@
 function ds = synthSetup(system, fracBits, intBits, rangeMax, rangeMin, type)
-% Organize the parameters provided for the digital plant, and then translate it to a struct in MATLAB
+% Organize the parameters provided for the digital plant and Configure MATLAB system's libraries.
 %
 % Function: ds = synthSetup(system, intBits, fracBits, rangeMax, rangeMin,type)
 %
@@ -14,6 +14,14 @@ function ds = synthSetup(system, fracBits, intBits, rangeMax, rangeMin, type)
 % 
 % March 2017
 %
+
+MatlabPath = getenv('LD_LIBRARY_PATH');
+% Make Matlab use system libraries
+setenv('LD_LIBRARY_PATH','');
+setenv('LD_LIBRARY_PATH',getenv('PATH'));
+% Reassign old library paths
+setenv('LD_LIBRARY_PATH',MatlabPath);
+
  if (strcmp(type,'tf'))
     ds.plant = system;
     ds.controller = system;

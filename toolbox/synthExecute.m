@@ -63,7 +63,7 @@ end
 
 copyfile(logfile);
 
-tmp_directory = [install_folder '/dssynth-tool/benchmarks/'];
-rmdir(tmp_directory);
+tmp_directory = [install_folder '/dssynth-tool/benchmarks'];
+rmdir(tmp_directory,'s');
 
 end
