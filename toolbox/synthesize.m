@@ -24,24 +24,15 @@ function controller = synthesize(system, intBits, fracBits, rangeMax, rangeMin)
  type = class(system);
  path = pwd;
 
- if (strcmp(type,'tf'))
-    ds.plant = system;
-    ds.controller = system;
- elseif (strcmp(type,'ss'))
-    ds.system = system;
- end
-
-  ds.impl.frac_bits = fracBits;
-  ds.impl.int_bits = intBits;
-  ds.range.max = rangeMax;
-  ds.range.min = rangeMin;
-
+%Step 1: Setup  
+  ds = synthSetup(system, intBits, fracBits, rangeMax, rangeMin, type);
+%Step 2: Parse
   synthParse(ds,type);
-
+%Step 3: Execute
   synthExecute(type);
-
+%Step 4: Extract
   synthExtract(path, type);
-
+%Step 5: Report
   controller = synthReport(ds,type);
 
 end

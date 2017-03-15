@@ -3,7 +3,7 @@ function synthExecute(type)
 %
 % Function: synthExecute(type)
 %
-% type: 'ss' for state-space or 'tf' for transfer-fuction;
+% type: 'ss' for state-space or 'tf' for transfer-function;
 %
 % Author: Lennon Chaves
 % 
@@ -28,6 +28,8 @@ end
 
 cd(install_folder);
 
+%creating temporary directory
+
 cd 'dssynth-tool'
 mkdir 'benchmarks'
 cd 'benchmarks'
@@ -42,13 +44,26 @@ benchmark_path = pwd;
 
 cd(current);
 
-%TODO: Implement Runner for State-Space
+%running the synthesis
+
+if (strcmp(type,'tf'))
 runner = [install_folder '/dssynth-tool/compiler-transfer-function.sh'];
+elseif (strcmp(type,'ss'))
+runner = [install_folder '/dssynth-tool/compiler-state-space.sh'];
+end
+
 command = ['sh ' runner];
 system(command);
 
+if (strcmp(type, 'tf'))
 logfile = [benchmark_path '/system_bound_simple.log'];
+elseif (strcmp(type,'ss'))
+logfile = [benchmark_path '/system_completeness-threshold-ss.log'];
+end
 
 copyfile(logfile);
+
+tmp_directory = [install_folder '/dssynth-tool/benchmarks/'];
+rmdir(tmp_directory);
 
 end

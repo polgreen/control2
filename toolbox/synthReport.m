@@ -4,7 +4,7 @@ function controller = synthReport(ds, type)
 % Function: controller = synthReport(ds, type)
 %
 %  ds: digital plant with specifications about plant, implementation and dynamical ranges;
-%  type: 'ss' for state-space or 'tf' for transfer-fuction;
+%  type: 'ss' for state-space or 'tf' for transfer-function;
 %
 % Author: Lennon Chaves
 % 

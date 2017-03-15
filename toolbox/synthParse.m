@@ -4,7 +4,7 @@ function synthParse(ds, type)
 % Function: synthParse(plant, type)
 %
 %  plant: digital plant with specifications about plant, implementation and dynamical ranges;
-%  type: 'ss' for state-space or 'tf' for transfer-fuction;
+%  type: 'ss' for state-space or 'tf' for transfer-function;
 %
 % Author: Lennon Chaves
 % 
@@ -66,10 +66,12 @@ min_range = ds.range.min;
 fid = fopen('system.c', 'wt' );
 fprintf(fid,'%s\n\n', '#include <dsverifier.h>');
 fprintf(fid,'%s\n\t', 'digital_system controller = { ');
+bc = zeros(1,nBc);
 fprintf(fid,'%s %s },\n\t','.b = { ', poly2strc(bc));
 uncertainty_b = zeros(1,nBc);
 fprintf(fid,'%s %s },\n\t','.b_uncertainty = { ', poly2strc(uncertainty_b));
 fprintf(fid,'%s %d,\n\t','.b_size = ', nBc);
+ac = zeros(1,nAc);
 fprintf(fid,'%s %s },\n\t','.a = { ', poly2strc(ac));
 uncertainty_a = zeros(1,nAc);
 fprintf(fid,'%s %s },\n\t','.a_uncertainty = { ', poly2strc(uncertainty_a));
