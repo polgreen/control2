@@ -593,7 +593,7 @@ where $\tilde{C}(z)$ is the controller adjusted to the FWL. The resulting system
    \only<5-7,17>{\path  ([xshift=5em]verif1.south) edge node[align=center] {$\textcolor{blue}{\frac{0z^2+0z+0}{0z^2+0z+0}}$} ([xshift=5em]bmc.north);}
    \only<1-5,8-11,16,18-19>{\path  ([xshift=-5em]bmc.north) edge node[align=center]  {UNSAT/\\model} ([xshift=-5em]verif1.south);}
    \only<6-7>{\path  ([xshift=-5em]bmc.north) edge node[align=center]  {$\textcolor{blue}{\frac{0.026506}{1.000610z+1.002838}}$} ([xshift=-5em]verif1.south);}
-   \only<1-6,8-12,16,18-19>{\path ([yshift=-2em]verif1.west) edge node {Counterexample} ([yshift=-2em]synth.east);}
+   \only<1-6,8-16,18->{\path ([yshift=-2em]verif1.west) edge node {Counterexample} ([yshift=-2em]synth.east);}
    \only<7>{\path ([yshift=-2em]verif1.west) edge node {$\textcolor{blue}{\frac{0.026506}{1.000610z+1.002838}}$} ([yshift=-2em]synth.east);}
    \only<8-15>{\path ([xshift=5em]synth.south) edge node[align=center] {$\textcolor{blue}{\frac{0.0264}{z-0.9998}}$\\$\textcolor{blue}{\frac{0.026506}{1.000610z+1.002838}}$} ([xshift=5em]gp.north);}
    \only<9-15,19->{\path ([xshift=-5em]gp.north) edge node[align=center] {$\textcolor{blue}{\hat{C}(z)}$} ([xshift=-5em]synth.south);}
