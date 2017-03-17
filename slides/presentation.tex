@@ -394,7 +394,7 @@ $\vec{b}$ and $\vec{a}$ -- plant coefficients
 \begin{tikzpicture}[scale=1]
 \begin{axis}[xmin=-2.5,xmax=2.5,ymin=-2,ymax=2]
 \draw[dashed,color=red] (axis cs:0cm,0cm) circle[radius=100];
-\node at (axis cs:.7,-.7) [pin={-10:{stable region}},inner sep=0pt] {};
+\node at (axis cs:.5,-.866) [pin={-80:{stable region}},inner sep=0pt] {};
 \draw[color=blue] (axis cs:0.5,0.7) ellipse[x radius=5, y radius=15];
 \node at (axis cs:.5,.7) [pin={+10:poles},inner sep=0pt] {};
 \end{axis}
@@ -467,7 +467,55 @@ $\vec{b}$ and $\vec{a}$ -- plant coefficients
 
 We seek to synthesise a controller where $\Delta \vec{\beta}=0$ and $\Delta \vec{\alpha}=0$ and which stabilizes all plants within a given range of $\Delta \vec{b}$ and $\Delta \vec{a}$. 
 
-\textcolor{red}{Copy here CEGIS architecture scheme.}
+\begin{figure}[htb]
+\centering
+\resizebox{1.0\textwidth}{!}
+{
+ \begin{tikzpicture}[scale=0.3,->,>=stealth',shorten >=.2pt,auto, semithick, initial text=, ampersand replacement=\&,]
+  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center
+},
+          row sep=1cm, column sep=2cm] {
+   \coordinate (aux1);
+   \& \coordinate (aux2);
+   \&;\\
+   \node[minimum width=2.5cm, minimum height=0.6cm, fill=gray!20] (synth) {{\sc Synthesize}};
+   \&
+   complexnode/.pic={ 
+     \node[rectangle,draw,dotted,
+	minimum width=7cm,
+	minimum height=1cm,
+        pattern=north west lines, pattern color=gray!20,
+	label={\sc Verify},] (verif) {};
+     \node[minimum width=2.5cm, minimum height=0.6cm, fill=gray!20] (verif1) at ([xshift=-2cm]verif.center) {{\sc Uncertainty}};
+     \node[minimum width=2.5cm, minimum height=0.6cm, fill=gray!20] (verif2) at ([xshift=2cm]verif.center) {{\sc Precision}};
+   } 
+   \& \node[ellipse, fill=gray!20] (done) {{\sc Done}};\\
+   \& \\
+   \node[minimum height=0.5cm] (gp) {\sf Closed-loop System Search};
+   \&
+   complexnode/.pic={ 
+     \coordinate (aux);
+   \node[minimum height=0.5cm] (bmc) at ([xshift=-2cm]aux.center) {\sf BMC-based\\Verifier};
+   \node[minimum height=0.5cm] (fp)  at ([xshift=2cm]aux.center) {\sf Interval Arithmetic\\Verifier};
+   }   
+    \\
+  };
+
+   \path (verif2) edge node {} (done);
+   \path ([xshift=5em]synth.south) edge node[align=center] {Inputs} ([xshift=5em]gp.north);
+   \path ([xshift=-5em]gp.north) edge node[align=center] {UNSAT/\\candidate} ([xshift=-5em]synth.south);
+   \path ([yshift=2em]synth.east) edge node[xshift=-0.5em] {Candidate solution} ([yshift=2em]verif1.west);
+   \path  ([xshift=5em]verif1.south) edge node[align=center] {Candidate\\ $P$} ([xshift=5em]bmc.north);
+   \path  ([xshift=-5em]bmc.north) edge node[align=center]  {UNSAT/\\model} ([xshift=-5em]verif1.south);
+   \path ([yshift=-2em]verif1.west) edge node {Counterexample} ([yshift=-2em]synth.east);
+   \path ([xshift=5em]verif2.south) edge node[align=center] {Candidate\\ $P$} ([xshift=5em]fp.north);
+   \path  ([xshift=-5em]fp.north) edge node[align=center]  {True/\\False} ([xshift=-5em]verif2.south);
+   \path (aux1) edge (synth.north);
+   \path[-] (verif2.north) edge node[align=center] {} ([xshift=6.7cm]aux2);
+   \path[-] ([xshift=6.7cm]aux2) edge node[align=center] {Increase Precision} (aux1);
+ \end{tikzpicture}
+}
+\end{figure}
 
 \end{frame}
 
@@ -819,7 +867,8 @@ approach to LTI systems with state space safety specifications.
 }
 
    \& complexnode/.pic={ 
-      \only<1-2>{\node[rectangle,dashed,draw,minimum width=6.5cm,minimum height=3.5cm,label=\textbf{Plant}] (plant)  at ([yshift=-.5cm]dac.center) {};}
+      \only<1>{\node[rectangle,dashed,draw,minimum width=6.5cm,minimum height=3.5cm,label=\textbf{Plant}] (plant)  at ([yshift=-.4cm]dac.center) {};}
+      \only<2>{\node[rectangle,dashed,draw,minimum width=6.5cm,minimum height=3.5cm,label=\textbf{Plant}] (plant)  at ([yshift=-.5cm]dac.center) {};}
       \only<3>{\node[rectangle,dashed,draw,minimum width=6.5cm,minimum height=3.5cm,label=\textbf{Plant}] (plant)  at ([yshift=-.75cm]dac.center) {};}
       \node[rectangle,draw,minimum width=1cm,minimum height=1cm] (B) at ([xshift=-2cm,yshift=.5cm]plant.center)  {\sc \only<1-2>{$\mat{B}$}\only<3>{$\mat{B}_d$}};
       \node[draw=none] (u) at ([xshift=-.8cm,yshift=.15cm]B)  {\only<1-2>{$u(t)$}};
