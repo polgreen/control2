@@ -1246,7 +1246,7 @@ N &\in [-.00595\ \ .00595]\\
    \& \coordinate (aux); \\ 
    \& \node[fill=gray!20,align=center] (synth) {\sc 2. synthesize};
    \& \node[fill=gray!20,align=center, minimum width=3.5cm] (verify) {\sc 3. verify ($\phi$)};
-         \node[draw=none] (SAT) at ([xshift=2.2cm,yshift=-.3cm]verify)  {\sc \textcolor{blue}{PASS}};
+        \uncover<9>{ \node[draw=none] (SAT) at ([xshift=2.2cm,yshift=-.3cm]verify)  {\sc \textcolor{blue}{PASS}};}
 
    \\
    \& \node[draw,rectangle,align=center] (KSAT) {Program \\ Search};
@@ -1256,32 +1256,34 @@ N &\in [-.00595\ \ .00595]\\
      \node[draw,rectangle,align=center] (AAC) at ([xshift=1.5cm]AA.center) {Abstraction \\ Verifier};
     }\\
   };
-  \only<1-3>{\path (abstract.south) edge node{$\textcolor{blue}{\begin{array}{c}\phi_{init}^K\\P_a(z)\\k=0\end{array}}$} (synth.north);}
-  \only<4->{\path (abstract.south) edge node{$\textcolor{blue}{\begin{array}{c}\phi_{k,x_0}^K\\P_a(z)\\k=0,1,2\end{array}}$} (synth.north);}
-    \only<1,4>{\path ([yshift=1em]synth.east) edge node {$K$} ([yshift=1em]verify.west);}
-    \only<2-3,5->{\path ([yshift=1em]synth.east) edge node {$\textcolor{blue}{K}$} ([yshift=1em]verify.west);}
+  \only<1-5>{\path (abstract.south) edge node{$\textcolor{blue}{\begin{array}{c}\phi_{init}^K\\P_a(z)\\k=0\end{array}}$} (synth.north);}
+  \only<6->{\path (abstract.south) edge node{$\textcolor{blue}{\begin{array}{c}\phi_{k,x_0}^K\\P_a(z)\\k=0,1,2\end{array}}$} (synth.north);}
+    \only<1-2,6>{\path ([yshift=1em]synth.east) edge node {$K$} ([yshift=1em]verify.west);}
+    \only<3-5,7->{\path ([yshift=1em]synth.east) edge node {$\textcolor{blue}{K}$} ([yshift=1em]verify.west);}
     \path (aux) edge (abstract.east);
-  \only<1-3>{\path ([xshift=+.6cm]KSAT.north) edge[left] node[xshift=-.3cm] {$\textcolor{blue}{\begin{array}{c}\phi_{init}^K\\P_a(z)\end{array}}$} ([xshift=0.6cm]synth.south);}
-  \only<4->{\path ([xshift=+.6cm]KSAT.north) edge[left] node[xshift=-.3cm] {$\textcolor{blue}{\begin{array}{c}\phi_{k,x_0}^K\\P_a(z)\\k=0,1,2\end{array}}$} ([xshift=0.6cm]synth.south);}
-    \only<1>{\path ([xshift=-.6cm]synth.south) edge node[align=center,xshift=.3cm] {$K$} ([xshift=-.6cm]KSAT.north);}
-    \only<2-3>{\path ([xshift=-.6cm]synth.south) edge node[align=center,xshift=.3cm] {$\textcolor{blue}{\left[\begin{array}{c}0.24609375\\-0.125\\0.1484375\end{array}\right]^T}$} ([xshift=-.6cm]KSAT.north);}
-    \only<4>{\path ([xshift=-.6cm]synth.south) edge node[align=center,xshift=.3cm] {$K$} ([xshift=-.6cm]KSAT.north);}
-    \only<5->{\path ([xshift=-.6cm]synth.south) edge node[align=center,xshift=.3cm] {$\textcolor{blue}{\left[\begin{array}{c}0.23828125\\-0.17578125\\0.109375\end{array}\right]^T}$} ([xshift=-.6cm]KSAT.north);}
-    \only<1-2,4>{
+    
+
+  \only<1,6>{\path ([xshift=+.6cm]KSAT.north) edge[left] node[xshift=-.3cm] {$(\phi(K),k)$} ([xshift=0.6cm]synth.south);}
+  \only<2-5>{\path ([xshift=+.6cm]KSAT.north) edge[left] node[xshift=-.3cm] {$\textcolor{blue}{\begin{array}{c}\phi_{init}^K\\P_a(z)\end{array}}$} ([xshift=0.6cm]synth.south);}
+  \only<7->{\path ([xshift=+.6cm]KSAT.north) edge[left] node[xshift=-.3cm] {$\textcolor{blue}{\begin{array}{c}\phi_{k,x_0}^K\\P_a(z)\\k=0,1,2\end{array}}$} ([xshift=0.6cm]synth.south);}
+    \only<1-2,6>{\path ([xshift=-.6cm]synth.south) edge node[align=center,xshift=.3cm] {$K$} ([xshift=-.6cm]KSAT.north);}
+    \only<3-5>{\path ([xshift=-.6cm]synth.south) edge node[align=center,xshift=.3cm] {$\textcolor{blue}{\left[\begin{array}{c}0.24609375\\-0.125\\0.1484375\end{array}\right]^T}$} ([xshift=-.6cm]KSAT.north);}
+    \only<7->{\path ([xshift=-.6cm]synth.south) edge node[align=center,xshift=.3cm] {$\textcolor{blue}{\left[\begin{array}{c}0.23828125\\-0.17578125\\0.109375\end{array}\right]^T}$} ([xshift=-.6cm]KSAT.north);}
+    \only<1-3,6-7>{
     \path ([yshift=.5cm]AAV.east) edge node{\sl $\hat{X}^\#$} ([yshift=.5cm]AAC.west);
     \path ([yshift=-.5cm]AAC.west) edge node{$(k,x_0)$} ([yshift=-.5cm]AAV.east);
     \path (AAC.north) edge node{\sl $\hat{X}^\#$} ([xshift=4.9cm]verify.south);
     \path ([xshift=-5cm]verify.south) edge node{$K$} (AAV.north);
     }
-    \only<3,5->{
+    \only<4-5,8->{
     \path ([yshift=.5cm]AAV.east) edge node{\sl $\textcolor{blue}{\hat{X}^\#}$} ([yshift=.5cm]AAC.west);
     \path ([yshift=-.5cm]AAC.west) edge node{$\textcolor{blue}{(k,x_0)}$} ([yshift=-.5cm]AAV.east);
     \path (AAC.north) edge node{\sl $\textcolor{blue}{\hat{X}^\#}$} ([xshift=4.9cm]verify.south);
     \path ([xshift=-5cm]verify.south) edge node{$\textcolor{blue}{K}$} (AAV.north);
     }
     
-  \only<1-2,5->{\path[-] (verify.north) edge node {$(k,x_0)$} (aux);}
-  \only<3-4>{\path[-] (verify.north) edge node {$\tiny \textcolor{blue}{\left(\begin{array}{cc}2,&[\begin{array}{ccc}.9&-.9&.9\end{array}]\\3,&[\begin{array}{ccc}.9&-.9&-.9\end{array}]\end{array}\right)}$} (aux);}
+  \only<1-4,7->{\path[-] (verify.north) edge node {$(k,x_0)$} (aux);}
+  \only<5-6>{\path[-] (verify.north) edge node {$\tiny \textcolor{blue}{\left(\begin{array}{cc}2,&[\begin{array}{ccc}.9&-.9&.9\end{array}]\\3,&[\begin{array}{ccc}.9&-.9&-.9\end{array}]\end{array}\right)}$} (aux);}
 \end{tikzpicture}
 }
 \end{figure}
