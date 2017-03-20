@@ -9,8 +9,11 @@ Supported Property:
 #### Useful Links:
 
 Download the latest version of DSSynth Toolbox at:
+
 Video Demonstration about DSSynth Toolbox Installation at:
+
 Video Demonstration about DSSynth Toolbox Usage at:
+
 See Detail about the functions available at DSSynth Toolbox in:
 
 #### Prerequisistes:
@@ -69,6 +72,7 @@ synthesize(plant,intBits,fracBits, maxRange, minRange);
 - rangeMin: represents the minimum dynamical range;
 
 Video Demonstration about Synthesis for Plants in Transfer-function Format:
+
 Video Demonstration about Synthesis for Plants in State-Space Format:
 
 #### Toolbox Application Usage:
