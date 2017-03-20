@@ -1,6 +1,6 @@
 ## DSSynth Toolbox
 
-DSSynth is a MATLAB Toolbox synthesizes digital controllers considering finite word-length (FWL) effects for physical plants represented by transfer-function or state-space, with fixed-point numerical representation and dynamic input ranges. Currently, there are two versions of DSSynth toolbox: command-line and MATLAB application.
+DSSynth is a MATLAB Toolbox that synthesizes digital controllers considering finite word-length (FWL) effects for physical plants represented by transfer-function or state-space, with fixed-point numerical representation and dynamic input ranges. Currently, there are two versions of the DSSynth toolbox: command-line and MATLAB application.
 
 Supported Property:
 
@@ -37,7 +37,7 @@ After that, the following steps must be executed:
 
 1. Setup: obtain the plant, fixed-point format and dynamic input ranges, and translate them to a struct in MATLAB;
 2. Parse: obtain the digital plant implementation, and then translate it to an ANSI-C file;
-3. Execute: obtain the ANSI-C file, call CBMC-CEGIS as back-end program synthesis tool, and then perform the automated synthesis;
+3. Execute: obtain the ANSI-C file from the previous step, call CBMC-CEGIS as back-end program synthesis tool, and then perform the automated synthesis;
 4. Extract: obtain the .log that is generated after the synthesis phase and then check the synthesized digital-controller.
 5. Report: obtain the digital-controller, translate it to a MATLAB system, and then show the result to the user.
 
@@ -45,7 +45,7 @@ After that, the following steps must be executed:
 
 #### Configuration:
 
-(1) Before starting to use the DSSynth toolbox, we must execute the following command in the MATLAB Workspace to configure correctly the Toolbox:
+(1) Before using the DSSynth toolbox, we must execute the following command in the MATLAB Workspace to configure correctly the Toolbox:
 
 	setenv('LD_LIBRARY_PATH','installation path to libstdc++');
 
@@ -55,11 +55,11 @@ Example:
 
 #### Toolbox Command-Line Usage:
 
-Steps to use the toolbox:
+Steps to use the DSSynth toolbox:
 
 1) Download and Install MATLAB 2016b;
 2) Download and Install the DSSynth Toolbox;
-3) Design a digital-plant into MATLAB as transfer-function or state-space format;
+3) Design a digital-plant in MATLAB as transfer-function or state-space format;
 4) Start the synthesis process by providing all required parameters (plant, numeric representation, and dynamic ranges).
 
 ###### Invoking Command:
@@ -71,8 +71,8 @@ Where:
 - plant: digital-plant as transfer-function or state-space. See details about 'tf' and 'ss' commands in MATLAB to design digital-systems.
 - intBits: represents the integer bits part;
 - fracBits: represents the fractionary bits part;
-- rangeMax: represents the maximum dynamical range;
-- rangeMin: represents the minimum dynamical range;
+- rangeMax: represents the maximum dynamic range;
+- rangeMin: represents the minimum dynamic range;
 
 Example:
 	plant = tf([1 0 -1],[1 0.9891 -3.456],0.01);
