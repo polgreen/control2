@@ -12,7 +12,7 @@ Download the latest version of DSSynth Toolbox at: https://drive.google.com/open
 
 Video Demonstration about DSSynth Toolbox Installation at: https://drive.google.com/open?id=0ByHTHsS00rluWnNHQnJjQ2hKWDg
 
-Video Demonstration about DSSynth Toolbox Usage at: https://drive.google.com/open?id=0ByHTHsS00rluNncyckZ6QjFQN1U
+Video Demonstration about DSSynth Toolbox Usage at: https://drive.google.com/open?id=0ByHTHsS00rluSnBOOVBwSEFveGM
 
 See Detail about the functions available at DSSynth Toolbox in:
 
@@ -78,7 +78,7 @@ Example:
 	plant = tf([1 0 -1],[1 0.9891 -3.456],0.01);
 	synthesize(plant, 12, 4, 3, -3);
 
-Video Demonstration about Synthesis for Plants in Transfer-function Format: https://drive.google.com/open?id=0ByHTHsS00rluNncyckZ6QjFQN1U
+Video Demonstration about Synthesis for Plants in Transfer-function Format: https://drive.google.com/open?id=0ByHTHsS00rluSnBOOVBwSEFveGM
 
 Video Demonstration about Synthesis for Plants in State-Space Format: https://drive.google.com/open?id=0ByHTHsS00rluWVY5Wk5jRVlwZFE
 
