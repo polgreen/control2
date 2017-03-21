@@ -61,7 +61,7 @@ Steps to use the DSSynth toolbox:
 
 synthesize(plant,intBits,fracBits, maxRange, minRange);
 
-Where:
+where:
 
 - plant: digital-plant as transfer-function or state-space. See details about 'tf' and 'ss' commands in MATLAB to design digital-systems.
 - intBits: represents the integer bits part;
