@@ -30,11 +30,11 @@ After that, the following steps must be executed:
 
 #### Automated Procedures Performed by MATLAB:
 
-1. Setup: obtain the plant, fixed-point format and dynamic input ranges, and translate them to a struct in MATLAB;
-2. Parse: obtain the digital plant implementation, and then translate it to an ANSI-C file;
-3. Execute: obtain the ANSI-C file from the previous step, call CBMC-CEGIS as back-end program synthesis tool, and then perform the automated synthesis;
-4. Extract: obtain the .log that is generated after the synthesis phase and then check the synthesized digital-controller.
-5. Report: obtain the digital-controller, translate it to a MATLAB system, and then show the result to the user.
+1. **Setup**: obtain the plant, fixed-point format and dynamic input ranges, and translate them to a struct in MATLAB;
+2. **Parse**: obtain the digital plant implementation, and then translate it to an ANSI-C file;
+3. **Execute**: obtain the ANSI-C file from the previous step, call CBMC-CEGIS as back-end program synthesis tool, and then perform the automated synthesis;
+4. **Extract**: obtain the .log that is generated after the synthesis phase and then check the synthesized digital-controller.
+5. **Report**: obtain the digital-controller, translate it to a MATLAB system, and then show the result to the user.
 
 ## Toolbox Usage:
 
