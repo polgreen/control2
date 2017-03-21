@@ -8,7 +8,7 @@ Supported Property:
 
 #### Useful Links:
 
-Download the latest version of DSSynth Toolbox at: https://drive.google.com/open?id=0ByHTHsS00rlueHZQY3FLUERLeVE
+Download the latest version of DSSynth Toolbox at: https://drive.google.com/open?id=0ByHTHsS00rluY3h2cFlCTjhNLWM
 
 Video Demonstration about DSSynth Toolbox Installation at: https://drive.google.com/open?id=0ByHTHsS00rluWnNHQnJjQ2hKWDg
 
@@ -23,7 +23,7 @@ MATLAB version: at least version 2016b;
 
 #### Installation:
 
-In order to install DSSynth Toolbox, the user must download the DSSynth Toolbox installation file from https://drive.google.com/open?id=0ByHTHsS00rlueHZQY3FLUERLeVE
+In order to install DSSynth Toolbox, the user must download the DSSynth Toolbox installation file from https://drive.google.com/open?id=0ByHTHsS00rluY3h2cFlCTjhNLWM
 
 After that, the following steps must be executed:
 
