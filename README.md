@@ -63,11 +63,11 @@ synthesize(plant,intBits,fracBits, maxRange, minRange);
 
 where:
 
-- plant: digital-plant as transfer-function or state-space. See details about 'tf' and 'ss' commands in MATLAB to design digital-systems.
-- intBits: represents the integer bits part;
-- fracBits: represents the fractionary bits part;
-- rangeMax: represents the maximum dynamic range;
-- rangeMin: represents the minimum dynamic range;
+- *plant*: digital-plant as transfer-function or state-space. See details about 'tf' and 'ss' commands in MATLAB to design digital-systems.
+- *intBits*: represents the integer bits part;
+- *fracBits*: represents the fractionary bits part;
+- *rangeMax*: represents the maximum dynamic range;
+- *rangeMin*: represents the minimum dynamic range;
 
 In order to visualize the documentation about the synthesize function, please invoke the following command:
 
