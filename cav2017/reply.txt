@@ -1,4 +1,9 @@
-[1] It would be good to more clearly describe on those two points how your 
+[X.Y] -> means reviewer X comment Y
+
+---
+Reviewer 1
+---
+[1.1] It would be good to more clearly describe on those two points how your 
 methods differ in the results that are produced, and in the cost of producing 
 those results. E.g., if both additional factors are removed, does your method 
 perform identical to earlier methods? As each factor is added, how much does 
@@ -6,47 +11,63 @@ it impact feasibility and cost of finding a solution?
 
 [Elizabeth]
 
-===========================================================================
-                            CAV'17 Review #160B
----------------------------------------------------------------------------
-Paper #160: Automated Formal Synthesis of Digital Controllers for
-            State-Space Physical Plants
----------------------------------------------------------------------------
+---
+Reviewer 2
+---
 
-                      Overall merit: 1. Reject
-
-                         ===== Paper summary =====
-
-The paper entitled "Automated Formal Synthesis of Digital Controllers for State-Space Physical Plants" presents a fully automated method for the synthesis of provably sound digital state-feedback controllers ensuring safety and stability of the controlled system.
-
-                      ===== Comments for author =====
-
-The authors emphasize the following main features of their synthesis approach:
-- They consider the true continuous dynamics of the plant as the starting point of the design.
-- They account for errors introduced by fixed-point arithmetics arising from a digital implementation of the controller.
-- They can ensure safety with respect to a safe set of states (containing the set of initial conditions) additionally to stability.
-- They get a fully automated synthesis methodology taking a continuous LTI plant model and a safety specification as an input and returning a digital controller s.t. the resulting closed loop system is safe and stable.
-
-Given these motivating points, there is actually a large body of work in the context of abstraction based controller synthesis for cyber-physical systems (CPS) which is not cited by the authors tackling these challenges. Furthermore, most of the work in this community can actually handle a lot more powerful specifications (beyond safety) and plant models (up to non-linear models without stability assumptions or stochastic models) by providing a fully automated design scheme as envisioned by the authors. Here is a short list of some related works that I have at the top of my head, but there are many more:
+[2.1] Given these motivating points, there is actually a large body of 
+work in the context of abstraction based controller synthesis for 
+cyber-physical systems (CPS) which is not cited by the authors 
+tackling these challenges. Furthermore, most of the work in this 
+community can actually handle a lot more powerful specifications 
+(beyond safety) and plant models (up to non-linear models without 
+stability assumptions or stochastic models) by providing a fully 
+automated design scheme as envisioned by the authors. Here is a short 
+list of some related works that I have at the top of my head, but there are many more:
 
 - textbook on the topic:
 * Paulo Tabuada, Verification and Control of Hybrid Systems - A Symbolic Approach,  2009
 (http://www.springer.com/de/book/9781441902238)
 
 - work especially on safety specifications:
-* Antoine Girard, Controller synthesis for safety and reachability via approximate bisimulation, 2012 (http://www.sciencedirect.com/science/article/pii/S000510981200088X)
+* Antoine Girard, Controller synthesis for safety and reachability 
+via approximate bisimulation, 2012 
+(http://www.sciencedirect.com/science/article/pii/S000510981200088X)
 
 - work especially on LTI systems:
-* Paulo Tabuada, Symbolic models for linear control systems with disturbances, 2007 (http://ieeexplore.ieee.org/abstract/document/4434957/)
+* Paulo Tabuada, Symbolic models for linear control systems 
+with disturbances, 2007 (http://ieeexplore.ieee.org/abstract/document/4434957/)
 
-- some recent works that talk explicitly about how errors form digital controller implementations are handled by the framework:
-* Jun Liu and Necmiye Ozay, Abstraction, Discretization, and Robustness in Temporal Logic Control of Dynamical Systems, 2014 (http://web.eecs.umich.edu/~necmiye/pubs/LiuO_hscc14.pdf)
-* Gunther Reissig, Alexander Weber, and Matthias Rungger, Feedback Refinement Relations for the Synthesis of Symbolic Controllers 2016 (http://ieeexplore.ieee.org/abstract/document/7519063/)
-* Mahmoud Khaled, Mtthias Rungger, and Majid Zamani, Symbolic Models of Networked Control Systems: A Feedback Refinement Relation Approach, 2016 (https://www.researchgate.net/profile/Majid_Zamani/publication/306017464_Symbolic_Models_of_Networked_Control_Systems_A_Feedback_Refinement_Relation_Approach/links/5857b7db08ae544d8863bef1.pdf)
+- some recent works that talk explicitly about how errors 
+form digital controller implementations are handled by the framework:
+* Jun Liu and Necmiye Ozay, Abstraction, Discretization, and 
+Robustness in Temporal Logic Control of Dynamical Systems, 
+2014 (http://web.eecs.umich.edu/~necmiye/pubs/LiuO_hscc14.pdf)
 
-Given the fact that the authors do not compare their work to the literature mentioned above, in which I think the proposed problem is already solved, I suggest to reject the paper.
+* Gunther Reissig, Alexander Weber, and Matthias Rungger, 
+Feedback Refinement Relations for the Synthesis of Symbolic 
+Controllers 2016 (http://ieeexplore.ieee.org/abstract/document/7519063/)
 
-The authors should consider resubmitting the paper if they can show that they can generate solutions to problems which are not solvable by those abstraction based techniques mentioned above or if they can show that their method is solving the problem in a more efficient or less complex way.
+* Mahmoud Khaled, Mtthias Rungger, and Majid Zamani, 
+Symbolic Models of Networked Control Systems: 
+A Feedback Refinement Relation Approach, 2016 
+(https://www.researchgate.net/profile/Majid_Zamani/publication/306017464_Symbolic_Models_of_Networked_Control_Systems_A_Feedback_Refinement_Relation_Approach/links/5857b7db08ae544d8863bef1.pdf)
+
+[Dario]
+
+
+Given the fact that the authors do not compare their work to the literature 
+mentioned above, in which I think the proposed problem is already solved, 
+I suggest to reject the paper.
+
+[Dario]
+
+The authors should consider resubmitting the paper if they can show that 
+they can generate solutions to problems which are not solvable by those 
+abstraction based techniques mentioned above or if they can show that 
+their method is solving the problem in a more efficient or less complex way.
+
+[Dario]
 
 
 ===========================================================================
