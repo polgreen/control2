@@ -105,6 +105,6 @@ In order to perform the synthesis of digital-controllers, a MATLAB application w
 
 	>> DSSynth
 
-Video Demonstration about the usage of the MATLAB Application (state-space): https://drive.google.com/open?id=0ByHTHsS00rluTVVZa3NWVFU3MEk
-
 Video Demonstration about the usage of the MATLAB Application (transfer-function): https://drive.google.com/open?id=0ByHTHsS00rluNVo0OEI2UUozcmM
+
+Video Demonstration about the usage of the MATLAB Application (state-space): https://drive.google.com/open?id=0ByHTHsS00rluTVVZa3NWVFU3MEk
