@@ -56,13 +56,13 @@ A Feedback Refinement Relation Approach, 2016
 [Dario]
 
 
-Given the fact that the authors do not compare their work to the literature 
+[2.2] Given the fact that the authors do not compare their work to the literature 
 mentioned above, in which I think the proposed problem is already solved, 
 I suggest to reject the paper.
 
 [Dario]
 
-The authors should consider resubmitting the paper if they can show that 
+[2.3] The authors should consider resubmitting the paper if they can show that 
 they can generate solutions to problems which are not solvable by those 
 abstraction based techniques mentioned above or if they can show that 
 their method is solving the problem in a more efficient or less complex way.
@@ -70,53 +70,29 @@ their method is solving the problem in a more efficient or less complex way.
 [Dario]
 
 
-===========================================================================
-                            CAV'17 Review #160C
----------------------------------------------------------------------------
-Paper #160: Automated Formal Synthesis of Digital Controllers for
-            State-Space Physical Plants
----------------------------------------------------------------------------
+---
+Reviewer 3
+---
 
-                      Overall merit: 3. Weak accept
+[3.1] In addition, the experimental section misses some details 
+which would be helpful to get a better insight into the algorithm behaviour.
 
-                         ===== Paper summary =====
+[Pascal]
 
-The paper presents a novel approach to synthesise controllers for LTI
-models based on the CEGIS framework. The authors suggest two
-approaches: 
-
-(a) The naive approach works by unfolding system behaviour for k steps
-    and calling an SMT solver to instantiate a gain matrix K. This
-    step is followed by a validation step where (1) precision and (3)
-    completeness are checked. Stability is encoded as a constraint
-    using Jury's criterion.
-
-(b) An advanced method uses a concept of abstraction to boost the
-    performance of the synthesis routine. The abstraction seems to
-    reason in terms of eigenvalues of some matrix with refinement
-    algorithm adding further constraints on the eigen value
-    structure. The completeness step from (a) is replaced by abstract
-    acceleration.
-
-                      ===== Comments for author =====
-
-The paper is generally well-written, although some parts require some
-more clarification (see the question section). In addition, the
-experimental section misses some details which would be helpful to get
-a better insight into the algorithm behaviour.
-
-I am not sure method (a) will scale due to exponential number of
+[3.2] I am not sure method (a) will scale due to exponential number of
 checks in the verification phase. Generally, I am missing a break down
 of the performance into phases (synthesis + verification). In
 particular, I am wondering which phase dominates the whole run-time.
 
-For the abstraction-based method, I am missing one of the main
+[Elizabeth]
+
+[3.3] For the abstraction-based method, I am missing one of the main
 indicators relevant for abstraction-based methods and namely number of
 refinements for each experiment.
 
-Some more questions: 
+[Elizabeth]
 
-* On the naive algorithm: 
+[3.4] * On the naive algorithm: 
 
 - I am confused about the completeness argument: The statement by the
   authors that a stable converges towards an origin seems to be
@@ -124,7 +100,9 @@ Some more questions:
   the authors can derive their guarantees in case of *safety*. Could
   you please clarify?
 
-* On the abstraction-based algorithm: 
+[Elizabeth]
+
+[3.5] * On the abstraction-based algorithm: 
 
 - How do you use characteristic polynomial in the algorithm? In other
   words, I could not find any references to P_a(x) from step 1(a) in
@@ -133,4 +111,4 @@ Some more questions:
 - It is not clear how you derive constraints on the eigen value
   structure based on a counter-example. Please clarify.
 
-
+[Dario]
