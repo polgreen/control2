@@ -78,8 +78,8 @@ function write_spec_header {
  B_value=$(echo ${B_value} | sed -r 's/([-0-9]+(\.[0-9e-]+)?)/interval(\1)/g')
  echo "const __plant_typet _controller_B[NSTATES] = { ${B_value} };" >>${header_file}
 
- g++ -I . -I /usr/include/eigen3/ discrete_step_k_completeness_check.cpp -o discrete_step_k_completeness_check -lmpfr
- chmod +x discrete_step_k_completeness_check
+ #g++ -I . -I /usr/include/eigen3/ discrete_step_k_completeness_check.cpp -o discrete_step_k_completeness_check -lmpfr
+ #chmod +x discrete_step_k_completeness_check
  gcc -D INTERVAL safety_stability.c -o precision_check
  chmod +x precision_check
 }
@@ -148,8 +148,8 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
    controller_items=$(grep '<item>' ${cbmc_log_file} | tail -n ${num_states})
    controller_params=$(echo "${controller_items}" | sed -r 's/<\/item> <item>/ /g' | sed -r 's/<item>//g' | sed -r 's/<\/item>//g' | tr '\n' ' ')
    if [ ${cbmc_result} -eq 0 ]; then
-    echo_log "./discrete_step_k_completeness_check ${k_size} ${controller_params}"
-    eval "./discrete_step_k_completeness_check ${k_size} ${controller_params}"
+    #echo_log "./discrete_step_k_completeness_check ${k_size} ${controller_params}"
+    #eval "./discrete_step_k_completeness_check ${k_size} ${controller_params}"
     k_check_result=$?
     echo_log "k_check_result: ${k_check_result}"
     if [ ${k_check_result} -eq 2 ]; then
