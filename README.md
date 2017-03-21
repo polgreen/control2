@@ -8,7 +8,7 @@ Supported Property:
 
 #### Useful Links:
 
-Download the latest version of DSSynth Toolbox at: https://drive.google.com/open?id=0ByHTHsS00rluY3h2cFlCTjhNLWM
+Download the latest version of DSSynth Toolbox at: https://drive.google.com/open?id=0ByHTHsS00rluT3FHZ05lc1JrbFE
 
 Video Demonstration about DSSynth Toolbox Installation at: https://drive.google.com/open?id=0ByHTHsS00rluWnNHQnJjQ2hKWDg
 
@@ -23,7 +23,7 @@ MATLAB version: at least version 2016b;
 
 #### Installation:
 
-In order to install DSSynth Toolbox, the user must download the DSSynth Toolbox installation file from https://drive.google.com/open?id=0ByHTHsS00rluY3h2cFlCTjhNLWM
+In order to install DSSynth Toolbox, the user must download the DSSynth Toolbox installation file from https://drive.google.com/open?id=0ByHTHsS00rluT3FHZ05lc1JrbFE
 
 After that, the following steps must be executed:
 
@@ -109,6 +109,6 @@ In order to perform the synthesis of digital-controllers, a MATLAB Application w
 
 	>> DSSynth
 
-Video Demonstration about the usage of the MATLAB Application (state-space): https://drive.google.com/open?id=0ByHTHsS00rluYnVtMXJhamV2WG8
+Video Demonstration about the usage of the MATLAB Application (state-space): https://drive.google.com/open?id=0ByHTHsS00rluTVVZa3NWVFU3MEk
 
-Video Demonstration about the usage of the MATLAB Application (transfer-function): https://drive.google.com/open?id=0ByHTHsS00rluZUFpMVhnNkJCUlU
+Video Demonstration about the usage of the MATLAB Application (transfer-function): https://drive.google.com/open?id=0ByHTHsS00rluNVo0OEI2UUozcmM
