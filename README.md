@@ -28,8 +28,9 @@ In order to install DSSynth Toolbox, the user must download the DSSynth Toolbox 
 After that, the following steps must be executed:
 
 1. Open MATLAB;
-2. Execute the file with the “$.mltbx$” extension (or double-click on it); a pop-up screen to install DSSynth Toolbox will be shown.
-3. Click on the install button.
+2. Go to the directory where "DSSynth.mltbx" file is stored;
+3. Execute the file with the “.mltbx$” extension (or double-click on it); a pop-up screen to install DSSynth Toolbox will be shown.
+4. Click on the install button.
 
 #### Automated Procedures Performed by MATLAB:
 
