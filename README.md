@@ -1,10 +1,6 @@
 ## DSSynth Toolbox
 
-DSSynth is a MATLAB Toolbox that synthesizes digital controllers considering finite word-length (FWL) effects for physical plants represented by transfer-function or state-space, with fixed-point numerical representation and dynamic input ranges. Currently, there are two versions of the DSSynth toolbox: command-line and MATLAB application.
-
-Supported Property:
-
-* Stability;
+DSSynth is a MATLAB Toolbox that synthesizes digital controllers w.r.t. the stability specification, considering finite word-length (FWL) effects for physical plants represented by transfer-function or state-space equations. DSSynth considers fixed-point numerical representation for the digital controller and dynamic input ranges for the closed-loop control system. Currently, there are two versions of the DSSynth toolbox: command-line and MATLAB application.
 
 #### Useful Links:
 
