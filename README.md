@@ -18,8 +18,8 @@ Video Demonstration about DSSynth Toolbox Usage at: https://drive.google.com/ope
 
 In order to execute DSSynth in MATLAB, the user must install the DSSynth Toolbox in MATLAB 2016b Linux version.
 
-Required tools to run the scripts: Linux/MATLAB;
-MATLAB version: at least version 2016b;
+* Required tools to run the scripts: Linux/MATLAB;
+* MATLAB version: at least version 2016b;
 
 #### Installation:
 
