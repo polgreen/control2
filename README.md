@@ -69,7 +69,7 @@ where:
 - *rangeMax*: represents the maximum dynamic range;
 - *rangeMin*: represents the minimum dynamic range;
 
-In order to visualize the documentation about the synthesize function, please invoke the following command:
+In order to visualize the documentation about the *synthesize* function, please invoke the following command:
 
 ``help  synthesize``
 
