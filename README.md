@@ -23,7 +23,7 @@ MATLAB version: at least version 2016b;
 
 #### Installation:
 
-In order to install DSSynth Toolbox, the user must download the DSSynth Toolbox installation file from https://drive.google.com/open?id=0ByHTHsS00rluZmlfTXBwQldGV1E
+In order to install DSSynth Toolbox, the user must download the DSSynth Toolbox installation file from https://drive.google.com/open?id=0ByHTHsS00rlueHZQY3FLUERLeVE
 
 After that, the following steps must be executed:
 
@@ -72,10 +72,30 @@ Where:
 - rangeMax: represents the maximum dynamic range;
 - rangeMin: represents the minimum dynamic range;
 
-Example:
-	plant = tf([1 0 -1],[1 0.9891 -3.456],0.01);
-	synthesize(plant, 12, 4, 3, -3);
+In order to see the documentation about synthesize function, please invoke in command line:
 
+``help  synthesize``
+
+Example (transfer-function):
+
+	>> system = tf([-0.06875 0 0],[1 -1.696 0.7089],0.02)
+	>> system =
+		-0.06875 z^2
+		----------------------
+		z^2 - 1.696 z + 0.7089
+		Sample time: 0.02 seconds
+		Discrete-time transfer function.
+	>> synthesize(system,8,8,1,-1)
+	
+Example (state-space):
+	
+	>> A = [0.90122,1.3429e-08;7.4506e-09,0];
+	>> B = [128;0];
+	>> C = [0.0014826,189.0217];
+	>> D = [0];
+	>> system = ss(A,B,C,D,0.02);
+	>> synthesize(system,8,8,1,-1)
+	
 Video Demonstration about Synthesis for Plants in Transfer-function Format: https://drive.google.com/open?id=0ByHTHsS00rluSnBOOVBwSEFveGM
 
 Video Demonstration about Synthesis for Plants in State-Space Format: https://drive.google.com/open?id=0ByHTHsS00rluWVY5Wk5jRVlwZFE
