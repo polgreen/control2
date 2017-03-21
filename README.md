@@ -40,7 +40,7 @@ After that, the following steps must be executed:
 
 #### Configuration:
 
-(1) Before using the DSSynth toolbox, we must execute the following command in the MATLAB Workspace to configure correctly the Toolbox:
+(1) Before running the DSSynth toolbox, the user must execute the following command in the MATLAB Workspace in order to configure the toolbox:
 
 	setenv('LD_LIBRARY_PATH','installation path to libstdc++');
 
@@ -69,7 +69,7 @@ Where:
 - rangeMax: represents the maximum dynamic range;
 - rangeMin: represents the minimum dynamic range;
 
-In order to see the documentation about synthesize function, please invoke in command line:
+In order to visualize the documentation about the synthesize function, please invoke the following command:
 
 ``help  synthesize``
 
