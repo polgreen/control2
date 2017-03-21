@@ -27,33 +27,41 @@ list of some related works that I have at the top of my head,
 but there are many more:
 
 - textbook on the topic:
-* Paulo Tabuada, Verification and Control of Hybrid Systems - 
+[1] Paulo Tabuada, Verification and Control of Hybrid Systems - 
 A Symbolic Approach,  2009
 (http://www.springer.com/de/book/9781441902238)
 
 - work especially on safety specifications:
-* Antoine Girard, Controller synthesis for safety and reachability 
+[2] Antoine Girard, Controller synthesis for safety and reachability 
 via approximate bisimulation, 2012 
 (http://www.sciencedirect.com/science/article/pii/S000510981200088X)
 
 - work especially on LTI systems:
-* Paulo Tabuada, Symbolic models for linear control systems 
+[3] Paulo Tabuada, Symbolic models for linear control systems 
 with disturbances, 2007 (http://ieeexplore.ieee.org/abstract/document/4434957/)
 
 - some recent works that talk explicitly about how errors 
 form digital controller implementations are handled by the framework:
-* Jun Liu and Necmiye Ozay, Abstraction, Discretization, and 
+[4] Jun Liu and Necmiye Ozay, Abstraction, Discretization, and 
 Robustness in Temporal Logic Control of Dynamical Systems, 
 2014 (http://web.eecs.umich.edu/~necmiye/pubs/LiuO_hscc14.pdf)
 
-* Gunther Reissig, Alexander Weber, and Matthias Rungger, 
+[5] Gunther Reissig, Alexander Weber, and Matthias Rungger, 
 Feedback Refinement Relations for the Synthesis of Symbolic 
 Controllers 2016 (http://ieeexplore.ieee.org/abstract/document/7519063/)
 
-* Mahmoud Khaled, Mtthias Rungger, and Majid Zamani, 
+[6] Mahmoud Khaled, Mtthias Rungger, and Majid Zamani, 
 Symbolic Models of Networked Control Systems: 
 A Feedback Refinement Relation Approach, 2016 
 (https://www.researchgate.net/profile/Majid_Zamani/publication/306017464_Symbolic_Models_of_Networked_Control_Systems_A_Feedback_Refinement_Relation_Approach/links/5857b7db08ae544d8863bef1.pdf)
+
+The above referenced literature relates to verification and synthesis of transition systems (ie LTL or similar discrete-state models) which correspond to sound abstractions of a continuous state model.
+The synthesised controllers are of a different type as the ones we synthesise although they may address a similar objective.
+The main limitation of those approaches when compared to ours is that they are not well suited for digital systems with limited resources. To quote your own references:
+"Given the fact that an abstraction may very well comprise millions of states and billions of transitions [7], [14], an implementation of the refined controller is often too expensive to be practical." (taken from [5])
+By comparison our implementation is a simple controller that operates on a limited number of bits with very few instructions per cycle. This also relates to our ability to deal with corner cases where our abstraction is more precise, whereas LTL approaches would be too costly implementation-wise to achieve similar precision.
+
+Furthermore, the referred literature does not explicitly address Fixed Point arithmetic issues (no mention about number of bits in the implementation), which means that it lacks in description to easily attain our desired objectives without preprocessing.
 
 [Dario]
 
@@ -93,6 +101,8 @@ particular, I am wondering which phase dominates the whole run-time.
 indicators relevant for abstraction-based methods and namely number of
 refinements for each experiment.
 
+There are 0-2 refinements in our test set.
+
 [Dario]
 
 [3.4] * On the naive algorithm: 
@@ -110,8 +120,12 @@ refinements for each experiment.
 - How do you use characteristic polynomial in the algorithm? In other
   words, I could not find any references to P_a(x) from step 1(a) in
   any further steps.
+  The characteristic polynomial is used to derive constraints on the controller coefficients based on Jury's Criterion (\phi_stability in step 2).
 
 - It is not clear how you derive constraints on the eigen value
   structure based on a counter-example. Please clarify.
+  The counter-example corresponds to a support function of the safe polyhedra whose limit is violated.
+  Given a set of initial states (vertices), we do a back transformation to find a set of support functions in the abstract dynamics that correspond to each initial state that potentially cause the violation.
+  The violation then corresponds to a vertex in the abstract dynamics relating to a set of iterations that are closest to it. Knowing the constraint on the abstract dynamics and the iteration allows us to build a constraint on the corresponding eigenvalue. The solution is sound but not complete (ie we may not be able to refine past a certain point).
 
 [Dario]
