@@ -154,7 +154,9 @@ the abstraction-based method.
 - It is not clear how you derive constraints on the eigen value
   structure based on a counter-example. Please clarify.
   The counter-example corresponds to a support function of the safe polyhedra whose limit is violated.
-  Given a set of initial states (vertices), we do a back transformation to find a set of support functions in the abstract dynamics that correspond to each initial state that potentially cause the violation.
-  The violation then corresponds to a vertex in the abstract dynamics relating to a set of iterations that are closest to it. Knowing the constraint on the abstract dynamics and the iteration allows us to build a constraint on the corresponding eigenvalue. The solution is sound but not complete (ie we may not be able to refine past a certain point).
-
-[Dario]
+  
+  [Response] Given a set of initial states (vertices), we do a back transformation to find a set of support 
+  functions in the abstract dynamics, which correspond to each initial state that potentially cause the violation (cf. section 4.4).
+  The violation then corresponds to a vertex in the abstract dynamics, relating to a set of iterations that are closest to it. 
+  Given the constraint on the abstract dynamics and the iteration, they allow us to build a constraint on the corresponding eigenvalue. 
+  The solution is sound but not complete (i.e., we might not be able to refine past a certain point).
