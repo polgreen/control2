@@ -55,16 +55,22 @@ Symbolic Models of Networked Control Systems:
 A Feedback Refinement Relation Approach, 2016 
 (https://www.researchgate.net/profile/Majid_Zamani/publication/306017464_Symbolic_Models_of_Networked_Control_Systems_A_Feedback_Refinement_Relation_Approach/links/5857b7db08ae544d8863bef1.pdf)
 
-The above referenced literature relates to verification and synthesis of transition systems (ie LTL or similar discrete-state models) which correspond to sound abstractions of a continuous state model.
-The synthesised controllers are of a different type as the ones we synthesise although they may address a similar objective.
-The main limitation of those approaches when compared to ours is that they are not well suited for digital systems with limited resources. To quote your own references:
-"Given the fact that an abstraction may very well comprise millions of states and billions of transitions [7], [14], an implementation of the refined controller is often too expensive to be practical." (taken from [5])
-By comparison our implementation is a simple controller that operates on a limited number of bits with very few instructions per cycle. This also relates to our ability to deal with corner cases where our abstraction is more precise, whereas LTL approaches would be too costly implementation-wise to achieve similar precision.
-
-Furthermore, the referred literature does not explicitly address Fixed Point arithmetic issues (no mention about number of bits in the implementation), which means that it lacks in description to easily attain our desired objectives without preprocessing.
-
-[Dario]
-
+[Response] The above referenced literature relates to verification and synthesis of transition systems 
+(i.e., LTL or similar discrete-state models), which correspond to sound abstractions of a 
+continuous state model. The synthesised controllers are of a different type as the ones 
+we synthesise, although they may address a similar control objective. However, the main 
+difference of that approaches if compared to ours is that they are not well suited 
+for digital systems considering finite word-length (FWL) effects. To quote the cited 
+references: "Given the fact that an abstraction may very well comprise millions of states 
+and billions of transitions [7], [14], an implementation of the refined controller 
+is often too expensive to be practical." (taken from reference [5]). By comparison our 
+implementation is a simple controller that operates on a limited number of bits 
+with very few instructions per cycle. This also relates to our ability to deal with 
+corner cases where our abstraction is more precise, whereas LTL approaches would be too 
+costly implementation-wise to achieve similar precision. Furthermore, the mentioned literature 
+does not explicitly address fixed-point arithmetic issues (no mention about number of bits 
+in the implementation), which means that it lacks in description to easily attain our 
+desired control objectives without preprocessing.
 
 [2.2] Given the fact that the authors do not compare their work to the literature 
 mentioned above, in which I think the proposed problem is already solved, 
