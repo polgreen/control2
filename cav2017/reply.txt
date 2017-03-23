@@ -8,6 +8,7 @@ perform identical to earlier methods? As each factor is added, how much does
 it impact feasibility and cost of finding a solution?
 
 [Elizabeth]
+The reviewer raises an interesting question, unfortunately due to the running time of the benchmarks we will not have time to answer this during the review period. 
 
 Related Work (R2)
 
@@ -83,6 +84,12 @@ The abstraction-based method produces up to 2 refinements in our benchmarks set.
   you please clarify?
 
 [Elizabeth]
+
+A stable system is characterised by the state values converging towards an origin. 
+By computing the Eigen values, we can compute the number of time steps for a full rotation
+to be complete. If the state values have not violated the safety property in the first full 
+rotation, by definition of convergence, the state values will not violate the safety property
+ever.
 
 Abstraction-based algorithm (R3) 
 
