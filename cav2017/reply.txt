@@ -85,19 +85,16 @@ The abstraction-based method produces up to 2 refinements in our benchmarks set.
   the authors can derive their guarantees in case of *safety*. Could
   you please clarify?
 
-[Elizabeth]
-
 A stable system is characterised by the state values converging towards an origin. 
-By computing the Eigen values, we can compute the number of time steps for a full rotation
-to be complete. If the state values have not violated the safety property in the first full 
-rotation, by definition of convergence, the state values will not violate the safety property
-ever.
+By computing the eigenvalues, we can compute the number of time steps for a full rotation (whenever existing) to be complete. 
+We can then export this knowledge to check for safety:  
+if the state values have not violated the safety property in the first full rotation, 
+then the state values shall not violate the safety property ever.
 
 Abstraction-based algorithm (R3) 
 
-The characteristic polynomial is used to derive constraints on the 
-controller coefficients based on Jury's Criterion (\phi_stability in step 2, 
-cf. section 4.4).
+The characteristic polynomial is used to derive constraints on the controller coefficients based on Jury's Criterion 
+(\phi_stability in step 2, cf. section 4.4).
 
 Given a set of initial states (vertices), we do a back transformation to find a set of support 
 functions in the abstract dynamics, which correspond to each initial state that potentially 
