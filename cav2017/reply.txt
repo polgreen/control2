@@ -13,15 +13,15 @@ The reviewer raises an interesting question, unfortunately due to the running ti
 Related Work (R2)
 
 The mentioned literature relates to verification and synthesis of transition systems 
-(i.e., LTL or similar discrete-state models), which correspond to sound abstractions of a 
-continuous-state control model that are, in nature, quite different than the method proposed here. 
+(i.e., LTL or similar discrete-state models), which correspond to finite abstractions of a 
+continuous-state control model: let us emphasise that these are, in nature, quite different than the method proposed here. 
 The synthesised controllers are as well of a different type than those we synthesise here, 
 although they may address a similar control objective (safety requirements). 
 
 The main limitation of the approaches in the literature is that they fail to address the whole set of 
 model uncertainties and imprecisions (quantisation, FWL representation) that our method tackles: 
 for instance, they are not well suited to digital systems with finite word-length (FWL) effects. 
-To quote the cited references [5]: "Given the fact that an abstraction may very well comprise millions of states 
+To quote the cited references [18]: "Given the fact that an abstraction may very well comprise millions of states 
 and billions of transitions, an implementation of the refined controller is often too expensive to be practical." 
 By comparison, our implementation is a simple controller that operates on a limited number of bits 
 with very few instructions per cycle. This also relates to our ability to deal with 
@@ -30,8 +30,12 @@ costly implementation-wise to achieve similar precision. Furthermore, the mentio
 does not explicitly address fixed-point arithmetic issues (no mention about number of bits 
 in the implementation), which means that it lacks in description to easily attain our 
 desired control objectives without preprocessing. 
+
 We would like to stress that we have cited related work in verification, synthesis, and optimisation of digital controllers that consider FWL effects 
-(cf. references [2,5,9,12,17,19,24,25,26,27,33,34] in the present paper).
+(cf. references [2,5,9,12,17,19,24,25,26,27,33,34] in the present paper). 
+In particular, work in [18] is a key contribution by authors mentioned by the reviewer; 
+[20, 25, 26, 33, 34] are from hybrid systems literature, [27, 28, 29] are from control literature (in its connection with formal methods); 
+[24] is from literature on embedded systems 
 
 Novelty (R1,R2,R3)
 
