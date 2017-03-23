@@ -7,26 +7,9 @@ those results. E.g., if both additional factors are removed, does your method
 perform identical to earlier methods? As each factor is added, how much does 
 it impact feasibility and cost of finding a solution?
 
-There are three new aspects to our algorithm: introduction of the safety specification, 
-accounting for the error due to using a fixed-point controller, and accounting for the 
-error due to the finite precision representation of the plant. Undoubtedly adding in 
-these additional constraints increases the size of the synthesis/verification problem, 
-and we have not explored the relative size of the increase as each factor is added. 
+There are three new aspects to our algorithm: introduction of the safety specification, accounting for the error due to using a fixed-point controller, and accounting for the error due to the finite precision representation of the plant.
 
-Our architecture is designed to synthesise safe and sound controllers, and, as a result, 
-it is more complex than the current state-of-the-art in control synthesis, which simply 
-find eigenvalues and places poles, often using the precision available in Matlab. 
-Consequently, synthesising a stable, but potentially unsound and unsafe, controller 
-with our approach may not be as fast as conventional control synthesis methods. 
-Having said that, it should only require one CEGIS loop, so we don't think it would 
-do too badly.
-
-The addition of the above factors can change the results obtained: Stable controllers 
-obtained by current methods may not be stable, when fixed word-length and quantisation 
-error is taken into account, as shown in [2]. For the problems we tackled there are many 
-stable controllers that do not satisfy the safety specifications, and there is no way 
-of guaranteeing that a stable controller synthesised by existing methods would satisfy 
-the safety specification. 
+The safety specification increases the size of the verification problem significantly, hence a configuration with just a stability property can be expected to perform faster. We explored similar stability-only synthesis problems in [2].  The quantisation error on the other hand introduces much less complexity to the verification problem and thus affects runtime only marginally.  Lastly, removing the precise fixed-point model from the analysis would be an impractical comparison, since our whole choise of synthesis tools is based on fixed-point precision.  It would also completely eliminate the soundness guarantees that this paper establishes over comparable work.
 
 
 Related Work (R2)
@@ -81,7 +64,9 @@ Reviewer 3
 which would be helpful to get a better insight into the algorithm 
 behaviour.
 
-[Pascal]
+We dedicated as many pages to the algorithm descriptions as the page limit permitted.
+However, if the reviewers would value more details on specific aspects of them,
+we shall happy to consider such feedback for the final paper version.
 
 Scalability (R3)
 
