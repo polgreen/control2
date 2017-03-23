@@ -114,16 +114,16 @@ checks in the verification phase. Generally, I am missing a break down
 of the performance into phases (synthesis + verification). In
 particular, I am wondering which phase dominates the whole run-time.
 
-[Response] CEGIS frameworks reason over a potentially exponential space of 
+[Response] CEGIS frameworks reason over an exponential space of 
 solution programs, which need to satisfy a property over an exponential input range.  
-The reviewer is thus correct in identifying the input range complexity as exponential.  
-However, inductive synthesis algorithms as CEGIS are designed to heuristically find
-universally compliant programs with only a limited set of counterexamples.  Whether
-such an inductive generalisation is possible strongly depends on the search domain.
-Our experimental results support the conjecture that this is the case for
-our controller synthesis problem: The majority of benchmarks can be synthesised
-using less than 5 counterexamples (cf. section 5).  In our experiments, 52% of the time 
-was spent in the synthesis and 48% in the CEGIS verification stage.
+The reviewer's remark is thus correct.  However, inductive synthesis algorithms like
+CEGIS are designed to heuristically find universally compliant programs with only a
+limited set of counterexamples.  Whether this inductive generalisation is possible
+depends on the search domain, but CEGIS literature suggests this is generally the case
+in practise.  Our experimental confirm that it applies to
+our controller synthesis domain: All successful benchmarks are synthesised
+using 5 counterexamples or less (cf. section 5).  In our experiments, 52% of the time 
+was spent in the synthesis and 48% in the verification phase.
 
 [Elizabeth]
 
