@@ -85,20 +85,14 @@ Experimental evaluation (R3)
 
 The abstraction-based method produces up to 2 refinements in our benchmarks set.
 
-
-[3.4] * On the naive algorithm: 
-
-- I am confused about the completeness argument: The statement by the
-  authors that a stable converges towards an origin seems to be
-  correct, which is relevant for *stability*. Yet, I am not sure how
-  the authors can derive their guarantees in case of *safety*. Could
-  you please clarify?
+Naive algorithm (R3) 
 
 A stable system is characterised by the state values converging towards an origin. 
-By computing the eigenvalues, we can compute the number of time steps for a full rotation (whenever existing) to be complete. 
-We can then export this knowledge to check for safety:  
-if the state values have not violated the safety property in the first full rotation, 
-then the state values shall not violate the safety property ever.
+By computing the eigenvalues, we can compute the number of time steps for a 
+full rotation (whenever existing) to be complete. We can then export this knowledge 
+to check for safety: if the state values have not violated the safety property 
+in the first full rotation, then the state values shall not violate the safety 
+property ever.
 
 Abstraction-based algorithm (R3) 
 
