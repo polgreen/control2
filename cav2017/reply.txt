@@ -1,43 +1,34 @@
----
-Reviewer 1
----
-[1.1] It would be good to more clearly describe on those two points how your 
-methods differ in the results that are produced, and in the cost of producing 
-those results. E.g., if both additional factors are removed, does your method 
-perform identical to earlier methods? As each factor is added, how much does 
-it impact feasibility and cost of finding a solution?
-
-There are three new aspects to our algorithm: introduction of the safety specification, accounting for the error due to using a fixed-point controller, and accounting for the error due to the finite precision representation of the plant.
-
-The safety specification increases the size of the verification problem significantly, hence a configuration with just a stability property can be expected to perform faster. We explored similar stability-only synthesis problems in [2].  The quantisation error on the other hand introduces much less complexity to the verification problem and thus affects runtime only marginally.  Lastly, removing the precise fixed-point model from the analysis would be an impractical comparison, since our whole choise of synthesis tools is based on fixed-point precision.  It would also completely eliminate the soundness guarantees that this paper establishes over comparable work.
-
-
 Related Work (R2)
 
 The mentioned literature relates to verification and synthesis of transition systems 
-(i.e., LTL or similar discrete-state models), which correspond to finite abstractions of a 
-continuous-state control model: let us emphasise that these are, in nature, quite different than the method proposed here. 
-The synthesised controllers are as well of a different type than those we synthesise here, 
-although they may address a similar control objective (safety requirements). 
+(i.e., LTL or similar discrete-state models), which correspond to finite 
+abstractions of a continuous-state control model: let us emphasise that 
+these are, in nature, quite different than the method proposed here. 
+The synthesised controllers are as well of a different type than those 
+we synthesise here, although they may address a similar control objective 
+(safety requirements). 
 
-The main limitation of the approaches in the literature is that they fail to address the whole set of 
-model uncertainties and imprecisions (quantisation, FWL representation) that our method tackles: 
-for instance, they are not well suited to digital systems with finite word-length (FWL) effects. 
-To quote the cited references [18]: "Given the fact that an abstraction may very well comprise millions of states 
-and billions of transitions, an implementation of the refined controller is often too expensive to be practical." 
-By comparison, our implementation is a simple controller that operates on a limited number of bits 
-with very few instructions per cycle. This also relates to our ability to deal with 
-corner cases where our abstraction is more precise, whereas LTL approaches would be too 
-costly implementation-wise to achieve similar precision. Furthermore, the mentioned literature 
+The main limitation of the approaches in the literature is that they fail 
+to address the whole set of model uncertainties and imprecisions (quantisation, 
+FWL representation) that our method tackles: for instance, they are not well suited 
+to digital systems with finite word-length (FWL) effects. To quote the cited references [18]: 
+"Given the fact that an abstraction may very well comprise millions of states 
+and billions of transitions, an implementation of the refined controller is often 
+too expensive to be practical." By comparison, our implementation is a simple controller 
+that operates on a limited number of bits with very few instructions per cycle. 
+This also relates to our ability to deal with corner cases where our abstraction 
+is more precise, whereas LTL approaches would be too costly implementation-wise 
+to achieve similar precision. Furthermore, the mentioned literature 
 does not explicitly address fixed-point arithmetic issues (no mention about number of bits 
 in the implementation), which means that it lacks in description to easily attain our 
 desired control objectives without preprocessing. 
 
-We would like to stress that we have cited related work in verification, synthesis, and optimisation of digital controllers that consider FWL effects 
+We would like to stress that we have cited related work in verification, synthesis, 
+and optimisation of digital controllers that consider FWL effects 
 (cf. references [2,5,9,12,17,19,24,25,26,27,33,34] in the present paper). 
 In particular, work in [18] is a key contribution by authors mentioned by the reviewer; 
-[20, 25, 26, 33, 34] are from hybrid systems literature, [27, 28, 29] are from control literature (in its connection with formal methods); 
-[24] is from literature on embedded systems 
+[20, 25, 26, 33, 34] are from hybrid systems literature, [27, 28, 29] are from control 
+literature (in its connection with formal methods); [24] is from literature on embedded systems.
 
 Novelty (R1,R2,R3)
 
@@ -48,25 +39,27 @@ a synthesiser for software-implemented digital control, which is correct by cons
 Thus, the present approach can avoid fragility problems in robust controllers designed for state-space equations, 
 which could be overlooked by other existing methods in view of their underestimation of FWL effects. 
 As a result, the present paper solves a different problem w.r.t. the references mentioned in the reviews. 
-The main novelty in our approach, compared to the mentioned references, is that it is algorithmically and numerically 
-sound over implementation aspects. Additionally, as described in section 5, it is able 
-to fully automatically synthesise stable controllers for intricate plant models within a reasonable amount of time; 
-the median run-time for our benchmark set is 7.9 seconds, 
+The main novelty in our approach, compared to the mentioned references, is that it is algorithmically 
+and numerically sound over implementation aspects. Additionally, as described in section 5, it is able 
+to fully automatically synthesise stable controllers for intricate plant models within a 
+reasonable amount of time; the median run-time for our benchmark set is 7.9 seconds, 
 and most controllers can be synthesised in less than 17.2 seconds. 
 The two proposed approaches complement each other and together solve all benchmarks, 
 which have been derived from modern control literature. 
 
----
-Reviewer 3
----
+CEGIS of Safe Controllers (R1)
 
-[3.1] In addition, the experimental section misses some details 
-which would be helpful to get a better insight into the algorithm 
-behaviour.
-
-We dedicated as many pages to the algorithm descriptions as the page limit permitted.
-However, if the reviewers would value more details on specific aspects of them,
-we shall happy to consider such feedback for the final paper version.
+There are three new aspects to our algorithm: introduction of the safety specification, 
+accounting for the error due to using a fixed-point controller, and accounting for the 
+error due to the finite precision representation of the plant.
+The safety specification increases the size of the verification problem significantly, 
+hence a configuration with just a stability property can be expected to perform faster. 
+We explored similar stability-only synthesis problems in [2]. The quantisation error 
+on the other hand introduces much less complexity to the verification problem and 
+thus affects runtime only marginally. Lastly, removing the precise fixed-point model 
+from the analysis would be an impractical comparison, since our whole choice of synthesis 
+tools is based on fixed-point precision. It would also completely eliminate the soundness 
+guarantees that this paper establishes over comparable work.
 
 Scalability (R3)
 
@@ -79,10 +72,6 @@ but CEGIS literature suggests this is generally the case in practise.
 Our experimental results confirm that it applies to our controller synthesis domain: 
 all successful benchmarks are synthesised using 5 counterexamples or less (cf. section 5).  
 In our experiments, 52% of the time was spent in the synthesis and 48% in the verification phase.
-
-Experimental evaluation (R3)
-
-The abstraction-based method produces up to 2 refinements in our benchmarks set.
 
 Naive algorithm (R3) 
 
@@ -104,3 +93,5 @@ The violation then corresponds to a vertex in the abstract dynamics, relating to
 Given the constraint on the abstract dynamics and the iteration, 
 they allow us to build a constraint on the corresponding eigenvalue. 
 This solution is sound, but not complete (i.e., we might not be able to refine past a certain point).
+
+The abstraction-based method produces up to 2 refinements in our benchmarks set.
