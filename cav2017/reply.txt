@@ -10,6 +10,22 @@ it impact feasibility and cost of finding a solution?
 [Elizabeth]
 The reviewer raises an interesting question, unfortunately due to the running time of the benchmarks we will not have time to answer this during the review period. 
 
+There are three new aspects to our algorithm: introduction of the safety specification, accounting for the error due to using a fixed-point controller, 
+and accounting for the error due to the finite precision representation of the plant. 
+Undoubtedly adding in these additional constraints increases the size of the synthesis/verification problem, 
+and we have not explored the relative size of the increase as each factor is added. 
+
+Our architecture is designed to synthesise safe and sound controllers, and, as a result, it is more complex than the current state-of-the-art in control synthesis, 
+which simply find eigenvalues and places poles, often using the precision available in Matlab. 
+Consequently, synthesising a stable, but potentially unsound and unsafe, controller with our approach may not be as fast as conventional control synthesis methods. 
+Having said that, it would only require one CEGIS loop, so we don't think it would do too badly.
+
+The addition of the above factors can change the results obtained: 
+Stable controllers obtained by current methods may not be stable when fixed word length and quantisation error is taken into account —  
+an example of this is shown in https://arxiv.org/abs/1610.04761. 
+For the problems we tackled there are many stable controllers that do not satisfy the safety specifications, 
+and there is no way of guaranteeing that a stable controller synthesised by existing methods would satisfy the safety specification.
+
 Related Work (R2)
 
 The mentioned literature relates to verification and synthesis of transition systems 
