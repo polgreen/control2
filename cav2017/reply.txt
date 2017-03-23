@@ -11,9 +11,9 @@ it impact feasibility and cost of finding a solution?
 
 [Elizabeth]
 
-Novelty (R2)
+Related Work (R2)
 
-The literature mentioned by the reviewer relates to verification and synthesis of transition systems 
+The mentioned literature relates to verification and synthesis of transition systems 
 (i.e., LTL or similar discrete-state models), which correspond to sound abstractions of a 
 continuous state model. The synthesised controllers are of a different type as the ones 
 we synthesise here, although they may address a similar control objective. However, the main 
@@ -21,28 +21,28 @@ difference of that approaches if compared to ours is that they are not well suit
 for digital systems considering finite word-length (FWL) effects. To quote the cited 
 references: "Given the fact that an abstraction may very well comprise millions of states 
 and billions of transitions [7], [14], an implementation of the refined controller 
-is often too expensive to be practical." (taken from reference [5]). By comparison our 
-implementation is a simple controller that operates on a limited number of bits 
+is often too expensive to be practical." (taken from reference given by the reviewer [5]). 
+By comparison our implementation is a simple controller that operates on a limited number of bits 
 with very few instructions per cycle. This also relates to our ability to deal with 
 corner cases where our abstraction is more precise, whereas LTL approaches would be too 
 costly implementation-wise to achieve similar precision. Furthermore, the mentioned literature 
 does not explicitly address fixed-point arithmetic issues (no mention about number of bits 
 in the implementation), which means that it lacks in description to easily attain our 
-desired control objectives without preprocessing.
+desired control objectives without preprocessing (cf. references [2,5,9,17,19] in the 
+present paper).
 
-As a result, the mentioned literature does not synthesize digital stabilizing controllers 
-with considerations to the implementation aspects, i.e., fixed-point arithmetic and 
-the word-length. In contrast to the mentioned literature, the present work exlpoits 
-current advances in bit-accurate verification of programs to obtain a synthesizer 
-for software-implemented digital control, which is indeed correct by its method of 
+Novelty (R1,R2,R3)
+
+Our work synthesizes digital stabilizing controllers with considerations to the implementation 
+aspects, i.e., fixed-point arithmetic and the word-length. In contrast to previous work, 
+the present work exlpoits current advances in bit-accurate verification of programs to obtain 
+a synthesizer for software-implemented digital control, which is indeed correct by its method of 
 construction (cf. section 2). Thus, the present approaches can avoid fragility problems 
 in robust controllers, which could be overlooked by other existing methods due to 
-underestimating of FWL effects (cf. references [2,5,9,17,19] in the present paper).
-
-In summary, the present paper solves a different problem w.r.t. the references mentioned
-by the reviewer (cf. section 2). The main novelty in our approaches if compared to the 
-mentioned references is that they are algorithmically and numerically sound considering
-implementation aspects. Additionally, as described in section 5, both approaches are able 
+underestimating of FWL effects. As a result, the present paper solves a different problem 
+w.r.t. the references mentioned by the second reviewer (cf. section 2). The main novelty in our 
+approaches if compared to the mentioned references is that they are algorithmically and numerically 
+sound considering implementation aspects. Additionally, as described in section 5, both approaches are able 
 to synthesize stable controllers for most intricate plant models within a reasonable amount 
 of time fully automatically. In particular, both approaches complement each other and together 
 solve all benchmarks, which have been derived from the control literature.
