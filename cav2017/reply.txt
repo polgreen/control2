@@ -11,54 +11,12 @@ it impact feasibility and cost of finding a solution?
 
 [Elizabeth]
 
----
-Reviewer 2
----
+Novelty (R2)
 
-[2.1] Given these motivating points, there is actually a large body of 
-work in the context of abstraction based controller synthesis for 
-cyber-physical systems (CPS) which is not cited by the authors 
-tackling these challenges. Furthermore, most of the work in this 
-community can actually handle a lot more powerful specifications 
-(beyond safety) and plant models (up to non-linear models without 
-stability assumptions or stochastic models) by providing a fully 
-automated design scheme as envisioned by the authors. Here is a short 
-list of some related works that I have at the top of my head, 
-but there are many more:
-
-- textbook on the topic:
-[1] Paulo Tabuada, Verification and Control of Hybrid Systems - 
-A Symbolic Approach,  2009
-(http://www.springer.com/de/book/9781441902238)
-
-- work especially on safety specifications:
-[2] Antoine Girard, Controller synthesis for safety and reachability 
-via approximate bisimulation, 2012 
-(http://www.sciencedirect.com/science/article/pii/S000510981200088X)
-
-- work especially on LTI systems:
-[3] Paulo Tabuada, Symbolic models for linear control systems 
-with disturbances, 2007 (http://ieeexplore.ieee.org/abstract/document/4434957/)
-
-- some recent works that talk explicitly about how errors 
-form digital controller implementations are handled by the framework:
-[4] Jun Liu and Necmiye Ozay, Abstraction, Discretization, and 
-Robustness in Temporal Logic Control of Dynamical Systems, 
-2014 (http://web.eecs.umich.edu/~necmiye/pubs/LiuO_hscc14.pdf)
-
-[5] Gunther Reissig, Alexander Weber, and Matthias Rungger, 
-Feedback Refinement Relations for the Synthesis of Symbolic 
-Controllers 2016 (http://ieeexplore.ieee.org/abstract/document/7519063/)
-
-[6] Mahmoud Khaled, Mtthias Rungger, and Majid Zamani, 
-Symbolic Models of Networked Control Systems: 
-A Feedback Refinement Relation Approach, 2016 
-(https://www.researchgate.net/profile/Majid_Zamani/publication/306017464_Symbolic_Models_of_Networked_Control_Systems_A_Feedback_Refinement_Relation_Approach/links/5857b7db08ae544d8863bef1.pdf)
-
-[Response] The above referenced literature relates to verification and synthesis of transition systems 
+The literature mentioned by the reviewer relates to verification and synthesis of transition systems 
 (i.e., LTL or similar discrete-state models), which correspond to sound abstractions of a 
 continuous state model. The synthesised controllers are of a different type as the ones 
-we synthesise, although they may address a similar control objective. However, the main 
+we synthesise here, although they may address a similar control objective. However, the main 
 difference of that approaches if compared to ours is that they are not well suited 
 for digital systems considering finite word-length (FWL) effects. To quote the cited 
 references: "Given the fact that an abstraction may very well comprise millions of states 
@@ -72,32 +30,22 @@ does not explicitly address fixed-point arithmetic issues (no mention about numb
 in the implementation), which means that it lacks in description to easily attain our 
 desired control objectives without preprocessing.
 
-[2.2] Given the fact that the authors do not compare their work to the literature 
-mentioned above, in which I think the proposed problem is already solved, 
-I suggest to reject the paper.
-
-[Response] The mentioned literature does not synthesize digital stabilizing controllers 
+As a result, the mentioned literature does not synthesize digital stabilizing controllers 
 with considerations to the implementation aspects, i.e., fixed-point arithmetic and 
-the word-length. In particular, the present work exlpoits current advances in bit-accurate 
-verification of programs to obtain a synthesizer for software-implemented digital control, 
-which is indeed correct by its method of construction (cf. section 2). As a result, the present 
-approaches described in this study can avoid fragility problems in robust controllers, 
-which could be overlooked by other existing approaches due to underestimating of FWL effects
-(cf. references [2,5,9,17,19] in the present paper).
+the word-length. In contrast to the mentioned literature, the present work exlpoits 
+current advances in bit-accurate verification of programs to obtain a synthesizer 
+for software-implemented digital control, which is indeed correct by its method of 
+construction (cf. section 2). Thus, the present approaches can avoid fragility problems 
+in robust controllers, which could be overlooked by other existing methods due to 
+underestimating of FWL effects (cf. references [2,5,9,17,19] in the present paper).
 
-[2.3] The authors should consider resubmitting the paper if they can show that 
-they can generate solutions to problems which are not solvable by those 
-abstraction based techniques mentioned above or if they can show that 
-their method is solving the problem in a more efficient or less complex way.
-
-[Response] The present paper solves a different problem w.r.t. references mentioned
+In summary, the present paper solves a different problem w.r.t. the references mentioned
 by the reviewer (cf. section 2). The main novelty in our approaches if compared to the 
 mentioned references is that they are algorithmically and numerically sound considering
-implementation aspects. Additionally, as described in section 5, both approaches presented 
-in this study are able to synthesize stable controllers for most intricate plant models 
-within a reasonable amount of time fully automatically. In particular, both approaches 
-complement each other and together solve all benchmarks, which have been derived 
-from the control literature.
+implementation aspects. Additionally, as described in section 5, both approaches are able 
+to synthesize stable controllers for most intricate plant models within a reasonable amount 
+of time fully automatically. In particular, both approaches complement each other and together 
+solve all benchmarks, which have been derived from the control literature.
 
 ---
 Reviewer 3
