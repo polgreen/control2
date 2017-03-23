@@ -47,6 +47,18 @@ and most controllers can be synthesised in less than 17.2 seconds.
 The two proposed approaches complement each other and together solve all benchmarks, 
 which have been derived from modern control literature. 
 
+Scalability (R3)
+
+CEGIS frameworks reason over an exponential space of solution programs, 
+which need to satisfy a property over an exponential input range. 
+Still, inductive synthesis algorithms as CEGIS are designed to heuristically find 
+universally compliant programs with only a limited set of counterexamples.  
+Whether this inductive generalisation is possible depends on the search domain, 
+but CEGIS literature suggests this is generally the case in practise.  
+Our experimental results confirm that it applies to our controller synthesis domain: 
+all successful benchmarks are synthesised using 5 counterexamples or less (cf. section 5).  
+In our experiments, 52% of the time was spent in the synthesis and 48% in the verification phase.
+
 CEGIS of Safe Controllers (R1)
 
 There are three new aspects to our algorithm: introduction of the safety specification, 
@@ -60,18 +72,6 @@ thus affects runtime only marginally. Lastly, removing the precise fixed-point m
 from the analysis would be an impractical comparison, since our whole choice of synthesis 
 tools is based on fixed-point precision. It would also completely eliminate the soundness 
 guarantees that this paper establishes over comparable work.
-
-Scalability (R3)
-
-CEGIS frameworks reason over an exponential space of solution programs, 
-which need to satisfy a property over an exponential input range. 
-Still, inductive synthesis algorithms as CEGIS are designed to heuristically find 
-universally compliant programs with only a limited set of counterexamples.  
-Whether this inductive generalisation is possible depends on the search domain, 
-but CEGIS literature suggests this is generally the case in practise.  
-Our experimental results confirm that it applies to our controller synthesis domain: 
-all successful benchmarks are synthesised using 5 counterexamples or less (cf. section 5).  
-In our experiments, 52% of the time was spent in the synthesis and 48% in the verification phase.
 
 Naive algorithm (R3) 
 
