@@ -8,8 +8,7 @@ perform identical to earlier methods? As each factor is added, how much does
 it impact feasibility and cost of finding a solution?
 
 [Elizabeth]
-Undoubtedly adding in the safety and quantisation error constraints increases the size of the verification problem. The relative size of the increase as each factor is added is not known and unfortunately, due to the time taken to run the benchmarks, we will not be able to answer this question within the review period, but will endeavour to add this in the future.
-However, we are using a very similar technique to https://arxiv.org/abs/1610.04761, which synthesises only stable controllers, for transfer function models, and performs favourably compared to the state-of-the-art. 
+The reviewer raises an interesting question, unfortunately due to the running time of the benchmarks we will not have time to answer this during the review period. 
 
 Related Work (R2)
 
@@ -36,20 +35,20 @@ We would like to stress that we have cited related work in verification, synthes
 
 Novelty (R1,R2,R3)
 
-Our work synthesizes digital stabilizing controllers with considerations to the implementation 
-aspects, i.e., fixed-point arithmetic and the word-length. In contrast to previous work, 
-the present work exlpoits current advances in bit-accurate verification of programs to obtain 
-a synthesizer for software-implemented digital control, which is indeed correct by its method of 
-construction (cf. section 2). Thus, the present approaches can avoid fragility problems 
-in robust controllers designed for state-space equations, which could be overlooked by other 
-existing methods due to underestimating of FWL effects. As a result, the present paper solves 
-a different problem w.r.t. the references mentioned in the reviews. The main novelty in our 
-approaches if compared to the mentioned references is that they are algorithmically and numerically 
-sound considering implementation aspects. Additionally, as described in section 5, both approaches are able 
-to synthesize stable controllers for most intricate plant models within a reasonable amount 
-of time fully automatically; the median run-time for our benchmark set is 7.9 seconds, 
-and most controllers can be synthesized in less than 17.2 seconds. In particular, both approaches 
-complement each other and together solve all benchmarks, which have been derived from modern control literature.
+Our work synthesises digital stabilising controllers with considerations to their implementation 
+aspects, i.e., fixed-point arithmetic and finite word length. In contrast to previous work, 
+this submission exploits current advances in bit-accurate verification of programs to obtain 
+a synthesiser for software-implemented digital control, which is correct by construction (cf. section 2). 
+Thus, the present approach can avoid fragility problems in robust controllers designed for state-space equations, 
+which could be overlooked by other existing methods in view of their underestimation of FWL effects. 
+As a result, the present paper solves a different problem w.r.t. the references mentioned in the reviews. 
+The main novelty in our approach, compared to the mentioned references, is that it is algorithmically and numerically 
+sound over implementation aspects. Additionally, as described in section 5, it is able 
+to fully automatically synthesise stable controllers for intricate plant models within a reasonable amount of time; 
+the median run-time for our benchmark set is 7.9 seconds, 
+and most controllers can be synthesised in less than 17.2 seconds. 
+The two proposed approaches complement each other and together solve all benchmarks, 
+which have been derived from modern control literature. 
 
 ---
 Reviewer 3
