@@ -1,0 +1,129 @@
+===========================================================================
+                            CAV'17 Review #160A
+---------------------------------------------------------------------------
+Paper #160: Automated Formal Synthesis of Digital Controllers for
+            State-Space Physical Plants
+---------------------------------------------------------------------------
+
+                      Overall merit: 3. Weak accept
+
+                         ===== Paper summary =====
+
+The paper describes two methods for synthesizing controllers represented as linear time invariant models. The first is based on the use of a bounded model checker, using unwinding. The second is based on the use of abstraction refinement. The paper shows that the second method can be faster, although in an empirical evaluation both methods were found to encounter models for which synthesis failed.
+
+                      ===== Comments for author =====
+
+The paper claims two improvements over earlier or related work. One is the establishment of safety guarantees, formalized as reachability regions. The second is treatment of quantization errors and their possible effect on controller stability and/or safety.
+It would be good to more clearly describe on those two points how your methods differ in the results that are produced, and in the cost of producing those results. E.g., if both additional factors are removed, does your method perform identical to earlier methods? As each factor is added, how much does it impact feasibility and cost of finding a solution?
+
+===========================================================================
+                            CAV'17 Review #160B
+                     Updated 6 Apr 2017 8:52:09am CEST
+---------------------------------------------------------------------------
+Paper #160: Automated Formal Synthesis of Digital Controllers for
+            State-Space Physical Plants
+---------------------------------------------------------------------------
+
+                      Overall merit: 3. Weak accept
+
+                         ===== Paper summary =====
+
+The paper entitled "Automated Formal Synthesis of Digital Controllers for State-Space Physical Plants" presents a fully automated method for the synthesis of provably sound digital state-feedback controllers ensuring safety and stability of the controlled system.
+
+                      ===== Comments for author =====
+
+The authors emphasize the following main features of their synthesis approach:
+- They consider the true continuous dynamics of the plant as the starting point of the design.
+- They account for errors introduced by fixed-point arithmetics arising from a digital implementation of the controller.
+- They can ensure safety with respect to a safe set of states (containing the set of initial conditions) additionally to stability.
+- They get a fully automated synthesis methodology taking a continuous LTI plant model and a safety specification as an input and returning a digital controller s.t. the resulting closed loop system is safe and stable.
+
+Given these motivating points, there is actually a large body of work in the context of abstraction based controller synthesis for cyber-physical systems (CPS) which is not cited by the authors tackling these challenges. Furthermore, most of the work in this community can actually handle a lot more powerful specifications (beyond safety) and plant models (up to non-linear models without stability assumptions or stochastic models) by providing a fully automated design scheme as envisioned by the authors. Here is a short list of some related works that I have at the top of my head, but there are many more:
+
+- textbook on the topic:
+* Paulo Tabuada, Verification and Control of Hybrid Systems - A Symbolic Approach,  2009
+(http://www.springer.com/de/book/9781441902238)
+
+- work especially on safety specifications:
+* Antoine Girard, Controller synthesis for safety and reachability via approximate bisimulation, 2012 (http://www.sciencedirect.com/science/article/pii/S000510981200088X)
+
+- work especially on LTI systems:
+* Paulo Tabuada, Symbolic models for linear control systems with disturbances, 2007 (http://ieeexplore.ieee.org/abstract/document/4434957/)
+
+- some recent works that talk explicitly about how errors form digital controller implementations are handled by the framework:
+* Jun Liu and Necmiye Ozay, Abstraction, Discretization, and Robustness in Temporal Logic Control of Dynamical Systems, 2014 (http://web.eecs.umich.edu/~necmiye/pubs/LiuO_hscc14.pdf)
+* Gunther Reissig, Alexander Weber, and Matthias Rungger, Feedback Refinement Relations for the Synthesis of Symbolic Controllers 2016 (http://ieeexplore.ieee.org/abstract/document/7519063/)
+* Mahmoud Khaled, Matthias Rungger, and Majid Zamani, Symbolic Models of Networked Control Systems: A Feedback Refinement Relation Approach, 2016 (https://www.researchgate.net/profile/Majid_Zamani/publication/306017464_Symbolic_Models_of_Networked_Control_Systems_A_Feedback_Refinement_Relation_Approach/links/5857b7db08ae544d8863bef1.pdf)
+
+Given the fact that the authors do not compare their work to the literature mentioned above, in which I think the proposed problem is already solved, I suggest to reject the paper.
+
+Added after the rebuttal
+----------------------------
+
+I think my subreviewer discounted the difficulty of taking into account implementation effects in controller design. Based on the rebuttal, I am increasing my score to 3. I think this is an interesting direction and scalable tools are lacking.
+
+===========================================================================
+                            CAV'17 Review #160C
+---------------------------------------------------------------------------
+Paper #160: Automated Formal Synthesis of Digital Controllers for
+            State-Space Physical Plants
+---------------------------------------------------------------------------
+
+                      Overall merit: 3. Weak accept
+
+                         ===== Paper summary =====
+
+The paper presents a novel approach to synthesise controllers for LTI
+models based on the CEGIS framework. The authors suggest two
+approaches: 
+
+(a) The naive approach works by unfolding system behaviour for k steps
+    and calling an SMT solver to instantiate a gain matrix K. This
+    step is followed by a validation step where (1) precision and (3)
+    completeness are checked. Stability is encoded as a constraint
+    using Jury's criterion.
+
+(b) An advanced method uses a concept of abstraction to boost the
+    performance of the synthesis routine. The abstraction seems to
+    reason in terms of eigenvalues of some matrix with refinement
+    algorithm adding further constraints on the eigen value
+    structure. The completeness step from (a) is replaced by abstract
+    acceleration.
+
+                      ===== Comments for author =====
+
+The paper is generally well-written, although some parts require some
+more clarification (see the question section). In addition, the
+experimental section misses some details which would be helpful to get
+a better insight into the algorithm behaviour.
+
+I am not sure method (a) will scale due to exponential number of
+checks in the verification phase. Generally, I am missing a break down
+of the performance into phases (synthesis + verification). In
+particular, I am wondering which phase dominates the whole run-time.
+
+For the abstraction-based method, I am missing one of the main
+indicators relevant for abstraction-based methods and namely number of
+refinements for each experiment.
+
+Some more questions: 
+
+* On the naive algorithm: 
+
+- I am confused about the completeness argument: The statement by the
+  authors that a stable converges towards an origin seems to be
+  correct, which is relevant for *stability*. Yet, I am not sure how
+  the authors can derive their guarantees in case of *safety*. Could
+  you please clarify?
+
+* On the abstraction-based algorithm: 
+
+- How do you use characteristic polynomial in the algorithm? In other
+  words, I could not find any references to P_a(x) from step 1(a) in
+  any further steps.
+
+- It is not clear how you derive constraints on the eigen value
+  structure based on a counter-example. Please clarify.
+
+
+
