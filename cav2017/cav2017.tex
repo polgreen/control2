@@ -741,14 +741,14 @@ set of test vectors {\sc inputs} that is updated incrementally.  Given
 the aforementioned specification $\sigma$, the inductive synthesis
 procedure tries to find an existential witness $P$ satisfying
 the specification $\sigma(a, P)$ for all $a$ in {\sc
-  inputs} (as opposed to all $x \in \mathcal{D}$).
+  inputs} (as opposed to all $a \in \mathcal{D}$).
 %
 If the synthesis phase succeeds in finding a witness~$P$, this
 witness is a candidate solution to the full synthesis formula.  We
 pass this candidate solution to the validation phase, which checks
 whether it is a full solution (i.e., $P$ satisfies the
 specification $\sigma(a, P)$ for all
-$x\in\mathcal{D}$).  If this is the case, then the algorithm
+$a\in\mathcal{D}$).  If this is the case, then the algorithm
 terminates.  Otherwise, additional information is provided to the
 inductive synthesis phase in the form of a new counterexample that is
 added to the {\sc inputs} set and the loop iterates again.
