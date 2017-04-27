@@ -1,3 +1,36 @@
+---
+Reviewer 1
+---
+[1.1] It would be good to more clearly describe on those two points how your 
+methods differ in the results that are produced, and in the cost of producing 
+those results. E.g., if both additional factors are removed, does your method 
+perform identical to earlier methods? As each factor is added, how much does 
+it impact feasibility and cost of finding a solution?
+
+There are three new aspects to our algorithm: introduction of the safety specification, accounting for the error due to using a fixed-point controller, and accounting for the error due to the finite precision representation of the plant. Undoubtedly adding in these additional constraints increases the size of the synthesis/verification problem, and we have not explored the relative size of the increase as each factor is added. 
+
+Our architecture is designed to synthesise safe and sound controllers, and, as a result, it is more complex than the current state-of-the-art in control synthesis, which simply find eigenvalues and places poles, often using the precision available in Matlab. Consequently, synthesising a stable, but potentially unsound and unsafe, controller with our approach may not be as fast as conventional control synthesis methods. 
+Having said that, it should only require one CEGIS loop, so we don't think it would do too badly.
+
+The addition of the above factors can change the results obtained: Stable controllers obtained by current methods may not be stable when fixed word length and quantisation error is taken into account, an example of this is shown in https://arxiv.org/abs/1610.04761. For the problems we tackled there are many stable controllers that do not satisfy the safety specifications, and there is no way of guaranteeing that a stable controller synthesised by existing methods would satisfy the safety specification. 
+
+
+There are three new aspects to our algorithm: introduction of the safety specification, accounting for the error due to using a fixed-point controller, 
+and accounting for the error due to the finite precision representation of the plant. 
+Undoubtedly adding in these additional constraints increases the size of the synthesis/verification problem, 
+and we have not explored the relative size of the increase as each factor is added. 
+
+Our architecture is designed to synthesise safe and sound controllers, and, as a result, it is more complex than the current state-of-the-art in control synthesis, 
+which simply find eigenvalues and places poles, often using the precision available in Matlab. 
+Consequently, synthesising a stable, but potentially unsound and unsafe, controller with our approach may not be as fast as conventional control synthesis methods. 
+Having said that, it would only require one CEGIS loop, so we don't think it would do too badly.
+
+The addition of the above factors can change the results obtained: 
+Stable controllers obtained by current methods may not be stable when fixed word length and quantisation error is taken into account —  
+an example of this is shown in https://arxiv.org/abs/1610.04761. 
+For the problems we tackled there are many stable controllers that do not satisfy the safety specifications, 
+and there is no way of guaranteeing that a stable controller synthesised by existing methods would satisfy the safety specification.
+
 Related Work (R2)
 
 The limitation of the approaches in the literature is that they do not address the combined model uncertainties, imprecisions, and restrictions (particularly, FWL representation) that our method tackles: they are not well suited to digital systems with limited resources. To quote a reference cited by the reviewer: "Given the fact that an abstraction may very well comprise millions of states and billions of transitions, an implementation of the refined controller is often too expensive to be practical." By comparison, our implementation operates on a limited number of bits and a few instruction cycles. This relates to our ability to deal with corner cases where our abstraction is more precise, whereas LTL approaches would be too costly implementation-wise to achieve similar precision. The mentioned literature does not explicitly address fixed-point arithmetic (no mention about number of bits in the implementation), which means that it lacks in description to attain our desired control objectives. 
