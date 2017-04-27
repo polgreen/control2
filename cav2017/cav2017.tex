@@ -53,8 +53,10 @@
 
 \mainmatter  % start of an individual contribution
 
-% first the title is needed
-\title{Automated Formal Synthesis of Digital Controllers for State-Space Physical Plants} 
+\title{Automated Formal Synthesis of Digital Controllers for State-Space
+Physical Plants\thanks{Supported by EPSRC grant EP/J012564/1, ERC project
+280053 (CPROVER) and the H2020 FET OPEN 712689 SC$^2$.}}
+
 \titlerunning{Automated Formal Synthesis of Digital Controllers}
 
 % a short form should be given in case it is too long for the running head
@@ -97,21 +99,22 @@
 %\tocauthor{Authors' Instructions}
 
 \author{%
-Alessandro Abate \and
-Iury Bessa \and
-Dario Cattaruzza \and
-Lucas Cordeiro \and
-\mbox{Cristina David} \and
-Pascal Kesseli \and
-Daniel Kroening \and
-Elizabeth Polgreen}
+Alessandro Abate\inst{1} \and
+Iury Bessa\inst{2} \and
+Dario Cattaruzza\inst{1} \and
+Lucas Cordeiro\inst{1} \and
+\mbox{Cristina David}\inst{1} \and
+Pascal Kesseli\inst{1} \and
+Daniel Kroening\inst{1} \and
+Elizabeth Polgreen\inst{1}}
 
 \authorrunning{Abate et al.}
 
-\institute{}
+\institute{University of Oxford, UK
+\and
+Federal University of Amazonas, Manaus, Brazil}
 
 \maketitle
-
 
 \begin{abstract}
 %
@@ -334,9 +337,9 @@ The tool Pessoa~\cite{mazo2010pessoa} synthesizes correct-by-design embedded
 control software in a Matlab toolbox.  It is based on the abstraction of a
 physical system to an equivalent finite-state machine and on the computation
 of reachability properties over the finite-state machine.  Based on this
-safety specification, Pessoa can synthesize embedded controller software for
-a range of properties.  The embedded controller software can be more
-complicated than the state-feedback control we synthesized, and the
+safety specification, \mbox{Pessoa} can synthesize embedded controller
+software for a range of properties.  The embedded controller software can be
+more complicated than the state-feedback control we synthesized, and the
 properties available cover more detail.
 %
 %based on a safety specification over state values, as well as specification on characteristic functions of the controller. 
@@ -1432,13 +1435,12 @@ for the controller, $\mathcal{F}_{\langle I_c,F_c \rangle}$, is chosen to be
 $I_c = 8$, $F_c = 8$.
 
 For the majority of our benchmarks, we observe that the abstraction-based
-back-end is faster than the basic multi-staged verification approach. 
-However, it fails to find solutions to three benchmarks, as compared to two
-with the multi-staged back-end, where the numbers given in the
-discretization matrices are too small.  In direct comparison, the
+back-end is faster than the basic multi-staged verification approach, and
+finds one solution more (9) than the multi-staged back-end (8).
+In direct comparison, the
 abstraction-based approach is on average able to find a solution in
-approximately 35\% of the time required using the multi-staged back-end, and
-has a median run-time 1.15\,s, which is seven times smaller than the
+approximately 70\% of the time required using the multi-staged back-end, and
+has a median run-time 1.4\,s, which is seven times smaller than the
 multi-staged approach.  The two back-ends complement each other in benchmark
 coverage and together solve all benchmarks in the set.
 
@@ -1450,23 +1452,23 @@ coverage and together solve all benchmarks in the set.
 \hline
 \# & \multicolumn{1}{|c|}{Benchmark}  & \multicolumn{2}{|c|}{Multi-staged}                 & \multicolumn{2}{|c|}{Abstraction} \\
    &                                  & \multicolumn{1}{|c|}{$\mathcal{F}_{\langle I_p,F_p \rangle}$} & \multicolumn{1}{|c|}{Time} & \multicolumn{1}{|c|}{$\mathcal{F}_{\langle I_p,F_p \rangle}$} & \multicolumn{1}{|c|}{Time} \\\hline
-1  & Cruise Control      & 8,16   & 6.88\,s & 16,16  &   0.24\,s \\
-2  & DC Motor            & 8,16   & 8.10\,s & 20,20  &   5.38\,s \\
-3  & Helicopter          & \xmark & \xmark  & 16,16  &   2.12\,s \\
-4  & Inverted Pendulum   & 8,16   & 7.81\,s & 16,16  &   0.39\,s \\
-5  & Magnetic Pointer    & \xmark & \xmark  & 28,28  & 132.85\,s \\
-6  & Magnetic Suspension & 12,20  & 8.73\,s & 32,32  &   7.85\,s \\
-7  & Pendulum            & 8,16   & 9.01\,s & 20,20  &   1.15\,s \\
-8  & Suspension          & 12,20  &49.41\,s & \xmark & \xmark \\
-9  & Tape Driver         & 8,16   & 9.18\,s & \xmark & \xmark \\
-10 & Satellite           & 8,16   & 8.98\,s & \xmark & \xmark \\\hline
+1  & Cruise Control      & 8,16   & 8.40\,s & 16,16  &   2.17\,s \\
+2  & DC Motor            & 8,16   & 9.45\,s & 20,20  &   2.06\,s \\
+3  & Helicopter          & \xmark & \xmark  & 16,16  &   1.37\,s \\
+4  & Inverted Pendulum   & 8,16   & 9.65\,s & 16,16  &   0.56\,s \\
+5  & Magnetic Pointer    & \xmark & \xmark  & 28,28  &  44.14\,s \\
+6  & Magnetic Suspension & 12,20  &10.41\,s & 16,16  &   0.61\,s \\
+7  & Pendulum            & 8,16   &14.02\,s & 16,16  &   0.60\,s \\
+8  & Suspension          & 12,20  &73.66\,s & \xmark &    \xmark \\
+9  & Tape Driver         & 8,16   &10.10\,s & 16,16  &  68.24\,s \\
+10 & Satellite           & 8,16   & 9.43\,s & 16,16  &   0.67\,s \\\hline
 %
 \end{tabular}
 \caption{Experimental results\label{tab:results}}
 \end{table}
 
-The median run-time for our benchmark set is 7.9\,s.  Overall, the average
-synthesis time amounts to approximately 17.2\,s.  We consider these times
+The median run-time for our benchmark set is 9.4\,s.  Overall, the average
+synthesis time amounts to approximately 15.6\,s.  We consider these times
 short enough to be of practical use to control engineers, and thus affirm
 RQ1.
 
@@ -1482,7 +1484,8 @@ The synthesized controllers were confirmed to be stable outside of our model
 representation using MATLAB, positively answering RQ2.  A~link to the full
 experimental environment, including scripts to reproduce the results, all
 benchmarks and the tool, is provided in the
-footnote.\footnote{\url{https://drive.google.com/open?id=0ByIexo3Z5N91eDludEdWdWxfV1E}}
+footnote as an Open Virtual Appliance
+(OVA).\footnote{\url{www.cprover.org/DSSynth/controller-synthesis-cav-2017.tar.gz}}
 
 
 %-------------------------------
