@@ -728,10 +728,10 @@ possible progressions of the system simultaneously.
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \label{synthesizer-general}
 The input specification provided to the program synthesizer is of the form
-%$\exists P .  \forall \vec{x}.  \sigma(\vec{x}, \vec{P})$ 
-$\exists P .\,  \forall x.\,  \sigma(x, P)$, 
+%$\exists P .  \forall \vec{a}.  \sigma(\vec{a}, \vec{P})$ 
+$\exists P .\,  \forall a.\,  \sigma(a, P)$, 
 where $P$ ranges over functions, 
-$x$ ranges over ground terms, 
+$a$ ranges over ground terms, 
 and $\sigma$ is a quantifier-free formula.  
 We interpret the ground terms over some finite domain~$\mathcal{D}$.
 %
@@ -740,15 +740,15 @@ synthesis phase and a validation phase, which interact via a finite
 set of test vectors {\sc inputs} that is updated incrementally.  Given
 the aforementioned specification $\sigma$, the inductive synthesis
 procedure tries to find an existential witness $P$ satisfying
-the specification $\sigma(x, P)$ for all $x$ in {\sc
-  inputs} (as opposed to all $x \in \mathcal{D}$).
+the specification $\sigma(a, P)$ for all $a$ in {\sc
+  inputs} (as opposed to all $a \in \mathcal{D}$).
 %
 If the synthesis phase succeeds in finding a witness~$P$, this
 witness is a candidate solution to the full synthesis formula.  We
 pass this candidate solution to the validation phase, which checks
 whether it is a full solution (i.e., $P$ satisfies the
-specification $\sigma(x, P)$ for all
-$x\in\mathcal{D}$).  If this is the case, then the algorithm
+specification $\sigma(a, P)$ for all
+$a\in\mathcal{D}$).  If this is the case, then the algorithm
 terminates.  Otherwise, additional information is provided to the
 inductive synthesis phase in the form of a new counterexample that is
 added to the {\sc inputs} set and the loop iterates again.
@@ -776,7 +776,7 @@ the controller.
 
 When mapping back to the notation used for describing the general
 architecture of the program synthesizer, the controller $K$ denotes $P$ and
-$(x_0, u_k)$ represents $x$.
+$(x_0, u_k)$ represents $a$.
 
 %% While the controller precision \todo{update notations} $\langle I_c,F_c\rangle$ is given and fixed, 
 %% we can vary the plant precision $\langle I_p,F_p\rangle$ such that $I_p \geq I_c \wedge F_p \geq F_c$.
