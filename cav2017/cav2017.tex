@@ -161,7 +161,7 @@ synthesis is challenging, particularly when the synthesis objective goes
 beyond classical stability.  There are recent methods for verifying more
 general reachability properties of a given controller~\cite{FLD+11,Fre05}. 
 However, these methods have not been generalized to control synthesis. 
-We~remark that a synthesis algorithm that guarantees satability does not
+We~remark that a synthesis algorithm that guarantees stability does not
 ensure safety: the system might transitively visit an unsafe state that
 results in an unrecoverable failure.
 
@@ -184,7 +184,7 @@ synthesis, but play an important role in systems engineering.
 We give two alternative approaches for synthesizing digital controllers for
 state-space physical plants, both based on CounterExample Guided Inductive
 Synthesis (CEGIS)~\cite{sketch}.  We prove their soundness by quantifying
-errors caused digitalization and quantization effects that arise when
+errors caused by digitalization and quantization effects that arise when
 time/value-discrete digital controller interacts with the continuous plant.
 
 {\em The first approach} uses a {\em na\"ive} technique that starts by
@@ -211,7 +211,7 @@ efficiently synthesize stable and safe controllers for a set of intricate
 physical plant models taken from the digital control literature: the median
 run-time for our benchmark set is $7.9$ seconds, and most controllers can be
 synthesized in less than $17.2$ seconds.  We further show that, in a direct
-comparison, the abstraction-based approach (second) lowers the median
+comparison, the abstraction-based approach (i.e., second approach) lowers the median
 run-time of our benchmarks by a factor of seven over the first approach
 based on the unfolding of the dynamics.
 
@@ -234,7 +234,7 @@ based on the unfolding of the dynamics.
   acceleration to improve scalability while retaining soundness.  Both
   approaches provide sound synthesis of state-feedback systems and consider
   the various sources of imprecision in the implementation of the control
-  algorithm and in the modeling of plant.
+  algorithm and in the modeling of the plant.
 %
 \item We develop a model for different sources of quantization errors and
   their effect on reachability properties.  We give bounds that ensure the
@@ -423,8 +423,8 @@ Appendix~\ref{sec:appendix:LTIbackground}) into
 x_{k+1} = A_d x_k+ B_d u_k. 
 \end{align} 
 %
-where $k \in \mathbb N$ and with initial state $x_{0}=x(0)$.  $A_d$ and
-$B_d$ denote the matrices that describe the discretized plant dynamics and
+where $k \in \mathbb N$ and $x_{0}=x(0)$ is the initial state.  $A_d$ and
+$B_d$ denote the matrices that describe the discretized plant dynamics, whereas
 $A$ and $B$ the continuous plant dynamics.  Later, we will address the
 issue of variable quantization, as introduced by the ADC/DAC conversion
 blocks (Fig.~\ref{fig:digitalsystem}).
@@ -529,10 +529,10 @@ blocks (Fig.~\ref{fig:digitalsystem}).
 \label{ssec:statefeedbackcontrol}
 %-------------------------------
 
-Models \eqref{eq:ode} and \eqref{eq:plant} depend on external non-determinism in the form of input signals $u (t), u_k$, respectively. 
+Models \eqref{eq:ode} and \eqref{eq:plant} depend on external non-determinism in the form of input signals $u (t)$ and  $u_k$, respectively. 
 Feedback architectures can be employed to manipulate the properties and behaviors of the continuous process (the plant).   
 %reduce the effect of parametric uncertainties and attenuate the effects of noise and disturbance. 
-We are interested in the synthesis of digital feedback control algorithm, 
+We are interested in the synthesis of digital feedback control algorithms, 
 as implemented on modern Field-Programmable Gate Arrays or Digital Signal Processors. 
 The most basic feedback architecture is the state feedback, 
 where the control action $u_k$ (notice we work with the discretized signal) is computed by: 
