@@ -780,7 +780,9 @@ the controller.
 
 When mapping back to the notation used for describing the general
 architecture of the program synthesizer, the controller $K$ denotes $P$,
-$(x_0, u_k)$ represents $a$ and $\phi_{stability} \wedge \phi_{input} \wedge \phi_{init} \wedge \phi_{safety}$
+$(x_0, u_k)$ represents $a$ and
+$\phi_\mathit{stability} \wedge \phi_\mathit{input} \wedge
+\phi_\mathit{init} \wedge \phi_\mathit{safety}$
 denotes the specification $\sigma$.
 
 %% While the controller precision \todo{update notations} $\langle I_c,F_c\rangle$ is given and fixed, 
@@ -1215,11 +1217,11 @@ $$(\phi_\mathit{init} \wedge \phi_\mathit{input} \wedge u_k=-K x_k)
 % these roots to remain within the unit circle, which we verify using Jury's criteria.
 % Notice that in our polynomials $c_0=1$ and we only use reals.
 % Once we have established convergence, we may examine the 
-% safety specification $\phi_{safety}$.
+% safety specification $\phi_\mathit{safety}$.
   $K \in \mathbb{R}\langle I_c,F_c\rangle^n$ that satisfies
   $\phi_\mathit{stability} \wedge \phi_\mathit{safety} \wedge \phi_\mathit{init}^{K}$ by invoking a SAT solver.
 %%   We obtain it by solving the SAT formula 
-%% $$\mathcal{J}_K=\mathcal{J}\langle I,F \rangle (P_{a-k},\mat{T})\wedge \phi_{safety}$$ 
+%% $$\mathcal{J}_K=\mathcal{J}\langle I,F \rangle (P_{a-k},\mat{T})\wedge \phi_\mathit{safety}$$ 
 %% that satisfies the input constraint and Jury's criteria for 
 %% $P_{a-k}=z^n+\sum_{i=1}^n (a_i-k_i) z^{n-i} : k_i \in \mat{K} \wedge \tilde{\mat{K}}=\mat{K}\mat{T}$,
 %% where $\mathcal{J}\langle I,F \rangle (P,\mat{T})$ is a program describing Jury's method.
@@ -1230,7 +1232,7 @@ If there is no candidate solution we return UNSAT and exit the loop.
   %consisting of evaluating the
   progression of the system from $\phi_\mathit{init}$ over time,
 $x_{k+1} \models \phi_\mathit{safety}$. %% For this purpose we require 
-%% an initial set $\phi_{init}= x_0 \in [\underline{x_0} \ \overline{x_0}]$ 
+%% an initial set $\phi_\mathit{init}= x_0 \in [\underline{x_0} \ \overline{x_0}]$ 
 %% from which the system progresses.
 % Obviously, this set $x_0$ 
 % must satisfy the specification; otherwise, the system will be unsafe to begin with.
