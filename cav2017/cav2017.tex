@@ -992,6 +992,8 @@ completeness threshold.  After unfolding the transition system corresponding
 to the previously synthesized controller $k$ steps, we check that the safety
 specification holds for any initial state.
 
+\todo{There is no reference to Alg.~\ref{alg:safetycheck}}
+
 \item The second {\sc verify} stage, {\sc precision}, 
  restores soundness with respect to the plant's precision
 by using interval arithmetic \cite{moore1966interval} to validate the 
@@ -1003,6 +1005,9 @@ completeness threshold $\overline{k}$ for the current candidate $K$ and
 check that $k{\leq}\overline{k}$.  This is done according to the argument
 given above and illustrated in Fig.~\ref{fig:ct}.
 
+\end{enumerate}
+
+\todo{check whether the above/below CT story is right}
 
 \begin{figure*}[t]
 \centering
@@ -1011,8 +1016,6 @@ given above and illustrated in Fig.~\ref{fig:ct}.
 \caption{Completeness threshold for multi-staged verification}
 \label{fig:ct}
 \end{figure*}
-
-\end{enumerate}
 
 
 Checking that the safety specification holds for any initial state can be 
