@@ -250,7 +250,7 @@ based on the unfolding of the dynamics.
 %based on~\cite{Monteiro16}, but enhanced to include evaluation of quantization effects and 
 %safety properties over the state space. 
 %In an alternative approach, we use a verification engine based 
-%on abstract acceleration~\cite{cattaruzza2015unbounded}, which avoids the explicit unwinding 
+%on abstract acceleration~\cite{cattaruzza2015unbounded}, which avoids the unwinding 
 %of the transition system necessary for the first approach. We introduce a CEGAR loop to this abstraction
 %in order to make it less conservative, and develop a CEGIS feedback based on abstraction refinement to
 %increase the speed of the synthesis algorithm.
@@ -309,7 +309,7 @@ plants with polynomial dynamics.  The work extends to affine systems, but is
 limited by the capacity of the state-of-the-art SMT solvers for solving
 linear arithmetic.  Since this approach uses switching models instead of
 linear dynamics for the digital controller, it avoids problems related to
-finite precision problem, but potentially suffers from state-space
+finite precision arithmetic, but potentially suffers from state-space
 explosion.  Moreover, in \cite{DBLP:conf/emsoft/RavanbakhshS16} the same
 authors use a CEGIS-based approach for synthesizing continuous-time
 switching controllers that guarantee \emph{reach-while-stay} properties of
@@ -420,14 +420,14 @@ Appendix~\ref{sec:appendix:LTIbackground}) into
 %
 \begin{align}
 \label{eq:plant}
-x_{k+1} = A_d x_k+ B_d u_k. 
+x_{k+1} = A_d x_k+ B_d u_k
 \end{align} 
 %
 where $k \in \mathbb N$ and $x_{0}=x(0)$ is the initial state.  $A_d$ and
-$B_d$ denote the matrices that describe the discretized plant dynamics, whereas
-$A$ and $B$ the continuous plant dynamics.  Later, we will address the
-issue of variable quantization, as introduced by the ADC/DAC conversion
-blocks (Fig.~\ref{fig:digitalsystem}).
+$B_d$ denote the matrices that describe the discretized plant dynamics,
+whereas $A$ and $B$ give the continuous plant dynamics.  Later, we will
+address the issue of variable quantization, as introduced by the ADC/DAC
+conversion blocks (Fig.~\ref{fig:digitalsystem}).
 
 \begin{figure*}[htb]
 \centering
@@ -542,7 +542,7 @@ where the control action $u_k$ (notice we work with the discretized signal) is c
 u_k = r_{k} - K x_k. 
 \end{equation}
 %
-Here $K \in \mathbb{R}^{m \times n}$ is a state-feedback gain matrix, 
+Here, $K \in \mathbb{R}^{m \times n}$ is a state-feedback gain matrix, 
 and $r_{k}$ is a reference signal (again digital).   
 %
 The closed-loop model then takes the form 
@@ -578,11 +578,10 @@ stable iff all the roots of the characteristic polynomial (i.e., the
 eigenvalues of the closed-loop matrix $A_d - B_d K$) are inside the unity
 circle in the complex plane, i.e., iff their absolute values are less than
 one~\cite{astrom1997computer}.  In this paper, we express the stability
-specification $\phi_\mathit{stability}$ in terms of a check known as Jury's
-criterion~\cite{fadali}: this is an easy algebraic formula to select the
-entries of matrix $K$, so that the closed-loop dynamics are shaped as
-desired (see Appendix~\ref{sec:appendix-stability} for details).
-
+specification $\phi_\mathit{stability}$ in terms of a check known as
+\emph{Jury's criterion}~\cite{fadali}: this is an easy algebraic formula to
+select the entries of matrix $K$ so that the closed-loop dynamics are shaped
+as desired (see Appendix~\ref{sec:appendix-stability} for details).
 
 %-------------------------------
 \subsection{Safety specifications for dynamical systems}
@@ -594,14 +593,14 @@ well known task in the literature on digital control system -- but target
 safety requirements with an overall approach that is sound and automated. 
 More specifically, we require that the closed-loop system
 \eqref{eq:closedloopss} meets given safety specifications.  A safety
-specification raises a requirement on the states of the model, such that the
-feedback controller (namely the choice of the gains matrix~$K$) must ensure
-that the states never exit such requirement.  Note that a stable,
-closed-loop system is not necessarily a safe system: indeed, the state
-values may leave the safe space whilst they converge to the equilibrium,
-which is typical in the case of oscillatory dynamics.  However, a safe
-system will always be stable.  In~this work, the safety property 
-is modeled as follows:
+specification gives raise to a requirement on the states of the model, such
+that the feedback controller (namely the choice of the gains matrix~$K$)
+must ensure that the state never violates the requirement.  Note that a
+stable, closed-loop system is not necessarily a safe system: indeed, the
+state values may leave the safe part of the state space while they converge
+to the equilibrium, which is typical in the case of oscillatory dynamics. 
+However, a safe system will always be stable.  In~this work, the safety
+property is modeled as follows:
 %
 \begin{equation}
 \label{eq:safetyliteral}
@@ -716,9 +715,9 @@ In this section, we describe our technique for synthesizing safe digital
 feedback controllers using CEGIS.  For this purpose, we first provide the
 synthesizer's general architecture, followed by describing our two
 approaches to synthesizing safe controllers: the first one is a baseline
-approach that relies on a na\"ive explicit unfolding of the transition
-relation, whereas the second uses abstraction to implicitly evaluate all
-possible progressions of the system simultaneously.
+approach that relies on a na\"ive unfolding of the transition relation,
+whereas the second uses abstraction to evaluate all possible progressions of
+the system.
 
 % on an infinite time horizon.
 
@@ -731,33 +730,31 @@ possible progressions of the system simultaneously.
 \subsection{General architecture of the program synthesizer}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \label{synthesizer-general}
+
 The input specification provided to the program synthesizer is of the form
-%$\exists P .  \forall \vec{a}.  \sigma(\vec{a}, \vec{P})$ 
-$\exists P .\,  \forall a.\,  \sigma(a, P)$, 
-where $P$ ranges over functions, 
-$a$ ranges over ground terms, 
-and $\sigma$ is a quantifier-free formula.  
-We interpret the ground terms over some finite domain~$\mathcal{D}$.
+$\exists P .\, \forall a.\, \sigma(a, P)$, where $P$ ranges over functions,
+$a$ ranges over ground terms, and $\sigma$ is a quantifier-free formula. 
+We~interpret the ground terms over some finite domain~$\mathcal{D}$.
 %
-The design of our synthesizer consists of two phases, an inductive
-synthesis phase and a validation phase, which interact via a finite
-set of test vectors {\sc inputs} that is updated incrementally.  Given
-the aforementioned specification $\sigma$, the inductive synthesis
-procedure tries to find an existential witness $P$ satisfying
-the specification $\sigma(a, P)$ for all $a$ in {\sc
-  inputs} (as opposed to all $a \in \mathcal{D}$).
+The design of our synthesizer consists of two phases, an inductive synthesis
+phase and a validation phase, which interact via a finite set of test
+vectors {\sc inputs} that is updated incrementally.  Given the
+aforementioned specification $\sigma$, the inductive synthesis procedure
+tries to find an existential witness $P$ satisfying the specification
+$\sigma(a, P)$ for all $a$ in {\sc inputs} (as opposed to all $a \in
+\mathcal{D}$).
 %
-If the synthesis phase succeeds in finding a witness~$P$, this
-witness is a candidate solution to the full synthesis formula.  We
-pass this candidate solution to the validation phase, which checks
-whether it is a full solution (i.e., $P$ satisfies the
-specification $\sigma(a, P)$ for all
-$a\in\mathcal{D}$).  If this is the case, then the algorithm
-terminates.  Otherwise, additional information is provided to the
-inductive synthesis phase in the form of a new counterexample that is
-added to the {\sc inputs} set and the loop iterates again.
-More details about the general architecture of the synthesizer can
-be found in~\cite{DBLP:conf/lpar/DavidKL15}.
+If the synthesis phase succeeds in finding a witness~$P$, this witness is a
+candidate solution to the full synthesis formula.  We pass this candidate
+solution to the validation phase, which checks whether it is a full solution
+(i.e., $P$ satisfies the specification $\sigma(a, P)$ for all
+$a\in\mathcal{D}$).  If this is the case, then the algorithm terminates. 
+Otherwise, additional information is provided to the inductive synthesis
+phase in the form of a new counterexample that is added to the {\sc inputs}
+set and the loop iterates again.  More details about the general
+architecture of the synthesizer can be found
+in~\cite{DBLP:conf/lpar/DavidKL15}.
+%
 %% It is worth noting that each iteration of the loop adds a new input to
 %% the finite set $\text{\sc inputs}$ that is used for synthesis.  Given
 %% that the full set of inputs $\mathcal{D}$ is finite, this means that
@@ -854,9 +851,9 @@ denotes the specification $\sigma$.
    \&
    complexnode/.pic={ 
      \coordinate (aux);
-   \node (bmc) at ([xshift=-2cm]aux.center) {\sf BMC-based \\Verifier};
-   \node (fp)  at ([xshift=0cm]aux.center) {\sf Fixed-point \\ Arithmetic\\Verifier};
-   \node (sv)  at ([xshift=2cm]aux.center) {\sf Completeness\\Verifier};
+   \node (bmc) at ([xshift=-2cm]aux.center) {\sf BMC-based \\ \sf Verifier};
+   \node (fp)  at ([xshift=0cm]aux.center) {\sf Fixed-point \\ \sf Arithmetic\\ \sf Verifier};
+   \node (sv)  at ([xshift=2cm]aux.center) {\sf Completeness\\ \sf Verifier};
    %\node (cv)  at ([xshift=3.1cm]aux.center) {\sf Sampling\\Verifier};
    }   
     \\
@@ -893,14 +890,14 @@ denotes the specification $\sigma$.
 
 %\subsubsection{Controller synthesis}
 
-An overview of the controller synthesis is given in
-Fig.~\ref{fig:CEGIS-precision-increment}.  One important observation is
-that, for this approach, we verify and synthesize a controller over $k$ time
-steps.  We~then compute a completeness threshold, $\overline{k}$, for this
-controller, and verify correctness for $\overline{k}$ time steps. 
-Essentially, $\overline{k}$ is the number of iterations required to
-sufficiently unwind the closed-loop state-space system such that the
-boundaries are not violated for any $k{>}\overline{k}$.
+An overview of the algorithm for controller synthesis is given in
+Fig.~\ref{fig:CEGIS-precision-increment}.  One important observation is that
+we verify and synthesize a controller over $k$ time steps.  We~then compute
+a completeness threshold, $\overline{k}$, for this controller, and verify
+correctness for $\overline{k}$ time steps.  Essentially, $\overline{k}$ is
+the number of iterations required to sufficiently unwind the closed-loop
+state-space system such that the boundaries are not violated for any
+$k{>}\overline{k}$.
 
 \begin{lemma} There exists a $\overline{k}$ such that it is
 sufficient to unwind the closed-loop state-space system up to $\overline{k}$
@@ -908,22 +905,22 @@ in order to ensure that $\phi_\mathit{safety}$ holds.
 \end{lemma}
 
 \begin{proof}
+%
 A stable control system is known to have converging dynamics.  Assume the
 closed-loop matrix eigenvalues are not repeated (which is sensible to do,
 since we select them).  The distance of the trajectory from the reference
 point (origin) decreases over time within subspaces related to real-valued
-eigenvalues; however, this in general not the case when dealing with complex
-eigenvalues.  Consider the closed-loop matrix, which updates the states
-every discrete time step, and select the eigenvalue $\vartheta$ with
-smallest (non-trivial) imaginary value.  At every consecutive time steps
-$kT_s, (k+1)T_s$, the dynamics projected on the corresponding eigenspace
-rotate of $\vartheta T_s$ radiants.  Thus, taking $k{\leq}\overline{k}$ as the
-ceiling of $\frac{2\pi}{\vartheta T_s}$, after $k{\leq}\overline{k}$ steps
-we have completed a full rotation, which results in a point closer to the
-origin, and it is the completeness threshold.
+eigenvalues; however, this is not the case in general when dealing with
+complex eigenvalues.  Consider the closed-loop matrix that updates the
+states in every discrete time step, and select the eigenvalue $\vartheta$
+with the smallest (non-trivial) imaginary value.  At every consecutive time
+step $kT_s, (k+1)T_s$, the dynamics projected on the corresponding
+eigenspace rotate $\vartheta T_s$ radiants.  Thus, taking
+$k{\leq}\overline{k}$ as the ceiling of $\frac{2\pi}{\vartheta T_s}$, after
+$k{\leq}\overline{k}$ steps we have completed a full rotation, which results
+in a point closer to the origin. This is the completeness threshold. 
+%
 \end{proof}
-
-
 
 \medskip
 
@@ -1533,10 +1530,10 @@ instance ``eventually always reaches a certain safe set''.
 
 We have presented two automated approaches to synthesize digital
 state-feedback controllers that ensure both stability and safety over the
-state-space representation.  The first approach relies on explicit unfolding
-of the closed-loop model dynamics up to a completeness threshold, whilst the
-second one applies abstraction refinement and acceleration to increase speed
-whilst retaining soundness.
+state-space representation.  The first approach relies on unfolding of the
+closed-loop model dynamics up to a completeness threshold, whilst the second
+one applies abstraction refinement and acceleration to increase speed whilst
+retaining soundness.
 %
 Both approaches are novel within the control literature: they give a fully
 automated synthesis method that is algorithmically and numerically sound,
