@@ -151,15 +151,15 @@ safety requirements.
 Linear Time Invariant (LTI) models represent a broad class of dynamical
 systems with significant impact in numerous application areas such as in life
 sciences, robotics, and engineering~\cite{astrom1997computer,Franklin15}. 
-Synthesis of controllers for LTI models is broadly investigated, however the
+The synthesis of controllers for LTI models is well understood, however the
 use of digital control architectures adds new challenges due to the effects
 of finite-precision arithmetic, time discretization, and quantization noise,
 which are typically introduced by Analogue-to-Digital (ADC) and
 Digital-to-Analogue (DAC) conversion.  While research on digital control is
 well developed~\cite{astrom1997computer}, automated and sound control
 synthesis is challenging, particularly when the synthesis objective goes
-beyond classical stability.  There are recent methods for verifying more
-general reachability properties of a given controller~\cite{FLD+11,Fre05}. 
+beyond classical stability.  There are recent methods for verifying
+reachability properties of a given controller~\cite{FLD+11,Fre05}. 
 However, these methods have not been generalized to control synthesis. 
 We~remark that a synthesis algorithm that guarantees satability does not
 ensure safety: the system might transitively visit an unsafe state that
@@ -187,7 +187,7 @@ Synthesis (CEGIS)~\cite{sketch}.  We prove their soundness by quantifying
 errors caused digitalization and quantization effects that arise when
 time/value-discrete digital controller interacts with the continuous plant.
 
-{\em The first approach} uses a {\em na\"ive} technique that starts by
+{\em The first approach} uses a na\"ive technique that starts by
 devising a digital controller that stabilizes the system while remaining
 safe for a pre-selected time horizon and a single initial state; then, it
 verifies unbounded safety by unfolding the dynamics of the system,
@@ -195,12 +195,12 @@ considering the full hyper-cube of initial states, and checking a {\em
 completeness threshold}, i.e., the number of iterations required to
 sufficiently unwind the closed-loop state-space system such that the
 boundaries are not violated for any larger number of iterations.  As~it
-requires explicit unfolding up to the completeness threshold, this approach
+requires unfolding up to the completeness threshold, this approach
 is computationally expensive.
 
-Instead of explicitly unfolding the dynamics, {\em the second approach}
+Instead of unfolding the dynamics, {\em the second approach}
 employs {\em abstract acceleration}~\cite{cattaruzza2015unbounded} to
-implicitly evaluate all possible progressions of the system simultaneously. 
+evaluate all possible progressions of the system simultaneously. 
 Additionally, the second approach uses {\em abstraction refinement},
 enabling us to always start with a very simple description regardless of the
 complexity of the overall dynamics, and only expand to more complex models
@@ -228,7 +228,7 @@ based on the unfolding of the dynamics.
   controller synthesis rely on transfer function representations, which are
   insufficient to prove safety requirements.
 %
-\item We give two novel algorithms: the first, naive one, relies on
+\item We give two novel algorithms: the first, na\"ive one, relies on
   an unfolding of the dynamics up to a completeness threshold, while the
   second one is abstraction-based and leverages abstraction refinement and
   acceleration to improve scalability while retaining soundness.  Both
@@ -716,7 +716,7 @@ In this section, we describe our technique for synthesizing safe digital
 feedback controllers using CEGIS.  For this purpose, we first provide the
 synthesizer's general architecture, followed by describing our two
 approaches to synthesizing safe controllers: the first one is a baseline
-approach that relies on a naive explicit unfolding of the transition
+approach that relies on a na\"ive explicit unfolding of the transition
 relation, whereas the second uses abstraction to implicitly evaluate all
 possible progressions of the system simultaneously.
 
@@ -1090,7 +1090,7 @@ solution by all verification stages.
 %\begin{itemize}
 %\item[1.]
 
-  The naive approach described in Sec.~\ref{sec:CEGIS-precision-incrementation}
+  The na\"ive approach described in Sec.~\ref{sec:CEGIS-precision-incrementation}
   %uses a multi-staged verification phase and performs solution generalization based on
 %the plant precision, the number of loop unrollings, 
   %and the sampling rate. Essentially, it
@@ -1113,7 +1113,7 @@ infinite space over an infinite time horizon.
 %% infinite set of states, which is undecidable.
 
 
-%% Our naive approach
+%% Our na\"ive approach
 %% creates an abstraction of the system by establishing bounds on the
 %% error between such a system and a discrete-time/continuous-space
 %% model.  This model is still however, quite complex, hard to verify,
@@ -1488,7 +1488,7 @@ short enough to be of practical use to control engineers, and thus affirm
 RQ1.
 
 There are several cases for which the system may fail to find a controller. 
-For the naive approach, the completeness threshold may be too large, thus
+For the na\"ive approach, the completeness threshold may be too large, thus
 causing a timeout.  On the other hand, the abstraction-based approach may
 require a very precise abstraction, resulting in too many refinements and,
 consequently, timeout.  Yet another source of incompleteness is the
