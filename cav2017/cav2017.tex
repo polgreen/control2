@@ -968,20 +968,20 @@ performed by subsequent {\sc verify} stages.
 \Function{$\mathit{safetyCheck}()$}{}
 \State assert($ \underline{u}  \leq u \leq \overline{u}$)
  \State set $x_0$ to be a vertex state, e.g., $[\underline{x_0},\underline{x_0}]$	
-\For {($c=0; c < 2^\mathit{Num\_States}; c++$)}
+\For {($c=0;~c < 2^\mathit{Num\_States};~c\mbox{++}$)}
   %\State assert($ \underline{x_0}  \leq x_0 \leq \overline{x_0}$)
-	\While{$i=0; i< k; i++$}
+	\For{($i=0;~i< k;~i\mbox{++}$)}
 		%\State $u = (\langle I_p,F_p\rangle)((\langle I_c,F_c\rangle)K * (\langle I_c,F_c\rangle) x)$
 		\State $u = (plant\_typet)((controller\_typet)K * (controller\_typet) x)$
 		\State $x = A * x + B * u$
 		\State assert($\underline{x} \leq x \leq \overline{x}$ )
-  	\EndWhile
+  	\EndFor
   	\State set $x_0$ to be a new vertex state
   	\EndFor
   %\State Return $K$
 \EndFunction
 \end{algorithmic}
-\label{alg:safetycheck}
+\caption{Safety check\label{alg:safetycheck}}
 \end{algorithm}
 
 \item The first {\sc verify} stage, {\sc safety}, checks that candidate
