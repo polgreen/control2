@@ -913,12 +913,12 @@ point (origin) decreases over time within subspaces related to real-valued
 eigenvalues; however, this is not the case in general when dealing with
 complex eigenvalues.  Consider the closed-loop matrix that updates the
 states in every discrete time step, and select the eigenvalue $\vartheta$
-with the smallest (non-trivial) imaginary value.  At every consecutive time
-step $kT_s, (k+1)T_s$, the dynamics projected on the corresponding
-eigenspace rotate $\vartheta T_s$ radiants.  Thus, taking
+with the smallest (non-trivial) imaginary value.  Between every pair of
+consecutive time steps $k\,T_s$ and $(k+1)\,T_s$, the dynamics projected on
+the corresponding eigenspace rotate $\vartheta T_s$ radiants.  Thus, taking
 $k{\leq}\overline{k}$ as the ceiling of $\frac{2\pi}{\vartheta T_s}$, after
 $k{\leq}\overline{k}$ steps we have completed a full rotation, which results
-in a point closer to the origin. This is the completeness threshold. 
+in a point closer to the origin.  This is the completeness threshold.
 %
 \end{proof}
 
@@ -944,7 +944,7 @@ unfolding the transition system $k$ steps and by picking a controller $K$
 and a single initial state, such that the states at each step do not violate
 the safety criteria.  That is, we ask the bounded model checker if there
 exists a $K$ that is safe for at least one $x_0$ in our set of all possible
-initial states.  This is sound if the current $k$ exceeds the completeness
+initial states.  This is sound if the current $k$ is below the completeness
 threshold.  We~also assume some precision $\langle I_p,F_p\rangle$ for the
 plant and a sampling rate.  The checks that these assumptions hold are
 performed by subsequent {\sc verify} stages.
