@@ -187,16 +187,16 @@ Synthesis (CEGIS)~\cite{sketch}.  We prove their soundness by quantifying
 errors caused by digitalization and quantization effects that arise when
 time/value-discrete digital controller interacts with the continuous plant.
 
-{\em The first approach} uses a na\"ive technique that starts by
-devising a digital controller that stabilizes the system while remaining
-safe for a pre-selected time horizon and a single initial state; then, it
-verifies unbounded safety by unfolding the dynamics of the system,
-considering the full hyper-cube of initial states, and checking a {\em
-completeness threshold}, i.e., the number of iterations required to
-sufficiently unwind the closed-loop state-space system such that the
-boundaries are not violated for any larger number of iterations.  As~it
-requires unfolding up to the completeness threshold, this approach
-is computationally expensive.
+{\em The first approach} uses a na\"ive technique that starts by devising a
+digital controller that stabilizes the system while remaining safe for a
+pre-selected time horizon and a single initial state; then, it verifies
+unbounded safety by unfolding the dynamics of the system, considering the
+full hyper-cube of initial states, and checking a {\em completeness
+threshold}~\cite{DBLP:conf/vmcai/KroeningS03}, i.e., the number of
+iterations required to sufficiently unwind the closed-loop state-space
+system such that the boundaries are not violated for any larger number of
+iterations.  As~it requires unfolding up to the completeness threshold, this
+approach is computationally expensive.
 
 Instead of unfolding the dynamics, {\em the second approach}
 employs {\em abstract acceleration}~\cite{cattaruzza2015unbounded} to
@@ -893,11 +893,11 @@ denotes the specification $\sigma$.
 An overview of the algorithm for controller synthesis is given in
 Fig.~\ref{fig:CEGIS-precision-increment}.  One important observation is that
 we verify and synthesize a controller over $k$ time steps.  We~then compute
-a completeness threshold, $\overline{k}$, for this controller, and verify
-correctness for $\overline{k}$ time steps.  Essentially, $\overline{k}$ is
-the number of iterations required to sufficiently unwind the closed-loop
-state-space system such that the boundaries are not violated for any
-$k{>}\overline{k}$.
+a completeness threshold~\cite{DBLP:conf/vmcai/KroeningS03}, $\overline{k}$,
+for this controller, and verify correctness for $\overline{k}$ time steps. 
+Essentially, $\overline{k}$ is the number of iterations required to
+sufficiently unwind the closed-loop state-space system such that the
+boundaries are not violated for any $k{>}\overline{k}$.
 
 \begin{lemma} There exists a $\overline{k}$ such that it is
 sufficient to unwind the closed-loop state-space system up to $\overline{k}$
@@ -1001,8 +1001,8 @@ operations performed by the previous stage.
 \item The third {\sc verify} stage, {\sc complete}, checks that the current
 $k$ is large enough to ensure safety for any $k'{>}k$.  Here, we compute the
 completeness threshold $\overline{k}$ for the current candidate $K$ and
-check that $k{\leq}\overline{k}$.  This is done according to the argument given above
-and illustrated in Fig.~\ref{fig:ct}.
+check that $k{\leq}\overline{k}$.  This is done according to the argument
+given above and illustrated in Fig.~\ref{fig:ct}.
 
 
 \begin{figure*}[t]
@@ -1531,7 +1531,7 @@ instance ``eventually always reaches a certain safe set''.
 We have presented two automated approaches to synthesize digital
 state-feedback controllers that ensure both stability and safety over the
 state-space representation.  The first approach relies on unfolding of the
-closed-loop model dynamics up to a completeness threshold, whilst the second
+closed-loop model dynamics up to a completeness threshold, while the second
 one applies abstraction refinement and acceleration to increase speed whilst
 retaining soundness.
 %
