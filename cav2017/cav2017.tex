@@ -131,16 +131,16 @@ verification step fails, we refine the controller by generalizing the
 counterexample.  We synthesize stable and safe controllers for intricate
 physical plant models from the digital control literature.
 %
-\keywords{
-State-space dynamical models of physical systems; 
-digital controllers; 
-analogue-to-digital converters; 
-time sampling; 
-quantization; 
-fixed-point arithmetic; 
-CEGIS; 
-safety requirements. 
-}
+%\keywords{
+%State-space dynamical models of physical systems; 
+%digital controllers; 
+%analogue-to-digital converters; 
+%time sampling; 
+%quantization; 
+%fixed-point arithmetic; 
+%CEGIS; 
+%safety requirements. 
+%}
 \end{abstract}
 
 
@@ -216,7 +216,7 @@ run-time of our benchmarks by a factor of seven over the first approach
 based on the unfolding of the dynamics.
 
 \todo{Clarify challenges: FWL (rounding, truncation), quantisation (ADC, DAC).}
-
+%
 \todo{Discuss numerical (HSCC'17) vs. algorithmical soundness (CAV'17).}
 
 \subsection*{Contributions} 
@@ -413,8 +413,7 @@ information (i.e., we have access to all the model variables):
 where $t \in \mathbb R_0^+$, where $A$ and $B$ are matrices that fully
 specify the continuous plant, and with initial states set as $x(0)$.  While
 we ideally would like to work on the continuous-time plant, in this work
-Eq.~\eqref{eq:ode} is soundly discretized in time (as shown in
-Appendix~\ref{sec:appendix:LTIbackground}) into
+Eq.~\eqref{eq:ode} is soundly discretized in time~\cite{fadali} into
 %
 %\textcolor{red}{What is subscript ``d''?}
 %
@@ -581,7 +580,7 @@ one~\cite{astrom1997computer}.  In this paper, we express the stability
 specification $\phi_\mathit{stability}$ in terms of a check known as
 \emph{Jury's criterion}~\cite{fadali}: this is an easy algebraic formula to
 select the entries of matrix $K$ so that the closed-loop dynamics are shaped
-as desired (see Appendix~\ref{sec:appendix-stability} for details).
+as desired.
 
 %-------------------------------
 \subsection{Safety specifications for dynamical systems}
@@ -1006,11 +1005,6 @@ given above and illustrated in Fig.~\ref{fig:ct}.
 
 \end{enumerate}
 
-\todo{EP: I've changed $\leq$ to $\geq$. Also changed: 
-"take $k{\leq}\overline{k}$ as the ceiling of $\frac{2\pi}{\vartheta T_s}$" to 
-"take $\overline{k}$ as the ceiling of $\frac{2\pi}{\vartheta T_s}$"; is this right ?
-\textcolor{gray}{check whether the above/below CT story is right. }}
-
 \begin{figure*}[t]
 \centering
 \includegraphics[width=0.6\textwidth]{ct.eps}
@@ -1088,7 +1082,7 @@ solution by all verification stages.
 \label{sec:CEGIS-abstraction-refinement}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-%\todo{Refer to the SAS paper in this section.}
+\todo{Refer to the SAS paper in this section.}
 
 %\begin{itemize}
 %\item[1.]
@@ -1297,8 +1291,7 @@ $z^n+\sum_{i=1}^n(a_i-k_i)z^{n-i}=\prod_{i=1}^n (z-\lambda_i) : |\lambda_i|<1 \w
 
 \subsubsection{Illustrative Example}
 %
-Let us consider the Helicopter example in Table
-\ref{table:State-space-benchmarks} with discretized dynamics
+Let us consider the following example with discretized dynamics
 %
 $$A_d = \left[\begin{array}{ccc}2.6207&-1.1793&0.65705\\2&0&0\\0&0.5&0\end{array}\right],
 \quad B_d = \left [\begin{array}{c}8\\0\\0\end{array}\right]$$
@@ -1395,16 +1388,15 @@ and allows relative motion between both parts.
 The \textit{Computer Tape Driver} plant describes a system to read and write data 
 on a storage device in the computer.
 
-Section~\ref{sec:BenchmarksforStateSpace} in the appendix summarizes all our
-benchmarks, which are SISO models (Section~\ref{sec:preliminaries}).  The
+%Section~\ref{sec:BenchmarksforStateSpace} in the appendix summarizes all our
+Our benchmarks are SISO models (Section~\ref{sec:preliminaries}).  The
 Inverted Pendulum appears to be a two output system, but it was treated as
 two SISO systems during the experiments.  For the sake of simplicity all the
 state measurements are assumed available.  In practice, state estimators
 should be designed in order to obtain an estimate of the states from the
 single output.  Further work can include state observers synthesis.
 
-All benchmarks were discretized with different sample times using 
-the approach described in Appendix~\ref{sec:appendix:LTIbackground}. 
+All benchmarks were discretized with different sample times~\cite{fadali}. 
 All experiments were performed considering $\underline{x_{i}}=-1$ and 
 $\overline{x_{i}}=1$ and the inputs $u_{k}=0, \forall k>0$.
 We have conducted the experimental evaluation on a 12-core 2.40\,GHz Intel
@@ -1484,7 +1476,7 @@ coverage and together solve all benchmarks in the set.
 \todo{Discuss the number of abstraction refinements (inner loop, not the outer one)
   for the 2nd approach?
   Although, if it's always one, I'm not sure how interesting it is.. }
-
+\vskip -0.5cm
 The median run-time for our benchmark set is 9.4\,s.  Overall, the average
 synthesis time amounts to approximately 15.6\,s.  We consider these times
 short enough to be of practical use to control engineers, and thus affirm
@@ -1555,17 +1547,17 @@ continuous-time case, to models with output-based control architectures
 (hinging on the use of observers), and to considering performance
 requirements (alongside safety) in the synthesis of digital controllers.
 
-\newpage
+%\newpage
 
 \bibliographystyle{abbrv}
 \bibliography{paper}  
 %\begin{thebibliography}{4}
 %\end{thebibliography}
 
-\newpage
+
 \appendix
 
-\todo{Integrate Appendix in the actual paper.}
+
 
 %-------------------------------
 \section{Stability of closed-loop models}
@@ -1575,77 +1567,77 @@ requirements (alongside safety) in the synthesis of digital controllers.
 %\addtodo{[Here discuss Jury criterium for DISCRETE-TIME models - a simplified version of the first part of what is now in Section \ref{sec:cof_verification} (with no quantization noises yet).]}  
 
 %-------------------------------
-\subsection{Encoding of Jury's criterion}
+%\subsection{Encoding of Jury's criterion}
 %-------------------------------
 
-For a closed-loop system as~\eqref{eq:closedloopss}, 
-the characteristic polynomial $P(z)$ should be computed as follows:
+%For a closed-loop system as~\eqref{eq:closedloopss}, 
+%the characteristic polynomial $P(z)$ should be computed as follows:
 %
-\begin{equation}
-P(z)= \det( z I_{n} - A_d + B_d K ) \,,
-\end{equation}
+%\begin{equation}
+%P(z)= \det( z I_{n} - A_d + B_d K ) \,,
+%\end{equation}
 %
-where $I_{n}$ is the $n$-th order identity matrix. 
+%where $I_{n}$ is the $n$-th order identity matrix. 
 
-Jury's criterion provides necessary and sufficient conditions for the
-eigenvalues to be within the unit circle and, consequently, for the system
-is stable~\cite{fadali}.  Given a polynomial $P(z)$ of the form
+%Jury's criterion provides necessary and sufficient conditions for the
+%eigenvalues to be within the unit circle and, consequently, for the system
+%is stable~\cite{fadali}.  Given a polynomial $P(z)$ of the form
 %
-$$
-P(z) = a_{0}z^{N} + a_{1}z^{N-1} + ... a_{N-1}z + a_{N} = 0, \;\; a_{0}\neq 0 \,,
-$$
+%$$
+%P(z) = a_{0}z^{N} + a_{1}z^{N-1} + ... a_{N-1}z + a_{N} = 0, \;\; a_{0}\neq 0 \,,
+%$$
 %
-Jury's criterion explores solely the coefficients
-$a_{0},a_{1},\ldots,a_{N-1}$ of $P(z)$ for checking stability, which we
-capture as property $\phi_\mathit{stability}$, as detailed below.
+%Jury's criterion explores solely the coefficients
+%$a_{0},a_{1},\ldots,a_{N-1}$ of $P(z)$ for checking stability, which we
+%capture as property $\phi_\mathit{stability}$, as detailed below.
 
-This study limits itself to explain the encoding of Jury's criterion for
-formal synthesis.  For the stability test procedure, the following matrix
-$M=[m_{ij}]_{(2N-2)\times N}$ is built from the coefficients of $P(z)$:
+%This study limits itself to explain the encoding of Jury's criterion for
+%formal synthesis.  For the stability test procedure, the following matrix
+%$M=[m_{ij}]_{(2N-2)\times N}$ is built from the coefficients of $P(z)$:
 %
-$$
-M=\left[
-\begin{matrix}
-  V^{(0)} \\
-  V^{(1)} \\
-  \vdots \\
-  V^{(N-2)}
- \end{matrix}
-\right]\mbox{,}
-$$
-\noindent where $V^{(k)}=[v^{(k)}_{ij}]_{2\times N}$ is such that
-$$
-v^{(0)}_{ij}=\begin{cases} 
-a_{j-1}, & \mbox{if } i=1 \\   v^{(0)}_{(1)(N-j+1)}, & \mbox{if } i=2 
-\end{cases}\mbox{, and} 
-$$
-$$
-v^{(k)}_{ij}=\begin{cases} 
-0, & \mbox{if } j>n-k\\
-v^{(k-1)}_{1j}-v^{(k-1)}_{2j}\cdot\frac{v^{(k-1)}_{11}}{v^{(k-1)}_{21}}, & \mbox{if } j\leq n-k  \mbox{ and } i=1 \\
-v^{(k)}_{(1)(N-j+1)}, & \mbox{if } j\leq n-k \mbox{ and } i=2 \\
-\end{cases} \mbox{,}
-$$
-\noindent where $k\in\mathbb{Z}$, such that $0<k<N-2$. $P(z)$ is the 
-characteristic polynomial of a stable system if and only if the following 
-four propositions hold:
-\begin{itemize}
-\item $R_{1}$: $P(1)>0$;
-\item $R_{2}$: $(-1)^{N}P(-1)>0$;
-\item $R_{3}$: $\vert{a_{0}}\vert <a_{N}$;
-\item $R_{4}$: $m_{11}>0\iff (m_{31}>0)\wedge (m_{51}>0)\wedge \ldots \wedge (m_{(2N-3)(1)}>0)$.
-\end{itemize}
+%$$
+%M=\left[
+%\begin{matrix}
+%  V^{(0)} \\
+%  V^{(1)} \\
+%  \vdots \\
+%  V^{(N-2)}
+% \end{matrix}
+%\right]\mbox{,}
+%$$
+%\noindent where $V^{(k)}=[v^{(k)}_{ij}]_{2\times N}$ is such that
+%$$
+%v^{(0)}_{ij}=\begin{cases} 
+%a_{j-1}, & \mbox{if } i=1 \\   v^{(0)}_{(1)(N-j+1)}, & \mbox{if } i=2 
+%\end{cases}\mbox{, and} 
+%$$
+%$$
+%v^{(k)}_{ij}=\begin{cases} 
+%0, & \mbox{if } j>n-k\\
+%v^{(k-1)}_{1j}-v^{(k-1)}_{2j}\cdot\frac{v^{(k-1)}_{11}}{v^{(k-1)}_{21}}, & \mbox{if } j\leq n-k  \mbox{ and } i=1 \\
+%v^{(k)}_{(1)(N-j+1)}, & \mbox{if } j\leq n-k \mbox{ and } i=2 \\
+%\end{cases} \mbox{,}
+%$$
+%\noindent where $k\in\mathbb{Z}$, such that $0<k<N-2$. $P(z)$ is the 
+%characteristic polynomial of a stable system if and only if the following 
+%four propositions hold:
+%\begin{itemize}
+%\item $R_{1}$: $P(1)>0$;
+%\item $R_{2}$: $(-1)^{N}P(-1)>0$;
+%\item $R_{3}$: $\vert{a_{0}}\vert <a_{N}$;
+%\item $R_{4}$: $m_{11}>0\iff (m_{31}>0)\wedge (m_{51}>0)\wedge \ldots \wedge (m_{(2N-3)(1)}>0)$.
+%\end{itemize}
 %
-The stability property $\phi_\mathit{stability}$ is encoded as the following formula:
-$$
-\phi_\mathit{stability}\iff \ (R_{1} \wedge R_{2} \wedge R_{3} \wedge R_{4}).
-$$
+%The stability property $\phi_\mathit{stability}$ is encoded as the following formula:
+%$$
+%\phi_\mathit{stability}\iff \ (R_{1} \wedge R_{2} \wedge R_{3} \wedge R_{4}).
+%$$
 
 %-------------------------------
 \subsection{Stability of Closed-loop Systems with Fixed-point Controller Error}
 %-------------------------------
 
-The proof above relies on the fact that the relationship between states and
+The proof for Jury's criteria~\cite{fadali} relies on the fact that the relationship between states and
 next states is defined by $x_{k+1} = (A_d - B_dK) \cdot x_k$, all computed
 at infinite precision.  When we employ a FWL digital controller, the
 operation becomes:
@@ -1665,7 +1657,7 @@ follows:
 x_{1} &= (A_d  - B_dK)x_0 + B_dK\delta \\
 x_{2} &= (A_d  - B_dK)((A_d  - B_dK)x_0 + B_dK\delta ) + B_dK\delta \\
       &=(A_d  - B_dK)^2x_0 + (A_d  - B_dK)B_dK\delta + B_dK\delta \\
-x_{3}  &=(A_d  - B_dK)^3x_0 + (A_d  - B_dK)^2B_dK\delta + (A_d  - B_dK)B_dK\delta + B_dK\delta\\
+%x_{3}  &=(A_d  - B_dK)^3x_0 + (A_d  - B_dK)^2B_dK\delta + (A_d  - B_dK)B_dK\delta + B_dK\delta\\
 x_{n} &= (A_d  - B_dK)^nx_0 + (A_d  - B_dK)^{n-1}B_dK\delta + ... + (A_d  - B_dK)^1B_dK \delta + B_dK\delta \\
   &= (A_d - B_dK)^nx_0 + \sum_{i=0}^{i=n-1}(A_d - B_dK)^iB_dk\delta
 \end{align*}
@@ -1703,49 +1695,49 @@ make it asymptomatically stable.
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{Time discretization of continuous-space dynamics}
+%\subsection{Time discretization of continuous-space dynamics}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-A dynamical system is a system in which a function describes the progression
-of a state over time.  In a continuous domain with linear dynamics, it is
-described by a first-order Ordinary Differential Equation (ODE).
 %
-\begin{equation}
-\dot{x}(t)=Ax(t)+Bu(t) \,.
-\label{eq:dynamical}
-\end{equation}
+%A dynamical system is a system in which a function describes the progression
+%of a state over time.  In a continuous domain with linear dynamics, it is
+%described by a first-order Ordinary Differential Equation (ODE).
+%
+%\begin{equation}
+%\dot{x}(t)=Ax(t)+Bu(t) \,.
+%\label{eq:dynamical}
+%\end{equation}
 %Furthermore, a control system may have a derived output that is a linear combination of its states and inputs, 
 %which may restrict the observability of the state-space from the output space.
 %\begin{equation}
 %\vec{y}(t)=\vec{C}\vec{x}(t)+\vec{D}\vec{u}(t).
 %\end{equation}
-
-Discretization of an continuous dynamical system turns the ODE into a
-difference equation, assuming zero-order hold for the input $u$,
+%
+%Discretization of an continuous dynamical system turns the ODE into a
+%difference equation, assuming zero-order hold for the input $u$,
 %
 %and continuous integration for the noise $\vec{w}$, 
-to
-\begin{align}
-\label{eq:discretization}
-x_{k+1} &= A_d x_k+B_d u_k \,,
+%to
+%\begin{align}
+%\label{eq:discretization}
+%x_{k+1} &= A_d x_k+B_d u_k \,,
 %\\y_k &= \vec{C}_d \vec{x}_ k + \vec{D}_d \vec{u}_ k. 
-\end{align}
+%\end{align}
 %with covariance for $\vec{w}_k \sim \mathcal{N}(0,Q_d)$,
-where
-\begin{align}
-\label{eq:discretize}
-A_d &= e^{A T_s} = \mathcal{L}^{-1} { ( s I - A )^{-1} }_{t = T_s}\\
-B_d &= \int_{0}^{T_s} e^{A t} dt\ B = A^{-1} ( A_d - I ) B \,,
+%where
+%\begin{align}
+%\label{eq:discretize}
+%A_d &= e^{A T_s} = \mathcal{L}^{-1} { ( s I - A )^{-1} }_{t = T_s}\\
+%B_d &= \int_{0}^{T_s} e^{A t} dt\ B = A^{-1} ( A_d - I ) B \,,
 %\\
 %\vec{C}_d &= \vec{C},\\
 %\vec{D}_d &= \vec{D},\\
 %Q_d &= \int_{0}^{T_s} e^{\vec{A} t} Q e^{\vec{A}^T t} dt.
-\end{align}
+%\end{align}
 %
-and $T_s$ is the sample time. Then
-$x(kT_s)=x_k 
+%and $T_s$ is the sample time. Then
+%$x(kT_s)=x_k 
 %\wedge y(kT_s) = y_k, 
-\forall k \in \mathbb N$.
+%\forall k \in \mathbb N$.
 %\end{align*}
 %Let $g_d(k)=\mathcal{G}(t,g(t),T)$ be a function that performs the discretization described above, where $g(t)$
 %represents the continuous dynamics and $g_d(k)$ the corresponding discrete dynamics. 
@@ -1754,15 +1746,15 @@ $x(kT_s)=x_k
 %$$G_d(z)=G(z)|_{z=e^{sT}} : g_d(k)=\mathcal{G}(t,g(t),T) \wedge T < \frac{1}{.5f_s},$$
 %where $.5f_s$ is the Nyquist frequency of $g(t)$. This last restriction is introduced to avoid the effects of aliasing
 %which could cause ``phantom poles'' to appear otherwise. 
-The eigenvalues of $A_d$ 
+%The eigenvalues of $A_d$ 
 %corresponding to the poles of $G_d(z)$, 
-are related to those of $A$:  
-% corresponding to the poles of $G(s)$ are similarly related.
+%are related to those of $A$:  
+%corresponding to the poles of $G(s)$ are similarly related.
 %
-$\hat{\lambda}_i=e^{-\lambda_iT_s}$, where $\hat{\lambda}_i \in \sigma(A_d)
-\wedge \lambda_i \in \sigma(A)$ where $\sigma(\cdot)$ is the spectrum of a
-matrix.
-
+%$\hat{\lambda}_i=e^{-\lambda_iT_s}$, where $\hat{\lambda}_i \in \sigma(A_d)
+%\wedge \lambda_i \in \sigma(A)$ where $\sigma(\cdot)$ is the spectrum of a
+%matrix.
+%
 %The following remark is worth mentioning regarding the above.
 %\begin{remark}
 %The witnessed maximum amplitude of the discrete signals $x_k,y_k$ may be smaller to that of $x(t),y(t)$ due to synchronism at fraction-frequency sampling.
@@ -1885,6 +1877,7 @@ resulting dynamics are
 u_k&=-K{x}_{k}+{{\nu}_1}_k \,,
 \end{align}
 %
+
 which result in the following closed-loop dynamics:
 %
 \begin{align}
@@ -2025,25 +2018,25 @@ which result in the following closed-loop dynamics:
 % \end{align}
 %
 
-\newpage
+
 
 %-------------------------------
-\section{Benchmarks for State-Space Physical Plants}
-\label{sec:BenchmarksforStateSpace}
+%\section{Benchmarks for State-Space Physical Plants}
+%\label{sec:BenchmarksforStateSpace}
 %-------------------------------
-
-We have derived a number of benchmarks from the control literature, which we report below. 
-As discussed, in this paper, we disregard the presence of output signals, that is the effect of matrices $\textbf{C}, \textbf{D}$, and use
-direct state-feedback. 
 %
-
-\begin{table}[htb]
-\centering
-\footnotesize
-\begin{tabular}{|c|c|c|c|c|}
-\hline
+%We have derived a number of benchmarks from the control literature, which we report below. 
+%As discussed, in this paper, we disregard the presence of output signals, that is the effect of matrices $\textbf{C}, \textbf{D}$, and use
+%direct state-feedback. 
+%
+%
+%\begin{table}[htb]
+%\centering
+%\footnotesize
+%\begin{tabular}{|c|c|c|c|c|}
+%\hline
 %\textbf{ID \#} & 
-\textbf{System}                                                               & \textbf{A} & \textbf{B} & \textbf{C} & \textbf{D} \\ \hline
+%\textbf{System}                                                               & \textbf{A} & \textbf{B} & \textbf{C} & \textbf{D} \\ \hline
 %1              & 
 %\begin{tabular}[c]{@{}c@{}}DC Motor\\ Position\end{tabular}                   & $\left[\begin{array}{ccc}
 %0		& 1 		& 0						\\
@@ -2055,15 +2048,15 @@ direct state-feedback.
 %1 & 0 & 0\\
 %\end{array}\right]$ & 0 \\  \hline
 %2              & 
-% \begin{tabular}[c]{@{}c@{}}Aircraft \\ Pitch\\ Dynamics\end{tabular} & $\left[\begin{array}{ccc}
-% -0.313	& 56.7 		& 0		\\
-% -0.0139	& -0.426	& 0		\\
-% 0		& 56.7		& 0		\\
-% \end{array}\right]$ & $\left[\begin{array}{c}
-% 0.232 \\ 0.0203 \\ 0
-% \end{array}\right]$ & $\left[\begin{array}{ccc}
-% 1 & 0 & 0\\
-% \end{array}\right]$ & 0 \\ \hline
+%\begin{tabular}[c]{@{}c@{}}Aircraft \\ Pitch\\ Dynamics\end{tabular} & $\left[\begin{array}{ccc}
+%-0.313	& 56.7 		& 0		\\
+%-0.0139	& -0.426	& 0		\\
+%0		& 56.7		& 0		\\
+%\end{array}\right]$ & $\left[\begin{array}{c}
+%0.232 \\ 0.0203 \\ 0
+%\end{array}\right]$ & $\left[\begin{array}{ccc}
+%1 & 0 & 0\\
+%\end{array}\right]$ & 0 \\ \hline
 %3            & 
 %\begin{tabular}[c]{@{}c@{}}Ball\\ Magnetic\\ Levitation\end{tabular} & $\left[\begin{array}{ccc}
 %0		& 1 		& 0		\\
@@ -2075,131 +2068,131 @@ direct state-feedback.
 %1 & 0 & 0\\
 %\end{array}\right]$ & 0 \\ \hline
 %4              & 
-% \begin{tabular}[c]{@{}c@{}}Buck\\ Converter\end{tabular}                      & $\left[\begin{array}{cc}
-% 0		& -500 \\
-% 4545	& -1515\\
-% \end{array}\right]$ & $\left[\begin{array}{c}
-% 125 \\ 0 \\
-% \end{array}\right]$ & $\left[\begin{array}{cc}
-%  0 & 1\\
-% \end{array}\right]$ & 0 \\ \hline
+%\begin{tabular}[c]{@{}c@{}}Buck\\ Converter\end{tabular}                      & $\left[\begin{array}{cc}
+%0		& -500 \\
+%4545	& -1515\\
+%\end{array}\right]$ & $\left[\begin{array}{c}
+%125 \\ 0 \\
+%\end{array}\right]$ & $\left[\begin{array}{cc}
+% 0 & 1\\
+%\end{array}\right]$ & 0 \\ \hline
 %5              & 
-% \begin{tabular}[c]{@{}c@{}}Boost\\ Converter\end{tabular} & $\left[\begin{array}{cc}
-% 0		& -375 \\
-% 3409	& -1515\\
-% \end{array}\right]$ & $\left[\begin{array}{c}
-% 500 \\ 0 \\
-% \end{array}\right]$ &  $\left[\begin{array}{cc}
-% 0 & 1\\
-% \end{array}\right]$  & 0        \\ \hline
+%\begin{tabular}[c]{@{}c@{}}Boost\\ Converter\end{tabular} & $\left[\begin{array}{cc}
+%0		& -375 \\
+%3409	& -1515\\
+%\end{array}\right]$ & $\left[\begin{array}{c}
+%500 \\ 0 \\
+%\end{array}\right]$ &  $\left[\begin{array}{cc}
+%0 & 1\\
+%\end{array}\right]$  & 0        \\ \hline
 %6              & 
-% \begin{tabular}[c]{@{}c@{}}Buck-boost\\ Converter\end{tabular} & $\left[\begin{array}{cc}
-% 0		& 375 \\
-% -3409	& -1515\\
-% \end{array}\right]$ & $\left[\begin{array}{c}
-% 125 \\ 0 \\
-% \end{array}\right]$ & $\left[\begin{array}{cc}
-% 0 & 1\\
-% \end{array}\right]$ & 0 \\ \hline
+%\begin{tabular}[c]{@{}c@{}}Buck-boost\\ Converter\end{tabular} & $\left[\begin{array}{cc}
+%0		& 375 \\
+%-3409	& -1515\\
+%\end{array}\right]$ & $\left[\begin{array}{c}
+%125 \\ 0 \\
+%\end{array}\right]$ & $\left[\begin{array}{cc}
+%0 & 1\\
+%\end{array}\right]$ & 0 \\ \hline
 %7              & 
-\begin{tabular}[c]{@{}c@{}}Automotive\\ Cruise\\ System\end{tabular} & $-0.05$ & $0.03125$ & $0.032$ & $0$ \\ \hline
+%\begin{tabular}[c]{@{}c@{}}Automotive\\ Cruise\\ System\end{tabular} & $-0.05$ & $0.03125$ & $0.032$ & $0$ \\ \hline
 %8              & 
-\begin{tabular}[c]{@{}c@{}}DC Motor\\ Rate\end{tabular} & $\left[\begin{array}{cc}
--1000		& -104 \\
-1			& 0\\
-\end{array}\right]$ & $\left[\begin{array}{c}
-1 \\ 0 \\
-\end{array}\right]$ & $\left[\begin{array}{cc}
-0 & 200\\
-\end{array}\right]$ & 0 \\ \hline
+%\begin{tabular}[c]{@{}c@{}}DC Motor\\ Rate\end{tabular} & $\left[\begin{array}{cc}
+%-1000		& -104 \\
+%1			& 0\\
+%\end{array}\right]$ & $\left[\begin{array}{c}
+%1 \\ 0 \\
+%\end{array}\right]$ & $\left[\begin{array}{cc}
+%0 & 200\\
+%\end{array}\right]$ & 0 \\ \hline
 %9              & 
-\begin{tabular}[c]{@{}c@{}}Helicopter\\ Longitudinal\\ Motion\end{tabular}    & $\left[\begin{array}{ccc}
--0.42		& 0.0168		& -0.396	\\
-0.5			& 0				& 0			\\
-0			& 0.5 			& 0			
-\end{array}\right]$ & $\left[\begin{array}{c}
-16 \\ 0 \\ 0
-\end{array}\right]$ & $~
-\left[\begin{array}{ccc}
-0.6125	& -0.6125	& 15.44 \\
-\end{array}\right]$ & 0 \\ \hline
+%\begin{tabular}[c]{@{}c@{}}Helicopter\\ Longitudinal\\ Motion\end{tabular}    & $\left[\begin{array}{ccc}
+%-0.42		& 0.0168		& -0.396	\\
+%0.5			& 0				& 0			\\
+%0			& 0.5 			& 0			
+%\end{array}\right]$ & $\left[\begin{array}{c}
+%16 \\ 0 \\ 0
+%\end{array}\right]$ & $~
+%\left[\begin{array}{ccc}
+%0.6125	& -0.6125	& 15.44 \\
+%\end{array}\right]$ & 0 \\ \hline
 %10             & 
-Pendulum   & $\left[\begin{array}{cc}
-0		& -2.453	\\
-4		& 0			\\	
-\end{array}\right]$ & $\left[\begin{array}{c}
-4 \\ 0
-\end{array}\right]$ & $\left[\begin{array}{cc}
--1.225	& -2.15 	\\
-\end{array}\right]$           & 9.8           \\ \hline
+%Pendulum   & $\left[\begin{array}{cc}
+%0		& -2.453	\\
+%4		& 0			\\	
+%\end{array}\right]$ & $\left[\begin{array}{c}
+%4 \\ 0
+%\end{array}\right]$ & $\left[\begin{array}{cc}
+%-1.225	& -2.15 	\\
+%\end{array}\right]$           & 9.8           \\ \hline
 %11             & 
-\begin{tabular}[c]{@{}c@{}}Inverted\\ Pendulum\end{tabular} & $\left[\begin{array}{cccc}
-0		& 1		& 0 	& 0	\\
-1		& 0		& 0		& 0	\\
-0		& 1 	& 0		& 0 \\
-0		& 0		& 1 	& 0 \\	
-\end{array}\right]$ & $\left[\begin{array}{c}
-1 \\ 0 \\ 0 \\ 0
-\end{array}\right]$  & $\left[\begin{array}{cccc}
-0	& 0	& 1 & -0.75 \\
-0	& 1	& 0	& 0		
-\end{array}\right]$ & $\left[\begin{array}{c}
-0 \\
-0 \end{array}\right]$ \\ \hline
+%\begin{tabular}[c]{@{}c@{}}Inverted\\ Pendulum\end{tabular} & $\left[\begin{array}{cccc}
+%0		& 1		& 0 	& 0	\\
+%1		& 0		& 0		& 0	\\
+%0		& 1 	& 0		& 0 \\
+%0		& 0		& 1 	& 0 \\	
+%\end{array}\right]$ & $\left[\begin{array}{c}
+%1 \\ 0 \\ 0 \\ 0
+%\end{array}\right]$  & $\left[\begin{array}{cccc}
+%0	& 0	& 1 & -0.75 \\
+%0	& 1	& 0	& 0		
+%\end{array}\right]$ & $\left[\begin{array}{c}
+%0 \\
+%0 \end{array}\right]$ \\ \hline
 %12             & 
-\begin{tabular}[c]{@{}c@{}}Magnetic\\ Suspension\end{tabular} & $\left[\begin{array}{cc}
-0		& 31.25	\\
-32		& 0		\\	
-\end{array}\right]$ & $\left[\begin{array}{c}
-8 \\ 0
-\end{array}\right]$ & $\left[\begin{array}{cc}
-0	& 9.766 	\\
-\end{array}\right]$ & 0 \\ \hline
+%\begin{tabular}[c]{@{}c@{}}Magnetic\\ Suspension\end{tabular} & $\left[\begin{array}{cc}
+%0		& 31.25	\\
+%32		& 0		\\	
+%\end{array}\right]$ & $\left[\begin{array}{c}
+%8 \\ 0
+%\end{array}\right]$ & $\left[\begin{array}{cc}
+%0	& 9.766 	\\
+%\end{array}\right]$ & 0 \\ \hline
 %13             & 
-\begin{tabular}[c]{@{}c@{}}Magnetic\\ Pointer \end{tabular} & $\left[\begin{array}{ccc}
--0.271		& -0.05336	& 0	\\
-0.03125		& 0			& 0	\\
-0			& 0.01562 	& 0	\\	
-\end{array}\right]$ & $\left[\begin{array}{c}
-1 \\ 0 \\ 0
-\end{array}\right]$ & $\left[\begin{array}{ccc}
-0	& -0.5888	& -0.2562 \\
-\end{array}\right]$ & 0           \\ \hline
+%\begin{tabular}[c]{@{}c@{}}Magnetic\\ Pointer \end{tabular} & $\left[\begin{array}{ccc}
+%-0.271		& -0.05336	& 0	\\
+%0.03125		& 0			& 0	\\
+%0			& 0.01562 	& 0	\\	
+%\end{array}\right]$ & $\left[\begin{array}{c}
+%1 \\ 0 \\ 0
+%\end{array}\right]$ & $\left[\begin{array}{ccc}
+%0	& -0.5888	& -0.2562 \\
+%\end{array}\right]$ & 0           \\ \hline
 %14             & 
-\begin{tabular}[c]{@{}c@{}}1/4 Car\\ Suspension\end{tabular} & $
-\left[\begin{array}{cccc}
--516.1	& -222.1& -79.75& -33.06	\\
-256		& 0		& 0		& 0			\\
-0		& 64 	& 0		& 0 \\
-0		& 0		& 32 	& 0 \\	
-\end{array}\right]$ & $\left[\begin{array}{c}
-8 \\ 0 \\ 0 \\ 0
-\end{array}\right]$ & $\left[\begin{array}{cccc}
-0	& 0	& 9.969 & 4.133 \\
-\end{array}\right]$ & 0 \\ \hline
+%\begin{tabular}[c]{@{}c@{}}1/4 Car\\ Suspension\end{tabular} & $
+%\left[\begin{array}{cccc}
+%-516.1	& -222.1& -79.75& -33.06	\\
+%256		& 0		& 0		& 0			\\
+%0		& 64 	& 0		& 0 \\
+%0		& 0		& 32 	& 0 \\	
+%\end{array}\right]$ & $\left[\begin{array}{c}
+%8 \\ 0 \\ 0 \\ 0
+%\end{array}\right]$ & $\left[\begin{array}{cccc}
+%0	& 0	& 9.969 & 4.133 \\
+%\end{array}\right]$ & 0 \\ \hline
 %15             & 
-\begin{tabular}[c]{@{}c@{}}Computer\\ Tape\\ Driver\end{tabular} & $\left[\begin{array}{ccc}
--1760		& -976.6	& -457.8	\\
-1024		& 0			& 0			\\
-0			& 512 		& 0			\\	
-\end{array}\right]$ & $\left[\begin{array}{c}
-8 \\ 0 \\ 0
-\end{array}\right]$ & $\left[\begin{array}{ccc}
-1.5	& 2.051	& 1.144 \\
-\end{array}\right]$ & 0           \\ \hline
+%\begin{tabular}[c]{@{}c@{}}Computer\\ Tape\\ Driver\end{tabular} & $\left[\begin{array}{ccc}
+%-1760		& -976.6	& -457.8	\\
+%1024		& 0			& 0			\\
+%0			& 512 		& 0			\\	
+%\end{array}\right]$ & $\left[\begin{array}{c}
+%8 \\ 0 \\ 0
+%\end{array}\right]$ & $\left[\begin{array}{ccc}
+%1.5	& 2.051	& 1.144 \\
+%\end{array}\right]$ & 0           \\ \hline
 %16             & 
-% \begin{tabular}[c]{@{}c@{}}USCG \\ Cutter\\ Tampa\\ Heading\\ Angle\end{tabular} & $\left[\begin{array}{ccc}
-% -0.271		& -0.05336	& 0	\\
-% 0.03125		& 0			& 0			\\
-% 0			& 0.01562 	& 0			\\	
-% \end{array}\right]$ & $\left[\begin{array}{c}
-% 1 \\ 0 \\ 0
-% \end{array}\right]$ & $\left[\begin{array}{ccc}
-% 0	& -0.5888	& -0.2562 \\
-% \end{array}\right]$ & 0 \\ \hline
-\end{tabular}
-\caption{Benchmarks for State-Space Physical Plants}
-\label{table:State-space-benchmarks}
-\end{table}
-
+%\begin{tabular}[c]{@{}c@{}}USCG \\ Cutter\\ Tampa\\ Heading\\ Angle\end{tabular} & $\left[\begin{array}{ccc}
+%-0.271		& -0.05336	& 0	\\
+%0.03125		& 0			& 0			\\
+%0			& 0.01562 	& 0			\\	
+%\end{array}\right]$ & $\left[\begin{array}{c}
+%1 \\ 0 \\ 0
+%\end{array}\right]$ & $\left[\begin{array}{ccc}
+%0	& -0.5888	& -0.2562 \\
+%\end{array}\right]$ & 0 \\ \hline
+%\end{tabular}
+%\caption{Benchmarks for State-Space Physical Plants}
+%\label{table:State-space-benchmarks}
+%\end{table}
+%
 \end{document}
