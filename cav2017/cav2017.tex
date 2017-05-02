@@ -39,6 +39,7 @@
 \newcommand{\commentib}[1]{{\color{blue} [IB: #1]}}
 \newcommand{\mat}[1]{\boldsymbol{#1}}
 \newcommand{\xmark}{\ding{55}}
+\newcommand{\blue}[1]{{\color{blue}#1}}
 
 \usepackage{url}
 %\urldef{\mailsa}\path|{alfred.hofmann, ursula.barth, ingrid.haas, frank.holzwarth,|
@@ -128,7 +129,7 @@ reachability analysis.  CEGIS synthesizes a static feedback controller that
 stabilizes the system under restrictions given by the safety of the reach
 space.  Safety is verified either via BMC or abstract acceleration; if the
 verification step fails, we refine the controller by generalizing the
-counterexample.  We synthesize stable and safe controllers for intricate
+counterexample.  We synthesize \blue{stable} and safe controllers for intricate
 physical plant models from the digital control literature.
 %
 %\keywords{
@@ -166,7 +167,7 @@ ensure safety: the system might transitively visit an unsafe state that
 results in an unrecoverable failure.
 
 We propose a novel algorithm for the synthesis of control algorithms for LTI
-models that are guaranteed to be both stable and safe, considering both the
+models that are guaranteed to be both \blue{stable} and safe, considering both the
 continuous dynamics of the plant and the finite-precision discrete dynamics
 of the controller, as well as the hybrid elements that connect them.
 %
@@ -207,7 +208,7 @@ complexity of the overall dynamics, and only expand to more complex models
 when a solution cannot be found.
 
 We provide experimental results showing that both approaches are able to
-efficiently synthesize stable and safe controllers for a set of intricate
+efficiently synthesize \blue{stable} and safe controllers for a set of intricate
 physical plant models taken from the digital control literature: the median
 run-time for our benchmark set is $7.9$ seconds, and most controllers can be
 synthesized in less than $17.2$ seconds.  We further show that, in a direct
@@ -223,7 +224,7 @@ based on the unfolding of the dynamics.
 
 \begin{enumerate}
 %
-\item  We compute state-feedback controllers that are provably stable and in
+\item  We compute state-feedback controllers that are provably \blue{stable} and in
   addition guaranteee a given safety property.  Existing methods for
   controller synthesis rely on transfer function representations, which are
   insufficient to prove safety requirements.
@@ -562,7 +563,7 @@ controller, which manipulates quantities with finite precision.
 \subsection{Stability of Closed-loop Systems}
 \label{ssec:stability}
 %-------------------------------
-
+\todo{this section sort of implies we are synthesising stable controllers?}
 Asymptotic stability implies convergence to an equilibrium point from any
 states in its neighborhood.  This stability concept is stronger than the
 Lyapunov and BIBO stability researched by previous
@@ -905,7 +906,7 @@ in order to ensure that $\phi_\mathit{safety}$ holds.
 
 \begin{proof}
 %
-A stable control system is known to have converging dynamics.  Assume the
+A \blue{stable} control system is known to have converging dynamics.  Assume the
 closed-loop matrix eigenvalues are not repeated (which is sensible to do,
 since we select them).  The distance of the trajectory from the reference
 point (origin) decreases over time within subspaces related to real-valued
@@ -1302,7 +1303,7 @@ $\overline{u}=10$, and safety specifications $\underline{x_{i}}=-0.92$ and
 $\overline{x_{i}}=0.92$, the {\sc synthesize} phase in
 Fig.~\ref{fig:CEGARIS} generates an initial candidate controller
 $K=[\begin{array}{ccc}0.24609375&-0.125&0.1484375\end{array}]$.
-This candidate is stable, but the {\sc verify} phase finds it to be
+This candidate is \blue{stable}, but the {\sc verify} phase finds it to be
 unsafe and returns a list of iterations with an initial state that
 fails the safety specification {\footnotesize $(k,x_0) {\in}
 \{ (2, [\begin{array}{ccc}0.9&-0.9&0.9\end{array}]),\allowbreak (3,
@@ -1432,7 +1433,7 @@ and can their stability and safety be confirmed outside of our model?
 We give the results in Table~\ref{tab:results}.  Here \textit{Benchmark} is
 the name of the respective benchmark, $\mathcal{F}_{\langle I_p,F_p
 \rangle}$ is the fixed-point precision used to model the plant, while
-\textit{Time} is the total time required to synthesize a stable controller
+\textit{Time} is the total time required to synthesize a \blue{stable} controller
 for the given plant, for CEGIS with multi-staged verification as well as
 abstraction-based CEGIS.  Timeouts are indicated by~\xmark.  The precision
 for the controller, $\mathcal{F}_{\langle I_c,F_c \rangle}$, is chosen to be
@@ -1490,7 +1491,7 @@ consequently, timeout.  Yet another source of incompleteness is the
 inability of the {\sc synthesize} phase to use a large enough precision for
 the plant model.
 
-The synthesized controllers were confirmed to be stable outside of our model
+The synthesized controllers were confirmed to be safe outside of our model
 representation using MATLAB, positively answering RQ2.  A~link to the full
 experimental environment, including scripts to reproduce the results, all
 benchmarks and the tool, is provided in the
@@ -1537,7 +1538,7 @@ considering various error sources in the implementation of the digital
 control algorithm and in the computational modeling of plant dynamics.
 %
 Our experimental results show that both approaches are able to synthesize
-stable controllers for most benchmarks within a reasonable amount of time
+safe controllers for most benchmarks within a reasonable amount of time
 fully automatically.  In particular, both approaches complement each other
 and together solve all benchmarks, which have been derived from the control
 literature.
