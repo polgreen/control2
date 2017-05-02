@@ -915,10 +915,11 @@ complex eigenvalues.  Consider the closed-loop matrix that updates the
 states in every discrete time step, and select the eigenvalue $\vartheta$
 with the smallest (non-trivial) imaginary value.  Between every pair of
 consecutive time steps $k\,T_s$ and $(k+1)\,T_s$, the dynamics projected on
-the corresponding eigenspace rotate $\vartheta T_s$ radiants.  Thus, taking
-$k{\leq}\overline{k}$ as the ceiling of $\frac{2\pi}{\vartheta T_s}$, after
-$k{\leq}\overline{k}$ steps we have completed a full rotation, which results
+the corresponding eigenspace rotate $\vartheta T_s$ radians.  Thus, taking
+$\overline{k}$ as the ceiling of $\frac{2\pi}{\vartheta T_s}$, after
+$k{\geq}\overline{k}$ steps we have completed a full rotation, which results
 in a point closer to the origin.  This is the completeness threshold.
+
 %
 \end{proof}
 
@@ -944,7 +945,7 @@ unfolding the transition system $k$ steps and by picking a controller $K$
 and a single initial state, such that the states at each step do not violate
 the safety criteria.  That is, we ask the bounded model checker if there
 exists a $K$ that is safe for at least one $x_0$ in our set of all possible
-initial states.  This is sound if the current $k$ is below the completeness
+initial states.  This is sound if the current $k$ is greater than the completeness
 threshold.  We~also assume some precision $\langle I_p,F_p\rangle$ for the
 plant and a sampling rate.  The checks that these assumptions hold are
 performed by subsequent {\sc verify} stages.
@@ -990,9 +991,7 @@ state, is safe for \emph{all} possible initial states, i.e., does not reach
 an unsafe state within $k$ steps where we assume $k$ to be under the
 completeness threshold.  After unfolding the transition system corresponding
 to the previously synthesized controller $k$ steps, we check that the safety
-specification holds for any initial state.
-
-\todo{There is no reference to Alg.~\ref{alg:safetycheck}}
+specification holds for any initial state. This is shown in Alg.~~\ref{alg:safetycheck}.
 
 \item The second {\sc verify} stage, {\sc precision}, 
  restores soundness with respect to the plant's precision
@@ -1002,12 +1001,15 @@ operations performed by the previous stage.
 \item The third {\sc verify} stage, {\sc complete}, checks that the current
 $k$ is large enough to ensure safety for any $k'{>}k$.  Here, we compute the
 completeness threshold $\overline{k}$ for the current candidate $K$ and
-check that $k{\leq}\overline{k}$.  This is done according to the argument
+check that $k{\geq}\overline{k}$.  This is done according to the argument
 given above and illustrated in Fig.~\ref{fig:ct}.
 
 \end{enumerate}
 
-\todo{check whether the above/below CT story is right}
+\todo{EP: I've changed $\leq$ to $\geq$. Also changed: 
+"take $k{\leq}\overline{k}$ as the ceiling of $\frac{2\pi}{\vartheta T_s}$" to 
+"take $\overline{k}$ as the ceiling of $\frac{2\pi}{\vartheta T_s}$"; is this right ?
+\textcolor{gray}{check whether the above/below CT story is right. }}
 
 \begin{figure*}[t]
 \centering
