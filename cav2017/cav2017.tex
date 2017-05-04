@@ -1466,7 +1466,8 @@ comparison, the abstraction-based approach is on average able to find a
 solution in approximately 70\% of the time required using the multi-staged
 back-end, and has a median run-time 1.4\,s, which is seven times smaller
 than the multi-staged approach.  The two back-ends complement each other in
-benchmark coverage and together solve all benchmarks in the set.
+benchmark coverage and together solve all benchmarks in the set.  On average
+our engine spent 52\% in the synthesis and 48\% in the verification phase.
 
 \begin{table}
 \centering
@@ -1492,12 +1493,6 @@ benchmark coverage and together solve all benchmarks in the set.
 \caption{Experimental results\label{tab:results}}
 \end{table}
 
-\todo{Add the percentage of the total time taken by verification and synthesis.}
-
-\todo{Discuss the number of abstraction refinements (inner loop, not the outer one)
-  for the 2nd approach?
-  Although, if it's always one, I'm not sure how interesting it is.. }
-\vskip -0.5cm
 The median run-time for our benchmark set is 9.4\,s.  Overall, the average
 synthesis time amounts to approximately 15.6\,s.  We consider these times
 short enough to be of practical use to control engineers, and thus affirm
@@ -1517,6 +1512,8 @@ experimental environment, including scripts to reproduce the results, all
 benchmarks and the tool, is provided in the
 footnote as an Open Virtual Appliance
 (OVA).\footnote{\url{www.cprover.org/DSSynth/controller-synthesis-cav-2017.tar.gz}}
+The provided experimental environment runs multiple discretisations for each
+benchmark, but only lists the fastest as the result synthesis time.
 
 
 %-------------------------------
@@ -1530,8 +1527,10 @@ not generalize to other benchmarks.\\
 %
 \textit{Plant precision and discretization heuristic:} Our algorithm to
 select suitable FWL word widths to model the plant behavior employs a
-heuristic based on user-provided controller word-width specifications \blue{[explain how precision is increased as number of bits?]}.  For
-the first approach, where we may need to increase the precision of the time
+heuristic based on user-provided controller word-width specifications.
+In order to be compliant with the CBMC type API, we increase the precision
+by 8 bits at each step.
+For the first approach, where we may need to increase the precision of the time
 discretization, we select the time steps for the discretizations on a
 similar basis.  This works sufficiently well for our benchmarks, but
 performance may suffer in some cases, for example if the completeness
