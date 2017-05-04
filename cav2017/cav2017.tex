@@ -161,10 +161,9 @@ well developed~\cite{astrom1997computer}, automated and sound control
 synthesis is challenging, particularly when the synthesis objective goes
 beyond classical stability.  There are recent methods for verifying
 reachability properties of a given controller~\cite{FLD+11,Fre05}. 
-However, these methods have not been generalized to control synthesis. 
-We~remark that a synthesis algorithm that guarantees stability does not
-ensure safety: the system might transitively visit an unsafe state that
-results in an unrecoverable failure.
+However, these methods have not been generalized to control synthesis.  
+Notice that a synthesis algorithm that guarantees stability does not
+ensure safety: the system might transitively visit an unsafe state resulting in unrecoverable failure.
 
 We propose a novel algorithm for the synthesis of control algorithms for LTI
 models that are guaranteed to be 
@@ -210,7 +209,9 @@ complexity of the overall dynamics, and only expand to more complex models
 when a solution cannot be found.
 
 We provide experimental results showing that both approaches are able to
-efficiently synthesize \blue{stable} and safe controllers for a set of intricate
+efficiently synthesize 
+%\blue{stable} and 
+safe controllers for a set of intricate
 physical plant models taken from the digital control literature: the median
 run-time for our benchmark set is $7.9$ seconds, and most controllers can be
 synthesized in less than $17.2$ seconds.  We further show that, in a direct
@@ -226,12 +227,13 @@ based on the unfolding of the dynamics.
 
 \begin{enumerate}
 %
-\item  We compute state-feedback controllers that are provably \blue{stable} and in
-  addition guaranteee a given safety property.  Existing methods for
+\item  We compute state-feedback controllers that 
+%are provably \blue{stable} and in addition 
+  guarantee a given safety property.  Existing methods for
   controller synthesis rely on transfer function representations, which are
-  insufficient to prove safety requirements.
+  inadequate to prove safety requirements.
 %
-\item We give two novel algorithms: the first, na\"ive one, relies on
+\item We provide two novel algorithms: the first, na\"ive one, relies on
   an unfolding of the dynamics up to a completeness threshold, while the
   second one is abstraction-based and leverages abstraction refinement and
   acceleration to improve scalability while retaining soundness.  Both
@@ -296,7 +298,7 @@ based on the unfolding of the dynamics.
 \label{sec:relw}
 %-------------------------------
 
-\paragraph{CEGIS}
+\paragraph{CEGIS -}
 
 Program synthesis is the problem of computing correct-by-design programs
 from high-level specifications; algorithms for this problem have made
@@ -327,11 +329,14 @@ The work in~\cite{hscc-paper} synthesizes stabilizing
 controllers for continuous plants given as transfer functions by exploiting
 bit-accurate verification of software-implemented digital
 controllers~\cite{IsmailBCFF15, Bessa16}.  While this work also uses CEGIS,
-their approach is restricted to digital controllers for stable closed-loop
-systems given as transfer function models.  By contrast, in the current
-paper we consider a state-space representation of the physical system, which
-has known advantages over the transfer function
-representation~\cite{Astrom08}: (i)~it generalizes to multivariate systems
+the approach is restricted to digital controllers for stable closed-loop
+systems given as transfer function models: 
+this results in  a static check on their coefficients.  
+By contrast, in the current paper we consider a state-space representation of the physical system, 
+which requires ensuring the specification over actual traces of the model, 
+alongside the numerical soundness required by the effects of discretisation and imprecision errors.   
+A state-space model has known advantages over the transfer function
+representation~\cite{Astrom08}: (i)~it naturally generalizes to multivariate systems
 (i.e., with multiple inputs and outputs); (ii)~gives the state-to-input
 relationships, offering an internal model of the system; and (iii)~allows to
 synthesize control systems with guarantees on the internal dynamics, e.g.,
@@ -357,7 +362,7 @@ fixed-point digital controllers.
 
 %\todo{Have we covered all the literature by Feron et al?}  
 
-\paragraph{Discretization Effects}
+\paragraph{Discretization Effects -}
 
 The classical approach to control synthesis has often disregarded
 quantization, thus sacrificing soundness.  Modern techniques focus on
@@ -425,11 +430,12 @@ Eq.~\eqref{eq:ode} is soundly discretized in time~\cite{fadali} into
 x_{k+1} = A_d x_k+ B_d u_k
 \end{align} 
 %
-where $k \in \mathbb N$ and $x_{0}=x(0)$ is the initial state.  $A_d$ and
-$B_d$ denote the matrices that describe the discretized plant dynamics, whereas
-$A$ and $B$ denote the continuous plant dynamics.  Later, we will address the
-issue of variable quantization, as introduced by the ADC/DAC conversion
-blocks (Fig.~\ref{fig:digitalsystem}).
+where $k \in \mathbb N$ and $x_{0}=x(0)$ is the initial state. 
+$A_d$ and $B_d$ denote the matrices that describe the discretized plant dynamics, whereas
+$A$ and $B$ denote the continuous plant dynamics.  
+We synthesize for requirements over this discrete-time domain. 
+Later, we will address the issue of variable quantization, 
+as introduced by the ADC/DAC conversion blocks (Fig.~\ref{fig:digitalsystem}).
 
 \begin{figure*}[htb]
 \centering
@@ -536,7 +542,7 @@ Feedback architectures can be employed to manipulate the properties and behavior
 %reduce the effect of parametric uncertainties and attenuate the effects of noise and disturbance. 
 We are interested in the synthesis of digital feedback control algorithms, 
 as implemented on modern Field-Programmable Gate Arrays or Digital Signal Processors. 
-The most basic feedback architecture is the state feedback, 
+The most basic feedback architecture is the state feedback one, 
 where the control action $u_k$ (notice we work with the discretized signal) is computed by: 
 %
 \begin{equation}
@@ -559,13 +565,14 @@ around a specific dynamical behavior \cite{astrom1997computer}.  As argued
 later in this work, we will target more complex objectives, such as
 quantitative safety requirements, which are not typical in the digital
 control literature.  Further, we will embrace the digital nature of the
-controller, which manipulates quantities with finite precision.
+controller, which manipulates quantized signals as discrete quantities represented with finite precision. 
 
 %-------------------------------
-\subsection{Stability of Closed-loop Systems}
+\subsection{Stability of closed-loop Systems}
 \label{ssec:stability}
 %-------------------------------
-\todo{this section sort of implies we are synthesising stable controllers?}
+\todo{this section sort of implies we are synthesising stable controllers? I argue we use this objective to guess reasonable controllers in the synthesis loop. }
+
 Asymptotic stability implies convergence to an equilibrium point from any
 states in its neighborhood.  This stability concept is stronger than the
 Lyapunov and BIBO stability researched by previous
@@ -634,13 +641,13 @@ physical constraints.
 %>>>>>>> added initial constraints on x_0
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{Numeric representations and soundness} 
+\subsection{Numerical representation and soundness} 
 \label{sec:numeric_rep}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
 The models we consider have two sources of error due to numeric
-representation.  The first is the numeric error introduced by the
+representation.  The first is the numerical error introduced by the
 fixed-point numbers employed to model the plant, i.e., to represent the
 plant dynamics $A_d$, $B_d$ and $x_k$.  The second is the quantization error
 introduced by the digital controller, which performs operations on
