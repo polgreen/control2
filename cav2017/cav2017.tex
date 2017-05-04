@@ -1265,7 +1265,7 @@ $x_{k+1} \models \phi_\mathit{safety}$ \blue{why $k+1$ here?}. %% For this purpo
 %
 \begin{align}
 %\label{eq:acc_observer_LTI_cf}
-\!\! x=&(A_d-B_dK)^kx_0
+\hspace{-0.1in} x=&(A_d-B_dK)^kx_0
 %+\sum_{i=0}^{k-1} \mat{A}_t^i \mat{B}_{t} r_i
 +\sum_{i=0}^{k-1} (A_d-B_dK)^i B_{n}(\nu_1+\nu_2+\nu_3) : B_n= [1 \cdots 1]^T
 \end{align}
@@ -1389,7 +1389,7 @@ this time passes the verification phase, resulting in a safe system.
 \label{experimental-setup}
 %-------------------------------
 
-A set of state-space models for different classes of systems was extracted
+A set of state-space models for different classes of systems has been taken 
 from the literature~\cite{Franklin15, maglev, converters, CTMS} and employed
 for validating our methodology.
 
@@ -1400,29 +1400,29 @@ of a helicopter.
 The \textit{Inverted Pendulum} plant describes a pendulum model
 with its center of mass above its pivot point. 
 The \textit{Magnetic Suspension} plant provides a physical model for which 
-a given object is suspended via magnetic field. 
+a given object is suspended via a magnetic field. 
 The \textit{Magnetized Pointer} plant describes a physical model employed in analogue gauges 
 and indicators that is rotated through interaction with magnetic fields.
 The \textit{1/4 Car Suspension} plant presents a physical model that connects a car to its wheels 
-and allows relative motion between both parts.
+and allows relative motion between the two parts.
 The \textit{Computer Tape Driver} plant describes a system to read and write data 
-on a storage device in the computer.
+on a storage device in a computer.
 
 %Section~\ref{sec:BenchmarksforStateSpace} in the appendix summarizes all our
 Our benchmarks are SISO models (Section~\ref{sec:preliminaries}).  The
-Inverted Pendulum appears to be a two output system, but it was treated as
-two SISO systems during the experiments.  For the sake of simplicity all the
-state measurements are assumed available.  In practice, state estimators
-should be designed in order to obtain an estimate of the states from the
-single output.  Further work can include state observers synthesis.
+Inverted Pendulum appears to be a two-output system, but it is treated as
+two SISO models during the experiments.  For the sake of simplicity all the
+state measurements are assumed to be available.  
+%In practice, state estimators should be designed in order to obtain an estimate of the states from the single output.  
+(Current work targets the extension of our framework to observer-based synthesis.)   
 
-All benchmarks were discretized with different sample times~\cite{fadali}. 
-All experiments were performed considering $\underline{x_{i}}=-1$ and 
-$\overline{x_{i}}=1$ and the inputs $u_{k}=0, \forall k>0$.
-We have conducted the experimental evaluation on a 12-core 2.40\,GHz Intel
-Xeon E5-2440 with 96\,GB of RAM and Linux OS.  We used the Linux
+All benchmarks are discretized with different sample times~\cite{fadali}. 
+All experiments are performed considering $\underline{x_{i}}=-1$ and 
+$\overline{x_{i}}=1$ \blue{[what does this mean:] and the inputs $u_{k}=0, \forall k>0$}.
+We conduct the experimental evaluation on a 12-core 2.40\,GHz Intel
+Xeon E5-2440 with 96\,GB of RAM and Linux OS.  We use the Linux
 \emph{times} command to measure CPU time used for each benchmark.  The
-runtime was limited to one hour per benchmark.
+runtime is limited to one hour per benchmark.
 
 %-------------------------------
 \subsection{Objectives}
@@ -1450,12 +1450,12 @@ stability and safety of the synthesized controllers outside of our model.
 \subsection{Results}
 %-------------------------------
 
-We give the results in Table~\ref{tab:results}.  Here \textit{Benchmark} is
-the name of the respective benchmark, \textit{order} is the number of
+We provide the results in Table~\ref{tab:results}.  Here \textit{Benchmark} is
+the name of the respective benchmark, \textit{Order} is the number of
 continuous variables, $\mathcal{F}_{\langle I_p,F_p \rangle}$ is the
 fixed-point precision used to model the plant, while \textit{Time} is the
-total time required to synthesize a \blue{stable} controller for the given
-plant with the given method.  Timeouts are indicated by~\xmark.  The
+total time required to synthesize a controller for the given
+plant with one of the two methods.  Timeouts are indicated by~\xmark.  The
 precision for the controller, $\mathcal{F}_{\langle I_c,F_c \rangle}$, is
 chosen to be $I_c = 8$, $F_c = 8$.
 
@@ -1503,15 +1503,15 @@ synthesis time amounts to approximately 15.6\,s.  We consider these times
 short enough to be of practical use to control engineers, and thus affirm
 EG1.
 
-There are several cases for which the system may fail to find a controller. 
+There are a few instances for which the system fails to find a controller. 
 For the na\"ive approach, the completeness threshold may be too large, thus
 causing a timeout.  On the other hand, the abstraction-based approach may
 require a very precise abstraction, resulting in too many refinements and,
-consequently, timeout.  Yet another source of incompleteness is the
+consequently, in a timeout.  Yet another source of incompleteness is the
 inability of the {\sc synthesize} phase to use a large enough precision for
 the plant model.
 
-The synthesized controllers were confirmed to be safe outside of our model
+The synthesized controllers are confirmed to be safe outside of our model
 representation using MATLAB, achieving EG2.  A~link to the full
 experimental environment, including scripts to reproduce the results, all
 benchmarks and the tool, is provided in the
@@ -1530,7 +1530,7 @@ not generalize to other benchmarks.\\
 %
 \textit{Plant precision and discretization heuristic:} Our algorithm to
 select suitable FWL word widths to model the plant behavior employs a
-heuristic based on user-provided controller word-width specifications.  For
+heuristic based on user-provided controller word-width specifications \blue{[explain how precision is increased as number of bits?]}.  For
 the first approach, where we may need to increase the precision of the time
 discretization, we select the time steps for the discretizations on a
 similar basis.  This works sufficiently well for our benchmarks, but
