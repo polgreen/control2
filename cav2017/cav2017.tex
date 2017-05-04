@@ -373,8 +373,8 @@ fixed-point digital controllers.
 The classical approach to control synthesis has often disregarded
 quantization, thus sacrificing soundness.  Modern techniques focus on
 different aspects of discretization, including delayed
-response~\cite{Duggirala2015} and Finite Word Length (FWL) semantics, with
-the goal either to verify (e.g.,~\cite{daes20161}) or to optimize
+response~\cite{Duggirala2015} and finite word length (FWL) semantics, 
+with the goal either to verify (e.g.,~\cite{daes20161}) or to optimize
 (e.g.,~\cite{oudjida2014design}) given implementations.
 
 There are two different problems that arise from FWL semantics.  The first
@@ -577,12 +577,12 @@ controller, which manipulates quantized signals as discrete quantities represent
 \subsection{Stability of closed-loop systems}
 \label{ssec:stability}
 %-------------------------------
-\todo{this section sort of implies we are synthesising stable controllers? I argue we use this objective to guess reasonable controllers in the synthesis loop. }
+%\todo{this section sort of implies we are synthesising stable controllers? I argue we use this objective to guess reasonable controllers in the synthesis loop. }
 
 In this work we employ asymptotic stability in the CEGIS loop,  
 as an objective for guessing controllers that are later proven sound over safety requirements.  
-Asymptotic stability implies convergence to an equilibrium point from any
-states in a neighborhood.  
+Asymptotic stability is a property that amounts to convergence of the model executions to an equilibrium point, 
+starting from any states in a neighborhood of the point (see Figure~\ref{fig:ct} for the portrait of a stable execution, converging to the origin).  
 %This stability concept is stronger than the
 %Lyapunov and BIBO stability researched by previous
 %work~\cite{DBLP:conf/emsoft/RavanbakhshS16, hscc-paper,
@@ -703,13 +703,12 @@ error due to representing $x_k$ as $\mathcal{F}{\langle I_c,F_c
 multiplication operation.  We represent these errors as non-deterministic
 additive noise, which might de-stabilize the closed-loop model.
 
-An additional error is caused by the representation of the plant dynamics, namely 
+An additional error is due to the representation of the plant dynamics, namely 
 %
 \begin{align*}
 x_{k+1} &=\mathcal{F}_{\langle I_p,F_p \rangle}(A_d) \mathcal{F}_{\langle I_p,F_p \rangle}(x_{k}) + \mathcal{F}_{\langle I_p,F_p \rangle}(B_d)\mathcal{F}_{\langle I_p,F_p \rangle}(u_{k}).
 \end{align*}
-
-We address this last error by use of interval
+We address this error by use of interval
 arithmetic~\cite{moore1966interval} in the verification phase.
 
 Previous studies~\cite{gangli1} show that the FWL affects the poles and
@@ -1019,7 +1018,7 @@ operations performed by the previous stage.
 
 \item The third {\sc verify} stage, {\sc complete}, checks that the current
 $k$ is large enough to ensure safety for any $k'{>}k$.  Here, we compute the
-completeness threshold $\overline{k}$ for the current candidate $K$ and
+completeness threshold $\overline{k}$ for the current candidate controller $K$ and
 check that $k{\geq}\overline{k}$.  This is done according to the argument
 given above and illustrated in Fig.~\ref{fig:ct}.
 
@@ -1029,7 +1028,7 @@ given above and illustrated in Fig.~\ref{fig:ct}.
 \centering
 \includegraphics[width=0.6\textwidth]{ct.eps}
 \vspace{0.1cm}
-\caption{Completeness threshold for multi-staged verification}
+\caption{Completeness threshold for multi-staged verification \blue{[Explain meaning of Ts, which I don't think is introduced anywhere in the current draft.]}}
 \label{fig:ct}
 \end{figure*}
 
@@ -1067,7 +1066,7 @@ We illustrate our approach with an example,
 extracted from the literature~\cite{Franklin15}.
 %
 We start with a candidate solution with all coefficients zero, $K=[0
-  \ 0 \ 0]^T$, and a precision of $I_p=13$, $F_p=3$.  In the first
+  \ 0 \ 0]^T$ \blue{[an attempted explanation of this first guess is due.]}, and a precision of $I_p=13$, $F_p=3$.  In the first
 {\sc verify} stage, the {\sc safety} check finds the counterexample
 %
 $ x_0 = [-0.5 \ 0.5 \ 0.5] $.
@@ -1080,7 +1079,7 @@ return $x_0=[-0.5\,-0.5\,-0.5]$ as the new counterexample.
 In the subsequent iteration, the synthesizer is unable to find further 
 suitable candidates and it returns UNSAT, meaning that the current precision is
 insufficient.  Consequently, we increase the precision to $I_p=17$,
-$F_p=7$.
+$F_p=7$. \blue{[ Explain how precision is increased, byte-congruent.]}
 %
 Since the previous counterexamples were obtained at lower precision,
 we remove them from the set of counterexamples.  Back in the {\sc
@@ -1114,8 +1113,8 @@ solution by all verification stages.
   synthesizes a controller for an individual initial state
 and input with a bounded time horizon and, subsequently, it generalizes it to all reachable states,
 inputs, and time horizons during the verification phase.
-Essentially, this approach relies on the explicit
-simulation over a bounded time horizon of individual states that form
+Essentially, this approach relies on the \blue{[qualitative term, please elaborate:] explicit
+simulation} over a bounded time horizon of individual states that form
 part of an uncountable space and tries to generalize it for an
 infinite space over an infinite time horizon.
 
@@ -1139,7 +1138,7 @@ infinite space over an infinite time horizon.
 
 Conversely, in this section, 
 we  find a controller for a continuous initial set of states and set of inputs, 
-  over an abstraction of the continuous dynamics (taken from \cite{cattaruzza2015unbounded}) that conforms to
+  over an abstraction of the continuous dynamics \cite{cattaruzza2015unbounded} that conforms to
   witness proofs at specific times. %% It further generalizes the
   Moreover, this approach uses abstraction refinement enabling us to 
   always start with a very simple description regardless of the complexity of the overall
@@ -1163,7 +1162,8 @@ cannot be found.
   % in sections \ref{sec:reachable} and \ref{sec:observable}.
   \begin{enumerate}
 \item Compute the characteristic polynomial of the matrix $(A_d-B_dK)$ as 
-$P_a(z) = z^n+\sum_{i=1}^p{(a_i-k_i)z^{n-i}}$.
+$P_a(z) = z^n+\sum_{i=1}^p{(a_i-k_i)z^{n-i}}$. 
+\blue{[shouldn't there be a b term in the polynomial's coefficients here?]}
 %%   A controllable system with quantization will have the following dynamics, where
 %% we use underscript ``n'' to denote a noise term,
 %% ``cf'' to denote Controllable Canonical Form,
@@ -1217,8 +1217,8 @@ quantization as noise are given in
 Appendix~\ref{appendix:quantization-noise}.
 
 \item Calculate a set of initial bounds on $K$, $\phi_\mathit{init}^{K}$,
-based on the input constraints.  Note that these bounds will be used by the
-{\sc synthesize} phase to reduce the size of the solution space. 
+based on the input constraints \blue{[how is this practically done?]}.  
+Note that these bounds will be used by the {\sc synthesize} phase to reduce the size of the solution space. 
 %
 $$(\phi_\mathit{init} \wedge \phi_\mathit{input} \wedge u_k=-K x_k)
 \Rightarrow \phi_\mathit{init}^{K}$$
@@ -1246,7 +1246,7 @@ If there is no candidate solution we return UNSAT and exit the loop.
   of the 
   %consisting of evaluating the
   progression of the system from $\phi_\mathit{init}$ over time,
-$x_{k+1} \models \phi_\mathit{safety}$. %% For this purpose we require 
+$x_{k+1} \models \phi_\mathit{safety}$ \blue{why $k+1$ here?}. %% For this purpose we require 
 %% an initial set $\phi_\mathit{init}= x_0 \in [\underline{x_0} \ \overline{x_0}]$ 
 %% from which the system progresses.
 % Obviously, this set $x_0$ 
@@ -1265,9 +1265,9 @@ $x_{k+1} \models \phi_\mathit{safety}$. %% For this purpose we require
 %
 \begin{align}
 %\label{eq:acc_observer_LTI_cf}
-x=&(A_d-B_dK)^kx_0
+\!\! x=&(A_d-B_dK)^kx_0
 %+\sum_{i=0}^{k-1} \mat{A}_t^i \mat{B}_{t} r_i
-+\sum_{i=0}^{k-1} (A_d-B_dK)^i B_{n}(\nu_1+\nu_2+\nu_3) : B_n= [1\ 1 \cdots \ 1 ]^T
++\sum_{i=0}^{k-1} (A_d-B_dK)^i B_{n}(\nu_1+\nu_2+\nu_3) : B_n= [1 \cdots 1]^T
 \end{align}
 %
 As this still requires us to verify the system for every $k$ up to infinity,
@@ -1278,11 +1278,11 @@ $\phi_\mathit{init}$:
 \begin{align}
 \label{eq:aa_observer_LTI_cf}
 \hat{X}^\#
-=&\mathcal{A} X_0 + \mathcal{B}_{n} N\\
-X_0 =&\left \{x : x \models \phi_\mathit{init} \right\}\nonumber
+=\mathcal{A} X_0 + \mathcal{B}_{n} N, \quad
+X_0 =\left \{x : x \models \phi_\mathit{init} \right\}, 
 \end{align}
 %
-where $\mathcal{A}=\bigcup_{k=1}^\infty (A_d-B_dK)t^k,
+where \blue{[what is $t$ in $t^k$?]} $\mathcal{A}=\bigcup_{k=1}^\infty (A_d-B_dK)t^k,
 \mathcal{B}_{n}=\bigcup_{k=1}^\infty \sum_{i=0}^k(A_d-B_dK)^iB_{n}$ are
 abstract matrices for the closed-loop system~\cite{cattaruzza2015unbounded},
 whereas the set $N$ is non-deterministically chosen.
