@@ -568,26 +568,30 @@ control literature.  Further, we will embrace the digital nature of the
 controller, which manipulates quantized signals as discrete quantities represented with finite precision. 
 
 %-------------------------------
-\subsection{Stability of closed-loop Systems}
+\subsection{Stability of closed-loop systems}
 \label{ssec:stability}
 %-------------------------------
 \todo{this section sort of implies we are synthesising stable controllers? I argue we use this objective to guess reasonable controllers in the synthesis loop. }
 
+In this work we employ asymptotic stability in the CEGIS loop,  
+as an objective for guessing controllers that are later proven sound over safety requirements.  
 Asymptotic stability implies convergence to an equilibrium point from any
-states in its neighborhood.  This stability concept is stronger than the
-Lyapunov and BIBO stability researched by previous
-work~\cite{DBLP:conf/emsoft/RavanbakhshS16, hscc-paper,
-DBLP:conf/hybrid/RouxJG15, DBLP:conf/hybrid/WangGRJF16}.  In the case of
-linear systems as in~\eqref{eq:closedloopss}, the equilibrium point for
-zero-input response is always the origin.  Here, we consider systems with a
-zero reference signal.
+states in a neighborhood.  
+%This stability concept is stronger than the
+%Lyapunov and BIBO stability researched by previous
+%work~\cite{DBLP:conf/emsoft/RavanbakhshS16, hscc-paper,
+%DBLP:conf/hybrid/RouxJG15, DBLP:conf/hybrid/WangGRJF16}.  
+In the case of linear systems as in~\eqref{eq:closedloopss}, 
+considered with a zero reference signal, 
+the equilibrium point of interest is the origin. 
 
 A discrete-time LTI system as \eqref{eq:closedloopss} is asymptotically
-stable iff all the roots of the characteristic polynomial (i.e., the
+stable if all the roots of its characteristic polynomial (i.e., the
 eigenvalues of the closed-loop matrix $A_d - B_d K$) are inside the unity
-circle in the complex plane, i.e., iff their absolute values are less than
-one~\cite{astrom1997computer}.  In this paper, we express the stability
-specification $\phi_\mathit{stability}$ in terms of a check known as
+circle of the complex plane, i.e., if their absolute values are strictly less than
+one~\cite{astrom1997computer} (this simple sufficient condition can be generalised, 
+however this is not necessary in our work).  
+In this paper, we express this stability specification $\phi_\mathit{stability}$ in terms of a check known as
 \emph{Jury's criterion}~\cite{fadali}: this is an easy algebraic formula to
 select the entries of matrix $K$ so that the closed-loop dynamics are shaped
 as desired.
@@ -598,7 +602,7 @@ as desired.
 %-------------------------------
 
 We are not limited to the synthesis of digital stabilizing controllers -- a
-well known task in the literature on digital control system -- but target
+well known task in the literature on digital control systems -- but target
 safety requirements with an overall approach that is sound and automated. 
 More specifically, we require that the closed-loop system
 \eqref{eq:closedloopss} meets given safety specifications.  A safety
