@@ -294,7 +294,7 @@ based on the unfolding of the dynamics.
 
 
 %-------------------------------
-\section{Related work}
+\section{Related Work}
 \label{sec:relw}
 %-------------------------------
 
@@ -612,8 +612,8 @@ must ensure that the state never violates the requirement.  Note that a
 stable, closed-loop system is not necessarily a safe system: indeed, the
 state values may leave the safe part of the state space while they converge
 to the equilibrium, which is typical in the case of oscillatory dynamics. 
-However, a safe system will always be stable.  In~this work, the safety
-property is modeled as follows:
+%However, a safe system will always be stable.  
+In~this work, the safety property is expressed as follows:
 %
 \begin{equation}
 \label{eq:safetyliteral}
@@ -624,8 +624,7 @@ property is modeled as follows:
 %
 where $\underline{x_{i}}$ and $\overline{x_{i}}$ are lower and upper bounds
 for the $i$-th coordinate $x_{i}$ of state $x\in \mathbb R^n$ at the $k$-th
-instant, respectively.  This means that the states will always be within the
-$n$-dimensional hyper-box.
+instant, respectively.  This means that the states will always be within an $n$-dimensional hyper-box.
 
 Furthermore, it is practically relevant to consider the 
 constraints $\phi_\mathit{input}$ on the input
@@ -633,7 +632,7 @@ signal $u_{k}$ and $\phi_\mathit{init}$ on the initial states $x_0$,
 which we assume have given bounds:
 $\phi_\mathit{input} = {\forall k.\underline{u} \leq u_{k} \leq \overline{u}} $, 
 $\phi_\mathit{init} = \bigwedge_{i=1}^{n} \underline{x_{i,0}} \leq x_{i,0} \leq \overline{x_{i,0}}.$
-For the former, this means that the control input saturates in view of
+For the former, this means that the control input might saturates in view of
 physical constraints.
 
 % \addtodo{[The remainder of the section needs to be updated. ]}
@@ -650,7 +649,7 @@ physical constraints.
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
-The models we consider have two sources of error due to numeric
+The models we consider have two sources of error that are due to numerical  
 representation.  The first is the numerical error introduced by the
 fixed-point numbers employed to model the plant, i.e., to represent the
 plant dynamics $A_d$, $B_d$ and $x_k$.  The second is the quantization error
@@ -671,13 +670,15 @@ given~\cite{DBLP:conf/arith/BrainTRW15}.
 We will use $\mathcal{F}_{\langle I_c,F_c \rangle}(x)$ to denote a real
 number $x$ represented at the fixed-point precision of the controller, and
 $\mathcal{F}_{\langle I_p,F_p \rangle}(x)$ to denote a real number $x$
-represented at the fixed-point precision of the plant model ($I_p \geq I_c
-\wedge\allowbreak F_p \geq F_c$).  Thus any mathematical operations in the
+represented at the fixed-point precision of the plant model (\blue{[justify this assumption:]} $I_p \geq I_c$ and $\allowbreak F_p \geq F_c$).  Thus any mathematical operations in the
 digital controller will be in the range of $\mathcal{F}_{\langle I_c,F_c
 \rangle}$, and all other calculations will be carried out in the range of
-$\mathcal{F}_{\langle I_p,F_p \rangle}$.  The physical plant operates in the
+$\mathcal{F}_{\langle I_p,F_p \rangle}$.  
+\blue{[this statement is potentially confusing: are we referring to quantisation effects, or to the uncertainty errors that we have handled in our HSCC17 work?]
+The physical plant operates in the
 reals, which means our verification phase must account for calculation
-errors in the model.
+errors in the model. 
+}
 
 \subsubsection{Effect on safety specification and stability}
 
@@ -696,7 +697,7 @@ This induces two types of the errors detailed above: first, the truncation
 error due to representing $x_k$ as $\mathcal{F}{\langle I_c,F_c
 \rangle}(x_{k})$; and second, the rounding error introduced by the
 multiplication operation.  We represent these errors as non-deterministic
-noise.
+additive noise, which might de-stabilize the closed-loop model.
 
 An additional error is caused by the representation of the plant dynamics, namely 
 %
@@ -710,7 +711,7 @@ arithmetic~\cite{moore1966interval} in the verification phase.
 Previous studies~\cite{gangli1} show that the FWL affects the poles and
 zeros positions, degrading the closed-loop dynamics, causing steady-state
 errors (see Appendix~\ref{sec:appendix:LTIbackground} for details) and
-eventually destabilizing the system~\cite{Bessa16}.  However, since in this
+eventually de-stabilizing the system~\cite{Bessa16}.  However, since in this
 paper we require stability only as a precursor to safety, it is sufficient
 to check that the (perturbed, noisy) model converges to a neighborhood of
 the equilibrium within the safe set.
@@ -729,7 +730,7 @@ feedback controllers using CEGIS.  For this purpose, we first provide the
 synthesizer's general architecture, followed by describing our two
 approaches to synthesizing safe controllers: the first one is a baseline
 approach that relies on a na\"ive unfolding of the transition relation,
-whereas the second uses abstraction to evaluate all possible progressions of
+whereas the second uses abstraction to evaluate all possible executions of
 the system.
 
 % on an infinite time horizon.
@@ -824,7 +825,7 @@ denotes the specification $\sigma$.
 %% %
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{Naive Approach: CEGIS with Multi-staged Verification}
+\subsection{Na\"ive Approach: CEGIS with multi-staged verification}
 \label{sec:CEGIS-precision-incrementation}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -907,20 +908,20 @@ denotes the specification $\sigma$.
 An overview of the algorithm for controller synthesis is given in
 Fig.~\ref{fig:CEGIS-precision-increment}.  One important observation is that
 we verify and synthesize a controller over $k$ time steps.  We~then compute
-a completeness threshold~\cite{DBLP:conf/vmcai/KroeningS03}, $\overline{k}$,
+a completeness threshold $\overline{k}$~\cite{DBLP:conf/vmcai/KroeningS03}
 for this controller, and verify correctness for $\overline{k}$ time steps. 
 Essentially, $\overline{k}$ is the number of iterations required to
-sufficiently unwind the closed-loop state-space system such that the
-boundaries are not violated for any $k{>}\overline{k}$.
+sufficiently unwind the closed-loop state-space system, 
+which ensures that the boundaries are not violated for any other $k{>}\overline{k}$.
 
-\begin{lemma} There exists a $\overline{k}$ such that it is
+\begin{theorem} There exists a finite $\overline{k}$ such that it is
 sufficient to unwind the closed-loop state-space system up to $\overline{k}$
 in order to ensure that $\phi_\mathit{safety}$ holds. 
-\end{lemma}
+\end{theorem}
 
 \begin{proof}
 %
-A \blue{stable} control system is known to have converging dynamics.  Assume the
+A stable control system is known to have converging dynamics.  Assume the
 closed-loop matrix eigenvalues are not repeated (which is sensible to do,
 since we select them).  The distance of the trajectory from the reference
 point (origin) decreases over time within subspaces related to real-valued
@@ -932,8 +933,8 @@ consecutive time steps $k\,T_s$ and $(k+1)\,T_s$, the dynamics projected on
 the corresponding eigenspace rotate $\vartheta T_s$ radians.  Thus, taking
 $\overline{k}$ as the ceiling of $\frac{2\pi}{\vartheta T_s}$, after
 $k{\geq}\overline{k}$ steps we have completed a full rotation, which results
-in a point closer to the origin.  This is the completeness threshold.
-
+in a point closer to the origin.  The synthesized $\overline{k}$ is the completeness threshold.
+\qed 
 %
 \end{proof}
 
@@ -949,8 +950,8 @@ Next, we describe the different phases in Fig.~\ref{fig:CEGIS-precision-incremen
 compute a candidate solution $K$ that satisfies both the stability criteria
 (Sec.~\ref{ssec:stability}) and the safety specification
 (Sec.~\ref{ssec:safety}).  To synthesize a controller that satisfies the
-stability criteria, we require that a computed characteristic polynomial
-satisfies Jury's criteria.  The details of this calculation can be found in
+stability criteria, we require that a computed polynomial
+satisfies Jury's criterion~\cite{fadali}.  The details of this calculation can be found in
 the Appendix.
 
 
@@ -999,7 +1000,7 @@ performed by subsequent {\sc verify} stages.
 \caption{Safety check\label{alg:safetycheck}}
 \end{algorithm}
 
-\item The first {\sc verify} stage, {\sc safety}, checks that candidate
+\item The first {\sc verify} stage, {\sc safety}, checks that the candidate
 solution $K$, which we synthesized to be safe for at least one initial
 state, is safe for \emph{all} possible initial states, i.e., does not reach
 an unsafe state within $k$ steps where we assume $k$ to be under the
@@ -1033,11 +1034,10 @@ Checking that the safety specification holds for any initial state can be
 computationally expensive if the bounds on the
 allowed initial states are large. 
 
-\begin{lemma} 
+\begin{theorem} 
 If a controller is safe for each of the corner cases of our hypercube of
-allowed initial states, it is safe for any initial state in the
-hypercube. 
-\end{lemma}
+allowed initial states, it is safe for any initial state in the hypercube. 
+\end{theorem}
 
 Thus we only need to check $2^n$ initial states, where $n$
 is the dimension of the state space (number of continuous variables). 
@@ -1053,7 +1053,8 @@ x_k   &= (A_d - B_d K)^k x = (A_d - B_d K)^k \sum_{i=1}^{2^n} \alpha_i v_i
 %
 where $x_k^i$ denotes the trajectories obtained from the single vertex
 $v_i$.  We~conclude that any $k$-step trajectory is encompassed, within a
-convex set, by those generated from the vertices.
+convex set, by those generated from the vertices. 
+\qed
 \end{proof}
 
 \subsubsection{Illustrative Example} \label{sec:running-ex}
@@ -1380,7 +1381,7 @@ this time passes the verification phase, resulting in a safe system.
 %-------------------------------
 
 %-------------------------------
-\subsection{Description of the Benchmarks}
+\subsection{Description of the benchmarks}
 \label{experimental-setup}
 %-------------------------------
 
@@ -1484,6 +1485,7 @@ coverage and together solve all benchmarks in the set.
 10 & Satellite          & 2 & 8,16   & 9.43\,s & 16,16  &   0.67\,s \\\hline
 %
 \end{tabular}
+\vspace{0.05in}
 \caption{Experimental results\label{tab:results}}
 \end{table}
 
@@ -1576,7 +1578,7 @@ requirements (alongside safety) in the synthesis of digital controllers.
 
 
 %-------------------------------
-\section{Stability of closed-loop models}
+\section{Stability of Closed-loop Models}
 \label{sec:appendix-stability}
 %-------------------------------
 
@@ -1650,7 +1652,7 @@ requirements (alongside safety) in the synthesis of digital controllers.
 %$$
 
 %-------------------------------
-\subsection{Stability of Closed-loop Systems with Fixed-point Controller Error}
+\subsection{Stability of closed-loop models with fixed-point controller error}
 %-------------------------------
 
 The proof for Jury's criteria~\cite{fadali} relies on the fact that the relationship between states and
@@ -1707,7 +1709,7 @@ closed-loop model.  The convergence to a finite value, however, will not
 make it asymptomatically stable.
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\section{LTI system Transformations and Equivalences} \label{sec:appendix:LTIbackground}
+\section{Errors in LTI models} \label{sec:appendix:LTIbackground}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
