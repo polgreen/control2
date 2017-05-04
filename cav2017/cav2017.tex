@@ -1420,18 +1420,19 @@ runtime was limited to one hour per benchmark.
 %-------------------------------
 
 Using the state-space models given in Section~\ref{experimental-setup}, 
-our experimental evaluation aims to answer two research questions:
+our evaluation has the following two experimental goals:
+%aims to answer two research questions:
 %
 
-\todo{Remove RQ2 and only discuss the sanity check in 5.3?}
+%\todo{Remove RQ2 and only discuss the sanity check in 5.3?}
 
 \begin{enumerate}
 
-\item[RQ1] \textbf{(CEGIS)} do the multi-staged verification and abstraction-based
-CEGIS generate a FWL digital controller in a reasonable amount of time?
+\item[EG1] \textbf{(CEGIS)} Show that multi-staged verification and abstraction-based
+CEGIS are able to generate FWL digital controllers in a reasonable amount of time.
 
-\item[RQ2] \textbf{(sanity check)} are the synthesized controllers sound
-and can their stability and safety be confirmed outside of our model?
+\item[EG2] \textbf{(sanity check)} Confirm the
+stability and safety of the synthesized controllers outside of our model.
 
 \end{enumerate}
 
@@ -1491,7 +1492,7 @@ coverage and together solve all benchmarks in the set.
 The median run-time for our benchmark set is 9.4\,s.  Overall, the average
 synthesis time amounts to approximately 15.6\,s.  We consider these times
 short enough to be of practical use to control engineers, and thus affirm
-RQ1.
+EG1.
 
 There are several cases for which the system may fail to find a controller. 
 For the na\"ive approach, the completeness threshold may be too large, thus
@@ -1502,7 +1503,7 @@ inability of the {\sc synthesize} phase to use a large enough precision for
 the plant model.
 
 The synthesized controllers were confirmed to be safe outside of our model
-representation using MATLAB, positively answering RQ2.  A~link to the full
+representation using MATLAB, achieving EG2.  A~link to the full
 experimental environment, including scripts to reproduce the results, all
 benchmarks and the tool, is provided in the
 footnote as an Open Virtual Appliance
