@@ -169,12 +169,18 @@ We propose a novel algorithm for the synthesis of control algorithms for LTI
 models that are guaranteed to be 
 %both \blue{stable} and 
 safe, considering both the continuous dynamics of the plant and the finite-precision discrete dynamics
-of the controller, as well as the hybrid elements that connect them.
+of the controller, as well as the hybrid elements that connect them. 
 %
 %% In this paper, we synthesize controllers for hybrid
 %% closed-loop systems, i.e., software-implemented embedded controllers along
 %% with a model of their physical environment (the plant), that are
 %% \emph{safe}.
+%
+We account for the presence of errors originating from a number of sources: 
+quantisation errors in ADC and DAC, 
+representation errors (from the discretisation introduced by finite-precision arithmetics), 
+and roundoff and saturation errors in the verification process 
+(from finite-precision operations).  
 %
 Due to the complexity of such systems, we focus on linear models with known
 implementation features (e.g., number of bits, fixed-point arithmetic). 
@@ -219,9 +225,9 @@ comparison, the abstraction-based approach (i.e., the second approach) lowers th
 run-time of our benchmarks by a factor of seven over the first approach
 based on the unfolding of the dynamics.
 
-\todo{Clarify challenges: FWL (rounding, truncation), quantisation (ADC, DAC).}
+%\todo{Clarify challenges: FWL (rounding, truncation), quantisation (ADC, DAC).}
 %
-\todo{Discuss numerical (HSCC'17) vs. algorithmical soundness (CAV'17).}
+%\todo{Discuss numerical (HSCC'17) vs. algorithmical soundness (CAV'17).}
 
 \subsection*{Contributions} 
 
