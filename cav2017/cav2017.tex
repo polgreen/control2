@@ -670,15 +670,13 @@ given~\cite{DBLP:conf/arith/BrainTRW15}.
 We will use $\mathcal{F}_{\langle I_c,F_c \rangle}(x)$ to denote a real
 number $x$ represented at the fixed-point precision of the controller, and
 $\mathcal{F}_{\langle I_p,F_p \rangle}(x)$ to denote a real number $x$
-represented at the fixed-point precision of the plant model (\blue{[justify this assumption:]} $I_p \geq I_c$ and $\allowbreak F_p \geq F_c$).  Thus any mathematical operations in the
+represented at the fixed-point precision of the plant model ($I_c$ and $F_c$ are determined by the controller. We pick $I_p$ and $F_p$ for our synthesis such that $I_p \geq I_c$ and $\allowbreak F_p \geq F_c$).  Thus any mathematical operations in our modelled
 digital controller will be in the range of $\mathcal{F}_{\langle I_c,F_c
-\rangle}$, and all other calculations will be carried out in the range of
+\rangle}$, and all other calculations in our model will be carried out in the range of
 $\mathcal{F}_{\langle I_p,F_p \rangle}$.  
-\blue{[this statement is potentially confusing: are we referring to quantisation effects, or to the uncertainty errors that we have handled in our HSCC17 work?]
 The physical plant operates in the
-reals, which means our verification phase must account for calculation
-errors in the model. 
-}
+reals, which means our verification phase must also account for the numerical error and quantization errors caused by representing the physical plant at the finite precision $\mathcal{F}_{\langle I_p,F_p \rangle}$.
+
 
 \subsubsection{Effect on safety specification and stability}
 
