@@ -1680,15 +1680,15 @@ x_{2} &= (A_d  - B_dK)((A_d  - B_dK)x_0 + B_dK\delta ) + B_dK\delta \\
       &=(A_d  - B_dK)^2x_0 + (A_d  - B_dK)B_dK\delta + B_dK\delta \\
 %x_{3}  &=(A_d  - B_dK)^3x_0 + (A_d  - B_dK)^2B_dK\delta + (A_d  - B_dK)B_dK\delta + B_dK\delta\\
 x_{n} &= (A_d  - B_dK)^nx_0 + (A_d  - B_dK)^{n-1}B_dK\delta + ... + (A_d  - B_dK)^1B_dK \delta + B_dK\delta \\
-  &= (A_d - B_dK)^nx_0 + \sum_{i=0}^{i=n-1}(A_d - B_dK)^iB_dk\delta
+  &= (A_d - B_dK)^nx_0 + \sum_{i=0}^{i=n-1}(A_d - B_dK)^iB_dk\delta. 
 \end{align*}
 
 The definition of asymptotic stability is that the system converges to a
 reference signal, in this case we use no reference signal so an
 asymptotically stable system will converge to the origin.  We know that the
 original system with an infinite-precision controller is stable, because we
-have synthesized it to meet Jury's criterion.  Hence, $(A_d - B_dK)^n \cdot
-x_0$ must converge to zero.
+have synthesized it to meet Jury's criterion.  Hence, $(A_d - B_dK)^n x_0$ 
+must converge to zero.
 
 To show that a fixed-point implementation of the same controller will
 converge to a finite value, we need to show that the infinite sum converges. 
