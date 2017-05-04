@@ -1539,7 +1539,7 @@ threshold is high.\\
 %
 \textit{Abstraction on other properties:} The performance gain from abstract
 acceleration may not hold for more complex properties than safety, for
-instance ``eventually always reaches a certain safe set''.
+instance ``eventually reach and always remain in a given safe set''.
 
 %-------------------------------
 \section{Conclusion}
@@ -1565,8 +1565,8 @@ literature.
 
 Future work will focus the extension of these approaches to the
 continuous-time case, to models with output-based control architectures
-(hinging on the use of observers), and to considering performance
-requirements (alongside safety) in the synthesis of digital controllers.
+(with the use of observers), and to the consideration of more complex specifications 
+and of additional performance requirements in the synthesis of digital controllers.
 
 %\newpage
 
@@ -1658,14 +1658,14 @@ requirements (alongside safety) in the synthesis of digital controllers.
 \subsection{Stability of closed-loop models with fixed-point controller error}
 %-------------------------------
 
-The proof for Jury's criteria~\cite{fadali} relies on the fact that the relationship between states and
-next states is defined by $x_{k+1} = (A_d - B_dK) \cdot x_k$, all computed
+The proof of Jury's criterion~\cite{fadali} relies on the fact that the relationship between states and
+next states is defined by $x_{k+1} = (A_d - B_dK) x_k$, all computed
 at infinite precision.  When we employ a FWL digital controller, the
 operation becomes:
 %
 \begin{align*}
 x_{k+1} &= A_d \cdot x_{k} -(\mathcal{F}_{\langle I_c,F_c \rangle}(K)\cdot\mathcal{F}_{\langle I_c,F_c \rangle}(x_{k})).  \\
-x_{k+1} &= (A_d  - B_dK) \cdot x_k + B_dK\delta
+x_{k+1} &= (A_d  - B_dK) \cdot x_k + B_dK\delta, 
 %\\ x_{k+1}&=A_d x_{k} + B_du_{k}
 \end{align*}
 %
@@ -1797,8 +1797,7 @@ representation:
 I,F \rangle}(x)$ be the same number represented in a fixed-point domain as
 above.  Then $\mathcal{F}_{\langle I,F \rangle}(x) = x-\delta_T$ where the
 error $ \delta_T=x\ \%_{c_m}\ \tilde x$, and $\%_{c_m}$ is the modulus
-operation performed on the last bit.
-
+operation performed on the last bit. 
 Thus, $\delta_T$ is the truncation error and it will propagate across
 operations.
 %
@@ -1823,7 +1822,7 @@ $c_m=2^{-F}$ as above.
 \item Division: the operations performed by our controllers in the FWL
 domain do not include division.  However, we do use division in computations
 at the precision of the plant.  Here the error depends on whether the
-divisor is greater or smaller than the dividend.  $\mathcal{F}_{\langle I,F
+divisor is greater or smaller than the dividend:  $\mathcal{F}_{\langle I,F
 \rangle}(c_1) / \mathcal{F}_{\langle I,F \rangle}(c_2) = c_3 + \delta_{T3}$
 where $\delta_{T3}$ is $(\delta_{T2}\cdot c_1 - \delta_{T1}\cdot
 c_2)/(\delta_{T2}^2 - \delta_{T2} c_2)$,
@@ -1865,7 +1864,7 @@ During any given ADC conversion, the continuous signal will be sampled in
 the real domain and transformed by $\mathcal{F}\langle I_{c},F_{c} \rangle
 (x)$ (assuming the ADC discretization is the same as the digital
 implementation).  This sampling uses a threshold which is defined by the
-less significant bit ($q_{c}=2^{-F_c}$) of the ADC and some non-linearities
+less significant bit \blue{[this quantity was named $c_m$ above and in other parts of the paper - please uniformise notations]} ($q_{c}=2^{-F_c}$) of the ADC and some non-linearities
 of the circuitry.  The overall conversion is
 %
 $$\mathcal{F}\langle I_{c},F_{c} \rangle(y(t)) = y_k :
@@ -1884,27 +1883,26 @@ are the same ($I_{c}=I_{dac},\allowbreak F_{c}=F_{dac}$), or if the DAC
 resolution in higher than the ADCs, then the DAC quantization error is equal
 to zero.  From the above equations we can now define the ADC and DAC
 quantization noises ${\nu_1}_k \in [-\frac{q_1}{2}\ \ \frac{q_1}{2}]$ and
-${\nu_2}_k \in [-\frac{q_2}{2}\ \ \frac{q_2}{2}]$ where $q_1=q_{c} \wedge
-q_2=q_\mathit{dac}$.  This is illustrated in
+${\nu_2}_k \in [-\frac{q_2}{2}\ \ \frac{q_2}{2}]$, where $q_1=q_{c}$ and 
+$q_2=q_\mathit{dac}$.  This is illustrated in
 Fig.~\ref{ssec:statefeedbackcontrol} where $Q_1$ is the quantizer of the ADC
 and $Q_2$ the quantizer for the DAC.  These bounds hold irrespective of
 whether the noise is correlated, hence we may use them to over-approximate
 the effect of the noise on the state space progression over time.  The
 resulting dynamics are
 %
-\begin{align}
-\label{eq:pre_quantization}
+\begin{align*}
+%\label{eq:pre_quantization}
 {x}_{k+1} &= {A}_d{x}_k+{B}_d({u}_k+{{\nu}_2}_k)\\
 u_k&=-K{x}_{k}+{{\nu}_1}_k \,,
-\end{align}
+\end{align*}
 %
-
 which result in the following closed-loop dynamics:
 %
-\begin{align}
-\label{eq:quantization}
+\begin{align*}
+%\label{eq:quantization}
 {x}_{k+1} &= ({A}_d-{B}_d{K}_d) {x}_k+{B}_d{{\nu}_2}_k +{{\nu}_1}_k \,. 
-\end{align}
+\end{align*}
 
 %The process of quantization in the DAC is similar except that it is going from $\mathcal{F}_{\langle I_c,F_c \rangle}  \rightarrow \mathcal{F}_{\langle I_p,F_p \rangle}$. If these domains are the same ($I_{p}=I_{c},F_{p}=F_{c}$), or if the DAC resolution in higher than the ADCs, then the DAC quantization error is equal to zero.
 %From the above equations we can now infer that $\nu_1 \in [-\frac{q_1}{2}\ \ \frac{q_1}{2}], \nu_2 \in [-\frac{q_2}{2}\ \ \frac{q_2}{2}] : q_1=q_{c} \wedge q_2=q_{dac}$.
