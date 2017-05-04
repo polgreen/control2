@@ -1302,7 +1302,7 @@ them to the {\sc abstract} phase.
 \item Find the constraints that invalidate the property
  as a set of counterexamples for the eigenvalues, which we define as $\phi_\Lambda$. This is a constraint in the spectrum i.e., transfer function) of the closed loop dynamics. 
 \item We use $\phi_\Lambda$ to
-  further constrain the characteristic polynomial  
+  further constrain the characteristic polynomial \blue{[again, check the coefficients of the characteristic polynomial.]} 
 $z^n+\sum_{i=1}^n(a_i-k_i)z^{n-i}=\prod_{i=1}^n (z-\lambda_i) : |\lambda_i|<1 \wedge \lambda_i \models \phi_{\Lambda}$. These constraints correspond to specific iterations for which the system may be unsafe.
 \item Pass the refined abstraction $\phi(K)$ with the new constraints and the list of iterations $k$ to the {\sc synthesize} phase.
   %, as well as a counterexample plant coefficients ($P_a$) and repeat the loop again. 
@@ -1322,7 +1322,7 @@ $\overline{u}=10$, and safety specifications $\underline{x_{i}}=-0.92$ and
 $\overline{x_{i}}=0.92$, the {\sc synthesize} phase in
 Fig.~\ref{fig:CEGARIS} generates an initial candidate controller
 $K=[\begin{array}{ccc}0.24609375&-0.125&0.1484375\end{array}]$.
-This candidate is \blue{stable}, but the {\sc verify} phase finds it to be
+This candidate is chosen for its closed-loop stable dynamics, but the {\sc verify} phase finds it to be
 unsafe and returns a list of iterations with an initial state that
 fails the safety specification {\footnotesize $(k,x_0) {\in}
 \{ (2, [\begin{array}{ccc}0.9&-0.9&0.9\end{array}]),\allowbreak (3,
