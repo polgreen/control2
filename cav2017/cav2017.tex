@@ -1446,23 +1446,22 @@ stability and safety of the synthesized controllers outside of our model.
 %-------------------------------
 
 We give the results in Table~\ref{tab:results}.  Here \textit{Benchmark} is
-the name of the respective benchmark, \textit{order} is the number of states, 
-$\mathcal{F}_{\langle I_p,F_p \rangle}$ is the fixed-point precision used to model the plant, while
-\textit{Time} is the total time required to synthesize a \blue{stable} controller
-for the given plant, for CEGIS with multi-staged verification as well as
-abstraction-based CEGIS.  Timeouts are indicated by~\xmark.  The precision
-for the controller, $\mathcal{F}_{\langle I_c,F_c \rangle}$, is chosen to be
-$I_c = 8$, $F_c = 8$.
+the name of the respective benchmark, \textit{order} is the number of
+continuous variables, $\mathcal{F}_{\langle I_p,F_p \rangle}$ is the
+fixed-point precision used to model the plant, while \textit{Time} is the
+total time required to synthesize a \blue{stable} controller for the given
+plant with the given method.  Timeouts are indicated by~\xmark.  The
+precision for the controller, $\mathcal{F}_{\langle I_c,F_c \rangle}$, is
+chosen to be $I_c = 8$, $F_c = 8$.
 
 For the majority of our benchmarks, we observe that the abstraction-based
 back-end is faster than the basic multi-staged verification approach, and
-finds one solution more (9) than the multi-staged back-end (8).
-In direct comparison, the
-abstraction-based approach is on average able to find a solution in
-approximately 70\% of the time required using the multi-staged back-end, and
-has a median run-time 1.4\,s, which is seven times smaller than the
-multi-staged approach.  The two back-ends complement each other in benchmark
-coverage and together solve all benchmarks in the set.
+finds one solution more (9) than the multi-staged back-end (8).  In direct
+comparison, the abstraction-based approach is on average able to find a
+solution in approximately 70\% of the time required using the multi-staged
+back-end, and has a median run-time 1.4\,s, which is seven times smaller
+than the multi-staged approach.  The two back-ends complement each other in
+benchmark coverage and together solve all benchmarks in the set.
 
 \begin{table}
 \centering
