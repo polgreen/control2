@@ -123,13 +123,13 @@ We present a sound and automated approach to synthesize safe digital
 feedback controllers for physical plants represented as linear,
 time-invariant models.  Models are given as dynamical equations with inputs,
 evolving over a continuous state space and accounting for errors due to the
-digitalization of signals by the controller.  Our approach has two stages,
+digitization of signals by the controller.  Our approach has two stages,
 leveraging counterexample guided inductive synthesis (CEGIS) and
 reachability analysis.  CEGIS synthesizes a static feedback controller that
 stabilizes the system under restrictions given by the safety of the reach
 space.  Safety is verified either via BMC or abstract acceleration; if the
 verification step fails, we refine the controller by generalizing the
-counterexample.  We display the practical value of this approach by automatically synthesizing safe controllers for intricate
+counterexample.  We demonstrate the practical value of this approach by automatically synthesizing safe controllers for intricate
 physical plant models from the digital control literature. 
 %
 %\keywords{
@@ -150,19 +150,19 @@ physical plant models from the digital control literature.
 %-------------------------------
 
 Linear Time Invariant (LTI) models represent a broad class of dynamical
-systems with significant impact in numerous application areas such as in life
+systems with significant impact in numerous application areas such as life
 sciences, robotics, and engineering~\cite{astrom1997computer,Franklin15}. 
 The synthesis of controllers for LTI models is well understood, however the
 use of digital control architectures adds new challenges due to the effects
 of finite-precision arithmetic, time discretization, and quantization noise,
-which are typically introduced by Analogue-to-Digital (ADC) and
+which is typically introduced by Analogue-to-Digital (ADC) and
 Digital-to-Analogue (DAC) conversion.  While research on digital control is
 well developed~\cite{astrom1997computer}, automated and sound control
 synthesis is challenging, particularly when the synthesis objective goes
 beyond classical stability.  There are recent methods for verifying
 reachability properties of a given controller~\cite{FLD+11}. 
 However, these methods have not been generalized to control synthesis.  
-Notice that a synthesis algorithm that guarantees stability does not
+Note that a synthesis algorithm that guarantees stability does not
 ensure safety: the system might transitively visit an unsafe state resulting in unrecoverable failure.
 
 We propose a novel algorithm for the synthesis of control algorithms for LTI
@@ -178,7 +178,7 @@ of the controller, as well as the hybrid elements that connect them.
 %
 We account for the presence of errors originating from a number of sources: 
 quantisation errors in ADC and DAC, 
-representation errors (from the discretisation introduced by finite-precision arithmetics), 
+representation errors (from the discretization introduced by finite-precision arithmetic), 
 and roundoff and saturation errors in the verification process 
 (from finite-precision operations).  
 %
@@ -191,8 +191,9 @@ synthesis, but play an important role in systems engineering.
 We give two alternative approaches for synthesizing digital controllers for
 state-space physical plants, both based on CounterExample Guided Inductive
 Synthesis (CEGIS)~\cite{DBLP:conf/asplos/Solar-LezamaTBSS06}.  We prove
-their soundness by quantifying errors caused by digitalization and
-quantization effects that arise when time/value-discrete digital controller
+their soundness by quantifying errors caused by digitization and
+quantization effects that arise when %time/value-discrete 
+the digital controller
 interacts with the continuous plant.
 
 {\em The first approach} uses a na\"ive technique that starts by devising a
@@ -327,7 +328,7 @@ closed-loop systems, i.e., properties that specify a set of goal states and
 safe states (constrained reachability).  This solution is based on
 synthesizing control Lyapunov functions for switched systems that yield
 switching controllers with a guaranteed minimum dwell time in each mode. 
-However, both approaches are not suitable for the kind of control we seek to
+However, both approaches are unsuitable for the kind of control we seek to
 synthesize.
 
 The work in~\cite{hscc-paper} synthesizes stabilizing
@@ -340,12 +341,21 @@ systems given as transfer function models:
 this results in  a static check on their coefficients.  
 By contrast, in the current paper we consider a state-space representation of the physical system, 
 which requires ensuring the specification over actual traces of the model, 
+<<<<<<< HEAD
 alongside the numerical soundness required by the effects of discretisation and finite-precision errors.   
 A state-space model has known advantages over the transfer function
 representation~\cite{Franklin15}: it naturally generalizes to multivariate systems
 (i.e., with multiple inputs and outputs); 
 %(ii)~gives the state-to-input relationships, offering an internal model of the system;  
 and it allows to synthesize control systems with guarantees on the internal dynamics, e.g.,
+=======
+alongside the numerical soundness required by the effects of discretization and imprecision errors.   
+A state-space model has known advantages over the transfer function
+representation~\cite{Astrom08}: (i)~it naturally generalizes to multivariate systems
+(i.e., with multiple inputs and outputs); (ii)~gives the state-to-input
+relationships, offering an internal model of the system; and (iii)~allows the
+synthesis of control systems with guarantees on the internal dynamics, e.g.,
+>>>>>>> 14b2cf34a87b12f077cef9a8fca94e2213ab9364
 to synthesize controllers that make the closed-loop system \emph{safe}.  Our
 work focuses on the \emph{safety} of internal states, which is usually
 overlooked in the literature.  Moreover, our work integrates an
@@ -704,7 +714,7 @@ This induces two types of the errors detailed above: first, the truncation
 error due to representing $x_k$ as $\mathcal{F}{\langle I_c,F_c
 \rangle}(x_{k})$; and second, the rounding error introduced by the
 multiplication operation.  We represent these errors as non-deterministic
-additive noise, which might de-stabilize the closed-loop model.
+additive noise.%, which might de-stabilize the closed-loop model.
 
 An additional error is due to the representation of the plant dynamics, namely 
 %
@@ -720,7 +730,7 @@ errors (see Appendix~\ref{sec:appendix:LTIbackground} for details) and
 eventually de-stabilizing the system~\cite{Bessa16}.  However, since in this
 paper we require stability only as a precursor to safety, it is sufficient
 to check that the (perturbed, noisy) model converges to a neighborhood of
-the equilibrium within the safe set.
+the equilibrium within the safe set (see Appendix~\ref{sec:stab_FWL}).
 
 In the following, we shall disregard these steady-state errors (caused by
 FWL effects) when stability is ensured by synthesis, and then verify its
@@ -793,7 +803,7 @@ Eq.~\ref{eq:controlaction}) that makes the closed-loop plant model safe for
 initial state $x_0$, reference signal $r_k$ and input $u_k$ as defined in
 Sec.~\ref{ssec:safety}.  We consider non-deterministic initial states within
 a specified range, the reference signal to be set to zero, saturation on the
-inputs, and account for digitalization and quantization errors introduced by
+inputs, and account for digitization and quantization errors introduced by
 the controller.
 
 When mapping back to the notation used for describing the general
@@ -1081,8 +1091,8 @@ return $x_0=[-0.5\,-0.5\,-0.5]$ as the new counterexample.
 
 In the subsequent iteration, the synthesizer is unable to find further 
 suitable candidates and it returns UNSAT, meaning that the current precision is
-insufficient.  Consequently, we increase the precision to $I_p=17$,
-$F_p=7$. \blue{[ Explain how precision is increased, byte-congruent.]}
+insufficient.  Consequently, we increase the precision the plant is modelled with to $I_p=17$,
+$F_p=7$. We increase the precision by 8 bits each step in order to be compliant with the CBMC type API.
 %
 Since the previous counterexamples were obtained at lower precision,
 we remove them from the set of counterexamples.  Back in the {\sc
@@ -1659,7 +1669,7 @@ and of additional performance requirements in the synthesis of digital controlle
 %-------------------------------
 \subsection{Stability of closed-loop models with fixed-point controller error}
 %-------------------------------
-
+\label{sec:stab_FWL}
 The proof of Jury's criterion~\cite{fadali} relies on the fact that the relationship between states and
 next states is defined by $x_{k+1} = (A_d - B_dK) x_k$, all computed
 at infinite precision.  When we employ a FWL digital controller, the
@@ -1679,7 +1689,11 @@ follows:
 \begin{align*}
 x_{1} &= (A_d  - B_dK)x_0 + B_dK\delta \\
 x_{2} %&= (A_d  - B_dK)((A_d  - B_dK)x_0 + B_dK\delta ) + B_dK\delta \\
+<<<<<<< HEAD
       &=(A_d  - B_dK)^2x_0 + (A_d  - B_dK)B_dK\delta + B_dK\delta \\
+=======
+ &=(A_d  - B_dK)^2x_0 + (A_d  - B_dK)B_dK\delta + B_dK\delta \\
+>>>>>>> 14b2cf34a87b12f077cef9a8fca94e2213ab9364
 %x_{3}  &=(A_d  - B_dK)^3x_0 + (A_d  - B_dK)^2B_dK\delta + (A_d  - B_dK)B_dK\delta + B_dK\delta\\
 x_{n} &= (A_d  - B_dK)^nx_0 + (A_d  - B_dK)^{n-1}B_dK\delta + ... + (A_d  - B_dK)^1B_dK \delta + B_dK\delta \\
   &= (A_d - B_dK)^nx_0 + \sum_{i=0}^{i=n-1}(A_d - B_dK)^iB_dk\delta. 
@@ -1692,11 +1706,11 @@ original system with an infinite-precision controller is stable, because we
 have synthesized it to meet Jury's criterion.  Hence, $(A_d - B_dK)^n x_0$ 
 must converge to zero.
 
-To show that a fixed-point implementation of the same controller will
-converge to a finite value, we need to show that the infinite sum converges. 
-A known result is that a power series of matrices
-converges~\cite{horn1990matrix}, iff the eigenvalues of the matrix are less
-than~1, as follows:
+%T%o show that a fixed-point implementation of the same controller will
+%converge to a finite value, we need to show that the infinite sum converges. 
+The power series of matrices
+converges~\cite{horn1990matrix} iff the eigenvalues of the matrix are less
+than~1 as follows:
 %
 %\begin{align*}
 $\sum_{i=0}^{\infty}T^i  = (I - T)^{-1}$, 
@@ -1859,7 +1873,7 @@ the domain.  We check that overflow does not occur.
 % We have also shown in the previous section that $x_k=A^nx_0$ is a witness of $x(t): \dot{x}(t)=Ax(t)$ at time $kT_s$. Applying this notion to multiple sample times, we can state that $x_{k_i}=A_i^nx_0$ are a set of witnesses at times $kT_i$, and by extension the set $\{x=A_i^nx_0 : \forall n \in \mathbb{R} \}$ witnesses all states visited by the continuous system in time $t \in [0,\infty)$. This applies to any arbitrary sample time $T_i$.
 % Since the controller output is fed to a Zero Order Holder, the progression of the system between times $kT_s$ and $(k+1)T_s$ is $\mat{A}^n\vec{x}_k+\mat{B}\vec{u}_k : n \in (0,1)$. We therefore obtain a reach tube for the continuous dynamics of a time sampled system to be contained within the abstract reach tube $\mathcal{A}^1\mathcal{M}X_0+\mathcal{BK}^1\mathcal{M}X_0=\mathcal{M}X_0$
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{Modelling quantization as noise} \label{appendix:quantization-noise}
+\subsection{Modeling quantization as noise} \label{appendix:quantization-noise}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 During any given ADC conversion, the continuous signal will be sampled in
