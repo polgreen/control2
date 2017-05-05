@@ -717,7 +717,7 @@ errors (see Appendix~\ref{sec:appendix:LTIbackground} for details) and
 eventually de-stabilizing the system~\cite{Bessa16}.  However, since in this
 paper we require stability only as a precursor to safety, it is sufficient
 to check that the (perturbed, noisy) model converges to a neighborhood of
-the equilibrium within the safe set.
+the equilibrium within the safe set (see Appendix~\ref{sec:stab_FWL}.
 
 In the following, we shall disregard these steady-state errors (caused by
 FWL effects) when the stability is ensured by synthesis, and then verify its
@@ -1656,7 +1656,7 @@ and of additional performance requirements in the synthesis of digital controlle
 %-------------------------------
 \subsection{Stability of closed-loop models with fixed-point controller error}
 %-------------------------------
-
+\label{sec:stab_FWL}
 The proof of Jury's criterion~\cite{fadali} relies on the fact that the relationship between states and
 next states is defined by $x_{k+1} = (A_d - B_dK) x_k$, all computed
 at infinite precision.  When we employ a FWL digital controller, the
