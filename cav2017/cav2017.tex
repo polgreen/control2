@@ -160,7 +160,7 @@ Digital-to-Analogue (DAC) conversion.  While research on digital control is
 well developed~\cite{astrom1997computer}, automated and sound control
 synthesis is challenging, particularly when the synthesis objective goes
 beyond classical stability.  There are recent methods for verifying
-reachability properties of a given controller~\cite{FLD+11,Fre05}. 
+reachability properties of a given controller~\cite{FLD+11}. 
 However, these methods have not been generalized to control synthesis.  
 Notice that a synthesis algorithm that guarantees stability does not
 ensure safety: the system might transitively visit an unsafe state resulting in unrecoverable failure.
@@ -307,12 +307,11 @@ based on the unfolding of the dynamics.
 \paragraph{CEGIS -}
 
 Program synthesis is the problem of computing correct-by-design programs
-from high-level specifications; algorithms for this problem have made
-substantial progress in recent years.  One such
-approach~\cite{itzhaky2010simple} inductively synthesizes invariants to
-generate the desired programs.
+from high-level specifications. Algorithms for this problem have made
+substantial progress in recent years, for instance~\cite{itzhaky2010simple} to inductively synthesize invariants for the 
+generation of desired programs.
 
-Program synthesizers are an ideal fit for synthesis of controllers, since
+Program synthesizers are an ideal fit for the synthesis of digital controllers, since
 the semantics of programs capture the effects of finite-precision arithmetic
 precisely.  In~\cite{DBLP:conf/cdc/RavanbakhshS15}, the authors use CEGIS
 for the synthesis of switching controllers for stabilizing continuous-time
@@ -334,52 +333,55 @@ synthesize.
 The work in~\cite{hscc-paper} synthesizes stabilizing
 controllers for continuous plants given as transfer functions by exploiting
 bit-accurate verification of software-implemented digital
-controllers~\cite{IsmailBCFF15, Bessa16}.  While this work also uses CEGIS,
+controllers~\cite{%IsmailBCFF15, 
+Bessa16}.  While this work also uses CEGIS,
 the approach is restricted to digital controllers for stable closed-loop
 systems given as transfer function models: 
 this results in  a static check on their coefficients.  
 By contrast, in the current paper we consider a state-space representation of the physical system, 
 which requires ensuring the specification over actual traces of the model, 
-alongside the numerical soundness required by the effects of discretisation and imprecision errors.   
+alongside the numerical soundness required by the effects of discretisation and finite-precision errors.   
 A state-space model has known advantages over the transfer function
-representation~\cite{Astrom08}: (i)~it naturally generalizes to multivariate systems
-(i.e., with multiple inputs and outputs); (ii)~gives the state-to-input
-relationships, offering an internal model of the system; and (iii)~allows to
-synthesize control systems with guarantees on the internal dynamics, e.g.,
+representation~\cite{Franklin15}: it naturally generalizes to multivariate systems
+(i.e., with multiple inputs and outputs); 
+%(ii)~gives the state-to-input relationships, offering an internal model of the system;  
+and it allows to synthesize control systems with guarantees on the internal dynamics, e.g.,
 to synthesize controllers that make the closed-loop system \emph{safe}.  Our
 work focuses on the \emph{safety} of internal states, which is usually
 overlooked in the literature.  Moreover, our work integrates an
-abstraction/refinement step inside the main CEGIS loop.
+abstraction/refinement (CEGAR) step inside the main CEGIS loop.
 
 The tool Pessoa~\cite{mazo2010pessoa} synthesizes correct-by-design embedded
 control software in a Matlab toolbox.  It is based on the abstraction of a
 physical system to an equivalent finite-state machine and on the computation
-of reachability properties over the finite-state machine.  Based on this
-safety specification, \mbox{Pessoa} can synthesize embedded controller
+of reachability properties thereon. 
+%over the finite-state machine.  
+Based on this safety specification, \mbox{Pessoa} can synthesize embedded controller
 software for a range of properties.  The embedded controller software can be
-more complicated than the state-feedback control we synthesized, and the
-properties available cover more detail.
+more complicated than the state-feedback control we synthesize, and the
+properties available cover more detail. 
 %
 %based on a safety specification over state values, as well as specification on characteristic functions of the controller. 
 %
-However, Pessoa does not have consider the quantization error introduced by
-Digital-to-Analogue/Analogue-to-Digital conversion needed for synthesizing
-fixed-point digital controllers.
+However, relying on state-space discretization \mbox{Pessoa} is likely to incur in scalability limitations. 
+Along this research line, \cite{Anta2010,liu16} studies the synthesis of digital controllers for continuous dynamics, 
+and \cite{zamani2014} extends the approach to the recent setup of Network Control Systems. 
 
 %\todo{Have we covered all the literature by Feron et al?}  
 
 \paragraph{Discretization Effects -}
 
-The classical approach to control synthesis has often disregarded
-quantization, thus sacrificing soundness.  Modern techniques focus on
+The classical approach to control synthesis has often disregarded digitalization effects, 
+%thus sacrificing soundness. 
+whereas more recently modern techniques have focused on
 different aspects of discretization, including delayed
 response~\cite{Duggirala2015} and finite word length (FWL) semantics, 
 with the goal either to verify (e.g.,~\cite{daes20161}) or to optimize
-(e.g.,~\cite{oudjida2014design}) given implementations.
+(e.g.,~\cite{oudjida2014design}) given implementations. 
 
 There are two different problems that arise from FWL semantics.  The first
 is the error in the dynamics caused by the inability to represent the exact
-state of the physical system, while the second relates to rounding errors
+state of the physical system, while the second relates to rounding and saturation errors
 during computation.  In~\cite{fialho1994stability}, a stability measure
 based on the error of the digital dynamics ensures that the deviation
 introduced by FWL does not make the digital system unstable.  A~more recent
@@ -393,10 +395,11 @@ stability, the latter uses Lyapunov-based quadratic invariants.  In both
 cases, the SDP solver uses floating-point arithmetic and soundness is
 checked by bounding the error.  An alternative is~\cite{park2016scalable},
 where the verification of given control code is performed against a known
-model by extracting an LTI model of the code by symbolic execution. 
-To~account for rounding errors, an upper bound is introduced in the
-verification phase.  The work in \cite{picasso2003stabilization,
-picasso2002construction} introduces attractive invariant sets as a mechanism
+model by extracting an LTI model of the code by symbolic execution:  
+to account for rounding errors, an upper bound is introduced in the
+verification phase.  The work in \cite{picasso2003stabilization}
+%picasso2002construction} 
+introduces attractive invariant sets as a mechanism
 to bound the quantization error effect on stabilization as an invariant set
 that always converges toward the controllable set.  In a similar fashion,
 \cite{liberzon2003hybrid} evaluates the dynamics of the quantization error
@@ -720,7 +723,7 @@ to check that the (perturbed, noisy) model converges to a neighborhood of
 the equilibrium within the safe set.
 
 In the following, we shall disregard these steady-state errors (caused by
-FWL effects) when the stability is ensured by synthesis, and then verify its
+FWL effects) when stability is ensured by synthesis, and then verify its
 safety accounting for the finite-precision errors.
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1675,7 +1678,7 @@ follows:
 %
 \begin{align*}
 x_{1} &= (A_d  - B_dK)x_0 + B_dK\delta \\
-x_{2} &= (A_d  - B_dK)((A_d  - B_dK)x_0 + B_dK\delta ) + B_dK\delta \\
+x_{2} %&= (A_d  - B_dK)((A_d  - B_dK)x_0 + B_dK\delta ) + B_dK\delta \\
       &=(A_d  - B_dK)^2x_0 + (A_d  - B_dK)B_dK\delta + B_dK\delta \\
 %x_{3}  &=(A_d  - B_dK)^3x_0 + (A_d  - B_dK)^2B_dK\delta + (A_d  - B_dK)B_dK\delta + B_dK\delta\\
 x_{n} &= (A_d  - B_dK)^nx_0 + (A_d  - B_dK)^{n-1}B_dK\delta + ... + (A_d  - B_dK)^1B_dK \delta + B_dK\delta \\
@@ -1893,8 +1896,7 @@ resulting dynamics are
 %
 \begin{align*}
 %\label{eq:pre_quantization}
-{x}_{k+1} &= {A}_d{x}_k+{B}_d({u}_k+{{\nu}_2}_k)\\
-u_k&=-K{x}_{k}+{{\nu}_1}_k \,,
+{x}_{k+1} = {A}_d{x}_k+{B}_d({u}_k+{{\nu}_2}_k), \quad u_k = -K{x}_{k}+{{\nu}_1}_k, 
 \end{align*}
 %
 which result in the following closed-loop dynamics:
