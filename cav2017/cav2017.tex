@@ -1538,14 +1538,19 @@ over a diverse set of real-world benchmarks.  Nevertheless, this set of
 benchmarks is limited within the scope of this paper and the performance may
 not generalize to other benchmarks.\\
 %
-\textit{Plant precision and discretization heuristic:} Our algorithm to
-select suitable FWL word widths to model the plant behavior employs a
-heuristic based on user-provided controller word-width specifications.
-In order to be compliant with the CBMC type API, we increase the precision
-by 8 bits at each step.
-For the first approach, where we may need to increase the precision of the time
-discretization, we select the time steps for the discretizations on a
-similar basis.  This works sufficiently well for our benchmarks, but
+\textit{Plant precision and discretization heuristics:} Our algorithm to
+select suitable FWL word widths to model the plant behavior %% employs a
+%% heuristic based on user-provided controller word-width specifications.
+increases the precision by 8 bits at each step 
+in order to be compliant with the CBMC type API. %% , we increase the precision
+%% by 8 bits at each step.
+Similarly, for discretization, we run multiple discretisations for each
+benchmark and retain the fastest run.
+%% where we may need to increase the precision of the time
+%% discretization,
+%% we select the time steps for the discretizations on a
+%% similar basis.
+This works sufficiently well for our benchmarks, but
 performance may suffer in some cases, for example if the completeness
 threshold is high.\\
 %
