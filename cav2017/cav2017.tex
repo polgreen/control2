@@ -1080,8 +1080,10 @@ convex set, by those generated from the vertices.
 We illustrate our approach with an example,
 extracted from the literature~\cite{Franklin15}.
 %
-We start with a candidate solution with all coefficients zero, $K=[0
-  \ 0 \ 0]^T$ \blue{[an attempted explanation of this first guess is due.]}, and a precision of $I_p=13$, $F_p=3$.  In the first
+Since we have not learned any information about the system yet,
+we pick an arbitrary candidate solution (we always choose $K=[0
+  \ 0 \ 0]^T$ in our experiments to simplify reproduction), and a
+precision of $I_p=13$, $F_p=3$.  In the first
 {\sc verify} stage, the {\sc safety} check finds the counterexample
 %
 $ x_0 = [-0.5 \ 0.5 \ 0.5] $.
