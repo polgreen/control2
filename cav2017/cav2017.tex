@@ -125,13 +125,16 @@ We present a sound and automated approach to synthesize safe digital
 feedback controllers for physical plants represented as linear,
 time-invariant models.  Models are given as dynamical equations with inputs,
 evolving over a continuous state space and accounting for errors due to the
-digitization of signals by the controller.  Our approach has two stages,
-leveraging counterexample guided inductive synthesis (CEGIS) and
-reachability analysis.  CEGIS synthesizes a static feedback controller that
-stabilizes the system under restrictions given by the safety of the reach
-space.  Safety is verified either via BMC or abstract acceleration; if the
-verification step fails, we refine the controller by generalizing the
-counterexample.  We demonstrate the practical value of this approach by automatically synthesizing safe controllers for intricate
+digitization of signals by the controller.  
+Our counterexample guided inductive synthesis (CEGIS) approach has two phases: We synthesize a static feedback controller that stabilizes the system but that may not be safe for all initial conditions. Safety is then verified either via BMC or abstract acceleration; if the verification step fails, a counterexample is provided to the synthesis engine and the process iterates until a safe controller is obtained.
+%Our approach has two stages,
+%leveraging counterexample guided inductive synthesis (CEGIS) and
+%reachability analysis.  CEGIS synthesizes a static feedback controller that
+%stabilizes the system under restrictions given by the safety of the reach
+%space.  Safety is verified either via BMC or abstract acceleration; if the
+%verification step fails, we refine the controller by generalizing the
+%counterexample.  
+We demonstrate the practical value of this approach by automatically synthesizing safe controllers for intricate
 physical plant models from the digital control literature. 
 %
 %\keywords{
