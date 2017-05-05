@@ -329,7 +329,7 @@ closed-loop systems, i.e., properties that specify a set of goal states and
 safe states (constrained reachability).  This solution is based on
 synthesizing control Lyapunov functions for switched systems that yield
 switching controllers with a guaranteed minimum dwell time in each mode. 
-However, both approaches are not suitable for the kind of control we seek to
+However, both approaches are unsuitable for the kind of control we seek to
 synthesize.
 
 The work in~\cite{hscc-paper} synthesizes stabilizing
@@ -341,12 +341,12 @@ systems given as transfer function models:
 this results in  a static check on their coefficients.  
 By contrast, in the current paper we consider a state-space representation of the physical system, 
 which requires ensuring the specification over actual traces of the model, 
-alongside the numerical soundness required by the effects of discretisation and imprecision errors.   
+alongside the numerical soundness required by the effects of discretization and imprecision errors.   
 A state-space model has known advantages over the transfer function
 representation~\cite{Astrom08}: (i)~it naturally generalizes to multivariate systems
 (i.e., with multiple inputs and outputs); (ii)~gives the state-to-input
-relationships, offering an internal model of the system; and (iii)~allows to
-synthesize control systems with guarantees on the internal dynamics, e.g.,
+relationships, offering an internal model of the system; and (iii)~allows the
+synthesis of control systems with guarantees on the internal dynamics, e.g.,
 to synthesize controllers that make the closed-loop system \emph{safe}.  Our
 work focuses on the \emph{safety} of internal states, which is usually
 overlooked in the literature.  Moreover, our work integrates an
@@ -1857,7 +1857,7 @@ the domain.  We check that overflow does not occur.
 % We have also shown in the previous section that $x_k=A^nx_0$ is a witness of $x(t): \dot{x}(t)=Ax(t)$ at time $kT_s$. Applying this notion to multiple sample times, we can state that $x_{k_i}=A_i^nx_0$ are a set of witnesses at times $kT_i$, and by extension the set $\{x=A_i^nx_0 : \forall n \in \mathbb{R} \}$ witnesses all states visited by the continuous system in time $t \in [0,\infty)$. This applies to any arbitrary sample time $T_i$.
 % Since the controller output is fed to a Zero Order Holder, the progression of the system between times $kT_s$ and $(k+1)T_s$ is $\mat{A}^n\vec{x}_k+\mat{B}\vec{u}_k : n \in (0,1)$. We therefore obtain a reach tube for the continuous dynamics of a time sampled system to be contained within the abstract reach tube $\mathcal{A}^1\mathcal{M}X_0+\mathcal{BK}^1\mathcal{M}X_0=\mathcal{M}X_0$
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{Modelling quantization as noise} \label{appendix:quantization-noise}
+\subsection{Modeling quantization as noise} \label{appendix:quantization-noise}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 During any given ADC conversion, the continuous signal will be sampled in
