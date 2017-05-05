@@ -1101,7 +1101,7 @@ solution by all verification stages.
 \label{sec:CEGIS-abstraction-refinement}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-\todo{Refer to the SAS paper in this section.}
+%\todo{Refer to the SAS paper in this section.}
 
 %\begin{itemize}
 %\item[1.]
@@ -1162,8 +1162,8 @@ cannot be found.
   % in sections \ref{sec:reachable} and \ref{sec:observable}.
   \begin{enumerate}
 \item Compute the characteristic polynomial of the matrix $(A_d-B_dK)$ as 
-$P_a(z) = z^n+\sum_{i=1}^p{(a_i-k_i)z^{n-i}}$. 
-\blue{[shouldn't there be a b term in the polynomial's coefficients here?]}
+$P_a(z) = z^n+\sum_{i=1}^n{(a_i-k_i)z^{n-i}}$. 
+%\blue{[shouldn't there be a b term in the polynomial's coefficients here? No. the polynomial only evaluates the poles]}
 %%   A controllable system with quantization will have the following dynamics, where
 %% we use underscript ``n'' to denote a noise term,
 %% ``cf'' to denote Controllable Canonical Form,
@@ -1209,7 +1209,7 @@ $P_a(z) = z^n+\sum_{i=1}^p{(a_i-k_i)z^{n-i}}$.
 $$N=\left \{ \nu_1+\nu_2+ \nu_3 : \nu_1 \in \left[-\frac{q_1}{2}\ \ \frac{q_1}{2}\right] 
 \wedge \nu_2 \in \left[-\frac{q_2}{2}\ \ \frac{q_2}{2}\right]  \wedge \nu_3 \in \left[-q_3\ \ q_3\right]  \right \}\nonumber$$
 %
-where  $q_1$ is the error introduced by the truncation by the ADC, $q_2$ is
+where  $q_1$ is the error introduced by the truncation in the ADC, $q_2$ is
 the error introduced by the DAC and $q_3$ is the maximum truncation and
 rounding error in $u_k=-K \cdot \mathcal{F}_{\langle I_c,F_c \rangle}(x_k)$ as
 discussed in Section~\ref{sec:numeric_rep}.  More details on how to model
@@ -1217,11 +1217,11 @@ quantization as noise are given in
 Appendix~\ref{appendix:quantization-noise}.
 
 \item Calculate a set of initial bounds on $K$, $\phi_\mathit{init}^{K}$,
-based on the input constraints \blue{[how is this practically done?]}.  
-Note that these bounds will be used by the {\sc synthesize} phase to reduce the size of the solution space. 
+based on the input constraints %\blue{[how is this practically done?With the equation below]}.  
 %
 $$(\phi_\mathit{init} \wedge \phi_\mathit{input} \wedge u_k=-K x_k)
 \Rightarrow \phi_\mathit{init}^{K}$$
+Note that these bounds will be used by the {\sc synthesize} phase to reduce the size of the solution space. 
 
 \end{enumerate}
 \item In the {\sc synthesize} phase, we synthesize a candidate controller
@@ -1246,7 +1246,7 @@ If there is no candidate solution we return UNSAT and exit the loop.
   of the 
   %consisting of evaluating the
   progression of the system from $\phi_\mathit{init}$ over time,
-$x_{k+1} \models \phi_\mathit{safety}$ \blue{why $k+1$ here?}. %% For this purpose we require 
+$x_{k} \models \phi_\mathit{safety}$. %\blue{why $k+1$ here?}. %% For this purpose we require 
 %% an initial set $\phi_\mathit{init}= x_0 \in [\underline{x_0} \ \overline{x_0}]$ 
 %% from which the system progresses.
 % Obviously, this set $x_0$ 
@@ -1282,7 +1282,7 @@ $\phi_\mathit{init}$:
 X_0 =\left \{x : x \models \phi_\mathit{init} \right\}, 
 \end{align}
 %
-where \blue{[what is $t$ in $t^k$?]} $\mathcal{A}=\bigcup_{k=1}^\infty (A_d-B_dK)t^k,
+where $\mathcal{A}=\bigcup_{k=1}^\infty (A_d-B_dK)^k,
 \mathcal{B}_{n}=\bigcup_{k=1}^\infty \sum_{i=0}^k(A_d-B_dK)^iB_{n}$ are
 abstract matrices for the closed-loop system~\cite{cattaruzza2015unbounded},
 whereas the set $N$ is non-deterministically chosen.
@@ -1302,7 +1302,7 @@ them to the {\sc abstract} phase.
 \item Find the constraints that invalidate the property
  as a set of counterexamples for the eigenvalues, which we define as $\phi_\Lambda$. This is a constraint in the spectrum i.e., transfer function) of the closed loop dynamics. 
 \item We use $\phi_\Lambda$ to
-  further constrain the characteristic polynomial \blue{[again, check the coefficients of the characteristic polynomial.]} 
+  further constrain the characteristic polynomial %\blue{[again, check the coefficients of the characteristic polynomial.]I don't find any error} 
 $z^n+\sum_{i=1}^n(a_i-k_i)z^{n-i}=\prod_{i=1}^n (z-\lambda_i) : |\lambda_i|<1 \wedge \lambda_i \models \phi_{\Lambda}$. These constraints correspond to specific iterations for which the system may be unsafe.
 \item Pass the refined abstraction $\phi(K)$ with the new constraints and the list of iterations $k$ to the {\sc synthesize} phase.
   %, as well as a counterexample plant coefficients ($P_a$) and repeat the loop again. 
@@ -1418,7 +1418,7 @@ state measurements are assumed to be available.
 
 All benchmarks are discretized with different sample times~\cite{fadali}. 
 All experiments are performed considering $\underline{x_{i}}=-1$ and 
-$\overline{x_{i}}=1$ \blue{[what does this mean:] and the inputs $u_{k}=0, \forall k>0$}.
+$\overline{x_{i}}=1$ and the reference inputs $r_{k}=0, \forall k>0$.
 We conduct the experimental evaluation on a 12-core 2.40\,GHz Intel
 Xeon E5-2440 with 96\,GB of RAM and Linux OS.  We use the Linux
 \emph{times} command to measure CPU time used for each benchmark.  The
@@ -1863,8 +1863,9 @@ During any given ADC conversion, the continuous signal will be sampled in
 the real domain and transformed by $\mathcal{F}\langle I_{c},F_{c} \rangle
 (x)$ (assuming the ADC discretization is the same as the digital
 implementation).  This sampling uses a threshold which is defined by the
-less significant bit \blue{[this quantity was named $c_m$ above and in other parts of the paper - please uniformise notations]} ($q_{c}=2^{-F_c}$) of the ADC and some non-linearities
-of the circuitry.  The overall conversion is
+less significant bit ($q_{c}=c_{m_c}=2^{-F_c}$) 
+%\blue{[this quantity was named $c_m$ above and in other parts of the paper - please uniformise notations]}
+of the ADC and some non-linearities of the circuitry.  The overall conversion is
 %
 $$\mathcal{F}\langle I_{c},F_{c} \rangle(y(t)) = y_k :
 y_k \in \left[y(t)-\frac{q_{c}}{2}\ \ \ \ y(t)+\frac{q_{c}}{2}\right] \,.$$
