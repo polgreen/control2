@@ -105,7 +105,7 @@ Physical Plants\thanks{Supported by EPSRC grant EP/J012564/1, ERC project
 Alessandro Abate\inst{1} \and
 Iury Bessa\inst{2} \and
 Dario Cattaruzza\inst{1} \and
-Lucas Cordeiro\inst{1} \and
+Lucas Cordeiro\inst{1,2} \and
 \mbox{Cristina David}\inst{1} \and
 Pascal Kesseli\inst{1} \and
 Daniel Kroening\inst{1} \and
@@ -217,7 +217,7 @@ employs {\em abstract acceleration}~\cite{cattaruzza2015unbounded} to
 evaluate all possible progressions of the system simultaneously. 
 Additionally, the second approach uses {\em abstraction refinement},
 enabling us to always start with a very simple description regardless of the
-complexity of the overall dynamics, and only expand to more complex models
+dynamics complexity, and only expand to more complex models
 when a solution cannot be found.
 
 We provide experimental results showing that both approaches are able to
@@ -414,11 +414,11 @@ model by extracting an LTI model of the code by symbolic execution:
 to account for rounding errors, an upper bound is introduced in the
 verification phase.  The work in \cite{picasso2003stabilization}
 %picasso2002construction} 
-introduces attractive invariant sets as a mechanism
+introduces invariant sets as a mechanism
 to bound the quantization error effect on stabilization as an invariant set
-that always converges toward the controllable set.  In a similar fashion,
-\cite{liberzon2003hybrid} evaluates the dynamics of the quantization error
-and bounds its trajectory to a known region over a finite period of time. 
+that always converges toward the controllable set.  Similarly,
+\cite{liberzon2003hybrid} evaluates the quantization error dynamics
+and bounds its trajectory to a known region over a finite time period. 
 This technique works for both linear and non-linear systems.
 
 %\addtodo{[Move material from \ref{sec:rw} here]}
@@ -444,7 +444,7 @@ information (i.e., we have access to all the model variables):
 %
 where $t \in \mathbb R_0^+$, where $A$ and $B$ are matrices that fully
 specify the continuous plant, and with initial states set as $x(0)$.  While
-ideally we would like to work on the continuous-time plant, in this work
+ideally we intend to work on the continuous-time plant, in this work
 Eq.~\eqref{eq:ode} is soundly discretized in time~\cite{fadali} into
 %
 %\textcolor{red}{What is subscript ``d''?}
@@ -565,7 +565,7 @@ Models \eqref{eq:ode} and \eqref{eq:plant} depend on external non-determinism in
 Feedback architectures can be employed to manipulate the properties and behaviors of the continuous process (the plant).   
 %reduce the effect of parametric uncertainties and attenuate the effects of noise and disturbance. 
 We are interested in the synthesis of digital feedback control algorithms, 
-as implemented on modern Field-Programmable Gate Arrays or Digital Signal Processors. 
+as implemented on Field-Programmable Gate Arrays or Digital Signal Processors. 
 The most basic feedback architecture is the state feedback one, 
 where the control action $u_k$ (notice we work with the discretized signal) is computed by: 
 %
@@ -637,7 +637,7 @@ stable, closed-loop system is not necessarily a safe system: indeed, the
 state values may leave the safe part of the state space while they converge
 to the equilibrium, which is typical in the case of oscillatory dynamics. 
 %However, a safe system will always be stable.  
-In~this work, the safety property is expressed as follows:
+In~this work, the safety property is expressed as:
 %
 \begin{equation}
 \label{eq:safetyliteral}
@@ -1063,7 +1063,7 @@ allowed initial states, it is safe for any initial state in the hypercube.
 Thus we only need to check $2^n$ initial states, where $n$
 is the dimension of the state space (number of continuous variables). 
 \begin{proof}
-Consider the set of initial states, $X_0$, which we assume to be convex since it's a hypercube. 
+Consider the set of initial states, $X_0$, which we assume to be convex since it is a hypercube. 
 Name $v_i$ its vertexes, where $i=1,\ldots, 2^n$.  
 Thus any point $x \in X_0$ can be expressed by convexity as $x = \sum_{i=1}^{2^n} \alpha_i v_i$, 
 where $\sum_{i=1}^{2^n} \alpha_i =1$. Then if $x_0=x$, we obtain 
@@ -1081,7 +1081,7 @@ convex set, by those generated from the vertices.
 \subsubsection{Illustrative Example} \label{sec:running-ex}
 
 We illustrate our approach with an example,
-extracted from the literature~\cite{Franklin15}.
+extracted from~\cite{Franklin15}.
 %
 Since we have not learned any information about the system yet,
 we pick an arbitrary candidate solution (we always choose $K=[0
@@ -1426,15 +1426,15 @@ and indicators that is rotated through interaction with magnetic fields.
 The \textit{1/4 Car Suspension} plant presents a physical model that connects a car to its wheels 
 and allows relative motion between the two parts.
 The \textit{Computer Tape Driver} plant describes a system to read and write data 
-on a storage device in a computer.
+on a storage device.
 
 %Section~\ref{sec:BenchmarksforStateSpace} in the appendix summarizes all our
 Our benchmarks are SISO models (Section~\ref{sec:preliminaries}).  The
 Inverted Pendulum appears to be a two-output system, but it is treated as
-two SISO models during the experiments.  For the sake of simplicity all the
-state measurements are assumed to be available.  
+two SISO models during the experiments.  All the
+state measurements are assumed to be available  
 %In practice, state estimators should be designed in order to obtain an estimate of the states from the single output.  
-(Current work targets the extension of our framework to observer-based synthesis.)   
+(current work targets the extension of our framework to observer-based synthesis).   
 
 All benchmarks are discretized with different sample times~\cite{fadali}. 
 All experiments are performed considering $\underline{x_{i}}=-1$ and 
@@ -1589,8 +1589,8 @@ literature.
 
 Future work will focus the extension of these approaches to the
 continuous-time case, to models with output-based control architectures
-(with the use of observers), and to the consideration of more complex specifications 
-and of additional performance requirements in the synthesis of digital controllers.
+(with the use of observers), and to the consideration of more complex specifications. 
+%and of additional performance requirements in the synthesis of digital controllers.
 
 %\newpage
 
@@ -1913,7 +1913,7 @@ $q_2=q_\mathit{dac}$.  This is illustrated in
 Fig.~\ref{ssec:statefeedbackcontrol} where $Q_1$ is the quantizer of the ADC
 and $Q_2$ the quantizer for the DAC.  These bounds hold irrespective of
 whether the noise is correlated, hence we may use them to over-approximate
-the effect of the noise on the state space progression over time.  The
+the noise effect on the state space progression over time.  The
 resulting dynamics are
 %
 \begin{align*}
