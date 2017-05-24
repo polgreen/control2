@@ -117,36 +117,115 @@ Cicero; Catiline; orations.               % chosen from the IFAC
 %\end{figure}
 
 
-\subsection{A subsection}
-Marcus Tullius Cicero, 106--43 B.C. was a Roman statesman, orator, 
-and philosopher.  A major figure in the last years of the Republic, 
-he is best known for his orations against Catiline\footnote{
-This footnote should be very brief.}
-and for his mastery of Latin prose \cite{Heritage:92}. He was a 
-contemporary of Julius Caesar (Fig.~\ref{fig1}).
+%\subsection{A subsection}
+%Marcus Tullius Cicero, 106--43 B.C. was a Roman statesman, orator, 
+%and philosopher.  A major figure in the last years of the Republic, 
+%he is best known for his orations against Catiline\footnote{
+%This footnote should be very brief.}
+%and for his mastery of Latin prose \cite{Heritage:92}. He was a 
+%contemporary of Julius Caesar (Fig.~\ref{fig1}).
 
-\section{The argument}
-Some words might be appropriate describing equation~(\ref{e1}), if 
-we had but time and space enough.
-\begin{equation} \label{e1}
-{{\partial F}\over {\partial t}} =
-D{{\partial^2 F}\over {\partial x^2}}.
-\end{equation}
-See \cite{Abl:56}, \cite{AbTaRu:54}, \cite{Keo:58} and 
-\cite{Pow:85}.
-This equation goes far beyond the celebrated theorem ascribed to the great
-Pythagoras by his followers.
-\begin{thm}
-The square of the length of the hypotenuse of a right triangle equals the sum of the squares 
-of the lengths of the other two sides.
-\end{thm}
-\section{Epilogue}
-A word or two to conclude, and this even includes some inline 
-maths:  $R(x,t)\sim t^{-\beta}g(x/t^\alpha)\exp(-|x|/t^\alpha)$.
+%-------------------------------
+\section{Related Work}
+\label{sec:relw}
+%-------------------------------
 
-\begin{ack}                               % Place acknowledgements
-Partially supported by the Roman Senate.  % here.
-\end{ack}
+\textbf{CEGIS -}
+Program synthesis is the problem of computing correct-by-design programs
+from high-level specifications. Algorithms for this problem have made
+substantial progress in recent years, for instance~\cite{itzhaky2010simple} 
+to inductively synthesize invariants for the generation of desired programs.
+
+Program synthesizers are an ideal fit for the synthesis of digital controllers, since
+the semantics of programs capture the effects of finite-precision arithmetic
+precisely.  In~\cite{DBLP:conf/cdc/RavanbakhshS15}, the authors use CEGIS
+for the synthesis of switching controllers for stabilizing continuous-time
+plants with polynomial dynamics.  The work extends to affine systems, but is
+limited by the capacity of the state-of-the-art SMT solvers for solving
+linear arithmetic.  Since this approach uses switching models instead of
+linear dynamics for the digital controller, it avoids problems related to
+finite precision arithmetic, but potentially suffers from state-space
+explosion.  Moreover, in \cite{DBLP:conf/emsoft/RavanbakhshS16} the same
+authors use a CEGIS-based approach for synthesizing continuous-time
+switching controllers that guarantee \emph{reach-while-stay} properties of
+closed-loop systems, i.e., properties that specify a set of goal states and
+safe states (constrained reachability).  This solution is based on
+synthesizing control Lyapunov functions for switched systems that yield
+switching controllers with a guaranteed minimum dwell time in each mode. 
+However, both approaches are unsuitable for the kind of control we seek to
+synthesize.
+
+The work in~\cite{hscc-paper} synthesizes stabilizing
+controllers for continuous plants given as transfer functions by exploiting
+bit-accurate verification of software-implemented digital
+controllers~\cite{Bessa16}.  While this work also uses CEGIS,
+the approach is restricted to digital controllers for stable closed-loop
+systems given as transfer function models: 
+this results in  a static check on their coefficients.  
+By contrast, in the current paper we consider a state-space representation of the physical system, 
+which requires ensuring the specification over actual traces of the model, 
+alongside the numerical soundness required by the effects of discretisation and finite-precision errors.   
+A state-space model has known advantages over the transfer function
+representation~\cite{Franklin15}: it naturally generalizes to multivariate systems
+(i.e., with multiple inputs and outputs); 
+and it allows synthesis of control systems with guarantees on the internal dynamics, e.g.,
+to synthesize controllers that make the closed-loop system \emph{safe}.  Our
+work focuses on the \emph{safety} of internal states, which is usually
+overlooked in the literature.  Moreover, our work integrates an
+abstraction/refinement (CEGAR) step inside the main CEGIS loop.
+
+The tool Pessoa~\cite{mazo2010pessoa} synthesizes correct-by-design embedded
+control software in a Matlab toolbox.  It is based on the abstraction of a
+physical system to an equivalent finite-state machine and on the computation
+of reachability properties thereon. 
+Based on this safety specification, \mbox{Pessoa} can synthesize embedded controller
+software for a range of properties.  The embedded controller software can be
+more complicated than the state-feedback control we synthesize, and the
+properties available cover more detail. 
+However, relying on state-space discretization \mbox{Pessoa} is likely to incur in scalability limitations. 
+Along this research line, \cite{Anta2010,liu16} studies the synthesis of digital controllers for continuous dynamics, 
+and \cite{zamani2014} extends the approach to the recent setup of Network Control Systems. 
+
+\textbf{Discretization Effects -}
+The classical approach to control synthesis has often disregarded digitalization effects, 
+whereas more recently modern techniques have focused on
+different aspects of discretization, including delayed
+response~\cite{Duggirala2015} and finite word length (FWL) semantics, 
+with the goal either to verify (e.g.,~\cite{daes20161}) or to optimize
+(e.g.,~\cite{oudjida2014design}) given implementations. 
+
+There are two different problems that arise from FWL semantics.  The first
+is the error in the dynamics caused by the inability to represent the exact
+state of the physical system, while the second relates to rounding and saturation errors
+during computation.  In~\cite{fialho1994stability}, a stability measure
+based on the error of the digital dynamics ensures that the deviation
+introduced by FWL does not make the digital system unstable.  A~more recent
+approach~\cite{DBLP:journals/automatica/WuLCC09} uses $\mu$-calculus to
+directly model the digital controller so that the selected parameters are
+stable by design.  The analyses in~\cite{DBLP:conf/hybrid/RouxJG15,
+DBLP:conf/hybrid/WangGRJF16} rely on an invariant computation on the
+discrete system dynamics using Semi-Definite Programming (SDP).  While the
+former uses bounded-input and bounded-output (BIBO) properties to determine
+stability, the latter uses Lyapunov-based quadratic invariants.  In both
+cases, the SDP solver uses floating-point arithmetic and soundness is
+checked by bounding the error.  An alternative is~\cite{park2016scalable},
+where the verification of given control code is performed against a known
+model by extracting an LTI model of the code by symbolic execution:  
+to account for rounding errors, an upper bound is introduced in the
+verification phase.  The work in \cite{picasso2003stabilization}
+introduces invariant sets as a mechanism
+to bound the quantization error effect on stabilization as an invariant set
+that always converges toward the controllable set.  Similarly,
+\cite{liberzon2003hybrid} evaluates the quantization error dynamics
+and bounds its trajectory to a known region over a finite time period. 
+This technique works for both linear and non-linear systems.
+
+%\addtodo{[Move material from \ref{sec:rw} here]}
+
+
+%\begin{ack}                               % Place acknowledgements
+%Partially supported by the Roman Senate.  % here.
+%\end{ack}
 
 \bibliographystyle{plain}        % Include this if you use bibtex 
 \bibliography{paper}           % and a bib file to produce the 
