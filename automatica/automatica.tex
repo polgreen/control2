@@ -323,7 +323,7 @@ property of interest (i.e., robust stability) and is passed to the
 Counterexample-Guided Inductive Synthesis (CEGIS) module of
 CBMC~\cite{ClarkeKL04}, where the controller is marked as the input variable
 to synthesize.  CEGIS employs an iterative, counterexample-guided refinement
-process, which is explained in detail in Section~\ref{synthesizer-general}. 
+process.%, which is explained in detail in Section~\ref{synthesizer-general}. 
 CEGIS reports a successful synthesis result if it generates a controller
 that is safe with respect to~$\phi$.  In particular, the ANSI-C code model
 guarantees that a synthesized solution is complete and sound with respect to
@@ -331,7 +331,7 @@ the stability property~$\phi$, since it does not depend on system inputs and
 outputs.  In the case of stability, the specification~$\phi$ consists of a
 number of assumptions on the polynomial coefficients, following Jury's
 Criteria, as well as the restrictions on the representation of these
-coefficients as discussed in detail in Section~\ref{synthesis-elements}.
+coefficients.% as discussed in detail in Section~\ref{synthesis-elements}.
 
 %-------------------------------
 \subsubsection{CEGIS of digital controllers} 
@@ -462,8 +462,7 @@ Next, we describe the different phases in Fig.~\ref{fig:CEGIS-precision-incremen
 
 \item The inductive synthesis phase ({\sc synthesize}) uses BMC to
 compute a candidate solution $K$ that satisfies both the stability criteria
-(Sec.~\ref{ssec:stability}) and the safety specification
-(Sec.~\ref{ssec:safety}).  To synthesize a controller that satisfies the
+ and the safety specification.  To synthesize a controller that satisfies the
 stability criteria, we require that a computed polynomial
 satisfies Jury's criterion~\cite{fadali}.  The details of this calculation can be found in
 the Appendix.
@@ -555,13 +554,13 @@ allowed initial states are large.
 %-------------------------------
 
 
-  The na\"ive approach described in Sec.~\ref{sec:CEGIS-precision-incrementation}
+%  The na\"ive approach described in Sec.~\ref{sec:CEGIS-precision-incrementation}
   %uses a multi-staged verification phase and performs solution generalization based on
 %the plant precision, the number of loop unrollings, 
   %and the sampling rate. Essentially, it
-  synthesizes a controller for an individual initial state
-and input with a bounded time horizon and, subsequently, it generalizes it to all reachable states,
-inputs, and time horizons during the verification phase.
+%  synthesizes a controller for an individual initial state
+%and input with a bounded time horizon and, subsequently, it generalizes it to all reachable states,
+%inputs, and time horizons during the verification phase.
 Essentially, this approach relies on the symbolic
 simulation over a bounded time horizon of individual initial states and inputs that form
 part of an uncountable space and tries to generalize it for an
@@ -662,6 +661,7 @@ N=\left \{ \nu_1+\nu_2+ \nu_3 : \nu_1 \in \left[-\frac{q_1}{2}\ \ \frac{q_1}{2}\
 \wedge \right. \\ \left. \nu_2 \in \left[-\frac{q_2}{2}\ \ \frac{q_2}{2}\right]  \wedge  \nu_3 \in \left[-q_3\ \ q_3\right]  \right \}
 \end{split}
 \end{equation}
+
 %
 where  $q_1$ is the error introduced by the truncation in the ADC, $q_2$ is
 the error introduced by the DAC and $q_3$ is the maximum truncation and
@@ -1021,7 +1021,7 @@ errors (see Appendix~\ref{sec:appendix:LTIbackground} for details) and
 eventually de-stabilizing the system~\cite{Bessa16}.  However, since in this
 paper we require stability only as a precursor to safety, it is sufficient
 to check that the (perturbed, noisy) model converges to a neighborhood of
-the equilibrium within the safe set (see Appendix~\ref{sec:stab_FWL}).
+the equilibrium within the safe set.
 
 In the following, we shall disregard these steady-state errors (caused by
 FWL effects) when stability is ensured by synthesis, and then verify its
@@ -1046,7 +1046,7 @@ algorithms in our verification engine that can be used for stability analysis~\c
 Here we choose Jury's criterion~\cite{astrom1997computer} in view of its efficiency 
 and ease of integration within \tool: 
 we employ this method to check the stability in the $z$-domain for the
-characteristic polynomial $S(z)$ defined in~\eqref{eq:internal_stab_lemma}.
+characteristic polynomial $S(z)$.
 %
 % of the matrix $\left( \begin{array}{c} Y \\ U \end{array}\right)$, where $Y(z)$ is the closed-loop system output and U(z) is the controller output. 
 %% \red{[unclear: what matrix? We need to clarify the relationship
@@ -1270,169 +1270,169 @@ physical constraints.
 \appendix
 
 
-%-------------------------------
-\section{Stability of Closed-loop Models}
-\label{sec:appendix-stability}
-%-------------------------------
-
-%-------------------------------
-\subsection{Stability of closed-loop models with fixed-point controller error}
-\label{sec:stab_FWL}
-%-------------------------------
-
-The proof of Jury's criterion~\cite{fadali} relies on the fact that the relationship between states and
-next states is defined by $x_{k+1} = (A_d - B_dK) x_k$, all computed
-at infinite precision.  When we employ a FWL digital controller, the
-operation becomes:
+%%-------------------------------
+%\section{Stability of Closed-loop Models}
+%\label{sec:appendix-stability}
+%%-------------------------------
 %
-\begin{align*}
-x_{k+1} &= A_d \cdot x_{k} -(\mathcal{F}_{\langle I_c,F_c \rangle}(K)\cdot\mathcal{F}_{\langle I_c,F_c \rangle}(x_{k})).  \\
-x_{k+1} &= (A_d  - B_dK) \cdot x_k + B_dK\delta, 
-\end{align*}
+%%-------------------------------
+%\subsection{Stability of closed-loop models with fixed-point controller error}
+%\label{sec:stab_FWL}
+%%-------------------------------
 %
-where $\delta$ is the maximum error that can be introduced by the FWL
-controller in one step, i.e., by reading the states values once and
-multiplying by $K$ once.  We derive the closed form expression for $x_n$ as
-follows:
-%
-\begin{align*}
-x_{1} &= (A_d  - B_dK)x_0 + B_dK\delta \\
-x_{2} 
- &=(A_d  - B_dK)^2x_0 + (A_d  - B_dK)B_dK\delta + B_dK\delta \\
-x_{n} &= (A_d  - B_dK)^nx_0 + (A_d  - B_dK)^{n-1}B_dK\delta + ... \\  \nonumber & + (A_d  - B_dK)^1B_dK \delta + B_dK\delta \\
-  &= (A_d - B_dK)^nx_0 + \sum_{i=0}^{i=n-1}(A_d - B_dK)^iB_dk\delta. 
-\end{align*}
-
-The definition of asymptotic stability is that the system converges to a
-reference signal, in this case we use no reference signal so an
-asymptotically stable system will converge to the origin.  We know that the
-original system with an infinite-precision controller is stable, because we
-have synthesized it to meet Jury's criterion.  Hence, $(A_d - B_dK)^n x_0$ 
-must converge to zero.
-
-The power series of matrices
-converges~\cite{horn1990matrix} iff the eigenvalues of the matrix are less
-than~1 as follows:
-%
+%The proof of Jury's criterion~\cite{fadali} relies on the fact that the relationship between states and
+%next states is defined by $x_{k+1} = (A_d - B_dK) x_k$, all computed
+%at infinite precision.  When we employ a FWL digital controller, the
+%operation becomes:
+%%
 %\begin{align*}
-$\sum_{i=0}^{\infty}T^i  = (I - T)^{-1}$, 
+%x_{k+1} &= A_d \cdot x_{k} -(\mathcal{F}_{\langle I_c,F_c \rangle}(K)\cdot\mathcal{F}_{\langle I_c,F_c \rangle}(x_{k})).  \\
+%x_{k+1} &= (A_d  - B_dK) \cdot x_k + B_dK\delta, 
+%\end{align*}
+%%
+%where $\delta$ is the maximum error that can be introduced by the FWL
+%controller in one step, i.e., by reading the states values once and
+%multiplying by $K$ once.  We derive the closed form expression for $x_n$ as
+%follows:
+%%
+%\begin{align*}
+%x_{1} &= (A_d  - B_dK)x_0 + B_dK\delta \\
+%x_{2} 
+% &=(A_d  - B_dK)^2x_0 + (A_d  - B_dK)B_dK\delta + B_dK\delta \\
+%x_{n} &= (A_d  - B_dK)^nx_0 + (A_d  - B_dK)^{n-1}B_dK\delta + ... \\  \nonumber & + (A_d  - B_dK)^1B_dK \delta + B_dK\delta \\
+%  &= (A_d - B_dK)^nx_0 + \sum_{i=0}^{i=n-1}(A_d - B_dK)^iB_dk\delta. 
 %\end{align*}
 %
-where $I$ is the identity matrix and $T$ is a square matrix. Thus, our system will converge to the value 
+%The definition of asymptotic stability is that the system converges to a
+%reference signal, in this case we use no reference signal so an
+%asymptotically stable system will converge to the origin.  We know that the
+%original system with an infinite-precision controller is stable, because we
+%have synthesized it to meet Jury's criterion.  Hence, $(A_d - B_dK)^n x_0$ 
+%must converge to zero.
 %
-\begin{align*}
-0 + (I - A_d + B_dK)^{-1}B_dk\delta \,. 
-\end{align*}
+%The power series of matrices
+%converges~\cite{horn1990matrix} iff the eigenvalues of the matrix are less
+%than~1 as follows:
+%%
+%%\begin{align*}
+%$\sum_{i=0}^{\infty}T^i  = (I - T)^{-1}$, 
+%%\end{align*}
+%%
+%where $I$ is the identity matrix and $T$ is a square matrix. Thus, our system will converge to the value 
+%%
+%\begin{align*}
+%0 + (I - A_d + B_dK)^{-1}B_dk\delta \,. 
+%\end{align*}
+%%
+%As a result, if the value $(I - A_d + B_dK)^{-1}B_dk\delta$ is within the
+%safe space, then the synthesized fixed-point controller results in a safe
+%closed-loop model.  The convergence to a finite value, however, will not
+%make it asymptomatically stable.
 %
-As a result, if the value $(I - A_d + B_dK)^{-1}B_dk\delta$ is within the
-safe space, then the synthesized fixed-point controller results in a safe
-closed-loop model.  The convergence to a finite value, however, will not
-make it asymptomatically stable.
-
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\section{Errors in LTI models} \label{sec:appendix:LTIbackground}
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-\subsection{Errors due to numerical representation} \label{appendix:numerical_errors}
-
-We have  used $\mathcal{F}_{\langle I,F \rangle}(x)$ denote a real number
-$x$ represented in a fixed point domain, with $I$ bits representing the
-integer part and $F$ bits representing the decimal part.  The smallest
-number that can be represented in this domain is $c_m=2^{-F}$.  The
-following approximation errors will arise in mathematical operations and
-representation:
+%%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+%\section{Errors in LTI models} \label{sec:appendix:LTIbackground}
+%%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 %
-\begin{enumerate}
-
-\item {\bf Truncation:} Let $x$ be a real number, and $\mathcal{F}_{\langle
-I,F \rangle}(x)$ be the same number represented in a fixed-point domain as
-above.  Then $\mathcal{F}_{\langle I,F \rangle}(x) = x-\delta_T$ where the
-error $ \delta_T=x\ \%_{c_m}\ \tilde x$, and $\%_{c_m}$ is the modulus
-operation performed on the last bit. 
-Thus, $\delta_T$ is the truncation error and it will propagate across
-operations.
+%\subsection{Errors due to numerical representation} \label{appendix:numerical_errors}
 %
-\item {\bf Rounding:} The following errors appear in basic operations.  Let
-$c_1, c_2$ and $c_3$ be real numbers, and $\delta_{T1}$ and $\delta_{T2}$ be
-the truncation errors caused by representing $c_1$ and $c_2$ in the
-fixed-point domain as above.
+%We have  used $\mathcal{F}_{\langle I,F \rangle}(x)$ denote a real number
+%$x$ represented in a fixed point domain, with $I$ bits representing the
+%integer part and $F$ bits representing the decimal part.  The smallest
+%number that can be represented in this domain is $c_m=2^{-F}$.  The
+%following approximation errors will arise in mathematical operations and
+%representation:
+%%
+%\begin{enumerate}
 %
-\begin{enumerate}
+%\item {\bf Truncation:} Let $x$ be a real number, and $\mathcal{F}_{\langle
+%I,F \rangle}(x)$ be the same number represented in a fixed-point domain as
+%above.  Then $\mathcal{F}_{\langle I,F \rangle}(x) = x-\delta_T$ where the
+%error $ \delta_T=x\ \%_{c_m}\ \tilde x$, and $\%_{c_m}$ is the modulus
+%operation performed on the last bit. 
+%Thus, $\delta_T$ is the truncation error and it will propagate across
+%operations.
+%%
+%\item {\bf Rounding:} The following errors appear in basic operations.  Let
+%$c_1, c_2$ and $c_3$ be real numbers, and $\delta_{T1}$ and $\delta_{T2}$ be
+%the truncation errors caused by representing $c_1$ and $c_2$ in the
+%fixed-point domain as above.
+%%
+%\begin{enumerate}
+%%
+%\item Addition/Subtraction: these operations only propagate errors coming
+%from truncation of the operands, namely $\mathcal{F}_{\langle I,F
+%\rangle}(c_1) \pm \mathcal{F}_{\langle I,F \rangle}(c_2) = c_3 + \delta_3$
+%with $|\delta_3| \leq |\delta_{T1}| + |\delta_{T2}|$.
+%%
+%\item Multiplication: $\mathcal{F}_{\langle I,F \rangle}(c_1) \cdot
+%\mathcal{F}_{\langle I,F \rangle}(c_2) =  c_3 + \delta_3$ with $|\delta_3|
+%\leq |\delta_{T1}\cdot\mathcal{F}_{\langle I,F \rangle}(c_2)|\allowbreak +
+%|\delta_{T2}\cdot\mathcal{F}_{\langle I,F \rangle}(c_1)| + c_m$, where
+%$c_m=2^{-F}$ as above.
+%%
+%\item Division: the operations performed by our controllers in the FWL
+%domain do not include division.  However, we do use division in computations
+%at the precision of the plant.  Here the error depends on whether the
+%divisor is greater or smaller than the dividend:  $\mathcal{F}_{\langle I,F
+%\rangle}(c_1) / \mathcal{F}_{\langle I,F \rangle}(c_2) = c_3 + \delta_{T3}$
+%where $\delta_{T3}$ is $(\delta_{T2}\cdot c_1 - \delta_{T1}\cdot
+%c_2)/(\delta_{T2}^2 - \delta_{T2} c_2)$,
+%\end{enumerate}
 %
-\item Addition/Subtraction: these operations only propagate errors coming
-from truncation of the operands, namely $\mathcal{F}_{\langle I,F
-\rangle}(c_1) \pm \mathcal{F}_{\langle I,F \rangle}(c_2) = c_3 + \delta_3$
-with $|\delta_3| \leq |\delta_{T1}| + |\delta_{T2}|$.
+%\item {\bf Overflow:}
+%The maximum size of a real number $x$ that can be represented in a fixed
+%point domain as $\mathcal{F}_{\langle I,F \rangle}(x)$ is $\pm
+%(2^{I-1}+1-2^{-F})$.  Numbers outside this range cannot be represented by
+%the domain.  We check that overflow does not occur.
 %
-\item Multiplication: $\mathcal{F}_{\langle I,F \rangle}(c_1) \cdot
-\mathcal{F}_{\langle I,F \rangle}(c_2) =  c_3 + \delta_3$ with $|\delta_3|
-\leq |\delta_{T1}\cdot\mathcal{F}_{\langle I,F \rangle}(c_2)|\allowbreak +
-|\delta_{T2}\cdot\mathcal{F}_{\langle I,F \rangle}(c_1)| + c_m$, where
-$c_m=2^{-F}$ as above.
+%\end{enumerate}
 %
-\item Division: the operations performed by our controllers in the FWL
-domain do not include division.  However, we do use division in computations
-at the precision of the plant.  Here the error depends on whether the
-divisor is greater or smaller than the dividend:  $\mathcal{F}_{\langle I,F
-\rangle}(c_1) / \mathcal{F}_{\langle I,F \rangle}(c_2) = c_3 + \delta_{T3}$
-where $\delta_{T3}$ is $(\delta_{T2}\cdot c_1 - \delta_{T1}\cdot
-c_2)/(\delta_{T2}^2 - \delta_{T2} c_2)$,
-\end{enumerate}
-
-\item {\bf Overflow:}
-The maximum size of a real number $x$ that can be represented in a fixed
-point domain as $\mathcal{F}_{\langle I,F \rangle}(x)$ is $\pm
-(2^{I-1}+1-2^{-F})$.  Numbers outside this range cannot be represented by
-the domain.  We check that overflow does not occur.
-
-\end{enumerate}
-
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{Modeling quantization as noise} \label{appendix:quantization-noise}
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-During any given ADC conversion, the continuous signal will be sampled in
-the real domain and transformed by $\mathcal{F}\langle I_{c},F_{c} \rangle
-(x)$ (assuming the ADC discretization is the same as the digital
-implementation).  This sampling uses a threshold which is defined by the
-less significant bit ($q_{c}=c_{m_c}=2^{-F_c}$) 
-of the ADC and some non-linearities of the circuitry.  The overall conversion is
+%%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+%\subsection{Modeling quantization as noise} \label{appendix:quantization-noise}
+%%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 %
-$$\mathcal{F}\langle I_{c},F_{c} \rangle(y(t)) = y_k :
-y_k \in \left[y(t)-\frac{q_{c}}{2}\ \ \ \ y(t)+\frac{q_{c}}{2}\right] \,.$$
+%During any given ADC conversion, the continuous signal will be sampled in
+%the real domain and transformed by $\mathcal{F}\langle I_{c},F_{c} \rangle
+%(x)$ (assuming the ADC discretization is the same as the digital
+%implementation).  This sampling uses a threshold which is defined by the
+%less significant bit ($q_{c}=c_{m_c}=2^{-F_c}$) 
+%of the ADC and some non-linearities of the circuitry.  The overall conversion is
+%%
+%$$\mathcal{F}\langle I_{c},F_{c} \rangle(y(t)) = y_k :
+%y_k \in \left[y(t)-\frac{q_{c}}{2}\ \ \ \ y(t)+\frac{q_{c}}{2}\right] \,.$$
+%%
+%If we denote the error in the conversion by $\nu_k=y_k-y(t)$ where $t = nk$,
+%and $n$ is the sampling time and $k$ the number of steps, then we may define
+%some bounds for it $\nu_k \in [-\frac{q_{c}}{2}\ \ \frac{q_{c}}{2}]$.
 %
-If we denote the error in the conversion by $\nu_k=y_k-y(t)$ where $t = nk$,
-and $n$ is the sampling time and $k$ the number of steps, then we may define
-some bounds for it $\nu_k \in [-\frac{q_{c}}{2}\ \ \frac{q_{c}}{2}]$.
-
-We will assume, for the purposes of this analysis, that the domain of the
-ADC is that of the digital controller (i.e, the quantizer includes any
-digital gain added in the code).  The process of quantization in the DAC is
-similar except that it is calculating $\mathcal{F}\langle I_{dac},F_{dac}
-\rangle (\mathcal{F}\langle I_{c},F_{c} \rangle (x)) $.  If these domains
-are the same ($I_{c}=I_{dac},\allowbreak F_{c}=F_{dac}$), or if the DAC
-resolution in higher than the ADCs, then the DAC quantization error is equal
-to zero.  From the above equations we can now define the ADC and DAC
-quantization noises ${\nu_1}_k \in [-\frac{q_1}{2}\ \ \frac{q_1}{2}]$ and
-${\nu_2}_k \in [-\frac{q_2}{2}\ \ \frac{q_2}{2}]$, where $q_1=q_{c}$ and 
-$q_2=q_\mathit{dac}$.  This is illustrated in
-Fig.~\ref{ssec:statefeedbackcontrol} where $Q_1$ is the quantizer of the ADC
-and $Q_2$ the quantizer for the DAC.  These bounds hold irrespective of
-whether the noise is correlated, hence we may use them to over-approximate
-the noise effect on the state space progression over time.  The
-resulting dynamics are
-%
-\begin{align*}
-%\label{eq:pre_quantization}
-{x}_{k+1} = {A}_d{x}_k+{B}_d({u}_k+{{\nu}_2}_k), \quad u_k = -K{x}_{k}+{{\nu}_1}_k, 
-\end{align*}
-%
-which result in the following closed-loop dynamics:
-%
-\begin{align*}
-%\label{eq:quantization}
-{x}_{k+1} &= ({A}_d-{B}_d{K}_d) {x}_k+{B}_d{{\nu}_2}_k +{{\nu}_1}_k \,. 
-\end{align*}
+%We will assume, for the purposes of this analysis, that the domain of the
+%ADC is that of the digital controller (i.e, the quantizer includes any
+%digital gain added in the code).  The process of quantization in the DAC is
+%similar except that it is calculating $\mathcal{F}\langle I_{dac},F_{dac}
+%\rangle (\mathcal{F}\langle I_{c},F_{c} \rangle (x)) $.  If these domains
+%are the same ($I_{c}=I_{dac},\allowbreak F_{c}=F_{dac}$), or if the DAC
+%resolution in higher than the ADCs, then the DAC quantization error is equal
+%to zero.  From the above equations we can now define the ADC and DAC
+%quantization noises ${\nu_1}_k \in [-\frac{q_1}{2}\ \ \frac{q_1}{2}]$ and
+%${\nu_2}_k \in [-\frac{q_2}{2}\ \ \frac{q_2}{2}]$, where $q_1=q_{c}$ and 
+%$q_2=q_\mathit{dac}$.  This is illustrated in
+%Fig.~\ref{ssec:statefeedbackcontrol} where $Q_1$ is the quantizer of the ADC
+%and $Q_2$ the quantizer for the DAC.  These bounds hold irrespective of
+%whether the noise is correlated, hence we may use them to over-approximate
+%the noise effect on the state space progression over time.  The
+%resulting dynamics are
+%%
+%\begin{align*}
+%%\label{eq:pre_quantization}
+%{x}_{k+1} = {A}_d{x}_k+{B}_d({u}_k+{{\nu}_2}_k), \quad u_k = -K{x}_{k}+{{\nu}_1}_k, 
+%\end{align*}
+%%
+%which result in the following closed-loop dynamics:
+%%
+%\begin{align*}
+%%\label{eq:quantization}
+%{x}_{k+1} &= ({A}_d-{B}_d{K}_d) {x}_k+{B}_d{{\nu}_2}_k +{{\nu}_1}_k \,. 
+%\end{align*}
 
 
 
