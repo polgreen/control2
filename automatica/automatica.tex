@@ -252,7 +252,6 @@ This technique works for both linear and non-linear systems.
 \label{sec:preliminaries}
 %-------------------------------
 
-{\color{blue}[IB:] In my opinion, the subsections \ref{ssec:statefeedbackcontrol}, \ref{ssec:ssrepresentation}, are \ref{ssec:stability} are useless for the Automatica audience. In addition, i guess that all the subsections~\ref{ssec:ssrepresentation}-\ref{ssec:performance} should be erased and a new section about formal specification of transient and stability specifications can be created.}
 
 %-------------------------------
 \subsection{Notation} 
@@ -288,12 +287,12 @@ uncertainty parameters in the plant model (plant intervals)~\cite{Bessa16}.
 %any digital controller, implementation details should be provided ({\it
 %e.g.}, number of bits, realization, and sample time).
 
-\begin{figure*}[t]
+\begin{figure}[t]
 \centering
-\includegraphics[width=0.9\textwidth]{figures/synthesis-flow.pdf}
+\includegraphics[width=\columnwidth]{figures/synthesis-flow.pdf}
 \vspace{0.1cm}
 \caption{Overview of the synthesis process\label{DSSynth_process}}
-\end{figure*}
+\end{figure}
 
 %In Step $1$, the user provides inputs $G(z)$ and $\Delta{G}(z)$
 %%$\%$ ({\it i.e.}, $\Delta{G}(z)$ as a percentage of $G(z)$)
@@ -346,7 +345,7 @@ coefficients as discussed in detail in Section~\ref{synthesis-elements}.
 \begin{figure}[htb]
 {\scriptsize
 \centering
-%\resizebox{.8\textwidth}{!}
+\resizebox{\columnwidth}{!}
 {
  \begin{tikzpicture}[scale=0.3,->,>=stealth',shorten >=.2pt,auto, semithick, initial text=, ampersand replacement=\&,]
   \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center
@@ -535,13 +534,13 @@ given above and illustrated in Fig.~\ref{fig:ct}.
 
 \end{enumerate}
 
-\begin{figure*}[t]
+\begin{figure}[t]
 \centering
-\includegraphics[width=0.6\textwidth]{figures/ct.eps}
-\vspace{0.1cm}
+\includegraphics[width=0.9\columnwidth]{figures/ct.eps}
+%\vspace{0.1cm}
 \caption{Completeness threshold for multi-staged verification. $T_s$ is the time step for the time discretization of the control matrices.}
 \label{fig:ct}
-\end{figure*}
+\end{figure}
 
 
 Checking that the safety specification holds for any initial state can be 
@@ -655,8 +654,13 @@ $P_a(z) = z^n+\sum_{i=1}^n{(a_i-k_i)z^{n-i}}$.
 
 \item Calculate the noise set $N$ from the quantizer resolutions and estimated round-off errors: %($\frac{q_1}{2},\frac{q_2}{2},q_3$)
 %
-$$N=\left \{ \nu_1+\nu_2+ \nu_3 : \nu_1 \in \left[-\frac{q_1}{2}\ \ \frac{q_1}{2}\right] 
-\wedge \nu_2 \in \left[-\frac{q_2}{2}\ \ \frac{q_2}{2}\right]  \wedge \nu_3 \in \left[-q_3\ \ q_3\right]  \right \}\nonumber$$
+\begin{equation}
+\nonumber
+\begin{split}
+N=\left \{ \nu_1+\nu_2+ \nu_3 : \nu_1 \in \left[-\frac{q_1}{2}\ \ \frac{q_1}{2}\right] 
+\wedge \right. \\ \left. \nu_2 \in \left[-\frac{q_2}{2}\ \ \frac{q_2}{2}\right]  \wedge  \nu_3 \in \left[-q_3\ \ q_3\right]  \right \}
+\end{split}
+\end{equation}
 %
 where  $q_1$ is the error introduced by the truncation in the ADC, $q_2$ is
 the error introduced by the DAC and $q_3$ is the maximum truncation and
@@ -712,12 +716,20 @@ $x_{k} \models \phi_\mathit{safety}$. %\blue{why $k+1$ here?}. %% For this purpo
   %$x_{k+1}=\mat{A}_{t}x_k+\mat{B}_{n} (\nu_1 + \nu_2 + \nu_3)$
   %and accelerate it to:
 %
-\begin{align}
+{
+\scriptsize
+\begin{equation}
+%\begin{split}
+x=(A_d-B_dK)^kx_0+ \sum_{i=0}^{k-1} (A_d-B_dK)^i B_{n}(\nu_1+\nu_2+\nu_3)% 
+%\end{split}
+\end{equation}
+\begin{equation}
+B_n= [1 \cdots 1]^T
+\end{equation}
+}
 %\label{eq:acc_observer_LTI_cf}
-\hspace{-0.1in} x=&(A_d-B_dK)^kx_0
 %+\sum_{i=0}^{k-1} \mat{A}_t^i \mat{B}_{t} r_i
-+\sum_{i=0}^{k-1} (A_d-B_dK)^i B_{n}(\nu_1+\nu_2+\nu_3) : B_n= [1 \cdots 1]^T
-\end{align}
+
 %
 As this still requires us to verify the system for every $k$ up to infinity,
 we use abstract acceleration again to obtain the reach-tube, i.e., the set
@@ -757,6 +769,54 @@ $z^n+\sum_{i=1}^n(a_i-k_i)z^{n-i}=\prod_{i=1}^n (z-\lambda_i) : |\lambda_i|<1 \w
   %, as well as a counterexample plant coefficients ($P_a$) and repeat the loop again. 
 \end{enumerate} 
 \end{enumerate}
+
+
+\begin{figure}
+\centering
+\resizebox{\columnwidth}{!}
+{\scriptsize
+\begin{tikzpicture}[scale=0.3,->,>=stealth',shorten >=.2pt,auto, semithick, ampersand replacement=\&,]
+  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center},row sep=.8cm, column sep=.2cm] {
+   \coordinate (aux1);
+   \& \coordinate (aux2);
+   \& ;\\
+   \&\node[fill=gray!20,align=center,xshift=-1.5cm] (pre) {{\sc 1. pre-}\\{\sc processing}};
+   \& \node[fill=gray!20,align=center] (abstract) {\sc 4. abstract};
+   \& \coordinate (aux); \\ 
+   \&
+   \& \node[fill=gray!20,align=center] (synth) {\sc 2. synthesize};
+   \& \node[fill=gray!20,align=center, minimum width=4cm] (verify) {\sc 3. verify ($\phi$)};
+      \node[draw=none] (SAT) at ([xshift=2.7cm,yshift=-.3cm]verify)  {\sc PASS};
+   \& \node[ellipse, fill=gray!20] (done) {{\sc Done}};\\
+   \&
+   \& \node[draw,rectangle,align=center] (KSAT) {Program \\ Search};
+   \& complexnode/.pic={
+     \coordinate (AA);
+     \node[draw,rectangle,align=center] (AAV) at ([xshift=-1.5cm]AA.center) {Abstract\\Acceleration};
+     \node[draw,rectangle,align=center] (AAC) at ([xshift=1.5cm]AA.center) {Abstraction \\ Verifier};
+    }\\
+  };
+  \path
+    (pre.east) edge node[align=center] {$P_a$, $N$,\\ $\phi_\mathit{init}^k$} (abstract.west)
+    (abstract.south) edge node{$(\phi(K), k)$} (synth.north)
+    ([yshift=1em]synth.east) edge node {$K$} ([yshift=1em]verify.west)
+    (aux) edge (abstract.east) 
+    (verify.east) edge (done.west);
+  \path
+    ([xshift=+.6cm]KSAT.north) edge[left] node[xshift=-.3cm] {$K$} ([xshift=0.6cm]synth.south) 
+    ([xshift=-.6cm]synth.south) edge node[align=center,xshift=.3cm] {$(\phi(K),k)$} ([xshift=-.6cm]KSAT.north)
+    ([yshift=.5cm]AAV.east) edge node{\sl $\hat{X}^\#$} ([yshift=.5cm]AAC.west)
+    ([yshift=-.5cm]AAC.west) edge node{$(k,x_0)$} ([yshift=-.5cm]AAV.east)
+    (AAC.north) edge node{\sl $\hat{X}^\#$} ([xshift=4.9cm]verify.south)
+    ([xshift=-5cm]verify.south) edge node{$K$} (AAV.north);
+  \path[-] 
+     (verify.north) edge node {$(k,x_0)$} (aux);
+\end{tikzpicture}
+}
+\caption{Abstraction-based CEGIS}
+\label{fig:CEGARIS} 
+\end{figure}
+
 
 %%-------------------------------
 %\subsection{State-space representation of physical systems} 
