@@ -666,9 +666,9 @@ N=\left \{ \nu_1+\nu_2+ \nu_3 : \nu_1 \in \left[-\frac{q_1}{2}\ \ \frac{q_1}{2}\
 where  $q_1$ is the error introduced by the truncation in the ADC, $q_2$ is
 the error introduced by the DAC and $q_3$ is the maximum truncation and
 rounding error in $u_k=-K \cdot \mathcal{F}_{\langle I_c,F_c \rangle}(x_k)$ as
-discussed in Section~\ref{sec:numeric_rep}.  More details on how to model
-quantization as noise are given in
-Appendix~\ref{appendix:quantization-noise}.
+discussed in Section~\ref{sec:numeric_rep}. % More details on how to model
+%quantization as noise are given in
+%Appendix~\ref{appendix:quantization-noise}.
 
 \item Calculate a set of initial bounds on $K$, $\phi_\mathit{init}^{K}$,
 based on the input constraints %\blue{[how is this practically done?With the equation below]}.  
@@ -1009,15 +1009,17 @@ additive noise.
 
 An additional error is due to the representation of the plant dynamics, namely 
 %
-\begin{align*}
-x_{k+1} &=\mathcal{F}_{\langle I_p,F_p \rangle}(A_d) \mathcal{F}_{\langle I_p,F_p \rangle}(x_{k}) + \mathcal{F}_{\langle I_p,F_p \rangle}(B_d)\mathcal{F}_{\langle I_p,F_p \rangle}(u_{k}).
-\end{align*}
+{\scriptsize
+\begin{equation}
+x_{k+1} =\mathcal{F}_{\langle I_p,F_p \rangle}(A_d) \mathcal{F}_{\langle I_p,F_p \rangle}(x_{k}) + \mathcal{F}_{\langle I_p,F_p \rangle}(B_d)\mathcal{F}_{\langle I_p,F_p \rangle}(u_{k}).
+\end{equation}
+}
 We address this error by use of interval
 arithmetic~\cite{moore1966interval} in the verification phase.
 
 Previous studies~\cite{gangli1} show that the FWL affects the poles and
 zeros positions, degrading the closed-loop dynamics, causing steady-state
-errors (see Appendix~\ref{sec:appendix:LTIbackground} for details) and
+errors  and
 eventually de-stabilizing the system~\cite{Bessa16}.  However, since in this
 paper we require stability only as a precursor to safety, it is sufficient
 to check that the (perturbed, noisy) model converges to a neighborhood of
@@ -1132,7 +1134,7 @@ We are not limited to the synthesis of digital stabilizing controllers -- a
 well known task in the literature on digital control systems -- but target
 safety requirements with an overall approach that is sound and automated. 
 More specifically, we require that the closed-loop system
-\eqref{eq:closedloopss} meets given safety specifications.  A safety
+ meets given safety specifications.  A safety
 specification gives raise to a requirement on the states of the model, such
 that the feedback controller (namely the choice of the gains matrix~$K$)
 must ensure that the state never violates the requirement.  Note that a
@@ -1267,7 +1269,7 @@ physical constraints.
 
 %\end{thebibliography}
 
-\appendix
+%\appendix
 
 
 %%-------------------------------
