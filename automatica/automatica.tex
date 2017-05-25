@@ -70,7 +70,7 @@
 
 %\thanksref{footnoteinfo}
 
-\title{Safe and Robust Formal  Synthesis of Digital Controllers for Continuous Plants with Transient Performance Specifications} % Title, preferably not more 
+\title{Safe and Robust Formal Synthesis of Digital Controllers for Continuous Plants with Transient Performance Specifications} % Title, preferably not more 
                                                 % than 10 words.
 
 %\thanks[footnoteinfo]{This paper was not presented at any IFAC 
@@ -252,6 +252,35 @@ This technique works for both linear and non-linear systems.
 \label{sec:preliminaries}
 %-------------------------------
 
+{\color{blue}[IB:] In my opinion, the subsections \ref{ssec:statefeedbackcontrol}, \ref{ssec:ssrepresentation}, are \ref{ssec:stability} are useless for the Automatica audience. In addition, i guess that all the subsections~\ref{ssec:ssrepresentation}-\ref{ssec:performance} should be erased and a new section about formal specification of transient and stability specifications can be created.}
+
+%-------------------------------
+\subsection{Notation} 
+\label{ssec:notation}
+%-------------------------------
+
+
+
+%-------------------------------
+\subsection{Counterexample Guided Inductive Synthesis} 
+\label{ssec:cegis}
+%-------------------------------
+
+%-------------------------------
+\subsubsection{CEGIS of digital controllers} 
+\label{sssec:cegisdig}
+%-------------------------------
+
+%-------------------------------
+\subsubsection{Naive approach} 
+\label{sssec:naive}
+%-------------------------------
+
+%-------------------------------
+\subsubsection{Abstraction-based CEGIS} 
+\label{sssec:abstraction}
+%-------------------------------
+
 %-------------------------------
 \subsection{State-space representation of physical systems} 
 \label{ssec:ssrepresentation}
@@ -386,6 +415,7 @@ physical constraints.
 
 \textcolor{red}{we should describe here about the performance specifications for dynamical systems.}
 
+
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{Numerical representation and soundness} 
 \label{sec:numeric_rep}
@@ -459,6 +489,45 @@ In the following, we shall disregard these steady-state errors (caused by
 FWL effects) when stability is ensured by synthesis, and then verify its
 safety accounting for the finite-precision errors.
 
+%-------------------------------
+\section{Formal specification of control systems properties} 
+\label{sec:specification}
+%-------------------------------
+
+%-------------------------------
+\subsection{Formal specification of stability} 
+\label{ssec:stabspecification}
+%-------------------------------
+
+%-------------------------------
+\subsection{Formal specification of safety} 
+\label{ssec:safespecification}
+%-------------------------------
+
+%-------------------------------
+\subsection{Formal specification of transient response} 
+\label{ssec:transientspecification}
+%-------------------------------
+
+%-------------------------------
+\section{CEGIS of digital control system with transient specifications}
+\label{sec:method}
+%-------------------------------
+
+%-------------------------------
+\subsection{Synthesis in frequency domain}
+\label{ssec:frequencycegis}
+%-------------------------------
+
+%-------------------------------
+\subsection{Synthesis of state feedback controllers}
+\label{ssec:sscegis}
+%-------------------------------
+
+%-------------------------------
+\subsection{Synthesis of state observers}
+\label{ssec:sobsvcegis}
+%-------------------------------
 
 %-------------------------------
 \section{Experimental Evaluation}
