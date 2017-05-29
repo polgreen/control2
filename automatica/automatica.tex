@@ -60,6 +60,7 @@
 \newcommand{\mat}[1]{\boldsymbol{#1}}
 \renewcommand{\vec}[1]{\boldsymbol{#1}}
 \newtheorem{theorem}{Theorem}
+\newtheorem{corollary}{Corollary}
 \newtheorem{proof}{Proof}
 
 \begin{document}
@@ -264,6 +265,206 @@ This technique works for both linear and non-linear systems.
 %-------------------------------
 
 \textcolor{red}{Elizabeth: we need to define the notation used throughout the paper.}
+
+
+%-------------------------------
+\subsection{Abstract Acceleration} 
+\label{ssec:aa}
+%-------------------------------
+For abstraction based synthesis, we will use Abstract Acceleration~\cite{JSS14,cattaruzza2015unbounded}.
+Given an iterative program with dynamics
+\begin{equation}
+\vec{x}_{k+1}=\mat{A}\vec{x}_k : \vec{x}_k \in \mathbb{R}^n \wedge \mat{A} \in \mathbb{R}^{n \times n} \wedge k \in [0\ \ \infty),
+\end{equation}
+we want to find all possible states visited over an infinite time horizon starting at an initial set $X_0$. We call this set the \emph{reach tube} of the model:
+\begin{equation}
+\hat{X} = \{ \vec{x}_k : k \in [0\ \infty) \wedge \vec{x}_0 \in X_0 \wedge \vec{x}_{k+1}=\mat{A}\vec{x}_k\}.
+\end{equation}
+It is easy to see that the infinite number of iterations would result in an unbounded cumulative rounding error, but using Abstract Acceleration we transform this problem into a one-step solution.
+We first change the problem statement by means of acceleration into 
+\begin{equation}
+\hat{X} = \{ \vec{x}_k=\mat{A}^k\vec{x}_0 : k \in [0\ \infty) \wedge \vec{x}_0 \in X_0 \}, 
+\end{equation}
+and further define new model semantics and corresponding set: 
+\begin{equation}\label{eq:aa_reachtube}
+\hat{X} \subseteq \hat{X}^\sharp = \mathcal{A}X_0, \text{ such that } \bigcup_{k \in [0\ \infty)} \mat{A}^k \subseteq \mathcal{A}, 
+\end{equation}
+where the newly introduced \emph{abstract reach tube} $\hat{X}^\sharp$ is an over-approximation of the reach tube of the model \cite{JSS14}.
+All we need to do is define the nature of $\mathcal{A}X_0$. 
+
+Let $\mat{S}\mat{J}\mat{S}^{-1}=\mat{A}$ be the eigen-decomposition of
+$\mat{A}$, where $\mat{S}$ is the set of generalised eigenvectors of
+$\mat{A}$ and $\mat{J}$ is the Jordan Form containing the eigenvalues of
+$\mat{A}$ in its main diagonal.  We correspondingly define
+$\mathcal{J}=\mat{S}^{-1}\mathcal{A}\mat{S}$, which is such that $\mathcal{J} \supseteq \bigcup_{k \in [0\
+\infty)} \mat{J}^k$.
+
+Introduce set $X=\{ \vec{x} : \mat{C}\vec{x} \leq \vec{d}\}$. 
+The linear transformation $\vec{x}'=\mat{S}^{-1}\vec{x}$ leads to set 
+\begin{equation}
+X'= \mat{S}^{-1}X = \{\vec{x}' : \mat{C}\mat{S}\vec{x}'\leq \vec{d}\}.  
+\label{eq:eigenInit}
+\end{equation}
+Analogously, 
+let $X_0'=\mat{S}^{-1}X_0$ and ${\hat{X}'^\sharp}=\mat{S}^{-1}{\hat{X}^\sharp}$ be the initial set and the abstract reach tube mapped onto the eigenspace of matrix $\mat{A}$. 
+We may transform equation \eqref{eq:aa_reachtube} into:
+\begin{equation}
+\hat{X}' \subseteq {\hat{X}'^\sharp} = \mathcal{J}X_0', \text{ such that } \bigcup_{k \in [0\ \ \infty)}\mat{J}^k \subseteq \mathcal{J}, 
+\end{equation}
+where $\hat{X}'=\mat{S}^{-1}\hat{X}$ and $\mathcal{J}$ is a convex polyhedron representing restrictions on the eigenvalues of $\mat{A}$.
+$\hat{X}'^\sharp$ is calculated by applying a simplex algorithm with a tableau defined by $\mathcal{J}$ and objective functions derived from each vertex of $X_0'$ (step \eqref{alg:getReachTube} in Algorithm \ref{alg:findReachTube} below).
+We note, however, that if we wish to use numerical analysis in the decomposition of $\mat{A}$, 
+the Tableau in $\mathcal{J}$ contains small intervals given by the errors, which cannot be processed efficiently by a regular simplex and require a new procedure. 
+
+The calculation of the abstract reach tube via abstract acceleration is encompassed in Algorithm \ref{alg:findReachTube}, 
+which can be summarised as follows (its steps are denoted in parentheses):
+%
+\begin{enumerate}
+\item We perform unsound eigen-decomposition using an existing algebra package (lines \ref{alg:calcEigenvalues}-\ref{alg:calcEigenvectors}).
+\item Then we restore soundness to the results using the methods described in Section \ref{sec:eigensolver} (lines \ref{alg:soundEigenvalues}-\ref{alg:soundEigenvectors}). 
+\item The inverse of the matrix of eigenvectors is calculated after soundness is restored, using interval arithmetic in order to ensure its soundness (line \ref{alg:inverse}).
+\item The abstract dynamics are obtained by evaluating the convex hull of all powers of eigenvalues up to the desired number of iterations as described in \cite{cattaruzza2015unbounded} (line \ref{alg:aa}).
+\item Using Equation \eqref{eq:eigenInit}, transform the initial state into the eigenspace (line \ref{alg:eigeninit}).
+\item Extract the vertices of the eigen-polyhedron $X_0'$ using the sound over-approximation of the double description algorithm \cite{fukuda1996double} from Section \ref{sec:dd} (line \ref{alg:getVertices}). It is worth noting that this algorithm uses a simplex to seed it: we will first discuss the simplex algorithm, which is also needed at the next step, and then the vertex enumeration algorithm used at this stage. 
+\item Calculate the mapped \emph{abstract reach tube} ${\hat{X}'^\sharp}$ that over-approximates the image of the reach tube in the eigenspace (line \ref{alg:getReachTube}). This is achieved by evaluating a set of objective functions using the abstract dynamics as a simplex Tableau, 
+and via a sound simplex described in Section \ref{sec:simplex}. 
+The objective functions are defined by the vertices of $X'_0$, 
+denote as $V_0$, 
+and by the desired template directions, 
+such that 
+\begin{equation*}
+\vec{w}_{ij}= \vec{v}_i \circ \vec{t}_j : \vec{v}_i \in V_0 \wedge \vec{t}_j \in T,
+\end{equation*}
+where $T$ is the set of template directions, and $\circ$ denotes a component-wise multiplication yielding a vector. 
+\item Using Equation \eqref{eq:eigenInit}, find the reach tube $\hat{X}^\sharp=\mat{S}{\hat{X}'^\sharp}$ (line \ref{alg:getNormReachTube}).
+\end{enumerate}
+
+\begin{algorithm}[]
+\small
+\begin{algorithmic}[1]
+\Function{$\mathit{findAbstractReachTube}()$}{}
+\State $\hat{\mat{J}}=$ calculateEigenvalues($ \mat{A}$)
+\label{alg:calcEigenvalues}
+\State $\hat{\mat{S}}=$ calculateEigenvectors($ \mat{A}$)
+\label{alg:calcEigenvectors}
+\State $[\mat{J}]=$ soundifyEigenvalues($\mat{A},\mat{J},\mat{S}$)
+\label{alg:soundEigenvalues}
+\State $[\mat{S}]=$ soundifyEigenvectors($\mat{A},[\mat{J}],\mat{S}$)
+\label{alg:soundEigenvectors}
+\State $[\mat{S}]^{-1}=$ calculateInverse($[\mat{S}]$)
+\label{alg:inverse}
+\State $\mathcal{J}=getAbstractDynamics([\mat{J}])$
+\label{alg:aa}
+\State $[X_0']=$ transformInitialSpace($X_0,\mat{S}$)
+\label{alg:eigeninit}
+\State $[V_0]=$ getVertices($[X_0']$)
+\label{alg:getVertices}
+\State ${\hat{X}'^\sharp}=$ getReachTube($\mathcal{J},[V_0]$)
+\label{alg:getReachTube}
+\State ${\hat{X}^\sharp}=$ transformReachTube(${\hat{X}'^\sharp},[\mat{S}]^{-1}$)
+\label{alg:getNormReachTube}
+\EndFunction
+\end{algorithmic}
+\caption{Calculation of Abstract Reach Tube Using Abstract Acceleration}
+\label{alg:findReachTube}
+\end{algorithm}
+
+%-------------------------------
+ \subsection{Overapproximating continuous time dynamics using discrete models}
+ \label{sec:cont_aa}
+%-------------------------------
+Thus far we wave discussed the Abstract Accelertion of Discrete Time systems. However, our plant models derive
+from the discretization of continuous time systems. We therefore seek to establish a sound
+overapproximation which does not only encompass the selected discretization, but any chosen discretization in the 
+time domain.
+
+%-------------------------------
+ \subsubsection{A discrete time model using reals}
+ \label{sec:real_aa}
+%-------------------------------
+
+ \begin{theorem}
+ The expression
+ \begin{align}
+ \vec{x}_k&=\vec{x}(t=k)=\mat{A}_k\vec{x}_0 : \dot{\vec{x}}=\mat{A}\vec{x} \wedge \mat{A}=\mat{S}\mat{J}\mat{S}^{-1}\\
+ \mat{A}_k&= \mat{S}
+ \left [ \begin{array}{cccc}
+ e^{k\lambda_i}  & s_i\frac{k^{j-i}e^{k\lambda_i}}{(j-i)!} & \hdots  & s_i\frac{k^{p-i}e^{k\lambda_i}}{(p-i)!} \\
+0 & e^{k\lambda_i}  & s_i\frac{k^{j-i}e^{k\lambda_i}}{(j-i)!} & \vdots \\
+\vdots & & \ddots & \vdots \\
+0 & \cdots & 0  &e^{k\lambda_i} \\
+\end{array} \right ]
+ \mat{S}^{-1}: s_i=\left\{\begin{array}{cc}1&gm(\lambda_i)>1\\0&gm(\lambda_i)=1\end{array}\right.
+ \label{eq:continuous_tube_dyn}
+ \end{align}
+ where $\lambda_i \in \mat{J}$ are the eigenvalues of $\mat{A}$, and $gm(\lambda_i)$ is the geometric multiplicity of $\lambda_i$ is a witness of the system $\dot{\vec{x}}(t)=\mat{A}\vec{x}$ at time t=k.
+ \end{theorem}
+ \begin{corollary}
+ If $\mat{J}$ is diagonal and there exists a discrete dynamics matrix for a sampling time $T_d :  A_d=e^{\mat{A} T_d}$, then $\vec{x}_k=A_d^k\vec{x} : k \in (0,\infty)$ is a witness of the system at time $t=kT_d$.
+ \end{corollary}
+ \begin{proof}
+ Let us recall equation \ref{eq:discretize}. The discrete representation of the system dynamics discretized with sample time $T_1$ is ruled by the formula
+ $\mat{A}_1 = e^{\mat{A} T_1}$. From matrix theory, we have 
+\begin{align}
+ e^{\mat{A}}&=\sum_{k=0}^\infty \frac{1}{k!}\mat{A}^k
+\end{align} 
+\begin{align} 
+ e^{\mat{S}\mat{J}\mat{S}^{-1}}&=\sum_{k=0}^\infty \frac{1}{k!}(\mat{S}\mat{J}\mat{S}^{-1})^k
+ =\mat{S} \left (\sum_{k=0}^\infty \frac{1}{k!}\mat{J}^k\right) \mat{S}^{-1}
+ =\mat{S}e^{\mat{J}}\mat{S}^{-1}
+\end{align} 
+\begin{equation}
+\mat{A}=\mat{S}\mat{J}\mat{S}^{-1} \Rightarrow \vec{A}_1 = \mat{S}\mat{J}_1\mat{S}^{-1}= \mat{S}e^{\mat{J} T_1}\mat{S}^{-1}.
+ \end{equation}
+ 
+ Let $\mat{J}$ be a diagonal matrix, such that 
+ $${\lambda_1}_i=e^{\lambda_i T_1}, \forall \lambda_i \in \mat{J}.$$
+ Let us now take a different sample rate $T_2$, such that 
+ $${\lambda_2}_i=e^{\lambda_i T_2}, \forall \lambda_i \in \mat{J}.$$
+ We can then say that 
+ \begin{equation}
+ {\lambda_2}_i=e^{\lambda_i T_1 \frac{T_2}{T_1}}={\lambda_1}_i^{\frac{T_2}{T_1}} \Rightarrow A_2=A_1^{\frac{T_2}{T_1}}.
+ \end{equation}
+ This proves the theorem for $gm(\lambda_i)=1$.
+ We now note that given an exponentiated Jordan form with geometric multiplicity, the upper diagonal terms can be
+ referenced to the original eigenvalues modified by the sampling rate.
+  Let $\mat{J}\in \mathbb{R}^{p \times p}$ be a Jordan Canonical matrix. Then
+\begin{align}
+\tiny
+ \mat{J}_1=&\sum_{k=0}^\infty \frac{1}{k!}\left(\mat{J}T_1\right)^k\nonumber\\
+\tiny
+=&\sum_{k=0}^\infty \frac{1}{k!} \left [ \begin{array}{cccc}
+ \lambda_i^k  & \binom{k}{1}  \lambda^{k-1} & \hdots  & \binom{k}{p-1} \lambda_i^{k-p+1} \\
+& \lambda_i^k  & \binom{k}{1}  \lambda_i^{k-1} & \vdots \\
+\vdots & \ddots & \ddots & \vdots \\
+& &  &\lambda_i^k \\
+\end{array} \right ] T_1^k
+\end{align}
+The eigenvalues remain the same as in the diagonal case, but the upper triangular terms are of the form:
+\begin{align}
+\forall j>i, c_{ij}&=\sum_{k=j-i}^\infty \frac{1}{k!}\binom{k}{j-i} \lambda_i^{k-(j-i)}T_1^k\\
+&=\frac{1}{(j-i)!}\sum_{k=j-i}^\infty \frac{1}{(k-(j-i))!} \lambda_i^{k-(j-i)}T_1^k\nonumber\\
+&=\frac{T_1^{j-i}e^{\lambda_i T_1}}{(j-i)!}\nonumber
+\end{align}
+which completes the proof for $gm(\lambda_i)>1$.
+\end{proof}
+
+%-------------------------------
+ \subsubsection{Finding Abstract Supports for Continuous Dynamics}
+ \label{sec:cont_aasup}
+%-------------------------------
+
+In the case of Discrete dynamics, support functions can be found by evaluating hyperplanes of consecutive exponents of the eigenvalues using differences.
+In the case of continuous time, this translates to calculating derivatives. Once again, when the sets are known to be convex,
+we may calculate the normal vector to this derivative and evaluate its support function on the selected iteration. The direction of the vector is determined by evaluating the support function of another point in the curve, which is known to be smaller than that of the selected point.
+The corresponding derivatives are:
+\begin{enumerate}
+\item for real eigenvalues: we first calculate the slope of the tangent between the two progressions: $\frac{d f(k)}{d g(k)}=\frac{f'(k)}{g'(k)}$. Hence $\frac{d \lambda_1^k}{d \lambda_2^k}=\frac{log(\lambda_1) \lambda_1^k}{log(\lambda_2) \lambda_2^k}$. From this we know that the polar angle of the support vector is $\psi = \tan^{-1}(\frac{log(\lambda_1) \lambda_1^k}{log(\lambda_2) \lambda_2^k})+\frac{\pi}{2}$
+\item for conjugate eigenvalue pairs: the pair forms a logarithmic spiral. The tangent of a spiral with polar equation $r=a e^{b\theta}$ will have a derivative $\frac{d r}{d \theta}=b a e^{b\theta}=b r$, hence the angle of the vector normal to the curve is $\tan^{-1}(\frac{r}{\frac{d r}{d \theta}})+\frac{\pi}{2}=\tan^{-1}(\frac{1}{b})+\frac{\pi}{2}$
+\item for Jordan blocks with $gm>1$: in the case of real eigenvalues, we follow the same procedure as in the real case, but considering that the equation for each eigenvalue is $\frac{k^j}{j!}e^{\lambda k}$ where $j$ is the index of the term within the Jordan block (note that when $j=0$ the term is the same as for real eigenvalues above). The derivatives f'(k),g'(k) are in the form $(j+k*log(\lambda))\frac{k^{j-1}}{j!}e^{\lambda k}$.
+\item for any combination of complex eigenvalues we use the above equations using the envelope of their magnitude (ie $|\lambda|$).
+\end{enumerate}
+
 
 %-------------------------------
 \subsection{Counterexample Guided Inductive Synthesis} 
@@ -1217,7 +1418,7 @@ We use Jury's criterion to limit $|\lambda_i| \leq 1$. Let us now define a trans
 P'=\prod_{i=0}^n (s-\lambda_i')=\prod_{i=0}^n (s-\lambda_i\overline{\lambda})=\sum_{j=0}^n c_j\overline{\lambda}^{n-j}s^j
 \end{equation}
 where all members are known, we may now synthesise coefficients that ensure the eigenvalues are smaller than a desired magnitue, thus ensuring that the settling time is too.
-%-------------------------------
+%---------------janus----------------
 \section{CEGIS of digital control system with transient specifications}
 \label{sec:method}
 %-------------------------------
