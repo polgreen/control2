@@ -1,6 +1,7 @@
 \documentclass[sigconf]{acmart}
 
 \usepackage{xspace,framed}
+\usepackage{listings}
 
 \setcopyright{acmcopyright}
 \acmDOI{10.475/123_4}
@@ -181,7 +182,35 @@ A graphical user interface application was developed (Fig.~\ref{fig:gui-for-tf})
 \subsection{Illustrative Example}
 %---------------------------------------------------
 
-\textcolor{red}{Lennon, can you please describe an illustrative example here?}
+To illustrate the \tool's usage, Fig.~\ref{toolbox-usage} shows the synthesis for a physical plant defined in Eq.(~\ref{equation_plant}) using the transfer-function representation, where ``num'' and ``den'' represent the numerator $A(z)$ and denominator $B(z)$, respectively.
+%
+\begin{equation}
+\label{equation_plant}
+H(z)=\frac{B(z)}{A(z)}=\frac{-0.06875z^{2}}{z^2-1.696z+0.7089},
+\end{equation}
+%
+\begin{figure}[ht]
+\scriptsize
+\begin{lstlisting}[xleftmargin=.025\textwidth,xrightmargin=.025\textwidth, frame=single,]
+>> num = [-0.06875 0 0];
+>> den = [1.0000 -1.696 0.7089];
+>> system = tf(num,den,0.002);
+>> y = synthesize(system,8,8,1,-1);
+>> SYNTHESIS SUCCESSFUL
+>> y = (-0.9983z^2 + 0.09587z + 0.1926)/(z^2+0.5665+0.75);
+\end{lstlisting}
+\vspace{-0.2cm}
+\caption{Synthesis of a Digital Controller for the physical plant defined in Eq.(~\ref{equation_plant}) in MATLAB, with a fixed-point format  $\left\langle 8,8\right\rangle$.}
+\label{toolbox-usage}
+\end{figure}
+%
+In the Fig.~\ref{toolbox-usage}, the value returned in $y$ represents the digital controller synthesized and stable. In order to validate and reproduce the stability in the digital system composed by the physical plant defined in Eq.(~\ref{equation_plant}) and the digital controller represented by $y$, the user can invoke the step response using the command \texttt{dstep}, and then observe that the graph plotted shows a stable digital system, as can be seen in Fig.~\ref{step-response}.
+%
+\begin{figure}[ht]
+  \includegraphics[width=0.5\textwidth]{step-response.eps}
+  \caption{Step response for the Eq.~\eqref{equation_plant} describing a stable system.}
+  \label{step-response}
+\end{figure}
 
 
 \section{Conclusions}
