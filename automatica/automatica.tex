@@ -386,18 +386,19 @@ time domain.
  \begin{theorem}
  The expression
  \begin{align}
- \vec{x}_k&=\vec{x}(t=k)=\mat{A}_k\vec{x}_0 : \dot{\vec{x}}=\mat{A}\vec{x} \wedge \mat{A}=\mat{S}\mat{J}\mat{S}^{-1}\\
- \mat{A}_k&= \mat{S}
+ \vec{x}_T&=\vec{x}(t=T)=\mat{A}_{T}\vec{x}_0 : \dot{\vec{x}}=\mat{A}\vec{x} \wedge \mat{A}=\mat{S}\mat{J}\mat{S}^{-1}\nonumber\\
+ \mat{A}_{T}&= \mat{S}
  \left [ \begin{array}{cccc}
- e^{k\lambda_i}  & s_i\frac{k^{j-i}e^{k\lambda_i}}{(j-i)!} & \hdots  & s_i\frac{k^{p-i}e^{k\lambda_i}}{(p-i)!} \\
-0 & e^{k\lambda_i}  & s_i\frac{k^{j-i}e^{k\lambda_i}}{(j-i)!} & \vdots \\
+ e^{T\lambda_i}  & s_i\frac{T^{j-i}e^{T\lambda_i}}{(j-i)!} & \hdots  & s_i\frac{T^{p-i}e^{T\lambda_i}}{(p-i)!} \\
+0 & e^{T\lambda_i}  & s_i\frac{T^{j-i}e^{T\lambda_i}}{(j-i)!} & \vdots \\
 \vdots & & \ddots & \vdots \\
-0 & \cdots & 0  &e^{k\lambda_i} \\
+0 & \cdots & 0  &e^{T\lambda_i} \\
 \end{array} \right ]
- \mat{S}^{-1}: s_i=\left\{\begin{array}{cc}1&gm(\lambda_i)>1\\0&gm(\lambda_i)=1\end{array}\right.
+ \mat{S}^{-1}\nonumber\\
+ s_i&=\left\{\begin{array}{cc}1&gm(\lambda_i)>1\\0&gm(\lambda_i)=1\end{array}\right.
  \label{eq:continuous_tube_dyn}
  \end{align}
- where $\lambda_i \in \mat{J}$ are the eigenvalues of $\mat{A}$, and $gm(\lambda_i)$ is the geometric multiplicity of $\lambda_i$ is a witness of the system $\dot{\vec{x}}(t)=\mat{A}\vec{x}$ at time t=k.
+ where $\lambda_i \in \mat{J}$ are the eigenvalues of $\mat{A}$, and $gm(\lambda_i)$ is the geometric multiplicity of $\lambda_i$ is a witness of the system $\dot{\vec{x}}(t)=\mat{A}\vec{x}$ at time t=T.
  \end{theorem}
  \begin{corollary}
  If $\mat{J}$ is diagonal and there exists a discrete dynamics matrix for a sampling time $T_d :  A_d=e^{\mat{A} T_d}$, then $\vec{x}_k=A_d^k\vec{x} : k \in (0,\infty)$ is a witness of the system at time $t=kT_d$.
@@ -428,12 +429,11 @@ time domain.
  This proves the theorem for $gm(\lambda_i)=1$.
  We now note that given an exponentiated Jordan form with geometric multiplicity, the upper diagonal terms can be
  referenced to the original eigenvalues modified by the sampling rate.
-  Let $\mat{J}\in \mathbb{R}^{p \times p}$ be a Jordan Canonical matrix. Then
+  Let $\mat{J}\in \mathbb{R}^{p \times p}$ be a Jordan Canonical matrix whose powers are described in Equation \eqref{jord:pow}
+ Then
 \begin{align}
-\tiny
- \mat{J}_1=&\sum_{k=0}^\infty \frac{1}{k!}\left(\mat{J}T_1\right)^k\nonumber\\
-\tiny
-=&\sum_{k=0}^\infty \frac{1}{k!} \left [ \begin{array}{cccc}
+ \mat{J}_1=\sum_{k=0}^\infty \frac{1}{k!}\left(\mat{J}T_1\right)^k=
+&\sum_{k=0}^\infty \frac{1}{k!} \left [ \begin{array}{cccc}
  \lambda_i^k  & \binom{k}{1}  \lambda^{k-1} & \hdots  & \binom{k}{p-1} \lambda_i^{k-p+1} \\
 & \lambda_i^k  & \binom{k}{1}  \lambda_i^{k-1} & \vdots \\
 \vdots & \ddots & \ddots & \vdots \\
