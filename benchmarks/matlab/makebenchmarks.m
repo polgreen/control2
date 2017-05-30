@@ -37,7 +37,11 @@ guidanceChen
 display('Guidance Control System - 1 benchmark')
 flexbeam
 display('Flexible beam - 7 benchmarks')
+acrobot
+display('Acrobot - 7 benchmarks')
+antenna
+display('Antenna - 7 benchmarks')
 display('Done')
-display('Total of benchmarks: 128')
+display('Total of benchmarks: 142')
 display('The .mat file benchmark_tf.mat contains the transfer function models.')
 display('The .mat file benchmark_ss.mat contains the state space models.')
