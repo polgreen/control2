@@ -85,12 +85,13 @@ Linear-Time Invariant (LTI) systems are used in several applications
 to support non-trivial tasks when applied to embedded systems 
 (e.g., robot manipulator, power plants and guidance system). 
 In addition, controllers synthesis for LTI systems is richly studied 
-by different researchers; however, there are many challenges when 
-digital-control systems theory is used due to the effects of finite-word 
-length (FWL)~\cite{Guang2013, Istepanian2001}, time discretization 
+by different researchers~\cite{mazo2010pessoa,DBLP:conf/emsoft/RavanbakhshS16,economakos2016automated}; 
+however, there are many challenges when 
+digital-control systems theory is used due to the finite-word 
+length (FWL) effects~\cite{Guang2013, Istepanian2001}, time discretization 
 and quantization noise, which are typically introduced by Analogue-to-Digital 
-(ADC) and Digital-to-Analogue (DAC) conversion, which can lead to several 
-quantization problems, such as truncation or round-off errors~\cite{astrom1997computer}. 
+(ADC) and Digital-to-Analogue (DAC) conversion, leading to truncation 
+or round-off errors~\cite{astrom1997computer}. 
 
 Embedded digital control systems perform computations over digital signals 
 to influence the system behavior~\cite{Ogata2001}; it can be mathematically 
@@ -107,7 +108,7 @@ H(z)=\frac{B(z)}{A(z)}=\frac{b_{0}+b_{1}z^{-1}+...+b_{M}z^{-M}}{1+a_{1}z^{-1}+..
 %
 \noindent where $z^{-1}$ is called backward-shift operator, $A(z)$ and $B(z)$ are 
 the denominator and numerator polynomials, respectively.
-
+%
 In state-space format, the digital control system represents the behavior 
 of a system via a state evolution equation $\dot{x}(n+1)$ and an instantaneous 
 output equation $y(n)$, as follows:
@@ -120,20 +121,21 @@ y(n) &= C x(n) + D u(n),
 \end{split}\label{eq:ss-example}
 \end{equation}
 
-\noindent where A, B, C and D are matrices that fully specify a digital system. 
+\noindent where $A$, $B$, $C$ and $D$ are matrices that fully specify a digital system. 
 
 Recently, a new methodology to synthesize digital-control systems was proposed, 
 named as DSSynth (Digital System Synthesis)~\cite{abate2017, abatecav2017}, 
-which is based on Counter-Example Guided Inductive Synthesis 
-(CEGIS)~\cite{DBLP:conf/asplos/Solar-LezamaTBSS06} able to produce programs 
-for highly non-trivial specifications with a very high degree of automation. 
-Program synthesis engines use a specification as the starting point, and subsequently 
+which is based on the Counter-Example Guided Inductive Synthesis 
+(CEGIS) approach~\cite{DBLP:conf/asplos/Solar-LezamaTBSS06}. Here, CEGIS is used
+as a program synthesis engine able to produce controllers for highly non-trivial 
+specifications with a very high degree of automation. Program synthesis engines 
+as CEGIS use a specification as the starting point, and subsequently 
 produce a sequence of candidate programs from a given template. The candidate programs 
 are iteratively refined to eventually satisfy the specification. Modern synthesis engines combine 
 automated testing, genetic algorithms and SMT-based automated reasoning~\cite{DBLP:journals/corr/AlurFSS16a, DBLP:conf/lpar/DavidKL15}. 
 Currently, Abate {\it et al.}~\cite{abate2017} synthesize stable, software-implemented 
-embedded controllers along with a model of a physical plant for transfer-function~\cite{abate2017}, 
-and recently, they also support state-space representation~\cite{abatecav2017}.
+embedded controllers, along with a physical plant model represented by transfer functions 
+or state-space equations~\cite{abate2017,abatecav2017} using a CEGIS-based approach.
 
 Notably, there are toolboxes in MATLAB with functions and scripts to facilitate the 
 digital system design and implementation~\cite{matlab-toolbox}. In fact, there is a MATLAB 
