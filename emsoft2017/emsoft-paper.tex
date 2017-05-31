@@ -73,7 +73,7 @@ real-world systems by control engineers.
 \ccsdesc[100]{Software and its engineering~Formal methods}
 \ccsdesc[300]{Theory of computation~Verification by model checking}
 
-\keywords{Formal Synthesis, Digital Controllers, MATLAB Toolbox, Fixed-point Arithmetic, Transfer-Function, State-Space, Digital Control Synthesis}
+\keywords{Formal Synthesis; Digital Control Systems; MATLAB Toolbox; Finite-Word Length; Verification}
 
 \maketitle
 
@@ -154,25 +154,41 @@ through transfer-function or state-space representations, consider low-level sys
 (implementation features and numerical format), and then gets a stable synthesized digital-controller.
 
 %---------------------------------------------------
-\section{Synthesizing Digital Controller with \tool}
+\section{Synthesizing Digital Controllers with \tool}
 %---------------------------------------------------
 
 %---------------------------------------------------
 \subsection{\tool Architecture}
 %---------------------------------------------------
 
-The proposed synthesization methodology for closed-loop digital systems is based on DSSynth~\cite{abate2017, abatecav2017} and it can be split into two main stages as follows: manual (user) and automated (DSSynth) procedures, as shown in Fig.~\ref{fig:synthesis-flow}. 
-
+The proposed synthesis methodology for closed-loop digital control
+systems is based on the DSSynth tool~\cite{abate2017, abatecav2017}; 
+it can be split into two main stages as follows: manual (user) and 
+automated (DSSynth) procedures, as illustrated in Fig.~\ref{fig:synthesis-flow}. 
+%
 \begin{figure}[ht!]
 \centering
 \includegraphics[width=0.45\textwidth]{synthesis-flow.pdf}
-\caption{Digital-Control Synthesis Methodology.}
+\caption{Digital Controller Synthesis Methodology.}
 \label{fig:synthesis-flow}
 \end{figure}
 
-In step $1$, the digital-control representation is determined, and it could be in transfer-function or state-space equations. In step $2$, the physical plant with the coefficients must be designed according to equations (\ref{eq:transferfunction}) and (\ref{eq:ss-example}). And finally, in step $3$, the numerical representation with the digital-control implementation must be defined, {\it i.e.}, the FWL format that includes the number of bits in the integer and fractional parts and the dynamic range inputs. The result from the manual procedure is a digital-system implementation for the given physical plant in MATLAB. 
+In step $1$, the digital-control representation is define, which can be in 
+transfer-function or state-space equations. In step $2$, the physical plant 
+with the respective coefficients must be designed, according to equations 
+(\ref{eq:transferfunction}) and (\ref{eq:ss-example}). And finally, in step $3$, 
+the numerical representation for the digital controller implementation must be 
+defined, {\it i.e.}, the FWL format that includes the number of bits for the integer 
+and fractional parts and the dynamic range inputs. The results from the manual 
+procedure is a digital-system implementation for the given physical plant in MATLAB. 
 
-The synthesis process starts in step $A$, when the \tool gets the digital-system in MATLAB, and then translate it in a ANSI-C program, and then in step $B$, the DSSynth Tool is invoked. Finally, in step $C$, the digital controller is synthesized based on (CEGIS)~\cite{DBLP:conf/asplos/Solar-LezamaTBSS06}. The output generated in MATLAB is the digital controller synthesized, and it could be represented in transfer-function or state-space format. The synthesis is \emph{successful} when a digital controller is synthesized correctly, and the synthesis has status \emph{failed} when any parameter is defined incorrectly in previous steps, or there is no solution for the digital-system designed.
+The synthesis process starts in step $A$, when the \tool gets the digital-system in MATLAB, 
+and then translates it into a ANSI-C program; then in step $B$, the DSSynth Tool is invoked. 
+Finally, in step $C$, the digital controller is synthesized based on CEGIS. The output generated 
+in MATLAB is the synthesized digital controller, which can be represented in transfer-function 
+or state-space format. The synthesis is \emph{successful} if a digital controller is correctly synthesized;
+otherwise the synthesis has status \emph{failed} if any parameter is defined incorrectly 
+in previous steps, or there is no solution for the designed digital controller.
  
 %---------------------------------------------------
 \subsection{\tool Procedures}
