@@ -277,11 +277,14 @@ fixed-point representation and dynamic inputs.
 \subsection{Illustrative Example}
 %---------------------------------------------------
 
-To illustrate the \tool's usage, Fig.~\ref{toolbox-usage} shows the synthesis for a physical plant defined in Eq.(~\ref{equation_plant}) using the transfer-function representation, where ``num'' and ``den'' represent the numerator $A(z)$ and denominator $B(z)$, respectively.
+To illustrate the \tool's usage, Fig.~\ref{toolbox-usage} shows the 
+synthesis for a physical plant defined in Eq.(~\ref{equation_plant}) 
+using the transfer-function representation, where ``num'' and ``den'' 
+represent the numerator $A(z)$ and denominator $B(z)$, respectively.
 %
 \begin{equation}
 \label{equation_plant}
-H(z)=\frac{B(z)}{A(z)}=\frac{-0.06875z^{2}}{z^2-1.696z+0.7089},
+H(z)=\frac{B(z)}{A(z)}=\frac{-0.06875z^{2}}{z^2-1.696z+0.7089}.
 \end{equation}
 %
 \begin{figure}[ht]
@@ -295,11 +298,16 @@ H(z)=\frac{B(z)}{A(z)}=\frac{-0.06875z^{2}}{z^2-1.696z+0.7089},
 >> y = (-0.9983z^2 + 0.09587z + 0.1926)/(z^2+0.5665+0.75);
 \end{lstlisting}
 \vspace{-0.2cm}
-\caption{Synthesis of a Digital Controller for the physical plant defined in Eq.(~\ref{equation_plant}) in MATLAB, with a fixed-point format  $\left\langle 8,8\right\rangle$.}
+\caption{Synthesis of a digital controller for the physical plant defined in Eq.(~\ref{equation_plant}) in MATLAB, with a fixed-point format  $\left\langle 8,8\right\rangle$.}
 \label{toolbox-usage}
 \end{figure}
 %
-In the Fig.~\ref{toolbox-usage}, the value returned in $y$ represents the digital controller synthesized and stable. In order to validate and reproduce the stability in the digital system composed by the physical plant defined in Eq.(~\ref{equation_plant}) and the digital controller represented by $y$, the user can invoke the step response using the command \texttt{dstep}, and then observe that the graph plotted shows a stable digital system, as can be seen in Fig.~\ref{step-response}.
+In Fig.~\ref{toolbox-usage}, the value returned in variable $y$ represents 
+the synthesized stable digital controller. In order to validate and reproduce 
+the stability of the digital system composed by the physical plant defined in Eq.(~\ref{equation_plant}) 
+and the digital controller represented by $y$, the user can invoke the step response using the 
+command \texttt{dstep}, and then observe that the plotted graph shows a stable digital system, 
+as shown in Fig.~\ref{step-response}.
 %
 \begin{figure}[ht]
   \includegraphics[width=0.5\textwidth]{step-response.eps}
