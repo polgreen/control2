@@ -316,13 +316,21 @@ as shown in Fig.~\ref{step-response}.
 \end{figure}
 
 
+%--------------------------------------
 \section{Conclusions}
+%--------------------------------------
 
-\tool is able to synthesize dynamic physical plants designed in MATLAB, through transfer-function and state-space representations based on Counter-Example Guided Inductive Synthesis (CEGIS)~\cite{DBLP:conf/asplos/Solar-LezamaTBSS06}.
-
-Given the current literature in formal synthesis, there is no other MATLAB toolbox for synthesize stable digital systems, while taking into account implementation aspects (fixed-point arithmetic). 
-
-As future work, \tool will perform synthesis to generate stable digital controllers and be combined with DSVerifier Toolbox~\cite{issta2017} to verify the stability of the digital controller synthesized, and also, with DSValidator Toolbox~\cite{dsvalidator}, in order to reproduce and validate the stability property.  
+\tool can synthesize digital controllers for dynamic physical plants 
+w.r.t. stability and safety, designed in MATLAB through transfer-function 
+and state-space representations using the CEGIS approach.
+%
+Given the current literature in controller synthesis, there is no other MATLAB toolbox 
+for synthesizing stable digital controllers for physical plants, while taking into account implementation 
+aspects (fixed-point arithmetic). 
+%
+As future work, \tool will perform synthesis of other types of specifications (e.g., performance) 
+and be combined with DSVerifier/DSValidator Toolboxes~\cite{issta2017,dsvalidator} to verify/validate
+ other controller properties (e.g., limit cycle). 
 
 
 \bibliographystyle{ACM-Reference-Format}
