@@ -198,14 +198,14 @@ incorrectly defined in previous steps, or if there is no solution (digital contr
 \subsection{\tool Procedures}
 %---------------------------------------------------
 
-The \tool performs the following automated procedures in order to synthesize a digital controller:
+The \tool performs the following automated procedures to synthesize a given digital controller:
 
 \begin{enumerate}
-\item \textbf{Setup}: obtain the plant, fixed-point format and dynamic input ranges, and translate them to a struct in MATLAB;
-\item \textbf{Parse}: obtain the digital plant implementation, and then translate it to an ANSI-C file;
-\item \textbf{Execute}: obtain the ANSI-C file from the previous step, call CBMC-CEGIS as back-end program synthesis tool, and then perform the automated synthesis;
-\item \textbf{Extract}: obtain the .log that is generated after the synthesis phase and then check the synthesized digital-controller.
-\item \textbf{Report}: obtain the digital-controller, translate it to a MATLAB system, and then show the result to the user.
+\item \textbf{Setup}: obtains the physical plant, fixed-point format and dynamic input ranges, and translates them to a specific structure in MATLAB;
+\item \textbf{Parse}: obtains the digital system specification and translates it into an ANSI-C program;
+\item \textbf{Execution}: obtains the ANSI-C program from the previous step and calls our CEGIS engine as back-end program synthesis tool to perform the automated synthesis;
+\item \textbf{Extraction}: obtains the ``.log'' file that is generated after the synthesis phase and then checks the synthesized digital-controller;
+\item \textbf{Report}: obtains the digital controller from the previous step and translates it into the MATLAB structures to show the respective result to the user.
 \end{enumerate}
 
 %---------------------------------------------------
