@@ -81,13 +81,23 @@ real-world systems by control engineers.
 \section{Introduction}
 %---------------------------------------------------
 
-%There are many application of embedded systems with low-cost devices that can perform non-trival tasks, such as UAV (Unmanned Aerial Vehicles) approach that could be used in various application (civil and millitary) that requires a reliable operation in order to avoid crashes and malfunctioning~\cite{williams2006human}. Synthesis of controllers for LTI (Linear Time Invariant) systems is broadly investigated, however the use of digital control architectures adds new challenges due to the effects of finite-precision arithmetic, time discretization, and quantization noise, which are typically introduced by Analogue-to-Digital (ADC) and Digital-to-Analogue (DAC) conversion~\cite{astrom1997computer}. 
+Linear-Time Invariant (LTI) systems are used in several applications
+to support non-trivial tasks when applied to embedded systems 
+(e.g., robot manipulator, power plants and guidance system). 
+In addition, controllers synthesis for LTI systems is richly studied 
+by different researchers; however, there are many challenges when 
+digital-control systems theory is used due to the effects of finite-word 
+length (FWL)~\cite{Guang2013, Istepanian2001}, time discretization 
+and quantization noise, which are typically introduced by Analogue-to-Digital 
+(ADC) and Digital-to-Analogue (DAC) conversion, which can lead to several 
+quantization problems, such as truncation or round-off errors~\cite{astrom1997computer}. 
 
-%In addition, embedded systems present a lot of advantages, if compared with analog ones, such as more flexibility, scalability, adaptability, and lower implementation cost. However, embedded systems are expressed as digital-control systems which are vulnerable to finite word-length (FWL) effects~\cite{Guang2013, Istepanian2001}, that can cause several quantization problems, such as truncation or round-off errors.
-
-Linear Time Invariant (LTI) systems are concepts that are used in many applications in order to support non-trivial tasks when applied in embedded systems. In addition, synthesis of controllers for LTI systems is richly studied by different researchers, however there are many challenges when digital-control systems theory is used due to the effects of finite-word length (FWL)~\cite{Guang2013, Istepanian2001}, time discretization, and quantization noise, which are typically introduced by Analogue-to-Digital (ADC) and Digital-to-Analogue (DAC) conversion, that can cause several quantization problems, such as truncation or round-off errors.~\cite{astrom1997computer}. 
-
-Digital-control systems are computations that manipulate digital signals, in order to influence the behavior of a system~\cite{Ogata2001}; it can be mathematically expressed as difference equations, transfer functions, or state-space equations. In this particular work, the focus is on transfer-function and state-space representation. The following expression presents the general form of a digital-control system in transfer function format:
+Embedded digital control systems perform computations over digital signals 
+to influence the system behavior~\cite{Ogata2001}; it can be mathematically 
+expressed as difference equations, transfer functions or state-space equations. 
+Here, the focus is on transfer-function and state-space representations. 
+The following expression presents the general form of a digital control system 
+using the transfer function representation:
 %
 \begin{equation}
 \small
@@ -95,10 +105,13 @@ Digital-control systems are computations that manipulate digital signals, in ord
 H(z)=\frac{B(z)}{A(z)}=\frac{b_{0}+b_{1}z^{-1}+...+b_{M}z^{-M}}{1+a_{1}z^{-1}+...+a_{N}z^{-N}},
 \end{equation}
 %
-where $z^{-1}$ is called backward-shift operator, $A(z)$ and $B(z)$ are the denominator and numerator polynomials, respectively.
+\noindent where $z^{-1}$ is called backward-shift operator, $A(z)$ and $B(z)$ are 
+the denominator and numerator polynomials, respectively.
 
-In state-space format, the digital-control system represents the behavior of a system through a state evolution equation $\dot{x}(n+1)$ and an instantaneous output equation $y(n)$, as follows:
-
+In state-space format, the digital control system represents the behavior 
+of a system via a state evolution equation $\dot{x}(n+1)$ and an instantaneous 
+output equation $y(n)$, as follows:
+%
 \begin{equation}
 \begin{split}
 \dot{x}(n+1) &= A x(n) + B u(n)
@@ -107,13 +120,36 @@ y(n) &= C x(n) + D u(n),
 \end{split}\label{eq:ss-example}
 \end{equation}
 
-%Recently, Bessa {\it et al.}~\cite{daes20161} has studied the stability of digital controllers considering implementation aspects, i.e., fixed-point arithmetic and the word length wich performs a model checking procedure based on satisfiability modulo theories (SMT) named as Digital-System Verifier (DSVerifier)~\cite{dsverifier}. While research on digital controller is well developed~\cite{astrom1997computer}, automated and sound control synthesis is challenging, particularly when the synthesis objective goes beyond classical stability. 
+\noindent where A, B, C and D are matrices that fully specify a digital system. 
 
-Recently, a new methodology to synthesize digital-control systems was designed, named as DSSynth (Digital-System Synthesizer)~\cite{abate2017, abatecav2017}, which is based on Counter-Example Guided Inductive Synthesis (CEGIS)~\cite{DBLP:conf/asplos/Solar-LezamaTBSS06} that are able to generate programs for highly non-trivial specifications with a very high degree of automation. Program synthesis engines use a specification as the starting point, and subsequently generate a sequence of candidate programs from a given template. The candidate programs are iteratively refined to eventually satisfy the specification. Modern synthesis engines combine automated testing, genetic algorithms, and SMT-based automated reasoning~\cite{DBLP:journals/corr/AlurFSS16a, DBLP:conf/lpar/DavidKL15}. Currently, Abate {\it et al.}~\cite{abate2017} synthesizes stable, software-implemented embedded controllers along with a model of a physical plant for transfer-function~\cite{abate2017}, and recently, also supports for state-space representation~\cite{abatecav2017}.
+Recently, a new methodology to synthesize digital-control systems was proposed, 
+named as DSSynth (Digital System Synthesis)~\cite{abate2017, abatecav2017}, 
+which is based on Counter-Example Guided Inductive Synthesis 
+(CEGIS)~\cite{DBLP:conf/asplos/Solar-LezamaTBSS06} able to produce programs 
+for highly non-trivial specifications with a very high degree of automation. 
+Program synthesis engines use a specification as the starting point, and subsequently 
+produce a sequence of candidate programs from a given template. The candidate programs 
+are iteratively refined to eventually satisfy the specification. Modern synthesis engines combine 
+automated testing, genetic algorithms and SMT-based automated reasoning~\cite{DBLP:journals/corr/AlurFSS16a, DBLP:conf/lpar/DavidKL15}. 
+Currently, Abate {\it et al.}~\cite{abate2017} synthesize stable, software-implemented 
+embedded controllers along with a model of a physical plant for transfer-function~\cite{abate2017}, 
+and recently, they also support state-space representation~\cite{abatecav2017}.
 
-Notably, there are toolboxes in MATLAB with functions and scripts to facilitate the digital system design and implementation~\cite{matlab-toolbox}. In fact, there is a MATLAB Toolbox named as DSVerifier Toolbox~\cite{issta2017} that automatically detect specific errors related to digital system design ({\it e.g.}, stability) using symbolic model checking based on SAT and SMT solvers given the physical plant and the digital controller. However, there is no toolbox in MATLAB to perform the digital control synthesis based on Counter-Example Guided Inductive Synthesis (CEGIS)~\cite{DBLP:conf/asplos/Solar-LezamaTBSS06} considering FWL effects.
+Notably, there are toolboxes in MATLAB with functions and scripts to facilitate the 
+digital system design and implementation~\cite{matlab-toolbox}. In fact, there is a MATLAB 
+Toolbox named as DSVerifier Toolbox~\cite{issta2017}, which automatically detects 
+specific errors related to digital system design ({\it e.g.}, stability, limit cycle and overflow) 
+using symbolic model checking techniques based on Boolean Satisfiability (SAT) and 
+Satisfiability Modulo Theories (SMT) solvers, given the physical plant and the digital controller. 
+However, there is no toolbox in MATLAB to perform digital control synthesis; in particular, based on 
+CEGIS considering FWL effects.
 
-The present paper addresses this problem and presents a MATLAB toolbox for DSSynth~\cite{abate2017, abatecav2017} in the MATLAB's environment named as \tool. The main advantage regarding the use of a MATLAB toolbox lies on designing physical plants in MATLAB and then promptly synthesizes a stable digital controller. Additionally, when using the \tool, an engineer is able to design a digital system with MATLAB, through transfer-function or state-space representations, consider low-level systems parameters (implementation features and numerical format), and then gets a stable synthesized digital-controller.
+The present paper addresses this problem and describes a MATLAB toolbox for DSSynth~\cite{abate2017, abatecav2017} 
+in MATLAB's environment named as \tool. The main advantage regarding the use of a MATLAB toolbox 
+lies on designing physical plants in MATLAB and then promptly synthesizing a stable digital controller. 
+Additionally, when using the \tool, an engineer is able to design a digital system with MATLAB, 
+through transfer-function or state-space representations, consider low-level systems parameters 
+(implementation features and numerical format), and then gets a stable synthesized digital-controller.
 
 %---------------------------------------------------
 \section{Synthesizing Digital Controller with \tool}
