@@ -198,14 +198,20 @@ incorrectly defined in previous steps, or if there is no solution (digital contr
 \subsection{\tool Procedures}
 %---------------------------------------------------
 
-The \tool performs the following automated procedures to synthesize a given digital controller:
+The \tool performs the following automated procedures 
+to synthesize a given digital controller:
 
 \begin{enumerate}
-\item \textbf{Setup}: obtains the physical plant, fixed-point format and dynamic input ranges, and translates them to a specific structure in MATLAB;
-\item \textbf{Parse}: obtains the digital system specification and translates it into an ANSI-C program;
-\item \textbf{Execution}: obtains the ANSI-C program from the previous step and calls our CEGIS engine as back-end program synthesis tool to perform the automated synthesis;
-\item \textbf{Extraction}: obtains the ``.log'' file that is generated after the synthesis phase and then checks the synthesized digital-controller;
-\item \textbf{Report}: obtains the digital controller from the previous step and translates it into the MATLAB structures to show the respective result to the user.
+\item \textbf{Setup}: obtains the physical plant, fixed-point format 
+and dynamic input ranges, and translates them to a specific structure in MATLAB;
+\item \textbf{Parse}: obtains the digital system specification and translates 
+it into an ANSI-C program;
+\item \textbf{Execution}: obtains the ANSI-C program from the previous step 
+and calls our CEGIS engine as back-end program synthesis tool to perform the automated synthesis;
+\item \textbf{Extraction}: obtains the ``.log'' file that is generated 
+after the synthesis phase and then checks the synthesized digital-controller;
+\item \textbf{Report}: obtains the digital controller from the previous step 
+and translates it into the MATLAB structures to show the respective result to the user.
 \end{enumerate}
 
 %---------------------------------------------------
@@ -215,10 +221,18 @@ The \tool performs the following automated procedures to synthesize a given digi
 The \tool's features can be described as follows:
 
 \begin{itemize}
-\item \textbf{Representation}: the synthesis can be performed for digital systems specified as transfer-function or state-space equations;
-\item \textbf{Fixed-Point Arithmetic}: the digital controller is synthesized considering FWL effects, in fixed-point numeric representation;
-\item \textbf{Interface}: the synthesis can be executed via command-line or graphical-user interface (GUI). For the GUI application, the user can plot the step response to reproduce the stability in closed-loop of the synthesized digital controller;
+\item \textbf{Representation}: the synthesis can be 
+performed for digital systems specified as 
+transfer-function or state-space equations;
+\item \textbf{Fixed-Point Arithmetic}: the digital 
+controller is synthesized considering FWL effects, 
+in fixed-point numeric representation;
+\item \textbf{Interface}: the synthesis can be executed 
+via command-line or graphical-user interface (GUI). 
+For the GUI application, the user can plot the step response 
+to reproduce the stability in closed-loop of the synthesized digital controller;
 \end{itemize}
+
 %---------------------------------------------------
 \subsection{\tool Usage}
 %---------------------------------------------------
@@ -227,11 +241,21 @@ The \tool's features can be described as follows:
 \subsubsection{Command Line Version}
 %---------------------------------------------------
 
-Users must provide a digital system described as a MATLAB system  using a \texttt{``tf''} (for transfer-function) or an \texttt{``ss''} (for state-space) command (cf. step $1$ of Fig.~\ref{fig:synthesis-flow}).
+Users must provide a digital system described as a MATLAB system 
+using a \texttt{tf} (for transfer-function) or an \texttt{ss} (for state-space) 
+command (cf. step $1$ of Fig.~\ref{fig:synthesis-flow}).
+\tool is called via command line in MATLAB as 
 
-\tool is called via command line in MATLAB as \texttt{synthesize(plant, intBits, fracBits, maxRange, minRange)}, where \texttt{plant} is the physical plant in state-space or transfer-function representation, \texttt{intBits} is the integer part, \texttt{fracBits} is the fractional part, \texttt{maxRange} and \texttt{minRange} are the maximum and minimum dynamic range, respectively.
+\begin{verbatim}  synthesize(plant, intBits, fracBits, maxR, minR) \end{verbatim} 
 
-After executing \texttt{synthesize} command in MATLAB, the output prints the synthesized digital controller according to the digital system representation, {\it i.e.}, transfer-function or state-space equations. 
+\noindent where \texttt{plant} is the physical plant in state-space or transfer-function representation, 
+\texttt{intBits} is the integer part, \texttt{fracBits} is the fractional part, \texttt{maxR} and \texttt{minR} 
+are the maximum and minimum dynamic range, respectively (cf. steps $2$ and $3$ of Fig.~\ref{fig:synthesis-flow}).
+%
+After executing the \texttt{synthesize} command in MATLAB, 
+\tool provides the synthesized digital controller, according to 
+the digital system representation, {\it i.e.}, transfer-function or 
+state-space equations. 
 
 %---------------------------------------------------
 \subsubsection{MATLAB Application Version} 
