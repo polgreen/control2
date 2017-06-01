@@ -378,6 +378,40 @@ from the discretization of continuous time systems. We therefore seek to establi
 overapproximation which does not only encompass the selected discretization, but any chosen discretization in the 
 time domain.
 
+A dynamical system is a system in which a function describes the progression of a state over time. 
+In a continuous domain with linear dynamics, it is described by a first order Ordinary Differential Equation (ODE).
+\begin{equation}
+\dot{x}(t)=\mat{A}_o\vec{x}(t)+\mat{B}_o\vec{u}(t) +\vec{w}(t)
+\label{eq:dynamical}
+\end{equation}
+where $\vec{w}$  is a continuous zero-mean white noise source with covariance $N ( 0 , Q )$
+Furthermore, a control system may have a derived output that is a linear combination of its states and inputs, 
+which may restricts the observability of the statespace from the output space.
+\begin{equation}
+\vec{y}(t)=\mat{C}_o\vec{x}(t)+\mat{D}_o\vec{u}(t)
+\end{equation}
+Discretization of a continuous dynamical system turns the ODE into a difference equation, assuming zero-order hold
+for the input $\vec{u}$ and continuous integration for the noise $\vec{w}$, to
+\begin{align}
+\label{eq:discretization}
+\vec{x}_{k+1} &= \mat{A}_d\vec{x}_k+\mat{B}_d\vec{u}_k + \vec{w}_k\\
+y_k &= \mat{C}_d \vec{x}_ k + \mat{D}_d \vec{u}_ k 
+\end{align}
+with covariance for $\vec{w}_k$, $N ( 0 , Q_d )$
+where
+\begin{align}
+\label{eq:discretize}
+\mat{A}_d &= e^{\mat{A}_o T_s} = \mathcal{L}^{-1} { ( s \mat{I} - \mat{A}_o )^{-1} }_{t = T_s}\\
+\mat{B}_d &= \int_{t = 0}^{T_s} e^{\mat{A}_o t} dt\ \mat{B}_o = \mat{A}_o^{-1} ( \mat{A}_d - \mat{I} ) \mat{B}_o\\
+\mat{C}_d &= \mat{C}_o\\
+\mat{D}_d &= \mat{D}_o \\
+Q_d &= \int_{t = 0}^{T_s} e^{\mat{A}_o t} Q e^{\mat{A}_o^T t} dt
+\end{align}
+and $T_s$ is the sample time. Then
+\begin{align*}
+x(kT)=x_k \wedge y(kT) = y_k, \forall k
+\end{align*}
+
 %-------------------------------
  \subsubsection{A discrete time model using reals}
  \label{sec:real_aa}
@@ -429,11 +463,10 @@ time domain.
  This proves the theorem for $gm(\lambda_i)=1$.
  We now note that given an exponentiated Jordan form with geometric multiplicity, the upper diagonal terms can be
  referenced to the original eigenvalues modified by the sampling rate.
-  Let $\mat{J}\in \mathbb{R}^{p \times p}$ be a Jordan Canonical matrix whose powers are described in Equation \eqref{jord:pow}
- Then
+  Let $\mat{J}\in \mathbb{R}^{p \times p}$ be a Jordan Canonical matrix. Then
 \begin{align}
- \mat{J}_1=\sum_{k=0}^\infty \frac{1}{k!}\left(\mat{J}T_1\right)^k=
-&\sum_{k=0}^\infty \frac{1}{k!} \left [ \begin{array}{cccc}
+ \mat{J}_1=&\sum_{k=0}^\infty \frac{1}{k!}\left(\mat{J}T_1\right)^k\nonumber\\
+ =&\sum_{k=0}^\infty \frac{1}{k!} \left [ \begin{array}{cccc}
  \lambda_i^k  & \binom{k}{1}  \lambda^{k-1} & \hdots  & \binom{k}{p-1} \lambda_i^{k-p+1} \\
 & \lambda_i^k  & \binom{k}{1}  \lambda_i^{k-1} & \vdots \\
 \vdots & \ddots & \ddots & \vdots \\
@@ -447,6 +480,64 @@ The eigenvalues remain the same as in the diagonal case, but the upper triangula
 &=\frac{T_1^{j-i}e^{\lambda_i T_1}}{(j-i)!}\nonumber
 \end{align}
 which completes the proof for $gm(\lambda_i)>1$.
+\end{proof}
+
+\begin{theorem}
+The expression
+ \begin{align}
+ \vec{x}_T&=\vec{x}(t=T)=\mat{A}^{-1}\vec{x}_T'\nonumber\\
+\vec{x}_T'&=\mat{A}\mat{A}_T\vec{x}_0 + (\mat{I}-\mat{A}_T)\mat{B}\vec{u} : \forall t \leq T,\ \vec{u}(t)=\vec{u} 
+ \end{align}
+ with $\mat{A}_T$ as per \eqref{eq:continuous_tube_dyn} is a witness of the system $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)$ at time $T$ given a parametric input $\vec{u}$.
+ \end{theorem}
+ \begin{corollary}
+ If $\mat{J}$ is diagonal and there exists a discrete dynamics matrix for a sampling time $T_d :  A_d=e^{\mat{A} T_d}$, then $\vec{x}_k=A_d^k\vec{x}+(\mat{I}-\mat{A}_d^k\mat{B}\vec{u}) : k \in (0,\infty)$ is a witness of the system at time $kT_d$.
+ \end{corollary}
+ \begin{proof}
+ We begin by expanding the equation
+ \begin{align}
+ \vec{x}_T&=\mat{A}^{-1}\vec{x}_T'\\
+ \vec{x}_T'&=\mat{A}_T\vec{x}_0 + \mat{A}^{-1}(\mat{I}-\mat{A}_T)\mat{B}\vec{u} = \mat{A}_T\vec{x}_0 + \mat{B}_T\vec{u}\nonumber
+ \end{align}
+ where $\mat{A}_T=e^{\mat{A}T}$ and $\mat{B}_T=\mat{A}^{-1}(\mat{I}-\mat{A}_T)\mat{B}$ correspond to $\mat{A}_d$ and $\mat{B}_d$ in equation \eqref{eq:discretize}
+ \end{proof}
+ \begin{theorem}
+Let $\mat{A}_b$ be a spherical overapproximation of $\mat{A}$ and $U_b$ a spherical overapproximation of $U$ centered at $\vec{u}_c$
+\begin{align}
+\mat{A}_b&=\mat{S} \mat{J}_b \mat{S}^{-1}\\
+\mat{J}_{bs}&=\lambda_{bs}\mat{I} \wedge \lambda_{bs}=|| \mat{J}_s ||=
+\max_{\vec{u} \subseteq U_b'} \frac{|| \mat{J}_s\vec{u}_s ||}{||
+  \vec{u}_s ||}\nonumber
+\label{eq:induced}
+\end{align}
+where $|| \mat{J}_s ||$ is the induced matrix norm, $s$ indicates the index of each Jordan block, and $\vec{u}_s$ is the corresponding subvector of $\vec{u}$ (\emph{ie} the subspace of $\vec{u}$ on which $\mat{J}_s$ operates).
+Directly from the definition of the matrix norm, we have 
+\begin{equation}
+||\mat{J}_s\vec{u}_s|| \leq ||\mat{J}_s||\,||\vec{u}_s||, 
+\label{eq:overinduced}
+\end{equation}
+and $\mat{J}_{b} U_b$ is the smallest ball that over-approximates $\mat{J}  U_d$.
+
+The expression
+ \begin{align}
+X_T^\sharp &=\mat{A}^{-1}X_T'\supseteq X_T\\
+X_T'&=\mat{A}\mat{A}_TX_0 \oplus (\mat{I}-\mat{A}_{bT})\mat{B}U_b \oplus (\mat{I}-\mat{A}_T)\mat{B}\vec{u}_c\nonumber
+ \end{align}
+ is an overapproximation of the reach set  at time $t=T$ of the system $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t) + \mat{B}\vec{u}(t)$ given $\vec{x}(0) \in X_0$ and $\vec{u}(t) \in U$.
+ \end{theorem}
+\begin{corollary}
+ If $\mat{J}$ is diagonal and there exists a discrete dynamics matrix for a sampling time $T_d :  A_d=e^{\mat{A} T_d}$, then 
+ \begin{equation}
+ \tiny
+ X_k=A_d^kX_0 \oplus (\mat{I}-\mat{A}_{bd}^k)(\mat{I}-\mat{A}_{bd})^{-1}\mat{B}U_b \oplus (\mat{I}-\mat{A}_d^k)(\mat{I}-\mat{A}_d)^{-1}\mat{B}\vec{u}_c\nonumber\\
+ k \in (0,\infty)
+ \end{equation}
+  is a witness of the system at time $kT_d$, where $\mat{A}_{bd}$ is a spherical overapproximation of $\mat{A}_d$
+\end{corollary}
+ \begin{proof}
+Let $U'=\mat{B}U$, with $\vec{u}'$ its geometrical centre and $U_b'$ the smallest sphere centered at $\vec{u}'$ containing all points in $U'$.
+Then $U'\subseteq U_b' \oplus \vec{u}_c' \Rightarrow (\mat{I}-\mat{A}_T)U' \subseteq (\mat{I}-\mat{A}_T)U_b' \oplus (\mat{I}-\mat{A}_T)\vec{u}_c'$. Since $ (\mat{I}-\mat{A}_{bT})U_b'\supseteq  (\mat{I}-\mat{A}_T)U_b'$, then $(\mat{I}-\mat{A}_T)U' \subseteq (\mat{I}-\mat{A}_{bT})U_b' \oplus (\mat{I}-\mat{A}_T)\vec{u}_c'$ thus proving the theorem.
+  
 \end{proof}
 
 %-------------------------------
