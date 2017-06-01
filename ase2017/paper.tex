@@ -159,6 +159,8 @@ through transfer-function or state-space representations, consider low-level sys
 
 \textcolor{red}{Cristina: can you please generalize our CEGIS implementation for control here?}
 
+\textcolor{red}{We have to talk about the naive and AA back-ends, which are based on our CEGIS framework}
+
 %---------------------------------------------------
 \section{Synthesizing Digital Controllers with \tool}
 %---------------------------------------------------
@@ -199,7 +201,18 @@ or state-space format. The synthesis is considered to be \emph{successful} if a 
 synthesized w.r.t. FWL effects; otherwise the synthesis is considered to be \emph{failed}, if any parameter is 
 incorrectly defined in previous steps, or if there is no solution (digital controller) for the respective physical plant
  given the digital controller word-length.
- 
+
+\textcolor{blue}{The main development challenge related to \tool is the representation of the
+closed-loop control system models, considering FWL effects, time discretization 
+and quantization noise.  In particular, our implementation consists of $400$
+lines of code related to MATLAB scripts, $585$ and $800$ lines of C code related to the
+naive and abstract accelerator backends. In addition, there are $4000$ lines of C code
+related to utility functions (e.g., interval and fixed-point arithmetic), $50$ lines
+of code to parse MATLAB functions and there are approximately $20$
+control system benchmarks to ensure the \tool's regression.  All those artifacts together
+with documentation and videos are available in a public github repository,
+which is located at \url{https://github.com/ssvlab/dsverifier/tree/master/toolbox-dssynth}}.
+
 %---------------------------------------------------
 \subsection{\tool Procedures}
 %---------------------------------------------------
