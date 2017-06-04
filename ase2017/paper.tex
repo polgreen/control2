@@ -23,7 +23,7 @@
 
 \begin{document}
 
-\title{DSSynth: An Automated Synthesis Tool of Digital Controllers \\ for Physical Plants via MATLAB Toolbox}
+\title{DSSynth: An Automated Synthesis Tool of Digital \\ Controllers for Physical Plants via MATLAB Toolbox}
 
 
 \maketitle
@@ -261,7 +261,7 @@ using a \texttt{tf} (for transfer-function) or an \texttt{ss} (for state-space)
 command (cf. step $1$ of Fig.~\ref{fig:synthesis-flow}).
 \tool is called via command line in MATLAB as 
 
-\begin{verbatim}  synthesize(plant, intBits, fracBits, maxR, minR) \end{verbatim} 
+\begin{verbatim} synthesize(plant, intBits, fracBits, maxR, minR) \end{verbatim} 
 
 \noindent where \texttt{plant} is the physical plant in state-space or transfer-function representation, 
 \texttt{intBits} is the integer part, \texttt{fracBits} is the fractional part, \texttt{maxR} and \texttt{minR} 
@@ -292,11 +292,9 @@ fixed-point representation and dynamic inputs.
 \subsection{Illustrative Example}
 %---------------------------------------------------
 
-\textcolor{red}{Lennon, can you please use an illustrative example related to UAV?}
-
 To illustrate the \tool's usage, Fig.~\ref{toolbox-usage} shows the 
-synthesis for a physical plant defined in Eq.(~\ref{equation_plant}) 
-using the transfer-function representation, where ``num'' and ``den'' 
+synthesis for a physical plant defined in Eq.(~\ref{equation_plant}),
+which represents a UAV a quadcopter system, whose model was described by Bouabdallah {\it et al.}~\cite{bouabdallah}. The physical plant in Eq.(~\ref{equation_plant}) is represented using the transfer-function format, where ``num'' and ``den'' 
 represent the numerator $A(z)$ and denominator $B(z)$, respectively.
 %
 \begin{equation}
