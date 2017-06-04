@@ -332,7 +332,7 @@ the synthesized stable digital controller, which could be expressed in Eq.(\ref{
 H(z)=\frac{-0.9983^{2}+0.09587z+0.1926}{z^2+0.5665z+0.75}.
 \end{equation}
 
-In addition, a digital system is stable \textit{iff} all of its poles are inside the $z$-plane unitary circle; poles must have the modulus less than one. In order to compute the poles from the digital system represented by the physical plant and the controller defined in Eq.~(\ref{equation_plant}) and Eq.~(\ref{equation_controller}), respectively, the user can use \texttt{feedback} and \texttt{series} commands in MATLAB~\cite{matlab} to achieve a general equation regarding the transfer-function representation. The general equation that represents the combination between Eq.~(\ref{equation_plant}) and Eq.~(\ref{equation_controller}) is represented by Eq.~(\ref{equation_general}):
+In addition, a digital system is stable \textit{iff} all of its poles are inside the $z$-plane unitary circle; poles must have the modulus less than one. In order to compute the poles from the digital system represented by the physical plant and the controller defined in Eq.~(\ref{equation_plant}) and Eq.~(\ref{equation_controller}), respectively, the user can use \texttt{feedback} and \texttt{series} commands in MATLAB~\cite{matlab-toolbox} to achieve a general equation regarding the transfer-function representation. The general equation that represents the combination between Eq.~(\ref{equation_plant}) and Eq.~(\ref{equation_controller}) is represented by Eq.~(\ref{equation_general}):
 %
 \begin{equation}
 \small
@@ -340,7 +340,7 @@ In addition, a digital system is stable \textit{iff} all of its poles are inside
 \frac{N(z)}{D(z)}=\frac{0.06863z^{4} - 0.006591z^{3} - 0.01324z^{2}}{1.069z^{4} - 1.136z^{3} + 0.4849z^{2} -0.8704z + 0.5317}.
 \end{equation}
  
-Applying the FWL effects in the $D(z)$ in order to compute the roots for stability reproduction, then if any root has modulus equal or greater than one, then the system is unstable; otherwise, it is stable. In fact, the roots computed by the function \texttt{roots} in MATLAB resulted in $-0.2909 + 0.8065i$, $-0.2909 - 0.8065i$, $0.8553$ and $0.7924$, which means that DSSynth returned a stable digital controller.
+Applying the FWL effects in the $D(z)$ in order to compute the roots for stability reproduction, then if any root has modulus equal or greater than one, then the system is unstable; otherwise, it is stable. In fact, the roots computed by the function \texttt{roots} in MATLAB~\cite{matlab-toolbox} resulted in $-0.2909 + 0.8065i$, $-0.2909 - 0.8065i$, $0.8553$ and $0.7924$, which means that DSSynth returned a stable digital controller.
 
 Simulating the digital system represented by Eq.~(\ref{equation_plant}) and Eq.~(\ref{equation_controller}), in order to validate and reproduce the stability, the user can invoke the step response using the 
 command \texttt{dstep}, and then observe that the plotted graph shows a stable digital system, 
