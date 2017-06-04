@@ -9,6 +9,7 @@
 \usepackage{amsmath}
 \usepackage{hyperref}
 \usepackage{cite}	
+\usepackage{mathtools}
 
 %\setcopyright{acmcopyright}
 %\acmDOI{10.475/123_4}
@@ -20,6 +21,7 @@
 
 
 \newcommand\tool{{DSSynth Toolbox}\xspace}
+\newcommand{\fwl}[1]{\mathcal{FWL}[#1]}
 
 \begin{document}
 
@@ -261,7 +263,9 @@ using a \texttt{tf} (for transfer-function) or an \texttt{ss} (for state-space)
 command (cf. step $1$ of Fig.~\ref{fig:synthesis-flow}).
 \tool is called via command line in MATLAB as 
 
-\begin{verbatim} synthesize(plant, intBits, fracBits, maxR, minR) \end{verbatim} 
+\begin{center} 
+\texttt{synthesize(plant, intBits, fracBits, maxR, minR)}
+\end{center} 
 
 \noindent where \texttt{plant} is the physical plant in state-space or transfer-function representation, 
 \texttt{intBits} is the integer part, \texttt{fracBits} is the fractional part, \texttt{maxR} and \texttt{minR} 
@@ -299,7 +303,7 @@ represent the numerator $A(z)$ and denominator $B(z)$, respectively.
 %
 \begin{equation}
 \label{equation_plant}
-H(z)=\frac{B(z)}{A(z)}=\frac{-0.06875z^{2}}{z^2-1.696z+0.7089}.
+G(z)=\frac{B(z)}{A(z)}=\frac{-0.06875z^{2}}{z^2-1.696z+0.7089}.
 \end{equation}
 %
 \begin{figure}[ht]
@@ -310,17 +314,35 @@ H(z)=\frac{B(z)}{A(z)}=\frac{-0.06875z^{2}}{z^2-1.696z+0.7089}.
 >> system = tf(num,den,0.002);
 >> y = synthesize(system,8,8,1,-1);
 >> SYNTHESIS SUCCESSFUL
->> y = (-0.9983z^2 + 0.09587z + 0.1926)/(z^2+0.5665+0.75);
+>> y = 
+>>  -0.9983 z^2 + 0.09587 z + 0.1926
+>>  --------------------------------
+>>       z^2 + 0.5665 z + 0.75
 \end{lstlisting}
 \vspace{-0.2cm}
-\caption{Synthesis of a digital controller for the physical plant defined in Eq.(~\ref{equation_plant}) in MATLAB, with a fixed-point format  $\left\langle 8,8\right\rangle$.}
+\caption{Synthesis of a digital controller for the physical plant defined in Eq.(\ref{equation_plant}) in MATLAB, with a fixed-point format  $\left\langle 8,8\right\rangle$.}
 \label{toolbox-usage}
 \end{figure}
 %
 In Fig.~\ref{toolbox-usage}, the value returned in variable $y$ represents 
-the synthesized stable digital controller. In order to validate and reproduce 
-the stability of the digital system composed by the physical plant defined in Eq.(~\ref{equation_plant}) 
-and the digital controller represented by $y$, the user can invoke the step response using the 
+the synthesized stable digital controller, which could be expressed in Eq.(\ref{equation_controller}).
+
+\begin{equation}
+\label{equation_controller}
+H(z)=\frac{-0.9983^{2}+0.09587z+0.1926}{z^2+0.5665z+0.75}.
+\end{equation}
+
+In addition, a digital system is stable \textit{iff} all of its poles are inside the $z$-plane unitary circle; poles must have the modulus less than one. In order to compute the poles from the digital system represented by the physical plant and the controller defined in Eq.~(\ref{equation_plant}) and Eq.~(\ref{equation_controller}), respectively, the user can use \texttt{feedback} and \texttt{series} commands in MATLAB~\cite{matlab} to achieve a general equation regarding the transfer-function representation. The general equation that represents the combination between Eq.~(\ref{equation_plant}) and Eq.~(\ref{equation_controller}) is represented by Eq.~(\ref{equation_general}):
+%
+\begin{equation}
+\small
+\label{equation_general}
+\frac{N(z)}{D(z)}=\frac{0.06863z^{4} - 0.006591z^{3} - 0.01324z^{2}}{1.069z^{4} - 1.136z^{3} + 0.4849z^{2} -0.8704z + 0.5317}.
+\end{equation}
+ 
+Applying the FWL effects in the $D(z)$ in order to compute the roots for stability reproduction, then if any root has modulus equal or greater than one, then the system is unstable; otherwise, it is stable. In fact, the roots computed by the function \texttt{roots} in MATLAB resulted in $-0.2909 + 0.8065i$, $-0.2909 - 0.8065i$, $0.8553$ and $0.7924$, which means that DSSynth returned a stable digital controller.
+
+Simulating the digital system represented by Eq.~(\ref{equation_plant}) and Eq.~(\ref{equation_controller}), in order to validate and reproduce the stability, the user can invoke the step response using the 
 command \texttt{dstep}, and then observe that the plotted graph shows a stable digital system, 
 as shown in Fig.~\ref{step-response}.
 %
