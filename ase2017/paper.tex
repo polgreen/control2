@@ -153,9 +153,68 @@ through transfer-function or state-space representations, consider low-level sys
 \section{Counterexample-Guided Inductive Synthesis for Control Systems}
 %---------------------------------------------------
 
-\textcolor{red}{Cristina: can you please generalize our CEGIS implementation for control here?}
+%\textcolor{red}{Cristina: can you please generalize our CEGIS implementation for control here?}
 
-\textcolor{red}{We have to talk about the naive and AA back-ends, which are based on our CEGIS framework}
+%% The input specification provided to the program synthesizer is of the form
+%% $\exists P .\, \forall a.\, \sigma(a, P)$, where $P$ ranges over functions
+%% (where a function is represented by the program computing it),
+%% $a$ ranges over ground terms, and $\sigma$ is a quantifier-free formula. 
+%% We~interpret the ground terms over some finite domain~$\mathcal{D}$.
+
+The design of our synthesizer consists of two phases, an inductive
+synthesis phase and a validation phase, which interact via a finite
+set of test vectors that is updated incrementally.  Given a stability
+and safety specification, the inductive synthesis procedure tries to
+find a candidate solution satisfying the specification for the given set of test inputs.
+%
+If the synthesis phase succeeds in finding a witness, this witness is
+a candidate solution to the full synthesis formula.  We pass this
+candidate solution to the validation phase, which checks whether it is
+a full solution (i.e., satisfies the specification for all possible
+inputs).  If this is the case, then the algorithm terminates.
+Otherwise, additional information is provided to the inductive
+synthesis phase in the form of a new counterexample that is added to
+the set of test inputs and the loop iterates again.
+
+We use two different instantiations of the synthesiser
+in order to synthesise stable and safe digital
+controllers. The two approaches differ in
+the manner in which they check the safety specification
+for all reachable states.
+
+The first approach uses a multi-staged verification process. 
+Essentially, it starts by devising a
+digital controller that stabilizes the system while remaining safe for a
+pre-selected time horizon and a single initial state; then, it
+employs a multi-staged verification process:
+(i) The first verification stage checks that the candidate
+solution, which we synthesized to be safe for at least one initial
+state, is safe for \emph{all} possible initial states, i.e., does not reach
+an unsafe state within $k$ steps.
+(ii) The second verification stage 
+ restores soundness with respect to the plant's precision
+by using interval arithmetic \cite{moore1966interval} to validate the 
+operations performed by the previous stage. 
+(iii) The third verification stage checks that the current
+$k$ is large enough to ensure safety for any $k'{>}k$.  Here, we compute the
+completeness threshold $\overline{k}$ for the current candidate controller $K$,
+i.e., the number of
+iterations required to sufficiently unwind the closed-loop state-space
+system such that the boundaries are not violated for any larger number of
+iterations, and
+check that $k{\geq}\overline{k}$.
+
+Instead of unfolding the dynamics, the second approach
+employs {\em abstract acceleration}~\cite{cattaruzza2015unbounded} to
+evaluate all possible progressions of the system simultaneously. 
+Additionally, the second approach uses abstraction refinement,
+enabling us to always start with a very simple description regardless of the
+dynamics complexity, and only expand to more complex models
+when a solution cannot be found.
+
+\textcolor{red}{add more for the second approach}
+
+%\textcolor{red}{We have to talk about the naive and AA back-ends, which are based on our CEGIS framework}
 
 %---------------------------------------------------
 \section{Synthesizing Digital Controllers with \tool}
