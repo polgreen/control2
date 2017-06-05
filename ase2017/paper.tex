@@ -296,18 +296,17 @@ fixed-point representation and dynamic inputs.
 \subsection{Illustrative Example}
 %---------------------------------------------------
 
-To illustrate the \tool's usage, Fig.~\ref{toolbox-usage} shows the 
-synthesis process for a physical plant described by Eq.(~\ref{equation_plant}),
-which represents a UAV a quadcopter system~\cite{bouabdallah}. 
-The physical plant in Eq.(~\ref{equation_plant}) is represented using 
-the transfer-function format, where ``num'' and ``den'' represent the 
-numerator $A(z)$ and denominator $B(z)$, respectively.
+To illustrate the \tool's usage, Fig.~\ref{toolbox-usage} shows each step of the 
+synthesis process for a physical plant described in Eq.~\eqref{equation_plant},
+which represents a real unmanned aerial vehicle (UAV) quadcopter system~\cite{bouabdallah}. 
+This physical plant is expressed by a transfer function, where 
+$B(z)$ and $A(z)$ represent the numerator and denominator, respectively, as
 %
 \begin{equation}
 \label{equation_plant}
 G(z)=\frac{B(z)}{A(z)}=\frac{-0.06875z^{2}}{z^2-1.696z+0.7089}.
 \end{equation}
-%
+
 \begin{figure}[ht]
 \scriptsize
 \begin{lstlisting}[xleftmargin=.025\textwidth,xrightmargin=.025\textwidth, frame=single,]
@@ -325,22 +324,22 @@ G(z)=\frac{B(z)}{A(z)}=\frac{-0.06875z^{2}}{z^2-1.696z+0.7089}.
 \caption{Synthesis of a digital controller for the physical plant defined in Eq.(\ref{equation_plant}) in MATLAB, with a fixed-point format  $\left\langle 8,8\right\rangle$.}
 \label{toolbox-usage}
 \end{figure}
-%
-In Fig.~\ref{toolbox-usage}, the value returned in variable $y$ represents 
-the synthesized stable digital controller, which can be expressed in Eq.(\ref{equation_controller}).
 
+In Fig.~\ref{toolbox-usage}, ``num'' represents $A(z)$ and ``den'' represent $B(z)$, while 
+$y$ represents the synthesized stable digital controller, which is defined by Eq.(\ref{equation_controller}).
+%
 \begin{equation}
 \label{equation_controller}
-H(z)=\frac{-0.9983^{2}+0.09587z+0.1926}{z^2+0.5665z+0.75}.
+C(z)=\frac{-0.9983^{2}+0.09587z+0.1926}{z^2+0.5665z+0.75}.
 \end{equation}
 
 A digital system is stable \textit{iff} all of its poles are inside the $z$-plane unitary circle; 
-poles must have the modulus less than one. In order to compute the poles from the digital 
-system represented by the physical plant and the controller defined in Eq.~(\ref{equation_plant}) 
-and Eq.~(\ref{equation_controller}), respectively, the user can use \texttt{feedback} and \texttt{series} 
-commands in MATLAB~\cite{matlab-toolbox} to achieve a general equation regarding the 
-transfer-function representation. The general equation that represents the combination 
-between Eq.~(\ref{equation_plant}) and Eq.~(\ref{equation_controller}) is represented by Eq.~(\ref{equation_general}):
+poles must have the modulus less than one. In order to compute the poles for the digital 
+system represented by Equations~\eqref{equation_plant} and \eqref{equation_controller}, 
+the user can invoke the \texttt{feedback} and \texttt{series} commands in MATLAB~\cite{matlab-toolbox} 
+to achieve a general equation regarding the transfer function representation. 
+The general equation that represents the combination between Equations~\eqref{equation_plant}
+and~\eqref{equation_controller} is
 %
 \begin{equation}
 \small
@@ -348,20 +347,20 @@ between Eq.~(\ref{equation_plant}) and Eq.~(\ref{equation_controller}) is repres
 \frac{N(z)}{D(z)}=\frac{0.06863z^{4} - 0.006591z^{3} - 0.01324z^{2}}{1.069z^{4} - 1.136z^{3} + 0.4849z^{2} -0.8704z + 0.5317}.
 \end{equation}
  
-After applying FWL effects in $D(z)$ to compute the roots for stability reproduction, 
-if any root has modulus equal or greater than one, then the system is unstable; 
+For the stability check, if any root has modulus equal or greater than one, then the system is unstable; 
 otherwise, it is stable. Indeed, the roots computed by the function \texttt{roots} 
-in MATLAB~\cite{matlab-toolbox} result in $-0.2909 + 0.8065i$, $-0.2909 - 0.8065i$, $0.8553$ and $0.7924$, 
+in MATLAB~\cite{matlab-toolbox} result in the following poles: 
+$-0.2909 + 0.8065i$, $-0.2909 - 0.8065i$, $0.8553$ and $0.7924$, 
 which means that DSSynth has synthesized a stable digital controller.
 
-Simulating the digital system represented by Eq.~(\ref{equation_plant}) and Eq.~(\ref{equation_controller}), 
-in order to validate and reproduce the stability, the user can invoke the step response using the 
-command \texttt{dstep}, and then observe that the plotted graph shows a stable digital system, 
+Simulating the digital system represented by Equations \eqref{equation_plant} and \eqref{equation_controller} 
+to validate and reproduce the system stability, the user can invoke the step response using the 
+command \texttt{dstep} in MATLAB, and then observe that the plotted graph shows a stable digital system, 
 as shown in Fig.~\ref{step-response}.
 %
 \begin{figure}[ht]
   \includegraphics[width=0.5\textwidth]{step-response.eps}
-  \caption{Step response for the Eq.~\eqref{equation_plant} describing a stable system.}
+  \caption{Step response for the Eq.~\eqref{equation_plant} describing a stable system for the UAV quadcopter system.}
   \label{step-response}
 \end{figure}
 
