@@ -3,7 +3,7 @@
 \usepackage{xspace,framed}
 \usepackage{listings}
 \usepackage{graphicx}
-\usepackage{subfigure} 
+\usepackage{subfig} 
 \usepackage{xcolor,colortbl}
 \usepackage{amssymb}
 \usepackage{amsmath}
@@ -286,11 +286,27 @@ consequently, attracting more digital dynamical system engineers. Users can prov
 required parameters for digital controller synthesis: physical plant specification, 
 fixed-point representation and dynamic inputs. 
 %
-\begin{figure}
-  \includegraphics[width=0.5\textwidth]{screens_dssynth.png}
-  \caption{GUI application for the digital synthesis based on the transfer function representation. \textcolor{red}{Lennon, can you please split this figure into 4 subfigures? The idea is to assign a label for each subfigure to explain a given step of our synthesis process}
-}
-  \label{fig:gui-for-tf}
+
+\begin{figure}[ht]
+    \centering
+    \subfloat[Define representation and the physical plant.]{
+		\includegraphics[width=0.35\textwidth]{step1.png}
+		\label{step1}}
+		\hfil
+    \subfloat[Determine the implementation and the dynamic range.]{
+	\includegraphics[width=0.35\textwidth]{step2.png}
+		\label{step2}}
+		\hfil
+    \subfloat[Digital controler synthesized.]{
+	\includegraphics[width=0.35\textwidth]{step3.png}
+		\label{step2}}
+		\hfil
+    \subfloat[Step Response for the stable digital controller synthesized]{
+	\includegraphics[width=0.35\textwidth]{step4.png}
+		\label{step3}}
+		\hfil
+    \caption{GUI application for the digital synthesis based on the transfer function representation.}
+    \label{fig:gui-for-tf}
 \end{figure}
 
 %---------------------------------------------------
