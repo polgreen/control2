@@ -1,6 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define _CONTROL_FLOAT_WIDTH 16
+#define _CONTORL_RADIX_WIDTH 8
+#define CPROVER
+#define NUMBERLOOPS 20
+
+
 #define INT_BITS 8
 #define FRAC_BITS 8
 #define NSTATES 3
