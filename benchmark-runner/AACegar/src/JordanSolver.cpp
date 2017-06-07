@@ -268,8 +268,8 @@ bool JordanSolver<scalar>::calculateJordanForm()
     m_eigenVectors=this->eigenvectors();
 
     if (ms_trace_dynamics>=eTraceAll) {
-      ms_logger.logData(m_dynamics,"Dynamics:");
-      ms_logger.logData(m_eigenValues,"EigenValues:");
+      ms_logger.logData(m_dynamics,"Ref Dynamics:");
+      ms_logger.logData(m_eigenValues,"Ref EigenValues:");
       ms_logger.logData(m_eigenVectors,"Initial EigenVectors:");
     }
     m_hasOnes=false;

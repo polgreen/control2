@@ -5,6 +5,8 @@
 #include "Scalar.h"
 #include <climits>
 
+#define USE_FMS
+
 inline bool mpfr_neg_p(mpfr_srcptr x)
 {
   return (mpfr_signbit(x) && !mpfr_zero_p(x));
@@ -42,7 +44,7 @@ std::string interval_def<mpinterval>::ms_name="mpi";
 std::string interval_def<ldinterval>::ms_name="ldi";
 
 template <class scalar> bool functions<scalar>::ms_formal=false;
-template <class scalar> std::string functions<scalar>::ms_imprecise="Not enough precision";
+template <class scalar> std::string functions<scalar>::ms_imprecise=" Not enough precision ";
 template <class scalar> std::string functions<scalar>::ms_error="Numerical error";
 template <class scalar> bool functions<scalar>::ms_isImprecise=false;
 template <class scalar> typename functions<scalar>::c_scalar
@@ -113,7 +115,11 @@ template <> void functions<mpfr::mpreal>::setDefaultPrec(int prec)
     mpfr::mpreal::set_default_prec(prec);
     ms_epsilon=pow(2*ms_1,1-prec);
     if (prec<128) ms_weakEpsilon =pow(2*ms_1,-(prec>>2)-10);//64=26(7.8),127=42(12)
-    else ms_weakEpsilon =pow(2*ms_1,-(prec>>4)-36);//128=44(13),256=52(15),512=68(20),1024=100(30),2048=164(49)
+    else {
+      int sqrt_prec=sqrt(prec);
+//      ms_weakEpsilon =pow(2*ms_1,-(prec>>4)-36);//128=44(13),256=52(15),512=68(20),1024=100(30),2048=164(49)
+      ms_weakEpsilon =pow(2*ms_1,-sqrt_prec-36);//128=47(14),256=52(15),512=58(17),1024=68(20),2048=81(23),4096=100(30)
+    }
     ms_highPi=mpfr::const_pi(prec, MPFR_RNDU);
     ms_lowPi=mpfr::const_pi(prec, MPFR_RNDN);
     ms_pi=ms_lowPi;
@@ -144,6 +150,7 @@ template <> bool functions<mpfr::mpreal>::increasePrec()
 }
 
 template <> bool functions<long double>::increasePrec() { return false; }
+
 
 template <> template <>
 mpfr::mpreal functions<mpfr::mpreal>::const_pi<mpfr::mpreal>(const mpfr::mpreal &multiplier)
@@ -206,7 +213,7 @@ mpfr::mpreal functions<mpfr::mpreal>::invtan<mpfr::mpreal>(mpfr::mpreal num,mpfr
       else if (sign<0) return -ms_pi_2;
       else if (sign==0) {
         //should never happen
-        imprecise(num,ms_hardZero);
+        imprecise(num,den,"interpolation error");
       }
     }
     else if (sign<0)  return ms_pi+atan(num/den);
@@ -224,7 +231,7 @@ mpinterval functions<mpfr::mpreal>::invtan<mpinterval>(mpinterval num,mpinterval
     else if (sign<0) return -ms_pi_2;
     else if (sign==0) {
       //should never happen
-      imprecise(num,ms_hardZero);
+      imprecise(num,ms_hardZero,"interpolation error");
       return mpinterval(-ms_pi_2,ms_pi_2);
     }
   }
@@ -290,7 +297,7 @@ ldinterval functions<long double>::invtan<ldinterval>(ldinterval num,ldinterval 
     else if (sign<0) return -ms_pi_2;
     else if (sign==0) {
       //should never happen
-      imprecise(num,ms_hardZero);
+      imprecise(num,ms_hardZero,"interpolation error");
       return ldinterval(-ms_pi_2,ms_pi_2);
     }
   }
@@ -415,6 +422,13 @@ long double functions<long double>::madd(ldinterval &z,const ldinterval &x,const
 }
 
 template <>
+long double functions<long double>::madd(long double &z,const long double &x,const long double &y)
+{
+  z+=x*y;
+  return ms_hardZero;
+}
+
+template <>
 long double functions<long double>::tightMadd(ldinterval &z,const ldinterval &x,const ldinterval &y)
 {
   ldinterval m(x*y);
@@ -432,6 +446,31 @@ long double functions<long double>::tightWidth(const ldinterval &x,const ldinter
   if (x.upper()<0) return width(y)*-x.upper();
   if (x.upper()+x.lower()>0) return  width(y)*-x.lower();
   return width(y)*x.upper();
+}
+
+template <>
+void functions<long double>::msub(long double &z,const long double &x,const long double &y)
+{
+  z-=x*y;
+}
+
+template <>
+mpfr::mpreal functions<mpfr::mpreal>::madd(mpfr::mpreal &z,const mpfr::mpreal &x,const mpfr::mpreal &y)
+{
+//  z+=x*y;
+  mpfr_fma((mpfr_ptr)z.mpfr_ptr(),x.mpfr_ptr(),y.mpfr_ptr(),z.mpfr_ptr(),MPFR_RNDZ);
+  return ms_hardZero;
+}
+
+template <>
+void functions<mpfr::mpreal>::msub(mpfr::mpreal &z,const mpfr::mpreal &x,const mpfr::mpreal &y)
+{
+#ifdef USE_FMS
+  mpfr_fms((mpfr_ptr)z.mpfr_ptr(),x.mpfr_ptr(),y.mpfr_ptr(),z.mpfr_ptr(),MPFR_RNDZ);
+  mpfr_neg((mpfr_ptr)z.mpfr_ptr(),z.mpfr_ptr(),MPFR_RNDZ);
+#else
+  z-=x*y;
+#endif
 }
 
 template <>
@@ -610,6 +649,7 @@ void functions<long double>::msub(ldinterval &z,const ldinterval &x,const ldinte
 template <>
 void functions<mpfr::mpreal>::msub(mpinterval &z,const mpinterval &x,const mpinterval &y)
 {
+  //RND is reverse on mpfr_fms because formula is negated
   z-=x*y;
   return;
   mpfr_srcptr xl = x.lower().mpfr_ptr();
@@ -624,8 +664,13 @@ void functions<mpfr::mpreal>::msub(mpinterval &z,const mpinterval &x,const mpint
     if (mpfr_pos_p(xu)) {
       if (mpfr_neg_p(yl)) {
         if (mpfr_neg_p(yu)) {
+#ifdef USE_FMS
+          mpfr_fms((mpfr_ptr)zl,xu,yl,zl,MPFR_RNDU);
+          mpfr_fms((mpfr_ptr)zu,xl,yl,zu,MPFR_RNDD);
+#else
           mpfr_mul(tl,xu,yl,MPFR_RNDD);
           mpfr_mul(tu,xl,yl,MPFR_RNDU);
+#endif
         }
         else {
           mpfr_ptr temp2 = (mpfr_ptr)ms_temp2.lower().mpfr_ptr();
@@ -635,39 +680,74 @@ void functions<mpfr::mpreal>::msub(mpinterval &z,const mpinterval &x,const mpint
           mpfr_mul(tu,xl,yl,MPFR_RNDU);
           mpfr_mul(temp2,xu,yu,MPFR_RNDU);
           if (mpfr_greater_p(temp2,tu)!=0) tu=temp2;
+#ifdef USE_FMS
+          mpfr_sub(zl,zl,tu,MPFR_RNDU);
+          mpfr_sub(zu,zu,tl,MPFR_RNDU);
+          return;
+#endif
         }
       }
       else if (mpfr_pos_p(yu)) {
+#ifdef USE_FMS
+        mpfr_fms((mpfr_ptr)zl,xl,yu,zl,MPFR_RNDU);
+        mpfr_fms((mpfr_ptr)zu,xu,yu,zu,MPFR_RNDD);
+#else
         mpfr_mul(tl,xl,yu,MPFR_RNDD);
         mpfr_mul(tu,xu,yu,MPFR_RNDU);
+#endif
       }
       else return;
     }
     else {
       if (mpfr_neg_p(yl)) {
+#ifdef USE_FMS
+        mpfr_fms((mpfr_ptr)zl,xu,yl,zl,MPFR_RNDU);
+        mpfr_fms((mpfr_ptr)zu,xl,yl,zu,MPFR_RNDD);
+#else
         mpfr_mul(tl,mpfr_neg_p(yu) ? xu : xl,yu,MPFR_RNDD);
         mpfr_mul(tu,xl,yl,MPFR_RNDU);
+#endif
       }
       else if (mpfr_pos_p(yu)) {
+#ifdef USE_FMS
+        mpfr_fms((mpfr_ptr)zl,xl,yu,zl,MPFR_RNDU);
+        mpfr_fms((mpfr_ptr)zu,xu,yl,zu,MPFR_RNDD);
+#else
         mpfr_mul(tl,xl,yu,MPFR_RNDD);
         mpfr_mul(tu,xu,yl,MPFR_RNDU);
+#endif
       }
       else return;
     }
   else if (mpfr_pos_p(xu)) {
     if (mpfr_neg_p(yl)) {
+#ifdef USE_FMS
+      mpfr_fms((mpfr_ptr)zl,xu,yl,zl,MPFR_RNDU);
+      mpfr_fms((mpfr_ptr)zu,mpfr_neg_p(yu) ? xl : xu,yu,zu,MPFR_RNDD);
+#else
       mpfr_mul(tl,xu,yl,MPFR_RNDD);
       mpfr_mul(tu,mpfr_neg_p(yu) ? xl : xu,yu,MPFR_RNDU);
+#endif
     }
     else if (mpfr_pos_p(yu)) {
+#ifdef USE_FMS
+      mpfr_fms((mpfr_ptr)zl,xl,yl,zl,MPFR_RNDU);
+      mpfr_fms((mpfr_ptr)zu,xu,yu,zu,MPFR_RNDD);
+#else
       mpfr_mul(tl,xl,yl,MPFR_RNDD);
       mpfr_mul(tu,xu,yu,MPFR_RNDU);
+#endif
     }
     else return;
   }
   else return;
+#ifdef USE_FMS
+  mpfr_neg((mpfr_ptr)zl,zl,MPFR_RNDD);
+  mpfr_neg((mpfr_ptr)zu,zu,MPFR_RNDU);
+#else
   mpfr_sub(zl,zl,tu,MPFR_RNDD);
   mpfr_sub(zu,zu,tl,MPFR_RNDU);
+#endif
 }
 
 template <>

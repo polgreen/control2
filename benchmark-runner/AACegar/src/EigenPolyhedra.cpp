@@ -65,9 +65,9 @@ void EigenPolyhedra<scalar>::changeDimension(const int dimension)
 
 /// Loads a full dynamic description
 template <class scalar>
-int EigenPolyhedra<scalar>::load(const std::string &data,size_t pos,const bool vertices)
+int EigenPolyhedra<scalar>::load(const std::string &data,const bool vertices,size_t pos,size_t end)
 {
-  int result=m_polyhedra.loadData(data,pos,vertices);
+  int result=m_polyhedra.loadData(data,vertices,pos,end);
   m_eigenPolyhedra.clear();
   m_singularPolyhedra.clear();
   if (result>0) getEigenPolyhedra();

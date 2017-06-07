@@ -52,7 +52,7 @@ public:
     /// @return true if succesful
     virtual int load(const std::string &data,size_t pos=0);
 
-    bool load(const MatrixS &matrix);
+    virtual bool load(const MatrixS &matrix);
 
     // Loads a matrix assumed to be a canonical Jordan form
     virtual bool loadJordan(const MatrixS &matrix);
@@ -163,8 +163,18 @@ public:
     /// Returns the inverse complex eigenvector matrix (S^-1)
     std::string getInvEigenVectorsDesc(bool pseudo=false);
 
-    double getError()                                       { return func::toDouble(func::toUpper(m_error)); }
+    double getError()
+    {
+      return func::toDouble(func::toUpper(m_error));
+    }
 
+    bool rotates(int row)
+    {
+      return (m_conjugatePair[row]>=0) || func::isNegative(m_eigenValues.coeff(row,row).real());
+    }
+
+    /// Retrieves the algebraic multiplicity of the ith eigenvalue
+    int jordanBlockSize(int i);
 protected:
     int                            m_dimension;
     refScalar                      m_zero;
@@ -182,12 +192,14 @@ protected:
     MatrixS                        m_pseudoEigenVectors;              // column list of pseudo eigenvectors
     MatrixS                        m_invPseudoEigenVectors;           // column list of inverse pseudo eigenvectors
     MatrixS                        m_transposeInvPseudoEigenVectors;  // column list of pseudo eigenvectors of A^-T
+    MatrixS                        m_cosFactors;
     std::vector<int>               m_jordanIndex;
     std::vector<int>               m_conjugatePair;
     std::vector<bool>              m_isOne;
     bool                           m_hasOnes;
     bool                           m_hasMultiplicities;
     scalar                         m_error;
+    scalar                         m_verror;
     refScalar                      m_boundForError;
     refScalar                      m_maxSigma;
     refScalar                      m_minSigma;

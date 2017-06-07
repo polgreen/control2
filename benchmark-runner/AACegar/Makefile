@@ -1,7 +1,7 @@
 CC=g++
 
 #list of source files
-SOURCE= src/RowSort.cpp src/Scalar.cpp src/Set.cpp src/MatrixToString.cpp\
+SOURCE= src/RowSort.cpp src/SparseRowSort.cpp src/Scalar.cpp src/Set.cpp src/MatrixToString.cpp\
       src/Tableau.cpp src/DualSimplex.cpp src/VertexEnumerator.cpp \
       src/Polyhedra.cpp src/AbstractPolyhedra.cpp src/EigenPolyhedra.cpp \
       src/JordanSolver.cpp src/JordanMatrix.cpp src/AccelMatrix.cpp \

@@ -33,7 +33,7 @@ template <class scalar>
 int VertexEnumerator<scalar>::SelectNextHyperplane(const Set &excluded)
 {
   for (int i=1; i<=m_size; i++){
-    if (!excluded.member(m_tableau.zeroOrder(i))) return (m_tableau.zeroOrder(i));//TODO: zero index
+    if (!excluded.member(m_pSortedTableau->zeroOrder(i))) return (m_pSortedTableau->zeroOrder(i));//TODO: zero index
   }
   return -1;
 }
@@ -69,7 +69,6 @@ template <class scalar>
 bool VertexEnumerator<scalar>::load(const MatrixS &faces,const MatrixS &supports,const bool transpose)
 {
   clear();
-  this->Error=this->None;
   return Tableau<scalar>::load(faces,supports,transpose);
 }
 
@@ -82,8 +81,8 @@ bool VertexEnumerator<scalar>::StoreRay(const MatrixS &vector, Ray<scalar> &ray)
   ray.FirstInfeasIndex=m_size+1;
   ray.data=vector;
   for (int i = 1; i <= m_size; i++) {//TODO: zero index
-    int k=m_tableau.zeroOrder(i);
-    char sign=func::hardSign(this->AValue(vector, k));//Zero is ensured by check in AValue
+    int k=m_pSortedTableau->zeroOrder(i);
+    char sign=func::hardSign(m_pSortedTableau->entry(vector, k));//Zero is ensured by check in AValue
     if (sign==0)  ray.ZeroSet.add(k);
     else if ((sign<0) && ray.feasible) {
       ray.feasible = false;
@@ -99,7 +98,7 @@ bool VertexEnumerator<scalar>::StoreRay(const MatrixS &vector, Ray<scalar> &ray)
     ms_logger.logData(ray.data);
     if (ms_normalised_rays) ms_logger.logNormalisedData(ray.data,0);
     MatrixS dist(1,m_size);
-    for (int i=0;i<m_size;i++) dist.coeffRef(0,i)=this->AValue(vector, i);
+    for (int i=0;i<m_size;i++) dist.coeffRef(0,i)=m_pSortedTableau->entry(vector, i);
     ms_logger.logData("dist: ",false);
     ms_logger.logData(dist);
   }
@@ -123,9 +122,8 @@ bool VertexEnumerator<scalar>::FindInitialRays(Set &initHyperplanes, MatrixS& In
 {
   long rank=this->FindEnumerationBasis(initHyperplanes, pivotRows);
   if (Set::ms_trace_set) initHyperplanes.logSet("Enumeration Basis");
-  if (rank < this->getDimension()) {
-    if (this->ms_trace_vertices>=eTraceVertices) ms_logger.logData(rank,"Low Column Rank");
-    this->Error = this->LowColumnRank;
+  if ((rank < this->getDimension()) && (Conversion != ExtToIne)) {
+    if (this->ms_trace_vertices>=eTraceVertices) ms_logger.logData(rank,"Low Column Rank",true);
     return false;
   }
   InitRays=this->m_basisInverse;
@@ -135,8 +133,8 @@ bool VertexEnumerator<scalar>::FindInitialRays(Set &initHyperplanes, MatrixS& In
 template <class scalar> void VertexEnumerator<scalar>::CreateNewRay(const MatrixS &Ray1, const MatrixS &Ray2, long row)
 {
   // Create a new ray by taking a linear combination of two rays
-  scalar v1 = abs(this->AValue(Ray1, row));
-  scalar v2 = abs(this->AValue(Ray2, row));
+  scalar v1 = abs(m_pSortedTableau->entry(Ray1, row));
+  scalar v2 = abs(m_pSortedTableau->entry(Ray2, row));
   refScalar den=func::toLower(v1+v2);
   v1/=den;
   v2/=den;
@@ -162,7 +160,7 @@ bool VertexEnumerator<scalar>::EvaluateRay(const long row)
     if (this->ms_trace_vertices>=eTraceRays) {
       ms_logger.logData(it->data,"Evaluate ray");
     }
-    it->ARay = this->AValue(it->data,row);
+    it->ARay = m_pSortedTableau->entry(it->data,row);
     char sign=func::hardSign(it->ARay);//Zero is ensured by check in AValue
     typename RayList::iterator it2=it;
     it++;
@@ -255,15 +253,15 @@ void VertexEnumerator<scalar>::ConditionalAddEdge(const Ray<scalar> &Ray1, const
   const Set &Zmin = Rmin.ZeroSet;
   const Set &Zmax = Rmax.ZeroSet;
 
-  if ((fmin==fmax) || (Zmax.member(m_tableau.zeroOrder(fmin)))) {//TODO: zero index
+  if ((fmin==fmax) || (Zmax.member(m_pSortedTableau->zeroOrder(fmin)))) {//TODO: zero index
     if (ms_trace_vertices>=eTraceEdges) {
       ms_logger.logData("Unfeasible Edge ");
       Zmin.logSet("Min ",false);
-      ms_logger.logData(m_tableau.zeroOrder(fmin),"[");
+      ms_logger.logData(m_pSortedTableau->zeroOrder(fmin),"[");
       ms_logger.logData("]: ",false);
       ms_logger.logData(Rmin.data);
       Zmax.logSet("Max ",false);
-      ms_logger.logData(m_tableau.zeroOrder(fmax),"[");
+      ms_logger.logData(m_pSortedTableau->zeroOrder(fmax),"[");
       ms_logger.logData("]: ",false);
       ms_logger.logData(Rmax.data);
     }
@@ -352,7 +350,7 @@ bool VertexEnumerator<scalar>::AddNewHyperplane(long row, long iter)
   }
   Edges[iter]=NULL;
   this->DeleteNegativeRays();
-    
+
   AddedHyperplanes.add(row);
   if ((iter<m_size) && (m_zeroHead!=m_rayList.end())) {
       UpdateEdges(m_zeroHead, iter);
@@ -367,7 +365,7 @@ bool VertexEnumerator<scalar>::CheckAdjacency(const Ray<scalar> &RMin, const Ray
 {
   Face1.intersect(RMin.ZeroSet, RMax.ZeroSet);
   for (int i=iter+1; i < RMin.FirstInfeasIndex; i++){
-    if (Face1.member(m_tableau.zeroOrder(i))){
+    if (Face1.member(m_pSortedTableau->zeroOrder(i))){
       return false;
     }
   }
@@ -401,7 +399,6 @@ void VertexEnumerator<scalar>::enumerate()
 {
   MatrixS InitRays(m_dimension,m_dimension);
   std::vector<int> InitRayIndex; // 0 if the corr. ray is for generator of an extreme line
-  this->Error=this->None;
   func::setZero(this->m_zero);
 
   InitialHyperplanes.initializeEmpty(m_size);
@@ -412,6 +409,7 @@ void VertexEnumerator<scalar>::enumerate()
 
   this->ComputeRowOrderVector(LexMin);
 
+
   TotalRayCount = 0;
   FeasibleRayCount = 0;
   VertexCount = 0;
@@ -419,7 +417,7 @@ void VertexEnumerator<scalar>::enumerate()
   TotalEdgeCount=0; // active edge count
   Edges.assign(m_size+1,(AdjacentRays<scalar>*)NULL);
 
-  if (ms_trace_vertices>=eTraceRays) ms_logger.logData(this->m_tableau,"Enumerate");
+  if (ms_trace_vertices>=eTraceRays) logTableau("Enumerate",true);
   if (this->FindInitialRays(InitialHyperplanes, InitRays, InitRayIndex)) {
     initialize(InitRays, InitRayIndex);
     createHyperplaneList();
@@ -436,7 +434,7 @@ void VertexEnumerator<scalar>::initialize(const MatrixS &InitialRays, std::vecto
 
   AddedHyperplanes.copy(InitialHyperplanes);
   WeaklyAddedHyperplanes.copy(InitialHyperplanes);
-  this->m_tableau.UpdateRowOrderVector(InitialHyperplanes);
+  m_pSortedTableau->UpdateRowOrderVector(InitialHyperplanes);
   for (int r = 1; r <= m_dimension; r++) {
     Vector1=InitialRays.col(r-1).transpose();
     this->Normalize(Vector1);
@@ -453,19 +451,19 @@ void VertexEnumerator<scalar>::initialize(const MatrixS &InitialRays, std::vecto
 template <class scalar>
 typename VertexEnumerator<scalar>::RayList& VertexEnumerator<scalar>::findVertices(MatrixS &faces,MatrixS &supports,char reverse)
 {
-  this->Conversion = reverse ? ExtToIne : IneToExt;
+  Conversion = reverse ? ExtToIne : IneToExt;
 
   /* Initialization of global variables */
   try {
-    this->Error=this->None;
     load(faces,supports);
     enumerate();
-    this->validateRays();
-    this->logRays();
+    validateRays();
+    logRays();
   }
   catch(std::string error) {
-    ms_logger.logData(error);
     m_rayList.clear();
+    if (reverse) throw error;
+    else ms_logger.logData(error);
   }
   return m_rayList;
 }

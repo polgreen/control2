@@ -33,11 +33,13 @@ public:
     using Tableau<scalar>::ms_decoder;
     using Tableau<scalar>::ms_trace_tableau;
     using Tableau<scalar>::ms_trace_errors;
+    using Tableau<scalar>::ms_trace_time;
 
     using Tableau<scalar>::order;
     using Tableau<scalar>::getDimension;
     using Tableau<scalar>::logTableau;
     using DualSimplex<scalar>::maximiseAll;
+    using DualSimplex<scalar>::removeRedundancies;
 
     /// Constructs an empty buffer
     /// @param dimension dimension of the space
@@ -53,8 +55,8 @@ public:
     ~Polyhedra() {}
 
     /// Loads a polyhedral description from file
-    /// @param data buffer containing the polyhedra description in the form
     /// @param vertices indicates if the data loaded are vertices as opposed to faces
+    /// @param data buffer containing the polyhedra description in the form
     /**
      c_11,c_12, ... ,c_1p, d_1
      c_21,c_22, ... ,c_2p, d_2
@@ -62,7 +64,7 @@ public:
      c_m1,c_m2, ... ,c_mp, d_m
      **/
     /// @return position after decoding. Negative (or zero) if failed.
-    int loadData(const std::string &data,size_t pos=0,const bool vertices=false);
+    int loadData(const std::string &data,const bool vertices=false,size_t pos=0,size_t end=std::string::npos);
 
     /// Calculates the convex hull of a point cloud
     /// @param points point cloud
@@ -98,15 +100,25 @@ public:
 
     /// Retrieves the template directions of the polyhedra
     /// @return column vectors normal to the faces of the polyhedra
-    MatrixS getFaceDirections() { return m_faces; }
+    MatrixS getFaceDirections()         { return m_faces; }
 
     /// Retrieves the template directions of the polyhedra
     /// @return column vectors normal to the faces of the polyhedra
-    MatrixS getDirections()     { return m_faces.transpose(); }
+    MatrixS getDirections()             { return m_faces.transpose(); }
+
+    /// Retrieves the template directions of the polyhedra
+    /// @param index Face direction to return
+    /// @return vector normal to the hyperplane at index
+    MatrixS getFaceDirection(int index) { return m_faces.row(index); }
 
     /// Retrieves the support functions for the faces of the polyhedra
     /// @return column vector holding the support functions of each face of the polyhedra
-    MatrixS getSupports()       { return m_supports; }
+    MatrixS getSupports()               { return m_supports; }
+
+    /// Retrieves the support functions for the given face index
+    /// @param index support to return
+    /// @return support function of the hyperplane at index
+    scalar getSupport(int index)        { return m_supports.coeff(index,0); }
 
     /// Copies the polyhedra from another source
     /// @param pSource polyhedra to copy
@@ -162,7 +174,7 @@ public:
     /// @param supports support vectors of the polyhedra in the given directions (when known)
     /// @return true if successful
     bool addDirection(const MatrixS &directions);
-    bool addDirection(const MatrixS &directions,MatrixS &supports);
+    bool addDirection(const MatrixS &directions,MatrixS &supports,bool keepBasis=false);
 
     /// templates the polyhedra in the given directions
     /// @param templates column vectors to use as directions
@@ -179,8 +191,12 @@ public:
 
     /// linearly transofrm the polyhedra (rotate, translate, stretch)
     /// @param pTransform transform matrix
-    /// @param pInverse precalculate inverso of the transform matrix (if null, the pseudoinverse will be calculated)
+    /// @param pInverse precalculate inverse of the transform matrix (if null, the pseudoinverse will be calculated)
     bool transform(const MatrixS &transform,const MatrixS& inverse=ms_emptyMatrix);
+
+    /// Optimization for transofrm from a single dimension
+    /// @param pTransform transform matrix
+    bool transformFromSingle(const MatrixS &transform);
 
     /// linearly transofrm the polyhedra (rotate, translate, stretch)
     /// @param coefficient expansion/compression value
@@ -225,6 +241,11 @@ public:
     /// @param points, points in the state space to evaluate
     /// @return true if all given points are inside the polyhedra
     bool isInside(const MatrixS &points);
+
+    /// Indicates which support (if any) does not contain the point
+    /// @param points, points in the state space to evaluate
+    /// @return first row to not contain the points (-1 if none).
+    int violatingSupport(const MatrixS &points);
 
     /// Removes any existing faces
     void clear();
@@ -274,6 +295,9 @@ public:
     /// @return corresponding row of the tableau at the given position
     inline short vertexOrder(const int row) { return m_vertices.order(row); }
 
+    /// Indicates that the polyhedra should calculate vertices on load
+    inline void useVertices(bool use=true)  { m_useVertices=use; }
+
     void logVertices(bool force=false);
     virtual void logPolyhedra(const std::string parameters="");
 protected:
@@ -293,6 +317,7 @@ protected:
 
 protected:
     bool                                    m_isCentralised;
+    bool                                    m_useVertices;
     MatrixS                                 m_centre;
     SortedMatrix<scalar>                    m_vertices;
     std::string                             m_name;

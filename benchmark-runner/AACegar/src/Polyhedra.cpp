@@ -32,7 +32,7 @@ template <class scalar>
 traceDynamics_t Polyhedra<scalar>::ms_trace_dynamics=eTraceNoDynamics;
 
 template <class scalar>
-bool Polyhedra<scalar>::ms_auto_make_vertices=true;
+bool Polyhedra<scalar>::ms_auto_make_vertices=false;
 
 /// Constructs an empty buffer
 template <class scalar>
@@ -75,13 +75,14 @@ bool Polyhedra<scalar>::convexHull(const MatrixS &points,const MatrixS &vectors)
 
 /// Loads a polyhedral description from file
 template <class scalar>
-int Polyhedra<scalar>::loadData(const std::string &data,size_t pos,const bool vertices)
+int Polyhedra<scalar>::loadData(const std::string &data,const bool vertices,size_t pos,size_t end)
 {
   size_t result=0;
   boost::timer timer;
   this->m_isNormalised=false;
   m_vertices.resize(0,m_vertices.cols());
-  if ((result=data.find("cube<",pos)) >= 0) {
+  if (end==std::string::npos) end=data.length();
+  if ((result=data.find("cube<",pos)) !=std::string::npos) {
     int dimension=getDimension();
     m_faces.resize(2*dimension,dimension);
     m_faces.block(0,0,dimension,dimension)=MatrixS::Identity(dimension,dimension);
@@ -96,30 +97,32 @@ int Polyhedra<scalar>::loadData(const std::string &data,size_t pos,const bool ve
     m_loadTime=timer.elapsed()*1000;
     return result;
   }
-  int lines=MatToStr<scalar>::ms_defaultLogger.lines(data,pos);
+  int lines=ms_logger.lines(data,pos,end);
   if (lines==0) {
-    result=ms_logger.StringToMat(m_faces,data,pos);
+    result=ms_logger.StringToMat(m_faces,data,pos,end);
     clear();
     return result;
   }
   if (vertices) {
-    result=ms_logger.StringToMat(m_vertices,data,pos);
+    result=ms_logger.StringToMat(m_vertices,data,pos,end);
     if (result>0) makeFaces();
     m_loadTime=timer.elapsed()*1000;
     return result;
   }
   if (getDimension()==0) {
-    int cols=MatToStr<scalar>::ms_defaultLogger.cols(data,pos);
+    int cols=ms_logger.cols(data,pos,end);
     changeDimension(cols);
   }
   m_supports.resize(lines,1);
   m_faces.resize(lines,getDimension());
-  result=ms_logger.StringToMat(m_faces,m_supports,data,pos);
+  result=ms_logger.StringToMat(m_faces,m_supports,data,pos,end);
   if (result>0) {
     load(m_faces,m_supports);
     m_loadTime=timer.elapsed()*1000;
     if (ms_trace_tableau>=eTraceTableau) logTableau("loaded ");
-    if (ms_auto_make_vertices && (m_faces.rows()>m_dimension)) makeVertices();
+    if (m_useVertices || ms_auto_make_vertices) {
+      if ((m_dimension==2) || (m_faces.rows()>m_dimension)) makeVertices();
+    }
   }
   return result;
 }
@@ -395,7 +398,7 @@ bool Polyhedra<scalar>::merge(Polyhedra &polyhedra,const bool extend)
   if (this->ms_trace_tableau>=eTraceTransforms) {
     ms_logger.logData(m_faces,m_supports,"Merged Set");
   }
-  if (this->ms_trace_time) {
+  if (ms_trace_time) {
     int elapsed=timer.elapsed()*1000;
     ms_logger.logData(elapsed," Merge time",true);
   }
@@ -478,7 +481,7 @@ bool Polyhedra<scalar>::addDirection(const MatrixS &directions)
 
 /// Adds a number of directions to the template of the polhedra
 template <class scalar>
-bool Polyhedra<scalar>::addDirection(const MatrixS &directions,MatrixS &supports)
+bool Polyhedra<scalar>::addDirection(const MatrixS &directions,MatrixS &supports,bool keepBasis)
 {
   if (directions.rows()!=getDimension()) return false;
   this->m_isNormalised=false;
@@ -487,7 +490,8 @@ bool Polyhedra<scalar>::addDirection(const MatrixS &directions,MatrixS &supports
   m_faces.block(count,0,directions.cols(),m_faces.cols())=directions.transpose();
   m_supports.conservativeResize(count+directions.cols(),1);
   m_supports.block(count,0,directions.cols(),1)=supports;  
-  this->removeRedundancies();
+  if (keepBasis) Tableau<scalar>::load(m_faces,m_supports);
+  else removeRedundancies();
   m_centre.resize(0,m_centre.cols());
   m_vertices.resize(0,m_vertices.cols());
   return true;
@@ -523,15 +527,32 @@ bool Polyhedra<scalar>::transform(const MatrixS &transform,const MatrixS& invers
   }
   else {
     if (transform.cols()!=getDimension()) return false;
+    if (transform.cols()>transform.rows()) {
+      makeVertices();
+      m_vertices*=transform.transpose();
+      if (makeFaces()) return true;
+    }
     if (transform.rows()>transform.cols()) {
       int rows=transform.rows();
       int cols=transform.cols();
+      if ((m_vertices.rows()>0) && (transform.rows()>2*transform.cols()))
+      {
+        bool wasImprecise=func::ms_isImprecise;
+        try {
+          m_vertices*=transform.transpose();
+          if (makeFaces()) return true;
+        }
+        catch(std::string e) {
+          func::ms_isImprecise=wasImprecise;
+        }
+      }
       MatrixS newTransform(rows,rows);
       newTransform.block(0,0,rows,cols)=transform;
       newTransform.block(0,cols,rows,rows-cols)=MatrixS::Zero(rows,rows-cols);
       changeDimension(rows,true);
       return this->transform(newTransform);
     }
+
     if (m_centre.rows()>0) {
       if (m_centre.cols()==transform.cols()) {
         m_centre=m_centre*transform.transpose();
@@ -564,13 +585,23 @@ bool Polyhedra<scalar>::transform(const MatrixS &transform,const MatrixS& invers
   }
   bool result=DualSimplex<scalar>::load(m_faces,m_supports);
   m_transformTime=timer.elapsed()*1000;
-  if (this->ms_trace_time) {
+  if (ms_trace_time) {
     if (m_transformTime>1) {
       ms_logger.logData(m_name,false);
       ms_logger.logData(m_transformTime," Transform:",true);
     }
   }
   return result;
+}
+
+/// Optimization for transofrm from a single dimension
+template <class scalar>
+bool Polyhedra<scalar>::transformFromSingle(const MatrixS &transform)
+{
+  if (getDimension()>1) return false;
+  makeVertices();
+  if (m_vertices.rows()<1) return false;
+  return true;
 }
 
 /// templates the polyhedra in the given directions
@@ -651,6 +682,7 @@ bool Polyhedra<scalar>::makeFaces()
   typename VertexEnumerator<scalar>::RayList& rayList=enumerator.findVertices(m_vertices,supports,true);
   int numFaces=rayList.size();
   if (numFaces==0) return false;
+  changeDimension(m_vertices.cols());
   m_faces.resize(numFaces,getDimension());
   m_supports.resize(numFaces,1);
   int row=0;
@@ -706,7 +738,7 @@ bool Polyhedra<scalar>::makeVertices(bool force)
 
   int numVertices=rayList.size();
   if (numVertices==0) {
-    if (this->ms_trace_time) {
+    if (ms_trace_time) {
       ms_logger.logData(m_name,false);
       ms_logger.logData(timer.elapsed()*1000," Make Vertices Time:",true);
     }
@@ -716,6 +748,10 @@ bool Polyhedra<scalar>::makeVertices(bool force)
       logTableau();
     }
     return false;
+  }
+  if (ms_trace_vertices>=eTraceVertexCount) {
+    ms_logger.logData(m_name,false);
+    ms_logger.logData(numVertices," vertices",true);
   }
   m_vertices.resize(numVertices,getDimension());
 
@@ -731,7 +767,7 @@ bool Polyhedra<scalar>::makeVertices(bool force)
     ms_logger.logData(" Find Vertices:");
     this->logTableau();
   }
-  if (this->ms_trace_time) {
+  if (ms_trace_time) {
     ms_logger.logData(m_name,false);
     ms_logger.logData(m_enumerationTime," Make Vertices Time:",true);
   }
@@ -823,6 +859,22 @@ bool Polyhedra<scalar>::isInside(const MatrixS &points)
   return true;
 }
 
+/// Indicates which support (if any) does not contain the point
+template <class scalar>
+int Polyhedra<scalar>::violatingSupport(const MatrixS &points)
+{
+  if (points.cols()!=getDimension()) return false;
+  MatrixS supports=m_faces*points.transpose();
+  for (int col=0;col<supports.cols();col++) {
+    supports.col(col)-=m_supports;
+    for (int row=0;row<supports.rows();row++) {
+      if (func::toUpper(supports.coeff(row,col))>0) {
+        return row;
+      }
+    }
+  }
+  return -1;
+}
 
 template <class scalar>
 void Polyhedra<scalar>::ComputeVertexOrderVector()

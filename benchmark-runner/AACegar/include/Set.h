@@ -39,7 +39,7 @@ public:
     int member(const long elem) const;
 
     long cardinality() const;
-    void logSet(const std::string name, const bool endline=true) const;
+    void logSet(const std::string name, const bool endline=true,const bool force=false) const;
 
 protected:
     void initialize(const long len);

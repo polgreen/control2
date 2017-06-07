@@ -87,6 +87,9 @@ public:
     /// @param inEigenSpace retrieves (J^nS^-1) or (I-J^n/I-J)S^-1 rather than their A^n equivalents
     MatrixS getRoundDynamics(const powerS iteration,const bool input=false,const bool inEigenSpace=false);
 
+    /// Loads a matrix and finds its decomposition
+    bool load(const MatrixS &matrix);
+
     /// Loads a matrix assumed to be a canonical Jordan form
     bool loadJordan(const MatrixS &matrix);
 protected:

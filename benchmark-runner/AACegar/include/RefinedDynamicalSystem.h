@@ -16,8 +16,10 @@ public:
     using typename JordanMatrix<scalar>::MatrixC;
     using typename JordanMatrix<scalar>::SolverMatrixType;
     using typename JordanMatrix<scalar>::SolverComplexMatrixType;
+    using typename JordanMatrix<scalar>::pseudoType_t;
     using typename AccelMatrix<scalar>::powerS;
     using typename AbstractMatrix<scalar>::powerList;
+    using typename AbstractMatrix<scalar>::iteration_pair;
 
     using JordanMatrix<scalar>::m_dimension;
     using JordanMatrix<scalar>::m_isOne;
@@ -25,6 +27,10 @@ public:
     using JordanMatrix<scalar>::m_hasMultiplicities;
     using JordanMatrix<scalar>::m_jordanIndex;
     using JordanMatrix<scalar>::m_conjugatePair;
+    using JordanMatrix<scalar>::m_eigenNorms;
+    using JordanMatrix<scalar>::m_cosFactors;
+    using AbstractMatrix<scalar>::m_eigenCloud;
+    using AbstractMatrix<scalar>::m_sampleTime;
     using DynamicalSystem<scalar>::m_idimension;
     using DynamicalSystem<scalar>::m_fdimension;
     using DynamicalSystem<scalar>::m_odimension;
@@ -35,15 +41,18 @@ public:
     using DynamicalSystem<scalar>::m_eigenValues;
     using DynamicalSystem<scalar>::m_eigenVectors;
     using DynamicalSystem<scalar>::m_invEigenVectors;
+    using DynamicalSystem<scalar>::m_pseudoEigenValues;
     using DynamicalSystem<scalar>::m_pseudoEigenVectors;
     using DynamicalSystem<scalar>::m_invPseudoEigenVectors;
     using DynamicalSystem<scalar>::m_source;
+    using DynamicalSystem<scalar>::m_name;
     using DynamicalSystem<scalar>::m_guard;
     using DynamicalSystem<scalar>::m_dynamics;
     using DynamicalSystem<scalar>::m_sensitivity;
     using DynamicalSystem<scalar>::m_inputs;
     using DynamicalSystem<scalar>::m_reference;
     using DynamicalSystem<scalar>::m_outputSensitivity;
+    using DynamicalSystem<scalar>::m_ioSensitivity;
     using DynamicalSystem<scalar>::m_outputGuard;
     using DynamicalSystem<scalar>::m_safeReachTube;
     using DynamicalSystem<scalar>::m_feedback;
@@ -57,17 +66,28 @@ public:
     using DynamicalSystem<scalar>::m_pAbstractReachTube;
     using DynamicalSystem<scalar>::m_maxIterations;
     using DynamicalSystem<scalar>::m_loadTime;
+
+
+    using AbstractMatrix<scalar>::ms_sparse;
     using DynamicalSystem<scalar>::ms_one;
     using DynamicalSystem<scalar>::ms_logger;
+    using DynamicalSystem<scalar>::ms_incremental;
     using DynamicalSystem<scalar>::ms_trace_time;
     using DynamicalSystem<scalar>::ms_trace_dynamics;
     using DynamicalSystem<scalar>::ms_emptyMatrix;
-
+    using DynamicalSystem<scalar>::ms_fullAnswers;
 
     using JordanMatrix<scalar>::interToRef;
     using JordanMatrix<scalar>::refToInter;
+    using JordanMatrix<scalar>::jordanToPseudoJordan;
     using AbstractMatrix<scalar>::findIterations;
     using AbstractMatrix<scalar>::addSupportsAtIteration;
+    using AbstractMatrix<scalar>::addSupportsAtIterations;
+    using AbstractMatrix<scalar>::isDivergent;
+    using AbstractMatrix<scalar>::eigenCloudSupport;
+    using AbstractMatrix<scalar>::getEigenCloud;
+    using AbstractMatrix<scalar>::firstVarBlock;
+    using DynamicalSystem<scalar>::setName;
     using DynamicalSystem<scalar>::getTemplates;
     using DynamicalSystem<scalar>::getGuardPoly;
     using DynamicalSystem<scalar>::getInitPoly;
@@ -81,7 +101,6 @@ public:
     using DynamicalSystem<scalar>::getAbstractReachTube;
     using DynamicalSystem<scalar>::getAbstractDynamics;
     using DynamicalSystem<scalar>::getAbstractVertices;
-    using DynamicalSystem<scalar>::addSupportsAtIteration;
     using DynamicalSystem<scalar>::getAccelInSupports;
     using DynamicalSystem<scalar>::mergeAccelInSupports;
     using DynamicalSystem<scalar>::mergeAbstractSupports;
@@ -104,10 +123,35 @@ public:
     using DynamicalSystem<scalar>::loadTemplates;
     using DynamicalSystem<scalar>::loadARMAXModel;
     using DynamicalSystem<scalar>::processError;
+    using DynamicalSystem<scalar>::calculateJordanForm;
+    using DynamicalSystem<scalar>::calculateMaxIterations;
+    using DynamicalSystem<scalar>::calculateIterations;
+    using DynamicalSystem<scalar>::setEigenSpace;
+    using DynamicalSystem<scalar>::setInputType;
+    using DynamicalSystem<scalar>::getAccelVertices;
+    using DynamicalSystem<scalar>::getOutputReachTube;
+    using DynamicalSystem<scalar>::process;
 
     /// Constructs an empty buffer
     /// @param dimension dimension of the space
     CegarSystem(int dimension=0,int idimension=0);
+
+    /// Gets the start and end position of the state, input and output description blocks
+    void getXYUSections(std::string &description,
+                        size_t pos,size_t end,
+                        size_t &x_pos,size_t &x_end,
+                        size_t &y_pos,size_t &y_end,
+                        size_t &u_pos,size_t &u_end,
+                        size_t &t_pos,size_t &t_end);
+
+    /// Loads a combined constraint description for inputs, outputs and state-space
+    int loadIneConstraints(std::string &constraints,size_t pos=0,size_t end=std::string::npos);
+
+    /// Loads a system descrition from a SpaceX representation
+    int loadFromSpaceX(std::string dynamics,std::string settings);
+
+    /// Loads a system descrition from SpaceX files
+    int loadFromSpaceXFiles(std::string &modelName);
 
     /// Retrieves the characteristic polynomial coefficients of the dynamics
     MatrixS getDynamicPolynomialCoefficients();
@@ -159,18 +203,44 @@ public:
     /// Retrieves the support set for the inputs
     MatrixS& getRefinedAccelInSupports();
 
+    /// turns a continuous time system into a discrete
+    void sample(scalar sampleTime);
+    bool sample(std::string &sampleTime);
+
     /// Corrects the support set by the input offset
     void demergeAccelInSupports(MatrixS &supports,MatrixS &inSupports,int numTemplates);
 
     /// Retrieves the reach tube given the refined dnamics
     AbstractPolyhedra<scalar>& getRefinedAbstractReachTube(space_t space,bool guarded=false);
 
+    /// Retrieves the reach tube at the given iteration
+    AbstractPolyhedra<scalar>& getRefinedAbstractReachTube(powerS iteration,int precision=2,int directions=0,inputType_t inputType=eParametricInputs,space_t space=eNormalSpace,bool guarded=false);
+
+    /// Retrieves the support functions for the reach tube in the given directions
+    MatrixS getRefinedAbstractReachTubeSupports(powerS iteration,int precision,AbstractPolyhedra<scalar>& dynamics,int direction);
+
+    /// Retrieves the support functions for the reach tube in the given directions
+    bool refineDynamics(AbstractPolyhedra<scalar>& dynamics,MatrixS &point,MatrixS &ce,scalar &support,bool next,int &newIndex);
+
+    /// Retrieves the refined supports for the reach tube in the given directions
+    bool refinedMaximise(AbstractPolyhedra<scalar>& dynamics,MatrixS &vectors,MatrixS &supports,MatrixS &inSupports,refScalar &max);
+
     /// Retrieves refined dynamics given a safety specification
     AbstractPolyhedra<scalar>& getRefinedDynamics(int refinements,powerS iteration=0,int directions=0,inputType_t inputType=eParametricInputs);
+
+    /// Sets the vector ordering scheme for incremental simplex calls
+    void setIncrementalOrder(std::string &order);
+
+    void makeConvergentSystem(ParamMatrix &params,bool run=true,bool save=true);
+protected:
+    /// Finds the statespace guard given an output guard
+    AbstractPolyhedra<scalar>& calculateGuardFromOutput();
 
     /// Solves the Sylvester equation AX+XB=C for X
     /// @return X
     MatrixS solveSylvester(const MatrixS &A,const MatrixS &B,const MatrixS &C,bool BisDiagonal=false);
+
+    OrderType   m_incOrderType;
 };
 
 }

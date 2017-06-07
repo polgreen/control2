@@ -15,7 +15,7 @@ std::string defaultSeparator=" , ";
 std::string dimensionMismatch="Dimensions do not match";
 std::string loadError="Load error";
 std::string processingError="Process error";
-std::string version="1.1";
+std::string version="1.3.6";
 
 namespace abstract {
 
@@ -43,6 +43,9 @@ bool MatToStr<scalar>::ms_traceIntervals=true;
 
 template <class scalar>
 bool MatToStr<scalar>::ms_useConsole=false;
+
+template <class scalar>
+bool MatToStr<scalar>::ms_zeroBased=false;
 
 template <class scalar>
 const char MatToStr<scalar>::ms_codes[eNumParameters]={'p','q','v','f','o','s','t','l','m','g','e'};
@@ -165,41 +168,51 @@ inline size_t skipControls(const char * pData,size_t pos,size_t length) {
 }
 
 template <class scalar>
-int MatToStr<scalar>::lines(const std::string &str,size_t pos)
+int MatToStr<scalar>::lines(const std::string &str,size_t pos,size_t end)
 {
-  return lines(str.data(),pos,str.length());
+  return lines(str.data(),pos,(end!=std::string::npos) ? end : str.length());
 }
 
 template <class scalar>
-int MatToStr<scalar>::lines(const char * pData,size_t pos,const size_t eof)
+int MatToStr<scalar>::lines(const char * pData,size_t pos,const size_t end)
 {
   int result=0;
-  while (pos<eof) {
+  if (pos==end) return 0;
+  while (pos<end) {
     if ((pData[pos]=='[') || (pData[pos]=='{') || (pData[pos]=='(')) result=0;
-    if ((pData[pos]=='\n') || (pData[pos]==';')) result++;
+    if ((pData[pos]=='\n') || (pData[pos]==';') || (pData[pos]=='&')) result++;
     if ((pData[pos]==']') || (pData[pos]=='}') || (pData[pos]==')')) {
       if ((pos>0) && ((pData[pos-1]=='[') || (pData[pos-1]=='{') || (pData[pos-1]=='('))) return 0;
       return result+1;
     }
     pos++;
   }
-  return result;
+  if ((pData[end-1]=='&') || (pData[end-1]=='\n')) return result;
+  return result+1;
 }
 
 template <class scalar>
-int MatToStr<scalar>::cols(const std::string &str,size_t pos)
+int MatToStr<scalar>::cols(const std::string &str,size_t pos,size_t end)
 {
-  return cols(str.data(),pos,str.length());
+  return cols(str.data(),pos,(end!=std::string::npos) ? end : str.length());
 }
 
 template <class scalar>
-int MatToStr<scalar>::cols(const char * pData,size_t pos,const size_t eof)
+int MatToStr<scalar>::cols(const char * pData,size_t pos,const size_t end)
 {
+  char *pEnd;
   int result=0;
-  while (pos<eof) {
+  while (pos<end) {
     if (pData[pos]=='[') result++;
     if ((pData[pos]=='[') || (pData[pos]=='{') || (pData[pos]=='(')) result=0;
     if ((pData[pos]=='\n') || (pData[pos]==';')) return ++result;
+    if ((pData[pos]=='x') || (pData[pos]=='u') || (pData[pos]=='y')) {
+      pos++;
+      int col=std::strtold(pData+pos,&pEnd);
+      if (ms_zeroBased) col++;
+      pos=(int)(pEnd-pData);
+      if (col>result) result=col;
+    }
     if ((pData[pos]==']') || (pData[pos]=='}') || (pData[pos]==')')) {
       if ((pos>0) && ((pData[pos-1]=='[') || (pData[pos-1]=='{') || (pData[pos-1]=='('))) return 0;
       return ++result;
@@ -216,10 +229,10 @@ bool MatToStr<scalar>::hasInequalities(const std::string &str,size_t pos)
 }
 
 template <class scalar>
-bool MatToStr<scalar>::hasInequalities(const char * pData,size_t pos,const size_t eof)
+bool MatToStr<scalar>::hasInequalities(const char * pData,size_t pos,const size_t end)
 {
-  pos=skipControls(pData,pos,eof);
-  while (pos<eof) {
+  pos=skipControls(pData,pos,end);
+  while (pos<end) {
     if ((pData[pos]=='>') || (pData[pos]=='<')) return true;
     if ((pData[pos]=='\n') || (pData[pos]==';') || pData[pos]==']') return false;
     pos++;
@@ -228,9 +241,9 @@ bool MatToStr<scalar>::hasInequalities(const char * pData,size_t pos,const size_
 }
 
 template <class scalar>
-int MatToStr<scalar>::getCommand(commands_t &command,const char * pData,size_t pos,size_t eof)
+int MatToStr<scalar>::getCommand(commands_t &command,const char * pData,size_t pos,size_t end)
 {
-  pos=skipControls(pData,pos,eof);
+  pos=skipControls(pData,pos,end);
   switch(pData[pos]) {
   case '+':
     command=ePlusCmd;
@@ -242,7 +255,7 @@ int MatToStr<scalar>::getCommand(commands_t &command,const char * pData,size_t p
     command=eGivenCmd;
       break;
   case '-':
-    if ((pos<eof) && (pData[pos+1]=='>')) {
+    if ((pos<end) && (pData[pos+1]=='>')) {
       command=eArrowCmd;
       pos++;
     }
@@ -262,21 +275,21 @@ int MatToStr<scalar>::getCommand(commands_t &command,const std::string &str,size
 }
 
 template <class scalar>
-int MatToStr<scalar>::StringToMat(MatrixS &matrix,const std::string &str,size_t pos)
+int MatToStr<scalar>::StringToMat(MatrixS &matrix,const std::string &str,size_t pos,const size_t end)
 {
-  return StringToMat(matrix,ms_emptyMatrix,str.data(),pos,str.length());
+  return StringToMat(matrix,ms_emptyMatrix,str.data(),pos,(end!=std::string::npos) ? end : str.length());
 }
 
 template <class scalar>
-int MatToStr<scalar>::StringToMat(MatrixS &directions,MatrixS &supports,const std::string &str,size_t pos)
+int MatToStr<scalar>::StringToMat(MatrixS &directions,MatrixS &supports,const std::string &str,size_t pos,const size_t end)
 {
-  return StringToMat(directions,supports,str.data(),pos,str.length());
+  return StringToMat(directions,supports,str.data(),pos,(end!=std::string::npos) ? end : str.length());
 }
 
 template <class scalar>
-scalar MatToStr<scalar>::getNumber(const char * pData,size_t &pos,const size_t eof)
+scalar MatToStr<scalar>::getNumber(const char * pData,size_t &pos,const size_t end)
 {
-  pos=skipControls(pData,pos,eof);
+  pos=skipControls(pData,pos,end);
   scalar value;
   char *pEnd=func::toScalar(pData+pos,value);
   pos=(int)(pEnd-pData);
@@ -284,42 +297,48 @@ scalar MatToStr<scalar>::getNumber(const char * pData,size_t &pos,const size_t e
 }
 
 template <class scalar>
-int MatToStr<scalar>::StringToMat(MatrixS& matrix,MatrixS &aux,const char * pData,size_t pos,size_t eof)
+int MatToStr<scalar>::StringToMat(MatrixS& matrix,MatrixS &aux,const char * pData,size_t pos,size_t end)
 {
   char * pEnd;
-  pos=skipControls(pData,pos,eof);
-  if ((pos<eof) && ((pData[pos]=='[') || (pData[pos]=='{') || (pData[pos]=='('))) pos++;
+  pos=skipControls(pData,pos,end);
+  if ((pos<end) && ((pData[pos]=='[') || (pData[pos]=='{') || (pData[pos]=='('))) pos++;
   matrix=MatrixS::Zero(matrix.rows(),matrix.cols());
   if (aux.rows()>0) aux=MatrixS::Zero(aux.rows(),aux.cols());
-  for (int row=0;(row<matrix.rows()) && (pos<eof);row++) {
-    for (int col=0;(col<matrix.cols()) && (pos<eof);col++) {
-      pos=skipSpaces(pData,pos,eof);
-      if ((pos<eof) && ((pData[pos]=='\n') || (pData[pos]==';') || (pData[pos]==']') || (pData[pos]=='}') || (pData[pos]==')'))) break;
+  for (int row=0;(row<matrix.rows()) && (pos<end);row++) {
+    for (int col=0;(col<matrix.cols()) && (pos<end);col++) {
+      pos=skipSpaces(pData,pos,end);
+      if ((pos<end) && ((pData[pos]=='\n') || (pData[pos]==';') || (pData[pos]=='&') || (pData[pos]==']') || (pData[pos]=='}') || (pData[pos]==')'))) break;
+      bool neg=(pData[pos]=='-');
       scalar value;
       pEnd=func::toScalar(pData+pos,value);
-      pos=skipSpaces(pData,(int)(pEnd-pData),eof);
-      if ((pData[pos]=='x') || (pData[pos]=='u')) {
+      if (pEnd==(pData+pos)) {
+        if (neg) pEnd++;
+        value=neg ? -ms_one : ms_one;
+      }
+      pos=skipSpaces(pData,(int)(pEnd-pData),end);
+      if ((pData[pos]=='x') || (pData[pos]=='u') || (pData[pos]=='y')) {
         pos++;
         col=std::strtold(pData+pos,&pEnd);
+        if (!ms_zeroBased) col--;
         pos=(int)(pEnd-pData);
-        if (func::isZero(value)) value=1.0;
+//        if (func::isZero(value)) value=1.0;
       }
       matrix.coeffRef(row,col)=value;
-      pos=skipSpaces(pData,(int)(pEnd-pData),eof);
+      pos=skipSpaces(pData,(int)(pEnd-pData),end);
       if (pData[pos]=='+') {
         scalar error=std::strtold(pData+pos,&pEnd);
-        pos=skipSpaces(pData,(int)(pEnd-pData),eof);
+        pos=skipSpaces(pData,(int)(pEnd-pData),end);
       }
       if ((pData[pos]=='\n') || (pData[pos]==';') || (pData[pos]=='<') || (pData[pos]=='>') || (pData[pos]=='=')) break;
       else if (pData[pos]==',') pos++;
-      else if (pData[pos]=='&') pos++;
     }
-    if ((pData[pos]=='\n') || (pData[pos]==';')) pos++;
+    if ((pData[pos]=='\n') || (pData[pos]==';') || (pData[pos]=='&')) pos++;
     else if ((pData[pos]=='<') || (pData[pos]=='>') || (pData[pos]=='=')) {
       if (aux.rows()<=0) return -pos;
       bool reverse=(pData[pos]=='>');
       pos++;
-      pos=skipSpaces(pData,pos,eof);
+      if (pData[pos]=='=') pos++;
+      pos=skipSpaces(pData,pos,end);
       scalar value;
       pEnd=func::toScalar(pData+pos,value);
       aux.coeffRef(row,0)=value;
@@ -327,17 +346,151 @@ int MatToStr<scalar>::StringToMat(MatrixS& matrix,MatrixS &aux,const char * pDat
         matrix.row(row)=-matrix.row(row);
         aux.coeffRef(row,0)=-aux.coeffRef(row,0);
       }
-      pos=skipSpaces(pData,(int)(pEnd-pData),eof);
+      pos=skipSpaces(pData,(int)(pEnd-pData),end);
       if (pData[pos]=='+') {
         long double error=std::strtold(pData+pos,&pEnd);
-        pos=skipSpaces(pData,(int)(pEnd-pData),eof);
+        pos=skipSpaces(pData,(int)(pEnd-pData),end);
       }
-      if ((pData[pos]=='\n') || (pData[pos]==';')) pos++;
+      if ((pData[pos]=='\n') || (pData[pos]==';') || (pData[pos]=='&')) pos++;
     }
-    pos=skipSpaces(pData,pos,eof);
+    pos=skipSpaces(pData,pos,end);
   }
   if ((pData[pos]==']') || (pData[pos]=='}') || (pData[pos]==')')) pos++;
   return pos;
+}
+
+template <class scalar>
+int MatToStr<scalar>::StringToMat(SMatrixS& matrix,MatrixS &aux,const char * pData,size_t pos,size_t end)
+{
+  char * pEnd;
+  pos=skipControls(pData,pos,end);
+  if ((pos<end) && ((pData[pos]=='[') || (pData[pos]=='{') || (pData[pos]=='('))) pos++;
+  matrix.assign(matrix.rows(),typename type::sparseVector());
+  if (aux.rows()>0) aux=MatrixS::Zero(aux.rows(),aux.cols());
+  for (int row=0;(row<matrix.rows()) && (pos<end);row++) {
+    typename type::sparseVector &data=matrix[row];
+    for (int col=0;(col<matrix.cols()) && (pos<end);col++) {
+      pos=skipSpaces(pData,pos,end);
+      if ((pos<end) && ((pData[pos]=='\n') || (pData[pos]==';') || (pData[pos]=='&') || (pData[pos]==']') || (pData[pos]=='}') || (pData[pos]==')'))) break;
+      bool neg=(pData[pos]=='-');
+      scalar value;
+      pEnd=func::toScalar(pData+pos,value);
+      if (pEnd==(pData+pos)) {
+        if (neg) pEnd++;
+        value=neg ? -ms_one : ms_one;
+      }
+      pos=skipSpaces(pData,(int)(pEnd-pData),end);
+      if ((pData[pos]=='x') || (pData[pos]=='u') || (pData[pos]=='y')) {
+        pos++;
+        col=std::strtold(pData+pos,&pEnd);
+        if (!ms_zeroBased) col--;
+        pos=(int)(pEnd-pData);
+//        if (func::isZero(value)) value=1.0;
+      }
+      data[col]=value;
+      pos=skipSpaces(pData,(int)(pEnd-pData),end);
+      if (pData[pos]=='+') {
+        scalar error=std::strtold(pData+pos,&pEnd);
+        pos=skipSpaces(pData,(int)(pEnd-pData),end);
+      }
+      if ((pData[pos]=='\n') || (pData[pos]==';') || (pData[pos]=='<') || (pData[pos]=='>') || (pData[pos]=='=')) break;
+      else if (pData[pos]==',') pos++;
+    }
+    if ((pData[pos]=='\n') || (pData[pos]==';') || (pData[pos]=='&')) pos++;
+    else if ((pData[pos]=='<') || (pData[pos]=='>') || (pData[pos]=='=')) {
+      if (aux.rows()<=0) return -pos;
+      bool reverse=(pData[pos]=='>');
+      pos++;
+      if (pData[pos]=='=') pos++;
+      pos=skipSpaces(pData,pos,end);
+      scalar value;
+      pEnd=func::toScalar(pData+pos,value);
+      aux.coeffRef(row,0)=value;
+      if (reverse) {
+        for (typename type::sparseVector::iterator it=data.begin();it!=data.end();it++) {
+          it->second=-it->second;
+        }
+        aux.coeffRef(row,0)=-aux.coeffRef(row,0);
+      }
+      pos=skipSpaces(pData,(int)(pEnd-pData),end);
+      if (pData[pos]=='+') {
+        long double error=std::strtold(pData+pos,&pEnd);
+        pos=skipSpaces(pData,(int)(pEnd-pData),end);
+      }
+      if ((pData[pos]=='\n') || (pData[pos]==';') || (pData[pos]=='&')) pos++;
+    }
+    pos=skipSpaces(pData,pos,end);
+  }
+  if ((pData[pos]==']') || (pData[pos]=='}') || (pData[pos]==')')) pos++;
+  return pos;
+}
+
+template <class scalar>
+int MatToStr<scalar>::StringToDynamics(MatrixS &dynamics,const std::string &str,size_t pos,const size_t end)
+{
+  return StringToDynamics(dynamics,ms_emptyMatrix,str.data(),pos,(end!=std::string::npos) ? end : str.length());
+}
+
+template <class scalar>
+int MatToStr<scalar>::StringToDynamics(MatrixS &dynamics,MatrixS &sensitivity,const std::string &str,size_t pos,const size_t end)
+{
+  return StringToDynamics(dynamics,sensitivity,str.data(),pos,(end!=std::string::npos) ? end : str.length());
+}
+
+template <class scalar>
+int MatToStr<scalar>::StringToDynamics(MatrixS &dynamics,MatrixS &sensitivity,const char * pData,size_t pos,const size_t end)
+{
+  char * pEnd;
+  int col;
+  while (pos<end) {
+    pos=skipControls(pData,pos,end);
+    if (pData[pos]=='t') {
+      pos++;
+      while((pos<end) && pData[pos]!='&') pos++;
+      if (pData[pos]=='&') pos++;
+      if (pos==end) return pos;
+      pos=skipControls(pData,pos,end);
+    }
+    if ((pData[pos]!='x') && (pData[pos]!='y')) return -pos;
+    pos++;
+    int row=std::strtold(pData+pos,&pEnd)-1;
+    if (row<0) return -pos;
+    pos=(int)(pEnd-pData);
+    if (pData[pos]=='\'') pos++;
+    pos=skipControls(pData,pos,end);
+    while (pData[pos]=='=') pos++;
+    pos=skipControls(pData,pos,end);
+    while(pos<end && pData[pos]!='\n' && pData[pos]!='&' && pData[pos]!='<') {
+      bool neg=(pData[pos]=='-');
+      if (pData[pos]=='+') pos++;
+      if (pData[pos]=='-') pos++;
+      pos=skipControls(pData,pos,end);
+      scalar value;
+      pEnd=func::toScalar(pData+pos,value);
+      if (pEnd==(pData+pos)) value=ms_one;
+      if (neg) value=-value;
+      pos=skipSpaces(pData,(int)(pEnd-pData),end);
+      if (pData[pos]=='*') pos++;
+      pos=skipSpaces(pData,pos,end);
+      bool state=(pData[pos]=='x');
+      bool sense=(pData[pos]=='u');
+      if (state || sense) {
+        pos++;
+        col=std::strtold(pData+pos,&pEnd);
+        if (!ms_zeroBased) col--;
+        pos=(int)(pEnd-pData);
+        if (func::isZero(value)) value=ms_one;
+      }
+      else return -pos;
+      if (state) dynamics.coeffRef(row,col)=value;
+      else sensitivity.coeffRef(row,col)=value;
+      pos=skipSpaces(pData,(int)(pEnd-pData),end);
+    }
+    pos++;
+    pos=skipControls(pData,pos,end);
+    while((pData[pos]=='&') || (pData[pos]=='\n')) pos++;
+    pos=skipControls(pData,pos,end);
+  }
 }
 
 template <class scalar>
@@ -347,10 +500,10 @@ int MatToStr<scalar>::StringToDim(ParamMatrix &paramValues,const std::string &st
 }
 
 template <class scalar>
-int MatToStr<scalar>::StringToDim(ParamMatrix &paramValues,const char * pData,size_t pos,size_t eof)
+int MatToStr<scalar>::StringToDim(ParamMatrix &paramValues,const char * pData,size_t pos,size_t end)
 {
   char * pEnd;
-  pos=skipSpaces(pData,pos,eof);
+  pos=skipSpaces(pData,pos,end);
   bool found=false;
   for (int j=0;j<eNumParameters;j++) {
     if (pData[pos]==ms_codes[j]) found=true;
@@ -363,27 +516,27 @@ int MatToStr<scalar>::StringToDim(ParamMatrix &paramValues,const char * pData,si
       pos++;
       paramValues.coeffRef(j,0)=std::strtold(pData+pos,&pEnd);
       pos=(int)(pEnd-pData);
-      pos=skipSpaces(pData,pos,eof);
+      pos=skipSpaces(pData,pos,end);
       if (pData[pos]==':') {
         pos++;
         paramValues.coeffRef(j,1)=std::strtold(pData+pos,&pEnd);
         pos=(int)(pEnd-pData);
-        pos=skipSpaces(pData,pos,eof);
+        pos=skipSpaces(pData,pos,end);
         if (pData[pos]==':') {
           pos++;
           paramValues.coeffRef(j,2)=std::strtold(pData+pos,&pEnd);
           pos=(int)(pEnd-pData);
-          pos=skipSpaces(pData,pos,eof);
+          pos=skipSpaces(pData,pos,end);
         }
       }
       if (pData[pos]==',') pos++;
-      pos=skipSpaces(pData,pos,eof);
+      pos=skipSpaces(pData,pos,end);
     }
   }
   return pos;
 }
 
-template <class scalar> std::string MatToStr<scalar>::DimToString(ParamMatrix* paramValues,refScalar error)
+template <class scalar> std::string MatToStr<scalar>::DimToString(ParamMatrix* paramValues,refScalar error,refScalar verror)
 {
   std::ostringstream stream;
   for (int i=0;i<eNumParameters;i++) {
@@ -398,7 +551,7 @@ template <class scalar> std::string MatToStr<scalar>::DimToString(ParamMatrix* p
       stream << ",";
     }
   }
-  stream << "e=" << func::toDouble(error) << "\n";
+  stream << "e=" << func::toDouble(error) << ":" << func::toDouble(verror) << "\n";
   return stream.str();
 }
 
@@ -420,6 +573,38 @@ template <class scalar> std::string MatToStr<scalar>::MatToString(const MatrixS 
     {
       for (int col=0;col<matrix.cols();col++) result+=MakeNumber(matrix.coeff(row,col),interval,m_precision,normalised ? row : -1)+m_separator; \
       if (result.length()>3) result.resize(result.length()-3);
+      result+="\n  ";
+    }
+  }
+  if (result.length()>3) result.resize(result.length()-3);
+  result+=m_rightBracket;
+  return result;
+}
+
+/// Returns the description of a matrix
+template <class scalar> std::string MatToStr<scalar>::MatToString(SMatrixS &matrix,const bool interval,const bool normalised,const bool transpose)
+{
+  std::string result=m_leftBracket;
+  if (normalised) clearNorms(matrix,transpose);
+  if (transpose) {
+    for (int col=0;col<matrix.cols();col++)
+    {
+      for (int row=0;row<matrix.rows();row++) result+=MakeNumber(matrix.coeff(row,col),interval,m_precision,normalised ? row : -1)+m_separator; \
+      if (result.length()>3) result.resize(result.length()-3);
+      result+="\n  ";
+    }
+  }
+  else {
+    for (int row=0;row<matrix.rows();row++)
+    {
+      std::stringstream buffer;
+      typename type::sparseVector &data=matrix[row];
+      for (typename type::sparseVector::iterator it=data.begin();it!=data.end();it++) {
+        if (it!=data.begin()) buffer << m_separator;
+        buffer << MakeNumber(it->second,interval,m_precision,normalised ? row : -1);
+        buffer << "x" << it->first;
+      }
+      result+=buffer.str();
       result+="\n  ";
     }
   }
@@ -470,9 +655,9 @@ std::string MatToStr<scalar>::IneToString(const MatrixS &directions,const Matrix
   if (normalised) clearNorms(directions,transposed);
   for (int row=0;row<supports.rows();row++) { //ie transposed ? directions.cols() : pDirections->rows()
     if (transposed) {
-        for (int col=0;col<directions.rows();col++) {
-          result+=MakeNumber(directions.coeff(col,row),interval,m_precision,normalised ? col : -1)+m_separator;
-        }
+      for (int col=0;col<directions.rows();col++) {
+        result+=MakeNumber(directions.coeff(col,row),interval,m_precision,normalised ? col : -1)+m_separator;
+      }
     }
     else {
       for (int col=0;col<directions.cols();col++) {
@@ -492,6 +677,41 @@ std::string MatToStr<scalar>::IneToString(const MatrixS &directions,const Matrix
   return result;
 }
 
+/// Returns the description of a complex matrix
+template <class scalar>
+std::string MatToStr<scalar>::IneToString(SMatrixS &directions,const MatrixS &supports,const bool interval,const bool normalised,const bool transposed)
+{
+  std::string result=m_leftBracket;
+  if (normalised) clearNorms(directions,transposed);
+  for (int row=0;row<supports.rows();row++) { //ie transposed ? directions.cols() : pDirections->rows()
+    if (transposed) {
+      for (int col=0;col<directions.rows();col++) {
+        result+=MakeNumber(directions.coeff(col,row),interval,m_precision,normalised ? col : -1)+m_separator;
+      }
+      if (result.length()>3) result.resize(result.length()-3);
+    }
+    else {
+      std::stringstream buffer;
+      typename type::sparseVector &data=directions[row];
+      for (typename type::sparseVector::iterator it=data.begin();it!=data.end();it++) {
+        if (it!=data.begin()) buffer << m_separator;
+        buffer << MakeNumber(it->second,interval,m_precision,normalised ? row : -1);
+        buffer << "x" << it->first;
+      }
+      result+=buffer.str();
+    }
+    result+=" < ";
+    for (int col=0;col<supports.cols();col++) {
+      result+=MakeNumber(supports.coeff(row,col),interval,m_precision,normalised ? row : -1)+m_separator;
+    }
+    if (result.length()>3) result.resize(result.length()-3);
+    result+="\n  ";
+  }
+  if (result.length()>3) result.resize(result.length()-3);
+  if (!result.empty()) result+=m_rightBracket;
+  return result;
+}
+
 template <class scalar>
 void MatToStr<scalar>::clearNorms(const MatrixS &matrix,const bool transpose)
 {
@@ -499,6 +719,20 @@ void MatToStr<scalar>::clearNorms(const MatrixS &matrix,const bool transpose)
   else m_norms=matrix.rowwise().norm();
   for (int row=0;row<m_norms.rows();row++) {
     if (func::isZero(m_norms.coeff(row)/*,m_zero*/)) m_norms.coeffRef(row)=1;
+  }
+}
+
+template <class scalar>
+void MatToStr<scalar>::clearNorms(SMatrixS &matrix,const bool transpose)
+{
+  UNUSED(transpose);
+  m_norms=MatrixS::Zero(matrix.rows(),1);
+  for (int row=0;row<m_norms.rows();row++) {
+    typename type::sparseVector &data=matrix[row];
+    for (typename type::sparseVector::iterator it=data.begin();it!=data.end();it++) {
+      m_norms.coeffRef(row)+=it->second;
+    }
+    if (func::isZero(m_norms.coeff(row))) m_norms.coeffRef(row)=1;
   }
 }
 
@@ -562,6 +796,13 @@ void MatToStr<scalar>::logData(const MatrixS &matrix,const std::string title,boo
 }
 
 template <class scalar>
+void MatToStr<scalar>::logData(SMatrixS &matrix,const std::string title,bool transpose,bool forceNewLine)
+{
+  if (!title.empty()) logData(title,(transpose ? (matrix.cols()>1) : (matrix.rows()>1)) || forceNewLine);
+  logData(MatToString(matrix,ms_traceIntervals,false,transpose),false);
+}
+
+template <class scalar>
 void MatToStr<scalar>::logNormalisedData(const MatrixS &matrix,int col,const std::string title)
 {
   MatrixS normedMatrix=matrix;
@@ -588,6 +829,13 @@ void MatToStr<scalar>::logData(const MatrixC &matrix,const std::string title,boo
 
 template <class scalar>
 void MatToStr<scalar>::logData(const MatrixS &directions,const MatrixS &supports,const std::string title,bool transpose)
+{
+  if (!title.empty()) logData(title,true);
+  logData(IneToString(directions,supports,ms_traceIntervals,false,transpose),false);
+}
+
+template <class scalar>
+void MatToStr<scalar>::logData(SMatrixS &directions,const MatrixS &supports,const std::string title,bool transpose)
 {
   if (!title.empty()) logData(title,true);
   logData(IneToString(directions,supports,ms_traceIntervals,false,transpose),false);

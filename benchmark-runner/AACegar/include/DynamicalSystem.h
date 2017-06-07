@@ -29,7 +29,7 @@ typedef enum
     eEigenTemplates         = 0x80
 } AbstractionFlags;
 
-typedef enum{eParamStr,eDynamicsStr,iSenseStr,oSenseStr,ioSenseStr,eGuardStr,iGuardStr,sGuardStr,oGuardStr,eInitStr,eInputStr,eTemplateStr,eARMAXStr,eControlStr,eRefStr,eMaxStr} optionStr_t;
+typedef enum{eParamStr,eDynamicsStr,iSenseStr,oSenseStr,ioSenseStr,eGuardStr,iGuardStr,sGuardStr,oGuardStr,eInitStr,eInputStr,eTemplateStr,eARMAXStr,eSpaceXStr,eControlStr,eReferenceStr,eIncOrderStr,eSampleStr,eRandStr,eMaxStr} optionStr_t;
 typedef std::list<std::string> stringList;
 typedef std::map<optionStr_t,std::string> optionList_t;
 
@@ -64,20 +64,25 @@ public:
     using JordanMatrix<scalar>::ms_trace_time;
     using JordanMatrix<scalar>::ms_emptyMatrix;
 
-    using AccelMatrix<scalar>::binomial;
     using AbstractMatrix<scalar>::m_inputType;
     using AbstractMatrix<scalar>::m_zeniths;
     using AbstractMatrix<scalar>::m_freq;
+
+    using AccelMatrix<scalar>::binomial;
+    using AccelMatrix<scalar>::load;
+    using AccelMatrix<scalar>::loadJordan;
     using AbstractMatrix<scalar>::findZeniths;
     using AbstractMatrix<scalar>::findFrequencies;
     using AbstractMatrix<scalar>::isDivergent;
     using AbstractMatrix<scalar>::getPseudoDynamics;
     using AbstractMatrix<scalar>::getAbstractDynamics;
+    using AbstractMatrix<scalar>::getRoundedDirections;
     using AbstractMatrix<scalar>::getSJinvS;
     using AbstractMatrix<scalar>::getMatrix;
     using AbstractMatrix<scalar>::jordanToPseudoJordan;
     using AbstractMatrix<scalar>::calculateJordanForm;
     using AbstractMatrix<scalar>::calculateMaxIterations;
+    using AbstractMatrix<scalar>::firstVarBlock;
 
     /// Constructs an empty buffer
     /// @param pParent owner of the system
@@ -178,17 +183,8 @@ public:
     /// Saves a description of the analysis onto a file
     bool save(displayType_t displayType=eInequalities,space_t space=eNormalSpace,bool interval=false,bool append=false);
 
-    /// Retrieves the number of non-correlated dimensions in the eigenspace
-    int getRoundedDimension();
-
     /// Retrieves the number of radii dimensions in the eigenspace (only one per conjugate pair)
     int getNormedDimension();
-
-    /// Retrieves the corresponding circular vectors for a given set of vectors
-    /// @param result container for the resulting directions
-    /// @param vectors origianl directions to transform
-    /// @param transposed indicates if the supplied vectors are row oriented
-    MatrixS& getRoundedDirections(MatrixS &result,const MatrixS &vectors,bool transposed=false);
 
     /// Retrieves the corresponding radial vectors for a given set of vectors
     /// @param result container for the resulting directions
@@ -244,6 +240,9 @@ public:
 
     /// Retrieves an abstractreachtube projected across a guard
     void getGuardedReachTube(AbstractPolyhedra<scalar>& reachTube,space_t space);
+
+    /// Retrieves the support functions for the reach tube in the given directions
+    MatrixS getAbstractReachTubeSupports(powerS iteration,int precision,AbstractPolyhedra<scalar>& dynamics,const MatrixS &templates);
 
     /// Retrieves the abstract reach tube at the given iteration
     /// @param iteration the n power of A for the iteration
@@ -309,27 +308,27 @@ public:
      ...
      g_r1,g_r2, ... ,g_rp, h_r
      **/
-    /// @param pos position to start parsing from
     /// @param vertices indicates if the description is vertex or inequality oriented
+    /// @param pos position to start parsing from
     /// @return position after parsing, negative if failed
-    int loadOutputGuard(const std::string &data,size_t pos=0,bool vertices=false);
+    int loadOutputGuard(const std::string &data,bool vertices=false,size_t pos=0,size_t end=std::string::npos);
 
     /// Loads a polyhedral description for the initial state
     /// @param data buffer containing the polyhedra description
-    /// @param pos position to start parsing from
     /// @param vertices indicates if the description is vertex or inequality oriented
-    /// @return position after parsing, negative if failed 
-    int loadInitialState(const std::string &data,size_t pos=0,bool vertices=false);
+    /// @param pos position to start parsing from
+    /// @return position after parsing, negative if failed
+    int loadInitialState(const std::string &data,bool vertices=false,size_t pos=0,size_t end=std::string::npos);
 
     /// Loads a polyhedral description for the inputs
     /// @param data buffer containing the polyhedra description
-    /// @param pos position to start parsing from
     /// @param vertices indicates if the description is vertex or inequality oriented
+    /// @param pos position to start parsing from
     /// @return position after parsing, negative if failed
-    int loadInputs(const std::string &data,size_t pos=0,bool vertices=false);
+    int loadInputs(const std::string &data,bool vertices=false,size_t pos=0,size_t end=std::string::npos);
 
     /// Processes the transformed inputs
-    void processInputs();
+    void processInputs(bool useVertices=false);
 
     /// Loads the sensitivity matrix for the inputs
     /// @param data buffer containing the matrix description in the form
@@ -359,7 +358,7 @@ public:
     MatrixS& getTemplates(const space_t space=eNormalSpace,int precision=-2);
 
     /// Retrieves the parametric input vertices for the current problem configuration
-    const MatrixS& getInputVertices(space_t space=eEigenSpace,bool fromSource=false);
+    const MatrixS getInputVertices(space_t space=eEigenSpace,bool fromSource=false);
 
     long long int getLoadTime()         { return m_loadTime; }
     long long int getReachTime()        { return m_reachTime; }
@@ -377,16 +376,23 @@ protected:
     /// retrieve the kronecker product of A and B
     MatrixS kronecker(const MatrixS& A,const MatrixS& B,const bool transA=false,const bool transB=false);
 
-    /// Retrieves the abstract vector set for a given template set
-    MatrixS getCombinedVectors(MatrixS &vectors,const MatrixS& templates,AbstractPolyhedra<scalar> &inputs,const MatrixS &inputVertices);
+    /// Retrieves the round abstract vector set for a given template set
+    /// @param vectors placeHolder for the resulting abstract vertices
+    /// @param templates original templates to creat the round abstract vertices from
+    /// @param fromSource indicates if the input vertices should be created directly from soucre
+    /// @return the number of round vertices used to source the abstract vertices
+    int getRoundedAbstractVertices(MatrixS &vectors,const MatrixS& templates,bool fromSource);
 
     /// Retrieves the abstract vector set for a given template set
-    MatrixS& getAbstractVertices(const MatrixS& templates,MatrixS &vectors,int &numVertices);
-    MatrixS& getAbstractVertices(const MatrixS& templates)
-    { return getAbstractVertices(templates,m_abstractVertices,m_numVertices); }
+    MatrixS getCombinedVectors(MatrixS &vectors,const MatrixS& templates,bool fromSource,const MatrixS &inputVertices);
+
+    /// Retrieves the abstract vector set for a given template set
+    MatrixS& getAbstractVertices(const MatrixS& templates,MatrixS &vectors,int &numVertices,bool force=true);
+    MatrixS& getAbstractVertices(const MatrixS& templates,bool force=true)
+    { return getAbstractVertices(templates,m_abstractVertices,m_numVertices,force); }
 
     /// Retrieves the parametric accelerated input vertices for the current problem configuration
-    MatrixS& getAccelVertices();
+    MatrixS& getAccelVertices(bool load=true);
 
     /// Calculates the parametric input supports for the given abstraction
     MatrixS& getAccelInSupports(powerS iteration, int precision,const MatrixS& templates);
@@ -406,6 +412,10 @@ protected:
     /// Processes a calculation error either executing a throw or tagging an imprecision
     void processError(std::string source);
 public:
+    /// @param dynamics of the system
+    /// @return true if succesful
+    bool loadDynamics(const MatrixS &dynamics);
+
     /// Loads the transformation matrix for the state space
     /// @param data buffer containing the matrix description in the form
     /**
@@ -414,7 +424,7 @@ public:
      ...
      a_p1,a_p2, ... ,a_pp
      **/
-    /// @return true if succesful
+    /// @return the position at which parsing ended (negative if failed)
     virtual int loadDynamics(const std::string &data,size_t pos=0);
 
     /// Loads the LTI dynamics of an armax model
@@ -480,7 +490,7 @@ public:
     void setParams(ParamMatrix& params);
 
     static void traceDynamics(const traceDynamics_t traceType);
-    static void traceSimplex(const traceTableau_t traceTableau,const traceVertices_t traceVertices);
+    static void traceSimplex(const traceTableau_t traceTableau,const tracePivots_t tracePivots,const traceVertices_t traceVertices);
 
 protected:
     int                         m_loadTime;
@@ -513,6 +523,7 @@ protected:
     MatrixS                     m_logTemplates;
     MatrixS                     m_sensitivity;
     MatrixS                     m_outputSensitivity;
+    MatrixS                     m_ioSensitivity;
     MatrixS                     m_feedback;
     MatrixS                     m_abstractVertices;
     MatrixS                     m_abstractInputVertices;
@@ -525,6 +536,7 @@ protected:
     std::vector<int>            m_normedJordanIndex;
     std::vector<bool>           m_normedOnes;
 public:
+    static bool                 ms_incremental;
     static bool                 ms_fullAnswers;
 };
 

@@ -20,18 +20,19 @@ typedef Eigen::Matrix<int,eNumParameters,3> ParamMatrix;
 
 template <class scalar> class MatToStr {
 public:
-    typedef interval_def<scalar> type;
-    typedef typename type::scalar_type refScalar;
-    typedef typename type::complexS complexS;
-    typedef typename type::MatrixS  MatrixS;
-    typedef typename type::MatrixC  MatrixC;
+    typedef interval_def<scalar>        type;
+    typedef typename type::scalar_type  refScalar;
+    typedef typename type::complexS     complexS;
+    typedef typename type::MatrixS      MatrixS;
+    typedef typename type::MatrixC      MatrixC;
+    typedef typename type::sparseMatrix SMatrixS;
 
     typedef functions<refScalar> func;
 
     void setPrecision(int precision) { m_precision=precision; }
     MatToStr(const int precision,const std::string leftBracket,const std::string rightBracket,const std::string separator);
     MatToStr(const bool brackets);
-    scalar getNumber(const char * pData,size_t &pos=0,const size_t eof=0);
+    scalar getNumber(const char * pData,size_t &pos=0,const size_t end=0);
     scalar getNumber(const std::string &str,size_t &pos=0) { return getNumber(str.data(),pos,str.size()); }
     std::string MakeNumber(scalar number,const bool interval=ms_traceIntervals,const int precision=6,const int row=-1);
     std::string MakeSTerm(scalar number,std::string &s);
@@ -41,6 +42,8 @@ public:
     std::string MatToString(const MatrixS &matrix,const bool interval=ms_traceIntervals,const bool normalised=false,const bool transpose=false);
     std::string MatToString(const MatrixC &matrix,const bool interval=ms_traceIntervals,const bool normalised=false,const bool transpose=false);
     std::string IneToString(const MatrixS &directions,const MatrixS &supports,const bool interval=ms_traceIntervals,const bool normalised=false,const bool transposed=false);
+    std::string MatToString(SMatrixS &matrix,const bool interval=ms_traceIntervals,const bool normalised=false,const bool transpose=false);
+    std::string IneToString(SMatrixS &directions,const MatrixS &supports,const bool interval=ms_traceIntervals,const bool normalised=false,const bool transposed=false);
 
     /// Returns a C structure description of a matrix
     std::string MatToC(const std::string name,const MatrixS &matrix,const bool interval=false,const bool use_cpp=true);
@@ -48,22 +51,26 @@ public:
     /// Returns a C boolen statement describing a set of Inequlities
     std::string IneToC(const std::string type,const std::string cast,const std::string name,const MatrixS &directions,const MatrixS &supports,const bool interval=false,const int orBlockSize=1);
 
-    int lines(const std::string &str,size_t pos=0);
-    int lines(const char * pData,size_t pos,const size_t eof);
+    int lines(const std::string &str,size_t pos=0,size_t end=std::string::npos);
+    int lines(const char * pData,size_t pos,const size_t end);
 
-    int cols(const std::string &str,size_t pos);
-    int cols(const char * pData,size_t pos,const size_t eof);
+    int cols(const std::string &str,size_t pos,size_t end=std::string::npos);
+    int cols(const char * pData,size_t pos,const size_t end);
 
     bool hasInequalities(const std::string &str,size_t pos=0);
-    bool hasInequalities(const char * pData,size_t pos,const size_t eof);
+    bool hasInequalities(const char * pData,size_t pos,const size_t end);
     std::list<std::string> split(const std::string &string,const std::string &separator);
-    int StringToMat(MatrixS &matrix,const std::string &str,size_t pos=0);
-    int StringToMat(MatrixS &directions,MatrixS &supports,const std::string &str,size_t pos=0);
-    int StringToMat(MatrixS &matrix,MatrixS &aux,const char * pData,size_t pos,const size_t eof);
+    int StringToMat(MatrixS &matrix,const std::string &str,size_t pos=0,const size_t end=std::string::npos);
+    int StringToMat(MatrixS &directions,MatrixS &supports,const std::string &str,size_t pos=0,const size_t end=std::string::npos);
+    int StringToMat(MatrixS &matrix,MatrixS &aux,const char * pData,size_t pos,const size_t end);
+    int StringToMat(SMatrixS &matrix,MatrixS &aux,const char * pData,size_t pos,const size_t end);
     int StringToDim(ParamMatrix &paramValues,const std::string &str,size_t pos=0);
-    int StringToDim(ParamMatrix &paramValues,const char * pData,size_t pos,const size_t eof);
-    std::string DimToString(ParamMatrix* paramValues,refScalar error);
-    int getCommand(commands_t &command,const char * pData,size_t pos,const size_t eof);
+    int StringToDim(ParamMatrix &paramValues,const char * pData,size_t pos,const size_t end);
+    int StringToDynamics(MatrixS &dynamics,const std::string &str,size_t pos=0,const size_t end=std::string::npos);
+    int StringToDynamics(MatrixS &dynamics,MatrixS &sensitivity,const std::string &str,size_t pos=0,const size_t end=std::string::npos);
+    int StringToDynamics(MatrixS &dynamics,MatrixS &sensitivity,const char * pData,size_t pos,const size_t end);
+    std::string DimToString(ParamMatrix* paramValues,refScalar error,refScalar verror);
+    int getCommand(commands_t &command,const char * pData,size_t pos,const size_t end);
     int getCommand(commands_t &command,const std::string &str,size_t pos=0);
     void logData(const std::string data,const bool newLine=true);
     void logData(scalar number,const std::string title,const bool brackets=false);
@@ -72,8 +79,11 @@ public:
     void logData(const MatrixS &matrix,const std::string title="",const bool transpose=false,bool forceNewLine=false);
     void logData(const MatrixC &matrix,const std::string title="",const bool transpose=false,bool forceNewLine=false);
     void logData(const MatrixS &directions,const MatrixS &supports,const std::string title="",const bool transpose=false);
+    void logData(SMatrixS &matrix,const std::string title="",const bool transpose=false,bool forceNewLine=false);
+    void logData(SMatrixS &directions,const MatrixS &supports,const std::string title="",const bool transpose=false);
 public:
     void clearNorms(const MatrixS &matrix,const bool transpose);
+    void clearNorms(SMatrixS &matrix,const bool transpose);
     MatrixS             m_norms;
     refScalar           m_zero;
 private:
@@ -87,6 +97,7 @@ public:
     std::string         m_separator;
     static bool         ms_traceIntervals;
     static bool         ms_useConsole;
+    static bool         ms_zeroBased;
     static scalar       ms_one;
     static refScalar    ms_zero;
     static MatrixS      ms_emptyMatrix;

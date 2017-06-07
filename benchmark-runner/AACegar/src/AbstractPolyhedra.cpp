@@ -11,9 +11,11 @@ bool AbstractPolyhedra<scalar>::ms_trace_abstraction=false;
 
 /// Constructs an empty buffer
 template <class scalar>
-AbstractPolyhedra<scalar>::AbstractPolyhedra(int dimension) :
+AbstractPolyhedra<scalar>::AbstractPolyhedra(int dimension,bool sparse) :
     Polyhedra<scalar>(dimension)
-{}
+{
+  if (sparse) this->m_pSortedTableau=&this->m_sparseTableau;
+}
 
 /// Constructs transformed polyhedra
 template <class scalar>
@@ -57,28 +59,14 @@ typename Tableau<scalar>::MatrixS AbstractPolyhedra<scalar>::getRoundedDirection
 
 /// Retrieves an abstraction that has circular faces in the rotating axis and jordan blocks
 template <class scalar>
-AbstractPolyhedra<scalar>& AbstractPolyhedra<scalar>::getRounded(const std::vector<int> &rotations,const std::vector<int> &dilations,AbstractPolyhedra<scalar> &roundAbstraction)
+bool AbstractPolyhedra<scalar>::getRoundAbstraction(int dimension,int roundDimension,const std::vector<int> &rotations,const std::vector<int> &dilations,AbstractPolyhedra<scalar> &roundAbstraction)
 {
-  int dimension=getDimension();
-  int roundDimension=0;
-  for (int col=0;col<m_faces.cols();col++)
-  {
-    if ((dilations[col+1]>0) || (rotations[col]>col)) dimension--;
-    else if ((dilations[col]>0) || (rotations[col]>=0)) roundDimension++;
-  }
-  this->centralize();
   if (dimension==getDimension()) {
     roundAbstraction.copy(*this);
-    this->decentralize();
-    return roundAbstraction;
-  }
-  if (!this->makeVertices()) {
-    roundAbstraction.clear();
-    this->decentralize();
-    return roundAbstraction;
+    return false;
   }
   roundAbstraction.changeDimension(dimension);
-  roundAbstraction.m_vertices.resize(this->m_vertices.rows(),dimension);
+  roundAbstraction.m_vertices.resize(m_vertices.rows(),dimension);
   roundAbstraction.m_faces.resize(m_faces.rows()+roundDimension,dimension);
   roundAbstraction.m_faces.block(m_faces.rows(),0,roundDimension,dimension)=MatrixS::Zero(roundDimension,dimension);
   int pos=0;
@@ -89,8 +77,8 @@ AbstractPolyhedra<scalar>& AbstractPolyhedra<scalar>::getRounded(const std::vect
     int subDim=mult;
     while(dilations[col+subDim]>0) subDim+=mult;
     if (subDim>1) {
-      for (int row=0;row<this->m_vertices.rows();row++) {
-        roundAbstraction.m_vertices.coeffRef(row,pos)=this->m_vertices.block(row,col,1,subDim).norm();
+      for (int row=0;row<m_vertices.rows();row++) {
+        roundAbstraction.m_vertices.coeffRef(row,pos)=m_vertices.block(row,col,1,subDim).norm();
       }
       for (int row=0;row<m_faces.rows();row++) {
         roundAbstraction.m_faces.coeffRef(row,pos)=m_faces.block(row,col,1,subDim).norm();
@@ -99,12 +87,11 @@ AbstractPolyhedra<scalar>& AbstractPolyhedra<scalar>::getRounded(const std::vect
       col+=subDim-1;
     }
     else {
-      roundAbstraction.m_vertices.col(pos)=this->m_vertices.col(col);
+      roundAbstraction.m_vertices.col(pos)=m_vertices.col(col);
       roundAbstraction.m_faces.block(0,pos,m_faces.rows(),1)=m_faces.col(col);
     }
     pos++;
   }
-  this->decentralize();
   //roundAbstraction.m_supports.resize(roundAbstraction.m_faces.rows()+roundDimension,1);
   MatrixS matrix=roundAbstraction.m_faces*roundAbstraction.m_vertices.transpose();
   roundAbstraction.m_supports=matrix.col(0);
@@ -119,6 +106,28 @@ AbstractPolyhedra<scalar>& AbstractPolyhedra<scalar>::getRounded(const std::vect
   roundAbstraction.m_supports.block(m_faces.rows(),0,roundDimension-m_faces.rows(),1)=MatrixS::Zero(roundDimension-m_faces.rows(),1);
   roundAbstraction.Tableau<scalar>::load(roundAbstraction.m_faces,roundAbstraction.m_supports);
   roundAbstraction.removeRedundancies();
+  return true;
+}
+
+/// Retrieves an abstraction that has circular faces in the rotating axis and jordan blocks
+template <class scalar>
+AbstractPolyhedra<scalar>& AbstractPolyhedra<scalar>::getRounded(const std::vector<int> &rotations,const std::vector<int> &dilations,AbstractPolyhedra<scalar> &roundAbstraction,bool preCentralized)
+{
+  int dimension=getDimension();
+  int roundDimension=0;
+  for (int col=0;col<m_faces.cols();col++)
+  {
+    if ((dilations[col+1]>0) || (rotations[col]>col)) dimension--;
+    else if ((dilations[col]>0) || (rotations[col]>=0)) roundDimension++;
+  }
+  if (!preCentralized) centralize();
+  if (dimension!=getDimension() && !makeVertices()) {
+    roundAbstraction.clear();
+    if (!preCentralized) decentralize();
+    return roundAbstraction;
+  }
+  getRoundAbstraction(dimension,roundDimension,rotations,dilations,roundAbstraction);
+  if (!preCentralized) decentralize();
   return roundAbstraction;
   }
 
@@ -313,11 +322,153 @@ typename Tableau<scalar>::MatrixS AbstractPolyhedra<scalar>::getAbstractVertices
   return result.transpose();
 }
 
+/// Sets the vertices of the polyhedra from a precalculated set
+template <class scalar>
+bool AbstractPolyhedra<scalar>::setVertices(MatrixS &vertices,const MatrixS &centre)
+{
+  m_vertices.resize(vertices.rows(),vertices.cols());
+  m_vertices.block(0,0,vertices.rows(),vertices.cols())=vertices;
+  if (centre.rows()>0) {
+    m_centre=centre;
+    translate(m_centre);
+  }
+}
+
 /// Retrieves a copy of this polyhedra transformed by the given matrix
 template <class scalar>
 AbstractPolyhedra<scalar>& AbstractPolyhedra<scalar>::getTransformedPolyhedra(Polyhedra<scalar> &polyhedra,const MatrixS &transform,const MatrixS &inverse,const MatrixS &templates)
 {
   return dynamic_cast<AbstractPolyhedra&>(Polyhedra<scalar>::getTransformedPolyhedra(polyhedra,transform,inverse,templates));
+}
+
+/// Retrieves a slice of the polyhedra for the size dimensions starting at offset
+template <class scalar>
+bool AbstractPolyhedra<scalar>::slice(AbstractPolyhedra<scalar>&target,int size,int offset,int rowSize,int rowOffset)
+{
+  target.clear();
+  if (size<0) size+=getDimension();
+  if (rowSize<0) rowSize+=m_faces.rows();
+  target.changeDimension(size);
+  if (rowSize>0) {
+    return target.load(m_faces.block(rowOffset,offset,rowSize,size),m_supports.block(rowOffset,0,rowSize,1));
+  }
+  target.m_faces=m_faces.block(rowOffset,offset,m_faces.rows(),size);
+  target.m_supports=m_supports;
+  return target.removeRedundancies();
+}
+
+/// Retrieves a slice of the polyhedra for the size dimensions starting at offset
+template <class scalar>
+bool AbstractPolyhedra<scalar>::getPlane(AbstractPolyhedra<scalar>&target,int col1,int col2,MatrixS &centre)
+{
+  target.clear();
+  target.changeDimension(2);
+  target.m_faces.resize(m_faces.rows(),2);
+  target.m_faces.col(0)=m_faces.col(col1);
+  target.m_faces.col(1)=m_faces.col(col2);
+  target.m_supports=m_supports-m_faces*centre;
+  bool only=true;
+  int pos=0;
+  if (only) {
+    for (int row=0;row<m_faces.rows();row++) {
+      bool maybe=true;
+      for (int col=0;col<m_faces.cols();col++) {
+        if ((col==col1) || (col==col2)) continue;
+        if (!func::isZero(m_faces.coeff(row,col))) maybe=false;
+      }
+      if (maybe) {
+        target.m_faces.row(pos)=target.m_faces.row(row);
+        target.m_supports.row(pos++)=target.m_supports.row(row);
+      }
+    }
+  }
+  else {
+    for (int row=0;row<m_faces.rows();row++) {
+      if (!func::isZero(m_faces.coeff(row,col1)) || !func::isZero(m_faces.coeff(row,col2))) {
+        target.m_faces.row(pos)=target.m_faces.row(row);
+        target.m_supports.row(pos++)=target.m_supports.row(row);
+      }
+    }
+  }
+  target.m_faces.conservativeResize(pos,2);
+  target.m_supports.conservativeResize(pos,1);
+  target.load(target.m_faces,target.m_supports);
+  return target.removeRedundancies();
+}
+
+/// Clears redundant faces in the polyhedra (caused by intersections and reductions)
+template <class scalar>
+bool AbstractPolyhedra<scalar>::removeRedundancies()
+{
+  if (m_faces.rows()<=0) return false;
+  std::vector<bool> isRedundant;
+  isRedundant.resize(m_faces.rows());
+  int redundant=findRedundancies(isRedundant);
+  if (redundant>0) {
+    int pos=0;
+    for (int i=0;i<m_faces.rows();i++) {
+      if (isRedundant[i]) continue;
+      m_faces.row(pos)=m_faces.row(i);
+      m_supports.coeffRef(pos,0)=m_supports.coeff(i,0);
+      if (m_iterations.size()>0) m_iterations[pos]=m_iterations[i];
+      pos++;
+    }
+    m_faces.conservativeResize(pos,m_faces.cols());
+    m_supports.conservativeResize(pos,1);
+    if (m_iterations.size()>0) m_iterations.resize(pos);
+    Tableau<scalar>::load(m_faces,m_supports);
+    return true;
+  }
+  Tableau<scalar>::load(m_faces,m_supports);
+  return false;
+}
+
+/// Loads a description into the tableau (Ax<b)
+template <class scalar>
+bool AbstractPolyhedra<scalar>::loadTagged(const MatrixS &faces,const MatrixS &supports,std::vector<iteration_pair>  &iterations,const bool transpose)
+{
+  m_iterations.resize(0);
+  m_iterations.insert(m_iterations.end(),iterations.begin(),iterations.end());
+  return load(faces,supports,transpose);
+}
+
+/// Loads a description into the tableau (Ax<b)
+template <class scalar>
+bool AbstractPolyhedra<scalar>::loadTagged(SMatrixS &faces,const MatrixS &supports,std::vector<iteration_pair>  &iterations)
+{
+  m_iterations.resize(0);
+  m_iterations.insert(m_iterations.end(),iterations.begin(),iterations.end());
+  m_faces=MatrixS::Zero(faces.rows(),faces.cols());
+  for (int row=0;row<faces.rows();row++) {
+    sparseVector &data=faces[row];
+    for (typename sparseVector::iterator it=data.begin();it!=data.end();it++) {
+      m_faces.coeffRef(row,it->first)=it->second;
+    }
+  }
+  return load(m_faces,supports);
+}
+
+/// Adds a number of directions to the template of the polhedra
+template <class scalar>
+bool AbstractPolyhedra<scalar>::addTaggedDirection(const MatrixS &directions,MatrixS &supports,std::vector<iteration_pair> &iterations,bool keepBasis)
+{
+  m_iterations.insert(m_iterations.end(),iterations.begin(),iterations.end());
+  return addDirection(directions,supports,keepBasis);
+}
+
+/// Adds a number of directions to the template of the polhedra
+template <class scalar>
+bool AbstractPolyhedra<scalar>::addTaggedDirection(SMatrixS &faces,MatrixS &supports,std::vector<iteration_pair> &iterations,bool keepBasis)
+{
+  m_iterations.insert(m_iterations.end(),iterations.begin(),iterations.end());
+  MatrixS directions=MatrixS::Zero(faces.cols(),faces.rows());
+  for (int row=0;row<faces.rows();row++) {
+    sparseVector &data=faces[row];
+    for (typename sparseVector::iterator it=data.begin();it!=data.end();it++) {
+      directions.coeffRef(it->first,row)=it->second;
+    }
+  }
+  return addDirection(directions,supports,keepBasis);
 }
 
 #ifdef USE_LDOUBLE

@@ -38,7 +38,8 @@ matrixt loop_cbmc;
 #include "FWL_LTI_stability.h"
 
 #ifdef _NUM_ITERATIONS
-  #include "FWL_LTI_iters.h"
+  #include "FWL_LTI_control_iters.h"
+//  #include "FWL_LTI_iters.h"
 #endif
 
 //struct implt impl={ .int_bits=_CONTROLER_INT_BITS, .frac_bits=_CONTROLER_FRAC_BITS};
@@ -80,7 +81,8 @@ int main()
   printf("stability=%d\n",result);
 #endif 
 #ifdef _NUM_ITERATIONS
-  if (result>0) checkIterations(loop_cbmc);
+//  if (result>0) checkIterations(loop_cbmc);
+  if (result>0) checkControlIterations();
 #endif
 #ifdef __CPROVER
   __CPROVER_array_copy(controller_cbmc, controller);

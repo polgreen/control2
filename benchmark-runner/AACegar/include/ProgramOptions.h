@@ -24,8 +24,12 @@ public:
   space_t                           space;
   bool                              traceIntervals;
   bool                              formal;
+  bool                              incremental;
+  bool                              continuous;
   bool                              answerOnly;
   bool                              useConsole;
+  bool                              useSparse;
+  bool                              parseError;
 };
 
 }

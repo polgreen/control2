@@ -118,6 +118,7 @@ bool JordanMatrix<scalar>::loadJordan(const MatrixS &matrix)
   m_isOne.resize(2*m_dimension);
   m_conjugatePair.resize(2*m_dimension);
   m_jordanIndex.resize(2*m_dimension);
+  m_cosFactors.resize(m_dimension+1,1);
   for (int i=0;i<m_dimension;i++) {
     m_conjugatePair[i]=-1;
     m_conjugatePair[i+m_dimension]=-1;
@@ -133,7 +134,13 @@ bool JordanMatrix<scalar>::loadJordan(const MatrixS &matrix)
   }
   m_eigenValues=pseudoToJordan(m_pseudoEigenValues,eToEigenValues);
   m_eigenNorms.resize(m_eigenValues.rows(),1);
-  for (int i=0;i<m_eigenValues.rows();i++) m_eigenNorms.coeffRef(i,0)=func::norm2(m_eigenValues.coeff(i,i));
+  for (int i=0;i<m_eigenValues.rows();i++) {
+    m_eigenNorms.coeffRef(i,0)=func::norm2(m_eigenValues.coeff(i,i));
+    if (m_conjugatePair[i]<0) m_cosFactors.coeffRef(i,0)=func::ms_1;
+    else {
+      m_cosFactors.coeffRef(i,0)=m_eigenNorms.coeffRef(i,0)/m_eigenValues.coeff(i,i).real();
+    }
+  }
   m_eigenVectors=MatrixC::Identity(m_dimension,m_dimension);
   m_invEigenVectors=m_eigenVectors;
   m_error=func::ms_hardZero;
@@ -190,11 +197,21 @@ bool JordanMatrix<scalar>::calculateJordanForm(bool includeSvd)
   m_hasOnes=m_eigenSpace.hasOnes();
   m_hasMultiplicities=m_eigenSpace.hasMultiplicities();
   m_eigenNorms.resize(m_eigenValues.rows(),1);
-  for (int i=0;i<m_eigenValues.rows();i++) m_eigenNorms.coeffRef(i,0)=func::norm2(m_eigenValues.coeff(i,i));
+  m_cosFactors.resize(m_dimension+1,1);
+  m_cosFactors.coeffRef(m_dimension,0)=func::ms_1;
+  for (int i=0;i<m_eigenValues.rows();i++) {
+    m_eigenNorms.coeffRef(i,0)=func::norm2(m_eigenValues.coeff(i,i));
+    if (m_conjugatePair[i]<0) m_cosFactors.coeffRef(i,0)=func::ms_1;
+    else {
+      m_cosFactors.coeffRef(i,0)=m_eigenNorms.coeffRef(i,0)/m_eigenValues.coeff(i,i).real();
+      m_cosFactors.coeffRef(m_dimension,0)*=m_cosFactors.coeffRef(i,0);
+    }
+  }
   try {
     m_invEigenVectors=m_eigenVectors.inverse();
   }
   catch(...) {
+    ms_logger.logData("Unsound Inverse");
     refToInter(m_invEigenVectors,m_eigenSpace.getEigenVectors().inverse());
   }
   if (ms_trace_dynamics>=eTraceDynamics) {
@@ -227,11 +244,11 @@ bool JordanMatrix<scalar>::calculateJordanForm(bool includeSvd)
       }
     }
     m_jordanTime=timer.elapsed()*1000;
-    if (ms_trace_time) ms_logger.logData(m_jordanTime,"SVD time:",true);
+    if (ms_trace_time && (ms_trace_dynamics>=eTraceDynamics)) ms_logger.logData(m_jordanTime,"SVD time:",true);
   }
   calculateEigenError();
   m_jordanTime=timer.elapsed()*1000;
-  if (ms_trace_time) ms_logger.logData(m_jordanTime,"Jordan Error time:",true);
+  if (ms_trace_time && (ms_trace_dynamics>=eTraceDynamics)) ms_logger.logData(m_jordanTime,"Jordan Error time:",true);
   for (int row=0;row<m_invPseudoEigenVectors.rows();row++) {
     for (int col=0;col<m_invPseudoEigenVectors.cols();col++) {
       if (func::isNan(m_invPseudoEigenVectors.coeff(row,col))) {
@@ -523,6 +540,16 @@ typename JordanMatrix<scalar>::MatrixS JordanMatrix<scalar>::getSVDpseudoInverse
   return matrixV*diag*matrixU.adjoint();
 }
 
+/// Retrieves the algebraic multiplicity of the ith eigenvalue
+template <class scalar>
+int JordanMatrix<scalar>::jordanBlockSize(int i)
+{
+  int mult=(m_conjugatePair[i]<0) ? 1 : 2;
+  i+=mult;
+  while(m_jordanIndex[i]>0) i+=mult;
+  return m_jordanIndex[i-mult]+1;
+}
+
 /// Calculates a lower bound for the minimum separation between any two jordan blocks
 template <class scalar>
 typename JordanMatrix<scalar>::refScalar JordanMatrix<scalar>::calculateMinSeparation()
@@ -551,7 +578,7 @@ typename JordanMatrix<scalar>::refScalar JordanMatrix<scalar>::calculateMinSepar
       det*=sep;
       diagNorm2+=func::squared(sep);//*sep;
     }
-    if (func::toLower(det)==0) func::imprecise(det,func::ms_hardZero);
+    if (func::toLower(det)==0) func::imprecise(det,func::ms_hardZero,"zero det");
     diagNorm2+=nonDiagNorm2;
     scalar maxColOrRowProd=func::pow(sqrt(diagNorm2),m_dimension-1);
     while (m_jordanIndex[i+mult]>0) i+=mult;
@@ -579,28 +606,52 @@ scalar JordanMatrix<scalar>::calculateEigenError()
   calculated-=m_dynamics;
   scalar errorNorm=calculated.norm();
   m_error=errorNorm*kP;
-  if (func::toUpper(m_error)>m_zero) func::imprecise(m_error,m_zero);
+  if (func::toUpper(m_error)>m_zero) func::imprecise(m_error,m_zero,"Eigenerror too large");
 
   m_boundForError=0;
   if (m_hasMultiplicities) return m_error;
 
   if (ms_trace_dynamics>=eTraceErrors) ms_logger.logData(m_error,"Error:",true);
   m_error=func::setpm(m_error);
-  complexS complexError=m_error;
-  for (int i=0;i<m_dimension;i++) {
-    m_eigenValues.coeffRef(i,i)+=complexError;
-//    m_eigenValues.coeffRef(i,i).real()+=m_error;
-//    if (m_conjugatePair[i]>=0) m_eigenValues.coeffRef(i,i).imag()+=m_error;
+  if (type::isInterval()) {
+    for (int i=0;i<m_dimension;i++) {
+      int size=jordanBlockSize(i);
+      scalar error=m_error;
+      if (size>1) {
+        scalar power=size;
+        power=ms_one/power;
+        error=pow(m_error,func::toDouble(func::toLower(power)));
+        error/=ms_one-error;
+      }
+      if (m_conjugatePair[i]>=0) m_eigenValues.coeffRef(i,i)+=complexS(m_error,m_error);
+      else m_eigenValues.coeffRef(i,i)+=error;
+    }
   }
   m_pseudoEigenValues=jordanToPseudoJordan(m_eigenValues,eToEigenValues);
 
   calculateMinSeparation();
-  for (int i=0;i<m_dimension;i++) {
-    if (m_minSeparation.coeff(i,0)>0) {
-      scalar angleError=errorNorm/m_minSeparation.coeff(i,0);
+  m_verror=func::ms_hardZero;
+  if (type::isInterval()) {
+    for (int i=0;i<m_dimension;i++) {
+      scalar angleError=errorNorm;
+      if (m_minSeparation.coeff(i,0)>0) {
+        angleError/=m_minSeparation.coeff(i,0);
+      }
+      else {
+        MatrixS vMatrix=m_dynamics-jordanToPseudoJordan(m_eigenValues.coeff(i,i)*MatrixC::Identity(m_dimension,m_dimension),eToEigenValues);
+        scalar num=pow(vMatrix.norm(),m_dimension-1);// | [\mat{U}]-[\lambda_i]\mat{I}|_2 ^{n-1}
+        scalar den=ms_one;
+        for (int j=0;j<m_dimension;j++) {
+          if (i+j!=m_jordanIndex[j]) den*=func::norm2(m_eigenValues.coeff(i,i)-m_eigenValues.coeff(j,j));
+        }
+        num/=pow(den,jordanBlockSize(i));// \prod_{i \neq j} {\left([\lambda_j]-[\lambda_i]\right)^{m_i}}
+        scalar dim=m_dimension;
+        angleError*=num*pow(dim,m_dimension-1)/pow(dim-ms_one,m_dimension/2);// >n^(n-1.5)/(n-1)^((n-1)/2)
+      }
       scalar cosTheta=func::toLower(func::cosine(angleError));
       scalar invCosTheta=ms_one/cosTheta;
       scalar vError=func::getHull(cosTheta,invCosTheta);
+      if (func::toUpper(vError)>func::toUpper(m_verror)) m_verror=vError;
       m_eigenVectors.col(i)*=vError;
     }
   }
@@ -637,7 +688,7 @@ scalar JordanMatrix<scalar>::calculateBoundedEigenError(scalar iteration)
   m_error=jordanError.norm();
   scalar theta=acos((ms_one-m_error)/(ms_one+m_error));
   scalar nTheta=iteration*theta;
-  if (func::toUpper(nTheta)>m_zero) func::imprecise(nTheta,m_zero);
+  if (func::toUpper(nTheta)>m_zero) func::imprecise(nTheta,m_zero,"Eigenerror too large");
   scalar cosn=func::toLower(func::cosine(nTheta));
   scalar invCosN=ms_one/cosn;
   scalar vError=func::getHull(cosn,invCosN);
@@ -654,7 +705,7 @@ bool JordanMatrix<scalar>::calculateSVD()
   MatrixS dynamicsSq=m_dynamics*m_dynamics.transpose();
   interToRef(m_refDynamics,dynamicsSq);
   m_eigenSpace.computeJordan(m_refDynamics);
-  if (ms_trace_time) ms_logger.logData(timer.elapsed()*1000,"Full Svd:",true);
+  if (ms_trace_time && (ms_trace_dynamics>=eTraceDynamics)) ms_logger.logData(timer.elapsed()*1000,"Full Svd:",true);
   if (m_eigenSpace.info()!=Eigen::Success) return false;
   MatrixS singularValues,singularVectors,inverseVectors;
   refToInter(singularValues,m_eigenSpace.getEigenValues().real());
@@ -663,7 +714,7 @@ bool JordanMatrix<scalar>::calculateSVD()
   scalar kP=singularVectors.norm()*inverseVectors.norm();
   dynamicsSq-=singularVectors*singularValues*singularVectors.inverse();
   scalar error=dynamicsSq.norm()*kP;
-  if (func::toUpper(m_error)>m_zero) func::imprecise(m_error,m_zero);
+  if (func::toUpper(m_error)>m_zero) func::imprecise(m_error,m_zero,"SVD error");
   error=func::setpm(error);
   for (int i=0;i<m_dimension;i++) {
     singularValues.coeffRef(i,i)+=error;

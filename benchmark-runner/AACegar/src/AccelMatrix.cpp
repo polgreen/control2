@@ -212,6 +212,21 @@ template <class scalar> bool AccelMatrix<scalar>::calculateJordanForm(bool inclu
   return true;
 }
 
+/// Loads a matrix and finds its decomposition
+template <class scalar> bool AccelMatrix<scalar>::load(const MatrixS &matrix)
+{
+  if (!JordanMatrix<scalar>::load(matrix)) return false;
+  calculateBlockSVD();
+  calculateInvIminJ();
+  calculateF();
+  calculateInvIminF();
+  if (this->ms_trace_dynamics>=eTraceDynamics) {
+    ms_logger.logData(m_pseudoInvIminJ,"InvIminJ:");
+    ms_logger.logData(m_invIminF,"InvIminF:");
+  }
+  return true;
+}
+
 // Loads a matrix assumed to be a canonical Jordan form
 template <class scalar> bool AccelMatrix<scalar>::loadJordan(const MatrixS &matrix)
 {

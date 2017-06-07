@@ -44,7 +44,7 @@ public:
      c_m1,c_m2, ... ,c_mp, d_m
      **/
     /// @return true if succesful
-    int load(const std::string &data,size_t pos,const bool vertices=false);
+    int load(const std::string &data,const bool vertices=false,size_t pos=0,size_t end=std::string::npos);
 
     /// Loads a known polyhedra
     /// @param source template to copy

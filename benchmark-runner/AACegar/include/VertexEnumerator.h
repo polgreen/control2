@@ -34,8 +34,11 @@ public:
 
     using Tableau<scalar>::m_dimension;
     using Tableau<scalar>::m_size;
-    using Tableau<scalar>::m_tableau;
+    using Tableau<scalar>::m_pSortedTableau;
+    using Tableau<scalar>::Conversion;
     using Tableau<scalar>::ms_logger;
+
+    using Tableau<scalar>::logTableau;
 
     typedef std::list<Ray<scalar> > RayList;
     VertexEnumerator(int size,int dimension);

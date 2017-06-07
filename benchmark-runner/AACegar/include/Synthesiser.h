@@ -44,7 +44,9 @@ public:
     using DynamicalSystem<scalar>::m_reference;
     using DynamicalSystem<scalar>::m_outputSensitivity;
     using DynamicalSystem<scalar>::m_outputGuard;
+    using DynamicalSystem<scalar>::m_outputs;
     using DynamicalSystem<scalar>::m_safeReachTube;
+    using DynamicalSystem<scalar>::m_templates;
     using DynamicalSystem<scalar>::m_feedback;
     using DynamicalSystem<scalar>::m_numVertices;
     using DynamicalSystem<scalar>::m_accelVertices;
@@ -58,6 +60,7 @@ public:
     using DynamicalSystem<scalar>::m_loadTime;
 
     using DynamicalSystem<scalar>::ms_one;
+    using DynamicalSystem<scalar>::ms_incremental;
     using DynamicalSystem<scalar>::ms_logger;
     using DynamicalSystem<scalar>::ms_trace_time;
     using DynamicalSystem<scalar>::ms_trace_dynamics;
@@ -68,6 +71,7 @@ public:
     using JordanMatrix<scalar>::refToInter;
     using AbstractMatrix<scalar>::findIterations;
     using AbstractMatrix<scalar>::addSupportsAtIteration;
+    using DynamicalSystem<scalar>::setName;
     using DynamicalSystem<scalar>::getTemplates;
     using DynamicalSystem<scalar>::getGuardPoly;
     using DynamicalSystem<scalar>::getInitPoly;
@@ -107,12 +111,18 @@ public:
     using DynamicalSystem<scalar>::loadARMAXModel;
     using DynamicalSystem<scalar>::processError;
     using DynamicalSystem<scalar>::combineAB;
+    using CegarSystem<scalar>::loadFromSpaceXFiles;
     using CegarSystem<scalar>::getReachableCanonicalTransformMatrix;
     using CegarSystem<scalar>::getRefinedDynamics;
+    using CegarSystem<scalar>::getRefinedAbstractReachTube;
     using CegarSystem<scalar>::generateNoiseInput;
     using CegarSystem<scalar>::generateFeedbackInput;
     using CegarSystem<scalar>::refineAbstractDynamics;
     using CegarSystem<scalar>::findCounterExampleIterations;
+    using CegarSystem<scalar>::calculateGuardFromOutput;
+    using CegarSystem<scalar>::setIncrementalOrder;
+    using CegarSystem<scalar>::sample;
+    using CegarSystem<scalar>::makeConvergentSystem;
 
     /// Constructs an empty buffer
     /// @param dimension dimension of the space
@@ -212,9 +222,6 @@ public:
     ///Creates a c header file for CEGIS
     bool makeCEGISFiles();
 
-protected:
-    /// Finds the statespace guard given an output guard
-    AbstractPolyhedra<scalar>& calculateGuardFromOutput();
 public:
     CegarSystem<scalar>     m_closedLoop;
     synthesisType_t         m_synthType;

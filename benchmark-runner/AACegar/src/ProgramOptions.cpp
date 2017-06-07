@@ -145,6 +145,7 @@ void ProgramOptions::help(std::ostream &out)
 
 void ProgramOptions::process()
 {
+  if (parseError) return;
   while (types.size()>0) {
     switch(types.back())
     {
@@ -153,9 +154,12 @@ void ProgramOptions::process()
   #ifdef USE_SINGLES
       //DynamicalSystem<long double> ldsystem;
       MatToStr<long double>::ms_useConsole=useConsole;
+      AbstractMatrix<long double>::ms_sparse=useSparse;
       Synthesiser<long double> ldsystem;
       ldsystem.m_synthType=synthType;
       ldsystem.ms_fullAnswers=!answerOnly;
+      ldsystem.ms_incremental=incremental;
+      ldsystem.ms_continuous=continuous;
       if (files.size()>0) ldsystem.processFiles(files,displayType,space,traceIntervals,options);
       else ldsystem.processOptions(options,displayType,space,traceIntervals,true);
   #endif
@@ -165,10 +169,14 @@ void ProgramOptions::process()
   #ifdef USE_INTERVALS
       //DynamicalSystem<ldinterval> ldisystem;
       MatToStr<ldinterval>::ms_useConsole=useConsole;
+      MatToStr<long double>::ms_useConsole=useConsole;
       MatToStr<ldinterval>::ms_traceIntervals=traceIntervals;
+      AbstractMatrix<ldinterval>::ms_sparse=useSparse;
       Synthesiser<ldinterval> ldisystem;
       ldisystem.m_synthType=synthType;
       ldisystem.ms_fullAnswers=!answerOnly;
+      ldisystem.ms_incremental=incremental;
+      ldisystem.ms_continuous=continuous;
       if (files.size()>0) ldisystem.processFiles(files,displayType,space,traceIntervals,options);
       else ldisystem.processOptions(options,displayType,space,traceIntervals,true);
   #endif
@@ -180,9 +188,12 @@ void ProgramOptions::process()
   #ifdef USE_SINGLES
       //DynamicalSystem<mpfr::mpreal> mpsystem;
       MatToStr<mpfr::mpreal>::ms_useConsole=useConsole;
+      AbstractMatrix<mpfr::mpreal>::ms_sparse=useSparse;
       Synthesiser<mpfr::mpreal> mpsystem;
       mpsystem.m_synthType=synthType;
       mpsystem.ms_fullAnswers=!answerOnly;
+      mpsystem.ms_incremental=incremental;
+      mpsystem.ms_continuous=continuous;
       if (files.size()>0) mpsystem.processFiles(files,displayType,space,traceIntervals,options);
       else mpsystem.processOptions(options,displayType,space,traceIntervals,true);
   #endif
@@ -193,9 +204,13 @@ void ProgramOptions::process()
       //DynamicalSystem<mpinterval> mpisystem;
       MatToStr<mpinterval>::ms_traceIntervals=traceIntervals;
       MatToStr<mpinterval>::ms_useConsole=useConsole;
+      MatToStr<mpfr::mpreal>::ms_useConsole=useConsole;
+      AbstractMatrix<mpinterval>::ms_sparse=useSparse;
       Synthesiser<mpinterval> mpisystem;
       mpisystem.m_synthType=synthType;
       mpisystem.ms_fullAnswers=!answerOnly;
+      mpisystem.ms_incremental=incremental;
+      mpisystem.ms_continuous=continuous;
       if (files.size()>0) mpisystem.processFiles(files,displayType,space,traceIntervals,options);
       else mpisystem.processOptions(options,displayType,space,traceIntervals,true);
   #endif
@@ -210,17 +225,21 @@ void ProgramOptions::process()
 ProgramOptions::ProgramOptions(int argc, char *argv[]) :
   synthType(eReachTubeSynth),
   displayType(eInequalities),
-  space(eNormalSpace)
+  space(eNormalSpace),
+  incremental(false),
+  continuous(false),
+  answerOnly(true),
+  useConsole(true),
+  useSparse(false),
+  parseError(false)
 {
   traceIntervals=true;
   formal=true;
-  answerOnly=true;
-  useConsole=true;
 
   //Important!: these have to be in the same order as the enums
-  std::string commandOptions[eMaxStr]={"params","dynamics","isense","osense","iosense","guard","iguard","sguard","oguard","init","inputs","templates","arma","control","ref"};
+  std::string commandOptions[eMaxStr]={"params","dynamics","isense","osense","iosense","guard","iguard","sguard","oguard","init","inputs","templates","arma","spaceex","control","ref","inc","sample","rand"};
   std::string typeOptions[eAllTypes+1]={"ld","mp","ldi","mpi","all"};
-  std::string synthOptions[eCEGISSynth+1]={"reach","init","input","sense","eigen","dynamics","CEGIS"};
+  std::string synthOptions[eCEGISSynth+1]={"aa-tube","tube","sets","init","input","sense","eigen","dynamics","CEGIS"};
 
   typedef std::map<std::string,optionStr_t> optionNames_t;
   typedef std::map<std::string,numericType_t> typeNames_t;
@@ -246,7 +265,14 @@ ProgramOptions::ProgramOptions(int argc, char *argv[]) :
       while(argv[i][offset]=='-') offset++;
       optionNames_t::iterator it=optionNames.find(argv[i]+offset);
       if (it!=optionNames.end()) {
-        if (++i<argc) options[it->second]=argv[i];
+        if (++i<argc) {
+          if (argv[i][0]=='-') {
+            options[it->second]=" ";
+            i--;
+          }
+          else options[it->second]=argv[i];
+        }
+        else options[it->second]=" ";
         continue;
       }
       typeNames_t::iterator typ=typeNames.find(argv[i]+offset);
@@ -289,6 +315,9 @@ ProgramOptions::ProgramOptions(int argc, char *argv[]) :
       }
       else if (strcmp(argv[i]+offset,"full")==0)  answerOnly=false;
       else if (strcmp(argv[i]+offset,"ii")==0)    traceIntervals=false;
+      else if (strcmp(argv[i]+offset,"cont")==0)  continuous=true;
+      else if (strcmp(argv[i]+offset,"mono")==0)  incremental=false;
+      else if (strcmp(argv[i]+offset,"sparse")==0) useSparse=true;
       else if (strcmp(argv[i]+offset,"norm")==0)  displayType=eNormalised;
       else if (strcmp(argv[i]+offset,"vert")==0)  displayType=eVertices;
       else if (strcmp(argv[i]+offset,"ine")==0)   displayType=eInequalities;
@@ -296,6 +325,7 @@ ProgramOptions::ProgramOptions(int argc, char *argv[]) :
       else {
         std::cout << "unknown parameter " << argv[i] << std::endl;
         std::cout << "use -h for help" << std::endl;
+        parseError=true;
         return;
       }
     }
@@ -313,6 +343,7 @@ ProgramOptions::ProgramOptions(int argc, char *argv[]) :
       pos=data.find("\"");
     }
   }
+  if (options[eIncOrderStr].size()>0) incremental=true;
   if ((types.size()==0) && (files.size()>0)) {
     types.push_back(eLD);
     types.push_back(eLDI);

@@ -230,7 +230,7 @@ AbstractPolyhedra<scalar> Synthesiser<scalar>::synthesiseInputs(inputType_t inpu
   MatrixS preSupports=end.getSupports();
   MatrixS abstractVectors,supports;
   dynamics.toInner(true);
-  if (inputType==eVariableInputs) {
+  if (inputType>=eVariableInputs) {
     MatrixS roundVectors;
     getRoundedDirections(roundVectors,vectors);
     MatrixS combinedVectors(vectors.rows()+roundVectors.rows(),vectors.cols());
@@ -368,7 +368,7 @@ AbstractPolyhedra<scalar> Synthesiser<scalar>::synthesiseEigenStructure(inputTyp
   if ((vertices.rows()<=0) || (lambdas.rows()<0) || (final.rows()<0)) processError(end.getName());
   MatrixS abstractVectors,combinedAbstractVectors;
   MatrixS finalVectors=kronecker(templates,final,true);//templates*final
-  if (inputType==eVariableInputs) {
+  if (inputType>=eVariableInputs) {
     MatrixS roundVectors;
     getRoundedDirections(roundVectors,templates);
     MatrixS combinedRoundVectors(templates.cols()+roundVectors.rows(),templates.rows());
@@ -389,7 +389,7 @@ AbstractPolyhedra<scalar> Synthesiser<scalar>::synthesiseEigenStructure(inputTyp
     //The synth vectors are multiplied by the transpose of the acceleration matrix
     MatrixS accelInputVectors=abstractVectors*this->m_pseudoInvIminJ;
     MatrixS accelInputVertices=inputVertices;
-    if (m_hasOnes && (m_inputType==eVariableInputs)) {
+    if (m_hasOnes && (m_inputType>=eVariableInputs)) {
       for (int i=0;i<accelInputVertices.cols();i++) {
         if (m_isOne[i]) accelInputVertices.coeffRef(i,0)=0;
       }
@@ -414,7 +414,7 @@ AbstractPolyhedra<scalar> Synthesiser<scalar>::synthesiseEigenStructure(inputTyp
       }
     }
   }
-  if (inputType==eVariableInputs) {
+  if (inputType>=eVariableInputs) {
   }
   MatrixS supports=MatrixS::Zero(faces.rows(),1);
   int ineqSize=final.rows()*combinedVectors.rows()*numInputs;
@@ -498,7 +498,7 @@ AbstractPolyhedra<scalar> Synthesiser<scalar>::synthesiseDynamicBounds(inputType
 template <class scalar>
 void Synthesiser<scalar>::demergeAccelInSupports(MatrixS &supports,MatrixS &inSupports,int numTemplates)
 {
-  if (!m_hasOnes || (m_inputType==eVariableInputs))  {
+  if (!m_hasOnes || (m_inputType>=eVariableInputs))  {
     for (int row=0;row<numTemplates;row++) {
       int pos=row*m_numVertices;
       supports.coeffRef(pos,0)-=inSupports.coeff(0,row);
@@ -514,7 +514,7 @@ void Synthesiser<scalar>::demergeAccelInSupports(MatrixS &supports,MatrixS &inSu
 template <class scalar>
 typename JordanMatrix<scalar>::MatrixS& Synthesiser<scalar>::getRefinedAccelInSupports()
 {
-  if (m_hasOnes && (m_inputType==eVariableInputs)) {
+  if (m_hasOnes && (m_inputType>=eVariableInputs)) {
     AbstractPolyhedra<scalar>& inputDynamics=getAbstractDynamics(eParametricInputs);
     MatrixS supports;
     inputDynamics.maximiseAll(m_abstractInputVertices,supports);
@@ -744,6 +744,7 @@ bool Synthesiser<scalar>::makeClosedLoop(bool useObserver,bool makeReference,boo
 template <class scalar>
 void Synthesiser<scalar>::processFiles(stringList &files,displayType_t displayType,space_t space,bool interval,optionList_t &options)
 {
+  boost::timer timer;
   for (stringList::iterator i=files.begin();i!=files.end();i++) {
     int pos=loadFromFile(*i);
     if (pos<0) {
@@ -760,6 +761,7 @@ void Synthesiser<scalar>::processFiles(stringList &files,displayType_t displayTy
       if (pos<0) break;
       process(displayType,space,interval,true);
     }
+    if (ms_logger.ms_useConsole) ms_logger.logData(timer.elapsed()*1000,"Total time: ",true);
   }
 }
 
@@ -768,29 +770,49 @@ template <class scalar>
 int Synthesiser<scalar>::processOptions(optionList_t &options,displayType_t displayType,space_t space,bool interval,bool run)
 {
   if (options.size()<=0) return 0;
+  boost::timer timer;
   if (options[eParamStr].size()>0) {
     if (ms_logger.StringToDim(m_paramValues,options[eParamStr])<0) return -1;
     if (m_paramValues.coeff(eNumBits,0)>0) {
       functions<mpfr::mpreal>::setDefaultPrec(m_paramValues.coeff(eNumBits,0));
     }
     traceDynamics((traceDynamics_t)m_paramValues.coeff(eTraceLevel,0));
-    traceSimplex((traceTableau_t)m_paramValues.coeff(eTraceLevel,1),(traceVertices_t)m_paramValues.coeff(eTraceLevel,2));
+    traceSimplex((traceTableau_t)(m_paramValues.coeff(eTraceLevel,1)/10),(tracePivots_t)(m_paramValues.coeff(eTraceLevel,1)%10),(traceVertices_t)m_paramValues.coeff(eTraceLevel,2));
     if (m_paramValues.coeff(eNumStates,0)>0) changeDimensions(m_paramValues.coeff(eNumStates,0),m_paramValues.coeff(eNumInputs,0)+m_paramValues.coeff(eNumVarInputs,0),m_paramValues.coeff(eNumOutputs,0),m_paramValues.coeff(eNumFeedbacks,0));
     m_sensitivity.conservativeResize(m_paramValues.coeff(eNumStates,0),m_paramValues.coeff(eNumInputs,0)+m_paramValues.coeff(eNumVarInputs,0));
     m_inputType=(m_paramValues.coeff(eNumVarInputs,0)>0) ? eVariableInputs : ((m_paramValues.coeff(eNumInputs,0)>0) ? eParametricInputs : eNoInputs);
+    if (m_paramValues.coeff(eNumInputs,2)+m_paramValues.coeff(eNumVarInputs,1)>0) m_inputType=eVariableOnlyInputs;
   }
-  if ((options[eARMAXStr].size()>0) && (loadARMAXModel(options[eARMAXStr])<0))      return -1;
-  if ((options[eGuardStr].size()>0) && (loadGuard(options[eGuardStr])<0))           return -1;
-  if ((options[sGuardStr].size()>0) && (loadSafeReachTube(options[sGuardStr])<0))   return -1;
-  if ((options[oGuardStr].size()>0) && (loadOutputGuard(options[oGuardStr])<0))     return -1;
-  if ((options[eDynamicsStr].size()>0) && (loadDynamics(options[eDynamicsStr])<0))  return -1;
-  if ((options[eInitStr].size()>0) && (loadInitialState(options[eInitStr])<0))      return -1;
-  if ((options[iSenseStr].size()>0) && (loadSensitivities(options[iSenseStr])<0))   return -1;
-  if ((options[eInputStr].size()>0) && (loadInputs(options[eInputStr])<0))          return -1;
-  if ((options[eTemplateStr].size()>0) && (loadTemplates(options[eTemplateStr])<0)) return -1;
-  if ((options[eRefStr].size()>0) && (loadReference(options[eRefStr])<0))           return -1;
-  if ((options[eControlStr].size()>0) && (loadController(options[eControlStr])<0))  return -1;
-  if (run) process(displayType,space,interval);
+  else if (run && (m_dimension==0)) processError("no parameters");
+  if ((options[eRandStr].size()>0) && (options[eParamStr].size()>0)) {
+    ParamMatrix params;
+    if (ms_logger.StringToDim(params,options[eParamStr])<0) return -1;
+    for (int i=0;i<10;i++) {
+      std::stringstream buffer;
+      buffer << options[eRandStr] << i;
+      setName(buffer.str());
+      makeConvergentSystem(params,true);
+    }
+    return 0;
+  }
+  if ((options[eSpaceXStr].size()>0) && (loadFromSpaceXFiles(options[eSpaceXStr])<0))   return -1;
+  if ((options[eARMAXStr].size()>0) && (loadARMAXModel(options[eARMAXStr])<0))          return -1;
+  if ((options[eGuardStr].size()>0) && (loadGuard(options[eGuardStr])<0))               return -1;
+  if ((options[sGuardStr].size()>0) && (loadSafeReachTube(options[sGuardStr])<0))       return -1;
+  if ((options[oGuardStr].size()>0) && (loadOutputGuard(options[oGuardStr])<0))         return -1;
+  if ((options[eDynamicsStr].size()>0) && (loadDynamics(options[eDynamicsStr])<0))      return -1;
+  if ((options[eInitStr].size()>0) && (loadInitialState(options[eInitStr])<0))          return -1;
+  if ((options[iSenseStr].size()>0) && (loadSensitivities(options[iSenseStr])<0))       return -1;
+  if ((options[eInputStr].size()>0) && (loadInputs(options[eInputStr])<0))              return -1;
+  if ((options[eTemplateStr].size()>0) && (loadTemplates(options[eTemplateStr])<0))     return -1;
+  if ((options[eReferenceStr].size()>0) && (loadReference(options[eReferenceStr])<0))   return -1;
+  if ((options[eControlStr].size()>0) && (loadController(options[eControlStr])<0))      return -1;
+  if (options[eIncOrderStr].size()>0) setIncrementalOrder(options[eIncOrderStr]);
+  if (options[eSampleStr].size()>0) sample(options[eIncOrderStr]);
+  if (run) {
+    process(displayType,space,interval);
+    if (ms_logger.ms_useConsole) ms_logger.logData(timer.elapsed()*1000,"Total time: ",true);
+  }
   return 0;
 }
 
@@ -798,6 +820,7 @@ template <class scalar>
 bool Synthesiser<scalar>::process(const displayType_t displayType,const space_t space,const bool interval,const bool append)
 {
   try {
+    boost::timer timer;
     func::ms_isImprecise=false;
     int iter=m_paramValues.coeff(eNumSteps,0);
     int maxIter=m_paramValues.coeff(eNumSteps,1);
@@ -805,10 +828,13 @@ bool Synthesiser<scalar>::process(const displayType_t displayType,const space_t 
     if (maxIter<=0) maxIter=iter+1;
     if (stepIter<=0) stepIter=1;
     int precision=m_paramValues.coeff(eLogFaces,0);
+    int minPrecision=precision;
     int maxPrecision=m_paramValues.coeff(eLogFaces,1);
     int stepPrecision=m_paramValues.coeff(eLogFaces,2);
+    if (precision<=0) precision=2;
     if (maxPrecision<=0) maxPrecision=precision;
     if (stepPrecision<=0) stepPrecision=1;
+    if (minPrecision==0) minPrecision+=stepPrecision;
     int directions=m_paramValues.coeff(eLogDirections,0);
     int maxDirections=m_paramValues.coeff(eLogDirections,1);
     int stepDirections=m_paramValues.coeff(eLogDirections,2);
@@ -819,32 +845,39 @@ bool Synthesiser<scalar>::process(const displayType_t displayType,const space_t 
     int stepTightness=m_paramValues.coeff(eTightness,2);
     if (maxTightness<=0) maxTightness=tightness;
     if (stepTightness==0) stepTightness=1;
-    int width=((maxIter-iter)/stepIter)*((maxPrecision-precision+1)/stepPrecision);
+    int width=((maxIter-iter)/stepIter)*((maxPrecision-minPrecision+1)/stepPrecision);
     if (m_synthType!=eReachTubeSynth) {
       m_dynamicParams.resize(eNumFinalParameters,0);
       save(displayType,space,interval);
     }
+    if ((m_templates.cols()>0) || !m_safeReachTube.isEmpty()) {
+      directions=-1;
+      maxDirections=-1;
+    }
     for (;directions<=maxDirections;directions+=stepDirections) {
-      MatrixS faces=makeLogahedralTemplates(directions,eEigenSpace).transpose();//TODO: the space in makelogahedral looks counterintuitive
+      MatrixS faces;
+      if (!m_safeReachTube.isEmpty()) faces=m_safeReachTube.getPolyhedra().getFaceDirections();
+      else if ((directions<=0) && m_templates.cols()>0) faces=m_templates.transpose();
+      else faces=makeLogahedralTemplates(directions,eEigenSpace).transpose();//TODO: the space in makelogahedral looks counterintuitive
       MatrixS supports(faces.rows(),width);
-      //MatrixS dynamicSupports(0,width);
       m_dynamicParams.resize(eNumFinalParameters,width);
       int col=0;
       for (iter=m_paramValues.coeff(eNumSteps,0);iter<maxIter;iter+=stepIter) {
         for (tightness=m_paramValues.coeff(eTightness,0);tightness<=maxTightness;tightness+=stepTightness) {
-          for (precision=m_paramValues.coeff(eLogFaces,0);precision<=maxPrecision;precision+=stepPrecision) {
+          for (precision=minPrecision;precision<=maxPrecision;precision+=stepPrecision) {
             powerS iteration=iter;
             switch(m_synthType) {
             case eReachTubeSynth: {
                 if (iter==0) iteration=this->calculateIterations(m_initialState.getPolyhedra(eEigenSpace),m_inputType);
                 refScalar longIter=iteration;
-                getAbstractReachTube(iteration,precision,directions,m_inputType,space);
+                if (!m_safeReachTube.isEmpty() && ms_incremental) getRefinedAbstractReachTube(iteration,precision,directions,m_inputType,space);
+                else getAbstractReachTube(iteration,precision,directions,m_inputType,space);
                 m_dynamicParams.coeffRef(eFinalIterations,col)=longIter;
                 m_dynamicParams.coeffRef(eFinalPrecision,col)=precision;
                 m_dynamicParams.coeffRef(eFinalLoadTime,col)=scalar(m_loadTime);
                 m_dynamicParams.coeffRef(eFinalReachTime,col)=scalar(m_reachTime);
                 supports.col(col++)=m_pAbstractReachTube->getPolyhedra(space).getSupports();
-                if (!m_safeReachTube.isEmpty()) {
+                if (!m_safeReachTube.isEmpty() && !ms_incremental) {
                   AbstractPolyhedra<scalar> bounds=synthesiseDynamicBounds(m_inputType,m_safeReachTube.getPolyhedra(eEigenSpace));
                   for(int i=0;(i<5) && refineAbstractDynamics(bounds);i++) {
                     getRefinedAbstractReachTube(space);
@@ -857,6 +890,12 @@ bool Synthesiser<scalar>::process(const displayType_t displayType,const space_t 
                     supports.col(col++)=m_pAbstractReachTube->getPolyhedra(space).getSupports();
                   }
                 }
+              }
+              break;
+            case eIterReachTubeSynth: {
+                AbstractPolyhedra<scalar>& tube=this->getIterativeReachTube(iter,m_inputType,space,directions);
+                m_pAbstractReachTube->load(tube);
+                save(displayType,space,interval,true);
               }
               break;
             case eCEGISSynth:
@@ -889,23 +928,27 @@ bool Synthesiser<scalar>::process(const displayType_t displayType,const space_t 
         save(displayType,space,interval,(directions>m_paramValues.coeff(eLogDirections,0)) || append);
         if (ms_logger.ms_useConsole) {
           ms_logger.logData(m_pAbstractReachTube->getPolyhedra(space).getDescription(displayType,interval,true));
+          if (m_odimension>0) {
+            m_outputs.logTableau("",true);
+          }
         }
       }
+    }
+    if (m_paramValues.coeff(eLogFaces,0)==0) {
+      powerS iteration=iter;
+      if (iter==0) iteration=this->calculateMaxIterations();
+      AbstractPolyhedra<scalar>& tube=this->getIterativeReachTube(iteration,m_inputType,space,maxDirections);
+      m_pAbstractReachTube->load(tube);
+      if (ms_logger.ms_useConsole) {
+        ms_logger.logData(m_pAbstractReachTube->getPolyhedra(space).getDescription(displayType,interval,true));
+      }
+      save(displayType,space,interval,true);
     }
   }
   catch(std::string &error) {
     ms_logger.logData("Error processing "+this->m_name);
     ms_logger.logData(error);
   }
-}
-
-/// Finds the statespace guard given an output guard
-template <class scalar>
-AbstractPolyhedra<scalar>& Synthesiser<scalar>::calculateGuardFromOutput()
-{
-  AbstractPolyhedra<scalar>& polyhedra=m_safeReachTube.getPolyhedra();
-  m_outputGuard.getTransformedPolyhedra(polyhedra,ms_emptyMatrix,m_outputSensitivity);
-  return m_safeReachTube.getPolyhedra(eEigenSpace,true);
 }
 
 /// Loads a controller candidate for the system
@@ -927,7 +970,7 @@ template <class scalar>
 int Synthesiser<scalar>::loadReference(const std::string &data,size_t pos,bool vertices)
 {
   boost::timer timer;
-  int result=m_reference.loadData(data,pos,vertices);
+  int result=m_reference.loadData(data,vertices,pos);
   if (ms_trace_time) ms_logger.logData(timer.elapsed()*1000,"Reference time:",true);
   return result;
 }
@@ -981,6 +1024,7 @@ std::string Synthesiser<scalar>::makeCEGISDescription(bool intervals)
   result << "struct coefft ";
   result << ms_logger.MatToC("plant",coefficients,intervals);
   result << "struct transformt " << ms_logger.MatToC("transform",invT,intervals);
+  result << "struct transformt " << ms_logger.MatToC("pretransform",T,intervals);
   result << "matrixt dynamics" << ms_logger.MatToC("",m_dynamics,intervals);
   result << "vectort sensitivity" << ms_logger.MatToC("",m_sensitivity.transpose(),intervals);
   result << "#ifdef __CPROVER\n";
@@ -1002,18 +1046,29 @@ std::string Synthesiser<scalar>::makeCEGISDescription(bool intervals)
   if (m_feedback.rows()>0) {
     MatrixS vertices=m_initialState.getPolyhedra().getVertices();
     makeClosedLoop(false,false,true);
+    const MatrixS inputVals=m_closedLoop.m_inputs.getVertices();
     const MatrixS inputVertices=m_closedLoop.getInputVertices(eNormalSpace,true);
+    result << "#define _IN_DIMENSION " << inputVals.cols() << "\n";
     result << "#define _NUM_VERTICES " << vertices.rows() << "\n";
     result << "#define _NUM_INPUT_VERTICES " << inputVertices.rows() << "\n";
     result << "#define _NUM_VECTORS " << vectors.rows() << "\n";
     if (vertices.rows()>0) {
       result << "control_floatt vertices[_NUM_VERTICES][_DIMENSION]";
       result << ms_logger.MatToC("",vertices);
+      MatrixS transformedVertices=vertices*invT.transpose();
+      result << "control_floatt transformed_vertices[_NUM_VERTICES][_DIMENSION]";
+      result << ms_logger.MatToC("",transformedVertices);
       result << "control_floatt input_vertices[_NUM_INPUT_VERTICES][_DIMENSION]";
       result << ms_logger.MatToC("",inputVertices);
+      result << "control_floatt input_values[_NUM_INPUT_VERTICES][_IN_DIMENSION]";
+      result << ms_logger.MatToC("",inputVals);
       result << "control_floatt accel_vertices[_NUM_INPUT_VERTICES][_DIMENSION];\n";
       result << "control_floatt vectors[_NUM_VECTORS][_DIMENSION]";
       result << ms_logger.MatToC("",vectors);
+      MatrixS transformedVectors=vectors*invT.transpose();
+      result << "control_floatt transformed_vectors[_NUM_VECTORS][_DIMENSION]";
+      result << ms_logger.MatToC("",transformedVectors);
+
       result << "control_floatt reach_vertices[_NUM_INPUT_VERTICES][_NUM_VERTICES][_DIMENSION];\n";
       result << "control_floatt supports[_NUM_VECTORS]";
       result << ms_logger.MatToC("",support);
@@ -1038,21 +1093,23 @@ std::string Synthesiser<scalar>::makeCEGISIterations(std::string &existing)
   AbstractPolyhedra<scalar> bounds=m_closedLoop.synthesiseDynamicBounds(m_inputType,m_safeReachTube.getPolyhedra(eEigenSpace));
   powerList counterexamples;
   bool fail=m_closedLoop.findCounterExampleIterations(counterexamples,bounds);
-  if (fail && counterexamples.empty()) counterexamples[1]=0;
+  if (fail && counterexamples.empty()) counterexamples[1]=std::pair<int,powerS>(-1,0);
   if (!counterexamples.empty()) {
     result << "#define POINTS_PER_ITER\n";
     result << "#define _NUM_ITERATIONS " << counterexamples.size() << "\n";
+    int max_iters=0;
     result << "int iterations[_NUM_ITERATIONS]={";
     for (typename powerList::iterator it=counterexamples.begin();it!=counterexamples.end();it++) {
       if (it!=counterexamples.begin()) result << ",";
       result << it->first;
+      if (it->first>max_iters) max_iters=it->first;
     }
     result << "};\n";
-
+    result << "#define _MAX_ITERATIONS " << max_iters << "\n";
     result << "int iter_vertices[_NUM_ITERATIONS][2]={";
     AbstractPolyhedra<scalar> &safe=m_safeReachTube.getPolyhedra();
     MatrixS vertices=m_initialState.getPolyhedra().getVertices();
-    MatrixS inputVertices=m_closedLoop.getInputVertices();
+    MatrixS inputVertices=m_closedLoop.getInputVertices(eEigenSpace,true);
     for (typename powerList::iterator it=counterexamples.begin();it!=counterexamples.end();it++) {
       if (it!=counterexamples.begin()) result << ",";
       MatrixS dynamics=m_closedLoop.getPseudoDynamics(it->first).transpose();

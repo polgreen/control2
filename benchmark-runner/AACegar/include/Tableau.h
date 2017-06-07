@@ -12,6 +12,7 @@
 #include "Scalar.h"
 #include "MatrixToString.h"
 #include "RowSort.h"
+#include "SparseRowSort.h"
 
 namespace abstract{
 typedef enum { IneToExt, ExtToIne, LPMax, LPMin } ConversionType_t;
@@ -34,18 +35,11 @@ public:
 
     typedef functions<refScalar> func;
 
-    typedef enum { DimensionTooLarge, LowColumnRank, ImproperInputFormat, DependentMarkedSet, FileNotFound, None } ErrorType;
+    typedef enum { eResetBasis, eRebaseBasis, eUseDefaultBasis, eKeepBasis, eCheckBasis } ResetType_t;
+
     Tableau(const int size,const int dimension);
     ~Tableau();
 protected:
-    /// Retrieves the value of a tableau entry for a given row an column (see revised simplex algorithm)
-    scalar entry(const int row, const int col);
-
-    /// Same as above but with tighter bounds
-    scalar tightEntry(const int row, const int col,const int iteration=0);
-
-    refScalar maxTightWidth(const int row,const int col);
-
     /// Selects a pivot row and column based on the first available non-zero entry
     /// @param rowmax maximum available row for pivot
     /// @param noPivotRow set of restricted rows that cannot pivot
@@ -60,7 +54,7 @@ protected:
     /// Performs a pivot around a given row and column
     /// updates the basic and non-basic variables
     /// @param pivot return row and column to pivot on
-    void ColumnPivotAndUpdate(const pivot_t &pivot);
+    bool ColumnPivotAndUpdate(const pivot_t &pivot);
 
     /// Finds a basis for vertex enumeration
     /// @param pRowSelected set of selected rows to find basis
@@ -69,6 +63,11 @@ protected:
 
     /// Finds a [possibly] feasible basis to start the maximise process
     int FindLPBasis();
+
+    /// Finds a [possibly] feasible basis to start solving from
+    /// @param resetType indicates if the algorithm should use a precalculated feasible solution, rebase or reset
+    /// @return number of iterations used to find the basis
+    int FindFeasBasis(const ResetType_t resetType=eResetBasis);
 
     /// Restarts the Simplex process at the current vertex
     int Rebase();
@@ -123,24 +122,16 @@ public:
     //void logData(const std::string data);
 
     /// Retrieves the number of variables in the linear problem
-    inline int getDimension() const         { return m_dimension-1; }
+    inline int getDimension() const             { return m_dimension-1; }
 
     ///Retrieves the ordered element at the given position
     /// @param row position to search in the ordered set
     /// @return corresponding row of the tableau at the given position
-    inline int order(const int row)       { return m_tableau.order(row); }
-protected:
-    ///Retrieves the magnitude of the vector in the direction normal to the gien halfspace
-    ///@param vector vector to verify
-    ///@param row halfspace to check against
-    scalar AValue(const MatrixS &vector, const long row);
-    ///Same as above but with tighter bounds
-    scalar ATightValue(const MatrixS &vector, const long row);
+    inline int order(const int row)             { return m_pSortedTableau->order(row); }
 
-    refScalar maxTightWidth(const MatrixS &vector, const long row);
+    const std::vector<int>& getSupportRows()    { return m_nonBasicRow; }
 
-    ///Relaxes the current basis by the given interval to cope with imprecisions
-    void relaxBasis(scalar width,int col);
+    SparseSortedMatrix<scalar>& getSparseTableau()  { return m_sparseTableau; }
 protected:
     int                         m_dimension;            //Size of the problem (number of variables including the support function)
     int                         m_size;                 //Number of inequalities/vertices in the tableau
@@ -149,19 +140,26 @@ protected:
     int                         m_objectiveRow;         //0-based row numbe of the objective function
     int                         m_evidenceRow;          //If non-negative indicates the row at which the solution was found unfeasible
     int                         m_evidenceCol;          //If non-negative indicates the column for which the solution was found unfeasible
+    int                         m_rank;                 //Number of iterations performed on the last section
     ConversionType_t            Conversion;
     MatrixS                     m_faces;                //Inequality vectors
     MatrixS                     m_supports;             //Corresponding values of each inequality vector (support function)
     SortedMatrix<scalar>        m_tableau;              //Full inequality set [m_supports m_faces ; 0 max]
+    SparseSortedMatrix<scalar>  m_sparseTableau;        //Full inequality set [m_supports m_faces ; 0 max]
+    SortedTableau<scalar>      *m_pSortedTableau;
     MatrixS                     m_basisInverse;         //Inverse of the basis for the dual simplex problem
     std::vector<int>            m_basicVars;            //Vector containig the basic variable corresponding to each row (-1 if none)
     std::vector<int>            m_nonBasicRow;          //Vector containing the row that corresponds to each basic variable
-    ErrorType                   Error;
+    MatrixS                     m_feasBasisInverse;     //Stores a pre-calculated feasible basis
+    std::vector<int>            m_feasBasicVars;        //Stores the precalculated state of the basicVars
+    std::vector<int>            m_feasNonBasicRow;      //Stores the precalculated state of the nonBasicRow
+    pivot_t                     m_lastPivot;
     std::ofstream               ms_trace;
     static MatToStr<scalar>     ms_logger;
     static MatToStr<scalar>     ms_decoder;
 public:
     static traceTableau_t       ms_trace_tableau;
+    static tracePivots_t        ms_trace_pivots;
     static bool                 ms_trace_errors;
     static bool                 ms_trace_time;
 };

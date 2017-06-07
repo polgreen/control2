@@ -4,45 +4,11 @@
   #include "3Inverse.h"
 #endif
 
-void multiply(matrixt result,matrixt transform)
-{
-  cnttype i,j,k;
-  control_floatt temp[_DIMENSION][_DIMENSION];
-  for (i=0;i<_DIMENSION;i++)
-  {
-    for (j=0;j<_DIMENSION;j++)
-    {
-      temp[i][j]=result[i][0]*transform[0][j];
-      for (k=1;k<_DIMENSION;k++)
-      {
-        temp[i][j]+=result[i][k]*transform[k][j];
-      }
-    }
-    for (j=0;j<_DIMENSION;j++) result[i][j]=temp[i][j];    
-  }
-}
+#include "FWL_LTI_transform.h"
 
-void transformPoint(vectort point,matrixt transform)
+void simulate_observable(vectort point,vectort input,matrixt transform)
 {
-  cnttype i,j;
-  control_floatt temp[_DIMENSION];
-  for (i=0;i<_DIMENSION;i++)
-  {
-    temp[i]=transform[i][0]*point[0];
-    for (j=1;j<_DIMENSION;j++) 
-    {
-      temp[i]+=transform[i][j]*point[j];
-    }
-  }
-  for (j=0;j<_DIMENSION;j++) point[j]=temp[j];    
-}
 
-control_floatt findSupport(vectort point,vectort vector)
-{
-  cnttype i,j,k;
-  control_floatt result=0;
-  for (i=0;i<_DIMENSION;i++) result+=vector[i]*point[i];
-  return result;
 }
 
 void powerMatrix(matrixt result,matrixt transform,int pow)
@@ -100,6 +66,7 @@ void accelerateInputs()
 }
 
 #ifdef _NUM_ITERATIONS
+
 void checkIteration(vectort point,matrixt transform,int input_index)
 {
   // Warning: point is being transformed here!
@@ -107,8 +74,8 @@ void checkIteration(vectort point,matrixt transform,int input_index)
   transformPoint(point,transform);
 #ifndef __CPROVER
     print_vector("point",point);
-#endif      
-  
+#endif
+
   for (i=0;i<_NUM_VECTORS;i++)
   {
     control_floatt value=findSupport(point,vectors[i])+accelsupports[input_index][i];

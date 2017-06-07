@@ -9,11 +9,13 @@
 #include "Set.h"
 
 namespace abstract{
-#define SETBITS (sizeof(long) * CHAR_BIT)
+
+#define SETBITS (sizeof(unsigned long) * CHAR_BIT)
 /* (Number of chars in a long) * (number of bits in a char) */
 
 const long setBitShift=(SETBITS==64) ? 6 : ((SETBITS==32) ? 5 : 4);
 const long setBitMask=SETBITS-1;
+const unsigned long one=1;
 
 /* Caution!!!
    Bremner's technique depends on the assumption that CHAR_BIT == 8.
@@ -108,12 +110,12 @@ void Set::copy(const Set &set)
 void Set::add(long elem)
 {
   if (elem>=m_size) initialize(elem+1);
-  m_pBuffer[(elem>>setBitShift)]|=(1 << (elem&setBitMask));
+  m_pBuffer[(elem>>setBitShift)]|=(one << (elem&setBitMask));
 }
 
 void Set::remove(long elem)
 {
-  if (elem<m_size) m_pBuffer[(elem>>setBitShift)]&=~(1 << (elem&setBitMask));
+  if (elem<m_size) m_pBuffer[(elem>>setBitShift)]&=~(one << (elem&setBitMask));
 }
 
 void Set::intersect(const Set &set1,const Set &set2)
@@ -168,7 +170,7 @@ int Set::isSubset(const Set &set)
 int Set::member(const long elem) const
 {
   if (elem<m_size) {
-    if (m_pBuffer[elem>>setBitShift]&(1<<(elem&setBitMask))) return 1;
+    if (m_pBuffer[elem>>setBitShift]&(one<<(elem&setBitMask))) return 1;
   }
   return 0;
 }
@@ -186,9 +188,9 @@ long Set::cardinality() const
 }
 
 
-void Set::logSet(const std::string name,const bool endline) const
+void Set::logSet(const std::string name,const bool endline,const bool force) const
 {
-  if (ms_trace_set) {
+  if (ms_trace_set || force) {
     std::ofstream trace;
     trace.open("trace.txt",std::ios_base::app);
     if (trace.is_open()) {

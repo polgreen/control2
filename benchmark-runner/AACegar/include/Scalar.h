@@ -10,6 +10,8 @@
 #include <limits>
 #include <cstdlib>
 #include <complex>
+#include <vector>
+#include <map>
 
 #include <mpreal.h>
 #include <math.h>
@@ -54,51 +56,110 @@ public:
     typedef power_type              power;
     typedef std::complex<scalar>    complexS;
     typedef std::complex<ref>       complexR;
-    typedef Eigen::Matrix<scalar,Eigen::Dynamic,Eigen::Dynamic>      MatrixS;
-    typedef Eigen::Matrix<ref,Eigen::Dynamic,Eigen::Dynamic>         MatrixR;
-    typedef Eigen::Matrix<complexS,Eigen::Dynamic,Eigen::Dynamic>    MatrixC;
-    typedef Eigen::Matrix<complexR,Eigen::Dynamic,Eigen::Dynamic>    MatrixRC;
+    typedef std::map<int,scalar>    sparseVector;
+    class sparseMatrix : public std::vector<sparseVector>
+    {
+    protected:
+      int               m_cols;
+      bool              m_transpose;
+      scalar            m_0;
+    public:
+      int rows()                        { return this->size(); }
+      int cols()                        { return m_cols; }
+      void transpose()                  { m_transpose=!m_transpose; }
+      bool isTranspose()                { return m_transpose; }
+      void resize(int _rows,int _cols)
+      {
+        m_cols=_cols;
+        std::vector<sparseVector>::resize(0);
+        std::vector<sparseVector>::resize(_rows);
+      }
+      void conservativeResize(int _rows,int _cols)
+      {
+        m_cols=_cols;
+        std::vector<sparseVector>::resize(_rows);
+      }
+      const scalar& coeff(int row,int col)
+      {
+        typename sparseVector::iterator it=(*this)[row].find(col);
+        if (it==(*this)[row].end()) return m_0;
+        return it->second;
+      }
+      scalar& coeffRef(int row,int col) { return (*this)[row][col]; }
+      sparseMatrix(const int rows=0,const int cols=0) : std::vector<sparseVector>(rows),
+        m_cols(cols),
+        m_transpose(false),
+        m_0(0)
+      {}
+    };
+
+    typedef Eigen::Matrix<scalar,Eigen::Dynamic,Eigen::Dynamic>     MatrixS;
+    typedef Eigen::Matrix<ref,Eigen::Dynamic,Eigen::Dynamic>        MatrixR;
+    typedef Eigen::Matrix<complexS,Eigen::Dynamic,Eigen::Dynamic>   MatrixC;
+    typedef Eigen::Matrix<complexR,Eigen::Dynamic,Eigen::Dynamic>   MatrixRC;
+
+    class iteration_pair {
+    public:
+      iteration_pair() : col1(0),col2(0),iteration(0) {}
+      iteration_pair(int _col1,int _col2,power_type iter) : col1(_col1),col2(_col2),iteration(iter) {}
+      int           col1;
+      int           col2;
+      power_type    iteration;
+    };
 };
 
 template <class scalar> class interval_def;
 #if defined (MPREAL_HAVE_INT64_SUPPORT)
 template<> class interval_def<mpfr::mpreal> : public type_def<mpfr::mpreal,mpfr::mpreal,mpinterval,long long>
 {
-public: static std::string ms_name;
+public:
+  static std::string ms_name;
+  static bool isInterval() { return false; }
 };
 
 template<> class interval_def<mpinterval> : public type_def<mpinterval,mpfr::mpreal,mpinterval,long long>
 {
-public: static std::string ms_name;
+public:
+  static std::string ms_name;
+  static bool isInterval() { return true; }
 };
 #else
 template<> class interval_def<mpfr::mpreal> : public type_def<mpfr::mpreal,mpfr::mpreal,mpinterval,long>
 {
-public: static std::string ms_name;
+public:
+  static std::string ms_name;
+  static bool isInterval() { return false; }
 };
 
 template<> class interval_def<mpinterval> : public type_def<mpinterval,mpfr::mpreal,mpinterval,long>
 {
-public: static std::string ms_name;
+public:
+  static std::string ms_name;
+  static bool isInterval() { return true; }
 };
 #endif
 template<> class interval_def<long double> : public type_def<long double,long double,ldinterval,long>
 {
-public: static std::string ms_name;
+public:
+  static std::string ms_name;
+  static bool isInterval() { return false; }
 };
 
 template<> class interval_def<ldinterval> : public type_def<ldinterval,long double,ldinterval,long>
 {
-public: static std::string ms_name;
+public:
+  static std::string ms_name;
+  static bool isInterval() { return true; }
 };
 
 typedef enum {eNormalSpace,eEigenSpace,eSingularSpace } space_t;
 typedef enum {eComplexDynamics,ePseudoDynamics,eCombinedDynamics } dynamics_t;
-typedef enum {eNoInputs,eParametricInputs,eVariableInputs } inputType_t;
-typedef enum {eReachTubeSynth,eInitSynth,eInputSynth,eSensitivitySynth,eEigenSynth,eDynamicSynth,eCEGISSynth} synthesisType_t;
+typedef enum {eNoInputs,eParametricInputs,eVariableInputs,eVariableOnlyInputs } inputType_t;
+typedef enum {eReachTubeSynth,eIterReachTubeSynth,eReachSetSynth,eInitSynth,eInputSynth,eSensitivitySynth,eEigenSynth,eDynamicSynth,eCEGISSynth} synthesisType_t;
 typedef enum {eInequalities, eNormalised, eTemplated, eVertices } displayType_t;
-typedef enum {eTraceNoTableau,eTraceTableau,eTraceTransforms,eTracePivots,eTraceSimplex,eTraceBasis,eTraceEntries} traceTableau_t;
-typedef enum {eTraceNoVertex,eTraceVertices,eTraceRays,eTraceEdges,eTraceSets} traceVertices_t;
+typedef enum {eTraceNoTableau,eTraceObjectives,eTraceTableau,eTraceTransforms} traceTableau_t;
+typedef enum {eTraceNoPivots,eTracePivots,eTraceCosts,eTraceSimplex,eTraceBasis,eTraceEntries} tracePivots_t;
+typedef enum {eTraceNoVertex,eTraceVertexCount,eTraceVertices,eTraceRays,eTraceEdges,eTraceSets} traceVertices_t;
 typedef enum {eTraceNoDynamics,eTraceTime,eTraceDynamics,eTraceErrors,eTraceAbstraction,eTraceAll,eTraceREF} traceDynamics_t;
 //typedef enum {eTraceNone,eTraceResults,eTraceIntermediate,eTraceTransforms,eTraceAll} traceType_t;
 typedef enum {eNoCmd,ePlusCmd,eMinusCmd,eArrowCmd,eEqualsCmd,eGivenCmd} commands_t;
@@ -117,20 +178,33 @@ public:
   typedef Eigen::Matrix<scinterval,Eigen::Dynamic,Eigen::Dynamic>     MatrixS;
   typedef Eigen::Matrix<scalar,Eigen::Dynamic,Eigen::Dynamic>         MatrixR;
 
-  static inline void imprecise(const scinterval &value,const scalar &ref)
+  static inline void imprecise(const scinterval &value,const scalar &ref,std::string message="")
   {
     UNUSED(value);
     UNUSED(ref);
     ms_isImprecise=true;
-    if (ms_formal) throw ms_imprecise;
+    if (ms_formal) {
+      std::ostringstream stream;
+      stream << message << ms_imprecise;
+      scalar midPoint=toCentre(value);
+      scalar error=toUpper(value)-midPoint;
+      stream << toDouble(midPoint);
+      stream << "+" << toDouble(error) << " : ";
+      midPoint=toCentre(ref);
+      error=toUpper(ref)-midPoint;
+      stream << toDouble(midPoint);
+      stream << "+" << toDouble(error);
+      throw stream.str();
+    }
   }
 
-  static inline void imprecise(const scalar &value,const scalar &ref)
+  static inline void imprecise(const scalar &value,const scalar &ref,std::string message="")
   {
     UNUSED(value);
     UNUSED(ref);
-    ms_isImprecise=true;
-    if (ms_formal) throw ms_imprecise;
+    UNUSED(message);
+    //ms_isImprecise=true;
+    //if (ms_formal) throw ms_imprecise;
   }
 
   static inline scinterval pow(scinterval x,power y)
@@ -175,6 +249,7 @@ public:
     return z;
   }
 
+  static inline scinterval normsq(std::complex<scinterval> x)   { return norm(x); }
   static inline scinterval norm2(std::complex<scinterval> x)    { return sqrt(norm(x));}
   static inline scinterval norm2(const scinterval &x)           { return x;}
   static inline scinterval squared(const scinterval &x)
@@ -190,7 +265,7 @@ public:
     if (x.upper()<ms_hardZero) return -1;
     if (x.lower()>ms_hardZero) return 1;
     if ((x.upper()>ms_zero) || (x.lower()<-ms_zero)) {
-      imprecise(x,ms_zero);
+      imprecise(x,ms_zero,"hard sign error");
     }
     return 0;
   }
@@ -200,7 +275,7 @@ public:
     if (x.upper()<-ms_zero) return -1;
     if (x.lower()>ms_zero) return 1;
     if ((x.upper()>ms_zero) || (x.lower()<-ms_zero)) {
-      imprecise(x,ms_zero);
+      imprecise(x,ms_zero,"soft sign error");
     }
     return 0;
   }
@@ -248,7 +323,6 @@ public:
   static inline c_interval getHull(const c_interval &x,const c_interval &y)
   { return c_interval(hull(x.real(),y.real()),hull(x.imag(),y.imag())); }
 
-  //static inline void mult(scinterval &z,const scinterval &x,const scinterval &y);
   static inline scalar madd(scinterval &z,const scinterval &x,const scinterval &y);
   static inline scalar tightMadd(scinterval &z,const scinterval &x,const scinterval &y);
   static inline scalar tightWidth(const scinterval &x,const scinterval &y);
@@ -325,6 +399,9 @@ public:
    return z;
   }
 
+  static inline scalar normsq(std::complex<scalar> x)
+  { return norm(x);}
+
   static inline scalar norm2(std::complex<scalar> x)
   { return sqrt(norm(x));}
 
@@ -340,11 +417,10 @@ public:
   static inline scalar setpm(scalar x)                  { return x; }
   static inline scalar getHull(const scalar &,const scalar &y)              { return y; }
   static inline c_scalar getHull(const c_scalar &,const c_scalar &y)        { return y; }
-  //static inline void mult(scalar &z,const scalar &x,const scalar &y)    { z=x*y;   }
-  static inline scalar madd(scalar &z,const scalar &x,const scalar &y)      { z+=x*y;return ms_hardZero; }
+  static inline scalar madd(scalar &z,const scalar &x,const scalar &y);
   static inline scalar tightMadd(scalar &z,const scalar &x,const scalar &y) { z+=x*y;return ms_hardZero; }
   static inline scalar tightWidth(const scalar &x,const scalar &y)          { return ms_hardZero; }
-  static inline void msub(scalar &z,const scalar &x,const scalar &y)        { z-=x*y;   }
+  static inline void msub(scalar &z,const scalar &x,const scalar &y);
 
   static long double toDouble(scalar x);
   static scalar toScalar(long double &x)                { return x; }
@@ -408,7 +484,7 @@ public:
 };
 
 #define USE_MPREAL
-//#define USE_LDOUBLE
+#define USE_LDOUBLE
 #define USE_INTERVALS
 #define USE_SINGLES
 #ifdef USE_MPREAL
