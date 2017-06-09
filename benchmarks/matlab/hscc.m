@@ -12,9 +12,9 @@
 satellite_tf_disc1=tf([0.5,0.5],[1,-2,1],1);
 satellite_tf_disc2=tf([0.125,0.125],[1,-2,1],1);
 satellite_tf_disc3=tf([2,2],[1,-2,1],2);
-satellite_ss_disc1=tf([0.5,0.5],[1,-2,1],1);
-satellite_ss_disc2=tf([0.125,0.125],[1,-2,1],1);
-satellite_ss_disc3=tf([2,2],[1,-2,1],2);
+%satellite_ss_disc1=tf([0.5,0.5],[1,-2,1],1);
+%satellite_ss_disc2=tf([0.125,0.125],[1,-2,1],1);
+%satellite_ss_disc3=tf([2,2],[1,-2,1],2);
 
 
 %% Ball Magnetic Levitation
@@ -40,5 +40,5 @@ springmassdamperHSCC_ss_disc1=ss(springmassdamperHSCC_tf_disc1);
 
 save('benchmark_tf','satellite_tf_disc1','satellite_tf_disc2','satellite_tf_disc3','ballmaglev_tf_disc1',...
     'cruiseHSCC_tf_disc1','springmassdamperHSCC_tf_disc1','-append')
-save('benchmark_ss','satellite_ss_disc1','satellite_ss_disc2','satellite_ss_disc3','ballmaglev_ss_disc1',...
+save('benchmark_ss','ballmaglev_ss_disc1',...
     'cruiseHSCC_ss_disc1','springmassdamperHSCC_ss_disc1','-append')
