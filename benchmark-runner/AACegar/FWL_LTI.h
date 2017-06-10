@@ -3,10 +3,10 @@
 #ifdef __CPROVER
 #ifndef _FIXEDBV
   #ifndef _EXPONENT_WIDTH
-    #define _EXPONENT_WIDTH 16
+    #define _EXPONENT_WIDTH 8
   #endif
   #ifndef _FRACTION_WIDTH
-  #define _FRACTION_WIDTH 11
+  #define _FRACTION_WIDTH 24
   #endif
   typedef __CPROVER_floatbv[_EXPONENT_WIDTH][_FRACTION_WIDTH] control_floatt;
   control_floatt _imp_max=(((1 <<(_EXPONENT_WIDTH-1))-1)<<1)+1;

@@ -1055,7 +1055,7 @@ std::string Synthesiser<scalar>::makeCEGISDescription(bool intervals)
     if (vertices.rows()>0) {
       result << "control_floatt vertices[_NUM_VERTICES][_DIMENSION]";
       result << ms_logger.MatToC("",vertices);
-      MatrixS transformedVertices=vertices*invT.transpose();
+      MatrixS transformedVertices=vertices*T.transpose();
       result << "control_floatt transformed_vertices[_NUM_VERTICES][_DIMENSION]";
       result << ms_logger.MatToC("",transformedVertices);
       result << "control_floatt input_vertices[_NUM_INPUT_VERTICES][_DIMENSION]";
@@ -1065,7 +1065,7 @@ std::string Synthesiser<scalar>::makeCEGISDescription(bool intervals)
       result << "control_floatt accel_vertices[_NUM_INPUT_VERTICES][_DIMENSION];\n";
       result << "control_floatt vectors[_NUM_VECTORS][_DIMENSION]";
       result << ms_logger.MatToC("",vectors);
-      MatrixS transformedVectors=vectors*invT.transpose();
+      MatrixS transformedVectors=vectors*invT;
       result << "control_floatt transformed_vectors[_NUM_VECTORS][_DIMENSION]";
       result << ms_logger.MatToC("",transformedVectors);
 

@@ -22,7 +22,7 @@ void make_nondet_coeffs(vectort src,vectort uncertainty,vectort dst)
 {
   cnttype i=0;
   for(i = 0; i < _DIMENSION; i++)
-#ifdef __CPROVER 
+#ifdef __CPROVER
     if(uncertainty[i] > _zero)
     {
       control_floatt min=src[i] -uncertainty[i];

@@ -64,7 +64,7 @@ void accelerateInputs()
   }
   
 }
-
+./axelerator -u -p -ii -mpi 256 -synth CEGIS -params "p=2,q=1,f=1,m=256:16:8" -dynamics "[0.90122,1.3429e-08;7.4506e-09,0]" -init "[cube<.5]" -isense "[128;0]" -inputs "[1>-1;1<1]" -sguard "[cube<1]" -control "[0]"
 #ifdef _NUM_ITERATIONS
 
 void checkIteration(vectort point,matrixt transform,int input_index)
