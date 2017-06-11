@@ -57,11 +57,17 @@ int check_matrix_bounds(matrixt coeffs)
   {
     for(j=0; j < _DIMENSION; j++)
     {
+#ifdef __CPROVER
+  #ifdef _FIXEDBV
       const control_floatt value=coeffs[i][j];
-#ifdef __CPROVER 
       verify_assume(value <= _dbl_max);
       verify_assume(value >= _dbl_min);
+      #else
+      const controller_floatt value=coeffs[i][j];
+      coeffs[i][j]=value;
+      #endif
 #else
+      const control_floatt value=coeffs[i][j];
       if(value > _dbl_max) return 10;
       if(value < _dbl_min) return 10;
 #endif  
