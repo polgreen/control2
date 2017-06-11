@@ -129,34 +129,136 @@ Digital Control; A/D converters; Control System Synthesis; Transient Analysis; S
 \end{frontmatter}
 
 \section{Introduction}
-\textcolor{red}{Cristina: We have to write a new introduction as well.} 
+Modern implementations of embedded control systems have proliferated with
+the availability of low-cost devices that can perform highly non-trivial
+control tasks, with significant impact in numerous application areas such as
+life sciences, environmental control and robotics~\cite{astrom1997computer, Franklin15}. 
+Correct synthesis is non-trivial, even in cases with restriceted dynamics.
+We examine the case of Linear Time Invariant (LTI) Models, for which the
+synthesis of controllers is well understood. However, the
+use of digital control architectures adds new challenges caused by artifacts
+specific to digital control, such as the effects of finite-precision arithmetic, time
+discretization and quantization noise introduced by A/D and D/A conversion.
 
-%\begin{figure}
-%\begin{center}
-%\includegraphics[height=4cm]{jcaesar.eps}    % The printed column  
-%\caption{Gaius Julius Caesar, 100--44 B.C.}  % width is 8.4 cm.
-%\label{fig1}                                 % Size the figures 
-%\end{center}                                 % accordingly.
-%\end{figure}
+While research on digital control is well developed~\cite{astrom1997computer},
+automated and sound control synthesis is challenging, particularly when the
+synthesis objective goes beyond classical stability.  There are recent methods
+for verifying reachability properties of a given controller~\cite{FLD+11}.
+However, these methods have not been generalized to control synthesis.  
+Note that a synthesis algorithm that guarantees stability does not
+ensure safety: the system might transitively visit an unsafe state resulting
+in unrecoverable failure. Programming expertise is a key
+barrier to broad adoption of correct digital controllers, and requires
+considerable knowledge outside of the expertise of many control engineers.
 
-% OR
+Beyond classical a-posteriori validation in digital control, there has been
+plenty of previous work aiming at \emph{verifying} a given designed
+controller, which however broadly lack automation.  Recent work has studied
+the stability of digital controllers considering implementation aspects,
+i.e., fixed-point arithmetic and the word length~\cite{Bessa16}.  They
+exploit advances in bit-accurate verification of C programs to obtain a
+verifier for software-implemented digital control.
 
-%\begin{figure}
-%\begin{center}
-%\epsfig{file=jcaesar,width=7cm}
-%\caption{Gaius Julius Caesar, 100--44 B.C.}
-%\label{fig1}
-%\end{center}
-%\end{figure}
+By contrast, we leverage a very recent step-change in the automation and
+scalability of \emph{program synthesis}.  Program synthesis engines use a
+specification as the starting point, and subsequently generate a sequence of
+candidate programs from a given template.  The candidate programs are
+iteratively refined to eventually satisfy the specification.  Program
+synthesizers implementing Counter-Example Guided Inductive Synthesis
+(CEGIS)~\cite{DBLP:conf/asplos/Solar-LezamaTBSS06} are now able to generate
+programs for highly non-trivial specifications with a very high degree of
+automation.  Modern synthesis engines combine automated testing, genetic
+algorithms, and SMT-based automated
+reasoning~\cite{DBLP:journals/corr/AlurFSS16a, DBLP:conf/lpar/DavidKL15}.
 
+By combining state-of-the-art synthesis engines we present a tool that
+automatically generates digital controllers for a given continuous plant
+model that are correct by construction.  This approach delivers a high
+degree of automation, promises to reduce the cost and time of development of
+digital control dramatically, and requires considerably less expertise than
+a-posteriori verification.  Specifically, we synthesize stable,
+software-implemented embedded controllers along with a model of a physical
+plant.  Due to the complexity of such closed-loop systems, in this work we
+focus on linear models with known configurations, and perform parametric
+synthesis of stabilizing digital controllers with a number of properties that
+define their desired behaviour.
 
-%\subsection{A subsection}
-%Marcus Tullius Cicero, 106--43 B.C. was a Roman statesman, orator, 
-%and philosopher.  A major figure in the last years of the Republic, 
-%he is best known for his orations against Catiline\footnote{
-%This footnote should be very brief.}
-%and for his mastery of Latin prose \cite{Heritage:92}. He was a 
-%contemporary of Julius Caesar (Fig.~\ref{fig1}).
+Our work addresses challenging aspects of the control synthesis problem.
+We perform digital control synthesis over a hybrid model, where the plant
+exhibits continuous behavior whereas the controller operates in discrete
+time and over a quantized domain. In particular, our model evaluates the
+effects of the quantizers (A/D and D/A converters) and of time discretization,
+as well as representation errors introduced by in modelling artifacts
+such as an observer~\cite{astrom1997computer} in a finite precision domain, 
+while reasoning about high level properties such as stability, robustness, safety,
+and response time, which define the behaviour of the system. In particular,
+safety requirements are frequently overlooked in conventional feedback control
+synthesis, but play an important role in systems engineering.
+
+Using state of the art verifiers, we evaluate these models against automatically 
+synthesised controllers using CEGIS-based synsthesis that incorporate the above
+mentioned artifacts in different models of Single-Input/Single-Output (SISO) systems.
+We offer three modes of operation that address different aspects of the problem.
+
+{\em The first  approach} uses a transfer-function based analysis that solves the
+problem of robust stability for closed loop systems for a collection of unstable plants.
+Inthis case, there is no safety specification since we are working in the frequency domain.
+
+{\em The second approach} uses a na\"ive technique that starts by devising a
+digital controller that stabilizes the system while remaining safe for a
+pre-selected time horizon and a single initial state; then, it verifies
+unbounded safety by unfolding the dynamics of the system, considering the
+full hyper-cube of initial states, and checking a {\em completeness
+threshold}~\cite{DBLP:conf/vmcai/KroeningS03}, i.e., the number of
+iterations required to sufficiently unwind the closed-loop state-space
+system such that the boundaries are not violated for any larger number of
+iterations.  As~it requires unfolding up to the completeness threshold, this
+approach is computationally expensive.
+
+Instead of unfolding the dynamics, {\em the third approach}
+employs {\em abstract acceleration}~\cite{cattaruzza2015unbounded} to
+evaluate all possible progressions of the system simultaneously. 
+Additionally, this approach uses {\em abstraction refinement},
+enabling us to always start with a very simple description regardless of the
+dynamics complexity, and only expand to more complex models
+when a solution cannot be found.
+
+We provide experimental results showing that all our approaches are able to
+efficiently synthesize safe controllers for a set of intricate
+physical plant models taken from the digital control literature.
+
+In summary, this paper makes the following original contributions.
+%
+\begin{enumerate}
+
+\item We automatically generate {\em correct-by-construction} digital
+  controllers using an inductive synthesis approach.  Our application of program
+  synthesis is non-trivial and addresses challenges specific to control
+  systems, such as quantizers and FWL.  In particular, we
+  have found that a two-stage verification engine that continuously refines
+  the precision of the fixed-point representation of the plant yields a
+  speed-up of two orders of magnitude over a conventional one-stage
+  verification engine.
+
+%
+\item  We compute state-feedback controllers that 
+  guarantee a given safety property alongside stability and response time
+  specifications.  Existing methods for controller synthesis rely on transfer
+  function representations, which are inadequate to prove safety requirements.
+%
+\item We provide three novel algorithms: the first, na\"ive one, relies on
+  an unfolding of the dynamics up to a completeness threshold, while the
+  second one is abstraction-based and leverages abstraction refinement and
+  acceleration to improve scalability while retaining soundness.  A third algorithm
+  evaluates systems using transfer functions where no state-space description is given.
+  All three approaches provide sound synthesis of feedback controllers and consider
+  the various sources of imprecision in the implementation of the control
+  algorithm and in the modeling of the plant.
+%
+\item We develop a model for different sources of quantization error and
+  their effect on reachability properties.  We give bounds that ensure the
+  safety of our controllers in a hybrid continuous-digital domain.
+\end{enumerate}
 
 %-------------------------------
 \section{Related Work}
