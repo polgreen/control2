@@ -11,12 +11,8 @@
 #ifdef CPROVER
     #ifndef FLOAT
       #ifdef INTERVAL
-        typedef   __CPROVER_fixedbv[_CONTROL_FLOAT_WIDTH][_CONTORL_RADIX_WIDTH] __plant_precisiont;
-        #include "intervals.h"
-        typedef   struct intervalt __plant_typet;
-        typedef   __CPROVER_fixedbv[_CONTROL_FLOAT_WIDTH][_CONTORL_RADIX_WIDTH] __controller_precisiont;
-        typedef   struct intervalt __controller_typet;
-        #define interval(x) interval_cast(x);
+     //we never use interval and cprover
+        __CPROVER_assert(0,"error");
       #else
         typedef __CPROVER_fixedbv[_CONTROL_FLOAT_WIDTH][_CONTORL_RADIX_WIDTH] __plant_precisiont;
         typedef __plant_precisiont __plant_typet;
@@ -28,13 +24,8 @@
       #endif
   #else
     #ifdef INTERVAL
-        //I don't think INTERVAL + CPROVER + FLOAT will work
-       typedef   __CPROVER_floatbv[_CONTROL_FLOAT_WIDTH][_CONTORL_RADIX_WIDTH] __plant_precisiont;
-       #include "intervals.h"
-       typedef   struct intervalt __plant_typet;
-       typedef   __CPROVER_floatbv[_CONTROL_FLOAT_WIDTH][_CONTORL_RADIX_WIDTH] __controller_precisiont;
-       typedef   struct intervalt __controller_typet;
-       #define interval(x) interval_cast(x);
+        //we never use interval and cprover
+        __CPROVER_assert(0,"error");
     #else
        typedef __CPROVER_floatbv[_CONTROL_FLOAT_WIDTH][_CONTORL_RADIX_WIDTH] __plant_precisiont;
        typedef __plant_precisiont __plant_typet;
@@ -65,6 +56,7 @@
        #define controller_cast(x) x
     #endif
   #else
+       __CPROVER_assert(0,"error: intervals for floating point not yet implemented");
    //we need to implement intervals for floating point
   #endif
 #endif
