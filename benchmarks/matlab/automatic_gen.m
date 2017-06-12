@@ -1,3 +1,6 @@
+
+%script to generate automatically the tf and ss files
+
 makebenchmarks
 
 benchmarks_ss = load('benchmark_ss.mat');
