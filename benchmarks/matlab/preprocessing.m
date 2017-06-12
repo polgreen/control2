@@ -33,9 +33,9 @@ for i=1:size(SS_names,1)
     %write benchmark
     fprintf(fileID,'#ifndef BENCHMARK_H_ \n #define BENCHMARK_H_ \n\n');
     fprintf(fileID,'// time discretisation %d \n',Benchmark.Ts);
-    fprintf(fileID,'#ifndef INT_BITS \n#define INT_BITS 8\n#define FRAC_BITS 8\n #endif\n');
-    fprintf(fileID,'#define NSTATES %d \n #include "control_types.h"\n',states);
-    fprintf(fileID,'#define NINPUTS %d \n #define NOUTPUTS %d\n',inputs, outputs);
+    fprintf(fileID,'#ifndef INT_BITS \n #define INT_BITS 8\n #define FRAC_BITS 8\n#endif\n');
+    fprintf(fileID,'#define NSTATES %d \n#include "control_types.h"\n',states);
+    fprintf(fileID,'#define NINPUTS %d \n#define NOUTPUTS %d\n',inputs, outputs);
     fprintf(fileID,'#define INPUT_UPPERBOUND (__plant_precisiont)1\n');
     fprintf(fileID,'#define INPUT_LOWERBOUND (__plant_precisiont)-1\n');
     fprintf(fileID,'const __plant_typet _controller_A[NSTATES][NSTATES] = {' );
