@@ -33,11 +33,12 @@ for i=1:size(SS_names,1)
     %write benchmark
     fprintf(fileID,'#ifndef BENCHMARK_H_ \n #define BENCHMARK_H_ \n\n');
     fprintf(fileID,'// time discretisation %d \n',Benchmark.Ts);
+    fprintf(fileID,'#ifndef INT_BITS \n#define INT_BITS 8\n#define FRAC_BITS 8\n #endif\n');
     fprintf(fileID,'#define NSTATES %d \n #include "control_types.h"\n',states);
     fprintf(fileID,'#define NINPUTS %d \n #define NOUTPUTS %d\n',inputs, outputs);
     fprintf(fileID,'#define INPUT_UPPERBOUND (__plant_precisiont)1\n');
     fprintf(fileID,'#define INPUT_LOWERBOUND (__plant_precisiont)-1\n');
-    fprintf(fileID,'#define __plant_typet _controller_A[NSTATES][NSTATES] = {' );
+    fprintf(fileID,'const __plant_typet _controller_A[NSTATES][NSTATES] = {' );
 
     for k=1:states
       if(i==1) 
@@ -52,7 +53,7 @@ for i=1:size(SS_names,1)
     end   
     fprintf(fileID,'};\n');
         
-    fprintf(fileID,'#define __plant_typet _controller_B[NSTATES] = {');
+    fprintf(fileID,'const __plant_typet _controller_B[NSTATES] = {');
     for k=1:states-1
         fprintf(fileID,'interval(%d)',B(k));
     end
@@ -105,11 +106,8 @@ end
 constant = flipud(constant);
 
 %output header file
-%q = quantizer('float', [wordlength,exponentlength])
-%constant2 = constant;
-%constant = num2hex(q, constant);
 
-fprintf(fileID,'__plant_typet __char_poly_const[%d][%d] = \n {', states+1,states+1);
+fprintf(fileID,'const __plant_typet __char_poly_const[%d][%d] = \n {', states+1,states+1);
 
 for i=1:states+1
    if(i==1) 

@@ -145,7 +145,18 @@ int check_stability(void){
 }
 
 #define __m _AminusBK
-#if NSTATES==2
+#if PREPROCESSING
+void __CPROVER_EIGEN_preprocessed_charpoly(void){
+  for(int i=0; i<NSTATES+1; i++)
+  {
+    __CPROVER_EIGEN_poly[i] = __char_poly_const[i][0];
+    for(int j=0; j<NSTATES; j++)
+    {
+      __CPROVER_EIGEN_poly[i] = add(__CPROVER_EIGEN_poly[i], mult(__char_poly_const[i][j+1],K_fxp[j]));
+    }
+  }
+}
+#elif NSTATES==2
 void __CPROVER_EIGEN_charpoly_2(void) { //m00*m11 - m01*m10 - m00*x - m11*x + x^2
 
   __CPROVER_EIGEN_poly[2] = sub ( mult(__m[0][0],__m[1][1]), mult(__m[0][1] , __m[1][0]) );
@@ -266,6 +277,8 @@ void __CPROVER_EIGEN_charpoly(void){
 
   #if NSTATES==1
   //do nothing
+ #elif PREPROCESSING
+   __CPROVER_EIGEN_preprocessed_charpoly();
   #elif NSTATES==2
       __CPROVER_EIGEN_charpoly_2();
   #elif NSTATES==3
