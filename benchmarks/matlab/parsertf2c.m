@@ -1,8 +1,8 @@
 function parsertf2c (plant, intBits, fracBits, minRange, maxRange, name)
 
-ap = cell2mat(plant.Denominator);
+ap = cell2mat(plant.den);
 nAp = length(ap);
-bp = cell2mat(plant.Numerator);
+bp = cell2mat(plant.num);
 nBp = length(bp);
 
 % generating the controller structure inside the ansi-c file
