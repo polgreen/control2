@@ -10,6 +10,10 @@
 \usepackage{hyperref}
 \usepackage{cite}	
 \usepackage{mathtools}
+\usepackage{tikz}
+\usetikzlibrary{positioning, automata, shapes.arrows, calc, shapes, arrows}
+\usetikzlibrary{patterns}
+\usepackage{pgfplots}
 
 %\setcopyright{acmcopyright}
 %\acmDOI{10.475/123_4}
@@ -182,7 +186,86 @@ controllers. The two approaches differ in
 the manner in which they check the safety specification
 for all reachable states.
 
-The first approach uses a multi-staged verification process. 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[htb]
+{\scriptsize
+\centering
+\resizebox{.5\textwidth}{!}
+{
+\hspace{-1cm}
+  \begin{tikzpicture}[scale=0.3,->,>=stealth',shorten >=.2pt,auto, semithick, initial text=, ampersand replacement=\&,]
+  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center
+},
+          row sep=.6cm, column sep=.9cm] {
+   \coordinate (aux1);
+   \& \coordinate (aux2);
+   \&;\\
+   \coordinate (aux3);
+   \& \coordinate (aux4);
+   \&;\\
+   \coordinate (aux5);
+   \& \coordinate (aux6);
+   \&;\\
+   \node[minimum width=1.5cm, minimum height=0.6cm, fill=gray!20] (synth) {{\sc 1.Synthesize}};
+   \&
+   complexnode/.pic={ 
+     \node[rectangle,draw,dotted,
+	minimum width=6cm,
+	minimum height=1cm,
+        pattern=north west lines, pattern color=gray!20,
+	label={\sc ~~~~~~~~~~~~Verify},] (verif) {};
+     \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif1) at ([xshift=-2cm]verif.center) {{\sc 2.Safety}};
+     \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif2) at ([xshift=0cm]verif.center) {{\sc 3.Precision}};
+     \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif3) at ([xshift=2cm]verif.center) {{\sc 4.Complete}};
+     %\node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif4) at ([xshift=3.1cm]verif.center) {{\sc 5.Sampling}};
+   } 
+   \& \node[ellipse, fill=gray!20] (done) {{\sc Done}};\\
+   \& \\
+   \node[minimum height=0cm] (gp) {\sf Program Search};
+   \&
+   complexnode/.pic={ 
+     \coordinate (aux);
+   \node (bmc) at ([xshift=-2cm]aux.center) {\sf BMC-based \\ \sf Verifier};
+   \node (fp)  at ([xshift=0cm]aux.center) {\sf Fixed-point \\ \sf Arithmetic\\ \sf Verifier};
+   \node (sv)  at ([xshift=2cm]aux.center) {\sf Completeness\\ \sf Verifier};
+   %\node (cv)  at ([xshift=3.1cm]aux.center) {\sf Sampling\\Verifier};
+   }   
+    \\
+  };
+
+   \path
+    ([yshift=2em]synth.east) edge node[xshift=-0.5em,align=center] {$K$} ([yshift=2em]verif1.west)
+    ([yshift=-2em]verif1.west) edge node {C-ex} ([yshift=-2em]synth.east)
+    ([xshift=-5em]fp.north) edge node[align=center]  {T/F} ([xshift=-5em]verif2.south)
+    ([xshift=-5em]sv.north) edge node[align=center]  {T/F} ([xshift=-5em]verif3.south)
+    %([xshift=-5em]cv.north) edge node[align=center]  {T/F} ([xshift=-5em]verif4.south)
+    ([xshift=5em]verif1.south) edge node[align=center] {$K$} ([xshift=5em]bmc.north)
+    ([xshift=5em]verif2.south) edge node[align=center] {$K$} ([xshift=5em]fp.north)
+    ([xshift=5em]verif3.south) edge node[align=center] {$K$} ([xshift=5em]sv.north)
+    %([xshift=5em]verif4.south) edge node[align=center] {$K$} ([xshift=5em]cv.north)
+    ([xshift=-5em]bmc.north) edge node[align=center]  {UNSAT/\\model} ([xshift=-5em]verif1.south)
+    (verif) edge node {PASS} (done)
+    ([xshift=5em]synth.south) edge node[align=center] {Inputs} ([xshift=5em]gp.north)
+    ([xshift=-5em]gp.north) edge node[align=center] {UNSAT/\\$K$} ([xshift=-5em]synth.south)
+    (aux3) edge (synth.north);
+   \path[-]
+   (verif2.north) edge node[align=center] {} ([xshift=0cm]aux6)
+   ([xshift=0cm]aux6) edge node[align=center] {Increase Precision} (aux5)
+   (verif3.north) edge node[align=center] {} ([xshift=6.7cm]aux4)
+   ([xshift=6.7cm]aux4) edge node[align=center] {Increase Unfolding Bound} (aux3);
+   %(verif4.north) edge node[align=center] {} ([xshift=10.5cm]aux2)
+   %([xshift=10.5cm]aux2) edge node[align=center] {Increase Sampling Rate} (aux1);
+
+ \end{tikzpicture}
+}}
+\caption{CEGIS with multi-staged verification}
+\label{fig:CEGIS-precision-increment}
+\end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The first approach presented in Figure~\ref{fig:CEGIS-precision-increment}
+uses a multi-staged verification process. 
 Essentially, it starts by devising a
 digital controller that stabilizes the system while remaining safe for a
 pre-selected time horizon and a single initial state; then, it
@@ -204,7 +287,55 @@ system such that the boundaries are not violated for any larger number of
 iterations, and
 check that $k{\geq}\overline{k}$.
 
-Instead of unfolding the dynamics, the second approach
+\begin{figure}
+\centering
+{\scriptsize
+  \resizebox{.5\textwidth}{!}
+  {
+\begin{tikzpicture}[scale=0.3,->,>=stealth',shorten >=.2pt,auto, semithick, ampersand replacement=\&,]
+  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center},row sep=.8cm, column sep=.2cm] {
+   \coordinate (aux1);
+   \& \coordinate (aux2);
+   \& ;\\
+   \&\node[fill=gray!20,align=center,xshift=-1.5cm] (pre) {{\sc 1. pre-}\\{\sc processing}};
+   \& \node[fill=gray!20,align=center] (abstract) {\sc 4. abstract};
+   \& \coordinate (aux); \\ 
+   \&
+   \& \node[fill=gray!20,align=center] (synth) {\sc 2. synthesize};
+   \& \node[fill=gray!20,align=center, minimum width=4cm] (verify) {\sc 3. verify ($\phi$)};
+      \node[draw=none] (SAT) at ([xshift=2.7cm,yshift=-.3cm]verify)  {\sc PASS};
+   \& \node[ellipse, fill=gray!20] (done) {{\sc Done}};\\
+   \&
+   \& \node[draw,rectangle,align=center] (KSAT) {Program \\ Search};
+   \& complexnode/.pic={
+     \coordinate (AA);
+     \node[draw,rectangle,align=center] (AAV) at ([xshift=-1.5cm]AA.center) {Abstract\\Acceleration};
+     \node[draw,rectangle,align=center] (AAC) at ([xshift=1.5cm]AA.center) {Abstraction \\ Verifier};
+    }\\
+  };
+  \path
+    (pre.east) edge node[align=center] {$P_a$, $N$,\\ $\phi_\mathit{init}^k$} (abstract.west)
+    (abstract.south) edge node{$(\phi(K), k)$} (synth.north)
+    ([yshift=1em]synth.east) edge node {$K$} ([yshift=1em]verify.west)
+    (aux) edge (abstract.east) 
+    (verify.east) edge (done.west);
+  \path
+    ([xshift=+.6cm]KSAT.north) edge[left] node[xshift=-.3cm] {$K$} ([xshift=0.6cm]synth.south) 
+    ([xshift=-.6cm]synth.south) edge node[align=center,xshift=.3cm] {$(\phi(K),k)$} ([xshift=-.6cm]KSAT.north)
+    ([yshift=.5cm]AAV.east) edge node{\sl $\hat{X}^\#$} ([yshift=.5cm]AAC.west)
+    ([yshift=-.5cm]AAC.west) edge node{$(k,x_0)$} ([yshift=-.5cm]AAV.east)
+    (AAC.north) edge node{\sl $\hat{X}^\#$} ([xshift=4.9cm]verify.south)
+    ([xshift=-5cm]verify.south) edge node{$K$} (AAV.north);
+  \path[-] 
+     (verify.north) edge node {$(k,x_0)$} (aux);
+\end{tikzpicture}
+}
+}
+\caption{Abstraction-based CEGIS}
+\label{fig:CEGARIS} 
+\end{figure}
+
+Instead of unfolding the dynamics, the second approach shown in Figure~\ref{fig:CEGARIS}
 employs {\em abstract acceleration}~\cite{cattaruzza2015unbounded} to
 evaluate all possible progressions of the system simultaneously. 
 Additionally, the second approach uses abstraction refinement,
@@ -212,7 +343,7 @@ enabling us to always start with a very simple description regardless of the
 dynamics complexity, and only expand to more complex models
 when a solution cannot be found.
 
-\textcolor{red}{add more for the second approach}
+%\textcolor{red}{add more for the second approach}
 
 %\textcolor{red}{We have to talk about the naive and AA back-ends, which are based on our CEGIS framework}
 
