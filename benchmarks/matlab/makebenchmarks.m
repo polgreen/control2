@@ -41,7 +41,11 @@ acrobot
 display('Acrobot - 7 benchmarks')
 antenna
 display('Antenna - 7 benchmarks')
+cstr
+display('CSTR - 7 benchmarks')
+voltageregulator
+display('Voltage Regulator - 8 benchmarks')
 display('Done')
-display('Total of benchmarks: 142')
+display('Total of benchmarks: 167')
 display('The .mat file benchmark_tf.mat contains the transfer function models.')
 display('The .mat file benchmark_ss.mat contains the state space models.')
