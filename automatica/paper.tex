@@ -1611,6 +1611,303 @@ We use Jury's criterion to limit $|\lambda_i| \leq 1$. Let us now define a trans
 P'=\prod_{i=0}^n (s-\lambda_i')=\prod_{i=0}^n (s-\lambda_i\overline{\lambda})=\sum_{j=0}^n c_j\overline{\lambda}^{n-j}s^j
 \end{equation}
 where all members are known, we may now synthesise coefficients that ensure the eigenvalues are smaller than a desired magnitue, thus ensuring that the settling time is too.
+
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+\section{Verification of a Conrollable Observed System}\label{sec:cof_verification}
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+\begin{figure*}[htb]
+\centering
+
+\tikzset{add/.style n args={4}{
+    minimum width=6mm,
+    path picture={
+        \draw[circle] 
+            (path picture bounding box.south east) -- (path picture bounding box.north west)
+            (path picture bounding box.south west) -- (path picture bounding box.north east);
+        \node[draw=none] at ($(path picture bounding box.south)+(0,0.13)$)     {\small #1};
+        \node[draw=none] at ($(path picture bounding box.west)+(0.13,0)$)      {\small #2};
+        \node[draw=none] at ($(path picture bounding box.north)+(0,-0.13)$)    {\small #3};
+        \node[draw=none] at ($(path picture bounding box.east)+(-0.13,0)$)     {\small #4};
+        }
+    }
+ }
+
+\resizebox{1.0\textwidth}{!}{
+ \begin{tikzpicture}[scale=0.6,-,>=stealth',shorten >=.2pt,auto,
+     semithick, initial text=, ampersand replacement=\&,]
+
+  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center}, row sep=.6cm, column sep=.6cm] {
+    \node[draw=none] (r) {$r_k$};
+    \node[rectangle,draw,
+	minimum width=1cm,
+	minimum height=1cm,] (gain)at ([xshift=1.2cm]r) {\sc $k_r$};
+    
+   \& \node[circle,add={-}{+}{}{}] (circle) {};
+   \node[draw=none] (ez) at ([xshift=1cm,yshift=.15cm]circle)  {$u_k$};
+   \node[rectangle,draw,minimum width=1cm,minimum height=1cm] (Kd) at ([xshift=0,yshift=-5.5cm]circle)  {\sc $\mat{K}_d$};
+   \coordinate (kdsouth) at ([yshift=-3cm]Kd);
+      
+   
+   \& complexnode/.pic={ 
+      \node[rectangle,dashed,draw,minimum width=3cm,minimum height=1.6cm,label=\textbf{DAC}] (dac) {};
+     \node[circle,add={+}{+}{}{},fill=gray!20] (q2) at ([xshift=-.65cm]dac.center) {};
+     \node[draw=none] (q2t)  at ([yshift=.55cm]q2) {{\sc Q2}};
+     \node[draw=none] (v2)  at ([yshift=-1.5cm]q2) {$\nu_2$};
+     \node[fill=gray!20] (zoh) at ([xshift=.65cm]dac.center) {\sc ZOH};
+   }   
+
+   \& complexnode/.pic={ 
+      \node[rectangle,dashed,draw,minimum width=8cm,minimum height=3.5cm,label=\textbf{Plant}] (plant)  at ([yshift=-.5cm]dac.center) {};
+      \node[rectangle,draw,minimum width=1cm,minimum height=1cm] (B) at ([xshift=-2.5cm,yshift=.5cm]plant.center)  {\sc $\mat{B}$};
+      \node[draw=none] (u) at ([xshift=-1cm,yshift=.15cm]B)  {$u(t)$};
+      \node[circle,add={+}{+}{}{}] (p1) at ([xshift=-1.3cm,yshift=.5cm]plant.center) {};
+      \node[draw=none] (xdot) at ([xshift=.85cm,yshift=.15cm]p1)  {$\dot{\vec{x}}(t)$};   
+      \node[rectangle,draw,minimum width=1cm] (int) at ([xshift=.5cm,yshift=.5cm]plant.center) {\sc $\int$};
+      \coordinate (xsouth) at ([xshift=1cm]int);
+      \node[draw=none] (x) at ([xshift=1cm,yshift=.15cm]int)  {$\vec{x}(t)$};   
+      \node[rectangle,draw,minimum width=1cm,minimum height=1cm] (C) at ([xshift=2.7cm,yshift=.5cm]plant.center)  {\sc $\mat{C}$};
+      \node[draw=none] (y) at ([xshift=1cm,yshift=.15cm]C)  {$\vec{y}(t)$};   
+      \node[rectangle,draw,minimum width=1cm,minimum height=1cm] (A) at ([xshift=.5cm,yshift=-1cm]plant.center)  {\sc $\mat{A}$};
+      \coordinate (aeast) at ([xshift=1cm]A);
+      \coordinate (awest) at ([xshift=-1.8cm]A);
+    }   
+    
+   complexnode/.pic={ 
+      \node[rectangle,dashed,draw,minimum width=8cm,minimum height=5cm,label=\textbf{Observer}] (observer)  at ([yshift=-5cm]plant.center) {};
+      \node[rectangle,draw,minimum width=1cm,minimum height=1cm] (Bd) at ([xshift=-2.5cm]observer.center)  {\sc $\mat{B}_o$};
+      \node[draw=none] (ud) at ([xshift=-1cm,yshift=.15cm]Bd)  {$u_k$};
+      \node[circle,add={+}{+}{+}{}] (o1) at ([xshift=-1.3cm]observer.center) {};
+      \node[draw=none] (xd) at ([xshift=.85cm,yshift=.15cm]o1)  {$\hat{\vec{x}}_{k+1}$};   
+      \node[rectangle,draw,minimum width=1cm] (delay) at ([xshift=.5cm]observer.center) {\sc $z^{-1}$};
+      \coordinate (xdsouth) at ([xshift=1.3cm]delay);
+      \coordinate (fbsouth) at ([xshift=1.3cm,yshift=-3cm]delay);
+      \node[draw=none] (xdp) at ([xshift=1cm,yshift=.15cm]delay)  {$\hat{\vec{x}}_k$};   
+      \node[rectangle,draw,minimum width=1cm,minimum height=1cm] (Cd) at ([xshift=2.7cm]observer.center)  {\sc $\mat{C}_o$};
+      \node[draw=none] (y) at ([xshift=.4cm,yshift=.8cm]Cd)  {$\hat{\vec{y}}_k$};   
+      \node[rectangle,draw,minimum width=1cm,minimum height=1cm] (Ad) at ([xshift=.5cm,yshift=-1.5cm]observer.center)  {\sc $\mat{A}_o$};
+      \coordinate (adeast) at ([xshift=1.3cm]Ad);
+      \coordinate (adwest) at ([xshift=-1.8cm]Ad);
+      \node[circle,add={-}{}{}{+}] (o2) at ([xshift=2.7cm,yshift=1.5cm]observer.center) {};
+      \node[rectangle,draw,minimum width=1cm,minimum height=1cm] (Ld) at ([xshift=.5cm,yshift=1.5cm]observer.center)  {\sc $\mat{L}_d$};
+      \coordinate (ldwest) at ([xshift=-1.8cm]Ld);
+      \coordinate (bdwest) at ([xshift=-5.5cm]Bd);
+      \coordinate (uksouth) at ([xshift=-5.5cm,yshift=5.5cm]Bd);
+      \coordinate (o2east) at ([xshift=6.3cm]o2);
+    }   
+    
+   \& complexnode/.pic={ 
+     \node[rectangle,dashed,draw,minimum width=3.5cm,minimum height=1.6cm,label=\textbf{ADC},] (adc) {};
+     \draw[] ([xshift=-1cm]adc.center) -- ++(0.5,0.2cm);
+     \coordinate (switch1) at ([xshift=-1cm]adc.center);
+     \coordinate (switch2) at ([xshift=-0.4cm]adc.center);
+     \node[circle,add={+}{+}{}{},fill=gray!20] (q1) at ([xshift=.6cm]adc.center) {};
+     \node[draw=none] (q2t)  at ([yshift=.55cm]q1) {\sc Q1};
+     \node[draw=none] (v1)  at ([yshift=-1.5cm]q1) {$\nu_1$};
+     \node[draw=none] (y) at ([xshift=.85cm,yshift=.15cm]q1)  {$\vec{y}_k$};       
+     \coordinate (ykeast) at ([xshift=1.9cm]q1);
+   } 
+   \& \coordinate (aux1);
+   \& \\
+  };
+
+  \path[->] (v1) edge (q1.south);
+  \path[->] (v2) edge (q2.south);
+  \path[->] (r) edge (gain.west);
+  \path[->] (gain.east) edge (circle.west);
+  \path[->] (circle.east) edge (q2.west);
+  \path       (q2.east) edge (zoh.west);
+  \path[->] (zoh.east) edge (B.west);
+  \path
+   (B.east) edge (p1.west)
+   (p1.east) edge (int.west)
+   (xsouth) edge (aeast)
+   (aeast) edge (A.east)
+   (A.west) edge (awest)
+   (awest) edge (p1.south)
+   (int.east) edge (C.west)
+   (C.east) edge (switch1.west)
+   (switch2) edge (q1.west);
+  \path
+   (q1.east) edge (ykeast)
+   (ykeast) edge (o2east);
+  \path       (uksouth) edge (bdwest);
+  \path[->] (bdwest) edge (Bd.west);
+  \path
+   (Bd.east) edge (o1.west)
+   (o1.east) edge (delay.west)
+   (xdsouth) edge (adeast)
+   (adeast) edge (Ad.east)
+   (Ad.west) edge (adwest)
+   (adwest) edge (o1.south)
+   (o2.west) edge (Ld.east)
+   (Ld.west) edge (ldwest)
+   (ldwest) edge (o1.north)
+   (delay.east) edge (Cd.west)
+   (Cd.north) edge (o2.south)
+   (o2east) edge (o2.east)
+   (xdsouth) edge (fbsouth)
+   (fbsouth) edge (kdsouth);
+  \path[->]  (kdsouth) edge (Kd.south);
+  \path (Kd.north) edge (circle.south);
+ \end{tikzpicture}
+}
+ \caption{Closed-loop digital control system with observer\label{fig:observersystem}}
+\end{figure*}
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+\subsection{Stability of an Observed System}\label{sec:cof_stability}
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Let us look at observer for a SISO systems as shown in figure \ref{fig:observersystem} where ideally $\mat{A}_o=\mat{A}_d$, $\mat{B}_o=\mat{B}_d$ and $\mat{C}_o=\mat{C}_d$ for a given time discretization.
+A controllable and observable system will have the following dynamics:
+\begin{equation}
+\tiny
+\left [\begin{array}{c}\vec{x}\\ \hat{\vec{x}}_e \end{array}\right]_{k+1}
+=\left [\begin{array}{cc}\mat{A}_d-\mat{B}_d\mat{K}_d&\mat{B}_d\mat{K}_d\\ \mat{0}&\mat{A}_d-\mat{L}_d\mat{C}_d\end{array}\right]
+\left [\begin{array}{c}\vec{x}\\ \hat{\vec{x}}_e \end{array}\right]_k
++\left [\begin{array}{c}\mat{B}_dk_r\\ \mat{0} \end{array}\right] \vec{r}_k
++\left [\begin{array}{cc}\mat{B}_dk_r&\mat{0}\\ \mat{0}&-\mat{L}_d\end{array}\right]\left [\begin{array}{c}\vec{\nu}_2\\ \vec{\nu}_1\end{array}\right]
+\end{equation}
+In order for the system to be in canonical form, we must however perform a transformation. The challenge however is that we want the state space dynamics in
+reachable form and the observer error dynamics in observable form. Let 
+\begin{equation}
+\left[\begin{array}{c}\vec{x}'\\ \hat{\vec{x}}_e'\end{array}\right]=
+\left[\begin{array}{cc}\mat{T}_c & \mat{0}\\\mat{0} & \mat{T}_o\end{array}\right] 
+\left[\begin{array}{c}\vec{x}\\ \hat{\vec{x}}_e\end{array}\right]
+\end{equation}
+We can transform equation \eqref{eq:observer_LTI} into the equivalent canonical form
+
+\begin{align}
+\label{eq:observer_LTI_cf}
+\left [\begin{array}{c}\vec{x}'\\ \hat{\vec{x}}_e' \end{array}\right]_{k+1}
+=&\left [\begin{array}{cc}\mat{A}_{tp}&\mat{B}_{to}\\ \mat{0}&\mat{A}_{to}\end{array}\right]
+\left [\begin{array}{c}\vec{x}'\\ \hat{\vec{x}}_e' \end{array}\right]_k
++\mat{B}_{tp} \vec{r}_k
++\mat{B}_{tn}\left [\begin{array}{c}\vec{\nu}_2\\ \vec{\nu}_1\end{array}\right]\\
+\vec{y}_k=&\mat{C}_{t}\vec{x}_k + \mat{D}_{d}\vec{u}_k\nonumber
+\end{align}
+\begin{align*}
+\mat{A}_{tp}=&\mat{T}_c\left(\mat{A}_d-\mat{B}_d\mat{K}_d\right)\mat{T}_c^{-1}&
+\mat{A}_{to}=&\mat{T}_o\left(\mat{A}_d-\mat{L}_d\mat{C}_d\right)\mat{T}_o^{-1}\\
+\mat{A}_t=&\left [\begin{array}{cc}\mat{A}_{tp}&\mat{B}_{to}\\ \mat{0}&\mat{A}_{to}\end{array}\right]&
+\mat{B}_{to}=&\mat{T}_c\mat{B}_d\mat{K}_d\mat{T}_o^{-1}\\
+\mat{B}_{tp}=&\left[\begin{array}{c}\mat{T}_c\mat{B}_d\mat{k}_r\\\mat{0}\end{array}\right]&
+\mat{B}_{tn}=&\left[\begin{array}{cc}\mat{T}_c\mat{B}_d\mat{k}_r&\mat{0}\\\mat{0}&-\mat{T}_o\mat{L}_d\end{array}\right]\\
+\mat{T}_с=&\mat{R}_{cf}\mat{R}^{-1}&
+\mat{T}_o=&\mat{W}_o^{-1}\mat{W}_{of}\\
+\mat{L}_d=& \mat{T}_o^{-1}\left[ \begin{array}{c}p_1\\p_2\\p_n\end{array}\right]&
+\mat{C}_t=&\mat{C}_d\mat{T}_c
+\end{align*}
+
+\begin{align*}
+\mat{A}_{tp}=&\left[
+\begin{array}{ccccc}
+0&1&0&\cdots&0\\
+0&0&1&\cdots&0\\
+\vdots&\vdots&\vdots&\ddots&\vdots\\
+0&0&0&\cdots&1\\
+k_n-a_n&k_{n-1}-a_{n-1}&k_{n-2}-a_{n-2}&\cdots&k_1-a_1
+\end{array}\right]
+\label{eq:cf_SISO_2}
+\end{align*}
+
+Careful examination of these matrices reveals that because the $\mat{A}_t$ is upper block diagonal, the spectrum of $\mat{A}_t$ is equal to the union of the spectrum of $\mat{A}_{tp}$ and $\mat{A}_{to}$ which can be calculated separately. Additionally, these correspond to the roots of the polynomials
+\begin{align*}
+\left(z^n+\sum_{i=1}^p{(a_i-k_i)z^{n-i}}\right) \left(z^n+\sum_{i=1}^p{(p_i-a_i)z^{n-i}}\right)
+\end{align*}
+
+As stated in section \ref{ssec:stabspecification}, we use Jury's Criterion to assert this specification.
+
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+\subsection{Safety of an Observed System}\label{sec:cof_safety}
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Now that we have established convergence, we may examine the safety specification of the state space. In the case of SISO systems, this is given by a range of the input and a range of the output which are considered safe ($\vec{u}_k \in [\underline{u}\ \ \overline{u}] \wedge \vec{y}_k \in [\underline{y}\ \ \overline{y}]$). Whilst there are other properties we may include in the verification, we will solely focus on these for simplicity of the explanation.
+We will assume that we do not want saturation in our system, hence the control loop has only one mode. We have also identified the quantization noise as a bounded non-deterministic input.
+First we must translate the safety specification into the statespace. Replacing on the second part of equation \eqref{eq:observer_LTI_cf} we obtain
+\begin{equation}
+\Psi := \underline{y}-\overline{\mat{B}\vec{u}}<\mat{C}_t\vec{x}_k<\overline{y}-\underline{\mat{B}\vec{u}}
+\label{eq:of_bounds}
+\end{equation}
+Note that we use the bounds of the input after the transformation by $\mat{B}$ since the matrix may reverse the bounds. Equation \eqref{eq:of_bounds} can be solved using linear programming as it describes a polyhedral region in $\mathbb{R}^n$.
+The second step is evaluating the progression of the system over time in order to calculate $\vec{x}_k$ to validte against this specification. For this step we require an initial set from which the system progresses. Obviously, this set $\vec{x}_0$ must satisfy the specification, otherwise the system will be unsafe to begin with.
+We will accept a specification in the form $\mat{E}\mat{T}\vec{x}_0<\mat{f}$. The presence of $\mat{T}$ is because this will typically be given in the original state-space.
+Accelerating \eqref{eq:observer_LTI_cf}, we obtain:
+\begin{align}
+\label{eq:acc_observer_LTI_cf}
+\left [\begin{array}{c}\vec{x}\\ \hat{\vec{x}}_e \end{array}\right]_k
+=&\mat{A}_t^k
+\left [\begin{array}{c}\vec{x}\\ \hat{\vec{x}}_e \end{array}\right]_0
++\sum_{i=0}^{k-1} \mat{A}_t^i \mat{B}_{tp} \vec{r}_i
++\sum_{i=0}^{k-1} \mat{A}_t^i \mat{B}_{tn}\left [\begin{array}{c}\vec{\nu}_2\\ \vec{\nu}_1\end{array}\right] \nonumber\\
+:&\left [\begin{array}{cc}\mat{E}\mat{T}&\mat{0}\end{array}\right] \left [\begin{array}{c}\vec{x}\\ \hat{\vec{x}}_e \end{array}\right]_0<\mat{f}
+\end{align}
+which would still require us to verify the system for every $k$ up to infinity. Instead we will use abstract acceleration~\cite{}, which translates the formula into
+\begin{align}
+\label{eq:aa_observer_LTI_cf}
+\hat{X}^\#
+=&\mathcal{A}_t X_0+\mathcal{B}_{tp} R + \mathcal{B}_{tn} N\\
+X_0 =&\left \{ \left[\begin{array}{c}\vec{x}\\ \hat{\vec{x}}_e \end{array}\right] :
+ \left [\begin{array}{cc}\mat{E}\mat{T}&\mat{0}\end{array}\right] \left [\begin{array}{c}\vec{x}\\ \hat{\vec{x}}_e \end{array}\right]_0<\mat{f} \right\}\nonumber\\
+ R =&\{r : \mat{E}_r < \vec{f}_r \}\nonumber\\
+ N=&\left \{ \left[\begin{array}{c}\vec{\nu}_2\\ \vec{\nu}_1\end{array}\right] : \nu_1 \in \left[-\frac{q1}{2}\ \ \frac{q1}{2}\right] \wedge \nu_2 \in \left[-\frac{q2}{2}\ \ \frac{q2}{2}\right]  \right \}\nonumber
+\end{align}
+where $\mathcal{A}_t=\bigcup_{k=1}^\infty \mat{A}^k, \mathcal{B}_{tp}=\bigcup_{k=1}^\infty \sum_{i=0}^k\mat{A}^i\mat{B}_{tp}, \mathcal{B}_{tn}=\bigcup_{k=1}^\infty \sum_{i=0}^k\mat{A}^i\mat{B}_{tn}$ are abstract matrices for the system in \eqref{eq:observer_LTI_cf}. It is worth noting that $r$ is a non-deterministic parametric input (\emph{ie} $\forall k>0, r_{k+1} =r_k$) whereas the set N is composed of non-deterministic variable inputs.
+
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+\subsection{Stability of an Digitally Observed System}\label{sec:cof_fwl_stability}
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Thus far we have presented a verification procedure for a continuous plant in discretized time domain (\emph{ie} the
+range of the quatizers is still $\mathbb{R}$. The next step we must reaize is that the controller and the observer
+exist in a digital program, hence their domain is $\mathbb{R}\langle I,F,E\rangle$. This has two separate effects
+on the model. If we recall equation \eqref{eq:to_of}, the matrices of the observer and the controller  are not necessarily those of the plant.
+In fact we have $\mat{A},\mat{B},\mat{C} \in \mathbb{R}^*$, $\mat{A}_o,\mat{B}_o,\mat{C}_o, \mat{K}_d, \mat{L}_d \in \mathbb{R}\langle I,F,E\rangle^*$
+Where $*$ represents the appropriate dimension for each matrix.
+Unfortunately this means that although combined matrices such as $\mat{A}_t$ are in the reals, they suffer from
+the fixed word restrictions in their composing matrices.
+
+When our observer is implemented using a finite precision controller, new problems arise due to the FWL effects.
+Let $\mat{A}_o$, $\mat{B}_o$ and $\mat{C}_o$ be the dynamics represented in
+$\mathbb{R} \langle I , F, E \rangle$, and  $\mat{A}_e=\mat{A}_d-\mat{A}_o$, $\mat{B}_e=\mat{B}_d-\mat{B}_o$,
+and $\mat{C}_e=\mat{C}_d-\mat{C}_o$ their corresponding errors.
+Equation \eqref{eq:observer_LTI_cf} will become
+\begin{align}
+\tiny
+\left [\begin{array}{c}\vec{x}'\\ \hat{\vec{x}}_e' \end{array}\right]_{k+1}
+=&\tiny \left [\begin{array}{cc}\mat{A}_{tp}+\mat{B}_{eo}&\mat{B}_{to}\\ \mat{A}_{eo}&\mat{A}_{to}\end{array}\right]
+\left [\begin{array}{c}\vec{x}'\\ \hat{\vec{x}}_e' \end{array}\right]_k
++\mat{B}_{tp} \vec{r}_k
++\mat{B}_{tn}\left [\begin{array}{c}\vec{\nu}_2\\ \vec{\nu}_1\end{array}\right]\nonumber\\
+\tiny\vec{y}_k=&\tiny\mat{C}_{t}\vec{x}_k + \mat{D}_{d}\vec{u}_k
+\label{eq:observer_LTI_FWL_cf}
+\end{align}
+\begin{align*}
+\mat{A}_{tp}=&\mat{T}_c\left(\mat{A}_d-\mat{B}_d\mat{K}_d\right)\mat{T}_c^{-1}&
+\mat{A}_{to}=&\mat{T}_o\left(\mat{A}_o-\mat{L}_o\mat{C}_o\right)\mat{T}_o^{-1}\\
+\mat{A}_t=&\left [\begin{array}{cc}\mat{A}_{tp}&\mat{B}_{to}\\ \mat{0}&\mat{A}_{to}\end{array}\right]&
+\mat{B}_{to}=&\mat{T}_c\mat{B}_o\mat{K}_d\mat{T}_o^{-1}\\
+\mat{B}_{tp}=&\left[\begin{array}{c}\mat{T}_c\mat{B}_o\mat{k}_r\\\mat{0}\end{array}\right]&
+\mat{B}_{tn}=&\left[\begin{array}{cc}\mat{T}_c\mat{B}_o\mat{k}_r&\mat{0}\\\mat{0}&-\mat{T}_o\mat{L}_d\end{array}\right]\\
+\mat{T}_с=&\mat{R}_{cf}\mat{R}^{-1}&
+\mat{T}_o=&\mat{W}_o^{-1}\mat{W}_{of}\\
+\mat{L}_d=& \mat{T}_o^{-1}\left[ \begin{array}{c}p_1\\p_2\\p_n\end{array}\right]&
+\mat{A}_{eo}=&\mat{T}_o\left(\mat{A}_e+\mat{L}_o\mat{C}_e\right)\mat{T}_o^{-1}\\
+\mat{B}_{eo}=&\mat{T}_c\mat{B}_e\mat{K}_d\mat{T}_o^{-1}&
+\mat{C}_t=&\mat{C}_d\mat{T}_c
+\end{align*}
+
+The first effect of this new equation is that the matrix is no longer upper diagonal. We must therefore compensate for the errors introduced in order to find a stable solution.
+We can use Gershgoring disks to limit the error in the expected eigenvalues. Let $\delta_o=\max(|\mat{A}_{ei*}|_2)$ (\emph{i.e.} the largest row norm in $\mat{A}_e$) be the largest error bound for any eigenvalue in $\mat{A}_e$.
+Then $\forall i \in [1\ n], |\lambda_{oi}-\hat{\lambda}_{oi}|<\delta_o$,where $\lambda_{oi}$ are the true eigenvalues of the observer and $\hat{\lambda}_{oi}$ the eigenvalues of the perturbed observer. We note that in the case of stability we only care about the error with respect to the unit circle, which is equivalent to upper bounding the estimation of the largest eigenvalue. Hence given a desired upper value $\overline{\lambda}$, we apply Iurys criterion on the polynomial.
+\begin{equation}
+P_o'=\sum_{j=0}^n c_j\overline{\lambda'}^{n-j}s^j : \overline{\lambda'}=(1+\delta_o)\overline{\lambda}
+\end{equation}
+Inthe case of the reachable eigenvalues, the procedure is the same except that we obtain our bound $\delta_c=\max(|\mat{A}_{e*i}+\mat{B}_{e*i}|_2)$ (\emph{i.e.} the largest column norm in $[\mat{A}_e\ \mat{B}_e]^T$) and apply Jury's Criterion over 
+\begin{equation}
+P_r'=\sum_{j=0}^n c_j\overline{\lambda'}^{n-j}s^j : \overline{\lambda'}=(1+\delta_c)\overline{\lambda}
+\end{equation}
+
+As a final annotation, we remark that the safety specification must be applied to the model described in this section, accounting for the representation errors of the FWL domain.
+
 %---------------janus----------------
 \section{CEGIS of digital control system with transient specifications}
 \label{sec:method}
