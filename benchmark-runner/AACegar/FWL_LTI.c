@@ -4,8 +4,8 @@
 #include "FWL_LTI.h"
 #include "types.h"
 #include "system.h"
-#ifdef defined(__CPROVER) && !defined(_FIXEBV)
-  typedef __CPROVER_floatbv[impl.int_bits][impl.frac_bits] controller_floatt;
+#if defined(__CPROVER) && !defined(_FIXEBV)
+  typedef __CPROVER_floatbv[_EXP_BITS][_FRAC_BITS] controller_floatt;
 #endif
 
 void print_vector(char *name,vectort vector)

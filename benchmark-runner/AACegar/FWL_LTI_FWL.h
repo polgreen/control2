@@ -38,11 +38,17 @@ int check_vector_bounds(vectort coeffs)
   cnttype i;
   for( i=0; i < _DIMENSION; i++)
   {
-    const control_floatt value=coeffs[i];
 #ifdef __CPROVER 
+  #ifdef _FIXEDBV
+    const control_floatt value=coeffs[i];
     verify_assume(value <= _dbl_max);
     verify_assume(value >= _dbl_min);
+  #else
+    const controller_floatt value=coeffs[i];
+    coeffs[i]=value;
+  #endif
 #else
+    const control_floatt value=coeffs[i];
     if(value > _dbl_max) return 10;
     if(value < _dbl_min) return 10;
 #endif  
@@ -62,10 +68,10 @@ int check_matrix_bounds(matrixt coeffs)
       const control_floatt value=coeffs[i][j];
       verify_assume(value <= _dbl_max);
       verify_assume(value >= _dbl_min);
-      #else
+  #else
       const controller_floatt value=coeffs[i][j];
       coeffs[i][j]=value;
-      #endif
+  #endif
 #else
       const control_floatt value=coeffs[i][j];
       if(value > _dbl_max) return 10;
@@ -105,22 +111,30 @@ signed long int fxp_control_floatt_to_fxp(control_floatt value)
   return tmp;
 }
 
-void fxp_check(control_floatt *value)
+control_floatt fxp_check(control_floatt value)
 {
 #ifdef __CPROVER
-  control_floatt tmp_value=*value;
-  if (tmp_value < _zero) tmp_value=-tmp_value;
-  verify_assume((~_dbl_max&tmp_value)==0);
+  #ifdef _FIXEDBV
+    control_floatt tmp_value=value;
+    if (tmp_value < _zero) tmp_value=-tmp_value;
+    verify_assume((~_dbl_max&tmp_value)==0);
+    return value;
+  #else
+    const controller_floatt fwl_value=value;
+    verify_assume(fwl_value!=0);
+    return fwl_value;
+  #endif
 #else
-  *value=fxp_control_floatt_to_fxp(*value);
-  *value/=_fxp_one;
+  value=fxp_control_floatt_to_fxp(value);
+  value/=_fxp_one;
+  return value;
 #endif
 }
 
 void fxp_check_coeffs(vectort f)
 {
   cnttype i;
-  for(i=0; i < _DIMENSION; i++) fxp_check(&f[i]);
+  for(i=0; i < _DIMENSION; i++) f[i]=fxp_check(f[i]);
 }
 
 int validation()
