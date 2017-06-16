@@ -129,16 +129,18 @@ Digital Control; A/D converters; Control System Synthesis; Transient Analysis; S
 \end{frontmatter}
 
 \section{Introduction}
+
 Modern implementations of embedded control systems have proliferated with
 the availability of low-cost devices that can perform highly non-trivial
 control tasks, with significant impact in numerous application areas such as
-life sciences, environmental control and robotics~\cite{astrom1997computer, Franklin15}. 
-Correct synthesis is non-trivial, even in cases with restriceted dynamics.
-We examine the case of Linear Time Invariant (LTI) Models, for which the
-synthesis of controllers is well understood. However, the
-use of digital control architectures adds new challenges caused by artifacts
-specific to digital control, such as the effects of finite-precision arithmetic, time
-discretization and quantization noise introduced by A/D and D/A conversion.
+life sciences, environmental control and robotics~\cite{astrom1997computer,
+Franklin15}.  Correct synthesis is non-trivial, even in cases with
+restriceted dynamics.  We examine the case of Linear Time Invariant (LTI)
+Models, for which the synthesis of controllers is well understood.  However,
+the use of digital control architectures adds new challenges caused by
+artifacts specific to digital control, such as the effects of
+finite-precision arithmetic, time discretization and quantization noise
+introduced by A/D and D/A conversion.
 
 While research on digital control is well developed~\cite{astrom1997computer},
 automated and sound control synthesis is challenging, particularly when the
@@ -183,26 +185,29 @@ focus on linear models with known configurations, and perform parametric
 synthesis of stabilizing digital controllers with a number of properties that
 define their desired behaviour.
 
-Our work addresses challenging aspects of the control synthesis problem.
-We perform digital control synthesis over a hybrid model, where the plant
+Our work addresses challenging aspects of the control synthesis problem.  We
+perform digital control synthesis over a hybrid model, where the plant
 exhibits continuous behavior whereas the controller operates in discrete
-time and over a quantized domain. In particular, our model evaluates the
-effects of the quantizers (A/D and D/A converters) and of time discretization,
-as well as representation errors introduced by in modelling artifacts
-such as an observer~\cite{astrom1997computer} in a finite precision domain, 
-while reasoning about high level properties such as stability, robustness, safety,
-and response time, which define the behaviour of the system. In particular,
-safety requirements are frequently overlooked in conventional feedback control
-synthesis, but play an important role in systems engineering.
+time and over a quantized domain.  In particular, our model evaluates the
+effects of the quantizers (A/D and D/A converters) and of time
+discretization, as well as representation errors introduced by in modelling
+artifacts such as an observer~\cite{astrom1997computer} in a finite
+precision domain, while reasoning about high level properties such as
+stability, robustness, safety, and response time, which define the behaviour
+of the system.  In particular, safety requirements are frequently overlooked
+in conventional feedback control synthesis, but play an important role in
+systems engineering.
 
-Using state of the art verifiers, we evaluate these models against automatically 
-synthesised controllers using CEGIS-based synsthesis that incorporate the above
-mentioned artifacts in different models of Single-Input/Single-Output (SISO) systems.
-We offer three modes of operation that address different aspects of the problem.
+Using state of the art verifiers, we evaluate these models against
+automatically synthesised controllers using CEGIS-based synsthesis that
+incorporate the above mentioned artifacts in different models of
+Single-Input/Single-Output (SISO) systems.  We offer three modes of
+operation that address different aspects of the problem.
 
-{\em The first  approach} uses a transfer-function based analysis that solves the
-problem of robust stability for closed loop systems for a collection of unstable plants.
-Inthis case, there is no safety specification since we are working in the frequency domain.
+{\em The first  approach} uses a transfer-function based analysis that
+solves the problem of robust stability for closed loop systems for a
+collection of unstable plants.  Inthis case, there is no safety
+specification since we are working in the frequency domain.
 
 {\em The second approach} uses a na\"ive technique that starts by devising a
 digital controller that stabilizes the system while remaining safe for a
@@ -224,8 +229,8 @@ dynamics complexity, and only expand to more complex models
 when a solution cannot be found.
 
 We provide experimental results showing that all our approaches are able to
-efficiently synthesize safe controllers for a set of intricate
-physical plant models taken from the digital control literature.
+efficiently synthesize safe controllers for a set of intricate physical
+plant models taken from the digital control literature.
 
 In summary, this paper makes the following original contributions.
 %
@@ -239,7 +244,6 @@ In summary, this paper makes the following original contributions.
   the precision of the fixed-point representation of the plant yields a
   speed-up of two orders of magnitude over a conventional one-stage
   verification engine.
-
 %
 \item  We compute state-feedback controllers that 
   guarantee a given safety property alongside stability and response time
@@ -249,11 +253,12 @@ In summary, this paper makes the following original contributions.
 \item We provide three novel algorithms: the first, na\"ive one, relies on
   an unfolding of the dynamics up to a completeness threshold, while the
   second one is abstraction-based and leverages abstraction refinement and
-  acceleration to improve scalability while retaining soundness.  A third algorithm
-  evaluates systems using transfer functions where no state-space description is given.
-  All three approaches provide sound synthesis of feedback controllers and consider
-  the various sources of imprecision in the implementation of the control
-  algorithm and in the modeling of the plant.
+  acceleration to improve scalability while retaining soundness.  A third
+  algorithm evaluates systems using transfer functions where no state-space
+  description is given.  All three approaches provide sound synthesis of
+  feedback controllers and consider the various sources of imprecision in
+  the implementation of the control algorithm and in the modeling of the
+  plant.
 %
 \item We develop a model for different sources of quantization error and
   their effect on reachability properties.  We give bounds that ensure the
@@ -290,21 +295,21 @@ switching controllers with a guaranteed minimum dwell time in each mode.
 However, both approaches are unsuitable for the kind of control we seek to
 synthesize.
 
-The work in~\cite{hscc-paper} synthesizes stabilizing
-controllers for continuous plants given as transfer functions by exploiting
-bit-accurate verification of software-implemented digital
-controllers~\cite{Bessa16}.  While this work also uses CEGIS,
-the approach is restricted to digital controllers for stable closed-loop
-systems given as transfer function models: 
-this results in  a static check on their coefficients.  
-By contrast, in the current paper we consider a state-space representation of the physical system, 
-which requires ensuring the specification over actual traces of the model, 
-alongside the numerical soundness required by the effects of discretisation and finite-precision errors.   
-A state-space model has known advantages over the transfer function
-representation~\cite{Franklin15}: it naturally generalizes to multivariate systems
-(i.e., with multiple inputs and outputs); 
-and it allows synthesis of control systems with guarantees on the internal dynamics, e.g.,
-to synthesize controllers that make the closed-loop system \emph{safe}.  Our
+The work in~\cite{hscc-paper} synthesizes stabilizing controllers for
+continuous plants given as transfer functions by exploiting bit-accurate
+verification of software-implemented digital controllers~\cite{Bessa16}. 
+While this work also uses CEGIS, the approach is restricted to digital
+controllers for stable closed-loop systems given as transfer function
+models: this results in a static check on their coefficients.  By contrast,
+in the current paper we consider a state-space representation of the
+physical system, which requires ensuring the specification over actual
+traces of the model, alongside the numerical soundness required by the
+effects of discretisation and finite-precision errors.  A state-space model
+has known advantages over the transfer function
+representation~\cite{Franklin15}: it naturally generalizes to multivariate
+systems (i.e., with multiple inputs and outputs); and it allows synthesis of
+control systems with guarantees on the internal dynamics, e.g., to
+synthesize controllers that make the closed-loop system \emph{safe}.  Our
 work focuses on the \emph{safety} of internal states, which is usually
 overlooked in the literature.  Moreover, our work integrates an
 abstraction/refinement (CEGAR) step inside the main CEGIS loop.
@@ -312,48 +317,49 @@ abstraction/refinement (CEGAR) step inside the main CEGIS loop.
 The tool Pessoa~\cite{mazo2010pessoa} synthesizes correct-by-design embedded
 control software in a Matlab toolbox.  It is based on the abstraction of a
 physical system to an equivalent finite-state machine and on the computation
-of reachability properties thereon. 
-Based on this safety specification, \mbox{Pessoa} can synthesize embedded controller
-software for a range of properties.  The embedded controller software can be
-more complicated than the state-feedback control we synthesize, and the
-properties available cover more detail. 
-However, relying on state-space discretization \mbox{Pessoa} is likely to incur in scalability limitations. 
-Along this research line, \cite{Anta2010,liu16} studies the synthesis of digital controllers for continuous dynamics, 
-and \cite{zamani2014} extends the approach to the recent setup of Network Control Systems. 
+of reachability properties thereon.  Based on this safety specification,
+\mbox{Pessoa} can synthesize embedded controller software for a range of
+properties.  The embedded controller software can be more complicated than
+the state-feedback control we synthesize, and the properties available cover
+more detail.  However, relying on state-space discretization \mbox{Pessoa}
+is likely to incur in scalability limitations.  Along this research line,
+\cite{Anta2010,liu16} studies the synthesis of digital controllers for
+continuous dynamics, and \cite{zamani2014} extends the approach to the
+recent setup of Network Control Systems.
 
 \textbf{Discretization Effects -}
-The classical approach to control synthesis has often disregarded digitalization effects, 
-whereas more recently modern techniques have focused on
-different aspects of discretization, including delayed
-response~\cite{Duggirala2015} and finite word length (FWL) semantics, 
-with the goal either to verify (e.g.,~\cite{daes20161}) or to optimize
-(e.g.,~\cite{oudjida2014design}) given implementations. 
+The classical approach to control synthesis has often disregarded
+digitalization effects, whereas more recently modern techniques have focused
+on different aspects of discretization, including delayed
+response~\cite{Duggirala2015} and finite word length (FWL) semantics, with
+the goal either to verify (e.g.,~\cite{daes20161}) or to optimize
+(e.g.,~\cite{oudjida2014design}) given implementations.
 
 There are two different problems that arise from FWL semantics.  The first
 is the error in the dynamics caused by the inability to represent the exact
-state of the physical system, while the second relates to rounding and saturation errors
-during computation.  In~\cite{fialho1994stability}, a stability measure
-based on the error of the digital dynamics ensures that the deviation
-introduced by FWL does not make the digital system unstable.  A~more recent
-approach~\cite{DBLP:journals/automatica/WuLCC09} uses $\mu$-calculus to
-directly model the digital controller so that the selected parameters are
-stable by design.  The analyses in~\cite{DBLP:conf/hybrid/RouxJG15,
-DBLP:conf/hybrid/WangGRJF16} rely on an invariant computation on the
-discrete system dynamics using Semi-Definite Programming (SDP).  While the
-former uses bounded-input and bounded-output (BIBO) properties to determine
-stability, the latter uses Lyapunov-based quadratic invariants.  In both
-cases, the SDP solver uses floating-point arithmetic and soundness is
-checked by bounding the error.  An alternative is~\cite{park2016scalable},
-where the verification of given control code is performed against a known
-model by extracting an LTI model of the code by symbolic execution:  
-to account for rounding errors, an upper bound is introduced in the
-verification phase.  The work in \cite{picasso2003stabilization}
-introduces invariant sets as a mechanism
-to bound the quantization error effect on stabilization as an invariant set
+state of the physical system, while the second relates to rounding and
+saturation errors during computation.  In~\cite{fialho1994stability}, a
+stability measure based on the error of the digital dynamics ensures that
+the deviation introduced by FWL does not make the digital system unstable. 
+A~more recent approach~\cite{DBLP:journals/automatica/WuLCC09} uses
+$\mu$-calculus to directly model the digital controller so that the selected
+parameters are stable by design.  The analyses
+in~\cite{DBLP:conf/hybrid/RouxJG15, DBLP:conf/hybrid/WangGRJF16} rely on an
+invariant computation on the discrete system dynamics using Semi-Definite
+Programming (SDP).  While the former uses bounded-input and bounded-output
+(BIBO) properties to determine stability, the latter uses Lyapunov-based
+quadratic invariants.  In both cases, the SDP solver uses floating-point
+arithmetic and soundness is checked by bounding the error.  An alternative
+is~\cite{park2016scalable}, where the verification of given control code is
+performed against a known model by extracting an LTI model of the code by
+symbolic execution: to account for rounding errors, an upper bound is
+introduced in the verification phase.  The work in
+\cite{picasso2003stabilization} introduces invariant sets as a mechanism to
+bound the quantization error effect on stabilization as an invariant set
 that always converges toward the controllable set.  Similarly,
-\cite{liberzon2003hybrid} evaluates the quantization error dynamics
-and bounds its trajectory to a known region over a finite time period. 
-This technique works for both linear and non-linear systems.
+\cite{liberzon2003hybrid} evaluates the quantization error dynamics and
+bounds its trajectory to a known region over a finite time period.  This
+technique works for both linear and non-linear systems.
 
 %-------------------------------
 \section{Preliminaries}
@@ -373,72 +379,112 @@ This technique works for both linear and non-linear systems.
 \subsection{Abstract Acceleration} 
 \label{ssec:aa}
 %-------------------------------
-For abstraction based synthesis, we will use Abstract Acceleration~\cite{JSS14,cattaruzza2015unbounded}.
-Given an iterative program with dynamics
+
+For abstraction based synthesis, we will use Abstract
+Acceleration~\cite{JSS14,cattaruzza2015unbounded}.  Given an iterative
+program with dynamics
+%
 \begin{equation}
 \vec{x}_{k+1}=\mat{A}\vec{x}_k : \vec{x}_k \in \mathbb{R}^n \wedge \mat{A} \in \mathbb{R}^{n \times n} \wedge k \in [0\ \ \infty),
 \end{equation}
-we want to find all possible states visited over an infinite time horizon starting at an initial set $X_0$. We call this set the \emph{reach tube} of the model:
+%
+we want to find all possible states visited over an infinite time horizon
+starting at an initial set $X_0$.  We call this set the \emph{reach tube} of
+the model:
+%
 \begin{equation}
 \hat{X} = \{ \vec{x}_k : k \in [0\ \infty) \wedge \vec{x}_0 \in X_0 \wedge \vec{x}_{k+1}=\mat{A}\vec{x}_k\}.
 \end{equation}
-It is easy to see that the infinite number of iterations would result in an unbounded cumulative rounding error, but using Abstract Acceleration we transform this problem into a one-step solution.
-We first change the problem statement by means of acceleration into 
+%
+It is easy to see that the infinite number of iterations would result in an
+unbounded cumulative rounding error, but using Abstract Acceleration we
+transform this problem into a one-step solution.  We first change the
+problem statement by means of acceleration into
+%
 \begin{equation}
 \hat{X} = \{ \vec{x}_k=\mat{A}^k\vec{x}_0 : k \in [0\ \infty) \wedge \vec{x}_0 \in X_0 \}, 
 \end{equation}
+%
 and further define new model semantics and corresponding set: 
+%
 \begin{equation}\label{eq:aa_reachtube}
 \hat{X} \subseteq \hat{X}^\sharp = \mathcal{A}X_0, \text{ such that } \bigcup_{k \in [0\ \infty)} \mat{A}^k \subseteq \mathcal{A}, 
 \end{equation}
-where the newly introduced \emph{abstract reach tube} $\hat{X}^\sharp$ is an over-approximation of the reach tube of the model \cite{JSS14}.
-All we need to do is define the nature of $\mathcal{A}X_0$. 
+%
+where the newly introduced \emph{abstract reach tube} $\hat{X}^\sharp$ is an
+over-approximation of the reach tube of the model \cite{JSS14}.  All we need
+to do is define the nature of $\mathcal{A}X_0$.
 
 Let $\mat{S}\mat{J}\mat{S}^{-1}=\mat{A}$ be the eigen-decomposition of
 $\mat{A}$, where $\mat{S}$ is the set of generalised eigenvectors of
 $\mat{A}$ and $\mat{J}$ is the Jordan Form containing the eigenvalues of
 $\mat{A}$ in its main diagonal.  We correspondingly define
-$\mathcal{J}=\mat{S}^{-1}\mathcal{A}\mat{S}$, which is such that $\mathcal{J} \supseteq \bigcup_{k \in [0\
-\infty)} \mat{J}^k$.
+$\mathcal{J}=\mat{S}^{-1}\mathcal{A}\mat{S}$, which is such that
+$\mathcal{J} \supseteq \bigcup_{k \in [0\ \infty)} \mat{J}^k$.
 
 Introduce set $X=\{ \vec{x} : \mat{C}\vec{x} \leq \vec{d}\}$. 
 The linear transformation $\vec{x}'=\mat{S}^{-1}\vec{x}$ leads to set 
+%
 \begin{equation}
 X'= \mat{S}^{-1}X = \{\vec{x}' : \mat{C}\mat{S}\vec{x}'\leq \vec{d}\}.  
 \label{eq:eigenInit}
 \end{equation}
-Analogously, 
-let $X_0'=\mat{S}^{-1}X_0$ and ${\hat{X}'^\sharp}=\mat{S}^{-1}{\hat{X}^\sharp}$ be the initial set and the abstract reach tube mapped onto the eigenspace of matrix $\mat{A}$. 
-We may transform equation \eqref{eq:aa_reachtube} into:
+%
+Analogously, let $X_0'=\mat{S}^{-1}X_0$ and
+${\hat{X}'^\sharp}=\mat{S}^{-1}{\hat{X}^\sharp}$ be the initial set and the
+abstract reach tube mapped onto the eigenspace of matrix $\mat{A}$.  We may
+transform equation \eqref{eq:aa_reachtube} into:
+%
 \begin{equation}
 \hat{X}' \subseteq {\hat{X}'^\sharp} = \mathcal{J}X_0', \text{ such that } \bigcup_{k \in [0\ \ \infty)}\mat{J}^k \subseteq \mathcal{J}, 
 \end{equation}
-where $\hat{X}'=\mat{S}^{-1}\hat{X}$ and $\mathcal{J}$ is a convex polyhedron representing restrictions on the eigenvalues of $\mat{A}$.
-$\hat{X}'^\sharp$ is calculated by applying a simplex algorithm with a tableau defined by $\mathcal{J}$ and objective functions derived from each vertex of $X_0'$ (step \eqref{alg:getReachTube} in Algorithm \ref{alg:findReachTube} below).
-We note, however, that if we wish to use numerical analysis in the decomposition of $\mat{A}$, 
-the Tableau in $\mathcal{J}$ contains small intervals given by the errors, which cannot be processed efficiently by a regular simplex and require a new procedure. 
+%
+where $\hat{X}'=\mat{S}^{-1}\hat{X}$ and $\mathcal{J}$ is a convex
+polyhedron representing restrictions on the eigenvalues of $\mat{A}$. 
+$\hat{X}'^\sharp$ is calculated by applying a simplex algorithm with a
+tableau defined by $\mathcal{J}$ and objective functions derived from each
+vertex of $X_0'$ (step \eqref{alg:getReachTube} in Algorithm
+\ref{alg:findReachTube} below).  We note, however, that if we wish to use
+numerical analysis in the decomposition of $\mat{A}$, the Tableau in
+$\mathcal{J}$ contains small intervals given by the errors, which cannot be
+processed efficiently by a regular simplex and require a new procedure.
 
-The calculation of the abstract reach tube via abstract acceleration is encompassed in Algorithm \ref{alg:findReachTube}, 
-which can be summarised as follows (its steps are denoted in parentheses):
+The calculation of the abstract reach tube via abstract acceleration is
+encompassed in Algorithm~\ref{alg:findReachTube}, which can be summarised as
+follows (its steps are denoted in parentheses):
 %
 \begin{enumerate}
+%
 \item We perform unsound eigen-decomposition using an existing algebra package (lines \ref{alg:calcEigenvalues}-\ref{alg:calcEigenvectors}).
+%
 \item Then we restore soundness to the results using the methods described in Section \ref{sec:eigensolver} (lines \ref{alg:soundEigenvalues}-\ref{alg:soundEigenvectors}). 
+%
 \item The inverse of the matrix of eigenvectors is calculated after soundness is restored, using interval arithmetic in order to ensure its soundness (line \ref{alg:inverse}).
+%
 \item The abstract dynamics are obtained by evaluating the convex hull of all powers of eigenvalues up to the desired number of iterations as described in \cite{cattaruzza2015unbounded} (line \ref{alg:aa}).
+%
 \item Using Equation \eqref{eq:eigenInit}, transform the initial state into the eigenspace (line \ref{alg:eigeninit}).
+%
 \item Extract the vertices of the eigen-polyhedron $X_0'$ using the sound over-approximation of the double description algorithm \cite{fukuda1996double} from Section \ref{sec:dd} (line \ref{alg:getVertices}). It is worth noting that this algorithm uses a simplex to seed it: we will first discuss the simplex algorithm, which is also needed at the next step, and then the vertex enumeration algorithm used at this stage. 
-\item Calculate the mapped \emph{abstract reach tube} ${\hat{X}'^\sharp}$ that over-approximates the image of the reach tube in the eigenspace (line \ref{alg:getReachTube}). This is achieved by evaluating a set of objective functions using the abstract dynamics as a simplex Tableau, 
-and via a sound simplex described in Section \ref{sec:simplex}. 
-The objective functions are defined by the vertices of $X'_0$, 
-denote as $V_0$, 
-and by the desired template directions, 
-such that 
+%
+\item Calculate the mapped \emph{abstract reach tube} ${\hat{X}'^\sharp}$
+that over-approximates the image of the reach tube in the eigenspace (line
+\ref{alg:getReachTube}).  This is achieved by evaluating a set of objective
+functions using the abstract dynamics as a simplex Tableau, and via a sound
+simplex described in Section \ref{sec:simplex}.  The objective functions are
+defined by the vertices of $X'_0$, denote as $V_0$, and by the desired
+template directions, such that
+%
 \begin{equation*}
 \vec{w}_{ij}= \vec{v}_i \circ \vec{t}_j : \vec{v}_i \in V_0 \wedge \vec{t}_j \in T,
 \end{equation*}
-where $T$ is the set of template directions, and $\circ$ denotes a component-wise multiplication yielding a vector. 
-\item Using Equation \eqref{eq:eigenInit}, find the reach tube $\hat{X}^\sharp=\mat{S}{\hat{X}'^\sharp}$ (line \ref{alg:getNormReachTube}).
+%
+where $T$ is the set of template directions, and $\circ$ denotes a
+component-wise multiplication yielding a vector.
+%
+\item Using Equation~\eqref{eq:eigenInit}, find the reach tube
+$\hat{X}^\sharp=\mat{S}{\hat{X}'^\sharp}$ (line \ref{alg:getNormReachTube}).
+%
 \end{enumerate}
 
 \begin{algorithm}[]
@@ -472,28 +518,38 @@ where $T$ is the set of template directions, and $\circ$ denotes a component-wis
 \end{algorithm}
 
 %-------------------------------
- \subsection{Overapproximating continuous time dynamics using discrete models}
- \label{sec:cont_aa}
+\subsection{Overapproximating continuous time dynamics using discrete models}
+\label{sec:cont_aa}
 %-------------------------------
-Thus far we wave discussed the Abstract Accelertion of Discrete Time systems. However, our plant models derive
-from the discretization of continuous time systems. We therefore seek to establish a sound
-overapproximation which does not only encompass the selected discretization, but any chosen discretization in the 
-time domain.
 
-A dynamical system is a system in which a function describes the progression of a state over time. 
-In a continuous domain with linear dynamics, it is described by a first order Ordinary Differential Equation (ODE).
+Thus far we wave discussed the Abstract Accelertion of Discrete Time
+systems.  However, our plant models derive from the discretization of
+continuous time systems.  We therefore seek to establish a sound
+overapproximation which does not only encompass the selected discretization,
+but any chosen discretization in the time domain.
+
+A dynamical system is a system in which a function describes the progression
+of a state over time.  In a continuous domain with linear dynamics, it is
+described by a first order Ordinary Differential Equation (ODE).
+%
 \begin{equation}
 \dot{x}(t)=\mat{A}_o\vec{x}(t)+\mat{B}_o\vec{u}(t) +\vec{w}(t)
 \label{eq:dynamical}
 \end{equation}
-where $\vec{w}$  is a continuous zero-mean white noise source with covariance $N ( 0 , Q )$
-Furthermore, a control system may have a derived output that is a linear combination of its states and inputs, 
-which may restricts the observability of the statespace from the output space.
+%
+where $\vec{w}$  is a continuous zero-mean white noise source with
+covariance $N ( 0 , Q )$ Furthermore, a control system may have a derived
+output that is a linear combination of its states and inputs, which may
+restricts the observability of the statespace from the output space.
+%
 \begin{equation}
 \vec{y}(t)=\mat{C}_o\vec{x}(t)+\mat{D}_o\vec{u}(t)
 \end{equation}
-Discretization of a continuous dynamical system turns the ODE into a difference equation, assuming zero-order hold
-for the input $\vec{u}$ and continuous integration for the noise $\vec{w}$, to
+%
+Discretization of a continuous dynamical system turns the ODE into a
+difference equation, assuming zero-order hold for the input $\vec{u}$ and
+continuous integration for the noise $\vec{w}$, to
+%
 \begin{align}
 \label{eq:discretization}
 \vec{x}_{k+1} &= \mat{A}_d\vec{x}_k+\mat{B}_d\vec{u}_k + \vec{w}_k\\
@@ -575,7 +631,9 @@ x(kT)=x_k \wedge y(kT) = y_k, \forall k
 & &  &\lambda_i^k \\
 \end{array} \right ] T_1^k
 \end{align}
+%
 The eigenvalues remain the same as in the diagonal case, but the upper triangular terms are of the form:
+%
 \begin{align}
 \forall j>i, c_{ij}&=\sum_{k=j-i}^\infty \frac{1}{k!}\binom{k}{j-i} \lambda_i^{k-(j-i)}T_1^k\\
 &=\frac{1}{(j-i)!}\sum_{k=j-i}^\infty \frac{1}{(k-(j-i))!} \lambda_i^{k-(j-i)}T_1^k\nonumber\\
@@ -647,15 +705,41 @@ Then $U'\subseteq U_b' \oplus \vec{u}_c' \Rightarrow (\mat{I}-\mat{A}_T)U' \subs
  \label{sec:cont_aasup}
 %-------------------------------
 
-In the case of Discrete dynamics, support functions can be found by evaluating hyperplanes of consecutive exponents of the eigenvalues using differences.
-In the case of continuous time, this translates to calculating derivatives. Once again, when the sets are known to be convex,
-we may calculate the normal vector to this derivative and evaluate its support function on the selected iteration. The direction of the vector is determined by evaluating the support function of another point in the curve, which is known to be smaller than that of the selected point.
-The corresponding derivatives are:
+In the case of Discrete dynamics, support functions can be found by
+evaluating hyperplanes of consecutive exponents of the eigenvalues using
+differences.  In the case of continuous time, this translates to calculating
+derivatives.  Once again, when the sets are known to be convex, we may
+calculate the normal vector to this derivative and evaluate its support
+function on the selected iteration.  The direction of the vector is
+determined by evaluating the support function of another point in the curve,
+which is known to be smaller than that of the selected point.  The
+corresponding derivatives are:
+%
 \begin{enumerate}
-\item for real eigenvalues: we first calculate the slope of the tangent between the two progressions: $\frac{d f(k)}{d g(k)}=\frac{f'(k)}{g'(k)}$. Hence $\frac{d \lambda_1^k}{d \lambda_2^k}=\frac{log(\lambda_1) \lambda_1^k}{log(\lambda_2) \lambda_2^k}$. From this we know that the polar angle of the support vector is $\psi = \tan^{-1}(\frac{log(\lambda_1) \lambda_1^k}{log(\lambda_2) \lambda_2^k})+\frac{\pi}{2}$
-\item for conjugate eigenvalue pairs: the pair forms a logarithmic spiral. The tangent of a spiral with polar equation $r=a e^{b\theta}$ will have a derivative $\frac{d r}{d \theta}=b a e^{b\theta}=b r$, hence the angle of the vector normal to the curve is $\tan^{-1}(\frac{r}{\frac{d r}{d \theta}})+\frac{\pi}{2}=\tan^{-1}(\frac{1}{b})+\frac{\pi}{2}$
-\item for Jordan blocks with $gm>1$: in the case of real eigenvalues, we follow the same procedure as in the real case, but considering that the equation for each eigenvalue is $\frac{k^j}{j!}e^{\lambda k}$ where $j$ is the index of the term within the Jordan block (note that when $j=0$ the term is the same as for real eigenvalues above). The derivatives f'(k),g'(k) are in the form $(j+k*log(\lambda))\frac{k^{j-1}}{j!}e^{\lambda k}$.
-\item for any combination of complex eigenvalues we use the above equations using the envelope of their magnitude (ie $|\lambda|$).
+%
+\item for real eigenvalues: we first calculate the slope of the tangent
+between the two progressions: $\frac{d f(k)}{d g(k)}=\frac{f'(k)}{g'(k)}$. 
+Hence $\frac{d \lambda_1^k}{d \lambda_2^k}=\frac{log(\lambda_1)
+\lambda_1^k}{log(\lambda_2) \lambda_2^k}$.  From this we know that the polar
+angle of the support vector is $\psi = \tan^{-1}(\frac{log(\lambda_1)
+\lambda_1^k}{log(\lambda_2) \lambda_2^k})+\frac{\pi}{2}$
+%
+\item for conjugate eigenvalue pairs: the pair forms a logarithmic spiral. 
+The tangent of a spiral with polar equation $r=a e^{b\theta}$ will have a
+derivative $\frac{d r}{d \theta}=b a e^{b\theta}=b r$, hence the angle of
+the vector normal to the curve is $\tan^{-1}(\frac{r}{\frac{d r}{d
+\theta}})+\frac{\pi}{2}=\tan^{-1}(\frac{1}{b})+\frac{\pi}{2}$
+%
+\item for Jordan blocks with $gm>1$: in the case of real eigenvalues, we
+follow the same procedure as in the real case, but considering that the
+equation for each eigenvalue is $\frac{k^j}{j!}e^{\lambda k}$ where $j$ is
+the index of the term within the Jordan block (note that when $j=0$ the term
+is the same as for real eigenvalues above).  The derivatives f'(k),g'(k) are
+in the form $(j+k*log(\lambda))\frac{k^{j-1}}{j!}e^{\lambda k}$.
+%
+\item for any combination of complex eigenvalues we use the above equations
+using the envelope of their magnitude (ie $|\lambda|$).
+%
 \end{enumerate}
 
 
@@ -858,13 +942,12 @@ Next, we describe the different phases in Fig.~\ref{fig:CEGIS-precision-incremen
 %\todo{please eventually itemize next}
 \begin{enumerate}
 
-\item The inductive synthesis phase ({\sc synthesize}) uses BMC to
-compute a candidate solution $K$ that satisfies both the stability criteria
- and the safety specification.  To synthesize a controller that satisfies the
-stability criteria, we require that a computed polynomial
-satisfies Jury's criterion~\cite{fadali}.  The details of this calculation can be found in
+\item The inductive synthesis phase ({\sc synthesize}) uses BMC to compute a
+candidate solution $K$ that satisfies both the stability criteria and the
+safety specification.  To synthesize a controller that satisfies the
+stability criteria, we require that a computed polynomial satisfies Jury's
+criterion~\cite{fadali}.  The details of this calculation can be found in
 the Appendix.
-
 
 Regarding the second requirement, we synthesize a safe controller by
 unfolding the transition system $k$ steps and by picking a controller $K$
@@ -940,11 +1023,9 @@ given above and illustrated in Fig.~\ref{fig:ct}.
 \label{fig:ct}
 \end{figure}
 
-
-Checking that the safety specification holds for any initial state can be 
-computationally expensive if the bounds on the
-allowed initial states are large. 
-
+Checking that the safety specification holds for any initial state can be
+computationally expensive if the bounds on the allowed initial states are
+large.
 
 %-------------------------------
 \subsubsection{Abstraction-based CEGIS} 
@@ -959,10 +1040,11 @@ allowed initial states are large.
 %  synthesizes a controller for an individual initial state
 %and input with a bounded time horizon and, subsequently, it generalizes it to all reachable states,
 %inputs, and time horizons during the verification phase.
-Essentially, this approach relies on the symbolic
-simulation over a bounded time horizon of individual initial states and inputs that form
-part of an uncountable space and tries to generalize it for an
-infinite space over an infinite time horizon.
+
+Essentially, this approach relies on the symbolic simulation over a bounded
+time horizon of individual initial states and inputs that form part of an
+uncountable space and tries to generalize it for an infinite space over an
+infinite time horizon.
 
   %% solution over all times by refining the number of witnesses.  
   %% In order to perform the safety check, this approach uses abstract acceleration
@@ -982,16 +1064,16 @@ infinite space over an infinite time horizon.
 %% and many of the states involved are inconsequential to the safety
 %% specification.
 
-Conversely, in this section, 
-we  find a controller for a continuous initial set of states and set of inputs, 
-  over an abstraction of the continuous dynamics \cite{cattaruzza2015unbounded} that conforms to
-  witness proofs at specific times. %% It further generalizes the
-  Moreover, this approach uses abstraction refinement enabling us to 
-  always start with a very simple description regardless of the complexity of the overall
-dynamics, and only expand to more complex models when a solution
+Conversely, in this section, we find a controller for a continuous initial
+set of states and set of inputs, over an abstraction of the continuous
+dynamics \cite{cattaruzza2015unbounded} that conforms to witness proofs at
+specific times.  %% It further generalizes the
+Moreover, this approach uses abstraction refinement enabling us to always
+start with a very simple description regardless of the complexity of the
+overall dynamics, and only expand to more complex models when a solution
 cannot be found.
 
-  The CEGIS loop for this approach is illustrated in Fig.~\ref{fig:CEGARIS}.
+The CEGIS loop for this approach is illustrated in Fig.~\ref{fig:CEGARIS}.
 
 % Now that we have explained the verification process, we may proceed to describe the synthesis procedure, which is illustrated in figure \ref{fig:CEGARIS}.
 % Our model, rather than look at a bisimulation \todo{specific notion that has not been formally define - do not use} in discrete time, explores a much higher abstraction, 
@@ -1380,12 +1462,16 @@ given~\cite{DBLP:conf/arith/BrainTRW15}.
 We will use $\mathcal{F}_{\langle I_c,F_c \rangle}(x)$ to denote a real
 number $x$ represented at the fixed-point precision of the controller, and
 $\mathcal{F}_{\langle I_p,F_p \rangle}(x)$ to denote a real number $x$
-represented at the fixed-point precision of the plant model ($I_c$ and $F_c$ are determined by the controller. We pick $I_p$ and $F_p$ for our synthesis such that $I_p \geq I_c$ and $\allowbreak F_p \geq F_c$).  Thus any mathematical operations in our modelled
-digital controller will be in the range of $\mathcal{F}_{\langle I_c,F_c
-\rangle}$, and all other calculations in our model will be carried out in the range of
-$\mathcal{F}_{\langle I_p,F_p \rangle}$.  
-The physical plant operates in the
-reals, which means our verification phase must also account for the numerical error and quantization errors caused by representing the physical plant at the finite precision $\mathcal{F}_{\langle I_p,F_p \rangle}$.
+represented at the fixed-point precision of the plant model ($I_c$ and $F_c$
+are determined by the controller.  We pick $I_p$ and $F_p$ for our synthesis
+such that $I_p \geq I_c$ and $\allowbreak F_p \geq F_c$).  Thus any
+mathematical operations in our modelled digital controller will be in the
+range of $\mathcal{F}_{\langle I_c,F_c \rangle}$, and all other calculations
+in our model will be carried out in the range of $\mathcal{F}_{\langle
+I_p,F_p \rangle}$.  The physical plant operates in the reals, which means
+our verification phase must also account for the numerical error and
+quantization errors caused by representing the physical plant at the finite
+precision $\mathcal{F}_{\langle I_p,F_p \rangle}$.
 
 
 \subsubsection{Effect on safety specification and stability}
@@ -1417,11 +1503,10 @@ arithmetic~\cite{moore1966interval} in the verification phase.
 
 Previous studies~\cite{gangli1} show that the FWL affects the poles and
 zeros positions, degrading the closed-loop dynamics, causing steady-state
-errors  and
-eventually de-stabilizing the system~\cite{Bessa16}.  However, since in this
-paper we require stability only as a precursor to safety, it is sufficient
-to check that the (perturbed, noisy) model converges to a neighborhood of
-the equilibrium within the safe set.
+errors and eventually de-stabilizing the system~\cite{Bessa16}.  However,
+since in this paper we require stability only as a precursor to safety, it
+is sufficient to check that the (perturbed, noisy) model converges to a
+neighborhood of the equilibrium within the safe set.
 
 In the following, we shall disregard these steady-state errors (caused by
 FWL effects) when stability is ensured by synthesis, and then verify its
@@ -1598,19 +1683,38 @@ Given a closed loop single output LTI system of order $n$ with dynamics
 \begin{equation}
 \left\{\begin{array}{c}\vec{x}_k=\mat{A}\vec{x}_{k-1}\\ \vec{y}_k=\mat{C}\vec{x}_k\end{array}\right. \Rightarrow \left\{ \begin{array}{c}\vec{x}_k'=\mat{J}\vec{x}_{k-1}'\\ \vec{y}_k=\mat{C}\mat{S}\vec{x}_k'\end{array}\right. : \left\{ \begin{array}{c}\mat{A}=\mat{S}\mat{J}\mat{S}^{-1} \\ \vec{x}_k'=\mat{S}^{-1}\vec{x}_k\end{array}\right.
 \end{equation}
-the output decay is a linear combination of the decay of eigenvalues or eigenvalue pairs. Hence the overall decay of the system is always smaller than $p=e^{-|\overline{\omega}| t}$ where $0\leq p\leq 1$ is the remaining percentage of the decay expressed. reversing we have $t=-\frac{ln(p)}{|\overline{\omega}|}=-\frac{ln(p)}{ln(|\overline{\lambda}|)}$. replacing for $p_s$ , $t_s$, and $\overline{\lambda}$ we get equation \eqref{eq:set_time}
+%
+the output decay is a linear combination of the decay of eigenvalues or
+eigenvalue pairs.  Hence the overall decay of the system is always smaller
+than $p=e^{-|\overline{\omega}| t}$ where $0\leq p\leq 1$ is the remaining
+percentage of the decay expressed.  reversing we have
+$t=-\frac{ln(p)}{|\overline{\omega}|}=-\frac{ln(p)}{ln(|\overline{\lambda}|)}$. 
+replacing for $p_s$ , $t_s$, and $\overline{\lambda}$ we get equation
+\eqref{eq:set_time}
+%
 \qed
 \end{proof}
-We may now use this limit to express a constraint in terms of the coefficients for our synthesis process.
-Let 
+%
+We may now use this limit to express a constraint in terms of the
+coefficients for our synthesis process.  Let
+%
 \begin{equation}
 P=\prod_{i=0}^n (s-\lambda_i)=\sum_{j=0}^n c_js^j.
 \end{equation}
-We use Jury's criterion to limit $|\lambda_i| \leq 1$. Let us now define a transformation $\lambda_i'=\frac{\lambda_i}{\overline{\lambda}}$. We want to ensure $\lambda_i' \leq 1$ which can be done by applying Jury's criterion to $P'=\prod_{i=0}^n (s-\lambda_i')=\sum_{j=0}^n c_j's^j$ where $c_j'$ are unknown. However, if we replace for $\lambda_i$, we obtain
+%
+We use Jury's criterion to limit $|\lambda_i| \leq 1$.  Let us now define a
+transformation $\lambda_i'=\frac{\lambda_i}{\overline{\lambda}}$.  We want
+to ensure $\lambda_i' \leq 1$ which can be done by applying Jury's criterion
+to $P'=\prod_{i=0}^n (s-\lambda_i')=\sum_{j=0}^n c_j's^j$ where $c_j'$ are
+unknown.  However, if we replace for $\lambda_i$, we obtain
+%
 \begin{equation}
 P'=\prod_{i=0}^n (s-\lambda_i')=\prod_{i=0}^n (s-\lambda_i\overline{\lambda})=\sum_{j=0}^n c_j\overline{\lambda}^{n-j}s^j
 \end{equation}
-where all members are known, we may now synthesise coefficients that ensure the eigenvalues are smaller than a desired magnitue, thus ensuring that the settling time is too.
+%
+where all members are known, we may now synthesise coefficients that ensure
+the eigenvalues are smaller than a desired magnitue, thus ensuring that the
+settling time is too.
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \section{Verification of a Conrollable Observed System}\label{sec:cof_verification}
@@ -1815,15 +1919,25 @@ Careful examination of these matrices reveals that because the $\mat{A}_t$ is up
 \left(z^n+\sum_{i=1}^p{(a_i-k_i)z^{n-i}}\right) \left(z^n+\sum_{i=1}^p{(p_i-a_i)z^{n-i}}\right)
 \end{align*}
 
-As stated in section \ref{ssec:stabspecification}, we use Jury's Criterion to assert this specification.
+As stated in Section~\ref{ssec:stabspecification}, we use Jury's Criterion
+to assert this specification.
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{Safety of an Observed System}\label{sec:cof_safety}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-Now that we have established convergence, we may examine the safety specification of the state space. In the case of SISO systems, this is given by a range of the input and a range of the output which are considered safe ($\vec{u}_k \in [\underline{u}\ \ \overline{u}] \wedge \vec{y}_k \in [\underline{y}\ \ \overline{y}]$). Whilst there are other properties we may include in the verification, we will solely focus on these for simplicity of the explanation.
-We will assume that we do not want saturation in our system, hence the control loop has only one mode. We have also identified the quantization noise as a bounded non-deterministic input.
-First we must translate the safety specification into the statespace. Replacing on the second part of equation \eqref{eq:observer_LTI_cf} we obtain
+Now that we have established convergence, we may examine the safety
+specification of the state space.  In the case of SISO systems, this is
+given by a range of the input and a range of the output which are considered
+safe ($\vec{u}_k \in [\underline{u}\ \ \overline{u}] \wedge \vec{y}_k \in
+[\underline{y}\ \ \overline{y}]$).  Whilst there are other properties we may
+include in the verification, we will solely focus on these for simplicity of
+the explanation.  We will assume that we do not want saturation in our
+system, hence the control loop has only one mode.  We have also identified
+the quantization noise as a bounded non-deterministic input.  First we must
+translate the safety specification into the statespace.  Replacing on the
+second part of equation \eqref{eq:observer_LTI_cf} we obtain
+%
 \begin{equation}
 \Psi := \underline{y}-\overline{\mat{B}\vec{u}}<\mat{C}_t\vec{x}_k<\overline{y}-\underline{\mat{B}\vec{u}}
 \label{eq:of_bounds}
@@ -1851,25 +1965,39 @@ X_0 =&\left \{ \left[\begin{array}{c}\vec{x}\\ \hat{\vec{x}}_e \end{array}\right
  R =&\{r : \mat{E}_r < \vec{f}_r \}\nonumber\\
  N=&\left \{ \left[\begin{array}{c}\vec{\nu}_2\\ \vec{\nu}_1\end{array}\right] : \nu_1 \in \left[-\frac{q1}{2}\ \ \frac{q1}{2}\right] \wedge \nu_2 \in \left[-\frac{q2}{2}\ \ \frac{q2}{2}\right]  \right \}\nonumber
 \end{align}
-where $\mathcal{A}_t=\bigcup_{k=1}^\infty \mat{A}^k, \mathcal{B}_{tp}=\bigcup_{k=1}^\infty \sum_{i=0}^k\mat{A}^i\mat{B}_{tp}, \mathcal{B}_{tn}=\bigcup_{k=1}^\infty \sum_{i=0}^k\mat{A}^i\mat{B}_{tn}$ are abstract matrices for the system in \eqref{eq:observer_LTI_cf}. It is worth noting that $r$ is a non-deterministic parametric input (\emph{ie} $\forall k>0, r_{k+1} =r_k$) whereas the set N is composed of non-deterministic variable inputs.
+%
+where $\mathcal{A}_t=\bigcup_{k=1}^\infty \mat{A}^k,
+\mathcal{B}_{tp}=\bigcup_{k=1}^\infty \sum_{i=0}^k\mat{A}^i\mat{B}_{tp},
+\mathcal{B}_{tn}=\bigcup_{k=1}^\infty \sum_{i=0}^k\mat{A}^i\mat{B}_{tn}$ are
+abstract matrices for the system in \eqref{eq:observer_LTI_cf}.  It is worth
+noting that $r$ is a non-deterministic parametric input (\emph{ie} $\forall
+k>0, r_{k+1} =r_k$) whereas the set N is composed of non-deterministic
+variable inputs.
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{Stability of an Digitally Observed System}\label{sec:cof_fwl_stability}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-Thus far we have presented a verification procedure for a continuous plant in discretized time domain (\emph{ie} the
-range of the quatizers is still $\mathbb{R}$. The next step we must reaize is that the controller and the observer
-exist in a digital program, hence their domain is $\mathbb{R}\langle I,F,E\rangle$. This has two separate effects
-on the model. If we recall equation \eqref{eq:to_of}, the matrices of the observer and the controller  are not necessarily those of the plant.
-In fact we have $\mat{A},\mat{B},\mat{C} \in \mathbb{R}^*$, $\mat{A}_o,\mat{B}_o,\mat{C}_o, \mat{K}_d, \mat{L}_d \in \mathbb{R}\langle I,F,E\rangle^*$
-Where $*$ represents the appropriate dimension for each matrix.
-Unfortunately this means that although combined matrices such as $\mat{A}_t$ are in the reals, they suffer from
-the fixed word restrictions in their composing matrices.
 
-When our observer is implemented using a finite precision controller, new problems arise due to the FWL effects.
-Let $\mat{A}_o$, $\mat{B}_o$ and $\mat{C}_o$ be the dynamics represented in
-$\mathbb{R} \langle I , F, E \rangle$, and  $\mat{A}_e=\mat{A}_d-\mat{A}_o$, $\mat{B}_e=\mat{B}_d-\mat{B}_o$,
-and $\mat{C}_e=\mat{C}_d-\mat{C}_o$ their corresponding errors.
-Equation \eqref{eq:observer_LTI_cf} will become
+Thus far we have presented a verification procedure for a continuous plant
+in discretized time domain (\emph{ie} the range of the quatizers is still
+$\mathbb{R}$.  The next step we must reaize is that the controller and the
+observer exist in a digital program, hence their domain is
+$\mathbb{R}\langle I,F,E\rangle$.  This has two separate effects on the
+model.  If we recall equation \eqref{eq:to_of}, the matrices of the observer
+and the controller are not necessarily those of the plant.  In fact we have
+$\mat{A},\mat{B},\mat{C} \in \mathbb{R}^*$, $\mat{A}_o,\mat{B}_o,\mat{C}_o,
+\mat{K}_d, \mat{L}_d \in \mathbb{R}\langle I,F,E\rangle^*$ Where $*$
+represents the appropriate dimension for each matrix.  Unfortunately this
+means that although combined matrices such as $\mat{A}_t$ are in the reals,
+they suffer from the fixed word restrictions in their composing matrices.
+
+When our observer is implemented using a finite precision controller, new
+problems arise due to the FWL effects.  Let $\mat{A}_o$, $\mat{B}_o$ and
+$\mat{C}_o$ be the dynamics represented in $\mathbb{R} \langle I , F, E
+\rangle$, and $\mat{A}_e=\mat{A}_d-\mat{A}_o$,
+$\mat{B}_e=\mat{B}_d-\mat{B}_o$, and $\mat{C}_e=\mat{C}_d-\mat{C}_o$ their
+corresponding errors.  Equation \eqref{eq:observer_LTI_cf} will become
+%
 \begin{align}
 \tiny
 \left [\begin{array}{c}\vec{x}'\\ \hat{\vec{x}}_e' \end{array}\right]_{k+1}
@@ -1895,18 +2023,36 @@ Equation \eqref{eq:observer_LTI_cf} will become
 \mat{C}_t=&\mat{C}_d\mat{T}_c
 \end{align*}
 
-The first effect of this new equation is that the matrix is no longer upper diagonal. We must therefore compensate for the errors introduced in order to find a stable solution.
-We can use Gershgoring disks to limit the error in the expected eigenvalues. Let $\delta_o=\max(|\mat{A}_{ei*}|_2)$ (\emph{i.e.} the largest row norm in $\mat{A}_e$) be the largest error bound for any eigenvalue in $\mat{A}_e$.
-Then $\forall i \in [1\ n], |\lambda_{oi}-\hat{\lambda}_{oi}|<\delta_o$,where $\lambda_{oi}$ are the true eigenvalues of the observer and $\hat{\lambda}_{oi}$ the eigenvalues of the perturbed observer. We note that in the case of stability we only care about the error with respect to the unit circle, which is equivalent to upper bounding the estimation of the largest eigenvalue. Hence given a desired upper value $\overline{\lambda}$, we apply Iurys criterion on the polynomial.
+The first effect of this new equation is that the matrix is no longer upper
+diagonal.  We must therefore compensate for the errors introduced in order
+to find a stable solution.  We can use Gershgoring disks to limit the error
+in the expected eigenvalues.  Let $\delta_o=\max(|\mat{A}_{ei*}|_2)$
+(\emph{i.e.} the largest row norm in $\mat{A}_e$) be the largest error bound
+for any eigenvalue in $\mat{A}_e$.  Then $\forall i \in [1\ n],
+|\lambda_{oi}-\hat{\lambda}_{oi}|<\delta_o$,where $\lambda_{oi}$ are the
+true eigenvalues of the observer and $\hat{\lambda}_{oi}$ the eigenvalues of
+the perturbed observer.  We note that in the case of stability we only care
+about the error with respect to the unit circle, which is equivalent to
+upper bounding the estimation of the largest eigenvalue.  Hence given a
+desired upper value $\overline{\lambda}$, we apply Iurys criterion on the
+polynomial.
+%
 \begin{equation}
 P_o'=\sum_{j=0}^n c_j\overline{\lambda'}^{n-j}s^j : \overline{\lambda'}=(1+\delta_o)\overline{\lambda}
 \end{equation}
-Inthe case of the reachable eigenvalues, the procedure is the same except that we obtain our bound $\delta_c=\max(|\mat{A}_{e*i}+\mat{B}_{e*i}|_2)$ (\emph{i.e.} the largest column norm in $[\mat{A}_e\ \mat{B}_e]^T$) and apply Jury's Criterion over 
+%
+In the case of the reachable eigenvalues, the procedure is the same except
+that we obtain our bound $\delta_c=\max(|\mat{A}_{e*i}+\mat{B}_{e*i}|_2)$
+(\emph{i.e.} the largest column norm in $[\mat{A}_e\ \mat{B}_e]^T$) and
+apply Jury's Criterion over
+%
 \begin{equation}
 P_r'=\sum_{j=0}^n c_j\overline{\lambda'}^{n-j}s^j : \overline{\lambda'}=(1+\delta_c)\overline{\lambda}
 \end{equation}
 
-As a final annotation, we remark that the safety specification must be applied to the model described in this section, accounting for the representation errors of the FWL domain.
+As a final annotation, we remark that the safety specification must be
+applied to the model described in this section, accounting for the
+representation errors of the FWL domain.
 
 %---------------janus----------------
 \section{CEGIS of digital control system with transient specifications}
