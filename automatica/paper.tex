@@ -1896,7 +1896,7 @@ Equation \eqref{eq:observer_LTI_cf} will become
 \end{align*}
 
 The first effect of this new equation is that the matrix is no longer upper diagonal. We must therefore compensate for the errors introduced in order to find a stable solution.
-We can use Gershgoring disks to limit the error in the expected eigenvalues. Let $\delta_o=\max(|\mat{A}_{ei*}|_2)$ (\emph{i.e.} the largest row norm in $\mat{A}_e$) be the largest error bound for any eigenvalue in $\mat{A}_e$.
+We can use Gershgoring disks to limit the error in the expected eigenvalues. Let $\delta_o=\max(|\mat{A}_{ei*}|_2)$ (\emph{i.e.} the largest row norm in $\mat{A}_e$) be the largest error bound for any eigenvalue in $\mat{A}_t$ that corresponds to the observer.
 Then $\forall i \in [1\ n], |\lambda_{oi}-\hat{\lambda}_{oi}|<\delta_o$,where $\lambda_{oi}$ are the true eigenvalues of the observer and $\hat{\lambda}_{oi}$ the eigenvalues of the perturbed observer. We note that in the case of stability we only care about the error with respect to the unit circle, which is equivalent to upper bounding the estimation of the largest eigenvalue. Hence given a desired upper value $\overline{\lambda}$, we apply Iurys criterion on the polynomial.
 \begin{equation}
 P_o'=\sum_{j=0}^n c_j\overline{\lambda'}^{n-j}s^j : \overline{\lambda'}=(1+\delta_o)\overline{\lambda}
