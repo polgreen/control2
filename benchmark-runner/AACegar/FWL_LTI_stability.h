@@ -21,6 +21,18 @@ void make_closed_loop()
 #endif
   for (i = 0;i<_DIMENSION;i++) plant_cbmc[i]-=controller_cbmc[i];
   
+#ifdef _OBSERVER
+  make_nondet_transform(observer_transform.coeffs,observer_transform.uncertainty,observer_transform_cbmc);
+  fxp_check_coeffs(observer);
+  for (i = 0;i<_DIMENSION;i++)
+  {
+    observer_cbmc[i]=0;
+    for (j = 0;j<_DIMENSION;j++)
+    {
+      observer_cbmc[i]+=observer_transform_cbmc[j][i]*observer[j];
+    }
+  }
+#endif
 }
 
 signed int check_stability_closedloop(vectort a)

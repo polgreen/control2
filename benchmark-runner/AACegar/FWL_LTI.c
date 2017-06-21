@@ -32,8 +32,8 @@ void print_matrix(char *name,matrixt matrix)
 #endif
 }
 
-vectort plant_cbmc,controller_cbmc;
-matrixt transform_cbmc;
+vectort plant_cbmc,controller_cbmc,observer_cbmc;
+matrixt transform_cbmc,observer_transform_cbmc;
 matrixt loop_cbmc;
 
 #include "FWL_LTI_FWL.h"
@@ -78,7 +78,14 @@ int main()
 #ifndef __CPROVER
   print_matrix("dynamics",dynamics);
   print_matrix("loop",loop_cbmc);
-#endif  
+#endif
+  vectort polynomial;
+  control_floatt speed_factor;
+  for (i=0;i<_DIMENSION;i++)
+  {
+    polynomial[i]=plant_cbmc[i];
+    for (j=0;j<=i;j++) polynomial[i]*=speed_factor;
+  }
   result=check_stability_closedloop(plant_cbmc);
 #ifndef __CPROVER
   printf("stability=%d\n",result);
