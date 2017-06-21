@@ -680,6 +680,7 @@ and $\mat{J}_{b} U_b$ is the smallest ball that over-approximates $\mat{J}  U_d$
 
 The expression
  \begin{align}
+ \label{eq:contu_reachset}
 X_T^\sharp &=\mat{A}^{-1}X_T'\supseteq X_T\\
 X_T'&=\mat{A}\mat{A}_TX_0 \oplus (\mat{I}-\mat{A}_{bT})\mat{B}U_b \oplus (\mat{I}-\mat{A}_T)\mat{B}\vec{u}_c\nonumber
  \end{align}
@@ -696,8 +697,28 @@ X_T'&=\mat{A}\mat{A}_TX_0 \oplus (\mat{I}-\mat{A}_{bT})\mat{B}U_b \oplus (\mat{I
 \end{corollary}
  \begin{proof}
 Let $U'=\mat{B}U$, with $\vec{u}'$ its geometrical centre and $U_b'$ the smallest sphere centered at $\vec{u}'$ containing all points in $U'$.
-Then $U'\subseteq U_b' \oplus \vec{u}_c' \Rightarrow (\mat{I}-\mat{A}_T)U' \subseteq (\mat{I}-\mat{A}_T)U_b' \oplus (\mat{I}-\mat{A}_T)\vec{u}_c'$. Since $ (\mat{I}-\mat{A}_{bT})U_b'\supseteq  (\mat{I}-\mat{A}_T)U_b'$, then $(\mat{I}-\mat{A}_T)U' \subseteq (\mat{I}-\mat{A}_{bT})U_b' \oplus (\mat{I}-\mat{A}_T)\vec{u}_c'$ thus proving the theorem.
+Then $U'\subseteq U_b' \oplus \vec{u}_c' \Rightarrow (\mat{I}-\mat{A}_T)U' \subseteq (\mat{I}-\mat{A}_T)U_b' \oplus (\mat{I}-\mat{A}_T)\vec{u}_c'$. Since $ (\mat{I}-\mat{A}_{bT})U_b'\supseteq  (\mat{I}-\mat{A}_T)U_b'$, then $(\mat{I}-\mat{A}_T)U' \subseteq (\mat{I}-\mat{A}_{bT})U_b' \oplus (\mat{I}-\mat{A}_T)\vec{u}_c'$ thus proving the theorem for $\vec{u}(t)=\vec{u}_0 : t \in [0\ T]$.
   
+For the continuous time interval, let us look at the solution for the differential equation at time $T$ with a non-deterministic input $\vec{u}$.
+\begin{equation*}
+\vec{x}_T=e^AT\vec{x}_0+\int_{t = 0}^{T_s} e^{\mat{A} t} \mat{B} \vec{u}(t) dt
+\end{equation*}
+We will first divide this equation into 
+\begin{align*}
+\vec{x}_T&=e^AT\vec{x}_0+\int_{t = 0}^{T} e^{\mat{A} t} \mat{B} \vec{u}_c dt +\int_{t = 0}^{T_s} e^{\mat{A} t} \mat{B} (\vec{u}(t)-\vec{u}_c) dt\\
+&=A_T\vec{x}_0+B_T\vec{u}_c+\int_{t = 0}^{T} \mat{S}e^{\mat{J} t} \mat{S}^{-1}\mat{B} (\vec{u}(t)-\vec{u}_c) dt\\
+&=A_T\vec{x}_0+B_T\vec{u}_c+\mat{S}\int_{t = 0}^{T} e^{\mat{J} t} \vec{u}_{j}'(t) dt\\
+&=A_T\vec{x}_0+B_T\vec{u}_c+\mat{S}\int_{t = 0}^{T} \sum_{k=0}^\infty \frac{1}{k!} \mat{J}^k t^k \vec{u}_{j}'(t) dt\\
+&=A_T\vec{x}_0+B_T\vec{u}_c+\mat{S}\sum_{k=0}^\infty \frac{1}{k!} \int_{t = 0}^{T} t^k \mat{J}^k \vec{u}_{j}'(t) dt
+\end{align*}
+It follows from equation \eqref{eq:overinduced} that $\mat{J}^k \vec{u}_{j}'(t) \subseteq \mat{J}_b^k U_{bj}'$ (where $U_{bj}'=\mat{S}^{-1}U_b'$), hence
+\begin{align*}
+&X_T \subseteq A_TX_0+B_T\vec{u}_c+\mat{S}\sum_{k=0}^\infty \frac{1}{k!} \int_{t = 0}^{T} t^k \mat{J}_b^k U_{bj}' dt\\
+\Rightarrow &X_T \subseteq A_TX_0+B_T\vec{u}_c+\mat{S} \int_{t = 0}^{T} \sum_{k=0}^\infty \frac{1}{k!}\mat{J}_b^k t^k U_{bj}' dt\\
+\Rightarrow &X_T \subseteq A_TX_0+B_T\vec{u}_c+\int_{t = 0}^{T_s} e^{\mat{A}_b t} U_b' dt\\
+\Rightarrow &X_T \subseteq A_TX_0+B_T\vec{u}_c+ \mat{A}^{-1}(\mat{I}-\mat{A}_{bT}) \mat{B} U_b
+\end{align*}
+Multiplying by $\mat{A}$ we get $X_T'$ as in \eqref{eq:contu_reachset}, thus proving the theorem.
 \end{proof}
 
 %-------------------------------
