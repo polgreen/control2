@@ -31,9 +31,9 @@ for i=1:size(SS_names,1)
     %'w' = discard existing contents. change to 'a' to append
     
     %write benchmark
-    fprintf(fileID,'#ifndef BENCHMARK_H_ \n #define BENCHMARK_H_ \n\n');
+    fprintf(fileID,'#ifndef BENCHMARK_H_ \n#define BENCHMARK_H_ \n\n');
     fprintf(fileID,'// time discretisation %d \n',Benchmark.Ts);
-    fprintf(fileID,'#ifndef INT_BITS \n #define INT_BITS 8\n #define FRAC_BITS 8\n#endif\n');
+    fprintf(fileID,'#ifndef INT_BITS \n#define INT_BITS 8\n#define FRAC_BITS 8\n#endif\n');
     fprintf(fileID,'#define NSTATES %d \n#include "control_types.h"\n',states);
     fprintf(fileID,'#define NINPUTS %d \n#define NOUTPUTS %d\n',inputs, outputs);
     fprintf(fileID,'#define INPUT_UPPERBOUND (__plant_precisiont)1\n');
@@ -41,21 +41,21 @@ for i=1:size(SS_names,1)
     fprintf(fileID,'const __plant_typet _controller_A[NSTATES][NSTATES] = {' );
 
     for k=1:states
-      if(i==1) 
-        fprintf(fileID,'{ interval(%d), ',A(k,1));
-      else
-        fprintf(fileID,',\n{ interval(%d), ',A(k,1));
+      if(k==1) 
+        fprintf(fileID,'{ interval(%d), ',A(k,1)); %row 1, col 1
+      else  
+        fprintf(fileID,',\n{ interval(%d), ',A(k,1)); %row 2->n, col 1
       end     
-    for j=2:states-1
-        fprintf(fileID,' interval(%d), ',A(k,j));
-    end
-    fprintf(fileID,' interval(%d)}',A(k,states));
+        for j=2:states-1
+            fprintf(fileID,' interval(%d), ',A(k,j)); %col 2->n-1
+        end
+        fprintf(fileID,' interval(%d)}',A(k,states)); %col n
     end   
     fprintf(fileID,'};\n');
         
     fprintf(fileID,'const __plant_typet _controller_B[NSTATES] = {');
     for k=1:states-1
-        fprintf(fileID,'interval(%d)',B(k));
+        fprintf(fileID,'interval(%d), ',B(k));
     end
     fprintf(fileID,'interval(%d)};\n',B(states));
     
@@ -124,4 +124,5 @@ fprintf(fileID,'};\n');
 
 fprintf(fileID,'\n#endif /*BENCHMARK_H_*/');
 
+fclose(fileID);
 end
