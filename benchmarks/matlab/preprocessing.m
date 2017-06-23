@@ -39,13 +39,16 @@ for i=1:size(SS_names,1)
     fprintf(fileID,'#define INPUT_UPPERBOUND (__plant_precisiont)1\n');
     fprintf(fileID,'#define INPUT_LOWERBOUND (__plant_precisiont)-1\n');
     fprintf(fileID,'const __plant_typet _controller_A[NSTATES][NSTATES] = {' );
-
+    
+    if states==1
+        fprintf(fileID,' interval(%d)};\n ',A(1,1)); %row 1, col 1
+    else    
     for k=1:states
       if(k==1) 
         fprintf(fileID,'{ interval(%d), ',A(k,1)); %row 1, col 1
       else  
         fprintf(fileID,',\n{ interval(%d), ',A(k,1)); %row 2->n, col 1
-      end     
+      end
         for j=2:states-1
             fprintf(fileID,' interval(%d), ',A(k,j)); %col 2->n-1
         end
@@ -59,7 +62,7 @@ for i=1:size(SS_names,1)
     end
     fprintf(fileID,'interval(%d)};\n',B(states));
     
-    
+    end
     
 
 
