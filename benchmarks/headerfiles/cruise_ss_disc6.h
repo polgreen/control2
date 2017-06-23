@@ -12,9 +12,8 @@
 #define NOUTPUTS 1
 #define INPUT_UPPERBOUND (__plant_precisiont)1
 #define INPUT_LOWERBOUND (__plant_precisiont)-1
-const __plant_typet _controller_A[NSTATES][NSTATES] = {{ interval(9.975031e-01),  interval(9.975031e-01)}};
-const __plant_typet _controller_B[NSTATES] = {interval(7.812500e-03)};
-const __plant_typet __char_poly_const[2][2] = 
+const __plant_typet _controller_A[NSTATES][NSTATES] = { interval(9.975031e-01)};
+ const __plant_typet __char_poly_const[2][2] = 
  {{ -1,  0},
 { 9.975031e-01,  -7.812500e-03}};
 
