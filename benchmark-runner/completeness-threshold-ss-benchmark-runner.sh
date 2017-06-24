@@ -1,6 +1,6 @@
 #!/bin/bash
-export PATH=${PATH//cbmc-5190/cbmc-trunk-diffblue-control-synthesis}
-export PATH=${PATH}:/users/pkesseli/software/cpp/cbmc/cbmc-trunk-diffblue-control-synthesis/src/cegis:/users/pkesseli/software/cpp/cbmc/cbmc-trunk-diffblue-control-synthesis-analyzer/src/goto-analyzer:/users/pkesseli/software/cpp/z3/trunk/target/i686-linux/bin
+export PATH=${PATH//cbmc-5190/cbmc-pkesseli-5.7}
+export PATH=${PATH}:/users/pkesseli/software/cpp/cbmc/cbmc-pkesseli-5.7/src/cegis:/users/pkesseli/software/cpp/cbmc/cbmc-pkesseli-5.7/src/goto-analyzer:/users/pkesseli/software/cpp/z3/trunk/target/i686-linux/bin
 
 synthesis_file='safety_stability.c'
 script_base_directory=`pwd`
@@ -20,33 +20,21 @@ function echo_success_message {
  echo_log "<control_synthesis_time>${runtime}</control_synthesis_time>"
 }
 
-function extract_spec_scalar {
- echo $1 | sed "s/.*$2 *= *\([^;]*\);.*/\1/"
+function extract_scalar_definition {
+ echo $1 | sed "s/.*#define *$2 *\([^ \d]\+\).*/\1/"
 }
 
 function extract_spec_matrix {
- echo $1 | sed "s/.*$2 *= *\[\([^]]*\)\].*/\1/"
+ echo $1 | sed "s/.*$2[^=]*= *\([^;]\+\);.*/\1/" | sed 's/} *, *{/;/g' | sed 's/interval/fxp/g' | sed 's/[{}]//g'
 }
 
-function extract_int_bits {
- echo $1 | sed "s/.*implementation *< *\([^,]*\),.*/\1/"
-}
-
-function extract_frac_bits {
- echo $1 | sed "s/.*implementation *< *[^,]*,\([^> ]*\) *>.*/\1/"
-}
-
-function extract_input_lower_bound {
- echo $1 | sed "s/.*inputs *= *\[ *\([^,]*\) *,.*/\1/"
-}
-
-function extract_input_upper_bound {
- echo $1 | sed "s/.*inputs *= *\[ *[^,]*,\([^]]*\).*/\1/"
+function extract_input {
+ echo $1 | sed "s/.*#define *$2 *\((__plant_precisiont)\)\? *\([-0-9]\+\(\.[0-9e-]\+\)\?\).*/\2/"
 }
 
 function setup_benchmark_directory {
  mkdir -p "$1" 2>/dev/null
- #rm "$1"/* 2>/dev/null
+ cp ${benchmark} ${working_directory}/benchmark.h
  cp ${source_template_directory}/${synthesis_file} ${working_directory}/
  cp ${source_template_directory}/control_types.h ${working_directory}/
  cp ${source_template_directory}/operators.h ${working_directory}/
@@ -57,30 +45,8 @@ function setup_benchmark_directory {
  cp ${source_template_directory}/discrete_step_k_completeness_check.cpp ${working_directory}/
 }
 
-function write_spec_header {
- header_file="${working_directory}/${spec_header_file}"
- echo "#define INT_BITS ${impl_int_bits}" >${header_file}
- echo "#define FRAC_BITS ${impl_frac_bits}" >>${header_file}
- echo "#define NSTATES ${num_states}" >>${header_file}
- echo '#include "control_types.h"' >>${header_file}
- echo '' >>${header_file}
-
- echo "#define NINPUTS ${num_inputs}" >>${header_file}
- echo "#define NOUTPUTS ${num_outputs}" >>${header_file}
- echo '#ifdef INTERVAL' >>${header_file}
- echo "#define INPUT_LOWERBOUND (__plant_precisiont)${input_lower_bound}" >>${header_file}
- echo "#define INPUT_UPPERBOUND (__plant_precisiont)${input_upper_bound}" >>${header_file}
- echo '#else' >>${header_file}
- echo "#define INPUT_LOWERBOUND (__plant_typet)${input_lower_bound}" >>${header_file}
- echo "#define INPUT_UPPERBOUND (__plant_typet)${input_upper_bound}" >>${header_file}
- echo '#endif' >>${header_file}
- A_value=$(echo ${A} | sed -r 's/;/ }, { /g')
- A_value=$(echo ${A_value} | sed -r 's/([-0-9]+(\.[0-9e-]+)?)/interval(\1)/g')
- echo "const __plant_typet _controller_A[NSTATES][NSTATES] = { { ${A_value} } };" >>${header_file}
- B_value=$(echo ${B} | sed -r 's/;/, /g')
- B_value=$(echo ${B_value} | sed -r 's/([-0-9]+(\.[0-9e-]+)?)/interval(\1)/g')
- echo "const __plant_typet _controller_B[NSTATES] = { ${B_value} };" >>${header_file}
-
+function compile_precision_check {
+ cd ${working_directory}
  g++ -I . -I /usr/include/eigen3/ discrete_step_k_completeness_check.cpp -o discrete_step_k_completeness_check -lmpfr
  chmod +x discrete_step_k_completeness_check
  gcc -D INTERVAL safety_stability.c -o precision_check
@@ -93,92 +59,57 @@ function get_current_cpu_millis {
  echo $((${formula}))
 }
 
-if [ -z "$1" ]; then
- #dkr10
- #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/cruise_ss/')
- #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/dcmotor_ss/')
- #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/helicopter_ss/')
- #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/cruise_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/dcmotor_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/helicopter_ss/')
 
- #dkr11
- benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/magsuspension_ss/') #initial controller unsat
- #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/invpendulum_pendang_ss/') #initial controller unsat
- #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/magsuspension_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/invpendulum_pendang_ss/')
+working_directory_base_suffix="$1"
+#dkr10
+if [ "$1" == "dkr10" ]; then
+ benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/cruise_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/dcmotor_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/helicopter_ss/')
+fi
 
- #dkr12
- #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/invpendulum_cartpos_ss/') #initial controller unsat
- #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/suspension_ss/') #precision check fails
- #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/invpendulum_cartpos_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/suspension_ss/')
+#dkr11
+if [ "$1" == "dkr11" ]; then
+ benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/ballmaglev_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/magsuspension_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/invpendulum_pendang_ss/')
+fi
 
- #dkr13 
- #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/tapedriver_ss/')
- #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/pendulum_ss/') #precision check fails
- #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/tapedriver_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/pendulum_ss/')
+#dkr12
+if [ "$1" == "dkr12" ]; then
+ benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/magneticpointer_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/invpendulum_cartpos_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/suspension_ss/')
+fi
 
- #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/cruise_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/dcmotor_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/helicopter_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/invpendulum_cartpos_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/invpendulum_pendang_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/magsuspension_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/pendulum_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/suspension_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/tapedriver_ss/')
- #benchmark_dirs=("${script_base_directory}/../benchmarks/state-space/dcmotor_ss/")
-else
- #benchmark_dirs=("$1")
- working_directory_base_suffix="$1"
- #dkr10
- if [ "$1" == "dkr10" ]; then
-  benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/cruise_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/dcmotor_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/helicopter_ss/')
- fi
-
- #dkr11
- if [ "$1" == "dkr11" ]; then
-  benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/ballmaglev_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/magsuspension_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/invpendulum_pendang_ss/')
- fi
-
- #dkr12
- if [ "$1" == "dkr12" ]; then
-  benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/magneticpointer_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/invpendulum_cartpos_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/suspension_ss/')
- fi
-
- #dkr13
- if [ "$1" == "dkr13" ]; then
-  benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/satellite_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/tapedriver_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/pendulum_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/uscgtampa_ss/')
- fi
+#dkr13
+if [ "$1" == "dkr13" ]; then
+ benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/satellite_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/tapedriver_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/pendulum_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/uscgtampa_ss/')
 fi
 
 working_directory_base="/tmp/control_synthesis-ss-${working_directory_base_suffix}"
 mkdir -p ${working_directory_base} 2>/dev/null
 
 for benchmark_dir in ${benchmark_dirs[@]}; do
- for benchmark in ${benchmark_dir}*.ss; do
- #for benchmark in '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/magsuspension_ss/magsuspension_ss_disc4.ss'; do
-  log_file="${benchmark%.ss}_completeness-threshold-ss.log"
-  time_tmp_file=/tmp/times${working_directory_base_suffix}.log
-  times >${time_tmp_file}; start_time=$(get_current_cpu_millis)
+ time_tmp_file=/tmp/times${working_directory_base_suffix}.log
+ times >${time_tmp_file}; start_time=$(get_current_cpu_millis)
+
+ for benchmark in ${benchmark_dir}*.h; do
+  log_file="${benchmark%.h}_completeness-threshold-ss.log"
   truncate -s 0 ${log_file}
   echo_log ${benchmark}
   echo_log 'completeness-threshold-ss'
 
-  spec_content=`cat ${benchmark}`
-  impl_int_bits=$(extract_int_bits "${spec_content}")
-  impl_frac_bits=$(extract_frac_bits "${spec_content}")
-  controller_fixedbv_type_width=$((impl_int_bits+impl_frac_bits))
-  width_offset=$((controller_fixedbv_type_width%8))
-  [ ${width_offset} -ne 0 ] && impl_int_bits=$((impl_int_bits+8-width_offset))
-  num_states=$(extract_spec_scalar "${spec_content}" 'states')
-  num_inputs=$(extract_spec_scalar "${spec_content}" 'inputs')
-  num_outputs=$(extract_spec_scalar "${spec_content}" 'outputs')
-  A=$(extract_spec_matrix "${spec_content}" 'A')
-  B=$(extract_spec_matrix "${spec_content}" 'B')
-  input_lower_bound=$(extract_input_lower_bound "${spec_content}")
-  input_upper_bound=$(extract_input_upper_bound "${spec_content}")
-
   working_directory="${working_directory_base}/completeness-threshold-ss"
   setup_benchmark_directory ${working_directory}
   cd ${working_directory}
-  write_spec_header
+  compile_precision_check
   cbmc_log_file="${working_directory}/cbmc.log"
 
+  spec_content=`cat ${benchmark}`
+  num_states=$(extract_scalar_definition "${spec_content}" 'NSTATES')
+  A=$(extract_spec_matrix "${spec_content}" '_controller_A')
+  B=$(extract_spec_matrix "${spec_content}" '_controller_B')
+  input_upper_bound=$(extract_input "${spec_content}" 'INPUT_UPPERBOUND')
+  input_lower_bound=$(extract_input "${spec_content}" 'INPUT_LOWERBOUND')
+
   max_length=64
-  #integer_width=8
   integer_width=${impl_int_bits}
   radix_width=$((impl_int_bits+impl_frac_bits))
-  #radix_width=${impl_frac_bits}
   min_size_offset=$(((integer_width+radix_width)%8))
   [ ${min_size_offset} -ne 0 ] && integer_width=$((integer_width+8-min_size_offset))
   k_sizes=(10 20 30 50 75 100 200)
@@ -206,9 +137,6 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
      echo_log 'K check error occurred'
      break
     else
-     #controller_intervals=$(echo "${controller_params}" | sed -r 's/([-0-9]+(\.[0-9]*)?)/interval(\1),/g' | sed 's/\(.*\),/\1/')
-     #echo "controller_intervals: ${controller_intervals}"
-     #gcc -D INTERVAL -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTORL_RADIX_WIDTH=${radix_width} -D NUMBERLOOPS=${k_size} -D _CONTROLLER_INTERVALS="${controller_intervals}" safety_stability.c -o precision_check
      echo_log "./precision_check ${k_size} ${controller_params}"
      ./precision_check ${k_size} ${controller_params}
      if [ $? -eq 0 ]; then
@@ -241,7 +169,7 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
     radix_width=$((radix_width+4))
    fi
   done
-  # All files are the same benchmark with increased sample frequency. Exit after first.
+  # All files are the same benchmark with increased sample frequency. Exit after first success.
   if [ "${solution_found}" = true ]; then
     break
   fi
