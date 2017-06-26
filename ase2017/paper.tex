@@ -65,7 +65,7 @@ Formal Synthesis; Digital Control Systems; MATLAB Toolbox; Finite-Word Length; V
 
 Control theory achieves the construction of reliable systems by 
 offering mathematical guarantees about the stability and the desired 
-performance of closed-loop systems, where states or outputs of discrete plant $G(z)$ 
+performance of closed-loop dynamical systems, where states or outputs of discrete plant $G(z)$ 
 are fed back and compared to a reference signal to which a (designed) 
 controller $C(z)$ should maintain a set of control objectives~\cite{astrom1997computer}. 
 Fig.~\ref{fig:typical-control-system} shows a typical closed-loop digital control system.
@@ -104,12 +104,12 @@ the denominator and numerator polynomials, respectively; and $N$ and $M$
 represent the denominator and numerator polynomials order, respectively.
 %
 In state-space format, the digital control system represents the behavior 
-of a system via a state evolution equation $\dot{x}(n+1)$ and an instantaneous 
+of a system via a state evolution equation $x(n+1)$ and an instantaneous 
 output equation $y(n)$, as follows:
 %
 \begin{equation}
 \begin{split}
-\dot{x}(n+1) &= A x(n) + B u(n)
+x(n+1) &= A x(n) + B u(n)
 \\
 y(n) &= C x(n) + D u(n), 
 \end{split}\label{eq:ss-example}
@@ -148,7 +148,7 @@ Satisfiability Modulo Theories (SMT) solvers. Pessoa~\cite{mazo2010pessoa} is an
 toolbox applied to the synthesis of correct-by-design digital controllers. 
 In particular, Pessoa is based on approximate bisimulation, which allows control engineers to replace differential equations, 
 describing a physical plant, by a respective finite-state machine. However, Pessoa does not take advantage of
-recent advances in bit-accurate verification of programs to synthesize controllers w.r.t. FWL effects.
+recent advances in bit-accurate verification of programs to synthesize controllers w.r.t. FWL effects. MATLAB already offers a toll (Control System Tuner~\cite{autotuner}) for automatically designing controllers based on optimization solvers or graphical analysis. However, the Control System Tuner is unable to consider FWL effects during the design process.
 As a result, there is no other MATLAB toolbox to perform digital controller synthesis based on 
 program synthesis engines and considering the complete range of approximations, including time discretization, 
 quantization effects, and finite-precision arithmetic and its rounding errors. 
