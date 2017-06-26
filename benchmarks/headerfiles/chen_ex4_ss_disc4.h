@@ -1,19 +1,18 @@
 #ifndef BENCHMARK_H_ 
- #define BENCHMARK_H_ 
+#define BENCHMARK_H_ 
 
 // time discretisation 5.000000e-02 
 #ifndef INT_BITS 
 #define INT_BITS 8
 #define FRAC_BITS 8
- #endif
+#endif
 #define NSTATES 9 
- #include "control_types.h"
+#include "control_types.h"
 #define NINPUTS 1 
- #define NOUTPUTS 1
+#define NOUTPUTS 1
 #define INPUT_UPPERBOUND (__plant_precisiont)1
 #define INPUT_LOWERBOUND (__plant_precisiont)-1
-const __plant_typet _controller_A[NSTATES][NSTATES] = {,
-{ interval(8.489898e+00),  interval(-4.012726e+00),  interval(2.217328e+00),  interval(-1.578595e+00),  interval(7.508029e-01),  interval(-4.771179e-01),  interval(3.906393e-01),  interval(-1.869603e-01),  interval(1.594070e-01)},
+const __plant_typet _controller_A[NSTATES][NSTATES] = {{ interval(8.489898e+00),  interval(-4.012726e+00),  interval(2.217328e+00),  interval(-1.578595e+00),  interval(7.508029e-01),  interval(-4.771179e-01),  interval(3.906393e-01),  interval(-1.869603e-01),  interval(1.594070e-01)},
 { interval(8),  interval(0),  interval(0),  interval(0),  interval(0),  interval(0),  interval(0),  interval(0),  interval(0)},
 { interval(0),  interval(4),  interval(0),  interval(0),  interval(0),  interval(0),  interval(0),  interval(0),  interval(0)},
 { interval(0),  interval(0),  interval(2),  interval(0),  interval(0),  interval(0),  interval(0),  interval(0),  interval(0)},
@@ -22,7 +21,7 @@ const __plant_typet _controller_A[NSTATES][NSTATES] = {,
 { interval(0),  interval(0),  interval(0),  interval(0),  interval(0),  interval(5.000000e-01),  interval(0),  interval(0),  interval(0)},
 { interval(0),  interval(0),  interval(0),  interval(0),  interval(0),  interval(0),  interval(5.000000e-01),  interval(0),  interval(0)},
 { interval(0),  interval(0),  interval(0),  interval(0),  interval(0),  interval(0),  interval(0),  interval(1.250000e-01),  interval(0)}};
-const __plant_typet _controller_B[NSTATES] = {interval(1.220703e-04)interval(0)interval(0)interval(0)interval(0)interval(0)interval(0)interval(0)interval(0)};
+const __plant_typet _controller_B[NSTATES] = {interval(1.220703e-04), interval(0), interval(0), interval(0), interval(0), interval(0), interval(0), interval(0), interval(0)};
 const __plant_typet __char_poly_const[10][10] = 
  {{ -1,  0,  0,  0,  0,  0,  0,  0,  0,  0},
 { 8.489898e+00,  0,  0,  0,  0,  0,  0,  0,  0,  -1.220703e-04},

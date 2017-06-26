@@ -791,12 +791,12 @@ uncertainty parameters in the plant model (plant intervals)~\cite{Bessa16}.
 %any digital controller, implementation details should be provided ({\it
 %e.g.}, number of bits, realization, and sample time).
 
-\begin{figure}[t]
+\begin{figure*}[t]
 \centering
-\includegraphics[width=\columnwidth]{figures/synthesis-flow.pdf}
+\includegraphics[width=\textwidth]{figures/synthesis-flow.pdf}
 \vspace{0.1cm}
 \caption{Overview of the synthesis process\label{DSSynth_process}}
-\end{figure}
+\end{figure*}
 
 %In Step $1$, the user provides inputs $G(z)$ and $\Delta{G}(z)$
 %%$\%$ ({\it i.e.}, $\Delta{G}(z)$ as a percentage of $G(z)$)
@@ -846,14 +846,10 @@ coefficients.% as discussed in detail in Section~\ref{synthesis-elements}.
 \label{sssec:naive}
 %-------------------------------
 
-\begin{figure}[htb]
-{\scriptsize
-\centering
-\resizebox{\columnwidth}{!}
-{
- \begin{tikzpicture}[scale=0.3,->,>=stealth',shorten >=.2pt,auto, semithick, initial text=, ampersand replacement=\&,]
-  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center
-},
+\begin{figure*}[htb]
+\scriptsize\centering
+\begin{tikzpicture}[scale=0.3,->,>=stealth',shorten >=.2pt,auto, semithick, initial text=, ampersand replacement=\&,]
+  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center},
           row sep=.6cm, column sep=.9cm] {
    \coordinate (aux1);
    \& \coordinate (aux2);
@@ -913,12 +909,10 @@ coefficients.% as discussed in detail in Section~\ref{synthesis-elements}.
    ([xshift=6.7cm]aux4) edge node[align=center] {Increase Unfolding Bound} (aux3);
    %(verif4.north) edge node[align=center] {} ([xshift=10.5cm]aux2)
    %([xshift=10.5cm]aux2) edge node[align=center] {Increase Sampling Rate} (aux1);
-
- \end{tikzpicture}
-}}
+\end{tikzpicture}
 \caption{CEGIS with multi-staged verification}
 \label{fig:CEGIS-precision-increment}
-\end{figure}
+\end{figure*}
 
 %\subsubsection{Controller synthesis}
 
@@ -1038,7 +1032,7 @@ given above and illustrated in Fig.~\ref{fig:ct}.
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.9\columnwidth]{figures/ct.eps}
+\includegraphics[width=\columnwidth]{figures/ct.eps}
 %\vspace{0.1cm}
 \caption{Completeness threshold for multi-staged verification. $T_s$ is the time step for the time discretization of the control matrices.}
 \label{fig:ct}
@@ -1273,10 +1267,8 @@ $z^n+\sum_{i=1}^n(a_i-k_i)z^{n-i}=\prod_{i=1}^n (z-\lambda_i) : |\lambda_i|<1 \w
 \end{enumerate}
 
 
-\begin{figure}
-\centering
-\resizebox{\columnwidth}{!}
-{\scriptsize
+\begin{figure*}
+\centering\scriptsize
 \begin{tikzpicture}[scale=0.3,->,>=stealth',shorten >=.2pt,auto, semithick, ampersand replacement=\&,]
   \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center},row sep=.8cm, column sep=.2cm] {
    \coordinate (aux1);
@@ -1314,10 +1306,9 @@ $z^n+\sum_{i=1}^n(a_i-k_i)z^{n-i}=\prod_{i=1}^n (z-\lambda_i) : |\lambda_i|<1 \w
   \path[-] 
      (verify.north) edge node {$(k,x_0)$} (aux);
 \end{tikzpicture}
-}
 \caption{Abstraction-based CEGIS}
 \label{fig:CEGARIS} 
-\end{figure}
+\end{figure*}
 
 
 %%-------------------------------
@@ -2123,7 +2114,161 @@ representation errors of the FWL domain.
 \label{exp:benchmarks}
 %-------------------------------
 
-\textcolor{red}{Iury: can you please describe the benchmarks?}
+%\textcolor{red}{Iury: can you please describe the benchmarks?}
+
+The benchmark suite employed to evaluate the proposed technique is 
+composed by 18 MIMO models extracted from the literature~\cite{acrobot,cstr,CHEN1979389,KOKOTOVIC198023,gajic2008optimal,Franklin15, maglev, converters, CTMS} and discretized with different sample time
+resulting in 167 benchmarks. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph*{DC Motor}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+DC Motor benchmark describes the velocity dynamics of a basic 
+brushed direct current electrical machine.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph*{Automotive Cruise System}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+An automotive cruise control system is used to keep constant the speed 
+of an automobile  tracking a desired speed reference, compensating 
+disturbances and uncertainties related to relief and terrain.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph*{Pendulum}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+A pendulum is system composed by a swinging point mass suspended from 
+a frictionless pivot through a negligible mass rod.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph*{Inverted Pendulum}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+An inverted pendulum is a system similar to the pendulum but the point 
+mass must be equilibrated above the pivot point that is mounted on an 
+one degree of freedom cart that moves over a track through a DC motor.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph*{Magnetic Suspension}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Magnetic suspension benchmark corresponds to the discrete model of a 
+simple eletromagnet-ball system where a steel ball is levitated in air 
+by the action of an electromagnetic force generated by an electromagnet.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph*{Magnetic Pointer}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Magnetic pointer is a pointer, that is usually employed in analogue 
+gauges and indicators, whose angular position dynamics is controlled 
+by a magnetic field.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph*{1/4 Car Suspension}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The 1/4 Car Suspension benchmark corresponds to the model of a single 
+wheel suspension system of a car, {\it i.e.} the relative motion dynamics 
+of a mass springer damp model that connects the car to one of its wheels.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph*{Computer Tape Driver}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Computer Tape Drive is a computer storage device used to read and write 
+data on magnetic tapes.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph*{Acrobot - Robot Manipulator}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The Acrobot benchmark corresponds to the model of an two-link 
+underactuated robot manipulator, named Acrobot, linearized by partial 
+feedback linearization~\cite{acrobot}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph*{High-order Systems from Chen et. al.}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+These benchmarks corresponds to a series of high-order system model 
+generally used as example for order reduction techniques~\cite{CHEN1979389}.
+ In this work, these benchmarks are used for evaluate the proposed control
+ synthesis technique under critical conditions, {\it i.e.} with a greater 
+ number of parameters to be considered.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph*{Continuous Stirred Tank Reactor}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+This benchmark describes a linear model for PH dynamics of a PH 
+neutralization process of an aqueous solution of sodium acetate with 
+hydrochloric acid in a continuous flow stirred-tank reactor.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph*{Flexible Beam}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+A Flexible Beam is a plant usually employed in vibration studies. It is 
+composed by a flexible metallic structure with piezoceramic actuators 
+and sensors.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph*{Helicopter Longitudinal Motion}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The Helicopter Longitudinal Motion benchmark describes the dynamics of 
+transitional motion with respect to a longitudinal plane and the 
+rotational motion around the longitudinal axis.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph*{USCG cutter Tampa Heading Angle}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The USCG cutter Tampa Heading Angle describes the heading angle 
+dynamics of a Coast Guard cutter.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph*{Voltage regulator}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The voltage regulator benchmark~\cite{KOKOTOVIC198023} consists 
+in a linear model of a synchronous machine connected to an 
+infinite bus.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph*{Guidance Control System}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The Guidance Control System benchmark is another high-order system 
+model used by Chen et al.~\cite{CHEN1979389}  in order reduction 
+techniques. Guidance systems are used to determine the path of an 
+autonomous vehicle movement.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph*{Satellite Attitude Control System}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+This benchmark describes the dynamics of a satellite attitude, 
+{\it i.e.} the orientation angles. An attitude control system must 
+maintain the desired orientation of satellite with respect to an 
+inertial frame during all the excursion. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph*{Springer-mass damper}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The springer-mass damper systems are classic models for a lot of 
+mechanical systems dynamics. This benchmark describes a mass that is 
+fixed to a node through a springer and moves under the action of a 
+input force, damping, and elastic force.
+
+
 
 %-------------------------------
 \subsection{Objectives}

@@ -65,7 +65,7 @@ Formal Synthesis; Digital Control Systems; MATLAB Toolbox; Finite-Word Length; V
 
 Control theory achieves the construction of reliable systems by 
 offering mathematical guarantees about the stability and the desired 
-performance of closed-loop systems, where states or outputs of discrete plant $G(z)$ 
+performance of closed-loop dynamical systems, where states or outputs of discrete plant $G(z)$ 
 are fed back and compared to a reference signal to which a (designed) 
 controller $C(z)$ should maintain a set of control objectives~\cite{astrom1997computer}. 
 Fig.~\ref{fig:typical-control-system} shows a typical closed-loop digital control system.
@@ -104,12 +104,12 @@ the denominator and numerator polynomials, respectively; and $N$ and $M$
 represent the denominator and numerator polynomials order, respectively.
 %
 In state-space format, the digital control system represents the behavior 
-of a system via a state evolution equation $\dot{x}(n+1)$ and an instantaneous 
+of a system via a state evolution equation $x(n+1)$ and an instantaneous 
 output equation $y(n)$, as follows:
 %
 \begin{equation}
 \begin{split}
-\dot{x}(n+1) &= A x(n) + B u(n)
+x(n+1) &= A x(n) + B u(n)
 \\
 y(n) &= C x(n) + D u(n), 
 \end{split}\label{eq:ss-example}
@@ -148,7 +148,9 @@ Satisfiability Modulo Theories (SMT) solvers. Pessoa~\cite{mazo2010pessoa} is an
 toolbox applied to the synthesis of correct-by-design digital controllers. 
 In particular, Pessoa is based on approximate bisimulation, which allows control engineers to replace differential equations, 
 describing a physical plant, by a respective finite-state machine. However, Pessoa does not take advantage of
-recent advances in bit-accurate verification of programs to synthesize controllers w.r.t. FWL effects.
+recent advances in bit-accurate verification of programs to synthesize controllers w.r.t. FWL effects. MATLAB already offers a tool 
+named as Control System Tuner~\cite{autotuner} for automatically designing controllers based on optimization solvers or graphical analysis. 
+However, the Control System Tuner is unable to consider FWL effects during the controller synthesis process.
 As a result, there is no other MATLAB toolbox to perform digital controller synthesis based on 
 program synthesis engines and considering the complete range of approximations, including time discretization, 
 quantization effects, and finite-precision arithmetic and its rounding errors. 
@@ -411,7 +413,12 @@ experiments\footnote{\url{www.cprover.org/DSSynth/controller-synthesis-cav-2017.
 of our tool is available in a public GitHub
 repository\footnote{\url{https://github.com/ssvlab/dsverifier/tree/master/toolbox-dssynth}}.
 
-\textcolor{red}{Pascal: May I ask you to briefly mention the modules and also the LOC associated to each module? The tool paper reviewers usually like to know about the tool's complexity (i.e., number of modules/components and LOC).}
+The entire implementation consists of $400$ lines of MATLAB scripts for the UI
+module, $585$ and $800$ lines of C code in the naive and abstract accelerator
+model respectively.  $4000$ lines of C code for utility functions such as
+interval and fixed-point arithmetic, as well as $1000$ lines of C++ code in the
+control synthesis module in CEGIS CBMC.  We evaluate \tool using $20$ regression
+test cases.
 
 %---------------------------------------------------
 \subsection{\tool Procedures}
@@ -595,6 +602,16 @@ which include physical plants for UAV, cruise control, spring-mass damper,
 satellite, direct current (DC) servo motor, helicopter, inverted pendulum,
 magnetic suspension, computer tape driver, robot manipulator, flexible beam,
 guidance system, and an antenna control system~\cite{abate2017, abatecav2017}.
+
+%-----------------------------------
+\subsection{Experimental Setup}
+\label{experimental-setup}
+%-----------------------------------
+
+For all evaluated benchmarks, the signal input range lies between $-1$ and $1$, and the implementation used for the integer part is $8$ bits, and for fractional part is also $8$ bits.
+%
+All experiments with \tool v$1$.$0$.$0$  were conducted on an otherwise idle Intel Core i$7-2600$ 
+$3.40$ GHz processor, with $24$ GB of RAM, running Ubuntu $64$-bits.
 
 %---------------------------------------------------
 \subsection{Objectives}
