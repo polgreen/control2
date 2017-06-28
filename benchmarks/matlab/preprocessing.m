@@ -14,7 +14,16 @@ SS_names = fieldnames(SS_benchmarks);
 directory = '../headerfiles/';
 
 for i=1:size(SS_names,1)
-    Benchmark = SS_benchmarks.(SS_names{i});
+    Benchmark = SS_benchmarks.(SS_names{i});    
+    Folder = strsplit(SS_names{i},'_ss_disc');
+    Folder = strcat(directory,Folder{1});
+    if(7~=exist(Folder,'dir'))
+        mkdir(Folder);
+    else
+        Folder
+        msg = ' already exists'
+    end 
+    
     %if(isfield(Benchmark, 'a')==0)
      %   msg = 'error'
       %  break;
@@ -25,9 +34,9 @@ for i=1:size(SS_names,1)
     inputs = size(B,2); %check this
     outputs = size(B,2); %check this
     
-    SS_names(i) = strcat(directory,SS_names(i),'.h');
+    filename = strcat(Folder,'/',SS_names{i},'.h');
     
-    fileID = fopen(SS_names{i},'w')
+    fileID = fopen(filename,'w')
     %'w' = discard existing contents. change to 'a' to append
     
     %write benchmark
