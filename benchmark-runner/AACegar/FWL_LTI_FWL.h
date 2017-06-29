@@ -10,6 +10,8 @@ control_floatt _sum_error;
 
 void get_bounds()
 {
+  cnttype i;
+#ifdef FIXEDBV
   verify_assume((impl.int_bits+impl.frac_bits) < 32);
   if(impl.frac_bits >= 31)
     _fxp_one = 2147483647l;
@@ -17,9 +19,20 @@ void get_bounds()
     _fxp_one = (1 << impl.frac_bits);
   _dbl_lsb=_one/(1 << impl.frac_bits);
   _fxp_min = -(1 << (impl.frac_bits + impl.int_bits -1));
-  _fxp_max = (1 << (impl.frac_bits + impl.int_bits-1))-1;
-  _dbl_max = (1 << (impl.int_bits-1))-1;//Integer part
-  _dbl_max += (_one-_dbl_lsb);//Fractional part
+  _fxp_max = (2 << (impl.int_bits-impl.frac_bits -1))-1;
+  _dbl_max = (1 << (impl.int_bits-impl.frac_bits))-1;
+#else
+  verify_assume((_EXP_BITS>_FRAC_BITS) && (_EXP_BITS<= 32));
+  signed long int exp=(1 << (_EXP_BITS -_FRAC_BITS -1));
+  _dbl_max=_one;
+  for (i=0;i<exp;i++)
+  {
+    _dbl_max*=2;
+  }
+  exp=1 << _FRAC_BITS;
+  _dbl_lsb=_one/_dbl_max;
+  _dbl_max*=_one-_one/exp;
+#endif
   _dbl_min = -_dbl_max;
 #ifndef __CPROVER
   printf("%f",_dbl_max);
@@ -125,8 +138,10 @@ control_floatt fxp_check(control_floatt value)
     return fwl_value;
   #endif
 #else
-  value=fxp_control_floatt_to_fxp(value);
-  value/=_fxp_one;
+  #ifdef _FIXEDBV
+    value=fxp_control_floatt_to_fxp(value);
+    value/=_fxp_one;
+  #endif
   return value;
 #endif
 }
