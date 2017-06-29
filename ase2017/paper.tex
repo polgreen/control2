@@ -400,10 +400,10 @@ incorrectly defined in previous steps, or if there is no solution (digital contr
 given the digital controller word length.
 
 Our CEGIS engine is implemented as an integrated module within the bounded model checker CBMC~\cite{cbmc}.  CBMC
-transforms an ANSI-C representation of our closed-loop control system models into its internal format called
+transforms an ANSI-C representation of our closed-loop control system model into its internal format called
 \emph{GOTO}.  We instrument this internal \emph{GOTO} program for each synthesis or verification scenario accordingly,
 and use CBMC as an oracle to answer our queries.  CBMC itself relies on an underlying SAT or SMT solver to solve the
-resulting formulae.  We model FWL effects, time discretization and quantization noise explicitly using CBMC's
+resulting formulae.  We model FWL effects, time discretization and the presence of quantization noise explicitly using CBMC's  
 nondeterminism API.  Our module was included in CBMC~5.7 and is available for
 download\footnote{\url{https://github.com/diffblue/cbmc/archive/cbmc-5.7.zip}}.  We further created a VirtualBox OVA image
 with our tool pre-installed, including our MATLAB-generated benchmarks and benchmark shell script with instructions
@@ -432,7 +432,7 @@ and dynamic input ranges, and translates them to a specific structure in MATLAB;
 \item \textbf{Parse}: obtains the digital system specification and translates 
 it into an ANSI-C program;
 \item \textbf{Execution}: obtains the ANSI-C program from the previous step 
-and calls our CEGIS engine as back-end program synthesis tool to perform the automated synthesis;
+and calls our CEGIS engine as a back-end program synthesis tool to perform the automated synthesis;
 \item \textbf{Extraction}: obtains the ``.log'' file that is generated 
 after the synthesis phase and then checks the synthesized digital-controller;
 \item \textbf{Report}: obtains the digital controller from the previous step 
@@ -447,8 +447,8 @@ The \tool's features can be described as follows:
 
 \begin{itemize}
 \item \textbf{Representation}: the synthesis can be 
-performed for digital systems specified as 
-transfer-function or state-space equations;
+performed for digital systems specified via 
+transfer function or as state-space models;
 \item \textbf{Fixed-Point Arithmetic}: the digital 
 controller is synthesized considering FWL effects, 
 in fixed-point numeric representation;
@@ -466,8 +466,8 @@ to reproduce the stability in closed-loop of the synthesized digital controller;
 \subsubsection{Command Line Version}
 %---------------------------------------------------
 
-Users must provide a digital system described as a MATLAB system 
-using a \texttt{tf} (for transfer-function) or an \texttt{ss} (for state-space) 
+Users must provide a digital system described as a MATLAB model 
+using a \texttt{tf} (for transfer function) or an \texttt{ss} (for state-space model) 
 command (cf. step $1$ of Fig.~\ref{fig:synthesis-flow}).
 \tool is called via command line in MATLAB as 
 
@@ -475,14 +475,12 @@ command (cf. step $1$ of Fig.~\ref{fig:synthesis-flow}).
 \texttt{synthesize(plant, intBits, fracBits, maxR, minR)}
 \end{center} 
 
-\noindent where \texttt{plant} is the physical plant in state-space or transfer-function representation, 
+\noindent where \texttt{plant} is the physical plant in state-space or transfer function representation, 
 \texttt{intBits} is the integer part, \texttt{fracBits} is the fractional part, \texttt{maxR} and \texttt{minR} 
 are the maximum and minimum dynamic range, respectively (cf. steps $2$ and $3$ of Fig.~\ref{fig:synthesis-flow}).
 %
 After executing the \texttt{synthesize} command in MATLAB, 
-\tool provides the synthesized digital controller, according to 
-the digital system representation, {\it i.e.}, transfer-function or 
-state-space equations. 
+\tool provides the synthesized digital controller, according to the digital system representation. 
 
 %---------------------------------------------------
 \subsubsection{MATLAB Application Version} 
@@ -557,8 +555,8 @@ $y$ represents the synthesized stable digital controller, which is defined by Eq
 C(z)=\frac{-0.9983^{2}+0.09587z+0.1926}{z^2+0.5665z+0.75}.
 \end{equation}
 
-A digital system is stable \textit{iff} all of its poles are inside the $z$-plane unitary circle; 
-poles must have the modulus less than one. In order to compute the poles for the digital 
+A digital system is stable \textit{iff} all of its poles are inside the $z$-plane unity circle, 
+namely poles must have the modulus less than one. In order to compute the poles for the digital 
 system represented by Equations~\eqref{equation_plant} and \eqref{equation_controller}, 
 the user can invoke the \texttt{feedback} and \texttt{series} commands in MATLAB~\cite{matlab-toolbox} 
 to achieve a general equation regarding the transfer function representation. 
@@ -646,7 +644,7 @@ stability of the synthesized controllers outside of our model in state-space and
 %--------------------------------------
 
 \tool can synthesize digital controllers for dynamic physical plants, 
-represented in MATLAB through transfer-function and state-space,  
+represented in MATLAB as a transfer function or a state-space model,  
 w.r.t. stability and safety, using the CEGIS approach. 
 %
 Given the current literature in controller synthesis, there is no other MATLAB toolbox 
