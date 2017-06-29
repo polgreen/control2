@@ -721,6 +721,43 @@ It follows from equation \eqref{eq:overinduced} that $\mat{J}^k \vec{u}_{j}'(t) 
 Multiplying by $\mat{A}$ we get $X_T'$ as in \eqref{eq:contu_reachset}, thus proving the theorem.
 \end{proof}
 
+ %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ \subsubsection{Discrete dynamics using reals for systems with discrete time feedback inputs}\label{sec:real_discrete_feedback_inputs}
+ %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+The final case we analyse here is that of hybrid time systems, where the plant dynamics evolve in continuous time
+while the feedback dynamics evolve in discrete time.
+
+\begin{theorem}
+The expression
+ \begin{align}
+ \vec{x}_{t} &= (\mat{A}_{t-kT_s}-\mat{B}_{t-kT_s}\mat{K}) (\mat{A}_d-\mat{B}_d\mat{K})^k\vec{x}_0
+ \end{align}
+ with $\mat{A}_t, \mat{B}_t$ as per \eqref{eq:continuous_tube_dyn} and $\mat{A}_d, \mat{B}_d$ as per equation \eqref{eq:discretize} is a witness of the system
+ \begin{align}
+ \dot{\vec{x}}_{t} &= \mat{A}\vec{x}+\mat{B}\vec{u}_t\nonumber\\
+ \vec{u}_t=\mat{K}\vec{x}_k  : kT_s \leq t < (k+1)T_s
+ \end{align}
+ \end{theorem}
+
+\begin{proof}
+Let $\mat{K}$ be a feedback controller such that $\vec{u}_k=-\mat{K}\vec{x}_k$ at time $t=kT_s$. Let the output of
+the feedback system be a zero order holder such that $\vec{u}(t+kT_s)=\vec{u}(kT_s) : 0 \leq t < T_s$.
+The closed loop dynamics of the system between times $kT_s$ and $kT_s+T_s$ are
+\begin{equation}
+\vec{x}_{k,t}=\mat{A}_t\vec{x}_k-\mat{B}_t\mat{K}\vec{x}_k = (\mat{A}_t-\mat{B}_t\mat{K})\vec{x}_k : 0 \leq t < T_s
+\end{equation}
+We further explore the dynamics across discrete time boundaries. Let $\mat{A}_d=\mat{A}_{T_s}$ and $\mat{B}_d=\mat{B}_{T_s}$
+\begin{align}
+\vec{x}_{k}&=\vec{x}_{k-1,T_s}= (\mat{A}_d-\mat{B}_d\mat{K})\vec{x}_{k-1}\\
+\vec{x}_{k,T_s} &= (\mat{A}_d-\mat{B}_d\mat{K}) (\mat{A}_d-\mat{B}_d\mat{K})\vec{x}_{k-1}
+\end{align}
+which accelerating results becomes
+\begin{align}
+\vec{x}_{k} &= (\mat{A}_d-\mat{B}_d\mat{K}) ^k\vec{x}_0\\
+\vec{x}_{t} &= (\mat{A}_{t-kT_s}-\mat{B}_{t-kT_s}\mat{K}) (\mat{A}_d-\mat{B}_d\mat{K})^k\vec{x}_0
+\end{align}
+\end{proof}
+
 %-------------------------------
  \subsubsection{Finding Abstract Supports for Continuous Dynamics}
  \label{sec:cont_aasup}
