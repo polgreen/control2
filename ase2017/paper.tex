@@ -30,24 +30,25 @@
 
 \begin{document}
 
-\title{DSSynth: An Automated Controller Synthesis Tool \\ for Physical Plants via MATLAB Toolbox}
+\title{DSSynth: An Automated Digital Controller Synthesis Tool for Physical Plants} 
+% via MATLAB Toolbox}
 
 
 \maketitle
 
 \begin{abstract}
 We present an automated MATLAB Toolbox, named as DSSynth 
-(Digital-System Synthesizer), to synthesize stable and safe digital controllers 
-for physical plants represented as linear time-invariant
-systems with single-input and single-output. In particular, DSSynth synthesizes digital 
-controllers w.r.t. the stability and safety specifications by taking into account finite word-length 
-effects. DSSynth considers the complete range
+(Digital-System Synthesizer), to synthesize sound digital controllers 
+for physical plants that are represented as linear time-invariant
+systems with single input and output. In particular, DSSynth synthesizes digital 
+controllers that are sound w.r.t. stability and safety specifications by taking into account finite word-length 
+effects in their representation. DSSynth considers the complete range
 of approximations, including time discretization, quantization effects, 
-and finite-precision arithmetic and its rounding errors. 
-Currently, there are two DSSynth toolbox versions: command-line and 
-MATLAB application for synthesizing digital controllers for physical plants 
-represented by transfer-function or state-space equations. The resulting toolbox 
-enables application of program synthesis to real-world systems by control engineers.
+and finite-precision arithmetic (and its rounding errors). 
+Currently, there are two DSSynth versions for synthesizing digital controllers for physical plants 
+represented by transfer-function or state-space equations: a command-line and 
+a MATLAB application. The resulting toolbox 
+enables application of program synthesis to real-world control engineering systems.
 \end{abstract}
 
 %
@@ -63,11 +64,10 @@ Formal Synthesis; Digital Control Systems; MATLAB Toolbox; Finite-Word Length; V
 \section{Introduction}
 %---------------------------------------------------
 
-Control theory achieves the construction of reliable systems by 
-offering mathematical guarantees about the stability and the desired 
-performance of closed-loop dynamical systems, where states or outputs of discrete plant $G(z)$ 
+Control theory targets the construction of reliable systems by providing mathematical guarantees about the stability and the desired 
+performance of closed-loop dynamics, where outputs of discrete plant $G(z)$ 
 are fed back and compared to a reference signal to which a (designed) 
-controller $C(z)$ should maintain a set of control objectives~\cite{astrom1997computer}. 
+controller $C(z)$ should steer~\cite{astrom1997computer}. 
 Fig.~\ref{fig:typical-control-system} shows a typical closed-loop digital control system.
 %
 \begin{figure}[ht!]
@@ -83,11 +83,11 @@ Fig.~\ref{fig:typical-control-system} shows a typical closed-loop digital contro
 %Here, the focus is on transfer-function and state-space representations. 
 
 
-There are various mathematical representations for digital control
-systems,  e.g.,  difference  equations, transfer functions and state-space
-equations. Here, linear time-invariant (LTI) systems 
-with single-input and single-output (SISO) are considered and 
-represented by transfer functions or state space equations. LTI systems 
+There are various mathematical representations for control 
+systems,  e.g.,  transfer functions and state-space equations (difference or differential equations). 
+Here, 
+systems with a single input and a single output (SISO) are considered and 
+represented by transfer functions or state-space LTI models. LTI models 
 are used in several engineering applications to support non-trivial tasks when 
 applied to embedded systems (e.g., robot manipulator, power plants 
 and guidance system). The following expression presents the general form 
@@ -268,7 +268,7 @@ for all reachable states.
 
  \end{tikzpicture}
 }}
-\caption{CEGIS with multi-staged verification}
+\caption{CEGIS with multi-staged verification \textcolor{red}{[make this fit the column]}}
 \label{fig:CEGIS-precision-increment}
 \end{figure}
 
@@ -646,17 +646,18 @@ stability of the synthesized controllers outside of our model in state-space and
 \section{Conclusions}
 %--------------------------------------
 
-\tool can synthesize digital controllers for dynamic physical plants 
-w.r.t. stability and safety, designed in MATLAB through transfer-function 
-and state-space representations using the CEGIS approach.
+\tool can synthesize digital controllers for dynamic physical plants, 
+represented in MATLAB through transfer-function and state-space,  
+w.r.t. stability and safety, using the CEGIS approach. 
 %
 Given the current literature in controller synthesis, there is no other MATLAB toolbox 
-for synthesizing stable digital controllers for physical plants, while taking into account implementation 
-aspects (fixed-point arithmetic). 
+for synthesizing stable digital controllers for physical plants, while taking into account all aspects of its digital implementation (fixed-point arithmetic). 
 %
 As future work, \tool will perform synthesis of other types of specifications (e.g., performance) 
-and be combined with DSVerifier/DSValidator Toolboxes~\cite{issta2017,dsvalidator} to verify/validate
- other controller properties (e.g., limit cycle). 
+and be combined with DSVerifier/DSValidator Toolboxes~\cite{issta2017,dsvalidator} to verify/validate 
+other controller properties (e.g., presence of limit cycles). 
+
+\textcolor{red}{[Pls update CAV reference with details from proof of article just received from Springer. ]}
 
 \bibliographystyle{IEEEtran}
 \bibliography{references} 
