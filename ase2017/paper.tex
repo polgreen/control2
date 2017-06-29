@@ -99,12 +99,12 @@ of a discrete plant or a digital controller based on the transfer function repre
 H(z)=\frac{B(z)}{A(z)}=\frac{b_{0}+b_{1}z^{-1}+...+b_{M}z^{-M}}{1+a_{1}z^{-1}+...+a_{N}z^{-N}},
 \end{equation}
 %
-\noindent where $z^{-1}$ is called backward-shift operator; $A(z)$ and $B(z)$ are 
-the denominator and numerator polynomials, respectively; and $N$ and $M$
+\noindent where $z^{-1}$ is called the backward-shift operator; $A(z)$ and $B(z)$ are 
+the denominator and numerator polynomials; and $N$ and $M$
 represent the denominator and numerator polynomials order, respectively.
 %
-In state-space format, the digital control system represents the behavior 
-of a system via a state evolution equation $x(n+1)$ and an instantaneous 
+In a state-space form, 
+the behavior of a system is represented via a state evolution equation $x(n+1)$ and an instantaneous 
 output equation $y(n)$, as follows:
 %
 \begin{equation}
@@ -115,28 +115,28 @@ y(n) &= C x(n) + D u(n),
 \end{split}\label{eq:ss-example}
 \end{equation}
 
-\noindent where $A$, $B$, $C$ and $D$ are matrices that fully specify a digital system. 
+\noindent where $A$, $B$, $C$ and $D$ are matrices that fully specify the model. 
 %
 Controllers synthesis for LTI systems is richly studied 
 in the literature~\cite{mazo2010pessoa,DBLP:conf/emsoft/RavanbakhshS16,economakos2016automated}; 
 however, there are many challenges when 
 digital control system theory is used, mainly due to the finite-word 
-length (FWL) effects~\cite{Guang2013, Istepanian2001}, time discretization 
+length (FWL) effects leading to truncation 
+or round-off errors~\cite{Guang2013, Istepanian2001}, time discretization 
 and quantization noise, which are typically introduced by Analogue-to-Digital 
-(ADC) and Digital-to-Analogue (DAC) conversion, leading to truncation 
-or round-off errors~\cite{astrom1997computer}. 
+(ADC) and Digital-to-Analogue (DAC) conversion~\cite{astrom1997computer}. 
 
-Recently, a new methodology to synthesize digital control systems was proposed, 
-named as DSSynth (Digital-System Synthesizer)~\cite{abate2017, abatecav2017}, 
+Recently, a new methodology to synthesize digital control systems has been proposed, 
+named DSSynth (Digital-System Synthesizer)~\cite{abate2017, abatecav2017}, 
 which is based on the Counter-Example Guided Inductive Synthesis 
 (CEGIS) approach~\cite{DBLP:conf/asplos/Solar-LezamaTBSS06}. Here, CEGIS is used
-as a program synthesis engine that is able to produce digital controllers for highly non-trivial 
+as a program synthesis engine that is able to generate sound digital controllers for highly non-trivial 
 control system specifications with a very high degree of automation. Program synthesis engines 
 use a specification as the starting point, and subsequently produce a sequence of candidate 
 programs from a given template. The candidate programs are iteratively refined to eventually 
-satisfy the specification. Modern synthesis engines as the one used here combine automated testing, genetic algorithms 
+satisfy the specification. Modern synthesis engines such as the one used here combine automated testing, genetic algorithms 
 and SMT-based automated reasoning~\cite{DBLP:journals/corr/AlurFSS16a, DBLP:conf/lpar/DavidKL15}. 
-DSSynth synthesizes stable digital controllers using that CEGIS-based approach,
+DSSynth synthesizes stable digital controllers using the CEGIS-based approach,
 for a given physical plant represented by either transfer functions or state-space equations~\cite{abate2017,abatecav2017}.
 
 Notably, there are toolboxes in MATLAB with functions and scripts to facilitate the 
@@ -149,19 +149,19 @@ toolbox applied to the synthesis of correct-by-design digital controllers.
 In particular, Pessoa is based on approximate bisimulation, which allows control engineers to replace differential equations, 
 describing a physical plant, by a respective finite-state machine. However, Pessoa does not take advantage of
 recent advances in bit-accurate verification of programs to synthesize controllers w.r.t. FWL effects. MATLAB already offers a tool 
-named as Control System Tuner~\cite{autotuner} for automatically designing controllers based on optimization solvers or graphical analysis. 
+named as Control System Tuner~\cite{autotuner} \textcolor{red}{[fix ref]} for automatically designing controllers based on optimization solvers or graphical analysis. 
 However, the Control System Tuner is unable to consider FWL effects during the controller synthesis process.
 As a result, there is no other MATLAB toolbox to perform digital controller synthesis based on 
 program synthesis engines and considering the complete range of approximations, including time discretization, 
 quantization effects, and finite-precision arithmetic and its rounding errors. 
 
-The present paper addresses this problem and describes a toolbox for the DSSynth tool~\cite{abate2017, abatecav2017} 
-in MATLAB's environment named as \tool. The main advantage regarding the use of a MATLAB toolbox 
+The present paper addresses this limitation and describes a toolbox for the DSSynth tool~\cite{abate2017, abatecav2017} 
+in a MATLAB environment, named \tool. The main advantage for the use of a MATLAB toolbox 
 lies on designing physical plants in MATLAB and then promptly synthesizing a stable and safe digital controller,
 considering the complete range of approximations. 
 Additionally, when using the \tool, an engineer is able to model a physical plant with MATLAB, 
 through transfer-function or state-space representations, considering low-level systems parameters 
-(implementation features and numerical format), and then obtain a stable and safe synthesized digital-controller.
+(implementation features and numerical format), and then to synthesize a stable and safe digital controller.
 
 %---------------------------------------------------
 \section{Counterexample-Guided Inductive Synthesis for Control Systems}
@@ -188,10 +188,10 @@ a full solution (i.e., satisfies the specification for all possible
 inputs).  If this is the case, then the algorithm terminates.
 Otherwise, additional information is provided to the inductive
 synthesis phase in the form of a new counterexample that is added to
-the set of test inputs and the loop iterates again.
+the set of test inputs, and the loop iterates again.
 
 We use two different instantiations of the synthesiser
-in order to synthesise stable and safe digital
+in order to find stable and safe digital
 controllers. The two approaches differ in
 the manner in which they check the safety specification
 for all reachable states.
@@ -274,18 +274,17 @@ for all reachable states.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-The first approach presented in Figure~\ref{fig:CEGIS-precision-increment}
+The first approach, presented in Figure~\ref{fig:CEGIS-precision-increment}, 
 uses a multi-staged verification process. 
-Essentially, it starts by devising a
-digital controller that stabilizes the system while remaining safe for a
-pre-selected time horizon and a single initial state; then, it
-employs a multi-staged verification process:
+It starts by devising a digital controller that stabilizes the model while remaining safe for a
+pre-selected time horizon ($k$) and a single initial state; then, it
+employs a multi-staged verification process as follows:
 (i) The first verification stage checks that the candidate
 solution, which we synthesized to be safe for at least one initial
 state, is safe for \emph{all} possible initial states, i.e., does not reach
 an unsafe state within $k$ steps.
 (ii) The second verification stage 
- restores soundness with respect to the plant's precision
+ restores soundness with respect to the plant precision
 by using interval arithmetic \cite{moore1966interval} to validate the 
 operations performed by the previous stage. 
 (iii) The third verification stage checks that the current
@@ -293,7 +292,7 @@ $k$ is large enough to ensure safety for any $k'{>}k$.  Here, we compute the
 completeness threshold $\overline{k}$ for the current candidate controller $K$,
 i.e., the number of
 iterations required to sufficiently unwind the closed-loop state-space
-system such that the boundaries are not violated for any larger number of
+model such that the boundaries are not violated for any larger number of
 iterations, and
 check that $k{\geq}\overline{k}$.
 
@@ -345,16 +344,16 @@ check that $k{\geq}\overline{k}$.
 \label{fig:CEGARIS} 
 \end{figure}
 
-Instead of unfolding the dynamics, the second approach shown in Figure~\ref{fig:CEGARIS}
-employs {\em abstract acceleration}~\cite{cattaruzza2015unbounded} to
-evaluate all possible progressions of the system simultaneously. This eliminates the need for
-a completenes threshold since the time horizon is always infinite.
+Instead of unfolding the dynamics, the second approach (shown in Figure~\ref{fig:CEGARIS}) 
+employs {\em abstract acceleration}~\cite{cattaruzza2015unbounded} to 
+simultaneously evaluate all possible progressions of the model. This eliminates the need for
+a completeness threshold, since the time horizon considered in abstract acceleration is infinite.
 Since this model is based on abstraction, we initially perform the synthesis over a basic
 model that abstracts away the complexity of the specification and is only refined to a more
 complex model when a counterexample is found. Thus, we may only look at the gain of the
-system to synthesise a controller and add further restrictions on specific sections of the reach
-tube when these prove to invalidate the solution. The use of Counterexample-Guided 
-Abstraction Refinement results in much faster synthesis and verification since it is applied to
+model to synthesise a controller and to add further restrictions on specific sections of the reach
+tube when these prove to invalidate the solution. The use of this Counterexample-Guided 
+Abstraction-Refinement (CEGAR) results in much faster synthesis and verification since it is applied to
 both phases, allowing for faster results whilst maintaining soundness for an infinite time horizon.
  
 %\textcolor{red}{We have to talk about the naive and AA back-ends, which are based on our CEGIS framework}
@@ -380,9 +379,9 @@ automated (DSSynth) procedures, as illustrated in Fig.~\ref{fig:synthesis-flow}.
 \end{figure}
 
 In step $1$, the user has to define the digital controller representation, 
-which can be transfer-function or state-space equations. 
+which can be a transfer function or a state-space model. 
 In step $2$, the physical plant (represented by Equations (\ref{eq:transferfunction}) 
-and (\ref{eq:ss-example})) must be designed, using the preferred method 
+and (\ref{eq:ss-example})) must be designed, using a method selected 
 from the control literature~\cite{astrom1997computer}. Finally, in step $3$, 
 the numerical representation for the digital controller implementation must be 
 defined by the user, {\it i.e.}, the FWL format that includes the number of bits for the integer 
@@ -394,11 +393,11 @@ After that, the synthesis process starts in step $A$, when \tool obtains the dig
 specification in MATLAB, and then translates it into an ANSI-C program. 
 In step $B$, our CEGIS engine is invoked to synthesize the digital controller w.r.t. the digital system
 specification. Finally, in step $C$, the synthesized digital controller considering FWL effects is produced. 
-The output generated by \tool is the synthesized digital controller represented either in transfer-function 
+The output generated by \tool is the synthesized digital controller represented either in transfer function form 
 or state-space format. The synthesis is considered to be \emph{successful} if a digital controller is correctly 
 synthesized w.r.t. FWL effects; otherwise the synthesis is considered to be \emph{failed}, if any parameter is 
-incorrectly defined in previous steps, or if there is no solution (digital controller) for the respective physical plant
- given the digital controller word-length.
+incorrectly defined in previous steps, or if there is no solution (digital controller) for the respective physical plant 
+given the digital controller word length.
 
 Our CEGIS engine is implemented as an integrated module within the bounded model checker CBMC~\cite{cbmc}.  CBMC
 transforms an ANSI-C representation of our closed-loop control system models into its internal format called
