@@ -2,24 +2,34 @@
 #define FWL_LTI_CONTROL_H
 
 #include "FWL_LTI_transform.h"
+vectort plant_base;
+vectort plant_radius;
+
+void makeControllablePlant()
+{
+  cnttype j;
+  for (j=0;j<_DIMENSION;j++)
+  {
+    plant_base[j]=-plant_cbmc[j];
+    if (plant_base[j]<0) plant_radius[j]=-plant_base[j];
+    else plant_radius[j]=plant_base[j];
+  }  
+}
 
 void checkControlIteration(vectort init,control_floatt input,cnttype iter)
 {
   cnttype i,j;
   vectort point;
   vectort radius;
-  vectort plant_radius;
   for (j=0;j<_DIMENSION;j++)
   {
     point[j]=init[j];
     radius[j]=0;
-    if (plant_cbmc[j]<0) plant_radius[j]=-plant_cbmc[j];
-    else plant_radius[j]=plant_cbmc[j];
   }
   //transformPoint(point,transform);
   for (i=0;i<iter;i++)
   {
-    control_floatt next=findSupport(plant_cbmc,point);
+    control_floatt next=findSupport(plant_base,point);
     control_floatt next_radius=findSupport(plant_radius,radius);
     for (j=1;j<_DIMENSION;j++) 
     {
@@ -28,13 +38,14 @@ void checkControlIteration(vectort init,control_floatt input,cnttype iter)
     }
     point[0]=next;
     radius[0]=next_radius+input;
-    for (i=0;i<_NUM_VECTORS;i++)
+    for (j=0;j<_NUM_VECTORS;j++)
     {
-      control_floatt value=findSupport(point,transformed_vectors[i]);
+      control_floatt value=findSupport(point,transformed_vectors[j]);
+      value+=findSupportRadius(radius,transformed_vectors[j]);
 #ifndef __CPROVER
-      printf("%f<%f\n",value,supports[i]);
+      printf("%f<%f\n",value,supports[j]);
 #endif      
-      verify_assume(value<supports[i]);
+      verify_assume(value<supports[j]);
     }
   }
 }
@@ -42,6 +53,7 @@ void checkControlIteration(vectort init,control_floatt input,cnttype iter)
 void checkControlIterations()
 {
   cnttype i;
+  makeControllablePlant();
   for(i=0;i<_NUM_ITERATIONS;i++)
   {
     checkControlIteration(transformed_vertices[iter_vertices[i][0]],input_values[0][0],iterations[i]);

@@ -32,7 +32,10 @@ void print_matrix(char *name,matrixt matrix)
 #endif
 }
 
-vectort plant_cbmc,controller_cbmc,observer_cbmc;
+vectort plant_cbmc,controller_cbmc;
+#ifdef _USE_OBSERVER
+vectort observer_plant_cbmc,observer_cbmc;
+#endif
 matrixt transform_cbmc,observer_transform_cbmc;
 matrixt loop_cbmc;
 
@@ -42,13 +45,17 @@ matrixt loop_cbmc;
 
 #ifdef _NUM_ITERATIONS
   #include "FWL_LTI_control_iters.h"
-//  #include "FWL_LTI_iters.h"
+  #ifdef _USE_OBSERVER
+    #include "FWL_LTI_observer_iters.h"
+  #endif
+  #include "FWL_LTI_iters.h"
 #endif
-
-//struct implt impl={ .int_bits=_CONTROLER_INT_BITS, .frac_bits=_CONTROLER_FRAC_BITS};
 
 int initialization()
 {
+  #ifndef _CPROVER
+    printf("initializing");
+  #endif
   get_bounds();
   int result=validation();
   return result;
@@ -79,14 +86,25 @@ int main()
   print_matrix("dynamics",dynamics);
   print_matrix("loop",loop_cbmc);
 #endif
-  vectort polynomial;
-  control_floatt speed_factor;
-  for (i=0;i<_DIMENSION;i++)
+
+#ifdef _USE_OBSERVER
+  control_floatt observerControlError=0;
+  for (i=0;i<_DIMENSION;i++) observerControlError+=observer[i]*observer[i];
+  observerControlError=observer_output_sensitivity_error*observerControlError;
+  observerControlError+=observer_dynamics_error;
+  result=check_restricted_stability(observer_plant_cbmc,1.0/(1.0-observerControlError));
+  
+  if (result>0)
   {
-    polynomial[i]=plant_cbmc[i];
-    for (j=0;j<=i;j++) polynomial[i]*=speed_factor;
+    control_floatt observerInputError=0;
+    for (i=0;i<_DIMENSION;i++) observerInputError+=controller[i]*controller[i];
+    observerControlError+=observer_sensitivity_error*observerInputError;
+    result=check_restricted_stability(plant_cbmc,speed_factor/(1.0-observerControlError));
   }
-  result=check_stability_closedloop(plant_cbmc);
+#else
+  result=check_restricted_stability(plant_cbmc,speed_factor);
+#endif
+
 #ifndef __CPROVER
   printf("stability=%d\n",result);
 #endif 
@@ -96,6 +114,9 @@ int main()
 #endif
 #ifdef __CPROVER
   __CPROVER_array_copy(controller_cbmc, controller);
+  #ifdef _USE_OBSERVER
+    __CPROVER_array_copy(observer_cbmc, observer);
+  #endif
   verify_assert(0);
 #else
   printf("end\n");

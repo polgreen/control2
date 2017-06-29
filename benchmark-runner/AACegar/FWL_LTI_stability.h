@@ -10,7 +10,7 @@ void make_closed_loop()
     for (j = 0;j<_DIMENSION;j++)
     {
       loop_cbmc[i][j]=dynamics[i][j]-sensitivity[i]*controller[j];
-      controller_cbmc[i]+=transform_cbmc[j][i]*controller[j];
+      controller_cbmc[i]-=transform_cbmc[j][i]*controller[j];
     }
   }
 #ifndef __CPROVER
@@ -19,9 +19,7 @@ void make_closed_loop()
     print_vector("plant polynomial",plant_cbmc);
     print_vector("controller polynomial",controller_cbmc);
 #endif
-  for (i = 0;i<_DIMENSION;i++) plant_cbmc[i]-=controller_cbmc[i];
-  
-#ifdef _OBSERVER
+#ifdef _USE_OBSERVER
   make_nondet_transform(observer_transform.coeffs,observer_transform.uncertainty,observer_transform_cbmc);
   fxp_check_coeffs(observer);
   for (i = 0;i<_DIMENSION;i++)
@@ -32,7 +30,10 @@ void make_closed_loop()
       observer_cbmc[i]+=observer_transform_cbmc[j][i]*observer[j];
     }
   }
+  //Has to be done before plant_cbmc is updated
+  for (i = 0;i<_DIMENSION;i++) observer_plant_cbmc[i]=plant_cbmc[i]-observer_cbmc[i];
 #endif
+  for (i = 0;i<_DIMENSION;i++) plant_cbmc[i]-=controller_cbmc[i];
 }
 
 signed int check_stability_closedloop(vectort a)
@@ -107,6 +108,9 @@ signed int check_stability_closedloop(vectort a)
   {
     //denominator is always >0
     control_floatt factor=m[i-1][columns] / m[i-1][0];
+#ifndef __CPROVER
+    printf("factor=%f,p=",factor);
+#endif
 #ifdef __CHECK_FP
     if (m[i-1][0]<0) verify_assume(m[i-1][0]<-(mag*mag/_imp_max+_transform_error));
     else             verify_assume(m[i-1][0]> (mag*mag/_imp_max+_transform_error));//check for overflow.
@@ -129,15 +133,34 @@ signed int check_stability_closedloop(vectort a)
 #endif
     for(j=0;j<columns;j++)
     {
-      m[i][j] = m[i - 1][j] - factor * m[i - 1][columns-j];
+      m[i][j] = m[i - 1][j] - factor * m[i - 1][columns-j];      
+#ifndef __CPROVER
+      printf("%f,",m[i][j]);
+#endif
     }
 #ifdef __CPROVER
       verify_assume(m[i][0] >= _transform_error);
 #else
-    printf("m[%d]=%f>0\n", i, m[i][0]);
+    printf("m[%d]=%f>%f\n", i, m[i][0],_transform_error);
     if (!(m[i][0] >= _transform_error)) return 0;
 #endif
     columns--;
   }
   return 1;
+}
+
+signed int check_restricted_stability(vectort a,control_floatt speed_factor)
+{
+  cnttype i,j;
+  vectort polynomial;
+  for (i=0;i<_DIMENSION;i++)
+  {
+    polynomial[i]=a[i];
+    for (j=0;j<=i;j++) polynomial[i]*=speed_factor;
+  }
+  #ifndef __CPROVER
+    print_vector("a ",polynomial);  
+    print_vector("P ",polynomial);
+  #endif
+  return check_stability_closedloop(polynomial);
 }
