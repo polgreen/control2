@@ -290,8 +290,8 @@ by using interval arithmetic \cite{moore1966interval} to validate the
 operations performed by the previous stage. 
 (iii) The third verification stage checks that the current
 $k$ is large enough to ensure safety for any $k'{>}k$.  Here, we compute the
-completeness threshold $\overline{k}$ for the current candidate controller $K$,
-i.e., the number of
+completeness threshold $\overline{k}$ for the current candidate controller 
+$K$~\cite{abatecav2017}, i.e., the number of
 iterations required to sufficiently unwind the closed-loop state-space
 model such that the boundaries are not violated for any larger number of
 iterations, and
@@ -354,7 +354,7 @@ model that abstracts away the complexity of the specification and is only refine
 complex model when a counterexample is found. Thus, we may only look at the gain of the
 model to synthesise a controller and to add further restrictions on specific sections of the reach
 tube when these prove to invalidate the solution. The use of this Counterexample-Guided 
-Abstraction-Refinement (CEGAR) results in much faster synthesis and verification since it is applied to
+Abstraction-Refinement results in much faster synthesis and verification since it is applied to
 both phases, allowing for faster results whilst maintaining soundness for an infinite time horizon.
  
 %\textcolor{red}{We have to talk about the naive and AA back-ends, which are based on our CEGIS framework}
