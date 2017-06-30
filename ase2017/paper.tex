@@ -545,9 +545,9 @@ G(z)=\frac{B(z)}{A(z)}=\frac{-0.06875z^{2}}{z^2-1.696z+0.7089}.
 >> y = synthesize(system,8,8,1,-1);
 >> SYNTHESIS SUCCESSFUL
 >> y = 
->>  -0.9983 z^2 + 0.09587 z + 0.1926
+>>  -0.9983z^2 + 0.09587z + 0.1926
 >>  --------------------------------
->>       z^2 + 0.5665 z + 0.75
+>>       z^2 + 0.5665z + 0.75
 \end{lstlisting}
 \vspace{-0.2cm}
 \caption{Synthesis of a digital controller for the physical plant defined in Eq.(\ref{equation_plant}) in MATLAB, with a fixed-point format  $\left\langle 8,8\right\rangle$.}
@@ -577,25 +577,24 @@ to achieve a general equation regarding the transfer function representation as 
 >> num = [-0.06875 0 0];
 >> den = [1.0000 -1.696 0.7089];
 >> plant = tf(num,den,0.002);
->> sys = series(controller,plant)
+>> sys = feedback(series(controller, plant),1)
 >> sys =
->> 
->>      0.06863 z^4 - 0.006591 z^3 - 0.01324 z^2
->>  ------------------------------------------------
->>  z^4 - 1.129 z^3 + 0.4981 z^2 - 0.8704 z + 0.5317
+>>        0.06863z^4 - 0.006591z^3 - 0.01324z^2
+>> ---------------------------------------------------
+>> 1.069z^4 - 1.136z^3 + 0.4849z^2 - 0.8704z + 0.5317
 \end{lstlisting}
 \vspace{-0.2cm}
-\caption{General equation for the closed-loop control system using the series configuration (as shown in Fig.~\ref{fig:typical-control-system}).}
+\caption{General equation for the closed-loop control system.}
 \label{combine-controller-plant}
 \end{figure}
 
-The general equation that represents the closed-loop control system using the series 
-configuration is described by Equation~\ref{equation_general} as follows
+The general equation that represents the closed-loop control system 
+is described by Equation~\ref{equation_general} as follows
 %
 \begin{equation}
 \small
 \label{equation_general}
-\frac{N(z)}{D(z)}=\frac{0.06863z^{4} - 0.006591z^{3} - 0.01324z^{2}}{z^{4} - 1.129z^{3} + 0.4981z^{2} -0.8704z + 0.5317}.
+\frac{N(z)}{D(z)}=\frac{0.06863z^{4} - 0.006591z^{3} - 0.01324z^{2}}{1.069z^{4} - 1.136z^{3} + 0.4849z^{2} -0.8704z + 0.5317}.
 \end{equation}
  
 For the stability check, if any root of the polynomial $D(z)$ in Equation~\ref{equation_general} 
@@ -607,13 +606,13 @@ which means that DSSynth has synthesized a stable digital controller.
 \begin{figure}[ht]
 \scriptsize
 \begin{lstlisting}[xleftmargin=.025\textwidth,xrightmargin=.025\textwidth, frame=single,]
->> den = [1 -1.129 0.4981 -0.8704 0.5317]
+>> den = [1.069 -1.136 0.4849 -0.8704 0.5317]
 >> r = roots(den)
 >> r =
->>  -0.2833 + 0.8185i
->>  -0.2833 - 0.8185i
->>   0.9480 + 0.0000i
->>   0.7476 + 0.0000i
+>>  -0.2912 + 0.8061i
+>>  -0.2912 - 0.8061i
+>>   0.8225 + 0.0219i
+>>   0.8225 - 0.0219i
 \end{lstlisting}
 \vspace{-0.2cm}
 \caption{Roots of the polynomial $D(z)$ given by Equation~\ref{equation_general}.}
