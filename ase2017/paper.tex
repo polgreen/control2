@@ -166,6 +166,7 @@ through transfer function or state-space representations, considering low-level 
 
 %---------------------------------------------------
 \section{Counterexample-Guided Inductive Synthesis for Control Systems}
+\label{sec:CEGIS}
 %---------------------------------------------------
 
 %\textcolor{red}{Cristina: can you please generalize our CEGIS implementation for control here?}
@@ -415,16 +416,18 @@ nondeterminism API (e.g., \texttt{nondet}, \texttt{CPROVER\_assume} intrinsic fu
 public download.\footnote{\url{https://github.com/diffblue/cbmc/archive/cbmc-5.7.zip}}  We further created a VirtualBox OVA image
 with our tool pre-installed, including our MATLAB-generated benchmarks and benchmark shell script with instructions
 to run all benchmarks and reproduce our
-experiments\.footnote{\url{www.cprover.org/DSSynth/controller-synthesis-cav-2017.tar.gz}}  The current development branch
-of our tool is available in a public GitHub
+experiments.\footnote{\url{www.cprover.org/DSSynth/controller-synthesis-cav-2017.tar.gz}}  The current development branch
+of our toolbox is available in a public GitHub
 repository.\footnote{\url{https://github.com/ssvlab/dsverifier/tree/master/toolbox-dssynth}}
 
 The entire implementation consists of $400$ lines of MATLAB scripts for the UI
 module, $585$ and $800$ lines of C code in the naive and abstract accelerator
-model, respectively.  $4000$ lines of C code for utility functions such as
+back-ends, respectively (cf.~Section~\ref{sec:CEGIS}).  $4000$ lines of C code for utility functions such as
 interval and fixed-point arithmetic, as well as $1000$ lines of C++ code in the
 control synthesis module in CEGIS CBMC.  We evaluate \tool using about $20$ 
-control system benchmarks.
+control system benchmarks. Additionally, the documentation and videos about \tool are available 
+at \url{http://dsverifier.org/dsverifier/dssynth-toolbox/}.
+
 
 %---------------------------------------------------
 \subsection{\tool Procedures}
