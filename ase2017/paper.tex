@@ -429,14 +429,14 @@ to synthesize a given digital controller:
 
 \begin{enumerate}
 \item \textbf{Setup}: obtains the physical plant, fixed-point format 
-and dynamic input ranges, and translates them to a specific structure in MATLAB;
+and dynamic input ranges, and translates them to a specific structure in MATLAB.
 \item \textbf{Parse}: obtains the digital system specification and translates 
-it into an ANSI-C program;
-\item \textbf{Execution}: obtains the ANSI-C program from the previous step 
+it into an ANSI-C program.
+\item \textbf{Execution}: obtains the ANSI-C program from the previous (parse) step 
 and calls our CEGIS engine as a back-end program synthesis tool to perform the automated synthesis;
 \item \textbf{Extraction}: obtains the ``.log'' file that is generated 
-after the synthesis phase and then checks the synthesized digital-controller;
-\item \textbf{Report}: obtains the digital controller from the previous step 
+after the synthesis phase and then checks the synthesized digital-controller.
+\item \textbf{Report}: obtains the digital controller from the previous (extraction) step 
 and translates it into the MATLAB structures to show the respective result to the user.
 \end{enumerate}
 
@@ -449,14 +449,14 @@ The \tool's features can be described as follows:
 \begin{itemize}
 \item \textbf{Representation}: the synthesis can be 
 performed for digital systems specified via 
-transfer function or as state-space models;
+transfer function or as state-space models.
 \item \textbf{Fixed-Point Arithmetic}: the digital 
 controller is synthesized considering FWL effects, 
-in fixed-point numeric representation;
+using the given fixed-point numerical representation.
 \item \textbf{Interface}: the synthesis can be executed 
 via command-line or graphical-user interface (GUI). 
 For the GUI application, the user can plot the step response 
-to reproduce the stability in closed-loop of the synthesized digital controller;
+to reproduce the stability in closed-loop of the synthesized digital controller.
 \end{itemize}
 
 %---------------------------------------------------
@@ -487,7 +487,7 @@ After executing the \texttt{synthesize} command in MATLAB,
 \subsubsection{MATLAB Application Version} 
 %---------------------------------------------------
 
-A graphical user interface application was developed (Fig.~\ref{fig:gui-for-tf}) 
+A graphical user interface application was developed (as shown in Fig.~\ref{fig:gui-for-tf}) 
 to favor digital controller synthesis in MATLAB, besides improving usability and, 
 consequently, attracting more digital dynamical system engineers. Users can provide all 
 required parameters for digital controller synthesis: physical plant specification, 
@@ -499,15 +499,15 @@ fixed-point representation and dynamic inputs.
 		\includegraphics[width=0.2\textwidth]{step1.png}
 		\label{step1}}
 		\hfil
-    \subfloat[Define implementation features and dynamic range.]{
+    \subfloat[Define implementation aspects and dynamic range.]{
 	\includegraphics[width=0.2\textwidth]{step2.png}
 		\label{step2}}
 		\hfil
-    \subfloat[Digital controller synthesized by DSSynth.]{
+    \subfloat[Resulting digital controller synthesized by DSSynth.]{
 	\includegraphics[width=0.2\textwidth]{step3.png}
 		\label{step2}}
 		\hfil
-    \subfloat[Step Response for the synthesized digital controller]{
+    \subfloat[Step response for the synthesized digital controller.]{
 	\includegraphics[width=0.22\textwidth]{step4.png}
 		\label{step3}}
 		\hfil
