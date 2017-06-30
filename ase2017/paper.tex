@@ -176,7 +176,7 @@ through transfer function or state-space representations, considering low-level 
 %% $a$ ranges over ground terms, and $\sigma$ is a quantifier-free formula. 
 %% We~interpret the ground terms over some finite domain~$\mathcal{D}$.
 
-The design of our synthesizer consists of two phases, an inductive
+The design of our synthesizer consists of two main phases, an inductive
 synthesis phase, {\sc synthesise}, and a validation phase, {\sc verify},
 which interact via a finite set of test vectors that is updated
 incrementally.  Given a stability and safety specification, the
@@ -217,7 +217,7 @@ for all reachable states.
    \coordinate (aux5);
    \& \coordinate (aux6);
    \&;\\
-   \node[minimum width=1.5cm, minimum height=0.6cm, fill=gray!20] (synth) {{\sc 1.Synthesize}};
+   \node[minimum width=1.5cm, minimum height=0.6cm, fill=gray!20] (synth) {{\sc Synthesize}};
    \&
    complexnode/.pic={ 
      \node[rectangle,draw,dotted,
@@ -225,9 +225,9 @@ for all reachable states.
 	minimum height=1cm,
         pattern=north west lines, pattern color=gray!20,
 	label={\sc ~~~~~~~~~~~~Verify},] (verif) {};
-     \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif1) at ([xshift=-2cm]verif.center) {{\sc 2.Safety}};
-     \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif2) at ([xshift=0cm]verif.center) {{\sc 3.Precision}};
-     \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif3) at ([xshift=2cm]verif.center) {{\sc 4.Complete}};
+     \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif1) at ([xshift=-2cm]verif.center) {{\sc 1.Safety}};
+     \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif2) at ([xshift=0cm]verif.center) {{\sc 2.Precision}};
+     \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif3) at ([xshift=2cm]verif.center) {{\sc 3.Complete}};
      %\node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif4) at ([xshift=3.1cm]verif.center) {{\sc 5.Sampling}};
    } 
    \& \node[ellipse, fill=gray!20] (done) {{\sc Done}};\\
@@ -280,15 +280,15 @@ uses a multi-staged verification process.
 It starts by devising a digital controller that stabilizes the model while remaining safe for a
 pre-selected time horizon ($k$) and a single initial state; then, it
 employs a multi-staged verification process as follows:
-(i) The first verification stage checks that the candidate
+(i) The first verification stage ({\sc safety}) checks that the candidate
 solution, which we synthesized to be safe for at least one initial
 state, is safe for \emph{all} possible initial states, i.e., does not reach
 an unsafe state within $k$ steps.
-(ii) The second verification stage 
+(ii) The second verification stage ({\sc precision})
  restores soundness with respect to the plant precision
 by using interval arithmetic \cite{moore1966interval} to validate the 
 operations performed by the previous stage. 
-(iii) The third verification stage checks that the current
+(iii) The third verification stage ({\sc complete}) checks that the current
 $k$ is large enough to ensure safety for any $k'{>}k$.  Here, we compute the
 completeness threshold $\overline{k}$ for the current candidate controller 
 $K$~\cite{abatecav2017}, i.e., the number of
