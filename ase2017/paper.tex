@@ -275,7 +275,7 @@ for all reachable states.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-The first approach, presented in Figure~\ref{fig:CEGIS-precision-increment}, 
+The first approach, presented in Fig.~\ref{fig:CEGIS-precision-increment}, 
 uses a multi-staged verification process. 
 It starts by devising a digital controller that stabilizes the model while remaining safe for a
 pre-selected time horizon ($k$) and a single initial state; then, it
@@ -345,7 +345,7 @@ check that $k{\geq}\overline{k}$.
 \label{fig:CEGARIS} 
 \end{figure}
 
-Instead of unfolding the dynamics, the second approach (shown in Figure~\ref{fig:CEGARIS}) 
+Instead of unfolding the dynamics, the second approach (shown in Fig.~\ref{fig:CEGARIS}) 
 employs {\em abstract acceleration}~\cite{cattaruzza2015unbounded} to 
 simultaneously evaluate all possible progressions of the model. This eliminates the need for
 a completeness threshold, since the time horizon considered in abstract acceleration is infinite.
@@ -566,7 +566,7 @@ A digital system is stable \textit{iff} all of its poles are inside the $z$-plan
 namely poles must have the modulus less than one. In order to compute the poles for the digital 
 system represented by Equations~\eqref{equation_plant} and \eqref{equation_controller}, 
 the user can invoke the \texttt{feedback} and \texttt{series} commands in MATLAB~\cite{matlab-toolbox} 
-to achieve a general equation regarding the transfer function representation as shown in Figure~\ref{combine-controller-plant}. 
+to achieve a general equation regarding the transfer function representation as shown in Fig.~\ref{combine-controller-plant}. 
 
 \begin{figure}[ht]
 \scriptsize
@@ -585,7 +585,7 @@ to achieve a general equation regarding the transfer function representation as 
 >>  z^4 - 1.129 z^3 + 0.4981 z^2 - 0.8704 z + 0.5317
 \end{lstlisting}
 \vspace{-0.2cm}
-\caption{General equation for the closed-loop control system using the series configuration (as shown in Figure~\ref{fig:typical-control-system}).}
+\caption{General equation for the closed-loop control system using the series configuration (as shown in Fig.~\ref{fig:typical-control-system}).}
 \label{combine-controller-plant}
 \end{figure}
 
@@ -601,7 +601,7 @@ configuration is described by Equation~\ref{equation_general} as follows
 For the stability check, if any root of the polynomial $D(z)$ in Equation~\ref{equation_general} 
 has modulus equal or greater than one, then the system is unstable; 
 otherwise, it is stable. Indeed, the roots computed by the function \texttt{roots} 
-in MATLAB~\cite{matlab-toolbox} result in the following poles as shown in Figure~\ref{roots-of-dz}, 
+in MATLAB~\cite{matlab-toolbox} result in the following poles as shown in Fig.~\ref{roots-of-dz}, 
 which means that DSSynth has synthesized a stable digital controller.
 
 \begin{figure}[ht]
