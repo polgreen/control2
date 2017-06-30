@@ -89,8 +89,9 @@ Here,
 systems with a single input and a single output (SISO) are considered and 
 represented by transfer functions or state-space LTI models. LTI models 
 are used in several engineering applications to support non-trivial tasks when 
-applied to embedded systems (e.g., robot manipulator, power plants 
-and guidance system). The following expression presents the general form 
+applied to embedded \& cyber-physical systems (e.g., robot manipulator, smart grid, 
+power plants, distributed robotics, and automatic pilot avionics). 
+The following expression presents the general form 
 of a discrete plant or a digital controller based on the transfer function representation:
 %
 \begin{equation}
@@ -145,7 +146,7 @@ Toolbox named as DSVerifier Toolbox~\cite{issta2017}, which automatically detect
 specific errors related to digital system design ({\it e.g.}, stability, limit cycle and overflow) 
 using symbolic model checking techniques based on Boolean Satisfiability (SAT) and 
 Satisfiability Modulo Theories (SMT) solvers. Pessoa~\cite{mazo2010pessoa} is another 
-toolbox applied to the synthesis of correct-by-design digital controllers. 
+toolbox, but applied to the synthesis of correct-by-design digital controllers. 
 In particular, Pessoa is based on approximate bisimulation, which allows control engineers to replace differential equations, 
 describing a physical plant, by a respective finite-state machine. However, Pessoa does not take advantage of
 recent advances in bit-accurate verification of programs to synthesize controllers w.r.t. FWL effects. MATLAB already offers a tool 
@@ -155,7 +156,7 @@ As a result, there is no other MATLAB toolbox to perform digital controller synt
 program synthesis engines and considering the complete range of approximations, including time discretization, 
 quantization effects, and finite-precision arithmetic and its rounding errors. 
 
-The present paper addresses this limitation and describes a toolbox for the DSSynth tool~\cite{abate2017, abatecav2017} 
+The present tool paper addresses this limitation and describes a toolbox for the DSSynth tool~\cite{abate2017, abatecav2017} 
 in a MATLAB environment, named \tool. The main advantage for the use of a MATLAB toolbox 
 lies on designing physical plants in MATLAB and then promptly synthesizing a stable and safe digital controller,
 considering the complete range of approximations. 
