@@ -152,17 +152,17 @@ describing a physical plant, by a respective finite-state machine. However, Pess
 recent advances in bit-accurate verification of programs to synthesize controllers w.r.t. FWL effects. MATLAB already offers a tool 
 named as Control System Tuner~\cite{autotuner} for automatically designing controllers based on optimization solvers or graphical analysis. 
 However, the Control System Tuner is unable to consider FWL effects during the controller synthesis process.
-As a result, there is no other MATLAB toolbox to perform digital controller synthesis based on 
-program synthesis engines and considering the complete range of approximations, including time discretization, 
+To the best of our knowledge, there is no MATLAB toolbox able to perform digital controller synthesis based on 
+program synthesis engines that considers the complete range of approximations, including time discretization, 
 quantization effects, and finite-precision arithmetic and its rounding errors. 
 
 The present tool paper addresses this limitation and describes a toolbox for the DSSynth tool~\cite{abate2017, abatecav2017} 
 in a MATLAB environment, named \tool. The main advantage for the use of a MATLAB toolbox 
 lies on designing physical plants in MATLAB and then promptly synthesizing a stable and safe digital controller,
 considering the complete range of approximations. 
-Additionally, when using the \tool, an engineer is able to model a physical plant with MATLAB, 
+Notably, when using the \tool, an engineer is able to model a physical plant with MATLAB
 through transfer function or state-space representations, considering low-level systems parameters 
-(implementation features and numerical format), and then to synthesize a stable and safe digital controller.
+(implementation features and numerical format).
 
 %---------------------------------------------------
 \section{Counterexample-Guided Inductive Synthesis for Control Systems}
