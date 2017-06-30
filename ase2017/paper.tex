@@ -177,10 +177,11 @@ through transfer function or state-space representations, considering low-level 
 %% We~interpret the ground terms over some finite domain~$\mathcal{D}$.
 
 The design of our synthesizer consists of two phases, an inductive
-synthesis phase and a validation phase, which interact via a finite
-set of test vectors that is updated incrementally.  Given a stability
-and safety specification, the inductive synthesis procedure tries to
-find a candidate solution satisfying the specification for the given set of test inputs.
+synthesis phase, {\sc synthesise}, and a validation phase, {\sc verify},
+which interact via a finite set of test vectors that is updated
+incrementally.  Given a stability and safety specification, the
+inductive synthesis procedure tries to find a candidate solution
+satisfying the specification for the given set of test inputs.
 %
 If the synthesis phase succeeds in finding a witness, this witness is
 a candidate solution to the full synthesis formula.  We pass this
@@ -244,19 +245,19 @@ for all reachable states.
   };
 
    \path
-    ([yshift=2em]synth.east) edge node[xshift=-0.5em,align=center] {$K$} ([yshift=2em]verif1.west)
+    ([yshift=2em]synth.east) edge node[xshift=-0.5em,align=center] {K} ([yshift=2em]verif1.west)
     ([yshift=-2em]verif1.west) edge node {C-ex} ([yshift=-2em]synth.east)
-    ([xshift=-5em]fp.north) edge node[align=center]  {T/F} ([xshift=-5em]verif2.south)
-    ([xshift=-5em]sv.north) edge node[align=center]  {T/F} ([xshift=-5em]verif3.south)
+    ([xshift=-5em]fp.north) edge node[align=center]  {} ([xshift=-5em]verif2.south)
+    ([xshift=-5em]sv.north) edge node[align=center]  {} ([xshift=-5em]verif3.south)
     %([xshift=-5em]cv.north) edge node[align=center]  {T/F} ([xshift=-5em]verif4.south)
-    ([xshift=5em]verif1.south) edge node[align=center] {$K$} ([xshift=5em]bmc.north)
-    ([xshift=5em]verif2.south) edge node[align=center] {$K$} ([xshift=5em]fp.north)
-    ([xshift=5em]verif3.south) edge node[align=center] {$K$} ([xshift=5em]sv.north)
+    ([xshift=5em]verif1.south) edge node[align=center] {} ([xshift=5em]bmc.north)
+    ([xshift=5em]verif2.south) edge node[align=center] {} ([xshift=5em]fp.north)
+    ([xshift=5em]verif3.south) edge node[align=center] {} ([xshift=5em]sv.north)
     %([xshift=5em]verif4.south) edge node[align=center] {$K$} ([xshift=5em]cv.north)
-    ([xshift=-5em]bmc.north) edge node[align=center]  {UNSAT/\\model} ([xshift=-5em]verif1.south)
+    ([xshift=-5em]bmc.north) edge node[align=center]  {} ([xshift=-5em]verif1.south)
     (verif) edge node {PASS} (done)
-    ([xshift=5em]synth.south) edge node[align=center] {Inputs} ([xshift=5em]gp.north)
-    ([xshift=-5em]gp.north) edge node[align=center] {UNSAT/\\$K$} ([xshift=-5em]synth.south)
+    ([xshift=5em]synth.south) edge node[align=center] {} ([xshift=5em]gp.north)
+    ([xshift=-5em]gp.north) edge node[align=center] {} ([xshift=-5em]synth.south)
     (aux3) edge (synth.north);
    \path[-]
    (verif2.north) edge node[align=center] {} ([xshift=0cm]aux6)
@@ -323,20 +324,20 @@ check that $k{\geq}\overline{k}$.
     }\\
   };
   \path
-    (pre.east) edge node[align=center] {$P_a$, $N$,\\ $\phi_\mathit{init}^k$} (abstract.west)
-    (abstract.south) edge node{$(\phi(K), k)$} (synth.north)
+    (pre.east) edge node[align=center] {} (abstract.west)
+    (abstract.south) edge node{} (synth.north)
     ([yshift=1em]synth.east) edge node {$K$} ([yshift=1em]verify.west)
     (aux) edge (abstract.east) 
     (verify.east) edge (done.west);
   \path
-    ([xshift=+.6cm]KSAT.north) edge[left] node[xshift=-.3cm] {$K$} ([xshift=0.6cm]synth.south) 
-    ([xshift=-.6cm]synth.south) edge node[align=center,xshift=.3cm] {$(\phi(K),k)$} ([xshift=-.6cm]KSAT.north)
-    ([yshift=.5cm]AAV.east) edge node{\sl $\hat{X}^\#$} ([yshift=.5cm]AAC.west)
-    ([yshift=-.5cm]AAC.west) edge node{$(k,x_0)$} ([yshift=-.5cm]AAV.east)
-    (AAC.north) edge node{\sl $\hat{X}^\#$} ([xshift=4.9cm]verify.south)
-    ([xshift=-5cm]verify.south) edge node{$K$} (AAV.north);
+    ([xshift=+.6cm]KSAT.north) edge[left] node[xshift=-.3cm] {} ([xshift=0.6cm]synth.south) 
+    ([xshift=-.6cm]synth.south) edge node[align=center,xshift=.3cm] {} ([xshift=-.6cm]KSAT.north)
+    ([yshift=.5cm]AAV.east) edge node{} ([yshift=.5cm]AAC.west)
+    ([yshift=-.5cm]AAC.west) edge node{} ([yshift=-.5cm]AAV.east)
+    (AAC.north) edge node{} ([xshift=4.9cm]verify.south)
+    ([xshift=-5cm]verify.south) edge node{} (AAV.north);
   \path[-] 
-     (verify.north) edge node {$(k,x_0)$} (aux);
+     (verify.north) edge node {C-ex} (aux);
 \end{tikzpicture}
 }
 }
@@ -348,11 +349,17 @@ Instead of unfolding the dynamics, the second approach (shown in Figure~\ref{fig
 employs {\em abstract acceleration}~\cite{cattaruzza2015unbounded} to 
 simultaneously evaluate all possible progressions of the model. This eliminates the need for
 a completeness threshold, since the time horizon considered in abstract acceleration is infinite.
+An additional preprocessing phase is used to compute 
+a set of initial bounds on $K$ based on input constraints. 
+Note that these bounds will be used by the {\sc synthesize} phase to reduce the size of the solution space.
+%
 Since this model is based on abstraction, we initially perform the synthesis over a basic
 model that abstracts away the complexity of the specification and is only refined to a more
-complex model when a counterexample is found. Thus, we may only look at the gain of the
-model to synthesise a controller and to add further restrictions on specific sections of the reach
-tube when these prove to invalidate the solution. The use of this Counterexample-Guided 
+complex model when a counterexample is found. 
+% Thus, we may only look at the gain of the
+% model to synthesise a controller and to add further restrictions on specific sections of the reach
+% tube when these prove to invalidate the solution.
+The use of this Counterexample-Guided 
 Abstraction-Refinement results in much faster synthesis and verification since it is applied to
 both phases, allowing for faster results whilst maintaining soundness for an infinite time horizon.
  
