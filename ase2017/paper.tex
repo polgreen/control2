@@ -97,7 +97,7 @@ of a discrete plant or a digital controller based on the transfer function repre
 \begin{equation}
 \small
 \label{eq:transferfunction}
-H(z)=\frac{B(z)}{A(z)}=\frac{b_{0}+b_{1}z^{-1}+...+b_{M}z^{-M}}{1+a_{1}z^{-1}+...+a_{N}z^{-N}},
+H(z)=\frac{B(z)}{A(z)}=\frac{b_{0}+b_{1}z^{-1}+...+b_{M}z^{-M}}{a_{0}+a_{1}z^{-1}+...+a_{N}z^{-N}},
 \end{equation}
 %
 \noindent where $z^{-1}$ is called the backward-shift operator; $A(z)$ and $B(z)$ are 
@@ -132,12 +132,12 @@ named DSSynth (Digital-System Synthesizer)~\cite{abate2017, abatecav2017},
 which is based on the Counter-Example Guided Inductive Synthesis 
 (CEGIS) approach~\cite{DBLP:conf/asplos/Solar-LezamaTBSS06}. Here, CEGIS is used
 as a program synthesis engine that is able to generate sound digital controllers for highly non-trivial 
-control system specifications with a very high degree of automation. Program synthesis engines 
-use a specification as the starting point, and subsequently produce a sequence of candidate 
+control system specifications with a very high degree of automation. The program synthesis engine 
+uses a specification as starting point, and subsequently produces a sequence of candidate 
 programs from a given template. The candidate programs are iteratively refined to eventually 
 satisfy the specification. Modern synthesis engines such as the one used here combine automated testing, genetic algorithms 
 and SMT-based automated reasoning~\cite{DBLP:journals/corr/AlurFSS16a, DBLP:conf/lpar/DavidKL15}. 
-DSSynth synthesizes stable digital controllers using the CEGIS-based approach,
+Using the CEGIS-based approach, DSSynth synthesizes stable digital controllers
 for a given physical plant represented by either transfer functions or state-space equations~\cite{abate2017,abatecav2017}.
 
 Notably, there are toolboxes in MATLAB with functions and scripts to facilitate the 
