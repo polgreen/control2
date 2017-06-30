@@ -559,22 +559,59 @@ A digital system is stable \textit{iff} all of its poles are inside the $z$-plan
 namely poles must have the modulus less than one. In order to compute the poles for the digital 
 system represented by Equations~\eqref{equation_plant} and \eqref{equation_controller}, 
 the user can invoke the \texttt{feedback} and \texttt{series} commands in MATLAB~\cite{matlab-toolbox} 
-to achieve a general equation regarding the transfer function representation. 
+to achieve a general equation regarding the transfer function representation as shown in Figure~\ref{combine-controller-plant}. 
 
-The general equation that represents the combination between Equations~\eqref{equation_plant}
-and~\eqref{equation_controller} using the \texttt{series} configuration (as shown in Figure~\ref{fig:typical-control-system}) is
+\begin{figure}[ht]
+\scriptsize
+\begin{lstlisting}[xleftmargin=.025\textwidth,xrightmargin=.025\textwidth, frame=single,]
+>> num = [-0.99832 0.09587 0.1926];
+>> den = [1 0.5665 0.75];
+>> controller = tf(num,den,0.002);
+>> num = [-0.06875 0 0];
+>> den = [1.0000 -1.696 0.7089];
+>> plant = tf(num,den,0.002);
+>> sys = series(controller,plant)
+>> sys =
+>> 
+>>      0.06863 z^4 - 0.006591 z^3 - 0.01324 z^2
+>>  ------------------------------------------------
+>>  z^4 - 1.129 z^3 + 0.4981 z^2 - 0.8704 z + 0.5317
+\end{lstlisting}
+\vspace{-0.2cm}
+\caption{General equation for the closed-loop control system using the series configuration (as shown in Figure~\ref{fig:typical-control-system}).}
+\label{combine-controller-plant}
+\end{figure}
+
+The general equation that represents the closed-loop control system using the series 
+configuration is described by Equation~\ref{equation_general} as follows
 %
 \begin{equation}
 \small
 \label{equation_general}
-\frac{N(z)}{D(z)}=\frac{0.06863z^{4} - 0.006591z^{3} - 0.01324z^{2}}{1.069z^{4} - 1.136z^{3} + 0.4849z^{2} -0.8704z + 0.5317}.
+\frac{N(z)}{D(z)}=\frac{0.06863z^{4} - 0.006591z^{3} - 0.01324z^{2}}{z^{4} - 1.129z^{3} + 0.4981z^{2} -0.8704z + 0.5317}.
 \end{equation}
  
-For the stability check, if any root has modulus equal or greater than one, then the system is unstable; 
+For the stability check, if any root of the polynomial $D(z)$ in Equation~\ref{equation_general} 
+has modulus equal or greater than one, then the system is unstable; 
 otherwise, it is stable. Indeed, the roots computed by the function \texttt{roots} 
-in MATLAB~\cite{matlab-toolbox} result in the following poles: 
-$-0.2909 + 0.8065i$, $-0.2909 - 0.8065i$, $0.8553$ and $0.7924$, 
+in MATLAB~\cite{matlab-toolbox} result in the following poles as shown in Figure~\ref{roots-of-dz}, 
 which means that DSSynth has synthesized a stable digital controller.
+
+\begin{figure}[ht]
+\scriptsize
+\begin{lstlisting}[xleftmargin=.025\textwidth,xrightmargin=.025\textwidth, frame=single,]
+>> den = [1 -1.129 0.4981 -0.8704 0.5317]
+>> r = roots(den)
+>> r =
+>>  -0.2833 + 0.8185i
+>>  -0.2833 - 0.8185i
+>>   0.9480 + 0.0000i
+>>   0.7476 + 0.0000i
+\end{lstlisting}
+\vspace{-0.2cm}
+\caption{Roots of the polynomial $D(z)$ given by Equation~\ref{equation_general}.}
+\label{roots-of-dz}
+\end{figure}
 
 Simulating the digital system represented by Equations \eqref{equation_plant} and \eqref{equation_controller} 
 to validate and reproduce the system stability, the user can invoke the step response using the 
