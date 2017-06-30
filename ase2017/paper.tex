@@ -528,7 +528,7 @@ fixed-point representation and dynamic inputs.
 To illustrate the \tool's usage, Fig.~\ref{toolbox-usage} shows each step of the 
 synthesis process for a physical plant described in Eq.~\eqref{equation_plant},
 which represents a real unmanned aerial vehicle (UAV) quadcopter system~\cite{bouabdallah}. 
-This physical plant is expressed by a transfer function, where 
+This physical plant is expressed by a transfer function $G(z)$, where 
 $B(z)$ and $A(z)$ represent the numerator and denominator, respectively, as
 %
 \begin{equation}
@@ -563,10 +563,10 @@ C(z)=\frac{-0.9983^{2}+0.09587z+0.1926}{z^2+0.5665z+0.75}.
 \end{equation}
 
 A digital system is stable \textit{iff} all of its poles are inside the $z$-plane unity circle, 
-namely poles must have the modulus less than one. In order to compute the poles for the digital 
+namely poles must have the modulus less than one~\cite{astrom1997computer}. In order to compute the poles for the digital 
 system represented by Equations~\eqref{equation_plant} and \eqref{equation_controller}, 
 the user can invoke the \texttt{feedback} and \texttt{series} commands in MATLAB~\cite{matlab-toolbox} 
-to achieve a general equation regarding the transfer function representation as shown in Fig.~\ref{combine-controller-plant}. 
+to achieve a general equation regarding the transfer function representation, as illustrated in Fig.~\ref{combine-controller-plant}. 
 
 \begin{figure}[ht]
 \scriptsize
@@ -584,11 +584,11 @@ to achieve a general equation regarding the transfer function representation as 
 >> 1.069z^4 - 1.136z^3 + 0.4849z^2 - 0.8704z + 0.5317
 \end{lstlisting}
 \vspace{-0.2cm}
-\caption{General equation for the closed-loop control system.}
+\caption{General equation for the closed-loop control system using the series configuration as shown in Fig.~\ref{fig:typical-control-system}.}
 \label{combine-controller-plant}
 \end{figure}
 
-The general equation that represents the closed-loop control system 
+The general equation that represents the closed-loop control system, using the series configuration as shown in Fig.~\ref{fig:typical-control-system},
 is described by Equation~\ref{equation_general} as follows
 %
 \begin{equation}
@@ -597,7 +597,7 @@ is described by Equation~\ref{equation_general} as follows
 \frac{N(z)}{D(z)}=\frac{0.06863z^{4} - 0.006591z^{3} - 0.01324z^{2}}{1.069z^{4} - 1.136z^{3} + 0.4849z^{2} -0.8704z + 0.5317}.
 \end{equation}
  
-For the stability check, if any root of the polynomial $D(z)$ in Equation~\ref{equation_general} 
+For the stability check, if any root of the denominator polynomial $D(z)$ in Equation~\ref{equation_general} 
 has modulus equal or greater than one, then the system is unstable; 
 otherwise, it is stable. Indeed, the roots computed by the function \texttt{roots} 
 in MATLAB~\cite{matlab-toolbox} result in the following poles as shown in Fig.~\ref{roots-of-dz}, 
