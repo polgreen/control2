@@ -772,14 +772,18 @@ all benchmarks, videos, documentation and the tool, is provided online.\footnote
 \section{Conclusions}
 %--------------------------------------
 
-\tool can synthesize digital controllers for dynamic physical plants, 
-represented in MATLAB as a transfer function or a state-space model,  
-w.r.t. stability and safety, using the CEGIS approach. 
+\tool can automatically synthesize stable digital controllers for intricate dynamic physical plants, 
+represented in MATLAB as a transfer function or a state-space equation using the CEGIS approach. 
+In particular, the \tool represents the first fully automated synthesis
+tool that is algorithmically and numerically sound, considering various error
+sources in the implementation of the digital control algorithm and in the computational 
+modeling of plant dynamics~\cite{abate2017,abatecav2017}.
 %
-Given the current literature in controller synthesis, there is no other MATLAB toolbox 
-for synthesizing stable digital controllers for physical plants, while taking into account all aspects of its digital implementation (fixed-point arithmetic). 
+Additionally, given the current literature in controller synthesis, there is no other MATLAB toolbox 
+for synthesizing stable digital controllers for physical plants, while taking into account all aspects of its 
+digital implementation. 
 %
-As future work, \tool will perform synthesis of other types of specifications (e.g., performance) 
+As future work, the \tool will perform synthesis of other specifications (e.g., performance) 
 and be combined with DSVerifier/DSValidator Toolboxes~\cite{issta2017,dsvalidator} to verify/validate 
 other controller properties (e.g., presence of limit cycles). 
 
