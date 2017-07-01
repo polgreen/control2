@@ -24,7 +24,7 @@
 %\copyrightyear{2017}
 %\acmPrice{15.00}
 
-
+\renewcommand{\baselinestretch}{0.991}
 \newcommand\tool{{DSSynth Toolbox}\xspace}
 \newcommand{\fwl}[1]{\mathcal{FWL}[#1]}
 
@@ -685,7 +685,8 @@ voltage regulator, and an acrobot control system.
 For all evaluated benchmarks, the signal input range related to the control system 
 lies between $-1$ and $1$. The implementation features used for digital controller are:
 $8$-bits for the integer part (including the sign bit) and $8$-bits for the fractional 
-part. All experiments with \tool v$1$.$0$.$0$  were conducted on an otherwise idle 
+part. We have run the \tool using the CEGIS with multi-staged verification (cf.~Section~\ref{sec:CEGIS}).
+All experiments with \tool v$1$.$0$.$0$  were conducted on an otherwise idle 
 Intel Core i$7-2600$ $3.40$ GHz processor, with $24$ GB of RAM, running Ubuntu $64$-bits.
 
 %---------------------------------------------------
