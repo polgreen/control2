@@ -54,7 +54,10 @@ output.  In~particular, DSSynth synthesizes digital controllers that are
 sound w.r.t.~stability and safety specifications.  DSSynth considers the
 complete range of approximations, including time discretization,
 quantization effects and finite-precision arithmetic (and its rounding
-errors).  The resulting toolbox enables the application of program synthesis
+errors).  We demonstrate the practical value of
+this toolbox by automatically synthesizing stable and safe controllers for intricate
+physical plant models from the digital control literature.
+The resulting toolbox enables the application of program synthesis
 to real-world control engineering problems.
 %
 \end{abstract}
@@ -78,7 +81,7 @@ closed-loop dynamics, where outputs of discrete plant $G(z)$ are fed back
 and compared to a reference signal towards which a controller $C(z)$ should
 steer~\cite{astrom1997computer}.  Fig.~\ref{fig:typical-control-system}
 depicts a typical closed-loop digital control system.
-
+%
 \begin{figure}[ht!]
 \centering
 \includegraphics[width=0.4\textwidth]{closedloopseries.pdf}
@@ -178,7 +181,12 @@ The present tool paper addresses this limitation and describes a MATLAB
 toolbox for DSSynth.  MATLAB is very commonly used for modeling physical
 plants.  Thus, the integration into MATLAB enables rapid synthesis of a
 stable and safe digital controller for such plants without switching the
-environment.
+environment. Experimental results show that \tool is able to efficiently 
+synthesize stable and safe controllers for a set of intricate benchmarks taken 
+from the literature:  the median runtime for our benchmarks set is $124$\,s, 
+and the average synthesis time amounts to $35.5$\,s for closed-loop control 
+systems represented by state-space equations, while for transfer functions, the average synthesis
+time amounts to $123.6$\,s.
 
 %---------------------------------------------------
 \section{Counterexample-Guided Inductive Synthesis for Control Systems}
