@@ -193,21 +193,21 @@ environment.
 %% $a$ ranges over ground terms, and $\sigma$ is a quantifier-free formula. 
 %% We~interpret the ground terms over some finite domain~$\mathcal{D}$.
 
-The design of our synthesizer consists of two main phases, an inductive
-synthesis phase, {\sc synthesise}, and a validation phase, {\sc verify},
-which interact via a finite set of test vectors that is updated
+Our synthesizer iterates between two main phases, an inductive synthesis
+phase, {\sc synthesise}, and a validation phase, {\sc verify}.  The two
+phases interact via a finite set of test vectors, which is updated
 incrementally.  Given a stability and safety specification, the inductive
 synthesis procedure tries to find a candidate solution satisfying the
 specification for the given set of test inputs.
 %
-If the synthesis phase succeeds in finding a witness, this witness is
-a candidate solution to the full synthesis formula.  We pass this
-candidate solution to the validation phase, which checks whether it is
-a full solution (i.e., satisfies the specification for all possible
-inputs).  If this is the case, then the algorithm terminates.
-Otherwise, additional information is provided to the inductive
-synthesis phase in the form of a new counterexample, C-ex, that is added to
-the set of test inputs, and the loop iterates again.
+If the synthesis phase succeeds in finding a witness, this witness is a
+candidate solution to the full synthesis formula.  We pass this candidate
+solution to the validation phase, which checks whether it is a full solution
+(i.e., satisfies the specification for all possible inputs).  If this is the
+case, then the algorithm terminates.  Otherwise, additional information is
+provided to the inductive synthesis phase in the form of a new
+counterexample, C-ex, that is added to the set of test inputs, and the loop
+iterates again.
 
 We use two different instantiations of the synthesiser
 in order to find stable and safe digital
