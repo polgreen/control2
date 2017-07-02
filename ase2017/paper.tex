@@ -24,7 +24,7 @@
 %\copyrightyear{2017}
 %\acmPrice{15.00}
 
-\renewcommand{\baselinestretch}{0.991}
+\renewcommand{\baselinestretch}{0.99}
 \newcommand\tool{{DSSynth Toolbox}\xspace}
 \newcommand{\fwl}[1]{\mathcal{FWL}[#1]}
 
@@ -49,7 +49,7 @@ We present an automated MATLAB Toolbox, named as DSSynth
 (Digital-System Synthesizer), to synthesize sound digital controllers 
 for physical plants that are represented as linear time-invariant
 systems with single input and output. In particular, DSSynth synthesizes digital 
-controllers that are sound w.r.t. the stability specification by taking into account finite word-length 
+controllers that are sound w.r.t. the stability and safety specifications by taking into account finite word-length 
 effects in their representation. DSSynth considers the complete range
 of approximations, including time discretization, quantization effects, 
 and finite-precision arithmetic (and its rounding errors). 
@@ -74,7 +74,7 @@ Formal Synthesis; Digital Control Systems; MATLAB Toolbox; Finite-Word Length; V
 
 Control theory targets the construction of reliable systems by providing mathematical guarantees about the stability and the desired 
 performance of closed-loop dynamics, where outputs of discrete plant $G(z)$ 
-are fed back and compared to a reference signal to which a (designed) 
+are fed back and compared to a reference signal to which a 
 controller $C(z)$ should steer~\cite{astrom1997computer}. 
 Fig.~\ref{fig:typical-control-system} shows a typical closed-loop digital control system.
 %
@@ -138,13 +138,13 @@ and quantization noise, which are typically introduced by Analogue-to-Digital
 Recently, a new methodology to synthesize digital control systems has been proposed, 
 named DSSynth (Digital-System Synthesizer)~\cite{abate2017, abatecav2017}, 
 which is based on the Counter-Example Guided Inductive Synthesis 
-(CEGIS) approach~\cite{DBLP:conf/asplos/Solar-LezamaTBSS06}. Here, CEGIS is used
+(CEGIS) approach~\cite{DBLP:conf/asplos/Solar-LezamaTBSS06}. CEGIS is used
 as a program synthesis engine that is able to generate sound digital controllers for highly non-trivial 
 control system specifications with a very high degree of automation. The program synthesis engine 
 uses a specification as starting point, and subsequently produces a sequence of candidate 
 programs from a given template. The candidate programs are iteratively refined to eventually 
 satisfy the specification. Modern synthesis engines such as the one used here combine automated testing, genetic algorithms 
-and SMT-based automated reasoning~\cite{DBLP:journals/corr/AlurFSS16a, DBLP:conf/lpar/DavidKL15}. 
+and SMT-based reasoning~\cite{DBLP:journals/corr/AlurFSS16a, DBLP:conf/lpar/DavidKL15}. 
 Using the CEGIS-based approach, DSSynth synthesizes stable digital controllers
 for a given physical plant represented by either transfer functions or state-space equations~\cite{abate2017,abatecav2017}.
 
@@ -206,7 +206,6 @@ in order to find stable and safe digital
 controllers. The two approaches differ in
 the manner in which they check the safety specification
 for all reachable states.
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[htb]
 {\scriptsize
@@ -305,7 +304,7 @@ iterations required to sufficiently unwind the closed-loop state-space
 model such that the boundaries are not violated for any larger number of
 iterations, and
 check that $k{\geq}\overline{k}$.
-
+%
 \begin{figure}
 \centering
 {\scriptsize
@@ -497,8 +496,8 @@ command (cf. step $1$ of Fig.~\ref{fig:synthesis-flow}).
 \texttt{intBits} is the integer part, \texttt{fracBits} is the fractional part, \texttt{maxR} and \texttt{minR} 
 are the maximum and minimum dynamic range, respectively (cf. steps $2$ and $3$ of Fig.~\ref{fig:synthesis-flow}).
 %
-After executing the \texttt{synthesize} command in MATLAB, 
-\tool provides the synthesized digital controller, according to the digital system representation. 
+After executing the \texttt{synthesize} command, 
+\tool provides the synthesized digital controller, according to the implementation aspects. 
 
 %---------------------------------------------------
 \subsubsection{MATLAB Application Version} 
@@ -650,7 +649,7 @@ as shown in Fig.~\ref{step-response}.
 \label{benchmarks-description}
 %---------------------------------------------------
 
-Our experimental evaluation consists of $18$ SISO control system benchmarks 
+Our evaluation consists of $18$ SISO control system benchmarks 
 extracted from the literature~\cite{abate2017,abatecav2017,bouabdallah, acrobot,cstr,KOKOTOVIC198023,gajic2008optimal,Franklin15, maglev, converters, CTMS,DBLP:journals/tc/BessaIPCF17,DBLP:journals/dafes/BessaICF16},
 which include physical plants for unmanned aerial vehicle (UAV), cruise control system, 
 spring-mass damper, satellite, direct current (DC) servo motor, helicopter, 
@@ -694,16 +693,16 @@ Intel Core i$7-2600$ $3.40$ GHz processor, with $24$ GB of RAM, running Ubuntu $
 %---------------------------------------------------
 
 The main objectives of our experimental evaluation is to (1) evaluate the \tool performance 
-to produce stable controllers, and also (2) confirm the stability of the synthesized digital 
-controllers outside of our model, using both the transfer function and state-space representations.
+to produce stable and safe controllers, and also (2) confirm the stability and safety of the synthesized digital 
+controllers outside of our model using MATLAB. %, using both the transfer function and state-space representations.
 
 %---------------------------------------------------
 \subsection{Results}
 %---------------------------------------------------
 
-\textcolor{red}{Why are the experiments only mentioning stable controllers? Up until this point, we discuss stable and safe controllers.}
+%\textcolor{red}{Why are the experiments only mentioning stable controllers? Up until this point, we discuss stable and safe controllers.}
 
-For our experiments, we observed that the \tool correctly synthesizes stable digital controllers 
+For our experiments, we observed that the \tool correctly synthesizes stable and safe digital controllers 
 for our set of benchmarks represented by transfer functions or state-space equations. 
 We employed a diverse set of real-world benchmarks extracted from the control literature. 
 However, note that this set of benchmarks is still limited within the scope of this paper, and 
@@ -712,7 +711,7 @@ The median runtime for our benchmarks set is $124$\,s, and the average synthesis
 to $35.5$\,s for closed-loop control systems represented by state-space equations, while 
 for transfer functions, the average synthesis time amounts to $123.6$\,s. 
 
-Additionally, we are able to reproduce the stability for all evaluated control system benchmarks.
+Additionally, we are able to reproduce the stability and safety for all evaluated control system benchmarks.
 As an example, we have reproduced the stability property in the synthesized controller 
 for a DC motor plant described in Eq.~\eqref{tf-synth-controller}, simulating the step response 
 in MATLAB. Fig.~\ref{tf-step-response} shows that the digital controller 
@@ -766,10 +765,14 @@ K &= \left [\begin{array}{cc}-0.5898&-0.1914\end{array}\right]
   \label{ss-step-response}
 \end{figure}
  
-The digital controllers synthesized by \tool are all stable using the MATLAB step response
-as a validation procedure, which means that our results are reliable for control engineers. 
-A link to the full experimental environment, including the scripts to reproduce the results, 
-all benchmarks, videos, documentation and the tool, is provided online.\footnote{\url{www.dsverifier.org}}
+%The digital controllers synthesized by \tool are all stable using the MATLAB step response
+%as a validation procedure, which means that our results are reliable for control engineers. 
+The synthesized controllers are also confirmed to be safe outside of our model
+representation using MATLAB, which means that our results are reliable for control engineers. 
+In particular, we unfold the system dynamics up to a given depth, 
+compute the system's input and output via the feedback matrix, and then check the states' bounds.
+ A link to the full experimental environment, including the scripts, benchmarks, 
+ videos, documentation and the tool, is provided online.\footnote{\url{www.dsverifier.org}}
 
 %--------------------------------------
 \section{Conclusions}
