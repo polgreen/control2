@@ -125,31 +125,32 @@ y(n) &= C x(n) + D u(n),
 %
 where $A$, $B$, $C$ and $D$ are matrices that fully specify the model. 
 
-Controllers synthesis for LTI systems is richly studied in the
-literature~\cite{mazo2010pessoa,DBLP:conf/emsoft/RavanbakhshS16,economakos2016automated};
-however, there are many challenges when digital control system theory is
-used, mainly due to the finite-word length (FWL) effects leading to
-truncation or round-off errors~\cite{Guang2013, Istepanian2001}, time
+There is a rich body of literature on automating the synthesis of
+controllers for LTI systems~\cite{mazo2010pessoa,
+DBLP:conf/emsoft/RavanbakhshS16, economakos2016automated}.  However, there
+are many challenges when digital control is used to implement the
+controller, mainly due to effects of finite-word length (FWL), which leads
+to truncation or round-off errors~\cite{Guang2013, Istepanian2001}, and time
 discretization and quantization noise, which are typically introduced by
 Analogue-to-Digital (ADC) and Digital-to-Analogue (DAC)
 conversion~\cite{astrom1997computer}.
 
-Recently, a new methodology to synthesize digital control systems has been
-proposed, named DSSynth (Digital-System Synthesizer)~\cite{abate2017,
-abatecav2017}, which is based on the Counter-Example Guided Inductive
-Synthesis (CEGIS) approach~\cite{DBLP:conf/asplos/Solar-LezamaTBSS06}. 
-CEGIS is used as a program synthesis engine that is able to generate sound
-digital controllers for highly non-trivial control system specifications
-with a very high degree of automation.  The program synthesis engine uses a
-specification as starting point, and subsequently produces a sequence of
-candidate programs from a given template.  The candidate programs are
-iteratively refined to eventually satisfy the specification.  Modern
-synthesis engines such as the one used here combine automated testing,
-genetic algorithms and SMT-based
+We have recently proposed a new method to synthesize digital control systems
+for LTI systems, which we have named \emph{DSSynth} (Digital-System
+Synthesizer)~\cite{abate2017, abatecav2017}.  The algorithm implements
+Counter-Example Guided Inductive Synthesis
+(CEGIS)~\cite{DBLP:conf/asplos/Solar-LezamaTBSS06}.  CEGIS is used to
+realize a program synthesis engine that is able to generate sound digital
+controllers for highly non-trivial system specifications with a very high
+degree of automation.  The program synthesis engine is given a specification
+and subsequently produces a sequence of candidate programs from a template. 
+The candidate programs are iteratively refined to eventually satisfy the
+specification.  Modern synthesis engines such as the one used here combine
+automated testing, genetic algorithms and SMT-based
 reasoning~\cite{DBLP:journals/corr/AlurFSS16a, DBLP:conf/lpar/DavidKL15}. 
 Using the CEGIS-based approach, DSSynth synthesizes stable digital
 controllers for a given physical plant represented by either transfer
-functions or state-space equations~\cite{abate2017,abatecav2017}.
+functions or state-space equations.
 
 Notably, there are toolboxes in MATLAB with functions and scripts to
 facilitate the digital system design and
