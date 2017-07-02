@@ -599,7 +599,7 @@ to achieve a general equation regarding the transfer function representation, as
 \end{figure}
 
 The general equation that represents the closed-loop control system, using the series configuration as shown in Fig.~\ref{fig:typical-control-system},
-is described by Equation~\ref{equation_general} as follows
+is described by Eq.~\ref{equation_general} as follows
 %
 \begin{equation}
 \small
@@ -607,7 +607,7 @@ is described by Equation~\ref{equation_general} as follows
 \frac{N(z)}{D(z)}=\frac{0.06863z^{4} - 0.006591z^{3} - 0.01324z^{2}}{1.069z^{4} - 1.136z^{3} + 0.4849z^{2} -0.8704z + 0.5317}.
 \end{equation}
  
-For the stability check, if any root of the denominator polynomial $D(z)$ in Equation~\ref{equation_general} 
+For the stability check, if any root of the denominator polynomial $D(z)$ in Eq.~\ref{equation_general} 
 has modulus equal or greater than one, then the system is unstable; 
 otherwise, it is stable. Indeed, the roots computed by the function \texttt{roots} 
 in MATLAB~\cite{matlab-toolbox} result in the following poles as shown in Fig.~\ref{roots-of-dz}, 
@@ -625,7 +625,7 @@ which means that DSSynth has synthesized a stable digital controller.
 >>   0.8225 - 0.0219i
 \end{lstlisting}
 \vspace{-0.2cm}
-\caption{Roots of the polynomial $D(z)$ given by Equation~\ref{equation_general}.}
+\caption{Roots of the polynomial $D(z)$ given by Eq.~\ref{equation_general}.}
 \label{roots-of-dz}
 \end{figure}
 
@@ -770,7 +770,7 @@ K &= \left [\begin{array}{cc}-0.5898&-0.1914\end{array}\right]
 The synthesized controllers are also confirmed to be safe outside of our model
 representation using MATLAB, which means that our results are reliable for control engineers. 
 In particular, we unfold the system dynamics up to a given depth, 
-compute the system's input and output via the feedback matrix, and then check the states' bounds.
+compute the system input and output via the feedback matrix, and then check the states bounds.
  A link to the full experimental environment, including the scripts, benchmarks, 
  videos, documentation and the tool, is provided online.\footnote{\url{www.dsverifier.org}}
 
