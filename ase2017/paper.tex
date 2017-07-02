@@ -75,14 +75,14 @@ Formal Synthesis; Digital Control Systems; MATLAB Toolbox; Finite-Word Length; V
 Control theory targets the construction of reliable systems by providing
 mathematical guarantees about the stability and the desired performance of
 closed-loop dynamics, where outputs of discrete plant $G(z)$ are fed back
-and compared to a reference signal to which a controller $C(z)$ should
+and compared to a reference signal towards which a controller $C(z)$ should
 steer~\cite{astrom1997computer}.  Fig.~\ref{fig:typical-control-system}
-shows a typical closed-loop digital control system.
-%
+depicts a typical closed-loop digital control system.
+
 \begin{figure}[ht!]
 \centering
 \includegraphics[width=0.4\textwidth]{closedloopseries.pdf}
-\caption{Typical Closed-loop Control System.}
+\caption{Typical Closed-loop Control System}
 \label{fig:typical-control-system}
 \end{figure}
 
@@ -91,16 +91,15 @@ shows a typical closed-loop digital control system.
 %expressed as difference equations, transfer functions or state-space equations. 
 %Here, the focus is on transfer function and state-space representations. 
 
-There are various mathematical representations for control systems, e.g.,
-transfer functions and state-space equations (difference or differential
-equations).  Here, systems with a single input and a single output (SISO)
-are considered and represented by transfer functions or state-space LTI
-models.  LTI models are used to represent dynamics in several engineering
-applications to support non-trivial tasks when applied to embedded \&
-cyber-physical systems (e.g., robot manipulator, smart grid, power plants,
-distributed robotics, and automatic pilot avionics).  The following
-expression presents the general form of a discrete plant or a digital
-controller based on the transfer function representation:
+There are various ways to model control systems.  Two common ways to
+represent the dynamics of such systems are transfer functions and
+state-space equations (difference or differential equations).  In this
+paper, we consider systems with a single input and a single output (SISO)
+given either as transfer functions or state-space linear time-invariant
+(LTI) models.  LTI models are a common sub-class, and are frequently used in
+cyber-physical systems (e.g., in robotics, smart grids, power plants, and
+avionics).  A discretized plant or a digital controller is, in generally,
+given as follows when using a transfer function representation:
 %
 \begin{equation}
 \small
@@ -108,13 +107,13 @@ controller based on the transfer function representation:
 H(z)=\frac{B(z)}{A(z)}=\frac{b_{0}+b_{1}z^{-1}+...+b_{M}z^{-M}}{a_{0}+a_{1}z^{-1}+...+a_{N}z^{-N}},
 \end{equation}
 %
-\noindent where $z^{-1}$ is called the backward-shift operator; $A(z)$ and $B(z)$ are 
-the denominator and numerator polynomials; and $N$ and $M$
-represent the denominator and numerator polynomials order, respectively.
-%
-In a state-space form, 
-the behavior of a system is represented via a state evolution equation $x(n+1)$ and an instantaneous 
-output equation $y(n)$, as follows:
+In this representation, $z^{-1}$ is called the backward-shift operator;
+$A(z)$ and $B(z)$ are the denominator and numerator polynomials; and $N$ and
+$M$ are the order of the denominator and numerator polynomials, respectively.
+
+In a state-space form, the behavior of a system is represented via a state
+evolution equation $x(n+1)$ and an instantaneous output equation $y(n)$, as
+follows:
 %
 \begin{equation}
 \begin{split}
@@ -123,9 +122,9 @@ x(n+1) &= A x(n) + B u(n)
 y(n) &= C x(n) + D u(n), 
 \end{split}\label{eq:ss-example}
 \end{equation}
-
-\noindent where $A$, $B$, $C$ and $D$ are matrices that fully specify the model. 
 %
+where $A$, $B$, $C$ and $D$ are matrices that fully specify the model. 
+
 Controllers synthesis for LTI systems is richly studied in the
 literature~\cite{mazo2010pessoa,DBLP:conf/emsoft/RavanbakhshS16,economakos2016automated};
 however, there are many challenges when digital control system theory is
