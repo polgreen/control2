@@ -46,18 +46,21 @@ $^{2}$Federal University of Amazonas, Manaus, Brazil}}
 \maketitle
 
 \begin{abstract}
-We present an automated MATLAB Toolbox, named as DSSynth 
-(Digital-System Synthesizer), to synthesize sound digital controllers 
-for physical plants that are represented as linear time-invariant
-systems with single input and output. In particular, DSSynth synthesizes digital 
-controllers that are sound w.r.t. the stability and safety specifications by taking into account finite word-length 
-effects in their representation. DSSynth considers the complete range
-of approximations, including time discretization, quantization effects, 
-and finite-precision arithmetic (and its rounding errors). 
-Currently, there are two DSSynth versions for synthesizing digital controllers for physical plants 
-represented by transfer function or state-space equations: a command-line and 
-a MATLAB application. The resulting toolbox 
-enables application of program synthesis to real-world control engineering systems.
+%
+We present an automated MATLAB Toolbox, named as DSSynth (Digital-System
+Synthesizer), to synthesize sound digital controllers for physical plants
+that are represented as linear time-invariant systems with single input and
+output.  In particular, DSSynth synthesizes digital controllers that are
+sound w.r.t.  the stability and safety specifications by taking into account
+finite word-length effects in their representation.  DSSynth considers the
+complete range of approximations, including time discretization,
+quantization effects, and finite-precision arithmetic (and its rounding
+errors).  Currently, there are two DSSynth versions for synthesizing digital
+controllers for physical plants represented by transfer function or
+state-space equations: a command-line and a MATLAB application.  The
+resulting toolbox enables application of program synthesis to real-world
+control engineering systems.
+%
 \end{abstract}
 
 %
@@ -73,11 +76,12 @@ Formal Synthesis; Digital Control Systems; MATLAB Toolbox; Finite-Word Length; V
 \section{Introduction}
 %---------------------------------------------------
 
-Control theory targets the construction of reliable systems by providing mathematical guarantees about the stability and the desired 
-performance of closed-loop dynamics, where outputs of discrete plant $G(z)$ 
-are fed back and compared to a reference signal to which a 
-controller $C(z)$ should steer~\cite{astrom1997computer}. 
-Fig.~\ref{fig:typical-control-system} shows a typical closed-loop digital control system.
+Control theory targets the construction of reliable systems by providing
+mathematical guarantees about the stability and the desired performance of
+closed-loop dynamics, where outputs of discrete plant $G(z)$ are fed back
+and compared to a reference signal to which a controller $C(z)$ should
+steer~\cite{astrom1997computer}.  Fig.~\ref{fig:typical-control-system}
+shows a typical closed-loop digital control system.
 %
 \begin{figure}[ht!]
 \centering
@@ -91,17 +95,16 @@ Fig.~\ref{fig:typical-control-system} shows a typical closed-loop digital contro
 %expressed as difference equations, transfer functions or state-space equations. 
 %Here, the focus is on transfer function and state-space representations. 
 
-
-There are various mathematical representations for control 
-systems,  e.g.,  transfer functions and state-space equations (difference or differential equations). 
-Here, 
-systems with a single input and a single output (SISO) are considered and 
-represented by transfer functions or state-space LTI models. LTI models 
-are used to represent dynamics in several engineering applications to support non-trivial tasks when 
-applied to embedded \& cyber-physical systems (e.g., robot manipulator, smart grid, 
-power plants, distributed robotics, and automatic pilot avionics). 
-The following expression presents the general form 
-of a discrete plant or a digital controller based on the transfer function representation:
+There are various mathematical representations for control systems, e.g.,
+transfer functions and state-space equations (difference or differential
+equations).  Here, systems with a single input and a single output (SISO)
+are considered and represented by transfer functions or state-space LTI
+models.  LTI models are used to represent dynamics in several engineering
+applications to support non-trivial tasks when applied to embedded \&
+cyber-physical systems (e.g., robot manipulator, smart grid, power plants,
+distributed robotics, and automatic pilot avionics).  The following
+expression presents the general form of a discrete plant or a digital
+controller based on the transfer function representation:
 %
 \begin{equation}
 \small
@@ -127,51 +130,65 @@ y(n) &= C x(n) + D u(n),
 
 \noindent where $A$, $B$, $C$ and $D$ are matrices that fully specify the model. 
 %
-Controllers synthesis for LTI systems is richly studied 
-in the literature~\cite{mazo2010pessoa,DBLP:conf/emsoft/RavanbakhshS16,economakos2016automated}; 
-however, there are many challenges when 
-digital control system theory is used, mainly due to the finite-word 
-length (FWL) effects leading to truncation 
-or round-off errors~\cite{Guang2013, Istepanian2001}, time discretization 
-and quantization noise, which are typically introduced by Analogue-to-Digital 
-(ADC) and Digital-to-Analogue (DAC) conversion~\cite{astrom1997computer}. 
+Controllers synthesis for LTI systems is richly studied in the
+literature~\cite{mazo2010pessoa,DBLP:conf/emsoft/RavanbakhshS16,economakos2016automated};
+however, there are many challenges when digital control system theory is
+used, mainly due to the finite-word length (FWL) effects leading to
+truncation or round-off errors~\cite{Guang2013, Istepanian2001}, time
+discretization and quantization noise, which are typically introduced by
+Analogue-to-Digital (ADC) and Digital-to-Analogue (DAC)
+conversion~\cite{astrom1997computer}.
 
-Recently, a new methodology to synthesize digital control systems has been proposed, 
-named DSSynth (Digital-System Synthesizer)~\cite{abate2017, abatecav2017}, 
-which is based on the Counter-Example Guided Inductive Synthesis 
-(CEGIS) approach~\cite{DBLP:conf/asplos/Solar-LezamaTBSS06}. CEGIS is used
-as a program synthesis engine that is able to generate sound digital controllers for highly non-trivial 
-control system specifications with a very high degree of automation. The program synthesis engine 
-uses a specification as starting point, and subsequently produces a sequence of candidate 
-programs from a given template. The candidate programs are iteratively refined to eventually 
-satisfy the specification. Modern synthesis engines such as the one used here combine automated testing, genetic algorithms 
-and SMT-based reasoning~\cite{DBLP:journals/corr/AlurFSS16a, DBLP:conf/lpar/DavidKL15}. 
-Using the CEGIS-based approach, DSSynth synthesizes stable digital controllers
-for a given physical plant represented by either transfer functions or state-space equations~\cite{abate2017,abatecav2017}.
+Recently, a new methodology to synthesize digital control systems has been
+proposed, named DSSynth (Digital-System Synthesizer)~\cite{abate2017,
+abatecav2017}, which is based on the Counter-Example Guided Inductive
+Synthesis (CEGIS) approach~\cite{DBLP:conf/asplos/Solar-LezamaTBSS06}. 
+CEGIS is used as a program synthesis engine that is able to generate sound
+digital controllers for highly non-trivial control system specifications
+with a very high degree of automation.  The program synthesis engine uses a
+specification as starting point, and subsequently produces a sequence of
+candidate programs from a given template.  The candidate programs are
+iteratively refined to eventually satisfy the specification.  Modern
+synthesis engines such as the one used here combine automated testing,
+genetic algorithms and SMT-based
+reasoning~\cite{DBLP:journals/corr/AlurFSS16a, DBLP:conf/lpar/DavidKL15}. 
+Using the CEGIS-based approach, DSSynth synthesizes stable digital
+controllers for a given physical plant represented by either transfer
+functions or state-space equations~\cite{abate2017,abatecav2017}.
 
-Notably, there are toolboxes in MATLAB with functions and scripts to facilitate the 
-digital system design and implementation~\cite{matlab-toolbox}. Indeed, there is a MATLAB 
-Toolbox named as DSVerifier Toolbox~\cite{issta2017,DBLP:journals/tc/BessaIPCF17,DBLP:journals/dafes/BessaICF16}, which automatically detects 
-specific errors related to digital system design ({\it e.g.}, stability, limit cycle and overflow) 
-using symbolic model checking techniques based on Boolean Satisfiability (SAT) and 
-Satisfiability Modulo Theories (SMT) solvers. Pessoa~\cite{mazo2010pessoa} is another 
-toolbox, but applied to the synthesis of correct-by-design digital controllers. 
-In particular, Pessoa is based on approximate bisimulation, which allows control engineers to replace differential equations, 
-describing a physical plant, by a respective finite-state machine. However, Pessoa does not take advantage of
-recent advances in bit-accurate verification of programs to synthesize controllers w.r.t. FWL effects. MATLAB already offers a tool 
-named as Control System Tuner~\cite{autotuner} for automatically designing controllers based on optimization solvers or graphical analysis. 
-However, the Control System Tuner is unable to consider FWL effects during the controller synthesis process.
-To the best of our knowledge, there is no MATLAB toolbox able to perform digital controller synthesis based on 
-program synthesis engines that considers the complete range of approximations, including time discretization, 
-quantization effects, and finite-precision arithmetic and its rounding errors. 
+Notably, there are toolboxes in MATLAB with functions and scripts to
+facilitate the digital system design and
+implementation~\cite{matlab-toolbox}.  Indeed, there is a MATLAB Toolbox
+named as DSVerifier
+Toolbox~\cite{issta2017,DBLP:journals/tc/BessaIPCF17,DBLP:journals/dafes/BessaICF16},
+which automatically detects specific errors related to digital system design
+({\it e.g.}, stability, limit cycle and overflow) using symbolic model
+checking techniques based on Boolean Satisfiability (SAT) and Satisfiability
+Modulo Theories (SMT) solvers.  Pessoa~\cite{mazo2010pessoa} is another
+toolbox, but applied to the synthesis of correct-by-design digital
+controllers.  In particular, Pessoa is based on approximate bisimulation,
+which allows control engineers to replace differential equations, describing
+a physical plant, by a respective finite-state machine.  However, Pessoa
+does not take advantage of recent advances in bit-accurate verification of
+programs to synthesize controllers w.r.t.  FWL effects.  MATLAB already
+offers a tool named as Control System Tuner~\cite{autotuner} for
+automatically designing controllers based on optimization solvers or
+graphical analysis.  However, the Control System Tuner is unable to consider
+FWL effects during the controller synthesis process.  To the best of our
+knowledge, there is no MATLAB toolbox able to perform digital controller
+synthesis based on program synthesis engines that considers the complete
+range of approximations, including time discretization, quantization
+effects, and finite-precision arithmetic and its rounding errors.
 
-The present tool paper addresses this limitation and describes a toolbox for the DSSynth tool~\cite{abate2017, abatecav2017} 
-in a MATLAB environment, named \tool. The main advantage for the use of a MATLAB toolbox 
-lies on designing physical plants in MATLAB and then promptly synthesizing a stable and safe digital controller,
-considering the complete range of approximations. 
-Notably, when using the \tool, an engineer is able to model a physical plant with MATLAB
-through transfer function or state-space representations, considering low-level systems parameters 
-(implementation features and numerical format).
+The present tool paper addresses this limitation and describes a toolbox for
+the DSSynth tool~\cite{abate2017, abatecav2017} in a MATLAB environment,
+named \tool.  The main advantage for the use of a MATLAB toolbox lies on
+designing physical plants in MATLAB and then promptly synthesizing a stable
+and safe digital controller, considering the complete range of
+approximations.  Notably, when using the \tool, an engineer is able to model
+a physical plant with MATLAB through transfer function or state-space
+representations, considering low-level systems parameters (implementation
+features and numerical format).
 
 %---------------------------------------------------
 \section{Counterexample-Guided Inductive Synthesis for Control Systems}
@@ -189,9 +206,9 @@ through transfer function or state-space representations, considering low-level 
 The design of our synthesizer consists of two main phases, an inductive
 synthesis phase, {\sc synthesise}, and a validation phase, {\sc verify},
 which interact via a finite set of test vectors that is updated
-incrementally.  Given a stability and safety specification, the
-inductive synthesis procedure tries to find a candidate solution
-satisfying the specification for the given set of test inputs.
+incrementally.  Given a stability and safety specification, the inductive
+synthesis procedure tries to find a candidate solution satisfying the
+specification for the given set of test inputs.
 %
 If the synthesis phase succeeds in finding a witness, this witness is
 a candidate solution to the full synthesis formula.  We pass this
@@ -354,23 +371,28 @@ check that $k{\geq}\overline{k}$.
 \label{fig:CEGARIS} 
 \end{figure}
 
-Instead of unfolding the dynamics, the second approach (shown in Fig.~\ref{fig:CEGARIS}) 
-employs {\em abstract acceleration}~\cite{cattaruzza2015unbounded} to 
-simultaneously evaluate all possible progressions of the model. This eliminates the need for
-a completeness threshold, since the time horizon considered in abstract acceleration is infinite.
-An additional preprocessing phase is used to compute 
-a set of initial bounds on $K$ based on input constraints. 
-Note that these bounds will be used by the {\sc synthesize} phase to reduce the size of the solution space.
+Instead of unfolding the dynamics, the second approach (shown in
+Fig.~\ref{fig:CEGARIS}) employs {\em abstract
+acceleration}~\cite{cattaruzza2015unbounded} to simultaneously evaluate all
+possible progressions of the model.  This eliminates the need for a
+completeness threshold, since the time horizon considered in abstract
+acceleration is infinite.  An additional preprocessing phase is used to
+compute a set of initial bounds on $K$ based on input constraints.  Note
+that these bounds will be used by the {\sc synthesize} phase to reduce the
+size of the solution space.
 %
-Since this model is based on abstraction, we initially perform the synthesis over a basic
-model that abstracts away the complexity of the specification and is only refined to a more
-complex model when a counterexample is found. 
+Since this model is based on abstraction, we initially perform the synthesis
+over a basic model that abstracts away the complexity of the specification
+and is only refined to a more complex model when a counterexample is found.
+%
 % Thus, we may only look at the gain of the
 % model to synthesise a controller and to add further restrictions on specific sections of the reach
 % tube when these prove to invalidate the solution.
-The use of this Counterexample-Guided 
-Abstraction-Refinement results in much faster synthesis and verification since it is applied to
-both phases, allowing for faster results whilst maintaining soundness for an infinite time horizon.
+%
+The use of this Counterexample-Guided Abstraction-Refinement results in much
+faster synthesis and verification since it is applied to both phases,
+allowing for faster results whilst maintaining soundness for an infinite
+time horizon.
  
 %\textcolor{red}{We have to talk about the naive and AA back-ends, which are based on our CEGIS framework}
 
@@ -394,47 +416,59 @@ automated (DSSynth) procedures, as illustrated in Fig.~\ref{fig:synthesis-flow}.
 \label{fig:synthesis-flow}
 \end{figure}
 
-In step $1$, the user has to define the digital controller representation, 
-which can be a transfer function or a state-space model. 
-In step $2$, the physical plant (represented by Equations (\ref{eq:transferfunction}) 
-or (\ref{eq:ss-example})) must be designed, using a method selected 
-from the control literature~\cite{astrom1997computer}. Finally, in step $3$, 
-the numerical representation for the digital controller implementation must be 
-defined by the user, {\it i.e.}, the FWL format that includes the number of bits for the integer 
-and fractional parts as well as the dynamic range inputs. The result of the manual 
-procedure performed by the user is a digital system specification for the given 
-physical plant in MATLAB. 
+In step $1$, the user has to define the digital controller representation,
+which can be a transfer function or a state-space model.  In step $2$, the
+physical plant (represented by Equations (\ref{eq:transferfunction}) or
+(\ref{eq:ss-example})) must be designed, using a method selected from the
+control literature~\cite{astrom1997computer}.  Finally, in step $3$, the
+numerical representation for the digital controller implementation must be
+defined by the user, {\it i.e.}, the FWL format that includes the number of
+bits for the integer and fractional parts as well as the dynamic range
+inputs.  The result of the manual procedure performed by the user is a
+digital system specification for the given physical plant in MATLAB.
 
-After that, the synthesis process starts in step $A$, when \tool obtains the digital system 
-specification in MATLAB, and then translates it into an ANSI-C program. 
-In step $B$, our CEGIS engine is invoked to synthesize the digital controller w.r.t. the digital system
-specification. Finally, in step $C$, the synthesized digital controller considering FWL effects is produced. 
-The output generated by \tool is the synthesized digital controller represented either in transfer function 
-or state-space equation. The synthesis is considered to be \emph{successful} if a digital controller is correctly 
-synthesized w.r.t. FWL effects; otherwise, if any parameter is incorrectly defined in previous steps, 
-or if there is no solution (digital controller) for the respective physical plant (given the digital controller
- implementation aspects), then the synthesis is considered to have \emph{failed}.
+After that, the synthesis process starts in step $A$, when \tool obtains the
+digital system specification in MATLAB, and then translates it into an
+ANSI-C program.  In step $B$, our CEGIS engine is invoked to synthesize the
+digital controller w.r.t.  the digital system specification.  Finally, in
+step $C$, the synthesized digital controller considering FWL effects is
+produced.  The output generated by \tool is the synthesized digital
+controller represented either in transfer function or state-space equation. 
+The synthesis is considered to be \emph{successful} if a digital controller
+is correctly synthesized w.r.t.  FWL effects; otherwise, if any parameter is
+incorrectly defined in previous steps, or if there is no solution (digital
+controller) for the respective physical plant (given the digital controller
+implementation aspects), then the synthesis is considered to have
+\emph{failed}.
 
-Our CEGIS engine is implemented as an integrated module within the C bounded model checker (CBMC)~\cite{cbmc}.  CBMC
-transforms the ANSI-C representation of our closed-loop control system model into its internal format called
-\emph{GOTO}.  We instrument this internal \emph{GOTO} program for each synthesis or verification scenario accordingly,
-and use CBMC as an oracle to answer our queries.  CBMC itself relies on an underlying SAT or SMT solver to solve the
-resulting formulae.  We model FWL effects, time discretization and the presence of quantization noise explicitly using CBMC's  
-nondeterminism API (e.g., \texttt{nondet}, \texttt{CPROVER\_assume} intrinsic functions).  Our module was included in CBMC~5.7 and is available for
-public download.\footnote{\url{https://github.com/diffblue/cbmc/archive/cbmc-5.7.zip}}  We further created a VirtualBox OVA image
-with our tool pre-installed, including our MATLAB-generated benchmarks and benchmark shell script with instructions
-to run all benchmarks and reproduce our
-experiments.\footnote{\url{www.cprover.org/DSSynth/controller-synthesis-cav-2017.tar.gz}}  The current development branch
-of our toolbox is available in a public GitHub
+Our CEGIS engine is implemented as an integrated module within the C bounded
+model checker (CBMC)~\cite{cbmc}.  CBMC transforms the ANSI-C representation
+of our closed-loop control system model into its internal format called
+\emph{GOTO}.  We instrument this internal \emph{GOTO} program for each
+synthesis or verification scenario accordingly, and use CBMC as an oracle to
+answer our queries.  CBMC itself relies on an underlying SAT or SMT solver
+to solve the resulting formulae.  We model FWL effects, time discretization
+and the presence of quantization noise explicitly using CBMC's
+nondeterminism API (e.g., \texttt{nondet}, \texttt{CPROVER\_assume}
+intrinsic functions).  Our module was included in CBMC~5.7 and is available
+for public
+download.\footnote{\url{https://github.com/diffblue/cbmc/archive/cbmc-5.7.zip}}
+We further created a VirtualBox OVA image with our tool pre-installed,
+including our MATLAB-generated benchmarks and benchmark shell script with
+instructions to run all benchmarks and reproduce our
+experiments.\footnote{\url{www.cprover.org/DSSynth/controller-synthesis-cav-2017.tar.gz}}
+The current development branch of our toolbox is available in a public
+GitHub
 repository.\footnote{\url{https://github.com/ssvlab/dsverifier/tree/master/toolbox-dssynth}}
 
-The entire implementation consists of $400$ lines of MATLAB scripts for the UI
-module, $585$ and $800$ lines of C code in the naive and abstract accelerator
-back-ends, respectively (cf.~Section~\ref{sec:CEGIS}).  $4000$ lines of C code for utility functions such as
-interval and fixed-point arithmetic, as well as $1000$ lines of C++ code in the
-control synthesis module in CEGIS CBMC.  We evaluate \tool using $18$ SISO 
-control system benchmarks. Additionally, the documentation and videos about \tool are available 
-at \url{http://dsverifier.org/dsverifier/dssynth-toolbox/}.
+The entire implementation consists of $400$ lines of MATLAB scripts for the
+UI module, $585$ and $800$ lines of C code in the naive and abstract
+accelerator back-ends, respectively (cf.~Section~\ref{sec:CEGIS}).  $4000$
+lines of C code for utility functions such as interval and fixed-point
+arithmetic, as well as $1000$ lines of C++ code in the control synthesis
+module in CEGIS CBMC.  We evaluate \tool using $18$ SISO control system
+benchmarks.  Additionally, the documentation and videos about \tool are
+available at \url{http://dsverifier.org/dsverifier/dssynth-toolbox/}.
 
 
 %---------------------------------------------------
@@ -573,11 +607,14 @@ $y$ represents the synthesized stable digital controller, which is defined by Eq
 C(z)=\frac{-0.9983^{2}+0.09587z+0.1926}{z^2+0.5665z+0.75}.
 \end{equation}
 
-A digital system is stable \textit{iff} all of its poles are inside the $z$-plane unity circle, 
-namely poles must have the modulus less than one~\cite{astrom1997computer}. In order to compute the poles for the digital 
-system represented by Equations~\eqref{equation_plant} and \eqref{equation_controller}, 
-the user can invoke the \texttt{feedback} and \texttt{series} commands in MATLAB~\cite{matlab-toolbox} 
-to achieve a general equation regarding the transfer function representation, as illustrated in Fig.~\ref{combine-controller-plant}. 
+A digital system is stable \textit{iff} all of its poles are inside the
+$z$-plane unity circle, namely poles must have the modulus less than
+one~\cite{astrom1997computer}.  In order to compute the poles for the
+digital system represented by Equations~\eqref{equation_plant} and
+\eqref{equation_controller}, the user can invoke the \texttt{feedback} and
+\texttt{series} commands in MATLAB~\cite{matlab-toolbox} to achieve a
+general equation regarding the transfer function representation, as
+illustrated in Fig.~\ref{combine-controller-plant}.
 
 \begin{figure}[ht]
 \scriptsize
@@ -608,11 +645,12 @@ is described by Eq.~\ref{equation_general} as follows
 \frac{N(z)}{D(z)}=\frac{0.06863z^{4} - 0.006591z^{3} - 0.01324z^{2}}{1.069z^{4} - 1.136z^{3} + 0.4849z^{2} -0.8704z + 0.5317}.
 \end{equation}
  
-For the stability check, if any root of the denominator polynomial $D(z)$ in Eq.~\ref{equation_general} 
-has modulus equal or greater than one, then the system is unstable; 
-otherwise, it is stable. Indeed, the roots computed by the function \texttt{roots} 
-in MATLAB~\cite{matlab-toolbox} result in the following poles as shown in Fig.~\ref{roots-of-dz}, 
-which means that DSSynth has synthesized a stable digital controller.
+For the stability check, if any root of the denominator polynomial $D(z)$ in
+Eq.~\ref{equation_general} has modulus equal or greater than one, then the
+system is unstable; otherwise, it is stable.  Indeed, the roots computed by
+the function \texttt{roots} in MATLAB~\cite{matlab-toolbox} result in the
+following poles as shown in Fig.~\ref{roots-of-dz}, which means that DSSynth
+has synthesized a stable digital controller.
 
 \begin{figure}[ht]
 \scriptsize
@@ -630,10 +668,11 @@ which means that DSSynth has synthesized a stable digital controller.
 \label{roots-of-dz}
 \end{figure}
 
-Simulating the digital system represented by Equations \eqref{equation_plant} and \eqref{equation_controller} 
-to validate and reproduce the system stability, the user can invoke the step response using the 
-command \texttt{dstep} in MATLAB, and then observe that the plotted graph shows a stable digital system, 
-as shown in Fig.~\ref{step-response}.
+Simulating the digital system represented by Equations
+\eqref{equation_plant} and \eqref{equation_controller} to validate and
+reproduce the system stability, the user can invoke the step response using
+the command \texttt{dstep} in MATLAB, and then observe that the plotted
+graph shows a stable digital system, as shown in Fig.~\ref{step-response}.
 %
 \begin{figure}[ht]
   \includegraphics[width=0.5\textwidth]{step-response.eps}
@@ -650,13 +689,17 @@ as shown in Fig.~\ref{step-response}.
 \label{benchmarks-description}
 %---------------------------------------------------
 
-Our evaluation consists of $18$ SISO control system benchmarks 
-extracted from the literature~\cite{abate2017,abatecav2017,bouabdallah, acrobot,cstr,KOKOTOVIC198023,gajic2008optimal,Franklin15, maglev, converters, CTMS,DBLP:journals/tc/BessaIPCF17,DBLP:journals/dafes/BessaICF16},
-which include physical plants for unmanned aerial vehicle (UAV), cruise control system, 
-spring-mass damper, satellite, direct current (DC) servo motor, helicopter, 
-inverted pendulum, pendulum, magnetic suspension, magnitezed pointer, 1/4 car suspension, 
-computer tape driver, flexible beam, guidance system, USCG cutter tampa, continuous stirred tank reactor, 
-voltage regulator, and an acrobot control system.
+Our evaluation consists of $18$ SISO control system benchmarks extracted
+from the literature~\cite{abate2017,abatecav2017,bouabdallah,
+acrobot,cstr,KOKOTOVIC198023,gajic2008optimal,Franklin15, maglev,
+converters,
+CTMS,DBLP:journals/tc/BessaIPCF17,DBLP:journals/dafes/BessaICF16}, which
+include physical plants for unmanned aerial vehicle (UAV), cruise control
+system, spring-mass damper, satellite, direct current (DC) servo motor,
+helicopter, inverted pendulum, pendulum, magnetic suspension, magnitezed
+pointer, 1/4 car suspension, computer tape driver, flexible beam, guidance
+system, USCG cutter tampa, continuous stirred tank reactor, voltage
+regulator, and an acrobot control system.
 
 %The first set of benchmarks uses the discrete model of a cruise control system for a car, and accounts for rolling friction, aerodynamic drag, and the gravitational disturbance force. %cruise-control
 %The second set of benchmarks considers the discrete model of a simple spring-mass damper plant. %spring-mass damper
@@ -682,12 +725,14 @@ voltage regulator, and an acrobot control system.
 \label{experimental-setup}
 %-----------------------------------
 
-For all evaluated benchmarks, the signal input range related to the control system 
-lies between $-1$ and $1$. The implementation features used for digital controller are:
-$8$-bits for the integer part (including the sign bit) and $8$-bits for the fractional 
-part. We have run the \tool using the CEGIS with multi-staged verification (cf.~Section~\ref{sec:CEGIS}).
-All experiments with \tool v$1$.$0$.$0$  were conducted on an otherwise idle 
-Intel Core i$7-2600$ $3.40$ GHz processor, with $24$ GB of RAM, running Ubuntu $64$-bits.
+For all evaluated benchmarks, the signal input range related to the control
+system lies between $-1$ and $1$.  The implementation features used for
+digital controller are: $8$-bits for the integer part (including the sign
+bit) and $8$-bits for the fractional part.  We have run the \tool using the
+CEGIS with multi-staged verification (cf.~Section~\ref{sec:CEGIS}).  All
+experiments with \tool v$1$.$0$.$0$ were conducted on an otherwise idle
+Intel Core i$7-2600$ $3.40$ GHz processor, with $24$ GB of RAM, running
+Ubuntu $64$-bits.
 
 %---------------------------------------------------
 \subsection{Objectives}
@@ -703,22 +748,26 @@ controllers outside of our model using MATLAB. %, using both the transfer functi
 
 %\textcolor{red}{Why are the experiments only mentioning stable controllers? Up until this point, we discuss stable and safe controllers.}
 
-For our experiments, we observed that the \tool correctly synthesizes stable and safe digital controllers 
-for our set of benchmarks represented by transfer functions or state-space equations. 
-We employed a diverse set of real-world benchmarks extracted from the control literature. 
-However, note that this set of benchmarks is still limited within the scope of this paper, and 
-the performance may not be generalized to other benchmarks. 
-The median runtime for our benchmarks set is $124$\,s, and the average synthesis time amounts 
-to $35.5$\,s for closed-loop control systems represented by state-space equations, while 
-for transfer functions, the average synthesis time amounts to $123.6$\,s. 
+For our experiments, we observed that the \tool correctly synthesizes stable
+and safe digital controllers for our set of benchmarks represented by
+transfer functions or state-space equations.  We employed a diverse set of
+real-world benchmarks extracted from the control literature.  However, note
+that this set of benchmarks is still limited within the scope of this paper,
+and the performance may not be generalized to other benchmarks.  The median
+runtime for our benchmarks set is $124$\,s, and the average synthesis time
+amounts to $35.5$\,s for closed-loop control systems represented by
+state-space equations, while for transfer functions, the average synthesis
+time amounts to $123.6$\,s.
 
-Additionally, we are able to reproduce the stability and safety for all evaluated control system benchmarks.
-As an example, we have reproduced the stability property in the synthesized controller 
-for a DC motor plant described in Eq.~\eqref{tf-synth-controller}, simulating the step response 
-in MATLAB. Fig.~\ref{tf-step-response} shows that the digital controller 
-synthesized by the \tool stabilizes the closed-loop control system using 
-the series connection (as shown in Fig.~\ref{fig:typical-control-system}) for the DC motor plant. 
-We have applied this procedure to all synthesized controllers to confirm the reliability of our experimental results.
+Additionally, we are able to reproduce the stability and safety for all
+evaluated control system benchmarks.  As an example, we have reproduced the
+stability property in the synthesized controller for a DC motor plant
+described in Eq.~\eqref{tf-synth-controller}, simulating the step response
+in MATLAB.  Fig.~\ref{tf-step-response} shows that the digital controller
+synthesized by the \tool stabilizes the closed-loop control system using the
+series connection (as shown in Fig.~\ref{fig:typical-control-system}) for
+the DC motor plant.  We have applied this procedure to all synthesized
+controllers to confirm the reliability of our experimental results.
 %
 \begin{equation}
 \label{tf-synth-controller}
@@ -779,20 +828,23 @@ compute the system input and output via the feedback matrix, and then check the 
 \section{Conclusions}
 %--------------------------------------
 
-The \tool can automatically synthesize stable and safe digital controllers for intricate dynamic physical plants, 
-represented in MATLAB as a transfer function or a state-space equation using CEGIS. 
-In particular, the \tool represents the first fully automated synthesis
-tool that is algorithmically and numerically sound, considering various error
-sources in the implementation of the digital control algorithm and in the computational 
+The \tool can automatically synthesize stable and safe digital controllers
+for intricate dynamic physical plants, represented in MATLAB as a transfer
+function or a state-space equation using CEGIS.  In particular, the \tool
+represents the first fully automated synthesis tool that is algorithmically
+and numerically sound, considering various error sources in the
+implementation of the digital control algorithm and in the computational
 modeling of plant dynamics~\cite{abate2017,abatecav2017}.
 %
-Additionally, given the current literature in controller synthesis, there is no other MATLAB toolbox 
-for synthesizing stable and safe digital controllers for physical plants, while taking into account all aspects of its 
-digital implementation. 
+Additionally, given the current literature in controller synthesis, there is
+no other MATLAB toolbox for synthesizing stable and safe digital controllers
+for physical plants, while taking into account all aspects of its digital
+implementation.
 %
-As future work, the \tool will perform synthesis of other specifications (e.g., performance) 
-and be combined with DSVerifier/DSValidator Toolboxes~\cite{issta2017,dsvalidator} to verify/validate 
-other controller properties. 
+As future work, the \tool will perform synthesis of other specifications
+(e.g., performance) and be combined with DSVerifier/DSValidator
+Toolboxes~\cite{issta2017,dsvalidator} to verify/validate other controller
+properties.
 
 \bibliographystyle{IEEEtran}
 \bibliography{references} 
