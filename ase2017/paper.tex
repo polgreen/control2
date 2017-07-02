@@ -152,22 +152,21 @@ Using the CEGIS-based approach, DSSynth synthesizes stable digital
 controllers for a given physical plant represented by either transfer
 functions or state-space equations.
 
-Notably, there are toolboxes in MATLAB with functions and scripts to
-facilitate the digital system design and
-implementation~\cite{matlab-toolbox}.  Indeed, there is a MATLAB Toolbox
-named as DSVerifier
-Toolbox~\cite{issta2017,DBLP:journals/tc/BessaIPCF17,DBLP:journals/dafes/BessaICF16},
-which automatically detects specific errors related to digital system design
-({\it e.g.}, stability, limit cycle and overflow) using symbolic model
-checking techniques based on Boolean Satisfiability (SAT) and Satisfiability
-Modulo Theories (SMT) solvers.  Pessoa~\cite{mazo2010pessoa} is another
-toolbox, but applied to the synthesis of correct-by-design digital
-controllers.  In particular, Pessoa is based on approximate bisimulation,
-which allows control engineers to replace differential equations, describing
-a physical plant, by a respective finite-state machine.  However, Pessoa
-does not take advantage of recent advances in bit-accurate verification of
-programs to synthesize controllers w.r.t.  FWL effects.  MATLAB already
-offers a tool named as Control System Tuner~\cite{autotuner} for
+There are existing toolboxes for MATLAB that provide functions and scripts
+to support design and implementation of digital
+controllers~\cite{matlab-toolbox}.  In~particular, there is a MATLAB Toolbox
+named \emph{DSVerifier}~\cite{issta2017, DBLP:journals/tc/BessaIPCF17,
+DBLP:journals/dafes/BessaICF16}, which automatically detects specific errors
+in a given digital system design (e.g., errors related to stability, limit
+cycle and overflow) using symbolic model checking based on Boolean
+Satisfiability (SAT) and Satisfiability Modulo Theories (SMT) solvers.  The
+Pessoa~\cite{mazo2010pessoa} toolbox performs synthesis of correct-by-design
+digital controllers.  Pessoa is based on approximate bisimulation, which
+allows control engineers to replace differential equations, describing a
+physical plant, by a respective finite-state machine.  However, Pessoa does
+not take advantage of recent advances in bit-accurate verification of
+programs to synthesize controllers w.r.t.~FWL effects.  MATLAB 
+offers a tool named Control System Tuner~\cite{autotuner} for
 automatically designing controllers based on optimization solvers or
 graphical analysis.  However, the Control System Tuner is unable to consider
 FWL effects during the controller synthesis process.  To the best of our
