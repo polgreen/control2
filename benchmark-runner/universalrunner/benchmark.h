@@ -7,9 +7,10 @@
 
 #ifndef BENCHMARK_H_
 #define BENCHMARK_H_
-
-#define INT_BITS 8
-#define FRAC_BITS 8
+#ifndef INT_BITS
+  #define INT_BITS 6
+  #define FRAC_BITS 10
+#endif
 #define NSTATES 3
 #include "control_types.h"
 
