@@ -56,6 +56,20 @@
        #define controller_cast(x) x
     #endif
   #else
+    #ifdef INTERVAL
+       typedef double __plant_precisiont;
+        #include "float_interval.h"
+       typedef struct intervalt __plant_typet;
+#ifdef SINGLE_PREC
+       typedef float __controller_precisiont;
+#elif DOUBLE_PREC
+       typedef double __controller_precisiont;
+#else
+#error unsupported precisions
+#endif
+       typedef struct intervalt __controller_typet;
+       #define interval(x) interval_cast(x)
+     #endif
        __CPROVER_assert(0,"error: intervals for floating point not yet implemented");
    //we need to implement intervals for floating point
   #endif
