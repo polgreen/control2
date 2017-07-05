@@ -335,9 +335,9 @@ void inputs_equal_ref_minus_k_times_states(void)
 
         _controller_inputs = sub(zero_type, plant_cast(result_fxp));
         #ifdef INTERVAL
-        __DSVERIFIER_assert(_controller_inputs.high<INPUT_UPPERBOUND && _controller_inputs.low >INPUT_LOWERBOUND);
+        __DSVERIFIER_assert(_controller_inputs.high<=INPUT_UPPERBOUND && _controller_inputs.low >=INPUT_LOWERBOUND);
         #else
-        __DSVERIFIER_assert(_controller_inputs < INPUT_UPPERBOUND && _controller_inputs > INPUT_LOWERBOUND);
+        __DSVERIFIER_assert(_controller_inputs <= INPUT_UPPERBOUND && _controller_inputs >= INPUT_LOWERBOUND);
         #endif
 
   }
@@ -369,18 +369,18 @@ void states_equals_A_states_plus_B_inputs(void)
    __CPROVER_array_copy(_controller_states, states_equals_A_states_plus_B_inputs_result);
    /*for(i=0; i<NSTATES; i++)
        {_controller_states[i] = states_equals_A_states_plus_B_inputs_result[i];}*/
-  __DSVERIFIER_assert( _controller_states[0]<SAFE_STATE_UPPERBOUND && _controller_states[0]>SAFE_STATE_LOWERBOUND);
-  __DSVERIFIER_assert( _controller_states[1]<SAFE_STATE_UPPERBOUND && _controller_states[1]>SAFE_STATE_LOWERBOUND);
+  __DSVERIFIER_assert( _controller_states[0]<=SAFE_STATE_UPPERBOUND && _controller_states[0]>=SAFE_STATE_LOWERBOUND);
+  __DSVERIFIER_assert( _controller_states[1]<=SAFE_STATE_UPPERBOUND && _controller_states[1]>=SAFE_STATE_LOWERBOUND);
   #if NSTATES==3 || NSTATES==4
-      __DSVERIFIER_assert( _controller_states[2]<SAFE_STATE_UPPERBOUND && _controller_states[2]>SAFE_STATE_LOWERBOUND);
+      __DSVERIFIER_assert( _controller_states[2]<=SAFE_STATE_UPPERBOUND && _controller_states[2]>=SAFE_STATE_LOWERBOUND);
   #endif
   #if NSTATES==4
-      __DSVERIFIER_assert( _controller_states[3]<SAFE_STATE_UPPERBOUND && _controller_states[3]>SAFE_STATE_LOWERBOUND);
+      __DSVERIFIER_assert( _controller_states[3]<=SAFE_STATE_UPPERBOUND && _controller_states[3]>=SAFE_STATE_LOWERBOUND);
   #endif
 #else
   for(int i=0; i<NSTATES; i++)
        {_controller_states[i] = states_equals_A_states_plus_B_inputs_result[i];
-       __DSVERIFIER_assert( _controller_states[i]<SAFE_STATE_UPPERBOUND && _controller_states[i]>SAFE_STATE_LOWERBOUND);
+       __DSVERIFIER_assert( _controller_states[i]<=SAFE_STATE_UPPERBOUND && _controller_states[i]>=SAFE_STATE_LOWERBOUND);
        }
 #endif
 #else
@@ -388,18 +388,18 @@ void states_equals_A_states_plus_B_inputs(void)
    __CPROVER_array_copy(_controller_states, states_equals_A_states_plus_B_inputs_result);
    /*for(i=0; i<NSTATES; i++)
        {_controller_states[i] = states_equals_A_states_plus_B_inputs_result[i];}*/
-  __DSVERIFIER_assert( _controller_states[0].high<SAFE_STATE_UPPERBOUND && _controller_states[0].low>SAFE_STATE_LOWERBOUND);
-  __DSVERIFIER_assert( _controller_states[1].high<SAFE_STATE_UPPERBOUND && _controller_states[1].low>SAFE_STATE_LOWERBOUND);
+  __DSVERIFIER_assert( _controller_states[0].high<=SAFE_STATE_UPPERBOUND && _controller_states[0].low>=SAFE_STATE_LOWERBOUND);
+  __DSVERIFIER_assert( _controller_states[1].high<=SAFE_STATE_UPPERBOUND && _controller_states[1].low>=SAFE_STATE_LOWERBOUND);
   #if NSTATES==3 || NSTATES==4
-      __DSVERIFIER_assert( _controller_states[2].high<SAFE_STATE_UPPERBOUND && _controller_states[2].low>SAFE_STATE_LOWERBOUND);
+      __DSVERIFIER_assert( _controller_states[2].high<=SAFE_STATE_UPPERBOUND && _controller_states[2].low>=SAFE_STATE_LOWERBOUND);
   #endif
   #if NSTATES==4
-      __DSVERIFIER_assert( _controller_states[3].high<SAFE_STATE_UPPERBOUND && _controller_states[3].low>SAFE_STATE_LOWERBOUND);
+      __DSVERIFIER_assert( _controller_states[3].high<=SAFE_STATE_UPPERBOUND && _controller_states[3].low=>SAFE_STATE_LOWERBOUND);
   #endif
 #else
   for(int i=0; i<NSTATES; i++)
        {_controller_states[i] = states_equals_A_states_plus_B_inputs_result[i];
-       __DSVERIFIER_assert( _controller_states[i].high<SAFE_STATE_UPPERBOUND && _controller_states[i].low>SAFE_STATE_LOWERBOUND);
+       __DSVERIFIER_assert( _controller_states[i].high<=SAFE_STATE_UPPERBOUND && _controller_states[i].low>=SAFE_STATE_LOWERBOUND);
        }
 #endif
 #endif
@@ -553,7 +553,7 @@ void assume_corner_cases_for_states(void) {
       { interval(INITIALSTATE_LOWERBOUND), interval(INITIALSTATE_LOWERBOUND), interval(INITIALSTATE_LOWERBOUND), interval(INITIALSTATE_UPPERBOUND) },
       { interval(INITIALSTATE_LOWERBOUND), interval(INITIALSTATE_LOWERBOUND), interval(INITIALSTATE_LOWERBOUND), interval(INITIALSTATE_LOWERBOUND) } };
   #else
-  #define NPOLES NSTATES*NSTATES
+  int NPOLES=internal_pow(2, NSTATES);
   const __plant_typet _state_poles[NPOLES][NSTATES];
 
   for(int i=0; i<NPOLES; i++)
@@ -588,7 +588,6 @@ void safety_stability(void) {
   __DSVERIFIER_assert(check_stability());
 #endif
 #if NSTATES != 1
-  //check_safety();
   __DSVERIFIER_assert(check_safety());
 #endif
 
