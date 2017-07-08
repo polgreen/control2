@@ -24,6 +24,7 @@ control_typet _dbl_lsb;
 
 void get_bounds()
 {
+#ifdef FIXEDBV
   if(FRAC_BITS >= 31)
     _fxp_one = 2147483647l;
   else
@@ -33,6 +34,18 @@ void get_bounds()
   _fxp_max = (1 << (FRAC_BITS + INT_BITS-1))-1;
   _dbl_max = (1 << (INT_BITS-1))-1;//Integer part
   _dbl_max += (_one-_dbl_lsb);//Fractional part
+#else
+  verify_assume((_EXP_BITS>_FRAC_BITS) && (_EXP_BITS<= 32));
+  signed long int exp=(1 << (_EXP_BITS -_FRAC_BITS -1));
+  _dbl_max=_one;
+  for (i=0;i<exp;i++)
+  {
+    _dbl_max*=2;
+  }
+  exp=1 << _FRAC_BITS;
+  _dbl_lsb=_one/_dbl_max;
+  _dbl_max*=_one-_one/exp;
+#endif
   _dbl_min = -_dbl_max;
 }
 
@@ -50,22 +63,32 @@ signed long int fxp_control_typet_to_fxp(control_typet value)
   return tmp;
 }
 
-void fxp_check(control_typet *value)
+control_floatt fxp_check(control_floatt value)
 {
 #ifdef __CPROVER
-  control_typet tmp_value=*value;
-  if (tmp_value < _zero) tmp_value=-tmp_value;
-  verify_assume((~_dbl_max&tmp_value)==0);
+  #ifdef _FIXEDBV
+    control_floatt tmp_value=value;
+    if (tmp_value < _zero) tmp_value=-tmp_value;
+    verify_assume((~_dbl_max&tmp_value)==0);
+    return value;
+  #else
+    const controller_floatt fwl_value=value;
+    verify_assume(fwl_value!=0);
+    return fwl_value;
+  #endif
 #else
-  *value=fxp_control_typet_to_fxp(*value);
-  *value/=_fxp_one;
+  #ifdef _FIXEDBV
+    value=fxp_control_floatt_to_fxp(value);
+    value/=_fxp_one;
+  #endif
+  return value;
 #endif
 }
 
 struct intervalt fxp_interval_check(struct intervalt value)
 {
-  fxp_check(&(value.low));
-  fxp_check(&(value.high));
+  value.low=fxp_check(value.low);
+  value.high=fxp_check(value.high);
   value.high+=_dbl_lsb;
   return value;
 }
@@ -147,6 +170,7 @@ struct intervalt abs_interval(struct intervalt x)
 
 /*inline */struct intervalt interval_fxp_mult(struct intervalt x,struct intervalt y)
 {
+#ifdef _FIXEDBV
   long long int xlow=x.low*_fxp_one;
   long long int xhigh=x.high*_fxp_one;
   long long int ylow=y.low*_fxp_one;
@@ -182,6 +206,53 @@ struct intervalt abs_interval(struct intervalt x)
   z.low/=_fxp_one;
   z.high=(zhigh/_fxp_one+1);
   z.high/=_fxp_one;
+#else
+  z=interval_mult(x,y);
+  // We need to do the equivalent of std::fexp()
+  control_floatt power=1 << FRAC_BITS;
+  control_floatt sign=_one;
+  // Normalize to 1.xxx
+  if (z.low<0)
+  {
+    sign=-sign;
+    z.low=-z.low;
+  }
+  while (z.low>_one)
+  {
+    power/=2;
+    z.low/=2;
+  }
+  while (z.low<_one)
+  {
+    power*=2;
+    z.low*=2;
+  }
+  // Restore sign and make lsb=1
+  z.low*=sign*(1 << FRAC_BITS);
+  z.low-=1;
+  //Restore original magnitude
+  z.low/=power;
+  power=1 << FRAC_BITS;
+  sign=_one;
+  if (z.high<0)
+  {
+    sign=-sign;
+    z.high=-z.high;
+  }
+  while (z.high>_one)
+  {
+    power/=2;
+    z.high/=2;
+  }
+  while (z.high<_one)
+  {
+    power*=2;
+    z.high*=2;
+  }
+  z.high*=sign*(1 << FRAC_BITS);
+  z.high+=1;
+  z.high/=power;
+#endif
   return z;
 }
 

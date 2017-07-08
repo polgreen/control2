@@ -463,6 +463,16 @@ int check_safety(void)
 }
 
 #ifdef CPROVER
+void assume_corner_cases_for_states_with_loops(void)
+{
+  for(int i=0; i<NSTATES; i++)
+  {
+    __CPROVER_assume(_controller_states[i]==INITIALSTATE_UPPERBOUND || _controller_states[i]==INITIALSTATE_LOWERBOUND);
+  }
+}
+
+
+
 void assume_corner_cases_for_states(void) {
   #if NSTATES == 1
   __CPROVER_assume(_controller_states[0] == INITIALSTATE_UPPERBOUND || _controller_states[0] == INITIALSTATE_LOWERBOUND);
@@ -498,7 +508,7 @@ void assume_corner_cases_for_states(void) {
                 || _controller_states[0] == INITIALSTATE_LOWERBOUND && _controller_states[1] == INITIALSTATE_LOWERBOUND && _controller_states[2] == INITIALSTATE_LOWERBOUND && _controller_states[3] == INITIALSTATE_UPPERBOUND
                 || _controller_states[0] == INITIALSTATE_LOWERBOUND && _controller_states[1] == INITIALSTATE_LOWERBOUND && _controller_states[2] == INITIALSTATE_LOWERBOUND && _controller_states[3] == INITIALSTATE_LOWERBOUND);
   #else
-  #error Unsupported NSTATES
+    assume_corner_cases_for_states_with_loops();
   #endif
 }
 #else
@@ -543,7 +553,20 @@ void assume_corner_cases_for_states(void) {
       { interval(INITIALSTATE_LOWERBOUND), interval(INITIALSTATE_LOWERBOUND), interval(INITIALSTATE_LOWERBOUND), interval(INITIALSTATE_UPPERBOUND) },
       { interval(INITIALSTATE_LOWERBOUND), interval(INITIALSTATE_LOWERBOUND), interval(INITIALSTATE_LOWERBOUND), interval(INITIALSTATE_LOWERBOUND) } };
   #else
-  #error Unsupported NSTATES
+  #define NPOLES NSTATES*NSTATES
+  const __plant_typet _state_poles[NPOLES][NSTATES];
+
+  for(int i=0; i<NPOLES; i++)
+  {
+    for(int j=0; j<NSTATES; j++)
+    {
+      if(i>>j & 1)
+      _state_poles[i][j] = INITIALSTATE_UPPERBOUND;
+      else
+        _state_poles[i][j] = INITIALSTATE_LOWERBOUND;
+    }
+  }
+
   #endif
 #endif
 
@@ -578,7 +601,16 @@ void safety_stability(void) {
 
 int main(int argc, const char *argv[]) {
 #ifdef CPROVER
+  #ifdef EP_TESTING
+  assume_corner_cases_for_states_with_loops();
+  __plant_typet _trace_initstates[NSTATES];
+  for(int i=0; i<NSTATES; i++)
+  {
+    _trace_initstates[i]=_controller_states[i];
+  }
+  #else
   assume_corner_cases_for_states();
+  #endif
 #else
   NUMBERLOOPS=atoi(argv[1]);
   for (int i = 0; i < NSTATES; ++i) {
