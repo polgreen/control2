@@ -166,15 +166,17 @@ alternativetitlepage=true,
   % use a better figure for cyber-physical systems
 %\vspace{-1cm}
 
-\begin{center}
-  \begin{tabular}{lll}
-    \includegraphics[width=.2\textwidth]{figures/step1_FigureD.png} &
-    \includegraphics[width=.25\textwidth]{figures/drone.jpg} &
-    \includegraphics[width=.25\textwidth]{figures/step1_FigureC.png}\\
-    \includegraphics[width=.25\textwidth]{figures/step1_FigureB.png}&
-    \includegraphics[width=.25\textwidth]{figures/medical.jpg} &
-    \includegraphics[width=.15\textwidth]{figures/intelligent_building.jpg}    
-    \end{tabular}
+  \begin{center}
+\vspace{-.5cm}
+    \includegraphics[width=.75\textwidth]{figures/CPS.jpg} 
+  %% \begin{tabular}{lll}
+  %%   \includegraphics[width=.2\textwidth]{figures/step1_FigureD.png} &
+  %%   \includegraphics[width=.25\textwidth]{figures/drone.jpg} &
+  %%   \includegraphics[width=.25\textwidth]{figures/step1_FigureC.png}\\
+  %%   \includegraphics[width=.25\textwidth]{figures/step1_FigureB.png}&
+  %%   \includegraphics[width=.25\textwidth]{figures/medical.jpg} &
+  %%   \includegraphics[width=.15\textwidth]{figures/intelligent_building.jpg}    
+  %%   \end{tabular}
 \end{center}
  
 
@@ -182,7 +184,7 @@ alternativetitlepage=true,
  
 %CPS = {\bf digital controllers} embedded within {\bf physical systems}.
 \uncover<2>{
-  \vspace{.5cm}
+ \vspace{-.5cm}
   \small
 {\bf Automatically synthesise feedback digital controllers that ensure {\color {red} stability} and {\color {red} safety}}.}
 
@@ -258,10 +260,10 @@ alternativetitlepage=true,
 %\item Controller: manipulates state values at lower precision $\langle I_c,F_c \rangle$
   \end{itemize}
 \vspace{.2cm}
- \uncover<2->{{\bf 2. Evaluate sources of error}
+ \uncover<2->{{\bf 2. Evaluate sources of numerical error}
   \begin{itemize}
-  \item {\color {orange} plant representation error} (interval arithmetic)
-  \item {\color {blue} quantization error} (quantization noise)
+  \item {\color {orange} FWL effects on the plant} (interval arithmetic)
+  \item {\color {blue} FWL effects on the controller} (additive noise)
   \end{itemize}
   }
 \vspace{.2cm}
@@ -498,7 +500,7 @@ alternativetitlepage=true,
   \vspace{.3cm}
 {\bf Stability:} Jury's criterion
 
-{\bf Safety:} (1) explicit unfolding (2) abstraction}
+{\bf Safety:} (1) unwinding up to a completeness threshold (2) abstraction}
 
 %We consider non-deterministic initial states within a
 %specified range, the reference signal to be set to zero, saturation on
@@ -510,7 +512,7 @@ alternativetitlepage=true,
 \end{frame}
 
 
-\begin{frame}{Explicit unfolding-based controller synthesis} %%Na\"ive Approach: CEGIS with multi-staged verification}
+\begin{frame}{Completeness threshold-based safety check} %%Na\"ive Approach: CEGIS with multi-staged verification}
 
 %\begin{tabular}{ll}
 \vspace{-.5cm}
@@ -713,6 +715,72 @@ alternativetitlepage=true,
 %% \end{frame}
 
 
+
+\begin{frame}{Experimental results}
+  
+\begin{table}
+\centering
+\scriptsize
+\begin{tabular}{| r | l | c | c | r | c | r |}
+%
+\hline
+\# & \multicolumn{1}{|c|}{Benchmark} & \multicolumn{1}{|c|}{Order} & \multicolumn{2}{|c|}{Completeness threshold}                 & \multicolumn{2}{|c|}{Abstraction} \\
+   &                                  & & \multicolumn{1}{|c|}{$\langle I_p,F_p \rangle$} & \multicolumn{1}{|c|}{Time} & \multicolumn{1}{|c|}{$\langle I_p,F_p \rangle$} & \multicolumn{1}{|c|}{Time} \\\hline
+1  & {\bf Cruise Control}  & 1 & 8,16   & 8.40\,s & 16,16  &    \cellcolor{green!40} 2.17\,s \\
+2  & {\bf DC Motor}          & 2 & 8,16   & 9.45\,s & 20,20  &   \cellcolor{green!40} 2.06\,s \\
+3  & {\bf Helicopter}        & 3 & \xmark &  \cellcolor{red!40}\xmark  & 16,16  &    \cellcolor{green!40} 1.37\,s \\
+4  & {\bf Inverted Pendulum} & 4 & 8,16   & 9.65\,s & 16,16  &    \cellcolor{green!40}0.56\,s \\
+5  & {\bf Magnetic Pointer}  & 2 & \xmark &  \cellcolor{red!40}\xmark  & 28,28  &   \cellcolor{green!40}44.14\,s \\
+6  & {\bf Magnetic Suspension} & 2 & 12,20  &10.41\,s & 16,16  &    \cellcolor{green!40}0.61\,s \\
+7  & {\bf Pendulum}          & 2 & 8,16   &14.02\,s & 16,16  &    \cellcolor{green!40}0.60\,s \\
+8  & {\bf Suspension}        & 2 & 12,20  & \cellcolor{green!40}73.66\,s & \xmark &     \cellcolor{red!40}\xmark \\
+9  & {\bf Tape Driver}       & 3 & 8,16   & \cellcolor{green!40}10.10\,s & 16,16  &  68.24\,s \\
+10 & {\bf Satellite}          & 2 & 8,16   & 9.43\,s & 16,16  &    \cellcolor{green!40}0.67\,s \\\hline
+%
+\end{tabular}
+\end{table}
+
+Timeout = 1 hour
+
+\end{frame}
+
+%% \begin{frame}{Experimental results}
+%% For the majority of our benchmarks, the abstraction-based back-end is
+%% faster than the basic multi-staged verification approach, and finds
+%% one solution more.
+
+%% The two back-ends complement each other in benchmark coverage and
+%% together solve all benchmarks in the set.
+
+%% On average our engine spent 52\% in the synthesis and 48\% in the
+%% verification phase.
+
+%% %% There are a few instances for which the system fails to find a controller. 
+%% %% For the na\"ive approach, the completeness threshold may be too large, thus
+%% %% causing a timeout.  On the other hand, the abstraction-based approach may
+%% %% require a very precise abstraction, resulting in too many refinements and,
+%% %% consequently, in a timeout.  Yet another source of incompleteness is the
+%% %% inability of the {\sc synthesize} phase to use a large enough precision for
+%% %% the plant model.
+
+
+%% \end{frame}
+
+\begin{frame}{Conclusions}
+
+We built an {\bf automated synthesizer for digital state-feedback
+controllers} that ensures both {\bf stability} and {\bf safety}.
+%over the state-space representation.
+
+\vspace{1cm}
+
+We considered the errors caused 
+by the implementation of the digital control algorithm and the
+modeling of plant dynamics.
+
+\end{frame}  
+
+
 \begin{frame}{Abstraction-based controller synthesis}
 \vspace{-1cm}
 \resizebox{.9\textwidth}{!}
@@ -766,16 +834,17 @@ alternativetitlepage=true,
 
    \only<2>{
      \begin{tabular}{l}
-       {\bf Find controller for given $\{x_0\}$ and $\{k_1\}$}\\
+       {\bf Find controller for given $\{x_0\}$ and $\{k\}$}\\
        {\bf such that the system is stable and safe.}
      \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
   \end{tabular}
    }
    \only<3>{
      \begin{tabular}{l}
-     {\bf Use abstract acceleration to compute} \\
-     {\bf the set of all reachable states at all times.}\\
-     \\\\\\\\\\\\\\\\\\\\\\\\\\\\
+     {\bf Use abstract acceleration to compute an} \\
+     {\bf overapproximation the set of all reachable}\\
+     {\bf states at all times.}\\
+     \\\\\\\\\\\\\\\\\\\\\\\\\\
   \end{tabular}
    }
    \only<4>{
@@ -793,22 +862,23 @@ alternativetitlepage=true,
    }
    \only<6>{
      \begin{tabular}{l}
-     {\bf Real counterexample $(x_0', k_2)$ found.} \\
+     {\bf Real counterexample $(x_0', k')$ found.} \\
      \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\   
   \end{tabular}
    }
    \only<7>{
      \begin{tabular}{l}
-       {\bf Find controller for given $\{x_0, x_0'\}$ and $\{k_1, k_2\}$}\\
+       {\bf Find controller for given $\{x_0, x_0'\}$ and $\{k, k'\}$}\\
        {\bf such that the system is stable and safe.}
      \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
   \end{tabular}
    }
    \only<8>{
      \begin{tabular}{l}
-     {\bf Use abstract acceleration to compute} \\
-     {\bf the set of all reachable states at all times.}\\
-     \\\\\\\\\\\\\\\\\\\\\\\\\\\\
+     {\bf Use abstract acceleration to compute an} \\
+     {\bf overapproximation the set of all reachable}\\
+     {\bf states at all times.}\\
+     \\\\\\\\\\\\\\\\\\\\\\\\\\
   \end{tabular}
    }
    \only<9>{
@@ -842,68 +912,5 @@ alternativetitlepage=true,
  %[figure]: two spirals within green area; add grey polygon (inside green area). 
 \end{frame}  
 
-\begin{frame}{Experimental results}
-  
-\begin{table}
-\centering
-\scriptsize
-\begin{tabular}{| r | l | c | c | r | c | r |}
-%
-\hline
-\# & \multicolumn{1}{|c|}{Benchmark} & \multicolumn{1}{|c|}{Order} & \multicolumn{2}{|c|}{Explicit unfolding}                 & \multicolumn{2}{|c|}{Abstraction} \\
-   &                                  & & \multicolumn{1}{|c|}{$\langle I_p,F_p \rangle$} & \multicolumn{1}{|c|}{Time} & \multicolumn{1}{|c|}{$\langle I_p,F_p \rangle$} & \multicolumn{1}{|c|}{Time} \\\hline
-1  & {\bf Cruise Control}  & 1 & 8,16   & 8.40\,s & 16,16  &    \cellcolor{green!40} 2.17\,s \\
-2  & {\bf DC Motor}          & 2 & 8,16   & 9.45\,s & 20,20  &   \cellcolor{green!40} 2.06\,s \\
-3  & {\bf Helicopter}        & 3 & \xmark &  \cellcolor{red!40}\xmark  & 16,16  &    \cellcolor{green!40} 1.37\,s \\
-4  & {\bf Inverted Pendulum} & 4 & 8,16   & 9.65\,s & 16,16  &    \cellcolor{green!40}0.56\,s \\
-5  & {\bf Magnetic Pointer}  & 2 & \xmark &  \cellcolor{red!40}\xmark  & 28,28  &   \cellcolor{green!40}44.14\,s \\
-6  & {\bf Magnetic Suspension} & 2 & 12,20  &10.41\,s & 16,16  &    \cellcolor{green!40}0.61\,s \\
-7  & {\bf Pendulum}          & 2 & 8,16   &14.02\,s & 16,16  &    \cellcolor{green!40}0.60\,s \\
-8  & {\bf Suspension}        & 2 & 12,20  & \cellcolor{green!40}73.66\,s & \xmark &     \cellcolor{red!40}\xmark \\
-9  & {\bf Tape Driver}       & 3 & 8,16   & \cellcolor{green!40}10.10\,s & 16,16  &  68.24\,s \\
-10 & {\bf Satellite}          & 2 & 8,16   & 9.43\,s & 16,16  &    \cellcolor{green!40}0.67\,s \\\hline
-%
-\end{tabular}
-\end{table}
-
-Timeout = 1 hour
-
-\end{frame}
-
-%% \begin{frame}{Experimental results}
-%% For the majority of our benchmarks, the abstraction-based back-end is
-%% faster than the basic multi-staged verification approach, and finds
-%% one solution more.
-
-%% The two back-ends complement each other in benchmark coverage and
-%% together solve all benchmarks in the set.
-
-%% On average our engine spent 52\% in the synthesis and 48\% in the
-%% verification phase.
-
-%% %% There are a few instances for which the system fails to find a controller. 
-%% %% For the na\"ive approach, the completeness threshold may be too large, thus
-%% %% causing a timeout.  On the other hand, the abstraction-based approach may
-%% %% require a very precise abstraction, resulting in too many refinements and,
-%% %% consequently, in a timeout.  Yet another source of incompleteness is the
-%% %% inability of the {\sc synthesize} phase to use a large enough precision for
-%% %% the plant model.
-
-
-%% \end{frame}
-
-\begin{frame}{Conclusions}
-
-We presented two automated approaches to synthesize digital state-feedback
-controllers that ensure both {\bf stability} and {\bf safety}.
-%over the state-space representation.
-
-\vspace{1cm}
-
-We considered the errors caused 
-by the implementation of the digital control algorithm and the
-modeling of plant dynamics.
-
-\end{frame}  
 
 \end{document}
