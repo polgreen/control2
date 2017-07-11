@@ -25,8 +25,13 @@ FiSettings = fimath('ProductMode',...
 fxp=@(v) fi(v,1,16,8,FiSettings);
 fxpP = @(v) v;% fi(v,0.5,64,32,FiSettingsP);
 
-loops = 50;
+loops = get_completeness(A, B, K )+1;
 numstates = numel(B);
+
+for i=1:numstates
+    K(i) = fxp(K(i));
+end
+
 
 if(numstates==2)
     statematrix = [fxpP(-0.5),fxpP(-0.5),fxpP(0.5),fxpP(0.5) ; fxpP(-0.5),fxpP(0.5),fxpP(-0.5), fxpP(0.5)];
