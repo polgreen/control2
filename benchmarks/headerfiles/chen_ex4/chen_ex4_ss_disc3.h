@@ -12,24 +12,24 @@
 #define NOUTPUTS 1
 #define INPUT_UPPERBOUND (__plant_precisiont)1
 #define INPUT_LOWERBOUND (__plant_precisiont)-1
-const __plant_typet _controller_A[NSTATES][NSTATES] = {{ interval(7.874743e+00),  interval(-3.474221e+00),  interval(1.803313e+00),  interval(-1.213579e+00),  interval(1.098092e+00),  interval(-6.679637e-01),  interval(2.634027e-01),  interval(-1.222025e-01),  interval(1.016424e-01)},
-{ interval(8),  interval(0),  interval(0),  interval(0),  interval(0),  interval(0),  interval(0),  interval(0),  interval(0)},
+const __plant_typet _controller_A[NSTATES][NSTATES] = {{ interval(7.874743e+00),  interval(-6.948441e+00),  interval(3.606627e+00),  interval(-2.427159e+00),  interval(1.098092e+00),  interval(-6.679637e-01),  interval(5.268053e-01),  interval(-2.444051e-01),  interval(2.032848e-01)},
+{ interval(4),  interval(0),  interval(0),  interval(0),  interval(0),  interval(0),  interval(0),  interval(0),  interval(0)},
 { interval(0),  interval(4),  interval(0),  interval(0),  interval(0),  interval(0),  interval(0),  interval(0),  interval(0)},
 { interval(0),  interval(0),  interval(2),  interval(0),  interval(0),  interval(0),  interval(0),  interval(0),  interval(0)},
-{ interval(0),  interval(0),  interval(0),  interval(1),  interval(0),  interval(0),  interval(0),  interval(0),  interval(0)},
+{ interval(0),  interval(0),  interval(0),  interval(2),  interval(0),  interval(0),  interval(0),  interval(0),  interval(0)},
 { interval(0),  interval(0),  interval(0),  interval(0),  interval(1),  interval(0),  interval(0),  interval(0),  interval(0)},
-{ interval(0),  interval(0),  interval(0),  interval(0),  interval(0),  interval(1),  interval(0),  interval(0),  interval(0)},
+{ interval(0),  interval(0),  interval(0),  interval(0),  interval(0),  interval(5.000000e-01),  interval(0),  interval(0),  interval(0)},
 { interval(0),  interval(0),  interval(0),  interval(0),  interval(0),  interval(0),  interval(5.000000e-01),  interval(0),  interval(0)},
 { interval(0),  interval(0),  interval(0),  interval(0),  interval(0),  interval(0),  interval(0),  interval(1.250000e-01),  interval(0)}};
-const __plant_typet _controller_B[NSTATES] = {interval(9.765625e-04), interval(0), interval(0), interval(0), interval(0), interval(0), interval(0), interval(0), interval(0)};
+const __plant_typet _controller_B[NSTATES] = {interval(1.953125e-03), interval(0), interval(0), interval(0), interval(0), interval(0), interval(0), interval(0), interval(0)};
 const __plant_typet __char_poly_const[10][10] = 
  {{ -1,  0,  0,  0,  0,  0,  0,  0,  0,  0},
-{ 7.874743e+00,  0,  0,  0,  0,  0,  0,  0,  0,  -9.765625e-04},
+{ 7.874743e+00,  0,  0,  0,  0,  0,  0,  0,  0,  -1.953125e-03},
 { -2.779377e+01,  0,  0,  0,  0,  0,  0,  0,  -7.812500e-03,  0},
 { 5.770603e+01,  0,  0,  0,  0,  0,  0,  -3.125000e-02,  0,  0},
 { -7.766907e+01,  0,  0,  0,  0,  0,  -6.250000e-02,  0,  0,  0},
-{ 7.027788e+01,  0,  0,  0,  0,  -6.250000e-02,  0,  0,  0,  0},
-{ -4.274968e+01,  0,  0,  0,  -6.250000e-02,  0,  0,  0,  0,  0},
+{ 7.027788e+01,  0,  0,  0,  0,  -1.250000e-01,  0,  0,  0,  0},
+{ -4.274968e+01,  0,  0,  0,  -1.250000e-01,  0,  0,  0,  0,  0},
 { 1.685777e+01,  0,  0,  -6.250000e-02,  0,  0,  0,  0,  0,  0},
 { -3.910481e+00,  0,  -3.125000e-02,  0,  0,  0,  0,  0,  0,  0},
 { 4.065697e-01,  -3.906250e-03,  0,  0,  0,  0,  0,  0,  0,  0}};

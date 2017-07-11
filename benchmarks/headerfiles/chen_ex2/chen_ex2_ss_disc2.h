@@ -12,18 +12,18 @@
 #define NOUTPUTS 1
 #define INPUT_UPPERBOUND (__plant_precisiont)1
 #define INPUT_LOWERBOUND (__plant_precisiont)-1
-const __plant_typet _controller_A[NSTATES][NSTATES] = {{ interval(4.126804e+00),  interval(-1.803484e+00),  interval(8.667155e-01),  interval(-4.975367e-01),  interval(3.466808e-01),  interval(-1.419295e-01),  interval(6.182477e-02),  interval(-4.353178e-02)},
-{ interval(4),  interval(0),  interval(0),  interval(0),  interval(0),  interval(0),  interval(0),  interval(0)},
+const __plant_typet _controller_A[NSTATES][NSTATES] = {{ interval(4.126804e+00),  interval(-3.606969e+00),  interval(1.733431e+00),  interval(-9.950734e-01),  interval(6.933617e-01),  interval(-2.838589e-01),  interval(1.236495e-01),  interval(-8.706355e-02)},
+{ interval(2),  interval(0),  interval(0),  interval(0),  interval(0),  interval(0),  interval(0),  interval(0)},
 { interval(0),  interval(2),  interval(0),  interval(0),  interval(0),  interval(0),  interval(0),  interval(0)},
 { interval(0),  interval(0),  interval(1),  interval(0),  interval(0),  interval(0),  interval(0),  interval(0)},
 { interval(0),  interval(0),  interval(0),  interval(5.000000e-01),  interval(0),  interval(0),  interval(0),  interval(0)},
 { interval(0),  interval(0),  interval(0),  interval(0),  interval(5.000000e-01),  interval(0),  interval(0),  interval(0)},
 { interval(0),  interval(0),  interval(0),  interval(0),  interval(0),  interval(2.500000e-01),  interval(0),  interval(0)},
 { interval(0),  interval(0),  interval(0),  interval(0),  interval(0),  interval(0),  interval(6.250000e-02),  interval(0)}};
-const __plant_typet _controller_B[NSTATES] = {interval(4), interval(0), interval(0), interval(0), interval(0), interval(0), interval(0), interval(0)};
+const __plant_typet _controller_B[NSTATES] = {interval(8), interval(0), interval(0), interval(0), interval(0), interval(0), interval(0), interval(0)};
 const __plant_typet __char_poly_const[9][9] = 
  {{ 1,  0,  0,  0,  0,  0,  0,  0,  0},
-{ -4.126804e+00,  0,  0,  0,  0,  0,  0,  0,  4},
+{ -4.126804e+00,  0,  0,  0,  0,  0,  0,  0,  8},
 { 7.213938e+00,  0,  0,  0,  0,  0,  0,  16,  0},
 { -6.933724e+00,  0,  0,  0,  0,  0,  32,  0,  0},
 { 3.980294e+00,  0,  0,  0,  0,  32,  0,  0,  0},
