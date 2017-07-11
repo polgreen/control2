@@ -620,7 +620,7 @@ int main(int argc, const char *argv[]) {
       _controller_states[stateIndex] = _state_poles[poleIndex][stateIndex];
     }
 #endif
-  assert_nonzero_controller();
+ // assert_nonzero_controller();
   safety_stability();
 #ifndef CPROVER
   }
