@@ -12,7 +12,9 @@
 \usepackage{xspace}
 \usepackage{subfig}
 \usepackage{adjustbox}
-\usepackage{pifont}
+\usepackage{pifont,color,soul}
+\usepackage[most]{tcolorbox}
+
 %\usepackage{mdframed,framed}
  \usepackage{adjustbox}
 \usepackage{xcolor,colortbl}
@@ -31,6 +33,7 @@
 \newcommand{\shakira}{{\sc Shakira}\xspace}
 \newcommand{\hnull}{{\bf null}}
 \newcommand{\xmark}{\ding{55}}
+\definecolor{azure}{rgb}{0.0, 0.5, 1.0}
 
 \usetheme[
 % Toggle showing page counter
@@ -166,23 +169,12 @@ alternativetitlepage=true,
   % use a better figure for cyber-physical systems
 %\vspace{-1cm}
 
-  \begin{center}
+  \centering
 \vspace{-.5cm}
     \includegraphics[width=.75\textwidth]{figures/CPS.jpg} 
-  %% \begin{tabular}{lll}
-  %%   \includegraphics[width=.2\textwidth]{figures/step1_FigureD.png} &
-  %%   \includegraphics[width=.25\textwidth]{figures/drone.jpg} &
-  %%   \includegraphics[width=.25\textwidth]{figures/step1_FigureC.png}\\
-  %%   \includegraphics[width=.25\textwidth]{figures/step1_FigureB.png}&
-  %%   \includegraphics[width=.25\textwidth]{figures/medical.jpg} &
-  %%   \includegraphics[width=.15\textwidth]{figures/intelligent_building.jpg}    
-  %%   \end{tabular}
-\end{center}
- 
 
 % smart spaces, intelligent transportation, medical equipment, sensors, robotics. 
  
-%CPS = {\bf digital controllers} embedded within {\bf physical systems}.
 \uncover<2>{
  \vspace{-.5cm}
   \small
@@ -208,39 +200,35 @@ alternativetitlepage=true,
  
 %% \end{frame}
 
-\begin{frame}{Problem specification}
+\begin{frame}{State-feedback architecture}
 \vspace{-1cm}
   \begin{center}
-  \includegraphics[width=.5\textwidth]{figures/spirals/diagram-14.png}
+    \only<1>{\includegraphics[width=.8\textwidth]{figures/spirals/diagram-14.png}}
+    \only<2>{\includegraphics[width=.8\textwidth]{figures/spirals/diagram-15.png}}
   \end{center}
   
-  %\small
-  %% \begin{itemize}
-  %% \item {\bf Closed-loop} system.
- 
-  %% \item {\bf Single Input Single Output (SISO) Linear Time Invariant (LTI)} plant models.
-
-  %% \item {\bf State-space} representation. % of the evolution of the plant
-%
-  %\begin{align*}
   {\bf Continuous-discrete system}
   \begin{itemize}
-\item Plant: $\dot{x}(t) = Ax(t)+ Bu(t), \quad t \in \mathbb R_0^+,~x(0)=initial~state$ 
-%\end{align*}
-%
-\item State-feedback controller:   \only<1>{$u_k = r_{k} - C x_k$}\only<2->{$u_k = - C x_k$}
+  \item \colorbox{green!70}{Plant:
+    \textsc{$\dot{x}(t) = Ax(t)+ Bu(t), \quad t \in \mathbb R_0^+,~x(0)=initial~state$}}
+\item \colorbox{azure!70}{State-feedback controller:   \only<1>{$u_k = r_{k} - C x_k$}\only<2->{$u_k = - C x_k$}}
 \end{itemize}
-
-   %[figure] switch to figure with converters.
-  %% \only<2>{{\color {red} {\bf Challenge:}} This is a hybrid model, where the plant exhibits {\bf continuous behavior}, whereas the controller operates in {\bf discrete time} and over a {\bf quantized domain}.}
-
-  % This depends on external non-determinism in the form of input signals
-
-  %// We want to to manipulate the properties and behaviors of the plant.
-
-  %% // For this we use a state-feedback controller (the control action from the controller is dependent on the process output)
-
 \end{frame}
+
+\begin{frame}{Translation to digital domain}
+\vspace{-1cm}
+  \begin{center}
+    \includegraphics[width=.8\textwidth]{figures/spirals/diagram-16.png}
+  \end{center}
+  
+  {\bf Continuous-discrete system}
+  \begin{itemize}
+  \item \colorbox{azure!70}{Plant:
+    \textsc{$x_{k+1} = A x_k+ B u_k, \quad k \in \mathbb \mathbb N,~x_0=initial~state$}}
+\item \colorbox{azure!70}{State-feedback controller:   $u_k = - C x_k$}
+\end{itemize}
+\end{frame}
+
 
 \begin{frame}{Our approach}
 \vspace{-1cm}
@@ -468,39 +456,61 @@ alternativetitlepage=true,
 
   \small
   
-  {\bf Synthesise a controller that makes the system
+    \colorbox{azure!70}{Plant:
+   \textsc{$x_{k+1} = A x_k+ B u_k, \quad k \in \mathbb \mathbb N$}}\\
+   \colorbox{azure!70}{State-feedback controller:   $u_k = - C x_k$}
+
+  
+  {\bf Synthesise a controller {\color {red} C} that makes the system
   stable and \bf safe for all initial states.}
 
-  \vspace{-1.5cm}
+  %\vspace{-1.5cm}
 \uncover<2->{
-  \begin{tabular}{ll}
-  \begin{tabular}{l}
-    \\\\\\\\\\\\
-    $x_{k+1} = A x_k+ B u_k$\\
-    $u_k = - C x_k$\\
-    $x_0$ = initial state \\
-    $x\in \mathbb R^n$ 
-    \end{tabular}
-&
-\adjustbox{valign=t}{
-  \centering
-  \hspace{1cm}
-\includegraphics[width=.45\textwidth]{figures/spirals/Spirals-01.png}
+%  \begin{tabular}{ll}
+%\\\\\\\\\\
+%\begin{tabular}{l}
+    %%   \vspace{-1cm}
+  %\begin{center}
+\centering
+  \includegraphics[width=.7\textwidth]{figures/spirals/Spirals-01.png}
+ }
+  %\end{center} 
+%  
+%  {\bf Continuous-discrete system}
+%%   \begin{itemize}
+    %%   \item
+%%     \colorbox{azure!70}{Plant:
+%%    \textsc{$x_{k+1} = A x_k+ B u_k, \quad k \in \mathbb \mathbb N$}}\\
+%%    \colorbox{azure!70}{State-feedback controller:   $u_k = - C x_k$}
+%% %% \end{itemize}
+%% \end{tabular}
+  %% \begin{tabular}{l}
+    %% \\\\\\\\\\\\
+    %% $x_{k+1} = A x_k+ B u_k$\\
+    %% $u_k = - C x_k$\\
+    %% $x_0$ = initial state \\
+    %% $x\in \mathbb R^n$ 
+    %% \end{tabular}
+%% &
+%% \adjustbox{valign=t}{
+%%   \centering
+%%   \hspace{1cm}
+%\includegraphics[width=.55\textwidth]{figures/spirals/Spirals-01.png}
 %\only<2->{\includegraphics[width=.6\textwidth]{figures/spirals/Spirals-02.png}}
-}
+%}
 
 % [figure] make initial states square bigger, use a different colour for k.
 % first figure: just one spiral
 % second figure: 4 spirals
 
-  \end{tabular}
-}
+%  \end{tabular}
+%}
 
-\uncover<3->{
-  \vspace{.3cm}
-{\bf Stability:} Jury's criterion
+%% \uncover<3->{
+%%   \vspace{.3cm}
+%% {\bf Stability:} Jury's criterion
 
-{\bf Safety:} (1) unwinding up to a completeness threshold (2) abstraction}
+%% {\bf Safety:} (1) unwinding up to a completeness threshold (2) abstraction}
 
 %We consider non-deterministic initial states within a
 %specified range, the reference signal to be set to zero, saturation on
