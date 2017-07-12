@@ -49,11 +49,11 @@ for i=1:size(SS_names,1)
         K = zeros(1,states);
         completeness = round(get_completeness(A,B,K),0)+1;
         if(completeness>100)
-            fprintf(fileID,'// stable. safety not checked, completeness k %i\n',completeness);
+            fprintf(fileID,'// stable. safety not checked, completeness k with no controller = %i\n',completeness);
         else    
         unsafe = fixedpointcheck(A,B,K,INPUT);
         if(unsafe==1)
-        fprintf(fileID,'// No controller needed, safe and stable, suggested completeness k %i \n', completeness);  
+        fprintf(fileID,'// No controller needed, safe and stable, completeness k with no controller =  %i \n', completeness);  
         safecount=safecount+1;
         end
         if(unsafe==0)

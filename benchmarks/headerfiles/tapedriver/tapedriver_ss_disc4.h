@@ -2,7 +2,7 @@
 #define BENCHMARK_H_ 
 
 // time discretisation 2.000000e-01 
-// No controller needed, safe and stable, suggested completeness k 7 
+// No controller needed, safe and stable, completeness k with no controller =  7 
 #ifndef INT_BITS 
 #define INT_BITS 8
 #define FRAC_BITS 8

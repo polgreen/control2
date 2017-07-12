@@ -2,7 +2,7 @@
 #define BENCHMARK_H_ 
 
 // time discretisation 5.000000e-03 
-// stable. safety not checked, completeness k 402
+// stable. safety not checked, completeness k with no controller = 402
 #ifndef INT_BITS 
 #define INT_BITS 8
 #define FRAC_BITS 8
