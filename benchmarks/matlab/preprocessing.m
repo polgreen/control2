@@ -5,13 +5,17 @@
 % script gets discretized benchmarks and writes header files
 %
 %
-clear all;
-makebenchmarks; %Iury's script to discretize benchmarks
+%clear all;
+%makebenchmarks; %Iury's script to discretize benchmarks
 
 SS_benchmarks = load('benchmark_ss.mat');
 SS_names = fieldnames(SS_benchmarks);
 
 directory = '../headerfiles/';
+safecount=0;
+unsafecount=0;
+stablecount=0;
+INPUT=[-1, 1];
 
 for i=1:size(SS_names,1)
     Benchmark = SS_benchmarks.(SS_names{i});    
@@ -20,28 +24,48 @@ for i=1:size(SS_names,1)
     if(7~=exist(Folder,'dir'))
         mkdir(Folder);
     else
-        Folder
-        msg = ' already exists'
+     %   Folder
+     %   msg = ' already exists'
     end 
     
-    %if(isfield(Benchmark, 'a')==0)
-     %   msg = 'error'
-      %  break;
-    %end
-    A = Benchmark.A;
+
+    A = Benchmark.A;   
     B = Benchmark.B;
     states = size(B,1);
     inputs = size(B,2); %check this
     outputs = size(B,2); %check this
     
-    filename = strcat(Folder,'/',SS_names{i},'.h');
+    filename = strcat(Folder,'/',SS_names{i},'.h')
     
-    fileID = fopen(filename,'w')
+    
+    fileID = fopen(filename,'w');
     %'w' = discard existing contents. change to 'a' to append
     
     %write benchmark
     fprintf(fileID,'#ifndef BENCHMARK_H_ \n#define BENCHMARK_H_ \n\n');
     fprintf(fileID,'// time discretisation %d \n',Benchmark.Ts);
+    if(max(abs(eig(A)))<1)
+        stablecount=stablecount+1;
+        K = zeros(1,states);
+        completeness = round(get_completeness(A,B,K),0)+1;
+        if(completeness>100)
+            fprintf(fileID,'// stable. safety not checked, completeness k %i\n',completeness);
+        else    
+        unsafe = fixedpointcheck(A,B,K,INPUT);
+        if(unsafe==1)
+        fprintf(fileID,'// No controller needed, safe and stable, suggested completeness k %i \n', completeness);  
+        safecount=safecount+1;
+        end
+        if(unsafe==0)
+        filename   
+        unsafe
+        fprintf(fileID,'// stable but not safe with no controller \n');
+        end
+        end
+    else
+        unsafecount=unsafecount+1;
+    end
+    
     fprintf(fileID,'#ifndef INT_BITS \n#define INT_BITS 8\n#define FRAC_BITS 8\n#endif\n');
     fprintf(fileID,'#define NSTATES %d \n#include "control_types.h"\n',states);
     fprintf(fileID,'#define NINPUTS %d \n#define NOUTPUTS %d\n',inputs, outputs);
@@ -73,9 +97,6 @@ for i=1:size(SS_names,1)
     
     end
     
-
-
-
 %build symbolic controller
 K= sym(zeros(1, states));
 x = sym('x');
@@ -138,3 +159,6 @@ fprintf(fileID,'\n#endif /*BENCHMARK_H_*/');
 
 fclose(fileID);
 end
+
+safecount
+unsafecount
