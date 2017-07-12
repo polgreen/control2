@@ -1,6 +1,8 @@
+function safe=fixedpointcheck(A, B, K, INPUT)
+
 global FiSettings ;
 global FiSettingsP ;
-
+safe=0;
 FiSettings = fimath('ProductMode',...
                    'SpecifyPrecision',... 
                    'ProductWordLength',16,... 
@@ -26,6 +28,11 @@ fxp=@(v) fi(v,1,16,8,FiSettings);
 fxpP = @(v) v;% fi(v,0.5,64,32,FiSettingsP);
 
 loops = get_completeness(A, B, K )+1;
+if(loops==1)
+    safe=1;
+    return
+end
+    
 numstates = numel(B);
 
 for i=1:numstates
@@ -44,6 +51,8 @@ elseif (numstates==4)
                    fxpP(-0.5),fxpP(-0.5),fxpP(-0.5),fxpP(-0.5),fxpP(0.5),fxpP(0.5),fxpP(0.5),fxpP(0.5),fxpP(-0.5),fxpP(-0.5),fxpP(-0.5),fxpP(-0.5),fxpP(0.5),fxpP(0.5),fxpP(0.5),fxpP(0.5); ...
                    fxpP(-0.5),fxpP(-0.5),fxpP(0.5), fxpP(0.5),fxpP(-0.5),fxpP(-0.5),fxpP(0.5),fxpP(0.5),fxpP(-0.5),fxpP(-0.5),fxpP(0.5), fxpP(0.5),fxpP(-0.5),fxpP(-0.5),fxpP(0.5),fxpP(0.5); ...
                    fxpP(-0.5),fxpP(0.5),fxpP(-0.5), fxpP(0.5),fxpP(-0.5),fxpP(0.5),fxpP(0.5),fxpP(0.5),fxpP(-0.5),fxpP(0.5),fxpP(-0.5), fxpP(0.5),fxpP(-0.5),fxpP(0.5),fxpP(0.5),fxpP(0.5)];
+else
+    statematrix = zeros(numstates,2^numstates);
 end
 
 
@@ -55,19 +64,21 @@ for j=1:2^(numstates)
     input = -K * fxp(states);
     tmp_input = double(input);
     if(input>INPUT(2) || input< INPUT(1))
-        msg = 'input too big'
+       % msg = 'input too big'
         return
     end    
     states = A * (states) + B * double(input);
     for idx = 1: numel(states)
         if(states(idx) > 1 || states(idx) < -1)
-            msg = '!!!!!UNSAFE!!!!!'
-            i
-            states
-            statematrix(:,j)
+          %  msg = '!!!!!UNSAFE!!!!!'
+         %  i
+         %   states
+         %   statematrix(:,j)
             return
         end  
     end
   end 
 end
-msg = 'safe and stable'
+%msg = 'safe and stable'
+safe=1;
+
