@@ -171,22 +171,22 @@ alternativetitlepage=true,
 \vspace{-1cm}
 \begin{center}
   \begin{overprint}
-    \onslide<1>
+    \onslide<1,2>
     \centerline{\includegraphics[width=.9\textwidth]{figures/spirals/diagram-15.png}}
-    \onslide<2->
+    \onslide<3->
     \centerline{\includegraphics[width=.9\textwidth]{figures/spirals/diagram-16.png}}
   \end{overprint}
   \end{center}
   \vspace{-1cm}
-  \only<1>{{\bf Continuous-discrete system}}
-  \only<2->{{\bf Digital domain}}  
+  \only<1,2>{{\bf Continuous-discrete system}}
+  \only<3->{{\bf Digital domain}}  
   \begin{itemize}
-  \item \only<1>{\colorbox{green!70}{Plant:
+  \item \only<1,2>{\colorbox{green!70}{Plant:
     \textsc{$\dot{x}(t) = Ax(t)+ Bu(t), \quad t \in \mathbb R_0^+,~x(0)=initial~state$}}}
-    \only<2->{\colorbox{azure!70}{Plant:
+    \only<3->{\colorbox{azure!70}{Plant:
     \textsc{$x_{k+1} = A x_k+ B u_k, \quad k \in \mathbb \mathbb N,~x_0=initial~state$}}}
   \item \colorbox{azure!70}{State-feedback controller:   \only<1>{$u_k = r_{k} - C x_k$}\only<2->{$u_k = - C x_k$}}
-  \item \uncover<3->{Finite precision}  
+  \item \uncover<4->{Finite precision}  
 \end{itemize}
 \end{frame}
 
@@ -199,7 +199,7 @@ alternativetitlepage=true,
   \end{center}
   \vspace{-1cm}
   \begin{itemize}
-  \item \uncover<1->{{\bf Truncation and rounding on the plant}}
+  \item \uncover<1->{{\bf Truncation and rounding on the plant (interval arithmetic)}}
   \item  \uncover<2->{{\bf Truncation on the converters (additive noise)}}
   \item \uncover<3->{{\bf Rounding on the controller (additive noise)}}
   \end{itemize}  
@@ -232,15 +232,15 @@ the point.}
 
 \begin{center}
 \begin{overprint}
-  \onslide<1>
-  \centerline{\includegraphics[width=.65\textwidth]{figures/spirals/Spirals-21.png}}
   \onslide<2>
-  \centerline{\includegraphics[width=.65\textwidth]{figures/spirals/Spirals-22.png}}
+  \centerline{\includegraphics[width=.65\textwidth]{figures/spirals/Spirals-21.png}}
   \onslide<3>
-  \centerline{\includegraphics[width=.65\textwidth]{figures/spirals/Spirals-23.png}}
+  \centerline{\includegraphics[width=.65\textwidth]{figures/spirals/Spirals-22.png}}
   \onslide<4>
-  \centerline{\includegraphics[width=.65\textwidth]{figures/spirals/Spirals-24.png}}
+  \centerline{\includegraphics[width=.65\textwidth]{figures/spirals/Spirals-23.png}}
   \onslide<5>
+  \centerline{\includegraphics[width=.65\textwidth]{figures/spirals/Spirals-24.png}}
+  \onslide<6>
   \centerline{\includegraphics[width=.65\textwidth]{figures/spirals/Spirals-25.png}}
 \end{overprint}
 \end{center}
@@ -332,7 +332,7 @@ the point.}
 
    \only<2-7>{
      \begin{tabular}{l}
-       {\bf Find a controller for given $\{x_0\}$ and $k$} \\
+       {\bf Find a controller for given $\{x_0\}$ and $k{=}6$} \\
        {\bf such that the system is stable and safe.} \\
      \\\\\\\\\\\\\\\\\\\\\\\\\\
   \end{tabular}
@@ -346,7 +346,7 @@ the point.}
    }
    \only<9>{
      \begin{tabular}{l}
-       {\bf Find a controller for $\{x_0, x_0'\}$ and $k$}\\
+       {\bf Find a controller for $\{x_0, x_0'\}$ and $k{=}6$}\\
        {\bf such that the system is stable and safe.} \\
      \\\\\\\\\\\\\\\\\\\\\\\\\\
   \end{tabular}
@@ -393,17 +393,19 @@ the point.}
         \STATE \textbf{assume}({\color {black} \textbf{STABLE}}(A,B,{\color {red} $C$}));}
   \only<4>{\STATE \colorbox{red!20}{{\color {red} $C$}=nondet;}
   \STATE \colorbox{red!20}{\textbf{assume}(\textbf{STABLE}(A,B,{\color {red} $C$}));}}
-  \only<1,2,3,4,6->{ \STATE \textbf{assume}(\textbf{SAFE}($x_{0}$));       
-  \FOR{$i=0$ to $k-1$}
+  \only<1,2,3,4,6->{ \STATE \textbf{assume}(\textbf{SAFE}($x_{0}$));
+    \STATE {$i=0$};
+  \WHILE{$i<k$}
         \STATE $x_{i+1}=x_i(A-B{\color {red} C})$
         \STATE assume({\color {black} \textbf{SAFE}}($x_{i+1}$));
-          \STATE $i=i+1;$;}
- \only<5>{\STATE \colorbox{red!20}{\textbf{assume}(\textbf{SAFE}($x_{0}$));}
-  \FOR{\colorbox{red!20}{$i=0$ to $k-1$}}
+          \STATE $i=i+1$;}
+  \only<5>{\STATE \colorbox{red!20}{\textbf{assume}(\textbf{SAFE}($x_{0}$));}
+        \STATE \colorbox{red!20}{$i=0$};
+  \WHILE{\colorbox{red!20}{$i<k$}}
         \STATE \colorbox{red!20}{$x_{i+1}=x_i(A-B{\color {red} C})$}
         \STATE \colorbox{red!20}{assume({\color {black} \textbf{SAFE}}($x_{i+1}$));}
-          \STATE \colorbox{red!20}{$i=i+1;$;}}
-          \ENDFOR
+          \STATE \colorbox{red!20}{$i=i+1$;}}
+          \ENDWHILE
           \only<6>{\STATE \colorbox{red!20}{\textbf{assert}(false);}}
           \only<1,2,3,4,5>{\STATE \textbf{assert}(false);}
 \end{algorithmic}
