@@ -8,6 +8,11 @@
 %clear all;
 %makebenchmarks; %Iury's script to discretize benchmarks
 
+INPUT_10 = {'ballmaglev','pendulum','satellite', 'usgtampa', 'invpendulum_pendang'};
+INPUT_100 = {'magneticpointer', 'invpendulum_cartpos'};    
+INPUT_1000 = {'magsuspension'};
+INPUT_1000000 = {'suspension'};
+
 SS_benchmarks = load('benchmark_ss.mat');
 SS_names = fieldnames(SS_benchmarks);
 
@@ -19,14 +24,26 @@ INPUT=[-1, 1];
 
 for i=1:size(SS_names,1)
     Benchmark = SS_benchmarks.(SS_names{i});    
-    Folder = strsplit(SS_names{i},'_ss_disc');
-    Folder = strcat(directory,Folder{1});
+    Name = strsplit(SS_names{i},'_ss_disc');
+    Folder = strcat(directory,Name{1});
     if(7~=exist(Folder,'dir'))
         mkdir(Folder);
+    end
+    
+    %get INPUT values
+    if(getnameidx(INPUT_10,Name{1})~=0)
+        INPUT=[-10,10];
+    elseif (getnameidx(INPUT_100,Name{1})~=0 )
+        INPUT=[-100,100];  
+    elseif (getnameidx(INPUT_100,Name{1})~=0 )
+        INPUT=[-100,100];  
+    elseif (getnameidx(INPUT_1000,Name{1})~=0 )
+        INPUT=[-1000,1000];  
+   elseif (getnameidx(INPUT_1000000,Name{1})~=0 )
+        INPUT=[-1000000,1000000];
     else
-     %   Folder
-     %   msg = ' already exists'
-    end 
+        INPUT=[-1, 1];
+    end    
     
 
     A = Benchmark.A;   
@@ -34,16 +51,15 @@ for i=1:size(SS_names,1)
     states = size(B,1);
     inputs = size(B,2); %check this
     outputs = size(B,2); %check this
-    
-    filename = strcat(Folder,'/',SS_names{i},'.h')
-    
-    
+    disc_time = sprintf('_Ts%.0fms',Benchmark.Ts*1000);
+   % filename = strcat(Folder,'/',Name{1},disc_time,'.h')
+   filename = strcat(Folder,'/',SS_names{i},'.h')
     fileID = fopen(filename,'w');
     %'w' = discard existing contents. change to 'a' to append
     
     %write benchmark
     fprintf(fileID,'#ifndef BENCHMARK_H_ \n#define BENCHMARK_H_ \n\n');
-    fprintf(fileID,'// time discretisation %d \n',Benchmark.Ts);
+    fprintf(fileID,'// time discretisation %4.3f  \n',Benchmark.Ts);
     if(max(abs(eig(A)))<1)
         stablecount=stablecount+1;
         K = zeros(1,states);
@@ -69,8 +85,8 @@ for i=1:size(SS_names,1)
     fprintf(fileID,'#ifndef INT_BITS \n#define INT_BITS 8\n#define FRAC_BITS 8\n#endif\n');
     fprintf(fileID,'#define NSTATES %d \n#include "control_types.h"\n',states);
     fprintf(fileID,'#define NINPUTS %d \n#define NOUTPUTS %d\n',inputs, outputs);
-    fprintf(fileID,'#define INPUT_UPPERBOUND (__plant_precisiont)1\n');
-    fprintf(fileID,'#define INPUT_LOWERBOUND (__plant_precisiont)-1\n');
+    fprintf(fileID,'#define INPUT_UPPERBOUND (__plant_precisiont)%d\n',INPUT(2));
+    fprintf(fileID,'#define INPUT_LOWERBOUND (__plant_precisiont)%d\n', INPUT(1));
     fprintf(fileID,'const __plant_typet _controller_A[NSTATES][NSTATES] = {' );
     
     if states==1

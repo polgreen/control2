@@ -1,7 +1,7 @@
 #ifndef BENCHMARK_H_ 
 #define BENCHMARK_H_ 
 
-// time discretisation 2.000000e-01 
+// time discretisation 0.200  
 // No controller needed, safe and stable, completeness k with no controller =  3 
 #ifndef INT_BITS 
 #define INT_BITS 8
@@ -11,8 +11,8 @@
 #include "control_types.h"
 #define NINPUTS 1 
 #define NOUTPUTS 1
-#define INPUT_UPPERBOUND (__plant_precisiont)1
-#define INPUT_LOWERBOUND (__plant_precisiont)-1
+#define INPUT_UPPERBOUND (__plant_precisiont)1000000
+#define INPUT_LOWERBOUND (__plant_precisiont)-1000000
 const __plant_typet _controller_A[NSTATES][NSTATES] = {{ interval(-1.590522e-01),  interval(-1.019035e-01),  interval(8.849018e-11),  interval(-6.047672e-42)},
 { interval(6.250000e-02),  interval(0),  interval(0),  interval(0)},
 { interval(0),  interval(6.250000e-02),  interval(0),  interval(0)},

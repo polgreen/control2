@@ -1,7 +1,7 @@
 #ifndef BENCHMARK_H_ 
 #define BENCHMARK_H_ 
 
-// time discretisation 1.000000e-03 
+// time discretisation 0.001  
 // No controller needed, safe and stable, completeness k with no controller =  1 
 #ifndef INT_BITS 
 #define INT_BITS 8

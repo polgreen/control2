@@ -1,7 +1,7 @@
 #ifndef BENCHMARK_H_ 
 #define BENCHMARK_H_ 
 
-// time discretisation 1.000000e-02 
+// time discretisation 0.010  
 #ifndef INT_BITS 
 #define INT_BITS 8
 #define FRAC_BITS 8
