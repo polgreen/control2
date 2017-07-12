@@ -199,9 +199,9 @@ alternativetitlepage=true,
   \end{center}
   
   \begin{itemize}
-  \item \uncover<1->{Truncation and rounding on the plant}
-  \item  \uncover<2->{Truncation on the converters}
-  \item \uncover<3->{Rounding on the controller}
+  \item \uncover<1->{{\bf Truncation and rounding on the plant}}
+  \item  \uncover<2->{{\bf Truncation on the converters (additive noise)}}
+  \item \uncover<3->{{\bf Rounding on the controller (additive noise)}}
   \end{itemize}  
  
 \end{frame}  
@@ -275,7 +275,7 @@ the point.}
    \& \coordinate (aux6);
    \&;\\
    \node[minimum width=1.5cm, minimum height=0.6cm, fill=gray!20] (synth) {{\sc 1.Synthesize}};
-   \only<2,3,5>{\node[minimum width=1.5cm, minimum height=0.6cm, fill=red!20] (synth) {{\sc 1.Synthesize}};}
+   \only<2-7,9>{\node[minimum width=1.5cm, minimum height=0.6cm, fill=red!20] (synth) {{\sc 1.Synthesize}};}
    \&
    complexnode/.pic={ 
      \node[rectangle,draw,dotted,
@@ -284,14 +284,14 @@ the point.}
         pattern=north west lines, pattern color=gray!20,
 	label={\sc ~~~~~~~~~~~~Verify},] (verif) {};
      \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif1) at ([xshift=-2cm]verif.center) {{\sc 2.Safety}};
-     \only<4,6>{\node[minimum width=1cm, minimum height=0.6cm, fill=red!20] (verif1) at ([xshift=-2cm]verif.center) {{\sc 2.Safety}};}
+     \only<8,10>{\node[minimum width=1cm, minimum height=0.6cm, fill=red!20] (verif1) at ([xshift=-2cm]verif.center) {{\sc 2.Safety}};}
      \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif2) at ([xshift=0cm]verif.center) {{\sc 3.Precision}};
-     \only<7>{\node[minimum width=1cm, minimum height=0.6cm, fill=red!20] (verif2) at ([xshift=0cm]verif.center) {{\sc 3.Precision}};}
+     \only<11>{\node[minimum width=1cm, minimum height=0.6cm, fill=red!20] (verif2) at ([xshift=0cm]verif.center) {{\sc 3.Precision}};}
      \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif3) at ([xshift=2cm]verif.center) {{\sc 4.Complete}};
-     \only<8>{\node[minimum width=1cm, minimum height=0.6cm, fill=red!20] (verif3) at ([xshift=2cm]verif.center) {{\sc 4.Complete}};}
+     \only<12>{\node[minimum width=1cm, minimum height=0.6cm, fill=red!20] (verif3) at ([xshift=2cm]verif.center) {{\sc 4.Complete}};}
    } 
    \& \node[ellipse, fill=gray!20] (done) {{\sc Done}};
-   \only<9>{\node[ellipse, fill=red!20] (done) {{\sc Done}};}\\
+   \only<13>{\node[ellipse, fill=red!20] (done) {{\sc Done}};}\\
    \& \\
    %% \node[minimum height=0cm] (gp) {\sf Program Search};
    %% \&
@@ -330,47 +330,47 @@ the point.}
  \begin{tabular}{p{\dimexpr 0.5\linewidth-2\tabcolsep} 
      p{\dimexpr 0.5\linewidth-2\tabcolsep}}
 
-   \only<2,3>{
+   \only<2-7>{
      \begin{tabular}{l}
        {\bf Find a controller for given $\{x_0\}$ and $k$} \\
        {\bf such that the system is stable and safe.} \\
      \\\\\\\\\\\\\\\\\\\\\\\\\\
   \end{tabular}
    }
-   \only<4>{
+   \only<8>{
      \begin{tabular}{l}
        {\bf Find an initial state for which the system}\\
        {\bf is unsafe.} \\
      \\\\\\\\\\\\\\\\\\\\\\\\\\
   \end{tabular}
    }
-   \only<5>{
+   \only<9>{
      \begin{tabular}{l}
        {\bf Find a controller for $\{x_0, x_0'\}$ and $k$}\\
        {\bf such that the system is stable and safe.} \\
      \\\\\\\\\\\\\\\\\\\\\\\\\\
   \end{tabular}
    }
-   \only<6>{
+   \only<10>{
      \begin{tabular}{l}
        {\bf Find an initial state for which the system}\\
        {\bf is unsafe.} \\       
      \\\\\\\\\\\\\\\\\\\\\\\\\\     
   \end{tabular}
    }
-   \only<7>{
+   \only<11>{
      \begin{tabular}{l}
      {\bf Check that the plant precision is sufficient.}\\
      \\\\\\\\\\\\\\\\\\\\\\\\\\\\     
   \end{tabular}
    }
-   \only<8>{
+   \only<12>{
      \begin{tabular}{l}
        {\bf Check that $k$ is sufficient.} \\
      \\\\\\\\\\\\\\\\\\\\\\\\\\\\     
   \end{tabular}
    }
-   \only<9>{
+   \only<13>{
      \begin{tabular}{l}
        {\bf Controller found.}\\
      \\\\\\\\\\\\\\\\\\\\\\\\\\\\     
@@ -379,23 +379,33 @@ the point.}
  
    &
    \begin{overprint}
-   \onslide<2>
+   \onslide<2,3,4,5,6>
        \scalebox{0.65}{
    \hspace{1cm}
      \begin{minipage}{0.6\linewidth}
       \begin{algorithm}[H]
 \begin{algorithmic}[1]
-        \STATE \textbf{Input:} $x_0$, $k$.
-        \STATE \textbf{Output:} {\color {red} $C$}.
-       \STATE {\color {red} $C$}=nondet;
-       \STATE \textbf{assume}({\color {black} \textbf{STABLE}}({\color {red} $C$}));
-        \STATE \textbf{assume}({\color {black} \textbf{SAFE}}($x_{0}$));       
+  \only<3>{\STATE \colorbox{red!20}{\textbf{Input:} $x_0$, $k$.}
+        \STATE \colorbox{red!20}{\textbf{Output:} {\color {red} $C$}.}}
+  \only<2,4->{\STATE \textbf{Input:} $x_0$, $k$.
+          \STATE \textbf{Output:} {\color {red} $C$}.}
+  \only<2,3,5->{\STATE {\color {red} $C$}=nondet;
+        \STATE \textbf{assume}({\color {black} \textbf{STABLE}}(A,B,{\color {red} $C$}));}
+  \only<4>{\STATE \colorbox{red!20}{{\color {red} $C$}=nondet;}
+  \STATE \colorbox{red!20}{\textbf{assume}(\textbf{STABLE}(A,B,{\color {red} $C$}));}}
+  \only<1,2,3,4,6->{ \STATE \textbf{assume}(\textbf{SAFE}($x_{0}$));       
   \FOR{$i=0$ to $k-1$}
         \STATE $x_{i+1}=x_i(A-B{\color {red} C})$
         \STATE assume({\color {black} \textbf{SAFE}}($x_{i+1}$));
-          \STATE $i=i+1;$;
-        \ENDFOR
-        \STATE \textbf{assert}(false);
+          \STATE $i=i+1;$;}
+ \only<5>{\STATE \colorbox{red!20}{\textbf{assume}(\textbf{SAFE}($x_{0}$));}
+  \FOR{\colorbox{red!20}{$i=0$ to $k-1$}}
+        \STATE \colorbox{red!20}{$x_{i+1}=x_i(A-B{\color {red} C})$}
+        \STATE \colorbox{red!20}{assume({\color {black} \textbf{SAFE}}($x_{i+1}$));}
+          \STATE \colorbox{red!20}{$i=i+1;$;}}
+          \ENDFOR
+          \only<6>{\STATE \colorbox{red!20}{\textbf{assert}(false);}}
+          \only<1,2,3,4,5>{\STATE \textbf{assert}(false);}
 \end{algorithmic}
 \caption*{\textsc{synthesize}}
 \label{alg:seq}
@@ -414,13 +424,13 @@ the point.}
 %%          x[k+1]
 %%      \end{lstlisting}
 
-     \onslide<3>
+     \onslide<7>
      \includegraphics[width=.55\textwidth]{figures/spirals/Spirals-05.png}
-     \onslide<4>
+     \onslide<8>
      \includegraphics[width=.55\textwidth]{figures/spirals/Spirals-04.png}
-     \onslide<5,6,7>
+     \onslide<9,10,11>
      \includegraphics[width=.55\textwidth]{figures/spirals/Spirals-06.png}
-     \onslide<8->
+     \onslide<12->
          \includegraphics[width=.55\textwidth]{figures/spirals/Spirals-06-prime.png}
  \end{overprint}
 %}
