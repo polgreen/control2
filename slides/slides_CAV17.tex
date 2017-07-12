@@ -14,26 +14,19 @@
 \usepackage{adjustbox}
 \usepackage{pifont,color,soul}
 \usepackage[most]{tcolorbox}
-
-%\usepackage{mdframed,framed}
+\usepackage{listings}
+\usepackage{blindtext}
+\usepackage{fancyvrb}
  \usepackage{adjustbox}
 \usepackage{xcolor,colortbl}
- \newcommand{\hpathlen}{\ensuremath{\mathit{pathLength}}\xspace}
-\newcommand{\halloc}{\ensuremath{\mathit{new}}\xspace}
-\newcommand{\hassign}{\ensuremath{\mathit{assign}}\xspace}
-\newcommand{\hlookup}{\ensuremath{\mathit{lookup}}\xspace}
-\newcommand{\hupdate}{\ensuremath{\mathit{update}}\xspace}
-\newcommand{\halias}{\ensuremath{\mathit{alias}}\xspace}
-\newcommand{\hisnull}{\ensuremath{\mathit{isNull}}\xspace}
-\newcommand{\hispath}{\ensuremath{\mathit{isPath}}\xspace}
-\newcommand{\hcircular}{\ensuremath{\mathit{circular}}\xspace}
-\newcommand{\id}{\ensuremath{\mathrm{id}}\xspace}
-\newcommand{\hsubdivide}{\ensuremath{\mathit{subdivide}}\xspace}
-\newcommand{\hfresh}{\ensuremath{\mathit{fresh}()}\xspace}
-\newcommand{\shakira}{{\sc Shakira}\xspace}
-\newcommand{\hnull}{{\bf null}}
+\usepackage{algorithm,algorithmic}
+\usepackage{caption}
 \newcommand{\xmark}{\ding{55}}
 \definecolor{azure}{rgb}{0.0, 0.5, 1.0}
+
+\lstnewenvironment{queryl}[1][] 
+   {\lstset{linewidth=8cm, #1}}
+   {}
 
 \usetheme[
 % Toggle showing page counter
@@ -106,9 +99,10 @@ alternativetitlepage=true,
 
 \usepackage{listings}
 
-\lstset{language=C,
- basicstyle=\normalsize
- }
+%% \lstset{language=C,
+%%   basicstyle=\normalsize,
+%%   linewidth=8cm
+%%  }
 
 \usepackage{ifthen}
 
@@ -157,23 +151,11 @@ alternativetitlepage=true,
 \end{frame}
 
 
-%\section{$\checkmark$ Motivation}
-
-%\section{$\checkmark$ Contributions}
-%\subsection{Example}
-%\subsection{Cristina Says Something}
-
 \begin{frame}{Motivation}
 
-  %Cyber-physical systems (CPS) are becoming ubiquitous in our daily life.
-  % use a better figure for cyber-physical systems
-%\vspace{-1cm}
+\centering
+ \includegraphics[width=.75\textwidth]{figures/CPS.jpg} 
 
-  \centering
-\vspace{-.5cm}
-    \includegraphics[width=.75\textwidth]{figures/CPS.jpg} 
-
-% smart spaces, intelligent transportation, medical equipment, sensors, robotics. 
  
 \uncover<2>{
  \vspace{-.5cm}
@@ -182,349 +164,97 @@ alternativetitlepage=true,
 
 \end{frame}
 
-%% \begin{frame}{Example}
-  
-%%   \begin{center}
-
-%%   \begin{tabular}{ll}
-%%  \includegraphics[width=.4\textwidth]{figures/aircon.jpg}&
-%%  \includegraphics[width=.3\textwidth]{figures/thermostat.jpg}
-%%   \end{tabular}
-
-%%   \end{center}
-
-%%   \vspace{.5cm}
-  
-%%  The thermostat must control the aircon such that the ambient temperature is stable and within
-%%  safe bounds.
- 
-%% \end{frame}
 
 \begin{frame}{State-feedback architecture}
 \vspace{-1cm}
-  \begin{center}
-    \only<1>{\includegraphics[width=.8\textwidth]{figures/spirals/diagram-14.png}}
-    \only<2>{\includegraphics[width=.8\textwidth]{figures/spirals/diagram-15.png}}
+\begin{center}
+  \begin{overprint}
+    \onslide<1>
+    \centerline{\includegraphics[width=.8\textwidth]{figures/spirals/diagram-15.png}}
+    \onslide<2->
+    \centerline{\includegraphics[width=.8\textwidth]{figures/spirals/diagram-16.png}}
+  \end{overprint}
   \end{center}
   
-  {\bf Continuous-discrete system}
+  \only<1>{{\bf Continuous-discrete system}}
+  \only<2->{{\bf Continuous system}}  
   \begin{itemize}
-  \item \colorbox{green!70}{Plant:
-    \textsc{$\dot{x}(t) = Ax(t)+ Bu(t), \quad t \in \mathbb R_0^+,~x(0)=initial~state$}}
-\item \colorbox{azure!70}{State-feedback controller:   \only<1>{$u_k = r_{k} - C x_k$}\only<2->{$u_k = - C x_k$}}
+  \item \only<1>{\colorbox{green!70}{Plant:
+    \textsc{$\dot{x}(t) = Ax(t)+ Bu(t), \quad t \in \mathbb R_0^+,~x(0)=initial~state$}}}
+    \only<2->{\colorbox{azure!70}{Plant:
+    \textsc{$x_{k+1} = A x_k+ B u_k, \quad k \in \mathbb \mathbb N,~x_0=initial~state$}}}
+  \item \colorbox{azure!70}{State-feedback controller:   \only<1>{$u_k = r_{k} - C x_k$}\only<2->{$u_k = - C x_k$}}
+  \item \uncover<3->{Finite precision}  
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Translation to digital domain}
+\begin{frame}{Numerical errors}
 \vspace{-1cm}
   \begin{center}
-    \includegraphics[width=.8\textwidth]{figures/spirals/diagram-16.png}
+    \only<1>{\includegraphics[width=.8\textwidth]{figures/spirals/diagram-18.png}}
+    \only<2>{\includegraphics[width=.8\textwidth]{figures/spirals/diagram-19.png}}
+    \only<3->{\includegraphics[width=.8\textwidth]{figures/spirals/diagram-20.png}}
   \end{center}
   
-  {\bf Continuous-discrete system}
   \begin{itemize}
-  \item \colorbox{azure!70}{Plant:
-    \textsc{$x_{k+1} = A x_k+ B u_k, \quad k \in \mathbb \mathbb N,~x_0=initial~state$}}
-\item \colorbox{azure!70}{State-feedback controller:   $u_k = - C x_k$}
-\end{itemize}
-\end{frame}
-
+  \item \uncover<1->{Truncation and rounding on the plant}
+  \item  \uncover<2->{Truncation on the converters}
+  \item \uncover<3->{Rounding on the controller}
+  \end{itemize}  
+ 
+\end{frame}  
 
 \begin{frame}{Our approach}
-\vspace{-1cm}
-  \begin{center}
-    \only<1>{\includegraphics[width=.5\textwidth]{figures/spirals/diagram1.png}}
-    \only<2->{\includegraphics[width=.5\textwidth]{figures/spirals/diagram2.png}}
-  \end{center}
-
-\footnotesize
-
-\vspace{-.5cm}
-{\bf 1. Translate to a single digital domain}
-\begin{itemize}
- \item Plant: $x_{k+1} = A x_k+ B u_k$
- \item State-feedback controller: $u_k = - C x_k$
- \item Finite precision %: $\langle I_p,F_p \rangle$, $\langle I_c,F_c \rangle$, $I_p{\geq}I_c$, $F_p{\geq}F_c$
-%\item Controller: manipulates state values at lower precision $\langle I_c,F_c \rangle$
-  \end{itemize}
-\vspace{.2cm}
- \uncover<2->{{\bf 2. Evaluate sources of numerical error}
-  \begin{itemize}
-  \item {\color {orange} FWL effects on the plant} (interval arithmetic)
-  \item {\color {blue} FWL effects on the controller} (additive noise)
-  \end{itemize}
-  }
-\vspace{.2cm}
-  \uncover<3->{{\bf 3. Apply program synthesis}} 
-
+  \vspace{-.5cm}
+\begin{overprint}
+  \onslide<1>
+  \centerline{\includegraphics[width=.9\textwidth]{figures/spirals/diagram-26.png}}
+  \onslide<2>
+  \centerline{\includegraphics[width=.9\textwidth]{figures/spirals/diagram-27.png}}
+  \onslide<3>
+  \centerline{\includegraphics[width=.9\textwidth]{figures/spirals/diagram-28.png}}
+\end{overprint}
+  
 \end{frame}
   
-  
-  %% The resulting closed-loop system is
-  %% a program with a loop that operates on bit-vectors encoded
-  %% using fixed-point arithmetic with finite word length (FWL).
-  %% The three effects of 1. uncertainties, 2. FWL representation
-  %% and 3. quantization errors are incorporated into the model,
-  %% and are taken into account during the CEGIS-based synthesis
-  %% of the control software for the plant.
-  
-%% \begin{frame}{Motivation}
-%% Linear Time Invariant (LTI) models represent a broad class of dynamical sys-
-%% tems with significant impact in numerous application areas such as life sciences,
-%% robotics, and engineering [2, 11]. The synthesis of controllers for LTI models
-%% is well understood, however the use of digital control architectures adds new
-%% challenges due to the effects of finite-precision arithmetic, time discretization,
-%% and quantization noise, which is typically introduced by Analogue-to-Digital
-%% (ADC) and Digital-to-Analogue (DAC) conversion.
-%% \end{frame}
 
-%% \begin{frame}{Closed-loop control system}
-%%   \includegraphics[width=\textwidth]{closedloopseries.pdf}
-
-%%   Outputs of discrete plant G(z) are fed back and compared to a
-%%   reference signal to which a controller C(z) should steer.
-
-%%   Representation: state-space LTI model.
-%% \end{frame}
-
-%% \begin{frame}{Our approach}
-
-%%   Translate everything into the digital domain.
-
- 
-%% \end{frame}
-
-%% \begin{frame}{State-space representation}
-%% \begin{itemize}
-%% %% \begin{align*}
-%% %% \dot{x}(t) = Ax(t)+ B u(t), \quad x \in \mathbb{R}^{n}, u \in \mathbb{R}^m, A \in \mathbb{R}^{n \times n}, B \in \mathbb{R}^{n \times m}, 
-%% %% \end{align*}
-%% %% %
-%% %% where $t \in \mathbb R_0^+$, where $A$ and $B$ are matrices that fully
-%% %% specify the continuous plant, and with initial states set as $x(0)$.
-
-%% %% This is soundly discretized in time into:
-%% \item  {\bf Discretized plant:} 
-%% \begin{align*}
-%%  & x_{k+1} = A x_k+ B u_k \qquad k \in \mathbb N, x_k \in \mathbb{R}^{n}, u_k \in \mathbb{R}^m, A \in \mathbb{R}^{n \times n}, B \in \mathbb{R}^{n \times m}\\
-%% & u_k = r_{k} - K x_k \\ 
-%%  & x_0=initial~state 
-%% \end{align*}
-%% %% where $k \in \mathbb N$ and $x_{0}$ is the initial state,
-%% %% $A_d$ and $B_d$ denote the matrices that describe the discretized plant dynamics.
-
-%% \item {\bf Fixed-point representation:}
-  
-%%   Plant: $\langle I_p,F_p \rangle$
-
-%%   Controller: $\langle I_c,F_c \rangle$
-
-%% %% \begin{flalign*}
-%% %% &x_{k+1} =\mathcal{F}_{\langle I_p,F_p \rangle}(A) \mathcal{F}_{\langle I_p,F_p \rangle}(x_{k}) + \mathcal{F}_{\langle I_p,F_p \rangle}(B)\mathcal{F}_{\langle I_p,F_p \rangle}(u_{k}) \qquad \qquad \quad\\
-%% %% &u_{k}=-(\mathcal{F}_{\langle I_c,F_c \rangle}(K)\cdot\mathcal{F}_{\langle I_c,F_c \rangle}(x_{k}))
-%% %% \end{flalign*}
-
-%% \end{itemize}
-
-%We synthesize for requirements over this discrete-time domain.
-
-%% The behavior of a system is represented via a state
-%% evolution equation $x(n+1)$ and an instantaneous output equation $y(n)$, as
-%% follows:
-%% %
-%% \begin{equation}
-%% \begin{split}
-%% x(n+1) &= A x(n) + B u(n)
-%% \\
-%% y(n) &= C x(n) + D u(n), 
-%% \end{split}\label{eq:ss-example}
-%% \end{equation}
-%% %
-%% where $A$, $B$, $C$ and $D$ are matrices that fully specify the model. 
-  
-%\end{frame}
-
-%% \begin{frame}{State feedback architecture}
-%% %The most basic feedback architecture is the state feedback one, 
-%%   %where
-%%   The control action $u_k$ is computed by: 
-%% %
-%% \begin{equation*}
-%% u_k = r_{k} - K x_k
-%% \end{equation*}
-%% %
-%% Here, $K \in \mathbb{R}^{m \times n}$ is a state-feedback gain matrix, 
-%% and $r_{k}$ is a reference signal (again digital).   
-%% %
-%% The closed-loop model then takes the form 
-%% \begin{align*}
-%% x_{k+1} = ( A_d - B_d K ) x_k + B_d r_k
-%% \end{align*}
-
-%% \end{frame}  
-
-%% \begin{frame}{Objectives}
-%% The gain matrix $K$ can be set so that the closed-loop discrete dynamics are
-%% shaped as desired: according to a specific stability goal or
-%% a quantitative safety requirement.
-
-%% \end{frame}  
-
-%% \begin{frame}{Novelty}
-
-%% - Quantitative safety requirements are not typical in the digital
-%% control literature.
-  
-%% - We embrace the digital nature of the controller, which
-%% manipulates quantized signals as discrete quantities represented with
-%% finite precision.
-%% \end{frame}  
-
-%% \begin{frame}{Stability of closed-loop systems}
-
-%% Asymptotic stability is a property that amounts to convergence of the
-%% model executions to an equilibrium point, starting from any states in
-%% a neighborhood of the point.
-
-%% \includegraphics[width=0.4\textwidth]{ct.eps}
-
-%% %% A discrete-time LTI system is asymptotically
-%% %% stable if all the roots of its characteristic polynomial (i.e., the
-%% %% eigenvalues of the closed-loop matrix $A_d - B_d K$) are inside the unity
-%% %% circle of the complex plane, i.e., their absolute values are strictly less than
-%% %% one (this simple sufficient condition can be generalised, 
-%% %% however this is not necessary in our work).  
-%% We express this stability specification $\phi_\mathit{stability}$ in terms of a check known as
-%% \emph{Jury's criterion}.
-%% %% this is an easy algebraic formula to
-%% %% select the entries of matrix $K$ so that the closed-loop dynamics are shaped
-%% %% as desired.
-
-%% \end{frame}  
-
-%% \begin{frame}{Safety of closed-loop systems}
-%% A safety specification gives raise to a requirement on the states of
-%% the model, such that the feedback controller (namely the choice of the
-%% gains matrix~$K$) must ensure that the state never violates the
-%% requirement.
-
-
-%% \begin{equation*}
-%% \phi_\mathit{safety}\iff \forall k\ge 0.\, \bigwedge_{i=1}^{n}{\underline{x_{i}} \leq x_{i,k} \leq \overline{x_{i}}}
-%% \end{equation*}
-
-%% where $\underline{x_{i}}$ and $\overline{x_{i}}$ are lower and upper bounds
-%% for the $i$-th coordinate $x_{i}$ of state $x\in \mathbb R^n$ at the $k$-th
-%% instant, respectively.
-
-
-%% This means that the states will always be within an $n$-dimensional hyper-box.
-
-
-%% \end{frame}
-
-%% \begin{frame}{Sources of uncertainty}
-
-%%   \begin{itemize}
-%%     \item (Representation) Numerical error introduced by the
-%%       fixed-point numbers employed to model the plant, i.e., to
-%%       represent the plant dynamics $A_d$, $B_d$ and $x_k$. We address this
-%%       by using interval arithmetic in the verification phase.
-%%     \item Quantization error introduced by the digital controller,
-%%       which performs operations on fixed-point numbers. We represent this as
-%%       nondeterministic addtive noise.
-%%   \end{itemize}  
-
-%% %% The physical plant operates in the
-%% %% reals, which means our verification phase must also account for the numerical error and quantization errors caused by representing the physical plant at the finite precision $\mathcal{F}_{\langle I_p,F_p \rangle}$.
-
-%% \end{frame}
-
-%% \begin{frame}{Challenges}
-%% FWL affects the poles and zeros
-%% positions, degrading the closed-loop dynamics, causing steady-state
-%% errors and eventually de-stabilizing the system.
-
-%% We disregard this during synthesis phase (the synthesis phase is potentially unsound), 
-%% and check in the verification phase that the (perturbed, noisy) model converges to a
-%% neighborhood of the equilibrium within the safe set (we require stability as a
-%% precursor to safety).
-
-%% \end{frame}  
-
-\begin{frame}{The synthesis problem}
+\begin{frame}{Stability \only<5>{and safety}}
 
   \small
-  
-    \colorbox{azure!70}{Plant:
-   \textsc{$x_{k+1} = A x_k+ B u_k, \quad k \in \mathbb \mathbb N$}}\\
-   \colorbox{azure!70}{State-feedback controller:   $u_k = - C x_k$}
 
-  
-  {\bf Synthesise a controller {\color {red} C} that makes the system
-  stable and \bf safe for all initial states.}
+  {\bf A system \colorbox{azure!70}{
+    \textsc{$x_{k+1} = A x_k+ B u_k, u_k = - C x_k$}} is
+  asymptotically stable if its model
+  executions converge to an equilibrium point,
+  when starting from any states in a neighborhood of
+the point.}
 
-  %\vspace{-1.5cm}
-\uncover<2->{
-%  \begin{tabular}{ll}
-%\\\\\\\\\\
-%\begin{tabular}{l}
-    %%   \vspace{-1cm}
-  %\begin{center}
-\centering
-  \includegraphics[width=.7\textwidth]{figures/spirals/Spirals-01.png}
- }
-  %\end{center} 
-%  
-%  {\bf Continuous-discrete system}
-%%   \begin{itemize}
-    %%   \item
-%%     \colorbox{azure!70}{Plant:
-%%    \textsc{$x_{k+1} = A x_k+ B u_k, \quad k \in \mathbb \mathbb N$}}\\
-%%    \colorbox{azure!70}{State-feedback controller:   $u_k = - C x_k$}
-%% %% \end{itemize}
-%% \end{tabular}
-  %% \begin{tabular}{l}
-    %% \\\\\\\\\\\\
-    %% $x_{k+1} = A x_k+ B u_k$\\
-    %% $u_k = - C x_k$\\
-    %% $x_0$ = initial state \\
-    %% $x\in \mathbb R^n$ 
-    %% \end{tabular}
-%% &
-%% \adjustbox{valign=t}{
-%%   \centering
-%%   \hspace{1cm}
-%\includegraphics[width=.55\textwidth]{figures/spirals/Spirals-01.png}
-%\only<2->{\includegraphics[width=.6\textwidth]{figures/spirals/Spirals-02.png}}
-%}
-
-% [figure] make initial states square bigger, use a different colour for k.
-% first figure: just one spiral
-% second figure: 4 spirals
-
-%  \end{tabular}
-%}
-
-%% \uncover<3->{
-%%   \vspace{.3cm}
-%% {\bf Stability:} Jury's criterion
-
-%% {\bf Safety:} (1) unwinding up to a completeness threshold (2) abstraction}
-
-%We consider non-deterministic initial states within a
-%specified range, the reference signal to be set to zero, saturation on
-%the inputs, and account for quantization errors introduced by the
-%controller.
-
-%$\exists K. \forall(x_0, u_k). \phi_{stability} \wedge \phi_{safety}$
+\begin{center}
+\begin{overprint}
+  \onslide<1>
+  \centerline{\includegraphics[width=.65\textwidth]{figures/spirals/Spirals-21.png}}
+  \onslide<2>
+  \centerline{\includegraphics[width=.65\textwidth]{figures/spirals/Spirals-22.png}}
+  \onslide<3>
+  \centerline{\includegraphics[width=.65\textwidth]{figures/spirals/Spirals-23.png}}
+  \onslide<4>
+  \centerline{\includegraphics[width=.65\textwidth]{figures/spirals/Spirals-24.png}}
+  \onslide<5>
+  \centerline{\includegraphics[width=.65\textwidth]{figures/spirals/Spirals-25.png}}
+\end{overprint}
+\end{center}
 
 \end{frame}
 
+%% \defverbatim[colored]\lstI{
+%% \begin{lstlisting}[language=C++,basicstyle=\ttfamily,keywordstyle=\color{red}]
+%% C=nondet;
+%% [...]
+%% \end{lstlisting}
+%% }
 
-\begin{frame}{Completeness threshold-based safety check} %%Na\"ive Approach: CEGIS with multi-staged verification}
 
-%\begin{tabular}{ll}
+\begin{frame}{Controller synthesis} 
 \vspace{-.5cm}
  \centering 
  {\scriptsize
@@ -544,7 +274,7 @@ alternativetitlepage=true,
    \& \coordinate (aux6);
    \&;\\
    \node[minimum width=1.5cm, minimum height=0.6cm, fill=gray!20] (synth) {{\sc 1.Synthesize}};
-   \only<2,4>{\node[minimum width=1.5cm, minimum height=0.6cm, fill=red!20] (synth) {{\sc 1.Synthesize}};}
+   \only<2,3,5>{\node[minimum width=1.5cm, minimum height=0.6cm, fill=red!20] (synth) {{\sc 1.Synthesize}};}
    \&
    complexnode/.pic={ 
      \node[rectangle,draw,dotted,
@@ -553,51 +283,44 @@ alternativetitlepage=true,
         pattern=north west lines, pattern color=gray!20,
 	label={\sc ~~~~~~~~~~~~Verify},] (verif) {};
      \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif1) at ([xshift=-2cm]verif.center) {{\sc 2.Safety}};
-     \only<3,5>{\node[minimum width=1cm, minimum height=0.6cm, fill=red!20] (verif1) at ([xshift=-2cm]verif.center) {{\sc 2.Safety}};}
+     \only<4,6>{\node[minimum width=1cm, minimum height=0.6cm, fill=red!20] (verif1) at ([xshift=-2cm]verif.center) {{\sc 2.Safety}};}
      \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif2) at ([xshift=0cm]verif.center) {{\sc 3.Precision}};
-     \only<6>{\node[minimum width=1cm, minimum height=0.6cm, fill=red!20] (verif2) at ([xshift=0cm]verif.center) {{\sc 3.Precision}};}
+     \only<7>{\node[minimum width=1cm, minimum height=0.6cm, fill=red!20] (verif2) at ([xshift=0cm]verif.center) {{\sc 3.Precision}};}
      \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif3) at ([xshift=2cm]verif.center) {{\sc 4.Complete}};
-     \only<7>{\node[minimum width=1cm, minimum height=0.6cm, fill=red!20] (verif3) at ([xshift=2cm]verif.center) {{\sc 4.Complete}};}
-     %\node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif4) at ([xshift=3.1cm]verif.center) {{\sc 5.Sampling}};
+     \only<8>{\node[minimum width=1cm, minimum height=0.6cm, fill=red!20] (verif3) at ([xshift=2cm]verif.center) {{\sc 4.Complete}};}
    } 
    \& \node[ellipse, fill=gray!20] (done) {{\sc Done}};
-   \only<8>{\node[ellipse, fill=red!20] (done) {{\sc Done}};}\\
+   \only<9>{\node[ellipse, fill=red!20] (done) {{\sc Done}};}\\
    \& \\
-   \node[minimum height=0cm] (gp) {\sf Program Search};
-   \&
-   complexnode/.pic={ 
-     \coordinate (aux);
-   \node (bmc) at ([xshift=-2cm]aux.center) {\sf BMC-based \\ \sf Verifier};
-   \node (fp)  at ([xshift=0cm]aux.center) {\sf Fixed-point \\ \sf Arithmetic\\ \sf Verifier};
-   \node (sv)  at ([xshift=2cm]aux.center) {\sf Completeness\\ \sf Verifier};
-   %\node (cv)  at ([xshift=3.1cm]aux.center) {\sf Sampling\\Verifier};
-   }   
-    \\
+   %% \node[minimum height=0cm] (gp) {\sf Program Search};
+   %% \&
+   %% complexnode/.pic={ 
+   %%   \coordinate (aux);
+   %% \node (bmc) at ([xshift=-2cm]aux.center) {\sf BMC-based \\ \sf Verifier};
+   %% \node (fp)  at ([xshift=0cm]aux.center) {\sf Fixed-point \\ \sf Arithmetic\\ \sf Verifier};
+   %% \node (sv)  at ([xshift=2cm]aux.center) {\sf Completeness\\ \sf Verifier};
+   %% }   
+   %%  \\
   };
 
    \path
     ([yshift=2em]synth.east) edge node[xshift=-0.5em,align=center] {$C$} ([yshift=2em]verif1.west)
     ([yshift=-2em]verif1.west) edge node {C-ex} ([yshift=-2em]synth.east)
-    ([xshift=-5em]fp.north) edge node[align=center]  {} ([xshift=-5em]verif2.south)
-    ([xshift=-5em]sv.north) edge node[align=center]  {} ([xshift=-5em]verif3.south)
-    %([xshift=-5em]cv.north) edge node[align=center]  {T/F} ([xshift=-5em]verif4.south)
-    ([xshift=5em]verif1.south) edge node[align=center] {} ([xshift=5em]bmc.north)
-    ([xshift=5em]verif2.south) edge node[align=center] {} ([xshift=5em]fp.north)
-    ([xshift=5em]verif3.south) edge node[align=center] {} ([xshift=5em]sv.north)
-    %([xshift=5em]verif4.south) edge node[align=center] {$C$} ([xshift=5em]cv.north)
-    ([xshift=-5em]bmc.north) edge node[align=center]  {} ([xshift=-5em]verif1.south)
+%    ([xshift=-5em]fp.north) edge node[align=center]  {} ([xshift=-5em]verif2.south)
+%    ([xshift=-5em]sv.north) edge node[align=center]  {} ([xshift=-5em]verif3.south)
+%    ([xshift=5em]verif1.south) edge node[align=center] {} ([xshift=5em]bmc.north)
+ %   ([xshift=5em]verif2.south) edge node[align=center] {} ([xshift=5em]fp.north)
+%    ([xshift=5em]verif3.south) edge node[align=center] {} ([xshift=5em]sv.north)
+%    ([xshift=-5em]bmc.north) edge node[align=center]  {} ([xshift=-5em]verif1.south)
     (verif) edge node {PASS} (done)
-    ([xshift=5em]synth.south) edge node[align=center] {} ([xshift=5em]gp.north)
-    ([xshift=-5em]gp.north) edge node[align=center] {} ([xshift=-5em]synth.south)
+    %% ([xshift=5em]synth.south) edge node[align=center] {} ([xshift=5em]gp.north)
+    %% ([xshift=-5em]gp.north) edge node[align=center] {} ([xshift=-5em]synth.south)
     (aux3) edge (synth.north);
    \path[-]
    (verif2.north) edge node[align=center] {} ([xshift=0cm]aux6)
    ([xshift=0cm]aux6) edge node[align=center] {Increase Precision} (aux5)
    (verif3.north) edge node[align=center] {} ([xshift=6.7cm]aux4)
    ([xshift=6.7cm]aux4) edge node[align=center] {Increase Unfolding Bound} (aux3);
-   %(verif4.north) edge node[align=center] {} ([xshift=10.5cm]aux2)
-   %([xshift=10.5cm]aux2) edge node[align=center] {Increase Sampling Rate} (aux1);
-
  \end{tikzpicture}
 }}
 
@@ -606,56 +329,47 @@ alternativetitlepage=true,
  \begin{tabular}{p{\dimexpr 0.5\linewidth-2\tabcolsep} 
      p{\dimexpr 0.5\linewidth-2\tabcolsep}}
 
-   \only<2>{
+   \only<2,3>{
      \begin{tabular}{l}
        {\bf Find a controller for given $\{x_0\}$ and $k$} \\
        {\bf such that the system is stable and safe.} \\
-%       {\bf states $x_0$, a given number of discrete steps $k$,} \\
- %      {\bf and a given precision $\langle I_p, F_p \rangle$.}\\
-     \\\\\\\\\\\\\\\\\\\\\\\\\\
-  \end{tabular}
-   }
-   \only<3>{
-     \begin{tabular}{l}
-       {\bf Find an initial state for which the system}\\
-       {\bf is unsafe.} \\
-     %{\bf is stable and safe for all initial states $x_0$.}\\
-     %{\bf Use the same $\langle I_p, F_p \rangle$, $k$.}
      \\\\\\\\\\\\\\\\\\\\\\\\\\
   \end{tabular}
    }
    \only<4>{
      \begin{tabular}{l}
-       {\bf Find a controller for $\{x_0, x_0'\}$ and $k$}\\
-       {\bf such that the system is stable and safe.} \\
-%       {\bf states $x_0$, a given number of discrete steps $k$,} \\
- %      {\bf and a given precision $\langle I_p, F_p \rangle$.}\\
+       {\bf Find an initial state for which the system}\\
+       {\bf is unsafe.} \\
      \\\\\\\\\\\\\\\\\\\\\\\\\\
   \end{tabular}
    }
    \only<5>{
      \begin{tabular}{l}
-       {\bf Find an initial state for which the system}\\
-       {\bf is unsafe.} \\       
-     %% {\bf Verify that the closed-loop system} \\
-     %% {\bf is stable and safe for all initial states $x_0$.}\\
-     %% {\bf Use the same $\langle I_p, F_p \rangle$, $k$.}
-     \\\\\\\\\\\\\\\\\\\\\\\\\\     
+       {\bf Find a controller for $\{x_0, x_0'\}$ and $k$}\\
+       {\bf such that the system is stable and safe.} \\
+     \\\\\\\\\\\\\\\\\\\\\\\\\\
   \end{tabular}
    }
    \only<6>{
+     \begin{tabular}{l}
+       {\bf Find an initial state for which the system}\\
+       {\bf is unsafe.} \\       
+     \\\\\\\\\\\\\\\\\\\\\\\\\\     
+  \end{tabular}
+   }
+   \only<7>{
      \begin{tabular}{l}
      {\bf Check that the plant precision is sufficient.}\\
      \\\\\\\\\\\\\\\\\\\\\\\\\\\\     
   \end{tabular}
    }
-   \only<7>{
+   \only<8>{
      \begin{tabular}{l}
        {\bf Check that $k$ is sufficient.} \\
      \\\\\\\\\\\\\\\\\\\\\\\\\\\\     
   \end{tabular}
    }
-   \only<8>{
+   \only<9>{
      \begin{tabular}{l}
        {\bf Controller found.}\\
      \\\\\\\\\\\\\\\\\\\\\\\\\\\\     
@@ -663,66 +377,57 @@ alternativetitlepage=true,
    }
  
    &
-%\adjustbox{valign=t}{  
- \only<2>{\includegraphics[width=.55\textwidth]{figures/spirals/Spirals-05.png}}
- \only<3>{\includegraphics[width=.55\textwidth]{figures/spirals/Spirals-04.png}}
- \only<4,5,6>{\includegraphics[width=.55\textwidth]{figures/spirals/Spirals-06.png}}
- \only<7->{\includegraphics[width=.55\textwidth]{figures/spirals/Spirals-06-prime.png}}   
+   \begin{overprint}
+   \onslide<2>
+       \scalebox{0.65}{
+   \hspace{1cm}
+     \begin{minipage}{0.6\linewidth}
+      \begin{algorithm}[H]
+\begin{algorithmic}[1]
+        \STATE \textbf{Input:} $x_0$, $k$.
+        \STATE \textbf{Output:} {\color {red} $C$}.
+       \STATE {\color {red} $C$}=nondet;
+       \STATE \textbf{assume}({\color {black} \textbf{STABLE}}({\color {red} $C$}));
+        \STATE \textbf{assume}({\color {black} \textbf{SAFE}}($x_{0}$));       
+  \FOR{$i=0$ to $k-1$}
+        \STATE $x_{i+1}=x_i(A-B{\color {red} C})$
+        \STATE assume({\color {black} \textbf{SAFE}}($x_{i+1}$));
+          \STATE $i=i+1;$;
+        \ENDFOR
+        \STATE \textbf{assert}(false);
+\end{algorithmic}
+\caption*{\textsc{synthesize}}
+\label{alg:seq}
+\end{algorithm}
+    \end{minipage}
+    }
+   
+
+%% \begin{lstlisting}[mathescape,language=C++,basicstyle=\ttfamily,keywordstyle=\color{red},linewidth=5cm]
+%%      function synthesise($x_0$,k)
+%%        C=nondet;
+%%        assume(Jury_criterion(C));
+%%        x[0]=$x_0$
+%%        k=1;
+%%        while(k<6) {
+%%          x[k+1]
+%%      \end{lstlisting}
+
+     \onslide<3>
+     \includegraphics[width=.55\textwidth]{figures/spirals/Spirals-05.png}
+     \onslide<4>
+     \includegraphics[width=.55\textwidth]{figures/spirals/Spirals-04.png}
+     \onslide<5,6,7>
+     \includegraphics[width=.55\textwidth]{figures/spirals/Spirals-06.png}
+     \onslide<8->
+         \includegraphics[width=.55\textwidth]{figures/spirals/Spirals-06-prime.png}
+ \end{overprint}
 %}
 \end{tabular}
 
- %[figure]: Re-draw such that the spiral doesn't reach the origin.
- % second figure for safety: put all the 4 incomplete spirals in.
- % for the completeness threshold: complete the spiral with
- % dashed line.
 \end{frame}
 
 
-%% \begin{frame}{Na\"ive Approach: CEGIS with multi-staged verification}
-
-%% \begin{itemize}  
-%% \item Synthesis: get a controller that is stable and safe for an initial state,
-%%   plants precision, completeness threshold and sampling rate.
-
-%% \item Verification:
-%%   \begin{itemize}
-%% \item First stage: verify the controller is safe for all initial states.
-%% performs potentially unsound fixed-point operations
-%% assuming a plant precision $\langle I_p,F_p \rangle$.
-
-%% \item The second stage restores soundness with respect to the plant's precision
-%% by using interval arithmetic on the synthesized controller.
-
-%% \item The third stage: check that we are above the completeness threshold.
-%%   \end{itemize}
-%% \end{itemize}
-
-%% {\bf Observation:} Checking that the safety specification holds for
-%% any initial state can be computationally expensive if the bounds on
-%% the allowed initial states are large.
-%% If a controller is safe for each of the corner cases of our hypercube of
-%% allowed initial states, it is safe for any initial state in the hypercube. 
-
-%% \end{frame}
-
-%% \begin{frame}{Na\"ive Approach: CEGIS with multi-staged verification}
-%%   Synthesizes a controller for an individual initial state and input with a
-%%   bounded time horizon and, subsequently,
-%% it generalizes it to all reachable states, inputs, and time horizons during the
-%% verification phase.
-%% \end{frame}
-
-%% \begin{frame}{Abstraction-based approach}
-%% Find a controller for a continuous initial set of states and set of
-%% inputs, over an abstraction of the continuous dynamics.
-
-%% We use an abstraction of the continuous dynamics that confirms to
-%% witness proofs at specific times.
-
-%% We use abstract acceleration to compute the reach-tube $\hat{X}^\#$, i.e. the set of all
-%% reachable states at all given times given an initial set $\phi_{init}$.
-
-%% \end{frame}
 
 
 
@@ -731,21 +436,21 @@ alternativetitlepage=true,
 \begin{table}
 \centering
 \scriptsize
-\begin{tabular}{| r | l | c | c | r | c | r |}
+\begin{tabular}{| r | l | c | c | r |}
 %
 \hline
-\# & \multicolumn{1}{|c|}{Benchmark} & \multicolumn{1}{|c|}{Order} & \multicolumn{2}{|c|}{Completeness threshold}                 & \multicolumn{2}{|c|}{Abstraction} \\
-   &                                  & & \multicolumn{1}{|c|}{$\langle I_p,F_p \rangle$} & \multicolumn{1}{|c|}{Time} & \multicolumn{1}{|c|}{$\langle I_p,F_p \rangle$} & \multicolumn{1}{|c|}{Time} \\\hline
-1  & {\bf Cruise Control}  & 1 & \cellcolor{green!40}8,16   & \cellcolor{green!40}8.40\,s & 16,16  &    2.17\,s \\
-2  & {\bf DC Motor}          & 2 & \cellcolor{green!40}8,16   & \cellcolor{green!40}9.45\,s & 20,20  &   2.06\,s \\
-3  & {\bf Helicopter}        & 3 & \cellcolor{red!40}\xmark &  \cellcolor{red!40}\xmark  & 16,16  &    1.37\,s \\
-4  & {\bf Inverted Pendulum} & 4 & \cellcolor{green!40}8,16   & \cellcolor{green!40}9.65\,s & 16,16  &    0.56\,s \\
-5  & {\bf Magnetic Pointer}  & 2 & \cellcolor{red!40}\xmark &  \cellcolor{red!40}\xmark  & 28,28  &   44.14\,s \\
-6  & {\bf Magnetic Suspension} & 2 & \cellcolor{green!40}12,20  & \cellcolor{green!40}10.41\,s & 16,16  &    0.61\,s \\
-7  & {\bf Pendulum}          & 2 & \cellcolor{green!40}8,16   & \cellcolor{green!40}14.02\,s & 16,16  &    0.60\,s \\
-8  & {\bf Suspension}        & 2 & \cellcolor{green!40} 12,20  & \cellcolor{green!40}73.66\,s & \xmark &    \xmark \\
-9  & {\bf Tape Driver}       & 3 & \cellcolor{green!40}8,16   & \cellcolor{green!40}10.10\,s & 16,16  &  68.24\,s \\
-10 & {\bf Satellite}          & 2 & \cellcolor{green!40}8,16   & \cellcolor{green!40}9.43\,s & 16,16  &  0.67\,s \\\hline
+\# & \multicolumn{1}{|c|}{Benchmark} & \multicolumn{1}{|c|}{Order} & \multicolumn{2}{|c|}{Completeness threshold}                 \\
+   &                                  & & \multicolumn{1}{|c|}{$\langle I_p,F_p \rangle$} & \multicolumn{1}{|c|}{Time} \\\hline
+1  & {\bf Cruise Control}  & 1 & \cellcolor{green!40}8,16   & \cellcolor{green!40}7.44\,s \\
+2  & {\bf DC Motor}          & 2 & \cellcolor{green!40}8,16   & \cellcolor{green!40}7.76\,s\\
+3  & {\bf Helicopter}        & 3 & \cellcolor{green!40}8,16 &  \cellcolor{green!40}12.13\,s \\
+4  & {\bf Inverted Pendulum} & 4 & \cellcolor{green!40}8,16   & \cellcolor{green!40}8.82\,s \\
+5  & {\bf Magnetic Pointer}  & 2 & \cellcolor{green!40}8,16 &  \cellcolor{green!40}10.31\,s \\
+6  & {\bf Magnetic Suspension} & 2 & \cellcolor{green!40}12,20  & \cellcolor{green!40}21.55\,s \\
+7  & {\bf Pendulum}          & 2 & \cellcolor{green!40}8,16   & \cellcolor{green!40}9.08\,s \\
+8  & {\bf Suspension}        & 2 & \cellcolor{green!40} 8,16  & \cellcolor{green!40}17.18\,s \\
+9  & {\bf Tape Driver}       & 3 & \cellcolor{green!40}8,16   & \cellcolor{green!40}8.05\,s \\
+10 & {\bf Satellite}          & 2 & \cellcolor{green!40}8,16   & \cellcolor{green!40}8.76\,s \\\hline
 %
 \end{tabular}
 \end{table}
@@ -754,40 +459,31 @@ Timeout = 1 hour
 
 \end{frame}
 
-%% \begin{frame}{Experimental results}
-%% For the majority of our benchmarks, the abstraction-based back-end is
-%% faster than the basic multi-staged verification approach, and finds
-%% one solution more.
-
-%% The two back-ends complement each other in benchmark coverage and
-%% together solve all benchmarks in the set.
-
-%% On average our engine spent 52\% in the synthesis and 48\% in the
-%% verification phase.
-
-%% %% There are a few instances for which the system fails to find a controller. 
-%% %% For the na\"ive approach, the completeness threshold may be too large, thus
-%% %% causing a timeout.  On the other hand, the abstraction-based approach may
-%% %% require a very precise abstraction, resulting in too many refinements and,
-%% %% consequently, in a timeout.  Yet another source of incompleteness is the
-%% %% inability of the {\sc synthesize} phase to use a large enough precision for
-%% %% the plant model.
-
-
-%% \end{frame}
 
 \begin{frame}{Conclusions}
 
 We built an {\bf automated synthesizer for digital state-feedback
 controllers} that ensures both {\bf stability} and {\bf safety}.
-%over the state-space representation.
 
-\vspace{1cm}
+\vspace{.5cm}
 
 We considered the errors caused 
 by the implementation of the digital control algorithm and the
 modeling of plant dynamics.
 
+\only<2->{
+\vspace{.5cm}
+\begin{tabular}{cc}
+  \scriptsize
+  \begin{tabular}{l}
+  {\bf DSSynth Matlab toolbox:}\\
+  http://dsverifier.org/dsverifier/dssynth-toolbox/
+  \\\\\\\\\\\\
+  \end{tabular}
+  &
+\includegraphics[width=.35\textwidth]{figures/screens_dssynth.png}
+\end{tabular}
+}
 \end{frame}  
 
 
