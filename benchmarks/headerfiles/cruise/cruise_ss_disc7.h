@@ -15,7 +15,7 @@
 #define INPUT_LOWERBOUND (__plant_precisiont)-1
 const __plant_typet _controller_A[NSTATES][NSTATES] = { interval(9.995001e-01)};
  const __plant_typet __char_poly_const[2][2] = 
- {{ -1,  0},
-{ 9.995001e-01,  -3.906250e-03}};
+ {{ 1,  0},
+{ -9.995001e-01,  3.906250e-03}};
 
 #endif /*BENCHMARK_H_*/

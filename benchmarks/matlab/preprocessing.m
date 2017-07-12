@@ -119,9 +119,8 @@ x = sym('x');
 for i=1:states
     K(i) = sym(sprintf('k%d', i));
 end
-M = (A - B*K) - x*eye(states);
+M = x*eye(states) - (A - B*K);
 C = coeffs(det(M),x);
-K = fliplr(K); % for some reason Matlab gives coefficients in a weird order otherwise
 constant = zeros(states+1);
 
 %builds a matrix of constants:

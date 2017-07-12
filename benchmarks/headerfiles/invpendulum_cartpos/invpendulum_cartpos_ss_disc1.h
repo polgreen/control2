@@ -19,9 +19,9 @@ const __plant_typet _controller_A[NSTATES][NSTATES] = {{ interval(4.255252e+00),
 const __plant_typet _controller_B[NSTATES] = {interval(2.500000e-01), interval(0), interval(0), interval(0)};
 const __plant_typet __char_poly_const[5][5] = 
  {{ 1,  0,  0,  0,  0},
-{ -4.255252e+00,  0,  0,  0,  2.500000e-01},
-{ 6.510504e+00,  0,  0,  5.000000e-01,  0},
-{ -4.255252e+00,  0,  1,  0,  0},
-{ 1,  5.000000e-01,  0,  0,  0}};
+{ -4.255252e+00,  2.500000e-01,  0,  0,  0},
+{ 6.510504e+00,  0,  5.000000e-01,  0,  0},
+{ -4.255252e+00,  0,  0,  1,  0},
+{ 1,  0,  0,  0,  5.000000e-01}};
 
 #endif /*BENCHMARK_H_*/
