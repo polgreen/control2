@@ -10,6 +10,7 @@
 #include "sizes.h"
 #define __OPENLOOP_DEN_SIZE (__CONTROLLER_DEN_SIZE+__PLANT_DEN_SIZE-1)
 #define __OPENLOOP_NUM_SIZE (__CONTROLLER_NUM_SIZE+__PLANT_NUM_SIZE-1)
+#define SPEED_FACTOR 1.0
 
 #define __NORMALIZED
 #ifdef __CPROVER
@@ -40,6 +41,13 @@
   #include <stdio.h> 
 #endif
 
+typedef control_floatt plant_numt[__PLANT_NUM_SIZE];
+typedef control_floatt plant_dent[__PLANT_DEN_SIZE];
+typedef control_floatt control_numt[__CONTROLLER_NUM_SIZE];
+typedef control_floatt control_dent[__CONTROLLER_DEN_SIZE];
+typedef control_floatt ans_numt[SOLUTION_NUM_SIZE];
+typedef control_floatt ans_dent[SOLUTION_DEN_SIZE];
+
 struct anonymous0
 {
   cnttype int_bits;
@@ -48,11 +56,11 @@ struct anonymous0
 
 struct anonymous3
 {
-  control_floatt den[SOLUTION_DEN_SIZE];
-  control_floatt den_uncertainty[SOLUTION_DEN_SIZE];
+  ans_dent den;
+  ans_dent den_uncertainty;
   cnttype den_size;
-  control_floatt num[SOLUTION_NUM_SIZE];
-  control_floatt num_uncertainty[SOLUTION_NUM_SIZE];
+  ans_numt num;
+  ans_numt num_uncertainty;
   cnttype num_size;
 };
 
@@ -74,7 +82,8 @@ struct anonymous0 impl={ .int_bits=_CONTROLER_INT_BITS, .frac_bits=_CONTROLER_FR
 /*struct anonymous3 plant={ .den={ 1.0, -3.32481248817168, 1.64872127070013 }, .den_size=3,
     .num={ 0.548693198268086, -0.886738807003861, 0.0 }, .num_size=2};*/
 
-struct anonymous3 plant_cbmc,controller_cbmc;
+struct anonymous2
+struct anonymous3 plant_cbmc,controller_cbmc,closed_loop_cbmc;
 //#ifdef __CPROVER
 #include "controller.h"
 //extern struct anonymous3 controller;
@@ -293,7 +302,28 @@ void call_closedloop_verification_task()
 #endif  
 }
 
-signed int check_stability_closedloop(control_floatt *a, cnttype n)
+int assert_nonzero_controller(void)
+{
+  unsigned int zero_count = 0;
+  for(unsigned int i=0; i < __CONTROLLER_DEN_SIZE; i++)
+    if (controller.den[i] == 0.0) ++zero_count;
+#ifdef __CPROVER
+  __DSVERIFIER_assert(zero_count < __CONTROLLER_DEN_SIZE);
+#else
+  if (zero_count >= __CONTROLLER_DEN_SIZE) return 0;
+#endif
+  zero_count = 0;
+  for(unsigned int i = 0 ; i < __CONTROLLER_NUM_SIZE; i++)
+    if (controller.num[i] == 0.0) ++zero_count;
+#ifdef __CPROVER
+  __DSVERIFIER_assert(zero_count < __CONTROLLER_NUM_SIZE);
+#else
+  if (zero_count >= __CONTROLLER_NUM_SIZE) return 0;
+#endif
+  return 1;
+}
+
+signed int check_stability_closedloop(ans_dent a,cnttype n)
 {
   cnttype columns=n;
   control_floatt m[n][n];
@@ -368,12 +398,23 @@ signed int check_stability_closedloop(control_floatt *a, cnttype n)
       __DSVERIFIER_assert(m[i][0l] >= _poly_error);
 #else
     printf("m[%d]=%f>0\n", i, m[i][0]);
-    //std::cout << "m[" << i << "]=" << m[i][0] << ">0" << std::endl;
     if (!(m[i][0] >= _poly_error)) return 0;
 #endif
     columns--;
   }
   return 1;
+}
+
+signed int check_restricted_stability(control_floatt speed_factor)
+{
+  cnttype i,j;
+  ans_dent polynomial;
+  for (i=0;i<closed_loop_cbmc.den_size;i++)
+  {
+    polynomial[i]=closed_loop_cbmc.den[i];
+    for (j=0;j<=i;j++) polynomial[i]*=speed_factor;
+  }
+  return check_stability_closedloop(polynomial,closed_loop_cbmc.den_size);
 }
 
 signed long int fxp_control_floatt_to_fxp(control_floatt value)
@@ -390,76 +431,70 @@ signed long int fxp_control_floatt_to_fxp(control_floatt value)
   return tmp;
 }
 
-void fxp_check(control_floatt *value)
+control_floatt fxp_check(control_floatt value)
 {
 #ifdef __CPROVER
-  control_floatt tmp_value=*value;
-  if (tmp_value < 0.0) tmp_value=-tmp_value;
-  __DSVERIFIER_assert((~_dbl_max&tmp_value)==0);
+  #ifdef _FIXEDBV
+    control_floatt tmp_value=value;
+    if (tmp_value < 0.0) tmp_value=-tmp_value;
+    __DSVERIFIER_assert((~_dbl_max&tmp_value)==0);
+    return value;
+  #else
+    const controller_floatt fwl_value=value;
+    __DSVERIFIER_assert(fwl_value!=0);
+    return fwl_value;
+  #endif
 #else
-  *value=fxp_control_floatt_to_fxp(*value);
-  *value/=_fxp_one;
+  #ifdef _FIXEDBV
+    value=fxp_control_floatt_to_fxp(value);
+    value/=_fxp_one;
+  #endif
+  return value;
 #endif
 }
 
-void fxp_check_array(control_floatt *f, cnttype N)
+void ft_closedloop_series()
 {
-  for(cnttype i=0; i < N; i++) fxp_check(&f[i]);
-}
-
-void poly_mult(control_floatt *a, cnttype Na, control_floatt *b, cnttype Nb, control_floatt *ans, cnttype Nans)
-{
+  
   cnttype i;
   cnttype j;
   cnttype k;
-  Nans = Na + Nb - 1;
-  for(i = 0 ; i<Nans; i++) ans[i] = 0.0;
-  for(i = 0; i < Na; i++)
+  closed_loop_cbmc.num = __CONTROLLER_NUM_SIZE + plant.num_size -1;
+  closed_loop_cbmc.den = __CONTROLLER_DEN_SIZE + plant.den_size -1;
+
+  for(i = 0 ; i<closed_loop_cbmc.num_size; i++) closed_loop_cbmc.num[i] = 0.0;
+  for(i = 1; i <= __CONTROLLER_NUM_SIZE; i++)
   {
-    for( j = 0; j < Nb; j++)
+    for( j = 1; j <= plant.num_size; j++)
     {
-      k = Na + Nb -i -j -2;
-      ans[k] += a[Na-i-1] * b[Nb-j-1];
+      closed_loop_cbmc.num[__CONTROLLER_NUM_SIZE + plant.num_size -i -j] += controller.num[__CONTROLLER_NUM_SIZE-i] * plant_cbmc.num[plant.num_size-j];
     }
   }
-}
 
-void poly_sum(control_floatt *a, cnttype Na, control_floatt *b, cnttype Nb, control_floatt *ans, cnttype Nans)
-{
-  cnttype i;
-  Nans--;
-  Na--;
-  Nb--;
-  for (i=0;i<=Na;i++) ans[Nans-i]=a[Na-i];
-  for (i=Na+1;i<=Nans;i++) ans[Nans-i]=0;
-  for (i=0;i<=Nb;i++) ans[Nans-i]+=b[Nb-i];
-}
-
-void ft_closedloop_series(control_floatt *c_num, cnttype Nc_num, control_floatt *c_den, cnttype Nc_den, control_floatt *plant_num, cnttype Nplant_num, control_floatt *plant_den, cnttype Nplant_den, control_floatt *ans_num, cnttype Nans_num, control_floatt *ans_den, cnttype Nans_den)
-{
-  Nans_num = Nc_num + Nplant_num -1;
-  Nans_den = Nc_den + Nplant_den -1;
-  control_floatt den_mult[Nans_den];
-  poly_mult(c_num, Nc_num, plant_num, Nplant_num, ans_num, Nans_num);
-  poly_mult(c_den, Nc_den, plant_den, Nplant_den, den_mult, Nans_den);
-  poly_sum(ans_num, Nans_num, den_mult, Nans_den, ans_den, Nans_den);
+  for(i = 0 ; i<closed_loop_cbmc.den_size; i++) closed_loop_cbmc.den[i] = 0.0;
+  for(i = 1; i <= __CONTROLLER_DEN_SIZE; i++)
+  {
+    for( j = 1; j <= plant.den_size; j++)
+    {
+      closed_loop_cbmc.den[__CONTROLLER_DEN_SIZE + plant.den_size -i -j] += controller.den[__CONTROLLER_DEN_SIZE-i] * plant_cbmc.den[plant.den_size-j];
+    }
+  }
+  for (i=0;i<closed_loop_cbmc.num_size;i++) closed_loop_cbmc.den[Nclosed_loop_cbmc.den_size-i-1]+=closed_loop_cbmc.num[closed_loop_cbmc.num_size-i-1];
 }
 
 int verify_stability_closedloop_using_dslib(void)
 {
-  fxp_check_array(controller.num,__CONTROLLER_NUM_SIZE);
-  fxp_check_array(controller.den,__CONTROLLER_DEN_SIZE);
+  for(cnttype i=0; i < __CONTROLLER_NUM_SIZE; i++) controller.num[i]=fxp_check(controller.num[i]);
+  for(cnttype i=0; i < __CONTROLLER_DEN_SIZE; i++) controller.den[i]=fxp_check(controller.den[i]);
 
-  cnttype ans_num_size=__CONTROLLER_NUM_SIZE + plant.num_size-1;
-  control_floatt ans_num[ans_num_size];
-  cnttype ans_den_size=__CONTROLLER_DEN_SIZE + plant.den_size-1;
-  control_floatt ans_den[ans_den_size];
+  closed_loop_cbmc.num_size=__CONTROLLER_NUM_SIZE + plant.num_size-1;
+  closed_loop_cbmc.den_size=__CONTROLLER_DEN_SIZE + plant.den_size-1;
 #ifdef __CPROVER
-  __CPROVER_array_set(ans_num,0.0);
-  __CPROVER_array_set(ans_den,0.0);
+  __CPROVER_array_set(closed_loop_cbmc.num,0.0);
+  __CPROVER_array_set(closed_loop_cbmc.den,0.0);
 #else
-  for (int i=0;i<ans_num_size;i++) ans_num[i]=3;
-  for (int i=0;i<ans_den_size;i++) ans_den[i]=3;
+  for (int i=0;i<closed_loop_cbmcnum_size;i++) closed_loop_cbmcnum[i]=3;
+  for (int i=0;i<closed_loop_cbmcden_size;i++) closed_loop_cbmcden[i]=3;
 #endif
 /*  signed int return_value1=check_stability_closedloop(controller.num, __CONTROLLER_NUM_SIZE);
 #ifdef __CPROVER  
@@ -467,8 +502,9 @@ int verify_stability_closedloop_using_dslib(void)
 #else
   if (return_value1 == 0) return 10;
 #endif*/
-  ft_closedloop_series(controller.num, __CONTROLLER_NUM_SIZE, controller.den, __CONTROLLER_DEN_SIZE, plant_cbmc.num, plant.num_size, plant_cbmc.den, plant.den_size, ans_num, ans_num_size, ans_den, ans_den_size);
-  signed int return_value2=check_stability_closedloop(ans_den, ans_den_size);
+  ft_closedloop_series();
+  
+  signed int return_value2=check_restricted_stability(SPEED_FACTOR);
 #ifdef __CPROVER    
   __DSVERIFIER_assert(!(return_value2 == 0));
 #else

@@ -106,6 +106,7 @@ struct intervalt fxp_interval_check(struct intervalt value)
 #define interval_add(x,y) (struct intervalt){.low=x.low+y.low, .high=x.high+y.high}
 #define interval_sub(x,y) (struct intervalt) {.low=x.low-y.high, .high=x.high-y.low}
 
+
 struct intervalt neg_interval(struct intervalt x)
 {
   struct intervalt z;
@@ -168,6 +169,58 @@ struct intervalt abs_interval(struct intervalt x)
   return z;
 }
 
+control_floatt fexp_round(control_floatt src, bool up)
+{
+  // Could also be done using bit masks but becomes dependent on compiler/processor
+  control_floatt power=1 << FRAC_BITS;
+  control_floatt sign=_one;
+  // Normalize to 1.xxx
+  if (src<0)
+  {
+    sign=-sign;
+    src=-src;
+  }
+  while (src>_one)
+  {
+    power/=2;
+    src/=2;
+  }
+  while (src<_one)
+  {
+    power*=2;
+    src*=2;
+  }
+  // Restore sign and make lsb=1
+  src*=sign*(1 << FRAC_BITS);
+  // src=floor(src); //the else should be removed if this is used
+  if (up) {
+    src+=_one;
+  }
+  else {
+    src-=_one;
+  }
+  src/=power;
+  return src;
+}
+
+struct intervalt interval_fxp_add(struct intervalt x,struct intervalt y)
+{
+  z=interval_add(x,y);
+#ifndef _FIXEDBV
+  z.low=fexp_round(z.low,false);
+  z.high=fexp_round(z.high,true);
+#endif  
+}
+
+struct intervalt interval_fxp_sub(struct intervalt x,struct intervalt y)
+{
+  z=interval_sub(x,y);
+#ifndef _FIXEDBV
+  z.low=fexp_round(z.low,false);
+  z.high=fexp_round(z.high,true);
+#endif  
+}
+
 /*inline */struct intervalt interval_fxp_mult(struct intervalt x,struct intervalt y)
 {
 #ifdef _FIXEDBV
@@ -208,50 +261,8 @@ struct intervalt abs_interval(struct intervalt x)
   z.high/=_fxp_one;
 #else
   z=interval_mult(x,y);
-  // We need to do the equivalent of std::fexp()
-  control_floatt power=1 << FRAC_BITS;
-  control_floatt sign=_one;
-  // Normalize to 1.xxx
-  if (z.low<0)
-  {
-    sign=-sign;
-    z.low=-z.low;
-  }
-  while (z.low>_one)
-  {
-    power/=2;
-    z.low/=2;
-  }
-  while (z.low<_one)
-  {
-    power*=2;
-    z.low*=2;
-  }
-  // Restore sign and make lsb=1
-  z.low*=sign*(1 << FRAC_BITS);
-  z.low-=1;
-  //Restore original magnitude
-  z.low/=power;
-  power=1 << FRAC_BITS;
-  sign=_one;
-  if (z.high<0)
-  {
-    sign=-sign;
-    z.high=-z.high;
-  }
-  while (z.high>_one)
-  {
-    power/=2;
-    z.high/=2;
-  }
-  while (z.high<_one)
-  {
-    power*=2;
-    z.high*=2;
-  }
-  z.high*=sign*(1 << FRAC_BITS);
-  z.high+=1;
-  z.high/=power;
+  z.low=fexp_round(z.low,false);
+  z.high=fexp_round(z.high,true);
 #endif
   return z;
 }
@@ -285,6 +296,7 @@ void closed_fxp_mult(const int_matrixt A,const int_vectort B,const int_vectort K
   control_typet kx[NSTATES][4];
   for (i=0;i<NSTATES;i++)
   {
+#ifdef FIXEDBV
     long long int xtemp=x[i].low*_fxp_one;
     long long int ktemp=K[i].low*_fxp_one;
     kx[i][0]=(xtemp*ktemp/_fxp_one);
@@ -298,6 +310,12 @@ void closed_fxp_mult(const int_matrixt A,const int_vectort B,const int_vectort K
     ktemp=K[i].low*_fxp_one;
     kx[i][2]=(xtemp*ktemp/_fxp_one);
     kx[i][2]/=_fxp_one;
+#else
+    kx[i][0]=fexp_round(x[i].low*K[i].low);
+    kx[i][1]=fexp_round(x[i].low*K[i].high);
+    kx[i][2]=fexp_round(x[i].high*K[i].low);
+    kx[i][3]=fexp_round(x[i].high*K[i].high);
+#endif
   }
   double up=1e-12;
   
