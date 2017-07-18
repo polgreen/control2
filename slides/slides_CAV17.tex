@@ -156,7 +156,7 @@ alternativetitlepage=true,
 \begin{frame}{Motivation}
 
 \centering
- \includegraphics[width=.75\textwidth]{figures/CPS.jpg} 
+ \includegraphics[width=.75\textwidth]{figures/controller.jpg} 
 
  
 \uncover<2>{
@@ -167,6 +167,33 @@ alternativetitlepage=true,
 
 \end{frame}
 
+\begin{frame}{State-feedback architecture}
+\vspace{-1cm}
+\begin{center}
+  \begin{overprint}
+    \onslide<1,2>
+    \centerline{\includegraphics[width=.9\textwidth]{figures/spirals/diagram-15.png}}
+    %% \onslide<3->
+    %% \centerline{\includegraphics[width=.9\textwidth]{figures/spirals/diagram-16.png}}
+  \end{overprint}
+  \end{center}
+  \vspace{-1cm}
+  \only<1,2>{{\bf Continuous-discrete system}}
+  %\only<3->{{\bf Digital domain}}  
+  \begin{itemize}
+  \item \only<1,2>{\colorbox{green!70}{Plant:
+    \textsc{$\dot{x}(t) = Ax(t)+ Bu(t), \quad t \in \mathbb R_0^+,~x(0)=initial~state$}}}
+    %% \only<3->{\colorbox{azure!70}{Plant:
+    %% \textsc{$x_{k+1} = A x_k+ B u_k, \quad k \in \mathbb \mathbb N,~x_0=initial~state$}}}
+  \item \colorbox{azure!70}{State-feedback controller:   \only<1>{$u_k = r_{k} - C x_k$}\only<2->{$u_k = - C x_k$}}
+  %\item \uncover<4->{Finite precision}  
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Our approach}
+  \vspace{-.5cm}
+  \centerline{\includegraphics[width=.9\textwidth]{figures/spirals/diagram-26.png}}
+\end{frame}
 
 \begin{frame}{State-feedback architecture}
 \vspace{-1cm}
@@ -179,17 +206,18 @@ alternativetitlepage=true,
   \end{overprint}
   \end{center}
   \vspace{-1cm}
-  \only<1,2>{{\bf Continuous-discrete system}}
-  \only<3->{{\bf Digital domain}}  
+  \only<1>{{\bf Continuous-discrete system}}
+  \only<2->{{\bf Digital domain}}  
   \begin{itemize}
-  \item \only<1,2>{\colorbox{green!70}{Plant:
+  \item \only<1>{\colorbox{green!70}{Plant:
     \textsc{$\dot{x}(t) = Ax(t)+ Bu(t), \quad t \in \mathbb R_0^+,~x(0)=initial~state$}}}
-    \only<3->{\colorbox{azure!70}{Plant:
+    \only<2->{\colorbox{azure!70}{Plant:
     \textsc{$x_{k+1} = A x_k+ B u_k, \quad k \in \mathbb \mathbb N,~x_0=initial~state$}}}
-  \item \colorbox{azure!70}{State-feedback controller:   \only<1>{$u_k = r_{k} - C x_k$}\only<2->{$u_k = - C x_k$}}
-  \item \uncover<4->{Finite precision}  
+  \item \colorbox{azure!70}{State-feedback controller:  $u_k = - C x_k$}
+  \item \uncover<3->{Finite precision}  
 \end{itemize}
 \end{frame}
+
 
 \begin{frame}{Numerical errors}
 \vspace{-1cm}
@@ -200,18 +228,12 @@ alternativetitlepage=true,
   \end{center}
   \vspace{-1cm}
   \begin{itemize}
-  \item \uncover<1->{{\bf Truncation and rounding on the plant (interval arithmetic)}}
-  \item  \uncover<2->{{\bf Truncation on the converters (additive noise)}}
-  \item \uncover<3->{{\bf Rounding on the controller (additive noise)}}
+  \item \uncover<1->{{\bf Truncation and rounding on the plant}}
+  \item  \uncover<2->{{\bf Truncation on the converters}}
+  \item \uncover<3->{{\bf Rounding on the controller}}
   \end{itemize}  
  
 \end{frame}  
-
-\begin{frame}{Our approach}
-  \vspace{-.5cm}
-  \centerline{\includegraphics[width=.9\textwidth]{figures/spirals/diagram-28.png}}
-\end{frame}
-  
 
 \begin{frame}{Stability \only<5>{and safety}}
 
@@ -219,9 +241,10 @@ alternativetitlepage=true,
 
   {\bf A system \colorbox{azure!70}{
     \textsc{$x_{k+1} = A x_k+ B u_k, u_k = - C x_k$}} is
-  asymptotically stable if its executions converge to an equilibrium point,
-  when starting from any states in a neighborhood of
-the point.}
+    asymptotically stable if its executions converge to an equilibrium point.
+    %% when starting from any states in a neighborhood of
+%% the point.
+  }
 
 \begin{center}
 \begin{overprint}
@@ -252,7 +275,7 @@ the point.}
 \vspace{-.5cm}
  \centering 
  {\scriptsize
-\resizebox{.65\textwidth}{!}
+\resizebox{.8\textwidth}{!}
 {
  \begin{tikzpicture}[scale=0.3,->,>=stealth',shorten >=.2pt,auto, semithick, initial text=, ampersand replacement=\&,]
   \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center
@@ -320,6 +343,7 @@ the point.}
 
  \scriptsize
  %&
+ \vspace{-.5cm}
  \begin{tabular}{p{\dimexpr 0.5\linewidth-2\tabcolsep} 
      p{\dimexpr 0.5\linewidth-2\tabcolsep}}
 
@@ -371,6 +395,7 @@ the point.}
    }
  
    &
+   \hspace{-.8cm}
    \begin{overprint}
    \onslide<2,3,4,5,6>
        \scalebox{0.65}{
@@ -420,13 +445,13 @@ the point.}
 %%      \end{lstlisting}
 
      \onslide<7>
-     \includegraphics[width=.55\textwidth]{figures/spirals/Spirals-05.png}
+     \includegraphics[width=.65\textwidth]{figures/spirals/Spirals-05.png}
      \onslide<8>
-     \includegraphics[width=.55\textwidth]{figures/spirals/Spirals-04.png}
+     \includegraphics[width=.65\textwidth]{figures/spirals/Spirals-04.png}
      \onslide<9,10,11>
-     \includegraphics[width=.55\textwidth]{figures/spirals/Spirals-06.png}
+     \includegraphics[width=.65\textwidth]{figures/spirals/Spirals-06.png}
      \onslide<12->
-         \includegraphics[width=.55\textwidth]{figures/spirals/Spirals-06-prime.png}
+         \includegraphics[width=.65\textwidth]{figures/spirals/Spirals-06-prime.png}
  \end{overprint}
 %}
 \end{tabular}
