@@ -160,7 +160,7 @@ alternativetitlepage=true,
 
  
 \uncover<2>{
- \vspace{-.5cm}
+ %\vspace{-.5cm}
   \small
 {\bf Automatically synthesise feedback digital controllers that ensure
 {\color {red} stability} and {\color {red} safety}}}
@@ -185,7 +185,7 @@ alternativetitlepage=true,
     \textsc{$\dot{x}(t) = Ax(t)+ Bu(t), \quad t \in \mathbb R_0^+,~x(0)=initial~state$}}}
     %% \only<3->{\colorbox{azure!70}{Plant:
     %% \textsc{$x_{k+1} = A x_k+ B u_k, \quad k \in \mathbb \mathbb N,~x_0=initial~state$}}}
-  \item \colorbox{azure!70}{State-feedback controller:   \only<1>{$u_k = r_{k} - C x_k$}\only<2->{$u_k = - C x_k$}}
+  \item \colorbox{azure!50}{State-feedback controller:   \only<1>{$u_k = r_{k} - C x_k$}\only<2->{$u_k = - C x_k$}}
   %\item \uncover<4->{Finite precision}  
 \end{itemize}
 \end{frame}
@@ -199,21 +199,21 @@ alternativetitlepage=true,
 \vspace{-1cm}
 \begin{center}
   \begin{overprint}
-    \onslide<1,2>
+    \onslide<1>
     \centerline{\includegraphics[width=.9\textwidth]{figures/spirals/diagram-15.png}}
-    \onslide<3->
+    \onslide<2->
     \centerline{\includegraphics[width=.9\textwidth]{figures/spirals/diagram-16.png}}
   \end{overprint}
   \end{center}
   \vspace{-1cm}
   \only<1>{{\bf Continuous-discrete system}}
-  \only<2->{{\bf Digital domain}}  
+  \only<2->{{\bf Time and value domain discretization}}  
   \begin{itemize}
   \item \only<1>{\colorbox{green!70}{Plant:
     \textsc{$\dot{x}(t) = Ax(t)+ Bu(t), \quad t \in \mathbb R_0^+,~x(0)=initial~state$}}}
-    \only<2->{\colorbox{azure!70}{Plant:
+    \only<2->{\colorbox{azure!50}{Plant:
     \textsc{$x_{k+1} = A x_k+ B u_k, \quad k \in \mathbb \mathbb N,~x_0=initial~state$}}}
-  \item \colorbox{azure!70}{State-feedback controller:  $u_k = - C x_k$}
+  \item \colorbox{azure!50}{State-feedback controller:  $u_k = - C x_k$}
   \item \uncover<3->{Finite precision}  
 \end{itemize}
 \end{frame}
@@ -239,7 +239,7 @@ alternativetitlepage=true,
 
   \small
 
-  {\bf A system \colorbox{azure!70}{
+  {\bf A system \colorbox{azure!50}{
     \textsc{$x_{k+1} = A x_k+ B u_k, u_k = - C x_k$}} is
     asymptotically stable if its executions converge to an equilibrium point.
     %% when starting from any states in a neighborhood of
@@ -291,7 +291,7 @@ alternativetitlepage=true,
    \& \coordinate (aux6);
    \&;\\
    \node[minimum width=1.5cm, minimum height=0.6cm, fill=gray!20] (synth) {{\sc 1.Synthesize}};
-   \only<2-7,9>{\node[minimum width=1.5cm, minimum height=0.6cm, fill=red!20] (synth) {{\sc 1.Synthesize}};}
+   \only<2-7,10>{\node[minimum width=1.5cm, minimum height=0.6cm, fill=red!20] (synth) {{\sc 1.Synthesize}};}
    \&
    complexnode/.pic={ 
      \node[rectangle,draw,dotted,
@@ -300,14 +300,14 @@ alternativetitlepage=true,
         pattern=north west lines, pattern color=gray!20,
 	label={\sc ~~~~~~~~~~~~Verify},] (verif) {};
      \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif1) at ([xshift=-2cm]verif.center) {{\sc 2.Safety}};
-     \only<8,10>{\node[minimum width=1cm, minimum height=0.6cm, fill=red!20] (verif1) at ([xshift=-2cm]verif.center) {{\sc 2.Safety}};}
+     \only<8,9,11>{\node[minimum width=1cm, minimum height=0.6cm, fill=red!20] (verif1) at ([xshift=-2cm]verif.center) {{\sc 2.Safety}};}
      \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif2) at ([xshift=0cm]verif.center) {{\sc 3.Precision}};
-     \only<11>{\node[minimum width=1cm, minimum height=0.6cm, fill=red!20] (verif2) at ([xshift=0cm]verif.center) {{\sc 3.Precision}};}
+     \only<12>{\node[minimum width=1cm, minimum height=0.6cm, fill=red!20] (verif2) at ([xshift=0cm]verif.center) {{\sc 3.Precision}};}
      \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif3) at ([xshift=2cm]verif.center) {{\sc 4.Complete}};
-     \only<12>{\node[minimum width=1cm, minimum height=0.6cm, fill=red!20] (verif3) at ([xshift=2cm]verif.center) {{\sc 4.Complete}};}
+     \only<13>{\node[minimum width=1cm, minimum height=0.6cm, fill=red!20] (verif3) at ([xshift=2cm]verif.center) {{\sc 4.Complete}};}
    } 
    \& \node[ellipse, fill=gray!20] (done) {{\sc Done}};
-   \only<13>{\node[ellipse, fill=red!20] (done) {{\sc Done}};}\\
+   \only<14>{\node[ellipse, fill=red!20] (done) {{\sc Done}};}\\
    \& \\
    %% \node[minimum height=0cm] (gp) {\sf Program Search};
    %% \&
@@ -354,40 +354,40 @@ alternativetitlepage=true,
      \\\\\\\\\\\\\\\\\\\\\\\\\\
   \end{tabular}
    }
-   \only<8>{
+   \only<8,9>{
      \begin{tabular}{l}
        {\bf Find an initial state for which the system}\\
        {\bf is unsafe} \\
      \\\\\\\\\\\\\\\\\\\\\\\\\\
   \end{tabular}
    }
-   \only<9>{
+   \only<10>{
      \begin{tabular}{l}
        {\bf Find a controller for $\{x_0, x_0'\}$ and $k{=}6$}\\
        {\bf such that the system is stable and safe} \\
      \\\\\\\\\\\\\\\\\\\\\\\\\\
   \end{tabular}
    }
-   \only<10>{
+   \only<11>{
      \begin{tabular}{l}
        {\bf Find an initial state for which the system}\\
        {\bf is unsafe} \\       
      \\\\\\\\\\\\\\\\\\\\\\\\\\     
   \end{tabular}
    }
-   \only<11>{
+   \only<12>{
      \begin{tabular}{l}
      {\bf Check that the plant precision is sufficient}\\
      \\\\\\\\\\\\\\\\\\\\\\\\\\\\     
   \end{tabular}
    }
-   \only<12>{
+   \only<13>{
      \begin{tabular}{l}
        {\bf Check that $k$ is sufficient} \\
      \\\\\\\\\\\\\\\\\\\\\\\\\\\\     
   \end{tabular}
    }
-   \only<13>{
+   \only<14>{
      \begin{tabular}{l}
        {\bf Controller found}\\
      \\\\\\\\\\\\\\\\\\\\\\\\\\\\     
@@ -444,13 +444,13 @@ alternativetitlepage=true,
 %%          x[k+1]
 %%      \end{lstlisting}
 
-     \onslide<7>
+     \onslide<7,8>
      \includegraphics[width=.65\textwidth]{figures/spirals/Spirals-05.png}
-     \onslide<8>
+     \onslide<9>
      \includegraphics[width=.65\textwidth]{figures/spirals/Spirals-04.png}
-     \onslide<9,10,11>
+     \onslide<10,11,12>
      \includegraphics[width=.65\textwidth]{figures/spirals/Spirals-06.png}
-     \onslide<12->
+     \onslide<13->
          \includegraphics[width=.65\textwidth]{figures/spirals/Spirals-06-prime.png}
  \end{overprint}
 %}
@@ -502,16 +502,16 @@ Check abstract acceleration based approach in the paper!\\\\\\\\\\\\
 
 
 \begin{frame}{Conclusions}
+\begin{itemize}
+  
+\item {\bf Automated synthesizer for digital state-feedback
+controllers that ensures stability and safety}
 
-We built an {\bf automated synthesizer for digital state-feedback
-controllers} that ensures both {\bf stability} and {\bf safety}
+\item {\bf Evaluated the errors due to the controller's implementation 
+  and plant's modeling}
+\end{itemize}
 
-\vspace{.5cm}
-
-We considered the errors caused by the implementation of the digital control
-algorithm and the modeling of plant dynamics
-
-\only<2->{
+\uncover<2->{
 \vspace{.5cm}
 \begin{tabular}{cc}
   \scriptsize
