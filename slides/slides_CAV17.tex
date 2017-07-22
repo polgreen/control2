@@ -527,136 +527,136 @@ controllers that ensures stability and safety}
 \end{frame}  
 
 
-\begin{frame}{Abstraction-based controller synthesis}
-\vspace{-1cm}
-\resizebox{.9\textwidth}{!}
-{
-\centering
-{\scriptsize
-  \begin{tikzpicture}[scale=0.3,->,>=stealth',shorten >=.2pt,auto, semithick, ampersand replacement=\&,]
-  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center},row sep=1.5cm, column sep=2cm] {
-   \coordinate (aux1);
-   \& \coordinate (aux2);
-   \& ;\\
-   %\& \node[fill=gray!20,align=center] (abstract) {\sc 4. abstract};
-   %\& \coordinate (aux); \\ 
-   \& \node[fill=gray!20,align=center] (synth) {\sc 2. synthesize};
-    \only<2,7>{\node[fill=red!20,align=center] (synth) {\sc 2. synthesize};}   
-   \& \node[fill=gray!20,align=center, minimum width=3.5cm] (verify) {\sc 3. verify };
-   \only<3,6,8,10>{\node[fill=red!20,align=center, minimum width=3.5cm] (verify) {\sc 3. verify ($\phi$)};}
-   \& \node[ellipse, fill=gray!20] (done) {{\sc Done}};
-   \only<10>{\node[ellipse, fill=red!20] (done) {{\sc Done}};}\\   
-   \& \node[draw,rectangle,align=center] (KSAT) {Program \\ Search};
-   \& complexnode/.pic={
-     \coordinate (AA);
-     \node[draw,rectangle,align=center] (AAV) at ([xshift=-1.5cm]AA.center) {Abstract\\Acceleration};
-     \only<3,5,8>{\node[draw,fill=red!20,rectangle,align=center] (AAV) at ([xshift=-1.5cm]AA.center) {Abstract\\Acceleration};}
-     \node[draw,rectangle,align=center] (AAC) at ([xshift=1.5cm]AA.center) {Abstraction \\ Verifier};
-     \only<4,6,9>{\node[draw,fill=red!20,rectangle,align=center] (AAC) at ([xshift=1.5cm]AA.center) {Abstraction \\ Verifier};}
-   }
-   \& \\   
-  };
-  %\path (abstract.south) edge node{$\textcolor{blue}{\begin{array}{c}\phi_{init}^K\\P_a(z)\\k=0\end{array}}$} (synth.north);
-    \path ([yshift=1em]synth.east) edge node {$C$} ([yshift=1em]verify.west);
-    \path ([yshift=-1em]verify.west) edge node{$(k, x_0)$} ([yshift=-1em]synth.east);
-    %\path (aux) edge (abstract.east);
-    \path(verify.east) edge (done.west);
+%% \begin{frame}{Abstraction-based controller synthesis}
+%% \vspace{-1cm}
+%% \resizebox{.9\textwidth}{!}
+%% {
+%% \centering
+%% {\scriptsize
+%%   \begin{tikzpicture}[scale=0.3,->,>=stealth',shorten >=.2pt,auto, semithick, ampersand replacement=\&,]
+%%   \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center},row sep=1.5cm, column sep=2cm] {
+%%    \coordinate (aux1);
+%%    \& \coordinate (aux2);
+%%    \& ;\\
+%%    %\& \node[fill=gray!20,align=center] (abstract) {\sc 4. abstract};
+%%    %\& \coordinate (aux); \\ 
+%%    \& \node[fill=gray!20,align=center] (synth) {\sc 2. synthesize};
+%%     \only<2,7>{\node[fill=red!20,align=center] (synth) {\sc 2. synthesize};}   
+%%    \& \node[fill=gray!20,align=center, minimum width=3.5cm] (verify) {\sc 3. verify };
+%%    \only<3,6,8,10>{\node[fill=red!20,align=center, minimum width=3.5cm] (verify) {\sc 3. verify ($\phi$)};}
+%%    \& \node[ellipse, fill=gray!20] (done) {{\sc Done}};
+%%    \only<10>{\node[ellipse, fill=red!20] (done) {{\sc Done}};}\\   
+%%    \& \node[draw,rectangle,align=center] (KSAT) {Program \\ Search};
+%%    \& complexnode/.pic={
+%%      \coordinate (AA);
+%%      \node[draw,rectangle,align=center] (AAV) at ([xshift=-1.5cm]AA.center) {Abstract\\Acceleration};
+%%      \only<3,5,8>{\node[draw,fill=red!20,rectangle,align=center] (AAV) at ([xshift=-1.5cm]AA.center) {Abstract\\Acceleration};}
+%%      \node[draw,rectangle,align=center] (AAC) at ([xshift=1.5cm]AA.center) {Abstraction \\ Verifier};
+%%      \only<4,6,9>{\node[draw,fill=red!20,rectangle,align=center] (AAC) at ([xshift=1.5cm]AA.center) {Abstraction \\ Verifier};}
+%%    }
+%%    \& \\   
+%%   };
+%%   %\path (abstract.south) edge node{$\textcolor{blue}{\begin{array}{c}\phi_{init}^K\\P_a(z)\\k=0\end{array}}$} (synth.north);
+%%     \path ([yshift=1em]synth.east) edge node {$C$} ([yshift=1em]verify.west);
+%%     \path ([yshift=-1em]verify.west) edge node{$(k, x_0)$} ([yshift=-1em]synth.east);
+%%     %\path (aux) edge (abstract.east);
+%%     \path(verify.east) edge (done.west);
 
-  \path ([xshift=+.6cm]KSAT.north) edge[left] node[xshift=-.3cm] {} ([xshift=0.6cm]synth.south);
-   \path ([xshift=-.6cm]synth.south) edge node[align=center,xshift=.3cm] {} ([xshift=-.6cm]KSAT.north);
-    \path ([yshift=.5cm]AAV.east) edge node{\sl $\hat{X}$} ([yshift=.5cm]AAC.west);
-    \path ([yshift=-.5cm]AAC.west) edge node{} ([yshift=-.5cm]AAV.east);
-    \path (AAC.north) edge node{} ([xshift=4.9cm]verify.south);
-    \path ([xshift=-5cm]verify.south) edge node{$C$} (AAV.north);
+%%   \path ([xshift=+.6cm]KSAT.north) edge[left] node[xshift=-.3cm] {} ([xshift=0.6cm]synth.south);
+%%    \path ([xshift=-.6cm]synth.south) edge node[align=center,xshift=.3cm] {} ([xshift=-.6cm]KSAT.north);
+%%     \path ([yshift=.5cm]AAV.east) edge node{\sl $\hat{X}$} ([yshift=.5cm]AAC.west);
+%%     \path ([yshift=-.5cm]AAC.west) edge node{} ([yshift=-.5cm]AAV.east);
+%%     \path (AAC.north) edge node{} ([xshift=4.9cm]verify.south);
+%%     \path ([xshift=-5cm]verify.south) edge node{$C$} (AAV.north);
 
-\end{tikzpicture}
-}}
+%% \end{tikzpicture}
+%% }}
 
 
- \scriptsize
- %&
- \begin{tabular}{p{\dimexpr 0.5\linewidth-2\tabcolsep} 
-     p{\dimexpr 0.5\linewidth-2\tabcolsep}}
+%%  \scriptsize
+%%  %&
+%%  \begin{tabular}{p{\dimexpr 0.5\linewidth-2\tabcolsep} 
+%%      p{\dimexpr 0.5\linewidth-2\tabcolsep}}
 
-   \only<2>{
-     \begin{tabular}{l}
-       {\bf Find controller for given $\{x_0\}$ and $\{k\}$}\\
-       {\bf such that the system is stable and safe}
-     \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-  \end{tabular}
-   }
-   \only<3>{
-     \begin{tabular}{l}
-     {\bf Use abstract acceleration to compute an} \\
-     {\bf overapproximation the set of all reachable}\\
-     {\bf states at all times}\\
-     \\\\\\\\\\\\\\\\\\\\\\\\\\
-  \end{tabular}
-   }
-   \only<4>{
-     \begin{tabular}{l}
-       {\bf Find an initial state and a number of}\\
-       {\bf iterations for for which the system is unsafe} \\
-     \\\\\\\\\\\\\\\\\\\\\\\\\\\\ 
-  \end{tabular}
-   }
-   \only<5>{
-     \begin{tabular}{l}
-     {\bf Refine abstraction} \\
-     \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\     
-  \end{tabular}
-   }
-   \only<6>{
-     \begin{tabular}{l}
-     {\bf Real counterexample $(x_0', k')$ found} \\
-     \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\   
-  \end{tabular}
-   }
-   \only<7>{
-     \begin{tabular}{l}
-       {\bf Find controller for given $\{x_0, x_0'\}$ and $\{k, k'\}$}\\
-       {\bf such that the system is stable and safe}
-     \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-  \end{tabular}
-   }
-   \only<8>{
-     \begin{tabular}{l}
-     {\bf Use abstract acceleration to compute an} \\
-     {\bf overapproximation the set of all reachable}\\
-     {\bf states at all times}\\
-     \\\\\\\\\\\\\\\\\\\\\\\\\\
-  \end{tabular}
-   }
-   \only<9>{
-     \begin{tabular}{l}
-       {\bf Find an initial state and a number of iterations}\\
-       {\bf for which the system is unsafe} \\
-     \\\\\\\\\\\\\\\\\\\\\\\\\\\\
-  \end{tabular}
-   }
-   \only<10>{
-     \begin{tabular}{l}
-     {\bf Controller found} \\
-     \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\        
-  \end{tabular}
-   }
+%%    \only<2>{
+%%      \begin{tabular}{l}
+%%        {\bf Find controller for given $\{x_0\}$ and $\{k\}$}\\
+%%        {\bf such that the system is stable and safe}
+%%      \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+%%   \end{tabular}
+%%    }
+%%    \only<3>{
+%%      \begin{tabular}{l}
+%%      {\bf Use abstract acceleration to compute an} \\
+%%      {\bf overapproximation the set of all reachable}\\
+%%      {\bf states at all times}\\
+%%      \\\\\\\\\\\\\\\\\\\\\\\\\\
+%%   \end{tabular}
+%%    }
+%%    \only<4>{
+%%      \begin{tabular}{l}
+%%        {\bf Find an initial state and a number of}\\
+%%        {\bf iterations for for which the system is unsafe} \\
+%%      \\\\\\\\\\\\\\\\\\\\\\\\\\\\ 
+%%   \end{tabular}
+%%    }
+%%    \only<5>{
+%%      \begin{tabular}{l}
+%%      {\bf Refine abstraction} \\
+%%      \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\     
+%%   \end{tabular}
+%%    }
+%%    \only<6>{
+%%      \begin{tabular}{l}
+%%      {\bf Real counterexample $(x_0', k')$ found} \\
+%%      \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\   
+%%   \end{tabular}
+%%    }
+%%    \only<7>{
+%%      \begin{tabular}{l}
+%%        {\bf Find controller for given $\{x_0, x_0'\}$ and $\{k, k'\}$}\\
+%%        {\bf such that the system is stable and safe}
+%%      \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+%%   \end{tabular}
+%%    }
+%%    \only<8>{
+%%      \begin{tabular}{l}
+%%      {\bf Use abstract acceleration to compute an} \\
+%%      {\bf overapproximation the set of all reachable}\\
+%%      {\bf states at all times}\\
+%%      \\\\\\\\\\\\\\\\\\\\\\\\\\
+%%   \end{tabular}
+%%    }
+%%    \only<9>{
+%%      \begin{tabular}{l}
+%%        {\bf Find an initial state and a number of iterations}\\
+%%        {\bf for which the system is unsafe} \\
+%%      \\\\\\\\\\\\\\\\\\\\\\\\\\\\
+%%   \end{tabular}
+%%    }
+%%    \only<10>{
+%%      \begin{tabular}{l}
+%%      {\bf Controller found} \\
+%%      \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\        
+%%   \end{tabular}
+%%    }
 
-   &
- \only<2>{\includegraphics[width=.6\textwidth]{figures/spirals/Spirals-11.png}}
- \only<3>{\includegraphics[width=.6\textwidth]{figures/spirals/Spirals-07.png}}
- \only<4>{\includegraphics[width=.6\textwidth]{figures/spirals/Spirals-08.png}}
- \only<5>{\includegraphics[width=.6\textwidth]{figures/spirals/Spirals-09.png}}    
- \only<6>{\includegraphics[width=.6\textwidth]{figures/spirals/Spirals-10.png}}
- \only<7>{\includegraphics[width=.6\textwidth]{figures/spirals/Spirals-12.png}}
- \only<8->{\includegraphics[width=.6\textwidth]{figures/spirals/Spirals-13.png}} 
+%%    &
+%%  \only<2>{\includegraphics[width=.6\textwidth]{figures/spirals/Spirals-11.png}}
+%%  \only<3>{\includegraphics[width=.6\textwidth]{figures/spirals/Spirals-07.png}}
+%%  \only<4>{\includegraphics[width=.6\textwidth]{figures/spirals/Spirals-08.png}}
+%%  \only<5>{\includegraphics[width=.6\textwidth]{figures/spirals/Spirals-09.png}}    
+%%  \only<6>{\includegraphics[width=.6\textwidth]{figures/spirals/Spirals-10.png}}
+%%  \only<7>{\includegraphics[width=.6\textwidth]{figures/spirals/Spirals-12.png}}
+%%  \only<8->{\includegraphics[width=.6\textwidth]{figures/spirals/Spirals-13.png}} 
 
-\end{tabular} 
+%% \end{tabular} 
 
-%[figure]: one spiral with abstract acceleration but no red area, just gray.
- %[figure]: refine abstraction: spiral with two red areas, one spurious and one with a
- % real c-ex.
- %[figure]: two spirals within green area; add grey polygon (inside green area). 
-\end{frame}  
+%% %[figure]: one spiral with abstract acceleration but no red area, just gray.
+%%  %[figure]: refine abstraction: spiral with two red areas, one spurious and one with a
+%%  % real c-ex.
+%%  %[figure]: two spirals within green area; add grey polygon (inside green area). 
+%% \end{frame}  
 
 
 \end{document}
