@@ -291,7 +291,7 @@ alternativetitlepage=true,
    \& \coordinate (aux6);
    \&;\\
    \node[minimum width=1.5cm, minimum height=0.6cm, fill=gray!20] (synth) {{\sc 1.Synthesize}};
-   \only<2-7,10>{\node[minimum width=1.5cm, minimum height=0.6cm, fill=red!20] (synth) {{\sc 1.Synthesize}};}
+   \only<2-7,10,11>{\node[minimum width=1.5cm, minimum height=0.6cm, fill=red!20] (synth) {{\sc 1.Synthesize}};}
    \&
    complexnode/.pic={ 
      \node[rectangle,draw,dotted,
@@ -300,14 +300,14 @@ alternativetitlepage=true,
         pattern=north west lines, pattern color=gray!20,
 	label={\sc ~~~~~~~~~~~~Verify},] (verif) {};
      \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif1) at ([xshift=-2cm]verif.center) {{\sc 2.Safety}};
-     \only<8,9,11>{\node[minimum width=1cm, minimum height=0.6cm, fill=red!20] (verif1) at ([xshift=-2cm]verif.center) {{\sc 2.Safety}};}
+     \only<8,9,12>{\node[minimum width=1cm, minimum height=0.6cm, fill=red!20] (verif1) at ([xshift=-2cm]verif.center) {{\sc 2.Safety}};}
      \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif2) at ([xshift=0cm]verif.center) {{\sc 3.Precision}};
-     \only<12>{\node[minimum width=1cm, minimum height=0.6cm, fill=red!20] (verif2) at ([xshift=0cm]verif.center) {{\sc 3.Precision}};}
+     \only<13>{\node[minimum width=1cm, minimum height=0.6cm, fill=red!20] (verif2) at ([xshift=0cm]verif.center) {{\sc 3.Precision}};}
      \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif3) at ([xshift=2cm]verif.center) {{\sc 4.Complete}};
-     \only<13>{\node[minimum width=1cm, minimum height=0.6cm, fill=red!20] (verif3) at ([xshift=2cm]verif.center) {{\sc 4.Complete}};}
+     \only<14>{\node[minimum width=1cm, minimum height=0.6cm, fill=red!20] (verif3) at ([xshift=2cm]verif.center) {{\sc 4.Complete}};}
    } 
    \& \node[ellipse, fill=gray!20] (done) {{\sc Done}};
-   \only<14>{\node[ellipse, fill=red!20] (done) {{\sc Done}};}\\
+   \only<15>{\node[ellipse, fill=red!20] (done) {{\sc Done}};}\\
    \& \\
    %% \node[minimum height=0cm] (gp) {\sf Program Search};
    %% \&
@@ -361,33 +361,33 @@ alternativetitlepage=true,
      \\\\\\\\\\\\\\\\\\\\\\\\\\
   \end{tabular}
    }
-   \only<10>{
+   \only<10,11>{
      \begin{tabular}{l}
        {\bf Find a controller for $\{x_0, x_0'\}$ and $k{=}6$}\\
        {\bf such that the system is stable and safe} \\
      \\\\\\\\\\\\\\\\\\\\\\\\\\
   \end{tabular}
    }
-   \only<11>{
+   \only<12>{
      \begin{tabular}{l}
        {\bf Find an initial state for which the system}\\
        {\bf is unsafe} \\       
      \\\\\\\\\\\\\\\\\\\\\\\\\\     
   \end{tabular}
    }
-   \only<12>{
+   \only<13>{
      \begin{tabular}{l}
      {\bf Check that the plant precision is sufficient}\\
      \\\\\\\\\\\\\\\\\\\\\\\\\\\\     
   \end{tabular}
    }
-   \only<13>{
+   \only<14>{
      \begin{tabular}{l}
        {\bf Check that $k$ is sufficient} \\
      \\\\\\\\\\\\\\\\\\\\\\\\\\\\     
   \end{tabular}
    }
-   \only<14>{
+   \only<15>{
      \begin{tabular}{l}
        {\bf Controller found}\\
      \\\\\\\\\\\\\\\\\\\\\\\\\\\\     
@@ -446,11 +446,11 @@ alternativetitlepage=true,
 
      \onslide<7,8>
      \includegraphics[width=.65\textwidth]{figures/spirals/Spirals-05.png}
-     \onslide<9>
+     \onslide<9,10>
      \includegraphics[width=.65\textwidth]{figures/spirals/Spirals-04.png}
-     \onslide<10,11,12>
+     \onslide<11,12,13>
      \includegraphics[width=.65\textwidth]{figures/spirals/Spirals-06.png}
-     \onslide<13->
+     \onslide<14->
          \includegraphics[width=.65\textwidth]{figures/spirals/Spirals-06-prime.png}
  \end{overprint}
 %}
