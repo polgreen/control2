@@ -1,0 +1,89 @@
+----------------------- REVIEW 1 ---------------------
+PAPER: 12
+TITLE: DSSynth: An Automated Digital Controller Synthesis Tool for Physical Plants
+AUTHORS: Alessandro Abate, Iury Bessa, Dario Cattaruzza, Lennon Chaves, Lucas Cordeiro, Cristina David, Pascal Kesseli, Daniel Kroening and Elizabeth Polgreen
+
+
+----------- Overall evaluation -----------
+Relevance to ASE audience:
+
+The tool is an automated MATLAB Toolbox to synthesize digital controllers for physical plants that are represented as linear time invariant systems with single input and output.  The tool is relevant to the ASE audience but not significantly relevant.
+
+Technical soundness of the demonstrated tool:
+
+The demonstrated tool seems to be based on solid theoretical foundations, mainly on ideas recently published by the authors in a CAV paper (to appear).    The paper is not difficult to read.    In the paper the ideas are presented in some detail.  The tool's architecture is presented.  An example helps in the presentation.  The authors further report on experimental evaluation over benchmarks from the literature.  The evaluation results examine the performance of the tool and the correctness of its results.
+
+Originality of underlying ideas:
+
+The ideas seem original, based on recent CAV paper by the authors.  The reviewer is not aware of other tools implementing similar functionality.
+
+Quality of presentation in the associated video:
+
+The associated video quality is not best.  It is too fast and has no narration sound or sub titles.   Still, if the tool demo is accepted, the reviewer believes this is something that the authors could fix.
+
+Relevant literature:
+
+Relevant literature is adequately discussed.
+
+
+----------------------- REVIEW 2 ---------------------
+PAPER: 12
+TITLE: DSSynth: An Automated Digital Controller Synthesis Tool for Physical Plants
+AUTHORS: Alessandro Abate, Iury Bessa, Dario Cattaruzza, Lennon Chaves, Lucas Cordeiro, Cristina David, Pascal Kesseli, Daniel Kroening and Elizabeth Polgreen
+
+
+----------- Overall evaluation -----------
+Summary:
+
+This paper presents a MATLAB toolbox to synthesise a digital controller for the
+physical plants, given a single input single output (SISO), linear time
+invariant (LTI) system representation. The tool is called DSSynth
+(Digital-System Synthesiser). One key feature of the this tool is that it
+considers a complete range of approximations, including time discretisation,
+quantisation effects and finite precision arithmetic and it's rounding errors.
+Results are demonstrated for practical scenarios by synthesising the controller
+for real world examples from the digital control literature.
+
+General comments:
+
+This paper addresses an interesting problem, which is to synthesise digital
+controllers based on mathematical LTI representations. To achieve this goal,
+authors use state of the art software engineering techniques such as
+Counterexample-Guided Abstraction-Refinement and bounded model-checking.
+
+
+Strengths:
++ A very well written paper
++ It considers the complete range of approximations including time discretisation, quantisation effects (ADC/DAC), and finite precision arithmetic and its rounding errors.
++ Accompanying website and documentation for the toolbox is easy to follow
+
+Weaknesses:
+
+- There is no single 4-5 minute video mentioned in the abstract as requested,
+but a series of short videos, suggest to merge into one presentation.
+
+Additional comments:
+
+-The term "safe" is used in abstract, results and conclusions along side "stable". Stability is standard notion in control theory. However, safety is usually defined in different context. For example, safety is mentioned mostly in fault tolerant control to see the effects of component failure on the system. While we can say that stable controller is safe too but it would be nice to show what metrics are you using to make this statement. As paper has explained, how to look for stabile controller, it would be nice to mention about the notion of safety too. or if you imply that if a system is proved to be stable we can consider it safe, it may also be explicitly stated so.
+
+-A typing mistake before equation 1, "in generally" should be "in general".
+
+
+----------------------- REVIEW 3 ---------------------
+PAPER: 12
+TITLE: DSSynth: An Automated Digital Controller Synthesis Tool for Physical Plants
+AUTHORS: Alessandro Abate, Iury Bessa, Dario Cattaruzza, Lennon Chaves, Lucas Cordeiro, Cristina David, Pascal Kesseli, Daniel Kroening and Elizabeth Polgreen
+
+
+----------- Overall evaluation -----------
+This paper is about a MATLAB Toolbox (DSSynth) which synthesizes digital controllers for physical plants given as transfer functions or state-space linear time-invariant models using Counter-Example Guided Inductive Synthesis. This toolbox enables using program synthesis to real-world control engineering problems. Though there are existing MATLAB toolboxes available for digital controller synthesis the authors claim that DSSynth is the only one capable of checking for time discretization, quantization effects, and finite-precision arithmetic and its rounding errors.
+
+This paper requires some understanding regarding software verification. The illustrative example makes it easier to follow the paper. The topic is important for both practitioners and researchers working on control systems. The applicability of CEGIS in other domains could initiate interesting conversation during the demo. However, it would have been useful if the paper in a discussion provided such connections to the broader ASE community.
+
+The topic is relevant to the conference as it uses program synthesis to real-world control engineering problems.
+
+Points against:
+1. Although the authors evaluate the DSSynth Toolbox performance to produce stable and safe controllers against known benchmarks, they didn't provide any comparison with the existing tools in terms of the average synthesis time.  I understand that all existing tools don't check for  time discretization, quantization effects etc but still a comparison of overall synthesis time across toolboxes would be interesting.
+
+2. The authors mentioned that DC motor plant described in equation 6 and pendulum represented by equation 7 are confirmed to be safe outside the model. How this safety property is ensured outside needs some explanation to get a complete picture or at the least some reference is required.
+
