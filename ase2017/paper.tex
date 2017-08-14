@@ -839,8 +839,13 @@ K &= \left [\begin{array}{cc}-0.5898&-0.1914\end{array}\right]
 %as a validation procedure, which means that our results are reliable for control engineers. 
 The synthesized controllers are also confirmed to be safe outside of our model
 representation using MATLAB, which means that our results are reliable for control engineers. 
-In particular, the safety of controllers may be checked in computing the infinity norm of states, {\it i.e.}, the product between $l_{\infty}$ norm of initial states ($\vert\vert{x_{0}}\vert\vert_{\infty}=\max{x_{0}}$) and the $l_{1}$ norm of ($\vert\vert{\bar{A}}\vert\vert_{1}=\max\limits_{j}{\sum\limits_{i=1}^{m} \vert \bar{a}_{ij} \vert}$, where $\bar{A}=A-BK$). This is a conservative safety checking that is based in a sufficient condition~\cite{toscano2013structured}. An alternative (and less conservative)  is to unfold the system dynamics up to a given depth, with the initial state equal to its maximum value, and compute the system input and output via the feedback matrix, and then check the states bounds.
- A link to the full experimental environment, including the scripts, benchmarks, 
+In particular, the controllers safety can be checked by computing the states infinity norm, {\it i.e.}, 
+the product between $l_{\infty}$ norm of initial states ($\vert\vert{x_{0}}\vert\vert_{\infty}=\max{x_{0}}$) 
+and the $l_{1}$ norm of ($\vert\vert{\bar{A}}\vert\vert_{1}=\max\limits_{j}{\sum\limits_{i=1}^{m} \vert \bar{a}_{ij} \vert}$, 
+where $\bar{A}=A-BK$). This is a conservative safety check, which is based on a sufficient condition~\cite{toscano2013structured}. 
+An alternative (and less conservative) approach is to unfold the system dynamics up to a given depth, 
+with the initial state equal to its maximum value, compute the system input and output via the feedback matrix, 
+and then check the states bounds. A link to the full experimental environment, including the scripts, benchmarks, 
  videos, documentation and the tool, is provided online.\footnote{\url{www.dsverifier.org}}
 
 %--------------------------------------
