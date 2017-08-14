@@ -839,7 +839,7 @@ K &= \left [\begin{array}{cc}-0.5898&-0.1914\end{array}\right]
 %as a validation procedure, which means that our results are reliable for control engineers. 
 The synthesized controllers are also confirmed to be safe outside of our model
 representation using MATLAB, which means that our results are reliable for control engineers. 
-In particular, the controllers safety can be checked by computing the states infinity norm, {\it i.e.}, 
+In particular, given that the closed loop dynamics are convergent, the controller's safety can be checked by computing the initial state's infinity norm, {\it i.e.}, 
 the product between $l_{\infty}$ norm of initial states ($\vert\vert{x_{0}}\vert\vert_{\infty}=\max{x_{0}}$) 
 and the $l_{1}$ norm of ($\vert\vert{\bar{A}}\vert\vert_{1}=\max\limits_{j}{\sum\limits_{i=1}^{m} \vert \bar{a}_{ij} \vert}$, 
 where $\bar{A}=A-BK$). This is a conservative safety check, which is based on a sufficient condition~\cite{toscano2013structured}. 
