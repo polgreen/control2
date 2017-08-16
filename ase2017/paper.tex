@@ -845,8 +845,10 @@ and the $l_{1}$ norm of ($\vert\vert{\bar{A}}\vert\vert_{1}=\max\limits_{j}{\sum
 where $\bar{A}=A-BK$). This is a conservative safety check, which is based on a sufficient condition~\cite{toscano2013structured}. 
 An alternative (and less conservative) approach is to unfold the system dynamics up to a given depth, 
 with the initial state equal to its maximum value, compute the system input and output via the feedback matrix, 
-and then check the states bounds. A link to the full experimental environment, including the scripts, benchmarks, 
- videos, documentation and the tool, is provided online.\footnote{\url{www.cprover.org/DSSynth/dssynth-toolbox-1.0.0.zip}}
+and then check the states bounds. 
+
+%A link to the full experimental environment, including the scripts, benchmarks, 
+%videos, documentation and the tool, is provided online.\footnote{\url{www.cprover.org/DSSynth/dssynth-toolbox-1.0.0.zip}}
 
 %--------------------------------------
 \section{Conclusions}
@@ -863,8 +865,6 @@ dynamics~\cite{abate2017, abatecav2017}.
 The \tool presents a practical application of CEGIS-based program synthesis.
 Tractable program synthesis in control engineering encourages the application
 of this technique in other fields such as program repair or superoptimisation.
-Future work of this group will pursue the application of CEGIS to software
-engineering problems.
 %
 Additionally, given the current literature in controller synthesis, there is
 no other MATLAB toolbox for synthesizing stable and safe digital controllers
@@ -875,6 +875,8 @@ As future work, the \tool will perform synthesis considering additional
 requirements (e.g., performance) and will be combined with the
 DSVerifier/DSValidator Toolboxes~\cite{issta2017,dsvalidator} to
 verify/validate further controller properties.
+We will also pursue the application of CEGIS to software
+engineering problems.
 
 \bibliographystyle{IEEEtran}
 \bibliography{references} 
