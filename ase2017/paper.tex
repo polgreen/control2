@@ -27,7 +27,7 @@
 %\copyrightyear{2017}
 %\acmPrice{15.00}
 
-\renewcommand{\baselinestretch}{0.99}
+\renewcommand{\baselinestretch}{0.986}
 \newcommand\tool{{DSSynth Toolbox}\xspace}
 \newcommand{\fwl}[1]{\mathcal{FWL}[#1]}
 
@@ -743,7 +743,7 @@ system.
 For all evaluated benchmarks, the signal input range related to the control
 system is between $-1$ and $1$.  The implementation features used for
 digital controller are: $8$~bits for the integer part (including the sign
-bit) and $8$~bits for the fractional part.  We have run the \tool using
+bit) and $8$~bits for the fractional part.  We~have run the \tool using
 CEGIS with multi-staged verification (cf.~Section~\ref{sec:CEGIS}).  All
 experiments with \tool v$1$.$0$.$0$ were conducted on an otherwise idle
 Intel Core i$7-2600$ $3.40$ GHz processor, with $24$ GB of RAM, running
@@ -863,7 +863,7 @@ control algorithm and in the computational modeling of plant
 dynamics~\cite{abate2017, abatecav2017}.
 %
 The \tool presents a practical application of CEGIS-based program synthesis.
-Tractable program synthesis in control engineering encourages the application
+Our results in control engineering encourages the application
 of this technique in other fields such as program repair or superoptimisation.
 %
 Additionally, given the current literature in controller synthesis, there is
@@ -871,11 +871,11 @@ no other MATLAB toolbox for synthesizing stable and safe digital controllers
 for physical plants that considers all aspects of their digital
 implementation.
 %
-As future work, the \tool will perform synthesis considering additional
-requirements (e.g., performance) and will be combined with the
+As future work, the \tool will perform synthesis considering performance
+requirements and will be combined with the
 DSVerifier/DSValidator Toolboxes~\cite{issta2017,dsvalidator} to
-verify/validate further controller properties.
-We will also pursue the application of CEGIS to software
+verify/validate other controller properties.
+We will also pursue the application of CEGIS to further software
 engineering problems.
 
 \bibliographystyle{IEEEtran}
