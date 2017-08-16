@@ -395,24 +395,24 @@ time horizon.
 %\textcolor{red}{We have to talk about the naive and AA back-ends, which are based on our CEGIS framework}
 
 %---------------------------------------------------
-\section{Synthesizing Digital Controllers with \tool}
+\section{Synthesizing Digital Controllers with the \tool}
 %---------------------------------------------------
 
 %---------------------------------------------------
 \subsection{\tool Architecture}
 %---------------------------------------------------
 
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.7\textwidth]{synthesis-flow.pdf}
+\caption{Phases of the Controller Synthesis}
+\label{fig:synthesis-flow}
+\end{figure*}
+
 The proposed synthesis methodology for closed-loop digital control
 systems is based on the DSSynth tool~\cite{abate2017, abatecav2017}, 
 which can be split into two main stages as follows: manual and 
 automated steps, as illustrated in Fig.~\ref{fig:synthesis-flow}. 
-
-\begin{figure}[ht!]
-\centering
-\includegraphics[width=0.47\textwidth]{synthesis-flow.pdf}
-\caption{Phases of the Controller Synthesis}
-\label{fig:synthesis-flow}
-\end{figure}
 
 In Step~1, the user selects the digital controller representation, which
 can be a transfer function or a state-space model.  In Step~2, the
@@ -421,8 +421,8 @@ physical plant (in the form of Equation~(\ref{eq:transferfunction}) or
 given~\cite{astrom1997computer}.  Finally, in Step~3, the numerical
 representation for the digital controller implementation must be set by the
 user, i.e., the FWL format that defines the number of bits of the integer
-and fractional parts as well as the dynamic range inputs.  The result of the
-input given by the user is a specification of the physical plant.
+and fractional parts as well as the dynamic range inputs.  The input 
+provided by the user is a specification of the physical plant.
 
 After that, the automated synthesis process starts with Step~A, where the
 \tool translates the digital system specification from the MATLAB format
@@ -446,8 +446,8 @@ underlying SAT or SMT solver to solve verification conditions.  We~model FWL
 effects, time discretization and the presence of quantization noise
 explicitly using CBMC's nondeterminism API (e.g., \texttt{nondet},
 \texttt{CPROVER\_assume} intrinsic functions).  Our module is included in
-CBMC~5.7 and is available for
-download.\footnote{\url{https://github.com/diffblue/cbmc/archive/cbmc-5.7.zip}}
+CBMC~5.8 and is available for
+download.\footnote{\url{https://github.com/diffblue/cbmc/archive/cbmc-5.8.zip}}
 We further created a VirtualBox OVA image with our tool pre-installed,
 including our MATLAB-generated benchmarks and benchmark shell script with
 instructions to run all benchmarks and reproduce our
@@ -470,7 +470,7 @@ available at \url{www.cprover.org/DSSynth/dssynth-toolbox-1.0.0.zip}.
 %---------------------------------------------------
 
 The \tool performs the following automated steps
-to synthesize a given digital controller:
+to synthesize a digital controller for the given physical plant:
 %
 \begin{enumerate}
 %
@@ -482,10 +482,10 @@ it into an ANSI-C program.
 %
 \item \textbf{Execution}: obtains the ANSI-C program from the previous
 (parse) step and calls our CEGIS engine as a back-end program synthesis tool
-to perform the automated synthesis;
+to perform the automated synthesis.
 %
 \item \textbf{Extraction}: obtains the ``.log'' file that is generated 
-after the synthesis phase and then checks the synthesized digital-controller.
+after the synthesis phase and then checks the synthesized digital controller.
 %
 \item \textbf{Report}: obtains the digital controller from the previous
 (extraction) step and translates it into MATLAB, for presentation to the
@@ -494,27 +494,27 @@ user.
 \end{enumerate}
 
 %---------------------------------------------------
-\subsection{\tool Features}
+%\subsection{\tool Features}
 %-----------------------------------------------
 
-The features of the \tool can be summarized as follows:
+%The features of the \tool can be summarized as follows:
 %
-\begin{itemize}
+%\begin{itemize}
 %
-\item \textbf{Representation}: the synthesis can be 
-performed for digital systems specified via 
-transfer function or as state-space models.
+%\item \textbf{Representation}: the synthesis can be 
+%performed for digital systems specified via 
+%transfer function or as state-space models.
 %
-\item \textbf{Fixed-Point Arithmetic}: the digital 
-controller is synthesized considering FWL effects, 
-using the given fixed-point numerical representation.
+%\item \textbf{Fixed-Point Arithmetic}: the digital 
+%controller is synthesized considering FWL effects, 
+%using the given fixed-point numerical representation.
 %
-\item \textbf{Interface}: the synthesis can be executed via command-line or
-graphical-user interface (GUI).  For the GUI application, the user can plot
-the step response to reproduce the stability in closed-loop of the
-synthesized digital controller.
+%\item \textbf{Interface}: the synthesis can be executed via command-line or
+%graphical-user interface (GUI).  For the GUI application, the user can plot
+%the step response to reproduce the stability in closed-loop of the
+%synthesized digital controller.
 %
-\end{itemize}
+%\end{itemize}
 
 %---------------------------------------------------
 \subsection{\tool Usage}
@@ -526,7 +526,7 @@ synthesized digital controller.
 
 Users must provide a digital system described as a MATLAB model using a
 \texttt{tf} (for transfer function) or an \texttt{ss} (for state-space
-model) command (step $1$ of Fig.~\ref{fig:synthesis-flow}).  The \tool is
+model) command (Step $1$ of Fig.~\ref{fig:synthesis-flow}).  The \tool is
 called via the command line in MATLAB as
 
 \begin{center} 
@@ -536,7 +536,7 @@ called via the command line in MATLAB as
 \noindent where \texttt{plant} is the physical plant in state-space or
 transfer function representation, \texttt{intBits} is the integer part,
 \texttt{fracBits} is the fractional part, \texttt{maxR} and \texttt{minR}
-are the maximum and minimum dynamic range, respectively (steps $2$ and
+are the maximum and minimum dynamic range, respectively (Steps $2$ and
 $3$ of Fig.~\ref{fig:synthesis-flow}).
 %
 After executing the \texttt{synthesize} command, the \tool provides the
@@ -579,9 +579,9 @@ representation and the range of the inputs.
 \subsection{Illustrative Example}
 %---------------------------------------------------
 
-To illustrate the usage of the \tool, Fig.~\ref{toolbox-usage} shows each
+Fig.~\ref{toolbox-usage} illustrates each
 step of the synthesis process for a physical plant described in
-Eq.~\eqref{equation_plant}, which represents a unmanned aerial vehicle
+Eq.~\eqref{equation_plant}, which represents an unmanned aerial vehicle
 (UAV) quadcopter system~\cite{bouabdallah}.  This physical plant is
 expressed by a transfer function $G(z)$, where $B(z)$ and $A(z)$ represent
 the numerator and denominator, respectively, as
@@ -610,7 +610,7 @@ fixed-point format $\left\langle 8,8\right\rangle$}
 \label{toolbox-usage}
 \end{figure}
 
-In Fig.~\ref{toolbox-usage}, ``num'' represents $B(z)$ and ``den'' represent
+In Fig.~\ref{toolbox-usage}, ``num'' represents $B(z)$ and ``den'' represents
 $A(z)$, while $y$ represents the synthesized stable digital controller,
 which is defined by Eq.~(\ref{equation_controller}).
 %
