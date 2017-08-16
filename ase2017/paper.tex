@@ -596,7 +596,7 @@ G(z)=\frac{B(z)}{A(z)}=\frac{-0.06875z^{2}}{z^2-1.696z+0.7089}.
 
 \begin{figure}[ht]
 \scriptsize
-\begin{lstlisting}[xleftmargin=.025\textwidth,xrightmargin=.025\textwidth, frame=single,]
+\begin{lstlisting}[xleftmargin=.025\textwidth,xrightmargin=.025\textwidth, frame=single,basicstyle=\tt]
 >> num = [-0.06875 0 0];
 >> den = [1.0000 -1.696 0.7089];
 >> system = tf(num,den,0.002);
@@ -607,8 +607,9 @@ G(z)=\frac{B(z)}{A(z)}=\frac{-0.06875z^{2}}{z^2-1.696z+0.7089}.
 >>  --------------------------------
 >>       z^2 + 0.5665z + 0.75
 \end{lstlisting}
-\vspace{-0.2cm}
-\caption{Synthesis of a digital controller for the physical plant defined in Eq.(\ref{equation_plant}) in MATLAB, with a fixed-point format  $\left\langle 8,8\right\rangle$}
+\caption{Synthesis of a digital controller for the physical plant
+defined in Eq.~(\ref{equation_plant}) with 
+fixed-point format $\left\langle 8,8\right\rangle$}
 \label{toolbox-usage}
 \end{figure}
 
@@ -632,7 +633,7 @@ illustrated in Fig.~\ref{combine-controller-plant}.
 
 \begin{figure}[ht]
 \scriptsize
-\begin{lstlisting}[xleftmargin=.025\textwidth,xrightmargin=.025\textwidth, frame=single,]
+\begin{lstlisting}[xleftmargin=.025\textwidth,xrightmargin=.025\textwidth, frame=single,basicstyle=\tt]
 >> num = [-0.99832 0.09587 0.1926];
 >> den = [1 0.5665 0.75];
 >> controller = tf(num,den,0.002);
@@ -671,7 +672,7 @@ DSSynth has synthesized a stable digital controller.
 
 \begin{figure}[ht]
 \scriptsize
-\begin{lstlisting}[xleftmargin=.025\textwidth,xrightmargin=.025\textwidth, frame=single,]
+\begin{lstlisting}[xleftmargin=.025\textwidth,xrightmargin=.025\textwidth, frame=single, basicstyle=\tt]
 >> den = [1.069 -1.136 0.4849 -0.8704 0.5317]
 >> r = roots(den)
 >> r =
@@ -681,7 +682,7 @@ DSSynth has synthesized a stable digital controller.
 >>   0.8225 - 0.0219i
 \end{lstlisting}
 \vspace{-0.2cm}
-\caption{Roots of the polynomial $D(z)$ given by Eq.~\ref{equation_general}.}
+\caption{Roots of the polynomial $D(z)$ given by Eq.~\ref{equation_general}}
 \label{roots-of-dz}
 \end{figure}
 
