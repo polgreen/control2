@@ -78,8 +78,8 @@ Formal Synthesis; Digital Control Systems; MATLAB Toolbox; Finite-Word Length; V
 %---------------------------------------------------
 
 Control theory targets the construction of reliable systems by providing
-mathematical guarantees about the stability and the desired performance of
-closed-loop dynamics, where outputs of discrete plant $G(z)$ are fed back
+mathematical guarantees about the stability and the performance of
+closed-loop dynamics, where outputs of a discrete plant $G(z)$ are fed back
 and compared to a reference signal towards which a controller $C(z)$ should
 steer~\cite{astrom1997computer}.  Fig.~\ref{fig:typical-control-system}
 depicts a typical closed-loop digital control system.
@@ -99,12 +99,12 @@ depicts a typical closed-loop digital control system.
 There are various ways to model control systems.  Two common ways to
 represent the dynamics of such systems are transfer functions and
 state-space equations (difference or differential equations).  In this
-paper, we consider systems with a single input and a single output (SISO)
+paper, we consider systems with a single input and a single output (SISO),
 given either as transfer functions or state-space linear time-invariant
 (LTI) models.  LTI models are a common sub-class, and are frequently used in
-cyber-physical systems (e.g., in robotics, smart grids, power plants, and
+cyber-physical systems (e.g., in robotics, smart grids, power plants and
 avionics).  A discretized plant or a digital controller is, in general,
-given as follows when using a transfer function representation:
+given as follows when using the transfer function representation:
 %
 \begin{equation}
 \small
@@ -116,7 +116,7 @@ In this representation, $z^{-1}$ is called the backward-shift operator;
 $A(z)$ and $B(z)$ are the denominator and numerator polynomials; and $N$ and
 $M$ are the order of the denominator and numerator polynomials, respectively.
 
-In a state-space form, the behavior of a system is represented via a state
+In state-space form, the behavior of a system is represented via a state
 evolution equation $x(n+1)$ and an instantaneous output equation $y(n)$, as
 follows:
 %
@@ -158,7 +158,7 @@ controllers for a given physical plant represented by either transfer
 functions or state-space equations.
 
 There are existing toolboxes for MATLAB that provide functions and scripts
-to support design and implementation of digital
+to support the design and implementation of digital
 controllers~\cite{matlab-toolbox}.  In~particular, there is a MATLAB Toolbox
 named \emph{DSVerifier}~\cite{issta2017, DBLP:journals/tc/BessaIPCF17,
 DBLP:journals/dafes/BessaICF16}, which automatically detects specific errors
@@ -167,8 +167,8 @@ cycle and overflow) using symbolic model checking based on Boolean
 Satisfiability (SAT) and Satisfiability Modulo Theories (SMT) solvers.  The
 Pessoa~\cite{mazo2010pessoa} toolbox performs synthesis of correct-by-design
 digital controllers.  Pessoa is based on approximate bisimulation, which
-allows control engineers to replace differential equations, describing a
-physical plant, by a respective finite-state machine.  However, Pessoa does
+allows control engineers to replace the differential equations (describing the
+physical plant) by a finite-state machine.  However, Pessoa does
 not take advantage of recent advances in bit-accurate verification of
 programs to synthesize controllers w.r.t.~FWL effects.  MATLAB offers a tool
 named \emph{Control System Tuner}~\cite{autotuner} for automatically
@@ -183,7 +183,7 @@ The present tool paper addresses this limitation and describes a MATLAB
 toolbox for DSSynth.  MATLAB is very commonly used for modeling physical
 plants.  Thus, the integration into MATLAB enables rapid synthesis of a
 stable and safe digital controller for such plants without switching the
-environment. Experimental results show that \tool is able to efficiently 
+environment. Experimental results show that the \tool is able to efficiently 
 synthesize stable and safe controllers for a set of intricate benchmarks taken 
 from the literature:  the median runtime for our benchmarks set is $124$\,s, 
 and the average synthesis time amounts to $35.5$\,s for closed-loop control 
