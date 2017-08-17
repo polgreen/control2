@@ -300,19 +300,19 @@ the manner in which they check the safety specification.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-The first approach, presented in Fig.~\ref{fig:CEGIS-precision-increment}, 
-starts by devising a digital controller that stabilizes the model while remaining safe for a
-pre-selected time horizon ($k$) and a single initial state; then, it
-employs a multi-staged verification process as follows:
-(i) The first verification stage ({\sc safety}) checks that the candidate
+The first approach, presented in Fig.~\ref{fig:CEGIS-precision-increment},
+starts by devising a digital controller that stabilizes the model while
+remaining safe for a pre-selected time horizon ($k$) and a single initial
+state; then, it employs a multi-staged verification process as follows:
+(i)~The first verification stage ({\sc safety}) checks that the candidate
 solution, which we synthesized to be safe for at least one initial
 state, is safe for \emph{all} possible initial states, i.e., does not reach
 an unsafe state within $k$ steps.
-(ii) The second verification stage ({\sc precision})
+(ii)~The second verification stage ({\sc precision})
  restores soundness with respect to the plant precision
-by using interval arithmetic \cite{moore1966interval} to validate the 
+by using interval arithmetic~\cite{moore1966interval} to validate the 
 operations performed by the previous stage. 
-(iii) The third verification stage ({\sc complete}) checks that the current
+(iii)~The third verification stage ({\sc complete}) checks that the current
 $k$ is large enough to ensure safety for any $k'{>}k$.  Here, we compute the
 completeness threshold $\overline{k}$ for the current candidate controller 
 $K$~\cite{abatecav2017}, i.e., the number of
