@@ -9,4 +9,4 @@ num_cl = cell2mat(syscl.Numerator);
 den_cl = cell2mat(syscl.Denominator);
 
 dstep(num_cl,den_cl)
-set(findall(gcf,'-property','FontSize'),'FontSize',22)
+set(findall(gcf,'-property','LineWidth'),'LineWidth',2)

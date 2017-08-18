@@ -11,9 +11,7 @@ D_= D;
 
 sys = ss(A,B,C,D, 0.002);
 
-roots = eig(F);
-
 dstep(A_,B_,C_,D_)
 
-set(findall(gcf,'-property','FontSize'),'FontSize',22)
+set(findall(gcf,'-property','LineWidth'),'LineWidth',2)
 
