@@ -831,16 +831,21 @@ K &= \left [\begin{array}{cc}-0.5898&-0.1914\end{array}\right].
  
 %The digital controllers synthesized by \tool are all stable using the MATLAB step response
 %as a validation procedure, which means that our results are reliable for control engineers. 
-The synthesized controllers are also confirmed to be safe outside of our model
-representation using MATLAB, which means that our results are usable for control engineers. 
-Given that the closed loop dynamics are convergent, 
-the controller's safety can be checked by computing the initial state's infinity norm, i.e., 
-the product between $l_{\infty}$ norm of initial states ($\vert\vert{x_{0}}\vert\vert_{\infty}=\max{x_{0}}$) 
-and the $l_{1}$ norm of ($\vert\vert{\bar{A}}\vert\vert_{1}=\max\limits_{j}{\sum\limits_{i=1}^{m} \vert \bar{a}_{ij} \vert}$, 
-where $\bar{A}=A-BK$). This is a conservative safety check, which is based on a sufficient condition~\cite{toscano2013structured}. 
-An~alternative (but not conservative) approach is to unfold the system dynamics up to a given depth, 
-with the initial state equal to its maximum value, compute the system input and output via the feedback matrix, 
-and then check the state bounds. 
+
+The synthesized controllers are also confirmed to be safe outside of our
+model representation using MATLAB, which means that our results are usable
+for control engineers.  Given that the closed loop dynamics are convergent,
+the controller's safety can be checked by computing the initial state's
+infinity norm, i.e., the product between the $l_{\infty}$ norm of the
+initial states ($\vert\vert{x_{0}}\vert\vert_{\infty}=\max{x_{0}}$) and the
+$l_{1}$ norm of
+($\vert\vert{\bar{A}}\vert\vert_{1}=\max\limits_{j}{\sum\limits_{i=1}^{m}
+\vert \bar{a}_{ij} \vert}$, where $\bar{A}=A-BK$).  This is a conservative
+safety check, which is based on a sufficient
+condition~\cite{toscano2013structured}.  An~alternative (but not
+conservative) approach is to unfold the system dynamics up to a given depth,
+with the initial state equal to its maximum value, compute the system input
+and output via the feedback matrix, and then check the state bounds.
 
 %A link to the full experimental environment, including the scripts, benchmarks, 
 %videos, documentation and the tool, is provided online.\footnote{\url{www.cprover.org/DSSynth/dssynth-toolbox-1.0.0.zip}}
