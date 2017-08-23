@@ -175,16 +175,16 @@ programs to synthesize controllers w.r.t.~FWL effects.  MATLAB offers a tool
 named \emph{Control System Tuner}~\cite{autotuner} for automatically
 designing controllers based on optimization or graphical analysis.  However,
 the Control System Tuner is unable to consider FWL effects during controller
-synthesis. In addition, there is another toolbox called 
-\emph{Robust Control Toolbox}~\cite{robusttool}, which computes a  
-stabilizing $H_{2}$ optimal controller $K$ for a partitioned LTI plant $P$. 
-The main output provided by this toolbox is the controller synthesized, and also,
-the closed-loop system that combines the plant and the controller synthesized. 
-However, the FWL effects is not taking account as well.
+synthesis. %In addition, there is another toolbox called 
+%\emph{Robust Control Toolbox}~\cite{robusttool}, which computes a  
+%stabilizing $H_{2}$ optimal controller $K$ for a partitioned LTI plant $P$. 
+%However, the FWL effects is not taking account as well.
 To the best of our knowledge, there is no MATLAB toolbox able to
 perform digital controller synthesis that considers the complete range of
 approximations, including time discretization, quantization effects, and
 finite-precision arithmetic and its rounding errors.
+
+%During our experiments, we tried to compare our results with these toolboxes. The first one is the Robust Control Toolbox~\cite{robusttool}, where the plant  for LTI systems in state-space representation is given as input, and the output is matrix stabilized, and the closed-loop state-space system. Nonetheless, for our set of state-space benchmarks, the number of inputs and outputs must  be tuned for each system, and the physical plant must be stable before the control synthesis,  which is different from our tool DSSynth, where the plant does not need be stable,  and we couldn't find the respective control synthesized for each benchmark.  We also explored the Control System Tuner Toolbox~\cite{autotuner}, however  we faced some difficulties  to configure the experiments: (1) the user need to translate the system to a  generic system,  and (2) a block diagram must be implemented for each benchmark (there are many  plants with  different orders). In addition, we found some problems with compatibility between  generic systems and the generic block diagrams. Finally, we investigated the  Pessoa Toolbox~\cite{mazo2010pessoa} usage, and due to libraries compatibility,  and some former dependencies, we couldn't run the set of scripts implemented  in Pessoa Toolbox~\cite{mazo2010pessoa}.
 
 The present tool paper addresses this limitation and describes a MATLAB
 toolbox for DSSynth.  MATLAB is very commonly used for modeling physical
