@@ -175,7 +175,13 @@ programs to synthesize controllers w.r.t.~FWL effects.  MATLAB offers a tool
 named \emph{Control System Tuner}~\cite{autotuner} for automatically
 designing controllers based on optimization or graphical analysis.  However,
 the Control System Tuner is unable to consider FWL effects during controller
-synthesis.  To the best of our knowledge, there is no MATLAB toolbox able to
+synthesis. In addition, there is another toolbox called 
+\emph{Robust Control Toolbox}~\cite{robusttool}, which computes a  
+stabilizing $H_{2}$ optimal controller $K$ for a partitioned LTI plant $P$. 
+The main output provided by this toolbox is the controller synthesized, and also,
+the closed-loop system that combines the plant and the controller synthesized. 
+However, the FWL effects is not taking account as well.
+To the best of our knowledge, there is no MATLAB toolbox able to
 perform digital controller synthesis that considers the complete range of
 approximations, including time discretization, quantization effects, and
 finite-precision arithmetic and its rounding errors.
@@ -188,8 +194,8 @@ environment. Experimental results show that the \tool is able to efficiently
 synthesize stable and safe controllers for a set of intricate benchmarks taken 
 from the literature:  the median runtime for our benchmarks set is $124$\,s, 
 and the average synthesis time amounts to $35.5$\,s for closed-loop control 
-systems represented by state-space equations, while for transfer functions, the average synthesis
-time amounts to $123.6$\,s.
+systems represented by state-space equations, while for transfer functions, 
+the average synthesis time amounts to $123.6$\,s.
 
 %---------------------------------------------------
 \section{Counterexample-Guided Inductive Synthesis for Control Systems}
