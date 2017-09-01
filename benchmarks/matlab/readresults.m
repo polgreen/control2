@@ -2,6 +2,8 @@
 % Iury Bessa
 % Manaus, 2017
 
+statespaceresults;
+
 num_success=0;
 num_benchmarks=153;
 for i=1:num_benchmarks 
