@@ -1,3 +1,10 @@
+
+% This script validates the CAV and ASE results for safety controllers
+% synthesized by DSSynth
+% Iury Bessa
+% Manaus, 2017
+
+
 boundspec=1.0;
 xmax=1.0;
 
@@ -13,7 +20,7 @@ B=[128;0];
 C=[0.0014826,189.0217];
 D=[0];
 K=[0,-0.0039062];
-bound=maxstate(A,xmax);
+bound=maxstate(A-B*K,xmax);
 results{i}.name=name;
 if bound>boundspec
     results{i}.truth=0;
@@ -2350,6 +2357,11 @@ B=[1.9852;23.3261;52.2281;8.899;2.9798];
 C=[1,0,0,0,0]; 	
 D=[0];
 K=[0,0,0,0,0];
+if bound>boundspec
+    results{i}.truth=0;
+else
+    results{i}.truth=1;
+end
 		
 %% regulator_ss_disc2 	
 
@@ -2376,6 +2388,11 @@ B=[0.005922;0.50923;10.1543;3.9743;1.8964];
 C=[1,0,0,0,0]; 	
 D=[0];
 K=[0,0,0,0,0];
+if bound>boundspec
+    results{i}.truth=0;
+else
+    results{i}.truth=1;
+end
 		
 %% regulator_ss_disc4 	
 
