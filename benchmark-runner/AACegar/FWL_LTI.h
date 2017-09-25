@@ -24,6 +24,7 @@
   const control_floatt _zero=0.0;
   const control_floatt _one=1.0;
 #else
+  #define _FIXEDBV
   typedef double control_floatt;
   typedef unsigned int cnttype;
   const control_floatt _zero=0.0;
@@ -44,6 +45,7 @@ void verify_assume(_Bool expression)
 #ifdef __CPROVER
   __CPROVER_assume(expression != (_Bool)0);
 #else
+  printf("assumes %d\n", (int)expression);
   assert(expression);
 #endif
 }

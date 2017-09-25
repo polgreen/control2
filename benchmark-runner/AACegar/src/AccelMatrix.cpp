@@ -6,6 +6,9 @@
 
 namespace abstract{
 
+template <class scalar>
+bool AccelMatrix<scalar>::ms_roundJordanBlocks=false;
+
 /// Constructs an empty buffer
 template <class scalar>
 AccelMatrix<scalar>::AccelMatrix(int dimension) : JordanMatrix<scalar>(dimension)
@@ -20,6 +23,40 @@ scalar AccelMatrix<scalar>::binomial(powerS n,int k)
   scalar den=k;
   for (int i=2;i<k;i++) den*=scalar(i);
   return num/den;
+}
+
+/// indicates if the eigenvalue at index should be overapproximated with a spherical abstraction.
+template <class scalar>
+int AccelMatrix<scalar>::roundIndex(int index)
+{
+  int offset=ms_roundJordanBlocks ? m_jordanIndex[index] : 0;
+  if (m_conjugatePair[index]>index) return index-2*offset;
+  if (m_conjugatePair[index]>=0)    return m_conjugatePair[index]-2*offset;
+  if (m_isNegative[index])          return index;
+  if (!ms_roundJordanBlocks)        return -1;
+  if (offset>0)                     return index-offset;
+  if (m_jordanIndex[index+1]>0)     return index;
+  return -1;
+}
+
+/// Marks the round indices in a rounded vector array
+template <class scalar>
+void AccelMatrix<scalar>::findRoundIndices(std::vector<int> &isRoundIndex,bool compressed)
+{
+  int pos=0;
+  isRoundIndex.resize(2*m_dimension,-1);
+  for (int row=0;row< 2*m_dimension;row++) isRoundIndex[row]=-1;
+  for (int row=0;row<m_dimension;row++,pos++) {
+    isRoundIndex[pos]=roundIndex(row);
+    if (compressed) {
+      int row2;
+      for (row2=row+1;row2<m_dimension;row2++) {
+        if (roundIndex(row2)!=row) break;
+      }
+      row=row2-1;
+    }
+  }
+  if (compressed) isRoundIndex.resize(pos);
 }
 
 /// retrieves J^n
@@ -44,9 +81,18 @@ template <class scalar>
 typename AccelMatrix<scalar>::MatrixS AccelMatrix<scalar>::getPoweredSingularValues(const powerS iteration)
 {
   MatrixS result=m_foldedEigenValues;
-  int power=iteration;//TODO: change for scalar
-  for (int row=0;row<m_foldedEigenValues.rows();row++) {
-    result.coeffRef(row,row)=func::pow(m_foldedEigenValues.coeff(row,row),power);
+  if (iteration==1) return result;
+  for (int row=0;row<m_foldedEigenValues.rows();row++)
+  {
+    result.coeffRef(row,row)=func::pow(m_foldedEigenValues.coeff(row,row),iteration);
+    int jordanIndex=0;
+    for (int offset=0;offset<row;offset++) {
+      if (func::isZero(result.coeffRef(row-offset-1,row-offset))) break;
+      jordanIndex++;
+    }
+    for (int offset=1;offset<=jordanIndex;offset++) {
+      result.coeffRef(row-offset,row)=binomial(iteration,offset)*func::pow(m_foldedEigenValues.coeff(row,row),iteration-offset);
+    }
   }
   return result;
 }
@@ -117,19 +163,30 @@ typename JordanMatrix<scalar>::MatrixS AccelMatrix<scalar>::calculateIminFn(cons
 /// Calculates (I-J)^-1
 template <class scalar> void AccelMatrix<scalar>::calculateInvIminJ()
 {
-  m_pseudoIminJ=MatrixS::Identity(m_dimension,m_dimension)-this->m_pseudoEigenValues;
+  m_pseudoIminJ=MatrixS::Identity(m_dimension,m_dimension)- m_pseudoEigenValues;
   m_invIminJ=MatrixC::Identity(m_dimension,m_dimension)-m_eigenValues;
-
   for (int row=0;row<m_dimension;row++) {
-    if (m_isOne[row]) {
-      m_invIminJ.coeffRef(row,row)=this->ms_complexOne;
+    scalar mag=func::ms_1-func::norm2(m_eigenValues.coeff(row,row));
+    if (func::isZero(mag)) {
+      m_invIminJ.coeffRef(row,row)=func::ms_c_1;
       int mult=(m_conjugatePair[row]<0) ? 1 : 2;
       for (int offset=1;offset<=m_jordanIndex[row];offset++) {
         m_invIminJ.coeffRef(row-mult*offset,row)=0;
       }
     }
+    else if (m_isNegative[row]) {
+      int jordanSize=1;
+      while ((jordanSize<m_dimension-row) && (m_jordanIndex[row+jordanSize]==0)) {
+        jordanSize++;
+      }
+      MatrixC jordanBlock=m_eigenValues.block(row,row,jordanSize,jordanSize);
+      MatrixC iMinJ=jordanBlock*(MatrixC::Identity(jordanSize,jordanSize)-jordanBlock*jordanBlock);
+      m_invIminJ.block(row,row,jordanSize,jordanSize)=makeInverse(iMinJ);
+      m_invIminJ.block(row,row,jordanSize,jordanSize)*=(MatrixC::Identity(jordanSize,jordanSize)+jordanBlock);
+    }
     else {
-      m_invIminJ.coeffRef(row,row)=this->ms_complexOne/m_invIminJ.coeff(row,row);
+      m_invIminJ.coeffRef(row,row)=func::ms_c_1;
+      m_invIminJ.coeffRef(row,row)/=m_invIminJ.coeff(row,row);
       if (m_conjugatePair[row]>=0) {
         if (m_jordanIndex[row+2]>0) {
           for (int col=row+2;col<m_dimension;col+=2){
@@ -147,44 +204,64 @@ template <class scalar> void AccelMatrix<scalar>::calculateInvIminJ()
       }
     }
   }
-  if (m_hasOnes) m_pseudoInvIminJ=this->jordanToPseudoJordan(m_invIminJ,eToEigenValues);
-  else           m_pseudoInvIminJ=m_pseudoIminJ.inverse();
+  if (m_hasOnes || m_hasNegatives) m_pseudoInvIminJ=this->jordanToPseudoJordan(m_invIminJ,eToEigenValues);
+  else m_pseudoInvIminJ=m_pseudoIminJ.inverse();
   m_IminA=m_pseudoEigenVectors*m_pseudoIminJ*m_invPseudoEigenVectors;
-  this->m_invIminA=m_pseudoEigenVectors*m_pseudoInvIminJ*m_invPseudoEigenVectors;
+  m_invIminA=m_pseudoEigenVectors*m_pseudoInvIminJ*m_invPseudoEigenVectors;
+}
+
+/// Retrieves a matrix that is Identity for positive blocks and J_s for negative ones
+template <class scalar>
+typename JordanMatrix<scalar>::MatrixS& AccelMatrix<scalar>::getJnegJ()
+{
+  MatrixS result=MatrixS::Identity(m_dimension,m_dimension);
+  for (int row=0;row<m_dimension;row++) {
+    if (m_isNegative[row]) {
+      int jordanSize=1;
+      while ((jordanSize<m_dimension-row) && (m_jordanIndex[row+jordanSize]==0)) {
+        jordanSize++;
+      }
+      result.block(row,row,jordanSize,jordanSize)=m_pseudoEigenValues.block(row,row,jordanSize,jordanSize);
+    }
+  }
+  return result;
 }
 
 /// Calculates the folded matrix over-approximation on the rotation and dilation axes
 template <class scalar> void AccelMatrix<scalar>::calculateF()
 {
-  this->m_foldedEigenValues=MatrixS::Identity(m_dimension,m_dimension);
-  m_binomialMultipliers=MatrixS::Ones(m_dimension,1);
+  MatrixS binomialMultipliers=MatrixS::Ones(m_dimension,1);
   for (int row=0;row<m_dimension;row++) {
     if (m_jordanIndex[row]>0)
     {
       int mult=(m_conjugatePair[row]>=0) ? 2 : 1;
-      m_binomialMultipliers.coeffRef(row,0)=m_binomialMultipliers.coeff(row-mult,0)/(this->ms_one-norm(m_eigenValues.coeff(row,row)));
-      m_binomialMultipliers.coeffRef(row-mult*m_jordanIndex[row],0)+=m_binomialMultipliers.coeff(row,0);
+      binomialMultipliers.coeffRef(row,0)=binomialMultipliers.coeff(row-mult,0)/(this->ms_one-norm(m_eigenValues.coeff(row,row)));
+      binomialMultipliers.coeffRef(row-mult*m_jordanIndex[row],0)+=binomialMultipliers.coeff(row,0);
     }
-    //else m_binomialMultipliers.coeffRef(row,0)/=(this->ms_one-norm(m_eigenValues.coeff(row,row)));//This is the original acceleration
   }
-  int j=1;
-  m_foldedBinomialMultipliers=m_binomialMultipliers;
-  m_foldedEigenValues.coeffRef(0,0)=this->m_blockSingularValues.coeff(0,0);
+
+  MatrixS m_foldedBinomialMultipliers=binomialMultipliers;
+  m_foldedEigenValues=MatrixS::Identity(m_dimension,m_dimension);
   m_svnIndex.resize(m_dimension);
-  m_svnIndex[0]=0;
-  for (int row=1;row<m_dimension;row++) {
-    m_svnIndex[row]=j;
-    if ((m_jordanIndex[row]>0) || (m_conjugatePair[row]==row-1)) {
-      m_svnIndex[row]--;
-      continue;
+  int transRow=0;
+  for (int row=0;row<m_dimension;row++) {
+    if ((m_roundings[row]<0) || (m_roundings[row]==row)) {
+      if (ms_roundJordanBlocks) {
+        m_foldedEigenValues.coeffRef(transRow,transRow)=m_blockSingularValues.coeff(row,0);
+      }
+      else {
+        m_foldedEigenValues.coeffRef(transRow,transRow)=func::norm2(m_eigenValues.coeff(row,row));
+        m_jordanIndex[m_dimension+transRow]=m_jordanIndex[row];
+        if (m_jordanIndex[row]>0) m_foldedEigenValues.coeffRef(transRow-1,transRow)=func::ms_1;
+      }
+      m_foldedBinomialMultipliers.coeffRef(transRow,0)=binomialMultipliers.coeff(row,0);
+      m_isOne[m_dimension+transRow]=func::isZero(m_foldedEigenValues.coeffRef(transRow,transRow)-func::ms_1);
+      transRow++;
     }
-    int offset=m_jordanIndex[row]*((m_conjugatePair[row]<0) ? 1 : 2);
-    m_foldedEigenValues.coeffRef(j,j)=this->m_blockSingularValues.coeff(row,0);
-    m_foldedBinomialMultipliers.coeffRef(j,0)=this->m_binomialMultipliers.coeff(row-offset,0);
-    j++;
+    m_svnIndex[row]=transRow-1;
   }
-  m_foldedEigenValues.conservativeResize(j,j);
-  m_foldedBinomialMultipliers.conservativeResize(j,1);
+  m_foldedBinomialMultipliers.conservativeResize(transRow,1);
+  m_foldedEigenValues.conservativeResize(transRow,transRow);
 }
 
 /// Calculates (I-F)^-1
@@ -194,14 +271,20 @@ template <class scalar> void AccelMatrix<scalar>::calculateInvIminF()
   m_IminF=MatrixS::Identity(dimension,dimension)-m_foldedEigenValues;
   m_invIminF=m_IminF;
   for (int row=0;row<dimension;row++) {
-    if (abs(m_foldedEigenValues.coeff(row,row))<this->m_zero) m_invIminF.coeffRef(row,row)=this->ms_one;
-    else m_invIminF.coeffRef(row,row)=this->ms_one/m_IminF.coeff(row,row);
+    if (func::isZero(m_IminF.coeff(row,row))) {
+      m_invIminF.coeffRef(row,row)=func::ms_1;
+      for (int offset=1;offset<=m_jordanIndex[m_dimension+row];offset++) {
+        m_invIminF.coeffRef(row-offset,row)=0;
+      }
+    }
+    else m_invIminF.coeffRef(row,row)=func::ms_1/m_IminF.coeff(row,row);
   }
 }
 
 template <class scalar> bool AccelMatrix<scalar>::calculateJordanForm(bool includeSvd)
 {
   if (!JordanMatrix<scalar>::calculateJordanForm(includeSvd)) return false;
+  findRoundIndices(m_roundings,false);
   calculateInvIminJ();
   calculateF();
   calculateInvIminF();
@@ -217,13 +300,7 @@ template <class scalar> bool AccelMatrix<scalar>::load(const MatrixS &matrix)
 {
   if (!JordanMatrix<scalar>::load(matrix)) return false;
   calculateBlockSVD();
-  calculateInvIminJ();
-  calculateF();
-  calculateInvIminF();
-  if (this->ms_trace_dynamics>=eTraceDynamics) {
-    ms_logger.logData(m_pseudoInvIminJ,"InvIminJ:");
-    ms_logger.logData(m_invIminF,"InvIminF:");
-  }
+  findRoundIndices(m_roundings,false);
   return true;
 }
 
@@ -231,6 +308,7 @@ template <class scalar> bool AccelMatrix<scalar>::load(const MatrixS &matrix)
 template <class scalar> bool AccelMatrix<scalar>::loadJordan(const MatrixS &matrix)
 {
   if (!JordanMatrix<scalar>::loadJordan(matrix)) return false;
+  findRoundIndices(m_roundings,false);
   calculateBlockSVD();
   calculateInvIminJ();
   calculateF();
@@ -241,6 +319,24 @@ template <class scalar> bool AccelMatrix<scalar>::loadJordan(const MatrixS &matr
   }
   return true;
 }
+
+/// Copies an existing object
+template <class scalar>
+void AccelMatrix<scalar>::copy(const AccelMatrix &source)
+{
+  JordanMatrix<scalar>::copy(source);
+  m_foldedBinomialMultipliers=source.m_foldedBinomialMultipliers;
+  m_foldedEigenValues=source.m_foldedEigenValues;
+  m_invIminJ=source.m_invIminJ;
+  m_pseudoIminJ=source.m_pseudoIminJ;
+  m_pseudoInvIminJ=source.m_pseudoInvIminJ;
+  m_IminA=source.m_IminA;
+  m_invIminA=source.m_invIminA;
+  m_IminF=source.m_IminF;
+  m_invIminF=source.m_invIminF;
+  m_svnIndex=source.m_svnIndex;
+}
+
 
 #ifdef USE_LDOUBLE
   #ifdef USE_SINGLES

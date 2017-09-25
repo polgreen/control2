@@ -17,6 +17,7 @@ template <class scalar>  traceTableau_t Tableau<scalar>::ms_trace_tableau=eTrace
 template <class scalar>  tracePivots_t Tableau<scalar>::ms_trace_pivots=eTraceNoPivots;
 template <class scalar>  bool Tableau<scalar>::ms_trace_errors=false;
 template <class scalar>  bool Tableau<scalar>::ms_trace_time=false;
+template <class scalar>  bool Tableau<scalar>::ms_useBasis=false;
 
 template <class scalar>
 Tableau<scalar>::Tableau(const int size,const int dimension):
@@ -32,6 +33,7 @@ Tableau<scalar>::Tableau(const int size,const int dimension):
   m_tableau(m_size,m_dimension),
   m_sparseTableau(0,m_dimension),
   m_pSortedTableau(&m_tableau),
+  m_auxiliaryRow(1,m_dimension),
   m_basisInverse(m_dimension,m_dimension)
 {
   m_basicVars.reserve(size+1);
@@ -129,6 +131,11 @@ void Tableau<scalar>::ColumnPivot(const pivot_t &pivot)
  */
 {
   scalar Xtemp;
+  if (m_pSortedTableau->m_dirty) {
+    m_pSortedTableau->pivot(m_auxiliaryRow,pivot);
+    if (ms_trace_pivots>=eTracePivots) logBasis(pivot.row,pivot.col);
+    return;
+  }
   refScalar invXtemp0 = func::toCentre(func::ms_1/m_pSortedTableau->entry(m_basisInverse,pivot.row,pivot.col));
   for (int j = 0; j < m_dimension; j++) {
     if (j != pivot.col) {
@@ -306,7 +313,7 @@ int Tableau<scalar>::FindFeasBasis(const ResetType_t resetType)
     }
     if (knownPivots==m_nonBasicRow.size()) return Rebase();
   }
-  if (resetType==eUseDefaultBasis) {
+  if ((resetType==eUseDefaultBasis) && ms_useBasis) {
     m_basisInverse=m_feasBasisInverse;
     m_basicVars=m_feasBasicVars;
     m_nonBasicRow=m_feasNonBasicRow;
@@ -417,6 +424,7 @@ void Tableau<scalar>::ResetTableau()
   m_nonBasicRow[RHSCol]=0;/* RHS is already in nonbasis and is considered to be associated with the zero-th row of input. */
   m_basisInverse=MatrixS::Identity(m_dimension,m_dimension);
   if (ms_trace_pivots>=eTracePivots) ms_logger.logData("Reset Tableau");
+  if (!ms_useBasis) m_pSortedTableau->m_dirty=!loadTableau(false)|| !ms_useBasis;
 
   /* Set the bflag according to nbindex */
   for (int row=0; row<=m_size; row++) m_basicVars[row]=-1; /* all basic variables have index -1 */
@@ -444,6 +452,7 @@ bool Tableau<scalar>::load(const MatrixS &faces,const MatrixS &supports,const bo
     m_basicVars[m_objectiveRow]=-1;
   }
   m_isNormalised=false;
+  m_pSortedTableau->m_dirty=false;
   m_size =numFaces+ ((Conversion!=ExtToIne) ? 1 : 0);
   m_basicVars.resize(m_size+1,-1);
   m_basicVars[m_size]=objectiveVar;
@@ -472,13 +481,21 @@ bool Tableau<scalar>::load(const MatrixS &faces,const MatrixS &supports,const bo
   }
   else m_zero=0;
   m_pSortedTableau->setSize(m_size,m_dimension);
+  return loadTableau(true);
+}
+
+/// Loads the tableau from the face and supprot description
+template <class scalar>
+bool Tableau<scalar>::loadTableau(bool clearObjective)
+{
+  if (m_pSortedTableau->numRows()!=m_size) return false;
   for (int row=0;row<m_faces.rows();row++) {
-    m_pSortedTableau->setCoeff(row,0,supports.coeff(row,0));
+    m_pSortedTableau->setCoeff(row,0,m_supports.coeff(row,0));
     m_pSortedTableau->negRow(row,1,m_faces.row(row));
   }
-  if (Conversion==IneToExt) {
-    m_pSortedTableau->setRow(faces.rows(),1,MatrixS::Zero(1,faces.cols())); //artificial row for x_1 >= 0
-    m_pSortedTableau->setCoeff(faces.rows(),0,func::ms_1);
+  if (m_faces.rows()<m_size) {
+    m_pSortedTableau->setCoeff(m_faces.rows(),0,func::ms_hardZero);
+    if (clearObjective) m_pSortedTableau->setRow(m_faces.rows(),1,MatrixS::Zero(1,m_faces.cols())); //artificial row for x_1 >= 0
   }
   return true;
 }

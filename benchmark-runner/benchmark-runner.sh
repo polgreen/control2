@@ -1,7 +1,7 @@
 #!/bin/bash
 export PATH=${PATH//jdk1.7.0_75/jdk1.8.0_20}
 export PATH=${PATH//cbmc-5190/cbmc-trunk-diffblue-control-synthesis}
-export PATH=${PATH}:/users/pkesseli/software/cpp/cbmc/cbmc-trunk-diffblue-control-synthesis/src/cegis:/users/pkesseli/software/cpp/cbmc/cbmc-trunk-diffblue-control-synthesis-analyzer/src/goto-analyzer:/users/pkesseli/software/cpp/z3/trunk/target/i686-linux/bin
+export PATH=${PATH}:/media/sf_Documents/cbmc5.7/src/cegis:/media/sf_Documents/cbmc5.7/src/goto-analyzer
 
 function extract_variable {
  echo $1 | sed "s/.*$2 *= *\([^,]*\),.*/\1/"
@@ -65,7 +65,7 @@ controller_header_file='controller.h'
 working_directory_base='/tmp/control_synthesis'
 mkdir -p ${working_directory_base} 2>/dev/null
 
-#benchmarks_base='/users/pkesseli/documents/control-synthesis/benchmarks'
+benchmarks_base='/media/sf_Documents/Github/control-synthesis/benchmarks/linear'
 #solved_benchmarks=("${benchmarks_base}/CruiseControl/CruiseControl02.c" "${benchmarks_base}/example-a/example-a_PLANT1_SCHEMA2_IMPL1.c" "${benchmarks_base}/example-a/example-a_PLANT1_SCHEMA3_IMPL1.c" "${benchmarks_base}/example-a/example-a_PLANT1_SCHEMA3_IMPL2.c" "${benchmarks_base}/example-a/example-a_PLANT1_SCHEMA3_IMPL3.c" "${benchmarks_base}/example-a/example-a_PLANT1_SCHEMA4_IMPL2.c")
 
 #benchmark='/users/pkesseli/documents/control-synthesis/benchmarks/example-a/example-a_PLANT1_SCHEMA3_IMPL3.c'
@@ -73,7 +73,7 @@ mkdir -p ${working_directory_base} 2>/dev/null
 #benchmark_dir='/users/pkesseli/documents/control-synthesis/benchmarks/SpringMassDamper/'
 
 if [ -z "$2" ]; then
-  benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/CruiseControl/' '/users/pkesseli/documents/control-synthesis/benchmarks/Satellite/' '/users/pkesseli/documents/control-synthesis/benchmarks/SpringMassDamper/' '/users/pkesseli/documents/control-synthesis/benchmarks/example-a/' '/users/pkesseli/documents/control-synthesis/benchmarks/example-a_uncertainty/')
+  benchmark_dirs=('${benchmarks_base}/CruiseControl/' '${benchmarks_base}/Satellite/' '${benchmarks_base}/SpringMassDamper/' '${benchmarks_base}/example-a/' '${benchmarks_base}/example-a_uncertainty/')
 else
    benchmark_dirs=("$2")
 fi

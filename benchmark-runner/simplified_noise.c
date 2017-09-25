@@ -82,7 +82,6 @@ struct anonymous0 impl={ .int_bits=_CONTROLER_INT_BITS, .frac_bits=_CONTROLER_FR
 /*struct anonymous3 plant={ .den={ 1.0, -3.32481248817168, 1.64872127070013 }, .den_size=3,
     .num={ 0.548693198268086, -0.886738807003861, 0.0 }, .num_size=2};*/
 
-struct anonymous2
 struct anonymous3 plant_cbmc,controller_cbmc,closed_loop_cbmc;
 //#ifdef __CPROVER
 #include "controller.h"
@@ -459,8 +458,8 @@ void ft_closedloop_series()
   cnttype i;
   cnttype j;
   cnttype k;
-  closed_loop_cbmc.num = __CONTROLLER_NUM_SIZE + plant.num_size -1;
-  closed_loop_cbmc.den = __CONTROLLER_DEN_SIZE + plant.den_size -1;
+  closed_loop_cbmc.num_size = __CONTROLLER_NUM_SIZE + plant.num_size -1;
+  closed_loop_cbmc.den_size = __CONTROLLER_DEN_SIZE + plant.den_size -1;
 
   for(i = 0 ; i<closed_loop_cbmc.num_size; i++) closed_loop_cbmc.num[i] = 0.0;
   for(i = 1; i <= __CONTROLLER_NUM_SIZE; i++)
@@ -479,7 +478,7 @@ void ft_closedloop_series()
       closed_loop_cbmc.den[__CONTROLLER_DEN_SIZE + plant.den_size -i -j] += controller.den[__CONTROLLER_DEN_SIZE-i] * plant_cbmc.den[plant.den_size-j];
     }
   }
-  for (i=0;i<closed_loop_cbmc.num_size;i++) closed_loop_cbmc.den[Nclosed_loop_cbmc.den_size-i-1]+=closed_loop_cbmc.num[closed_loop_cbmc.num_size-i-1];
+  for (i=0;i<closed_loop_cbmc.num_size;i++) closed_loop_cbmc.den[closed_loop_cbmc.den_size-i-1]+=closed_loop_cbmc.num[closed_loop_cbmc.num_size-i-1];
 }
 
 int verify_stability_closedloop_using_dslib(void)
@@ -493,8 +492,8 @@ int verify_stability_closedloop_using_dslib(void)
   __CPROVER_array_set(closed_loop_cbmc.num,0.0);
   __CPROVER_array_set(closed_loop_cbmc.den,0.0);
 #else
-  for (int i=0;i<closed_loop_cbmcnum_size;i++) closed_loop_cbmcnum[i]=3;
-  for (int i=0;i<closed_loop_cbmcden_size;i++) closed_loop_cbmcden[i]=3;
+  for (int i=0;i<closed_loop_cbmc.num_size;i++) closed_loop_cbmc.num[i]=3;
+  for (int i=0;i<closed_loop_cbmc.den_size;i++) closed_loop_cbmc.den[i]=3;
 #endif
 /*  signed int return_value1=check_stability_closedloop(controller.num, __CONTROLLER_NUM_SIZE);
 #ifdef __CPROVER  
@@ -516,7 +515,7 @@ int verify_stability_closedloop_using_dslib(void)
   print_poly(plant_cbmc.den, plant_cbmc.den_size);
   fputs("ans=", stdout);
   //std::cout << "ans=";
-  print_poly(ans_den, ans_den_size);
+  print_poly(closed_loop_cbmc.den, closed_loop_cbmc.den_size);
   if (return_value2 == 0) return 10;
 #endif
   return 0;

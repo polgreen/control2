@@ -86,7 +86,7 @@ public:
 
     /// Gets the polyhedral representation in the requested space
     AbstractPolyhedra<scalar>& getPolyhedra(space_t space=eNormalSpace,bool force=false);
-    AbstractPolyhedra<scalar>& getPolyhedra(space_t space,const std::vector<int> &rotations,const std::vector<int> &dilations);
+    AbstractPolyhedra<scalar>& getPolyhedra(space_t space,const std::vector<int> &roundings);
 
     /// Retrieves a copy of this polyhedra transformed by the given matrix
     /// @param polyhedra container for the result (if NULL, a new one is created)
@@ -106,6 +106,8 @@ public:
     /// @return pointer to the rounded eigenspace polyhedra m_pRoundPolyhedra
     AbstractPolyhedra<scalar>& getSingularPolyhedraRef()        { return m_singularPolyhedra; }
 
+    // copies another EigenPolyhedra into this one
+    void copy(const EigenPolyhedra<scalar> &source);
 protected:
     /// Creates m_pEigenPolyhedra if not existent
     /// @return pointer to the eigenspace polyhedra m_pEigenPolyhedra
@@ -113,7 +115,7 @@ protected:
 
     /// Creates m_pRoundPolyhedra if not existent
     /// @return pointer to the rounded eigenspace polyhedra m_pRoundPolyhedra
-    AbstractPolyhedra<scalar>& getSingularPolyhedra(const std::vector<int> &rotations,const std::vector<int> &dilations);
+    AbstractPolyhedra<scalar>& getSingularPolyhedra(const std::vector<int> &roundings);
 
 protected:
     std::string                   m_name;

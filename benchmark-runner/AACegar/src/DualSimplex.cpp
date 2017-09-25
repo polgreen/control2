@@ -31,7 +31,6 @@ bool DualSimplex<scalar>::ms_incremental=false;
 
 template <class scalar>  DualSimplex<scalar>::DualSimplex(const int size,const int dimension)  :
     Tableau<scalar>(size,dimension),
-    m_auxiliaryRow(1,m_dimension),
     m_costs(1,m_dimension),
     m_orBlockSize(1)
 {}
@@ -280,7 +279,7 @@ bool DualSimplex<scalar>::AuxiliaryPivotAndUpdate(long col)
   //for (int i=0;i<m_dimension;i++) Rtemp.coeffRef(0,i)=auxEntry(i);
   char sign=func::hardSign(Rtemp.coeff(0,col));
   if (sign==0) return false;
-  scalar Xtemp;
+  scalar Xtemp;  
   refScalar invXtemp0 = func::toCentre(func::ms_1/Rtemp.coeff(0,col));
   for (int j = 0; j < m_dimension; j++) {
     if (j != col) {
@@ -385,7 +384,12 @@ int DualSimplex<scalar>::FindDualFeasibleBasis()
   }
 
   /* Pivot on (m_auxiliaryRow, maxReducedCostCol) so that the dual basic solution becomes feasible */
-  AuxiliaryPivotAndUpdate(maxReducedCostCol);
+  if (m_pSortedTableau->m_dirty) {
+    pivot.row=m_pSortedTableau->numRows();
+    pivot.col=maxReducedCostCol;
+    ColumnPivotAndUpdate(pivot);
+  }
+  else AuxiliaryPivotAndUpdate(maxReducedCostCol);
   rank++;
 
   m_status=eUndecided;/* Dual Simplex Phase I */
@@ -399,6 +403,7 @@ int DualSimplex<scalar>::FindDualFeasibleBasis()
     if (m_basicVars[m_size]<0) return rank;
   }
 
+  if (maxReducedCostCol<0) return rank;
   /* The current dictionary is terminal.  There are two cases:
      TableauEntry(m_objectiveRow,maxReducedCostCol) is negative or zero.
      The first case implies dual infeasible,
@@ -713,6 +718,7 @@ When LP is dual-inconsistent then *se returns the evidence column.
   if (resetType>=eKeepBasis) m_rank+=rank;
   if ((this->ms_trace_time) && (ms_trace_pivots>=eTracePivots)) logPivotCount(timer.elapsed()*1000,"Find Support");
   scalar result=m_pSortedTableau->entry(m_basisInverse,m_objectiveRow,RHSCol);
+  if (ms_trace_pivots>=eTracePivots) ms_logger.logData(result,"max",true);
   if (func::isNan(result)) {
     func::imprecise(result,func::ms_hardZero);
     return result;

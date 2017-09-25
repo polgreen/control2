@@ -29,7 +29,7 @@ typedef enum
     eEigenTemplates         = 0x80
 } AbstractionFlags;
 
-typedef enum{eParamStr,eDynamicsStr,iSenseStr,oSenseStr,ioSenseStr,eGuardStr,iGuardStr,sGuardStr,oGuardStr,eInitStr,eInputStr,eTemplateStr,eARMAXStr,eSpaceXStr,eControlStr,eReferenceStr,eIncOrderStr,eSampleStr,eRandStr,eMaxStr} optionStr_t;
+typedef enum{eParamStr,eDynamicsStr,iSenseStr,oSenseStr,ioSenseStr,eGuardStr,iGuardStr,sGuardStr,oGuardStr,eInitStr,eInputStr,eTemplateStr,eARMAXStr,eSpaceXStr,eControlStr,eObserveStr,eReferenceStr,eIncOrderStr,eSampleStr,eSpeedStr,eRandStr,eMaxStr} optionStr_t;
 typedef std::list<std::string> stringList;
 typedef std::map<optionStr_t,std::string> optionList_t;
 
@@ -47,9 +47,11 @@ public:
     using JordanMatrix<scalar>::m_dimension;
     using JordanMatrix<scalar>::m_isOne;
     using JordanMatrix<scalar>::m_hasOnes;
+    using JordanMatrix<scalar>::m_hasNegatives;
     using JordanMatrix<scalar>::m_hasMultiplicities;
     using JordanMatrix<scalar>::m_jordanIndex;
     using JordanMatrix<scalar>::m_conjugatePair;
+    using JordanMatrix<scalar>::m_roundings;
 
     using JordanMatrix<scalar>::m_dynamics;
     using JordanMatrix<scalar>::m_eigenValues;
@@ -64,13 +66,19 @@ public:
     using JordanMatrix<scalar>::ms_trace_time;
     using JordanMatrix<scalar>::ms_emptyMatrix;
 
+    using AccelMatrix<scalar>::m_invIminA;
+    using AccelMatrix<scalar>::m_IminA;
+    using AccelMatrix<scalar>::m_pseudoInvIminJ;
+    using AccelMatrix<scalar>::m_pseudoIminJ;
+
     using AbstractMatrix<scalar>::m_inputType;
     using AbstractMatrix<scalar>::m_zeniths;
     using AbstractMatrix<scalar>::m_freq;
 
+    using JordanMatrix<scalar>::makeInverse;
     using AccelMatrix<scalar>::binomial;
-    using AccelMatrix<scalar>::load;
-    using AccelMatrix<scalar>::loadJordan;
+    using AbstractMatrix<scalar>::load;
+    using AbstractMatrix<scalar>::loadJordan;
     using AbstractMatrix<scalar>::findZeniths;
     using AbstractMatrix<scalar>::findFrequencies;
     using AbstractMatrix<scalar>::isDivergent;
@@ -352,6 +360,17 @@ public:
     /// @return position after parsing, negative if failed
     int loadOutputSensitivities(std::string &data,size_t pos=0);
 
+    /// Loads the sensitivity matrix for the outputs
+    /// @param data buffer containing the matrix description in the form
+    /**
+     a_11,a_12, ... ,a_1q
+     a_21,a_22, ... ,a_2q
+     ...
+     a_p1,a_p2, ... ,a_pq
+     **/
+    /// @return position after parsing, negative if failed
+    int loadIOSensitivities(std::string &data,size_t pos=0);
+
     /// Retrieve the template directions, if available, in the corresponding space
     /// @param space space in which the templates are given
     /// @param precision if greater than -2 indicates to supply logahedral faces when no templates are available
@@ -433,14 +452,17 @@ public:
     /// @return position after parsing, negative if failed
     int loadARMAXModel(std::string &data,size_t pos=0);
 
+    /// Copies an existing object
+    virtual void copy(const DynamicalSystem &source);
+
     /// Centralizes the inputs in eigenspace
     void centralizeInputs()                                                 { m_transformedInputs.centralize(true); }
 
     /// Returns a pointer to the guard polyhedra (G)
-    AbstractPolyhedra<scalar>& getGuard(space_t space=eNormalSpace)         { return m_guard.getPolyhedra(space,m_conjugatePair,m_jordanIndex); }
+    AbstractPolyhedra<scalar>& getGuard(space_t space=eNormalSpace)         { return m_guard.getPolyhedra(space,m_roundings); }
 
     /// Returns a pointer to the initial state polyhedra (X_0)
-    AbstractPolyhedra<scalar>& getInitialState(space_t space=eNormalSpace)  { return m_initialState.getPolyhedra(space,m_conjugatePair,m_jordanIndex); }
+    AbstractPolyhedra<scalar>& getInitialState(space_t space=eNormalSpace)  { return m_initialState.getPolyhedra(space,m_roundings); }
 
     /// Returns a pointer to the input polyhedra (U)
     AbstractPolyhedra<scalar> &getInputs()          { return m_inputs; }
@@ -463,7 +485,6 @@ public:
     EigenPolyhedra<scalar> &getGuardPoly()          { return m_guard; }
     EigenPolyhedra<scalar> &getInitPoly()           { return m_initialState; }
     EigenPolyhedra<scalar> &getInputPoly()          { return m_transformedInputs; }
-    EigenPolyhedra<scalar> &getAccelInputPoly()     { return m_transformedStateInputs; }
     EigenPolyhedra<scalar> &getReachPoly()          { return *m_pReachSet; }
     EigenPolyhedra<scalar> &getTubePoly()           { return *m_pReachTube; }
     EigenPolyhedra<scalar> &getAbsTubePoly()        { return *m_pAbstractReachTube; }
@@ -506,8 +527,6 @@ protected:
     AbstractPolyhedra<scalar>   m_subReach;
     EigenPolyhedra<scalar>      m_initialState;
     EigenPolyhedra<scalar>      m_transformedInputs;
-    EigenPolyhedra<scalar>      m_transformedStateInputs;
-    AbstractPolyhedra<scalar>*  m_pTransformedRoundInputs;
 
     EigenPolyhedra<scalar>      m_guard;
     EigenPolyhedra<scalar>      m_safeReachTube;
@@ -516,7 +535,6 @@ protected:
     EigenPolyhedra<scalar>     *m_pReachSet;
     EigenPolyhedra<scalar>     *m_pReachTube;
     EigenPolyhedra<scalar>     *m_pAbstractReachTube;
-
 
     MatrixS                     m_templates;
     MatrixS                     m_eigenTemplates;

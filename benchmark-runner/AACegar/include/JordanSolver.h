@@ -45,11 +45,29 @@ protected:
     refScalar calculateEpsilon(const MatrixType &matrix);
     refScalar calculateEpsilon(const ComplexMatrixType &matrix);
 
+    /// calculates the dotProduct of two vectors
+    scalar dotProduct(ComplexMatrixType &matrix1, int col1, ComplexMatrixType &matrix2, int col2, bool normed=false);
+
+    /// Indicates if the given eigenvectors at col1 and col2 are orthogonal
+    bool isOrthogonal(int col1,int col2)
+    {
+      return func::isZero(dotProduct(m_eigenVectors,col1,m_eigenVectors,col2));
+    }
+
+    /// Indicates if the given eigenvectors at col1 and col2 are orthogonal
+    bool isMultiple(ComplexMatrixType &matrix1,int col1,ComplexMatrixType &matrix2,int col2)
+    {
+      return func::isZero(func::ms_1-dotProduct(matrix1,col1,matrix2,col2,true));
+    }
+
     /// Checks if the given row pair belongs to the same jordan block
     bool isJordanBlock(const int row1,const int row2);
 
     /// Calculates the Jordan block and generalised eigenvector for the row pair
-    bool makeJordanBlock(const int row1,const int row2);
+    int makeJordanBlock(int row1,const int row2);
+
+    /// Orders the eigenvectors of the set of equal eigenvalues starting at col, by row major
+    void sortEigenvectors(const int col);
 
     /// Returns the nullSpace vectors of M
     ComplexMatrixType getNullSpace(const ComplexMatrixType &matrixBase,bool normalized=false);
@@ -66,7 +84,9 @@ public:
     std::vector<int>& getJordanIndeces()           { return m_jordanIndex; }
     std::vector<int>& getConjugatePairs()          { return m_conjugatePair; }
     std::vector<bool>& getOnes()                   { return m_isOne; }
+    std::vector<bool>& getNegatives()              { return m_isNegative; }
     bool hasOnes()                                 { return m_hasOnes; }
+    bool hasNegatives()                            { return m_hasNegatives; }
     bool hasMultiplicities()                       { return m_hasMultiplicities; }
 
     MatrixType& getSchur()                         { return this->m_matT; }
@@ -82,9 +102,12 @@ protected:
     std::vector<int>                 m_jordanIndex;
     std::vector<int>                 m_conjugatePair;
     std::vector<bool>                m_isOne;
-    bool                             m_hasZeros;
+    std::vector<bool>                m_isNegative;
+    int                              m_numZeros;
     bool                             m_hasOnes;
+    bool                             m_hasNegatives;
     bool                             m_hasMultiplicities;
+    int                              m_leadingZeroColumns;
     static complexType               ms_complexOne;
     static MatToStr<scalar>          ms_logger;
     static MatToStr<scalar>          ms_decoder;

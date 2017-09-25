@@ -10,6 +10,7 @@ template <class scalar> class CegarSystem : public DynamicalSystem<scalar>
 {
 public:
     using typename JordanMatrix<scalar>::refScalar;
+    using typename JordanMatrix<scalar>::type;
     using typename JordanMatrix<scalar>::func;
     using typename JordanMatrix<scalar>::complexS;
     using typename JordanMatrix<scalar>::MatrixS;
@@ -31,6 +32,7 @@ public:
     using JordanMatrix<scalar>::m_cosFactors;
     using AbstractMatrix<scalar>::m_eigenCloud;
     using AbstractMatrix<scalar>::m_sampleTime;
+    using AbstractMatrix<scalar>::m_delayTime;
     using DynamicalSystem<scalar>::m_idimension;
     using DynamicalSystem<scalar>::m_fdimension;
     using DynamicalSystem<scalar>::m_odimension;
@@ -79,6 +81,7 @@ public:
 
     using JordanMatrix<scalar>::interToRef;
     using JordanMatrix<scalar>::refToInter;
+    using JordanMatrix<scalar>::makeInverse;
     using JordanMatrix<scalar>::jordanToPseudoJordan;
     using AbstractMatrix<scalar>::findIterations;
     using AbstractMatrix<scalar>::addSupportsAtIteration;
@@ -92,7 +95,6 @@ public:
     using DynamicalSystem<scalar>::getGuardPoly;
     using DynamicalSystem<scalar>::getInitPoly;
     using DynamicalSystem<scalar>::getInputPoly;
-    using DynamicalSystem<scalar>::getAccelInputPoly;
     using DynamicalSystem<scalar>::getReachPoly;
     using DynamicalSystem<scalar>::getTubePoly;
     using DynamicalSystem<scalar>::getAbsTubePoly;
@@ -153,6 +155,9 @@ public:
     /// Loads a system descrition from SpaceX files
     int loadFromSpaceXFiles(std::string &modelName);
 
+    /// Copies an existing object
+    virtual void copy(const CegarSystem &source);
+
     /// Retrieves the characteristic polynomial coefficients of the dynamics
     MatrixS getDynamicPolynomialCoefficients();
 
@@ -181,10 +186,10 @@ public:
     AbstractPolyhedra<scalar> synthesiseDynamicBounds(inputType_t inputType,AbstractPolyhedra<scalar> &end);
 
     /// Creates a model for the input of the closed loop
-    AbstractPolyhedra<scalar> generateFeedbackInput(int fdimension=0,bool makeNoise=false,MatrixS &sensitivity=ms_emptyMatrix);
+    AbstractPolyhedra<scalar> generateFeedbackInput(int fdimension=0,bool makeNoise=false,MatrixS &sensitivity=ms_emptyMatrix,scalar sampling=0,scalar delay=0);
 
     /// Creates a model for the quantization noise as an input specification
-    AbstractPolyhedra<scalar> generateNoiseInput();
+    AbstractPolyhedra<scalar> generateNoiseInput(scalar sampling,scalar delay);
 
     /// Retrieves a list of iterations whose reach set fails the specification
     bool findCounterExampleIterations(powerList &iterations,AbstractPolyhedra<scalar> &bounds);
@@ -203,9 +208,23 @@ public:
     /// Retrieves the support set for the inputs
     MatrixS& getRefinedAccelInSupports();
 
+    /// retrieves the Jordan form of the system sampled at SampleTime
+    MatrixC getSampledJordanForm(scalar sampleTime);
+
+    /// retrieves the dynamics of the system sampled at SampleTime
+    MatrixS getSampledDynamics(scalar sampleTime);
+
+    /// retrieves the delay noise matrix
+    MatrixS getDelayNoise(scalar sampleTime, scalar maxDelay);
+
     /// turns a continuous time system into a discrete
-    void sample(scalar sampleTime);
+    void sample(scalar sampleTime,scalar delayTime=0);
     bool sample(std::string &sampleTime);
+
+    /// Sets the expected maximum eigenvalue of the closed loop
+    bool setSpeed(std::string &max);
+
+    scalar getSpeed()       { return m_eigenValueCap; }
 
     /// Corrects the support set by the input offset
     void demergeAccelInSupports(MatrixS &supports,MatrixS &inSupports,int numTemplates);
@@ -232,7 +251,25 @@ public:
     void setIncrementalOrder(std::string &order);
 
     void makeConvergentSystem(ParamMatrix &params,bool run=true,bool save=true);
+
+    /// Creates the observer matrices (based on the FWL truncation)
+    /// and returns the maximum error caused by the truncation
+    /// for the eigenvalues of the observed system
+    scalar makeObserver(MatrixS &dynamics=ms_emptyMatrix,MatrixS &sensitivity=ms_emptyMatrix,const MatrixS &feedbackDynamics=ms_emptyMatrix);
+
+    /// Creates a closed dynamical system that overapproximates the system with inputs
+    bool makeClosedSystem(CegarSystem<scalar> &closedSystem);
+
+    /// Retrieves constraints on the controller coefficients based on the Dynamic constraints
+    AbstractPolyhedra<scalar> getControllerDynBounds(AbstractPolyhedra<scalar>& reachTube,int &orBlockSize);
+
+    /// Retrieves constraints on the controller coefficients based on the Input constraints
+    AbstractPolyhedra<scalar> getControllerInBounds(AbstractPolyhedra<scalar>& reachTube);
 protected:
+
+    /// Truncates the value to the current controller precision
+    scalar truncateCoefficient(const scalar& coeff);
+
     /// Finds the statespace guard given an output guard
     AbstractPolyhedra<scalar>& calculateGuardFromOutput();
 
@@ -240,7 +277,20 @@ protected:
     /// @return X
     MatrixS solveSylvester(const MatrixS &A,const MatrixS &B,const MatrixS &C,bool BisDiagonal=false);
 
-    OrderType   m_incOrderType;
+public:
+    MatrixS             m_observer;
+    MatrixS             m_observerDynamics;
+    MatrixS             m_observerSensitivity;
+    MatrixS             m_observerOutputSensitivity;
+    scalar              m_eigenValueCap;
+    scalar              m_observerDynamicsError;
+    scalar              m_observerSensitivityError;
+    scalar              m_observerOutputSensitivityError;
+    OrderType           m_incOrderType;
+
+public:
+    static bool ms_fixedBVs;
+
 };
 
 }

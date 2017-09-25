@@ -26,30 +26,29 @@ AbstractPolyhedra<scalar>::AbstractPolyhedra(const AbstractPolyhedra &source,con
 
 /// Retrieves an abstraction that has circular faces in the rotating axis and jordan blocks
 template <class scalar>
-typename Tableau<scalar>::MatrixS AbstractPolyhedra<scalar>::getRoundedDirections(const MatrixS &vectors,const std::vector<int> &rotations,const std::vector<int> &dilations)
+typename Tableau<scalar>::MatrixS AbstractPolyhedra<scalar>::getRoundedDirections(const MatrixS &vectors,const std::vector<int> &roundings)
 {
-  if (rotations.size()<vectors.rows() && dilations.size()<vectors.rows()) {
+  if (roundings.size()<vectors.rows()) {
     return MatrixS(0,0);
   }
   MatrixS result(getDimension(),vectors.cols());
   int pos=0;
   for (int row=0;row<vectors.rows();row++)
   {
-    int mult=(rotations[row]<0) ? 1 : 2;
-    if ((rotations[row]<0) && (dilations[row+mult]<=0)) {
+    if (roundings[row]<0) {
       result.row(pos)=vectors.row(row);
     }
     else {
       for (int col=0;col<vectors.cols();col++) {
         scalar value=func::squared(vectors.coeff(row,col));//*vectors.coeff(row,col);
-        for (int row2=row+1;(rotations[row2]>=0) || (dilations[row2]>0);row2++) {
+        for (int row2=row+1;roundings[row2]==row;row2++) {
           value+=func::squared(vectors.coeff(row2,col));
 //          func::madd(value,vectors.coeff(row2,col),vectors.coeff(row2,col));
         }
         result.coeffRef(pos,col)=sqrt(value);
       }
-      row+=mult;
-      while (dilations[row]>0) row+=mult;
+      int base=row;
+      while (roundings[row]==base) row++;
       row--;
     }
     pos++;
@@ -59,12 +58,12 @@ typename Tableau<scalar>::MatrixS AbstractPolyhedra<scalar>::getRoundedDirection
 
 /// Retrieves an abstraction that has circular faces in the rotating axis and jordan blocks
 template <class scalar>
-bool AbstractPolyhedra<scalar>::getRoundAbstraction(int dimension,int roundDimension,const std::vector<int> &rotations,const std::vector<int> &dilations,AbstractPolyhedra<scalar> &roundAbstraction)
+bool AbstractPolyhedra<scalar>::getRoundAbstraction(int dimension,int roundDimension,const std::vector<int> &roundings,AbstractPolyhedra<scalar> &roundAbstraction)
 {
-  if (dimension==getDimension()) {
+/*  if (dimension==getDimension()) {
     roundAbstraction.copy(*this);
     return false;
-  }
+  }*/
   roundAbstraction.changeDimension(dimension);
   roundAbstraction.m_vertices.resize(m_vertices.rows(),dimension);
   roundAbstraction.m_faces.resize(m_faces.rows()+roundDimension,dimension);
@@ -73,10 +72,9 @@ bool AbstractPolyhedra<scalar>::getRoundAbstraction(int dimension,int roundDimen
   roundDimension=m_faces.rows();
   for (int col=0;col<m_faces.cols();col++)
   {
-    int mult=(rotations[col]>col) ? 2 : 1;
-    int subDim=mult;
-    while(dilations[col+subDim]>0) subDim+=mult;
-    if (subDim>1) {
+    int subDim=1;
+    while (roundings[col+subDim]==col) subDim++;
+    if (roundings[col]==col) {
       for (int row=0;row<m_vertices.rows();row++) {
         roundAbstraction.m_vertices.coeffRef(row,pos)=m_vertices.block(row,col,1,subDim).norm();
       }
@@ -111,14 +109,16 @@ bool AbstractPolyhedra<scalar>::getRoundAbstraction(int dimension,int roundDimen
 
 /// Retrieves an abstraction that has circular faces in the rotating axis and jordan blocks
 template <class scalar>
-AbstractPolyhedra<scalar>& AbstractPolyhedra<scalar>::getRounded(const std::vector<int> &rotations,const std::vector<int> &dilations,AbstractPolyhedra<scalar> &roundAbstraction,bool preCentralized)
+AbstractPolyhedra<scalar>& AbstractPolyhedra<scalar>::getRounded(const std::vector<int> &roundings,AbstractPolyhedra<scalar> &roundAbstraction,bool preCentralized)
 {
   int dimension=getDimension();
   int roundDimension=0;
   for (int col=0;col<m_faces.cols();col++)
   {
-    if ((dilations[col+1]>0) || (rotations[col]>col)) dimension--;
-    else if ((dilations[col]>0) || (rotations[col]>=0)) roundDimension++;
+    if (roundings[col]>=0) {
+      if (roundings[col]!=col) dimension--;
+      else roundDimension++;
+    }
   }
   if (!preCentralized) centralize();
   if (dimension!=getDimension() && !makeVertices()) {
@@ -126,27 +126,47 @@ AbstractPolyhedra<scalar>& AbstractPolyhedra<scalar>::getRounded(const std::vect
     if (!preCentralized) decentralize();
     return roundAbstraction;
   }
-  getRoundAbstraction(dimension,roundDimension,rotations,dilations,roundAbstraction);
+  getRoundAbstraction(dimension,roundDimension,roundings,roundAbstraction);
   if (!preCentralized) decentralize();
   return roundAbstraction;
   }
 
+/// Retrieves an abstraction that has circular faces in the rotating axis and jordan blocks
+template <class scalar>
+bool AbstractPolyhedra<scalar>::getSquareAbstraction(AbstractPolyhedra<scalar> &squareAbstraction,bool symmetric)
+{
+  int dimension=getDimension();
+  MatrixS boxVertices=boundingHyperBox();
+  if (boxVertices.rows()!=dimension) return false;
+  if (symmetric) {
+    for (int i=0;i<dimension;i++) {
+      if (func::isNegative(boxVertices.coeff(i,0)+boxVertices.coeff(i,1))) boxVertices.coeffRef(i,1)=-boxVertices.coeff(i,0);
+      else boxVertices.coeffRef(i,0)=-boxVertices.coeff(i,1);
+    }
+  }
+  squareAbstraction.changeDimension(dimension);
+  squareAbstraction.m_faces.resize(2*dimension,dimension);
+  squareAbstraction.m_faces.block(0,0,dimension,dimension)=MatrixS::Identity(dimension,dimension);
+  squareAbstraction.m_faces.block(dimension,0,dimension,dimension)=-MatrixS::Identity(dimension,dimension);
+  squareAbstraction.m_supports.resize(2*dimension,1);
+  squareAbstraction.m_supports.block(0,0,dimension,1)=-boxVertices.col(0);
+  squareAbstraction.m_supports.block(dimension,0,dimension,1)=boxVertices.col(1);
+  squareAbstraction.Tableau<scalar>::load(squareAbstraction.m_faces,squareAbstraction.m_supports);
+  return true;
+}
+
 /// Performs the Minkowski sum of this polyhedra to another
 template <class scalar>
-bool AbstractPolyhedra<scalar>::addRounded(Polyhedra<scalar> &polyhedra,const std::vector<int> &rotations,const std::vector<int> &dilations)
+bool AbstractPolyhedra<scalar>::addRounded(Polyhedra<scalar> &polyhedra,const std::vector<int> &roundings)
 {
-  if (rotations.size()<m_faces.cols() && dilations.size()<m_faces.cols()) return false;
+  if (roundings.size()<m_faces.cols()) return false;
   MatrixS vectors(polyhedra.getDimension(),m_faces.rows());
   int col2=0;
   for (int row=0;row<m_faces.rows();row++) {
     for (int col=m_faces.cols()-1;col>=0;col--) {
-      if ((dilations[col]>0) || rotations[col]>=0) {
+      if (roundings[col]>=0) {
         scalar coeff=0;
-        while (dilations[col]>0) {
-          func::madd(coeff,m_faces.coeff(row,col),m_faces.coeff(row,col));
-          col--;
-        }
-        if (rotations[col]==col-1) {
+        while (roundings[col]!=col) {
           func::madd(coeff,m_faces.coeff(row,col),m_faces.coeff(row,col));
           col--;
         }
@@ -214,7 +234,7 @@ typename Tableau<scalar>::MatrixS AbstractPolyhedra<scalar>::getAbstractVertices
   /// for real jordan =a(v1x1+v2x2)+b(v1x2) on the previous col (series=a(sum(vi xi))+b(sum(v{i-1} xi))+c(sum(v{i-2} xi))...)
   /// for complex jordan (series=a(sum(vi xi))+b(sum(v{2j-2} x{2j+1}-v{2j} x{2j+1}))+c(sum(v{i-2} xi))...)
   MatrixS result(vectors.cols()*vertices.rows(),vertices.cols());
-  if (rotations.size()<vertices.cols() || dilations.size()<vertices.cols()) {
+  if ((rotations.size()<vertices.cols()) || (dilations.size()<vertices.cols())) {
     ms_logger.logData("Dimension error");
     throw dimensionMismatch;
   }
@@ -257,7 +277,7 @@ typename Tableau<scalar>::MatrixS AbstractPolyhedra<scalar>::getAbstractVertices
 }
 
 template<class scalar>
-typename Tableau<scalar>::MatrixS AbstractPolyhedra<scalar>::getSynthVertices(const MatrixS &vectors,const std::vector<int> &rotations,const std::vector<int> &dilations,const MatrixS &vertices)
+typename Tableau<scalar>::MatrixS AbstractPolyhedra<scalar>::getSynthVertices(const MatrixS &vectors,const std::vector<int> &rotations,const std::vector<int> &dilations,const std::vector<int> &roundings,const MatrixS &vertices)
 {
   /// sup<v.xy>=sup(sum_i(v_ix_iy_i))=sup<vx.y>
   /// vector is after transformation thus v1(ax1+bx2)+v2(ax2-bx1)=x1(av1-bv2)+x2(av2+bv1)
@@ -305,21 +325,6 @@ typename Tableau<scalar>::MatrixS AbstractPolyhedra<scalar>::getSynthVertices(co
     ms_logger.logData(result,"Synth Vertices:");
   }
   return result;
-}
-
-/// Retrives the vertices mapped into an abstract domain of a linear matrix
-template <class scalar>
-typename Tableau<scalar>::MatrixS AbstractPolyhedra<scalar>::getAbstractVertices(MatrixS &vectors)
-{
-  const MatrixS &vertices=this->getVertices();
-  int rows=vertices.rows();
-  MatrixS result(vectors.cols()*rows,vertices.cols());
-  for (int vectorNum=0;vectorNum<vectors.cols();vectorNum++) {
-    for (int col=0;col<vertices.cols();col++){
-      result.block(vectorNum*rows,col,rows,1)=vertices.col(col)*vectors.coeff(col,vectorNum);
-    }
-  }
-  return result.transpose();
 }
 
 /// Sets the vertices of the polyhedra from a precalculated set

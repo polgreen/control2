@@ -5,6 +5,7 @@
 #include <math.h>
 #include "JordanSolver.h"
 #include "MatrixToString.h"
+#include "RowSort.h"
 #include <Eigen/Eigenvalues>
 
 namespace abstract{
@@ -134,11 +135,52 @@ bool JordanSolver<scalar>::isJordanBlock(const int row1,const int row2)
   return false;
 }
 
+/// Orders the eigenvectors of the set of equal eigenvalues starting at col, by row major
+template <class scalar> void JordanSolver<scalar>::sortEigenvectors(const int col)
+{
+  int step=(m_conjugatePair[col]>=0) ? 2 : 1;
+  int size=step;
+  while (col+size<m_dimension) {
+    scalar radius=func::norm2(m_eigenValues.coeff(col,col)-m_eigenValues.coeff(col+size,col+size));
+    if (!func::isZero(radius)) break;
+    size+=step;
+  }
+  for (int i=0;i<size;i++) {
+    if (func::isNegative(m_eigenVectors.coeff(0,col+i).real())) {
+      m_eigenVectors.col(col+i)=-m_eigenVectors.col(col+i);
+    }
+  }
+  MatrixType genericSpace=m_eigenVectors.block(0,col,m_dimension,size).real().transpose();
+  SortedMatrix<refScalar> sorted(genericSpace,LexMin);
+  ComplexMatrixType newOrder(m_dimension,size);
+  for (int i=0;i<size;i++) {
+    newOrder.col(i)=m_eigenVectors.col(col+sorted.zeroOrder(i+1));
+  }
+  m_eigenVectors.block(0,col,m_dimension,size)=newOrder;
+  if (ms_trace_dynamics>=eTraceREF) {
+    ms_logger.logData(m_eigenVectors,"Sorted EigenVectors:");
+  }
+}
+
+/// Indicates if the given vectors at matrix1:col1 and matrix2:col2 are orthogonal
+template <class scalar> scalar JordanSolver<scalar>::dotProduct(ComplexMatrixType &matrix1,int col1,ComplexMatrixType &matrix2,int col2, bool normed)
+{
+  ComplexMatrixType dotProd=matrix1.col(col1).transpose()*matrix2.col(col2);
+  if (normed) {
+    scalar vNorms=matrix1.col(col1).norm()*matrix2.col(col2).norm();
+    long double test=func::toDouble(dotProd.norm()/vNorms);
+    return dotProd.norm()/vNorms;
+  }
+  return dotProd.norm();
+}
+
 /// Calculates the Jordan block and generalised eigenvector for the row pair
-template <class scalar> bool JordanSolver<scalar>::makeJordanBlock(const int row1,const int row2)
+template <class scalar> int JordanSolver<scalar>::makeJordanBlock(int row1,const int row2)
 {
   scalar radius=func::norm2(m_eigenValues.coeff(row1,row1)-m_eigenValues.coeff(row2,row2));
-  if (!func::isZero(radius)) return false;
+  if (!func::isZero(radius)) return row1;
+  // if (m_jordanIndex[row2]==0) sortEigenvectors(row2);
+  // if (isOrthogonal(row1,row2)) return row1;
   m_hasMultiplicities=true;
   ComplexMatrixType matrixBase=ComplexMatrixType::Zero(m_dimension,m_dimension);
   matrixBase.real()=m_dynamics;
@@ -148,16 +190,100 @@ template <class scalar> bool JordanSolver<scalar>::makeJordanBlock(const int row
   ComplexMatrixType matrix=matrixBase;
   int order=1;
   int rank=toREF(matrix);
-  if (rank==0) return false;
-  if (rank==m_dimension) return false;
+  if (rank==0) return row1;
+  if (rank==m_dimension) return row1;
+#if 1
+  if (m_conjugatePair[row1]<0) {
+    int step=(m_conjugatePair[row1]>=0) ? 2 : 1;
+    while(row1+step<m_dimension) {
+      int row=row1+step;
+      scalar radius=func::norm2(m_eigenValues.coeff(row,row)-m_eigenValues.coeff(row2,row2));
+      if (!func::isZero(radius)) break;
+      row1=row;
+    }
+    order=row1-row2+1;
+    matrix=matrixBase;
+    for (int i=1;i<order;i++) matrix*=matrixBase;
+    rank=toREF(matrix);
+    ComplexMatrixType nullSpace=getNullSpace(matrix);
+    std::vector<int> orders(nullSpace.cols());
+    ComplexMatrixType eigenSpace=matrixBase*nullSpace;
+    MatrixType norms=eigenSpace.colwise().norm();
+    for (int col=0;col<nullSpace.cols();col++) {
+      orders[col]=order;
+      if (func::isZero(norms.coeff(0,col))) orders[col]--;
+    }
+    for (int i=1;i<order;i++) {
+      eigenSpace=matrixBase*eigenSpace;
+      MatrixType norms=eigenSpace.colwise().norm();
+      for (int col=0;col<nullSpace.cols();col++) {
+        if (func::isZero(norms.coeff(0,col))) orders[col]--;
+      }
+    }
+    ComplexMatrixType generalisedEigenvectors=nullSpace;
+    int pos=0;
+    for (int i=order;i>=0;i--) {
+      for (int col=0;(col<nullSpace.cols() && (pos<generalisedEigenvectors.cols()));col++) {
+        if (orders[col]==i) {
+          orders[col]=-1;
+          m_jordanIndex[row2+pos+i*step]=i;
+          generalisedEigenvectors.col(pos+i*step)=nullSpace.col(col);
+          for (int j=i-1;j>=0;j--) {
+            m_jordanIndex[row2+pos+j*step]=j;
+            generalisedEigenvectors.col(pos+j*step)=matrixBase*generalisedEigenvectors.col(pos+(j+1)*step);
+            int jCol=-1;
+            scalar jNorm=0;
+            for (int col2=0;col2<nullSpace.cols();col2++) {
+              if (orders[col2]==j) {
+                scalar norm=dotProduct(generalisedEigenvectors,pos+j*step,nullSpace,col2,true);
+                if (func::isPositive(norm-jNorm)) {
+                  jNorm=norm;
+                  jCol=col2;
+                }
+              }
+            }
+            if (jCol>=0) orders[jCol]=-1;
+          }
+          //ComplexMatrixType check=matrixBase*generalisedEigenvectors.col(pos);
+          pos+=(i+1)*step;
+        }
+      }
+    }
+    m_eigenVectors.block(0,row2,generalisedEigenvectors.rows(),generalisedEigenvectors.cols())=generalisedEigenvectors;
+    for (int i=row2;i<=row1;i++) {
+      if (m_jordanIndex[i]>0) m_eigenValues.coeffRef(i-1,i)=func::ms_c_1;
+    }
+    if (ms_trace_dynamics>=eTraceREF) {
+      ms_logger.logData(m_eigenVectors,"Intermediate EigenVectors:");
+      matrix=matrixBase;
+      for (int i=1;i<=m_jordanIndex[row1];i++) matrix*=matrixBase;
+      ms_logger.logData(matrix,"Matrix Base:");
+      ComplexMatrixType nullSpace=getNullSpace(matrix);
+      ms_logger.logData(nullSpace,"nullSpace:");
+    }
+    return row1;
+  }
+  else
+  {
+    m_jordanIndex[row1]=m_jordanIndex[row2]+1;
+    if (m_conjugatePair[row1]>=0) m_jordanIndex[m_conjugatePair[row1]]=m_jordanIndex[m_conjugatePair[row2]]+1;
+    while (rank<=m_jordanIndex[row1]) {
+      order++;
+      matrix=matrixBase;
+      for (int i=1;i<order;i++) matrix*=matrixBase;
+      rank=toREF(matrix);
+    }
+  }
+#else
   m_jordanIndex[row1]=m_jordanIndex[row2]+1;
+  if (m_conjugatePair[row1]>=0) m_jordanIndex[m_conjugatePair[row1]]=m_jordanIndex[m_conjugatePair[row2]]+1;
   while (rank<=m_jordanIndex[row1]) {
     order++;
     matrix=matrixBase;
     for (int i=1;i<order;i++) matrix*=matrixBase;
     rank=toREF(matrix);
   }
-
+#endif
   int row=m_dimension-rank-1;
   if (row<0) row=0;//TODO: What happens when rank is m_dim? Is this right?
   int col=row;
@@ -194,7 +320,6 @@ template <class scalar> bool JordanSolver<scalar>::makeJordanBlock(const int row
       m_eigenVectors.col(row1-i)=vector;
     }
   }
-
   if (ms_trace_dynamics>=eTraceREF) {
     ms_logger.logData(m_eigenVectors,"Intermediate EigenVectors:");
     matrix=matrixBase;
@@ -203,7 +328,7 @@ template <class scalar> bool JordanSolver<scalar>::makeJordanBlock(const int row
     ComplexMatrixType nullSpace=getNullSpace(matrix);
     ms_logger.logData(nullSpace,"nullSpace:");
   }
-  return true;
+  return row1;
 }
 
 /// calculates the estimated roundoff error of a matrix operation
@@ -273,30 +398,43 @@ bool JordanSolver<scalar>::calculateJordanForm()
       ms_logger.logData(m_eigenVectors,"Initial EigenVectors:");
     }
     m_hasOnes=false;
-    m_hasZeros=false;
-    m_hasMultiplicities=false;
-    m_isOne.resize(2*m_dimension);
-    m_conjugatePair.resize(2*m_dimension);
-    m_jordanIndex.resize(2*m_dimension);
+    m_hasNegatives=false;
+    m_numZeros=0;
+    m_hasMultiplicities=false;    
+    m_isOne.resize(2*m_dimension+1);
+    m_isNegative.resize(2*m_dimension+1);
+    m_conjugatePair.resize(2*m_dimension+1);
+    m_jordanIndex.resize(2*m_dimension+1);
     for (int i=0;i<m_dimension;i++) {
-      if (func::isZero(func::norm2(m_eigenValues.coeff(i,i)))) m_hasZeros=true;
-    }
-    for (int i=0;i<m_dimension;i++) {
-      m_conjugatePair[i]=-1;
       m_jordanIndex[i]=0;
-      m_isOne[i]=false;
+      m_isNegative[i]=false;
       if ((i<(m_dimension-1)) && !func::isZero(m_eigenValues.coeff(i,i).imag(),m_zero)) {
+        m_isOne[i]=false;
+        m_isOne[i+1]=false;
+        m_isNegative[i+1]=false;
         m_conjugatePair[i]=i+1;
-        if (i>=2) makeJordanBlock(i,i-2);
-        m_jordanIndex[i+1]=m_jordanIndex[i];
         m_conjugatePair[i+1]=i;
         i++;
       }
       else {
+        m_conjugatePair[i]=-1;
         m_isOne[i]=func::isZero(func::norm2(m_eigenValues.coeff(i,i)-ms_complexOne),m_zero);
         m_hasOnes|=m_isOne[i];
-        if (i>0) makeJordanBlock(i,i-1);
+        char sign=func::hardSign(m_eigenValues.coeff(i,i).real());
+        if (sign==0) m_numZeros++;
+        else if (sign<0) {
+          m_isNegative[i]=true;
+          m_hasNegatives=true;
+        }
       }
+    }
+    for (int i=0;i<m_dimension;i++) {
+      if (m_conjugatePair[i]>=0) {
+        if (i>=2) i=makeJordanBlock(i,i-2);
+        m_jordanIndex[i+1]=m_jordanIndex[i];
+        i++;
+      }
+      else if (i>0) i=makeJordanBlock(i,i-1);
     }
     refScalar eigenVectorEpsilon=calculateEpsilon(m_eigenVectors);
     for (int row=0;row<m_eigenVectors.rows();row++) {
@@ -318,31 +456,28 @@ bool JordanSolver<scalar>::calculateJordanForm()
 template<class scalar>
 typename JordanSolver<scalar>::ComplexMatrixType JordanSolver<scalar>::getNullSpace(const ComplexMatrixType &matrixBase,bool normalized)
 {
-  ComplexMatrixType result;
   ComplexMatrixType nullSpace=matrixBase;
   toRREF(nullSpace);
-  std::vector<bool> vars(nullSpace.cols());
-  int row=0;
+  std::vector<int> vars(nullSpace.cols());
+  int row=0,col2=0;
   int freeVars=nullSpace.cols();
   for (int col=0;col<nullSpace.cols();col++) {
-    vars[col]=true;
+    vars[col]=col2;
     if (!func::isZero(norm(nullSpace.coeff(row,col)))) {
-      vars[col]=false;
+      vars[col]=-1;
       row++;
       freeVars--;
     }
+    else col2++;
   }
-  result.resize(m_dimension,freeVars);
-  int col=0;
-  for (int j=0;j<nullSpace.cols();j++) {
-    if (vars[j]) {
-      result.row(j)=ComplexMatrixType::Zero(1,freeVars);
-      result.coeffRef(j,col)=func::ms_c_1;
+  ComplexMatrixType result=ComplexMatrixType::Zero(m_dimension,freeVars);;
+  for (int row=0;row<nullSpace.rows();row++) {
+    if (vars[row]>=0) {
+      result.coeffRef(row,vars[row])=func::ms_c_1;
     }
     else {
-      int pos=0;
-      for (int k=0;k<nullSpace.cols();k++) {
-        if (vars[k]) result.coeffRef(j,pos++)=-nullSpace.coeff(j,k);
+      for (int col=0;col<nullSpace.cols();col++) {
+        if (vars[col]>=0) result.coeffRef(row,vars[col])=-nullSpace.coeff(row,col);
       }
     }
   }

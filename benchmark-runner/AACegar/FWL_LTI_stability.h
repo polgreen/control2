@@ -20,20 +20,23 @@ void make_closed_loop()
     print_vector("controller polynomial",controller_cbmc);
 #endif
 #ifdef _USE_OBSERVER
-  make_nondet_transform(observer_transform.coeffs,observer_transform.uncertainty,observer_transform_cbmc);
+  make_nondet_transform(observer_pretransform.coeffs,observer_pretransform.uncertainty,observer_transform_cbmc);
   fxp_check_coeffs(observer);
   for (i = 0;i<_DIMENSION;i++)
   {
     observer_cbmc[i]=0;
     for (j = 0;j<_DIMENSION;j++)
     {
-      observer_cbmc[i]+=observer_transform_cbmc[j][i]*observer[j];
+      observer_cbmc[i]-=observer_transform_cbmc[i][j]*observer[j];
     }
   }
   //Has to be done before plant_cbmc is updated
   for (i = 0;i<_DIMENSION;i++) observer_plant_cbmc[i]=plant_cbmc[i]-observer_cbmc[i];
 #endif
   for (i = 0;i<_DIMENSION;i++) plant_cbmc[i]-=controller_cbmc[i];
+#ifndef __CPROVER
+    print_vector("loop polynomial",plant_cbmc);
+#endif
 }
 
 signed int check_stability_closedloop(vectort a)

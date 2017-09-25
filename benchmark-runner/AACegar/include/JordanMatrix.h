@@ -59,6 +59,12 @@ public:
 
     bool loadFromRef(const MatrixR &matrix);
 protected:
+    /// Makes an inverse soundly (since eigens method does not handle interval inequalities properly)
+    MatrixS makeInverse(const MatrixS &matrix);
+
+    /// Makes an inverse soundly (since eigens method does not handle interval inequalities properly)
+    MatrixC makeInverse(const MatrixC &matrix);
+
     /// calculates the estimated roundoff error of a matrix operation
     template <class MatrixType> refScalar calculateEpsilon(const MatrixType &matrix);
 
@@ -96,6 +102,11 @@ protected:
     /// @param dest reference matrix to fill
     /// @param source interval matrix containing the data
     void interToRef(SolverMatrixType &dest,const MatrixS &source);
+
+    /// Retrieves a scalar matrix from a refScalar one
+    /// @param dest reference matrix to fill
+    /// @param source interval matrix containing the data
+    void interToRef(SolverComplexMatrixType &dest,const MatrixC &source);
 
     /// Retrieves a scalar matrix from a refScalar one
     /// @param dest interval matrix to fill
@@ -175,6 +186,9 @@ public:
 
     /// Retrieves the algebraic multiplicity of the ith eigenvalue
     int jordanBlockSize(int i);
+
+    /// Copies an existing object
+    virtual void copy(const JordanMatrix &source);
 protected:
     int                            m_dimension;
     refScalar                      m_zero;
@@ -195,8 +209,11 @@ protected:
     MatrixS                        m_cosFactors;
     std::vector<int>               m_jordanIndex;
     std::vector<int>               m_conjugatePair;
+    std::vector<int>               m_roundings;
     std::vector<bool>              m_isOne;
+    std::vector<bool>              m_isNegative;
     bool                           m_hasOnes;
+    bool                           m_hasNegatives;
     bool                           m_hasMultiplicities;
     scalar                         m_error;
     scalar                         m_verror;

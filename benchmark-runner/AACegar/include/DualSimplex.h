@@ -27,6 +27,7 @@ public:
     using Tableau<scalar>::m_dimension;
     using Tableau<scalar>::m_size;
     using Tableau<scalar>::m_pSortedTableau;
+    using Tableau<scalar>::m_auxiliaryRow;
     using Tableau<scalar>::m_basisInverse;
     using Tableau<scalar>::m_objectiveRow;
     using Tableau<scalar>::m_nonBasicRow;
@@ -41,6 +42,7 @@ public:
     using Tableau<scalar>::m_evidenceCol;
     using Tableau<scalar>::m_lastPivot;
 
+    using Tableau<scalar>::ms_useBasis;
     using Tableau<scalar>::ms_logger;
     using Tableau<scalar>::ms_trace_tableau;
     using Tableau<scalar>::ms_trace_pivots;
@@ -183,7 +185,6 @@ protected:
     scalar auxEntry(const int col);
 public:
     LPStatusType_t      m_status;               //Indicates the status of the simplex
-    MatrixS             m_auxiliaryRow;         //Saves the auxiliary row data for the dual simplex
     MatrixS             m_costs;                //Saves the objective function costs
     int                 m_iterations;           //Number of iterations performed on the last operation
     int                 m_orBlockSize;          //Size of each block that corresponds to an or constraint

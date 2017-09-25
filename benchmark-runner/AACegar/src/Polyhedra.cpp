@@ -756,11 +756,18 @@ bool Polyhedra<scalar>::makeVertices(bool force)
   m_vertices.resize(numVertices,getDimension());
 
   int row=0;
-  for (typename VertexEnumerator<scalar>::RayList::iterator it=rayList.begin();it!=rayList.end();it++,row++) {
+  for (typename VertexEnumerator<scalar>::RayList::iterator it=rayList.begin();it!=rayList.end();it++) {
     scalar scale = abs(it->data.coeff(0,0));
     if (func::isZero(scale)) scale=1;
-    for (int col=0;col<m_vertices.cols();col++) m_vertices.coeffRef(row,col)=it->data.coeff(0,col+1)/scale;
+    MatrixS vector=it->data/scale;
+    if (!m_vertices.contains(vector,1)) {
+      for (int col=0;col<m_vertices.cols();col++) {
+        m_vertices.coeffRef(row,col)=vector.coeff(0,col+1);
+      }
+      row++;
+    }
   }
+  m_vertices.conservativeResize(row,getDimension());
   m_enumerationTime=timer.elapsed()*1000;
   if (ms_trace_vertices>=eTraceVertices) {
     ms_logger.logData(m_name,false);
@@ -897,7 +904,7 @@ template <class scalar>
 typename Tableau<scalar>::MatrixS Polyhedra<scalar>::boundingHyperBox()
 {
   int dimension=getDimension();
-  MatrixS hyperbox(2*dimension,2);
+  MatrixS hyperbox(dimension,2);
   makeVertices();
   for (int i=0;i<dimension;i++) {
     hyperbox.coeffRef(i,0)=m_vertices.coeff(0,i);
@@ -905,8 +912,8 @@ typename Tableau<scalar>::MatrixS Polyhedra<scalar>::boundingHyperBox()
   }
   for  (int row=1;row<m_vertices.rows();row++) {
     for (int i=0;i<dimension;i++) {
-      if (m_vertices.coeff(row,i)<hyperbox.coeff(i,0)) hyperbox.coeffRef(i,0)=m_vertices.coeff(0,i);
-      if (m_vertices.coeff(row,i)>hyperbox.coeff(i,1)) hyperbox.coeffRef(i,1)=m_vertices.coeff(0,i);
+      if (func::isNegative(m_vertices.coeff(row,i)-hyperbox.coeff(i,0))) hyperbox.coeffRef(i,0)=m_vertices.coeff(0,i);
+      if (func::isPositive(m_vertices.coeff(row,i)-hyperbox.coeff(i,1))) hyperbox.coeffRef(i,1)=m_vertices.coeff(0,i);
     }
   }
   return hyperbox;

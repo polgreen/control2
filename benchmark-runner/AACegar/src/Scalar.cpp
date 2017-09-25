@@ -74,14 +74,14 @@ template <> long double functions<long double>::ms_highPi=(3373259426.0 + 273689
 template <> long double functions<long double>::ms_lowPi= (3373259426.0 + 273688.0 / (1<<21)) / (1<<30);
 
 template <> typename interval_def<long double>::power_type
-  functions<long double>::ms_infPower=LONG_MAX;
+  functions<long double>::ms_infPower=LONG_MAX-1;
 
 #if defined (MPREAL_HAVE_INT64_SUPPORT)
 template <> typename interval_def<mpfr::mpreal>::power_type
-  functions<mpfr::mpreal>::ms_infPower=LONG_LONG_MAX;
+  functions<mpfr::mpreal>::ms_infPower=LONG_LONG_MAX-1;
 #else
 template <> typename interval_def<mpfr::mpreal>::power_type
-  functions<mpfr::mpreal>::ms_infPower=LONG_MAX;
+  functions<mpfr::mpreal>::ms_infPower=LONG_MAX-1;
 #endif
 
 template <class scalar> scalar functions<scalar>::ms_hardZero=0;
@@ -118,7 +118,7 @@ template <> void functions<mpfr::mpreal>::setDefaultPrec(int prec)
     else {
       int sqrt_prec=sqrt(prec);
 //      ms_weakEpsilon =pow(2*ms_1,-(prec>>4)-36);//128=44(13),256=52(15),512=68(20),1024=100(30),2048=164(49)
-      ms_weakEpsilon =pow(2*ms_1,-sqrt_prec-36);//128=47(14),256=52(15),512=58(17),1024=68(20),2048=81(23),4096=100(30)
+      ms_weakEpsilon =pow(2*ms_1,-sqrt_prec-32);//128=43(13),256=48(14),512=54(16),1024=64(19),2048=77(23),4096=96(29)
     }
     ms_highPi=mpfr::const_pi(prec, MPFR_RNDU);
     ms_lowPi=mpfr::const_pi(prec, MPFR_RNDN);
@@ -400,6 +400,19 @@ long double functions<long double>::toDouble(long double value)          { retur
 
 template <>
 long long int functions<long double>::toInt(long double value)           { return value; }
+
+
+template <>
+mpfr::mpreal functions<mpfr::mpreal>::extractExponent(mpfr::mpreal x, exponent& exp)
+{
+  return mpfr::frexp(x,&exp);
+}
+
+template <>
+long double functions<long double>::extractExponent(long double x, exponent& exp)
+{
+  return frexpl(x,&exp);
+}
 
 template <>
 bool functions<long double>::isNan(const long double &value)             { return std::isnan(value); }

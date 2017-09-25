@@ -141,13 +141,13 @@ typename Synthesiser<scalar>::MatrixS Synthesiser<scalar>::solveSylvester(const 
 template<class scalar>
 typename Synthesiser<scalar>::MatrixS Synthesiser<scalar>::getValidLeftEigenVectors(const MatrixS &pseudoEigenValues,const MatrixS &desired)
 {
-  MatrixS S=desired.inverse();//TODO:may be transposed
+  MatrixS S=makeInverse(desired);//TODO:may be transposed
   MatrixS B=m_sensitivity.leftCols(m_fdimension);
   bool hasInverse=false;
   MatrixS invB=this->getSVDpseudoInverse(B,hasInverse);
   MatrixS C=-B*invB*(m_dynamics*S-S*pseudoEigenValues);//-BP
   S=solveSylvester(m_dynamics,pseudoEigenValues,C,true);
-  return S.inverse();//TODO:may be transposed
+  return makeInverse(S);//TODO:may be transposed
 }
 
 /// Retrieves a set of viable Left Eigenvectors for given eigenvalues
@@ -156,70 +156,6 @@ typename Synthesiser<scalar>::MatrixS Synthesiser<scalar>::getLeftEigenVectors(c
 {
   UNUSED(pseudoEigenValues);
   UNUSED(eigenVectorSpace);
-}
-
-/// Retrieves constraints on the controller coefficients based on the I/O constraints
-template<class scalar>
-AbstractPolyhedra<scalar> Synthesiser<scalar>::getControllerInBounds(AbstractPolyhedra<scalar>& reachTube)
-{
-  MatrixS &vertices=reachTube.getVertices();
-  MatrixS directions=m_inputs.getDirections();
-  directions.conservativeResize(m_fdimension,directions.cols());
-  MatrixS faces(vertices.rows()*directions.cols(),vertices.cols()*m_fdimension);
-  MatrixS supports(vertices.rows()*directions.cols(),1);
-  MatrixS inputSupports=m_inputs.getSupports();
-  for (int row=0;row<vertices.rows();row++) {
-    for (int col=0;col<directions.cols();col++) {
-      for (int i=0;i<m_fdimension;i++) {
-        for (int j=0;j<vertices.cols();j++) {
-          faces.coeffRef(row*directions.cols()+col,i*vertices.cols()+j)=vertices.coeff(row,j)*directions.coeff(i,col);
-        }
-      }
-      supports.coeffRef(row*directions.cols()+col)=inputSupports.coeff(col,0);
-    }
-  }
-  AbstractPolyhedra<scalar> result(vertices.cols()*m_fdimension);
-  result.load(faces,supports);
-  return result;
-}
-
-/// Retrieves constraints on the controller coefficients based on the Dynamic constraints
-template<class scalar>
-AbstractPolyhedra<scalar> Synthesiser<scalar>::getControllerDynBounds(AbstractPolyhedra<scalar>& reachTube,int &orBlockSize)
-{
-  //max((I-A-BK)Sv)>max(Rv) -> +p_R+p_S((A-I)^T)<-p_S(BK)
-  //(A-I)S-R>-SBK -> -\sum(bji)k_{lj}S_lV_l < (A-I)Sv-B_nR_nv
-  MatrixS templates=reachTube.getDirections();
-
-  MatrixS dynamics=m_dynamics;
-  for (int i=0;i<m_dimension;i++) dynamics.coeffRef(i,i)-=ms_one;
-  MatrixS aDirections=dynamics.transpose()*templates;
-  MatrixS inDirections=m_sensitivity.transpose()*templates;
-  MatrixS aSupports;
-  reachTube.maximiseAll(aDirections,aSupports);
-
-  if (!m_reference.isEmpty()) {
-    MatrixS inSupports;
-    m_reference.maximiseAll(inDirections,inSupports);
-    aSupports-=inSupports;
-  }
-
-  MatrixS &vertices=reachTube.getVertices();
-  orBlockSize=vertices.rows();
-  MatrixS supports(aSupports.rows()*vertices.rows(),1);
-  MatrixS faces(supports.rows(),m_feedback.rows()*m_feedback.cols());
-  MatrixS coefficients=templates.transpose()*m_sensitivity;
-  for (int row=0;row<templates.cols();row++) {
-    for (int i=0;i<orBlockSize;i++) {
-      for (int j=0;j<m_feedback.rows();j++) {
-        faces.block(row*orBlockSize+i,j*m_dimension,1,m_dimension)=coefficients.coeff(row,j)*vertices.row(i);
-      }
-      supports.coeffRef(row*orBlockSize+i,0)=aSupports.coeff(row,0);
-    }
-  }
-  AbstractPolyhedra<scalar> result(faces.cols());
-  result.load(faces,supports);
-  return result;
 }
 
 /// Synthetises the input that leads to a given reach tube
@@ -236,7 +172,7 @@ AbstractPolyhedra<scalar> Synthesiser<scalar>::synthesiseInputs(inputType_t inpu
     MatrixS combinedVectors(vectors.rows()+roundVectors.rows(),vectors.cols());
     combinedVectors.block(0,0,vectors.rows(),vectors.cols())=vectors;
     combinedVectors.block(vectors.rows(),0,roundVectors.rows(),roundVectors.cols())=roundVectors;
-    MatrixS abstractRoundedVectors=dynamics.getSynthVertices(combinedVectors,m_conjugatePair,m_jordanIndex);
+    MatrixS abstractRoundedVectors=dynamics.getSynthVertices(combinedVectors,m_conjugatePair,m_jordanIndex,m_roundings);
     abstractVectors=abstractRoundedVectors.block(0,0,abstractRoundedVectors.rows(),m_dimension);
     init.maximiseAll(abstractVectors.transpose(),supports);
     int factor=supports.rows()/vectors.cols();
@@ -255,15 +191,15 @@ AbstractPolyhedra<scalar> Synthesiser<scalar>::synthesiseInputs(inputType_t inpu
     tempResult.toInner(true);
     tempResult.retemplate(templates,-tightness);//templog?
     MatrixS subTemplates;
-    std::vector<bool> isRound;
-    this->findRoundIndices(isRound);
+    std::vector<int> isRound;
+    this->findRoundIndices(isRound,false);
     int newRow=0;
     abstractVectors=tempResult.m_faces;
     supports=tempResult.m_supports;
     for (int row=0;row<abstractVectors.rows();row++) {
       bool keep=true;
-      for (int col=0;col<isRound.size();col++) {
-        if (isRound[col] && (func::hardSign(abstractVectors.coeff(row,col))<0)) keep=false;
+      for (unsigned col=0;col<isRound.size();col++) {
+        if ((isRound[col]>=0) && (func::hardSign(abstractVectors.coeff(row,col))<0)) keep=false;
       }
       if (keep) {
         abstractVectors.row(newRow)=abstractVectors.row(row);
@@ -309,7 +245,7 @@ AbstractPolyhedra<scalar> Synthesiser<scalar>::synthesiseInputs(inputType_t inpu
     }
   }
   else {
-    abstractVectors=dynamics.getSynthVertices(vectors,m_conjugatePair,m_jordanIndex);
+    abstractVectors=dynamics.getSynthVertices(vectors,m_conjugatePair,m_jordanIndex,m_roundings);
     init.maximiseAll(abstractVectors.transpose(),supports);
     int factor=supports.rows()/vectors.cols();
     for (int row=0;row<supports.rows();row++) {
@@ -332,7 +268,7 @@ template<class scalar>
 AbstractPolyhedra<scalar> Synthesiser<scalar>::synthesiseInitialState(inputType_t inputType,AbstractPolyhedra<scalar> &input,AbstractPolyhedra<scalar> &end,AbstractPolyhedra<scalar> &dynamics)
 {
   MatrixS vectors=end.getDirections();
-  MatrixS abstractVectors=dynamics.getSynthVertices(vectors,m_conjugatePair,m_jordanIndex);
+  MatrixS abstractVectors=dynamics.getSynthVertices(vectors,m_conjugatePair,m_jordanIndex,m_roundings);
   MatrixS supports;
   MatrixS preSupports=end.getSupports();
   if(inputType==eNoInputs) {
@@ -374,10 +310,10 @@ AbstractPolyhedra<scalar> Synthesiser<scalar>::synthesiseEigenStructure(inputTyp
     MatrixS combinedRoundVectors(templates.cols()+roundVectors.rows(),templates.rows());
     combinedRoundVectors.block(0,0,templates.cols(),templates.rows())=templates.transpose();
     combinedRoundVectors.block(templates.cols(),0,roundVectors.rows(),roundVectors.cols())=roundVectors;
-    combinedAbstractVectors=dynamics.getSynthVertices(combinedRoundVectors,m_conjugatePair,m_jordanIndex);
+    combinedAbstractVectors=dynamics.getSynthVertices(combinedRoundVectors,m_conjugatePair,m_jordanIndex,m_roundings);
     abstractVectors=combinedAbstractVectors.block(0,0,combinedAbstractVectors.rows(),m_dimension);
   }
-  else abstractVectors=dynamics.getSynthVertices(templates,m_conjugatePair,m_jordanIndex);//templates*lambdas
+  else abstractVectors=dynamics.getSynthVertices(templates,m_conjugatePair,m_jordanIndex,m_roundings);//templates*lambdas
   MatrixS combinedVectors=kronecker(abstractVectors,vertices);//templates*lambdas*vertices
   MatrixS combinedInputVectors(0,0);
   int numInputs=1;
@@ -708,7 +644,6 @@ int Synthesiser<scalar>::loadPoles(const std::string &data,size_t pos)
   pos=ms_logger.getCommand(command,data,pos);
   MatrixS poles(m_dimension,m_dimension);
   int result=ms_logger.StringToMat(poles,data,pos);
-  ms_logger.logData(poles,"cl dynamics");//templog
   m_closedLoop.loadJordan(poles);
   return result;
 }
@@ -717,23 +652,23 @@ int Synthesiser<scalar>::loadPoles(const std::string &data,size_t pos)
 template <class scalar>
 bool Synthesiser<scalar>::makeClosedLoop(bool useObserver,bool makeReference,bool makeNoise)
 {
-  UNUSED(useObserver);
-  MatrixS dynamics;
-  if (m_outputSensitivity.cols()>0) {
-    dynamics=m_dynamics-m_sensitivity.block(0,0,m_dimension,m_fdimension)*m_feedback*m_outputSensitivity;
-  }
-  else {
-    dynamics=m_dynamics-m_sensitivity.block(0,0,m_dimension,m_fdimension)*m_feedback;
-  }
+  CegarSystem<scalar> &source=(m_sampled.m_dimension==m_dimension) ? m_sampled : *this;
+  MatrixS feedbackDynamics=source.m_sensitivity.block(0,0,m_dimension,m_fdimension)*m_feedback;
+  if (!useObserver && source.m_outputSensitivity.cols()>0) feedbackDynamics*=source.m_outputSensitivity;
+  MatrixS dynamics=source.m_dynamics-feedbackDynamics;
   int fdimension= (makeReference || (m_reference.getDimension()>0)) ? 0 : m_fdimension;
-  MatrixS sensitivity=m_sensitivity.block(0,fdimension,m_dimension,m_idimension-fdimension);
+  MatrixS sensitivity=source.m_sensitivity.block(0,fdimension,m_dimension,m_idimension-fdimension);
   m_closedLoop.setInputType(eParametricInputs);
-  AbstractPolyhedra<scalar> inputs=generateFeedbackInput(fdimension,makeNoise,sensitivity);
+  AbstractPolyhedra<scalar> inputs=generateFeedbackInput(fdimension,makeNoise,sensitivity,source.m_sampleTime,source.m_delayTime);
+  if (useObserver) {
+    if (source.m_outputSensitivity.cols()<=0) source.m_outputSensitivity=MatrixS::Identity(m_dimension,m_dimension);
+    source.makeObserver(dynamics,sensitivity,feedbackDynamics);
+  }
   if (ms_trace_dynamics>=eTraceDynamics) {
     ms_logger.logData(dynamics,"Loading Closed Loop");
   }
   m_closedLoop.setParams(m_paramValues);
-  m_closedLoop.changeDimensions(m_dimension,sensitivity.cols(),0,0);
+  m_closedLoop.changeDimensions(dynamics.rows(),sensitivity.cols(),0,0);
   bool result=m_closedLoop.load(dynamics,sensitivity,m_guard.getPolyhedra(),m_initialState.getPolyhedra(),inputs,m_safeReachTube.getPolyhedra());
   if (result && (ms_trace_dynamics>=eTraceDynamics)) {
     ms_logger.logData(m_closedLoop.getDescription());
@@ -803,14 +738,27 @@ int Synthesiser<scalar>::processOptions(optionList_t &options,displayType_t disp
   if ((options[eDynamicsStr].size()>0) && (loadDynamics(options[eDynamicsStr])<0))      return -1;
   if ((options[eInitStr].size()>0) && (loadInitialState(options[eInitStr])<0))          return -1;
   if ((options[iSenseStr].size()>0) && (loadSensitivities(options[iSenseStr])<0))       return -1;
+  if ((options[oSenseStr].size()>0) && (loadOutputSensitivities(options[oSenseStr])<0)) return -1;
+  if ((options[ioSenseStr].size()>0) && (loadIOSensitivities(options[oSenseStr])<0))    return -1;
   if ((options[eInputStr].size()>0) && (loadInputs(options[eInputStr])<0))              return -1;
   if ((options[eTemplateStr].size()>0) && (loadTemplates(options[eTemplateStr])<0))     return -1;
   if ((options[eReferenceStr].size()>0) && (loadReference(options[eReferenceStr])<0))   return -1;
-  if ((options[eControlStr].size()>0) && (loadController(options[eControlStr])<0))      return -1;
   if (options[eIncOrderStr].size()>0) setIncrementalOrder(options[eIncOrderStr]);
-  if (options[eSampleStr].size()>0) sample(options[eIncOrderStr]);
+  if ((options[eObserveStr].size()>0) && (loadObserver(options[eObserveStr])<0))        return -1;
+  if (options[eSampleStr].size()>0) {
+    m_sampled.copy(*this);
+    m_sampled.sample(options[eSampleStr]);
+  }
+  else m_sampled.m_dimension=0;
+  if (options[eSpeedStr].size()>0) { setSpeed(options[eSpeedStr]); }
+  if ((options[eControlStr].size()>0) && (loadController(options[eControlStr])<0))      return -1;
   if (run) {
-    process(displayType,space,interval);
+    if ((m_synthType<eCEGISSynth) && (options[eSampleStr].size()>0)) {
+      m_sampled.process(displayType,space,interval);
+    }
+    else {
+      process(displayType,space,interval);
+    }
     if (ms_logger.ms_useConsole) ms_logger.logData(timer.elapsed()*1000,"Total time: ",true);
   }
   return 0;
@@ -820,6 +768,12 @@ template <class scalar>
 bool Synthesiser<scalar>::process(const displayType_t displayType,const space_t space,const bool interval,const bool append)
 {
   try {
+    if (m_synthType==eClosedReachTubeSynth) {
+      makeClosedSystem(m_closedLoop);
+      m_closedLoop.setName(m_name+"-sq");
+      ms_logger.logData(m_closedLoop.getDescription(displayType,space,interval));
+      return m_closedLoop.process(displayType,space,interval,append);
+    }
     boost::timer timer;
     func::ms_isImprecise=false;
     int iter=m_paramValues.coeff(eNumSteps,0);
@@ -827,14 +781,12 @@ bool Synthesiser<scalar>::process(const displayType_t displayType,const space_t 
     int stepIter=m_paramValues.coeff(eNumSteps,2);
     if (maxIter<=0) maxIter=iter+1;
     if (stepIter<=0) stepIter=1;
-    int precision=m_paramValues.coeff(eLogFaces,0);
-    int minPrecision=precision;
+    int minPrecision=m_paramValues.coeff(eLogFaces,0);
     int maxPrecision=m_paramValues.coeff(eLogFaces,1);
     int stepPrecision=m_paramValues.coeff(eLogFaces,2);
-    if (precision<=0) precision=2;
-    if (maxPrecision<=0) maxPrecision=precision;
+    if ((minPrecision|maxPrecision|stepPrecision)==0) minPrecision=2;
+    if (maxPrecision<=0) maxPrecision=minPrecision;
     if (stepPrecision<=0) stepPrecision=1;
-    if (minPrecision==0) minPrecision+=stepPrecision;
     int directions=m_paramValues.coeff(eLogDirections,0);
     int maxDirections=m_paramValues.coeff(eLogDirections,1);
     int stepDirections=m_paramValues.coeff(eLogDirections,2);
@@ -864,7 +816,7 @@ bool Synthesiser<scalar>::process(const displayType_t displayType,const space_t 
       int col=0;
       for (iter=m_paramValues.coeff(eNumSteps,0);iter<maxIter;iter+=stepIter) {
         for (tightness=m_paramValues.coeff(eTightness,0);tightness<=maxTightness;tightness+=stepTightness) {
-          for (precision=minPrecision;precision<=maxPrecision;precision+=stepPrecision) {
+          for (int precision=(minPrecision>0) ? minPrecision : 1;precision<=maxPrecision;precision+=stepPrecision) {
             powerS iteration=iter;
             switch(m_synthType) {
             case eReachTubeSynth: {
@@ -899,7 +851,8 @@ bool Synthesiser<scalar>::process(const displayType_t displayType,const space_t 
               }
               break;
             case eCEGISSynth:
-              makeCEGISFiles();
+            case eObserverSynth:
+              makeCEGISFiles(m_synthType==eObserverSynth);
               break;
             default: {
                 if (iteration==0) iteration=func::ms_infPower;
@@ -921,7 +874,7 @@ bool Synthesiser<scalar>::process(const displayType_t displayType,const space_t 
       if (m_synthType==eReachTubeSynth) {
         for (int row=0;row<supports.rows();row++) {
           for (int col=0;col<supports.cols();col++) {
-            if (func::toUpper(supports.coeff(row,col))>func::ms_infPower) supports.coeffRef(row,col)=func::ms_infinity;
+            if (10*func::toUpper(supports.coeff(row,col))>func::ms_infPower) supports.coeffRef(row,col)=func::ms_infinity;
           }
         }
         m_pAbstractReachTube->load(faces,supports,space);
@@ -934,7 +887,7 @@ bool Synthesiser<scalar>::process(const displayType_t displayType,const space_t 
         }
       }
     }
-    if (m_paramValues.coeff(eLogFaces,0)==0) {
+    if (minPrecision==0) {
       powerS iteration=iter;
       if (iter==0) iteration=this->calculateMaxIterations();
       AbstractPolyhedra<scalar>& tube=this->getIterativeReachTube(iteration,m_inputType,space,maxDirections);
@@ -965,6 +918,19 @@ int Synthesiser<scalar>::loadController(const std::string &data,size_t pos)
   return result;
 }
 
+/// Loads an observer candidate for the system
+template <class scalar>
+int Synthesiser<scalar>::loadObserver(const std::string &data,size_t pos)
+{
+  boost::timer timer;
+  commands_t command;
+  pos=ms_logger.getCommand(command,data,pos);
+  m_observer.resize(m_dimension,(m_odimension>0) ? m_odimension : m_dimension);
+  size_t result=ms_logger.StringToMat(m_observer,data,pos);
+  if (ms_trace_time) ms_logger.logData(timer.elapsed()*1000,"Observer time:",true);
+  return result;
+}
+
 /// Loads a reference input set for the system
 template <class scalar>
 int Synthesiser<scalar>::loadReference(const std::string &data,size_t pos,bool vertices)
@@ -977,10 +943,21 @@ int Synthesiser<scalar>::loadReference(const std::string &data,size_t pos,bool v
 
 ///Creates a c header file for CEGIS
 template <class scalar>
-std::string Synthesiser<scalar>::makeCEGISHeader(bool intervals)
+std::string Synthesiser<scalar>::makeCEGISHeader(bool observer,bool intervals)
 {
   std::stringstream result;
-  result << "#define _DIMENSION " << m_dimension << "\n";
+  result << "#define _DIMENSION " << m_dimension << "\n";  
+  if (observer)result << "#define _USE_OBSERVER\n";
+  int totalbits=m_paramValues.coeff(eNumBits,1);
+  int fracbits=m_paramValues.coeff(eNumBits,2);
+  if (totalbits<=0) {
+    totalbits=m_paramValues.coeff(eNumBits,0);
+    if (totalbits<=0) totalbits=func::getDefaultPrec();
+    fracbits=totalbits;
+  }
+  else if (fracbits==0) fracbits=totalbits>>1;
+  result << "#define _FRAC_BITS " << fracbits << "\n";
+  result << "#define _EXP_BITS " << totalbits << "\n";
   result << "typedef control_floatt vectort[_DIMENSION];\n"
          << "typedef control_floatt matrixt[_DIMENSION][_DIMENSION];\n";
   result << "struct coefft\n"
@@ -998,16 +975,17 @@ std::string Synthesiser<scalar>::makeCEGISHeader(bool intervals)
 
 ///Creates a c header file for CEGIS
 template <class scalar>
-std::string Synthesiser<scalar>::makeCEGISDescription(bool intervals)
+std::string Synthesiser<scalar>::makeCEGISDescription(bool observer,bool intervals)
 {
+  CegarSystem<scalar> &source=(m_sampled.m_dimension==m_dimension) ? m_sampled : *this;
   std::stringstream result;
-  MatrixS T=getReachableCanonicalTransformMatrix();
+  MatrixS T=source.getReachableCanonicalTransformMatrix();
   MatrixS invT=T.inverse();
-  MatrixS controllable=T*m_dynamics*invT;
+  MatrixS controllable=T*source.m_dynamics*invT;
   if (ms_trace_dynamics>=eTraceDynamics) {
     ms_logger.logData(controllable,"Controllable");
   }
-  MatrixS coefficients=controllable.row(0);
+  MatrixS coefficients=-controllable.row(0);
   int totalbits=m_paramValues.coeff(eNumBits,1);
   int fracbits=m_paramValues.coeff(eNumBits,2);
   int multbits=0;
@@ -1025,23 +1003,61 @@ std::string Synthesiser<scalar>::makeCEGISDescription(bool intervals)
   result << ms_logger.MatToC("plant",coefficients,intervals);
   result << "struct transformt " << ms_logger.MatToC("transform",invT,intervals);
   result << "struct transformt " << ms_logger.MatToC("pretransform",T,intervals);
-  result << "matrixt dynamics" << ms_logger.MatToC("",m_dynamics,intervals);
-  result << "vectort sensitivity" << ms_logger.MatToC("",m_sensitivity.transpose(),intervals);
+  result << "control_floatt speed_factor=";
+  if (!func::isZero(m_feedback.norm()) && makeClosedLoop(false,false,true) && m_closedLoop.isDivergent()) {
+    refScalar max=func::toUpper(m_closedLoop.largestEigenNorm());
+    if (func::isPositive(max-source.getSpeed())) max=source.getSpeed();
+    if (max>1.05) {
+      ms_logger.logData(m_closedLoop.m_dynamics,"loop dynamics");
+      ms_logger.logData(max,"divergent loop",true);
+      ms_logger.logData(coefficients,"coefficients");
+      MatrixS newControllable=T*m_closedLoop.m_dynamics*invT;
+      ms_logger.logData(newControllable,"cl coefficients");
+      max=1.0;//TODO: this should never be needed.
+    }
+    result << ms_logger.MakeNumber(max) << ";\n";
+  }
+  else if (!func::isZero(getSpeed())) result << ms_logger.MakeNumber(getSpeed()) << ";\n";
+  else result << "1.0;\n";
+  if (observer) {
+    MatrixS invW=source.getObservableCanonicalTransformMatrix();
+    MatrixS W=makeInverse(invW);
+    if (ms_trace_dynamics>=eTraceAll) {
+      MatrixS observer=W*source.m_dynamics*invW;
+      ms_logger.logData(observer,"OCF");
+    }
+    result << "struct transformt " << ms_logger.MatToC("observer_transform",invW,intervals);
+    result << "struct transformt " << ms_logger.MatToC("observer_pretransform",W,intervals);
+    source.makeObserver();
+    result << "struct transformt " << ms_logger.MatToC("observer_dynamics",source.m_observerDynamics,intervals);
+    result << "struct transformt " << ms_logger.MatToC("observer_sensitivity",source.m_observerSensitivity,intervals);
+    result << "struct transformt " << ms_logger.MatToC("observer_output",source.m_observerOutputSensitivity,intervals);
+    result << "control_floatt observer_dynamics_error=" << ms_logger.MakeNumber(source.m_observerDynamicsError) << ";\n";
+    result << "control_floatt observer_sensitivity_error=" << ms_logger.MakeNumber(source.m_observerSensitivityError) << ";\n";
+    result << "control_floatt observer_output_sensitivity_error=" << ms_logger.MakeNumber(source.m_observerOutputSensitivityError) << ";\n";
+  }
+  result << "matrixt dynamics" << ms_logger.MatToC("",source.m_dynamics,intervals);
+  result << "vectort sensitivity" << ms_logger.MatToC("",source.m_sensitivity.transpose(),intervals);
   result << "#ifdef __CPROVER\n";
   result << "extern vectort controller;\n";
+  if (observer) result << "extern vectort observer;\n";
   result << "#else\n";
   result << "vectort controller" << ms_logger.MatToC("",m_feedback,intervals);;
+  if (observer) result << "vectort observer" << ms_logger.MatToC("",source.m_observer,intervals);;
   result << "#endif\n";
   if (m_safeReachTube.isEmpty() && !m_outputGuard.isEmpty()) calculateGuardFromOutput();
   MatrixS vectors=m_safeReachTube.getPolyhedra().getFaceDirections();
   MatrixS support=m_safeReachTube.getPolyhedra().getSupports().transpose();
-  AbstractPolyhedra<scalar> K=getControllerInBounds(m_safeReachTube.getPolyhedra());
+  AbstractPolyhedra<scalar> K=source.getControllerInBounds(m_safeReachTube.getPolyhedra());
   K.toOuter(true);
   int controllerOrBlocks;
-  AbstractPolyhedra<scalar> K2=getControllerDynBounds(m_safeReachTube.getPolyhedra(),controllerOrBlocks);
   result << "void boundController()\n{\n";
   result << ms_logger.IneToC("verify_assume","(control_floatt)","controller",K.getFaceDirections(),K.getSupports()) << ";\n";
-  result << ms_logger.IneToC("verify_assume","(control_floatt)","controller",K2.getFaceDirections(),K2.getSupports(),false,controllerOrBlocks) << ";\n";
+
+  if (source.m_feedback.rows()*source.m_feedback.cols()>0) {
+    AbstractPolyhedra<scalar> K2=source.getControllerDynBounds(m_safeReachTube.getPolyhedra(),controllerOrBlocks);
+    result << ms_logger.IneToC("verify_assume","(control_floatt)","controller",K2.getFaceDirections(),K2.getSupports(),false,controllerOrBlocks) << ";\n";
+  }
   result << "}\n";
   if (m_feedback.rows()>0) {
     MatrixS vertices=m_initialState.getPolyhedra().getVertices();
@@ -1095,6 +1111,11 @@ std::string Synthesiser<scalar>::makeCEGISIterations(std::string &existing)
   bool fail=m_closedLoop.findCounterExampleIterations(counterexamples,bounds);
   if (fail && counterexamples.empty()) counterexamples[1]=std::pair<int,powerS>(-1,0);
   if (!counterexamples.empty()) {
+    AbstractPolyhedra<scalar> &safe=m_safeReachTube.getPolyhedra();
+    MatrixS vertices=m_initialState.getPolyhedra().getVertices();
+    MatrixS inputVertices=m_closedLoop.getInputVertices(eEigenSpace,true);
+    powerS counterPoints[vertices.rows()+1][inputVertices.rows()+1];
+
     result << "#define POINTS_PER_ITER\n";
     result << "#define _NUM_ITERATIONS " << counterexamples.size() << "\n";
     int max_iters=0;
@@ -1107,9 +1128,6 @@ std::string Synthesiser<scalar>::makeCEGISIterations(std::string &existing)
     result << "};\n";
     result << "#define _MAX_ITERATIONS " << max_iters << "\n";
     result << "int iter_vertices[_NUM_ITERATIONS][2]={";
-    AbstractPolyhedra<scalar> &safe=m_safeReachTube.getPolyhedra();
-    MatrixS vertices=m_initialState.getPolyhedra().getVertices();
-    MatrixS inputVertices=m_closedLoop.getInputVertices(eEigenSpace,true);
     for (typename powerList::iterator it=counterexamples.begin();it!=counterexamples.end();it++) {
       if (it!=counterexamples.begin()) result << ",";
       MatrixS dynamics=m_closedLoop.getPseudoDynamics(it->first).transpose();
@@ -1124,6 +1142,7 @@ std::string Synthesiser<scalar>::makeCEGISIterations(std::string &existing)
           MatrixS point=(vertices.row(i)-inputVertices.row(j))*dynamics+inputVertices.row(j);
           ms_logger.logData(point,"point");
           if (!safe.isInside(point)) {
+            if (counterPoints[i][j]<it->first) counterPoints[i][j]=it->first;
             result << "{" << i << "," << j << "}";
             i=vertices.rows();
             found=true;
@@ -1143,17 +1162,16 @@ std::string Synthesiser<scalar>::makeCEGISIterations(std::string &existing)
 
 ///Creates a c header file for CEGIS
 template <class scalar>
-bool Synthesiser<scalar>::makeCEGISFiles()
+bool Synthesiser<scalar>::makeCEGISFiles(bool observer)
 {
   std::ofstream headerFile;
   headerFile.open("types.h");
   if (!headerFile.is_open()) return false;
   ms_logger.setPrecision(12);
-  std::string data=makeCEGISHeader();
+  std::string data=makeCEGISHeader(observer);
   headerFile.write(data.data(),data.size());
   headerFile.close();
-
-  data=makeCEGISDescription();
+  data=makeCEGISDescription(observer);
   std::string oldIters;
   std::string iters=makeCEGISIterations(oldIters);
   std::ofstream sucess_file;

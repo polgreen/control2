@@ -74,7 +74,7 @@ public:
     int getCommand(commands_t &command,const std::string &str,size_t pos=0);
     void logData(const std::string data,const bool newLine=true);
     void logData(scalar number,const std::string title,const bool brackets=false);
-    void logData(std::vector<int> &vector,const std::string title);
+    void logData(const std::vector<int> &vector,const std::string title);
     void logNormalisedData(const MatrixS &matrix,int col=-1,const std::string title="");
     void logData(const MatrixS &matrix,const std::string title="",const bool transpose=false,bool forceNewLine=false);
     void logData(const MatrixC &matrix,const std::string title="",const bool transpose=false,bool forceNewLine=false);

@@ -6,10 +6,14 @@
 
 namespace abstract{
 
+template <class scalar>
+bool CegarSystem<scalar>::ms_fixedBVs=false;
+
 /// Constructs an empty buffer
 template<class scalar>
 CegarSystem<scalar>::CegarSystem(int dimension,int idimension) :
   DynamicalSystem<scalar>(dimension,idimension),
+  m_eigenValueCap(func::ms_1),
   m_incOrderType(LexCos)
 {}
 
@@ -199,11 +203,75 @@ int CegarSystem<scalar>::loadFromSpaceXFiles(std::string &modelName)
   return loadFromSpaceX(xml_buffer.str(),cfg_buffer.str());
 }
 
+/// Copies an existing object
+template<class scalar>
+void CegarSystem<scalar>::copy(const CegarSystem &source)
+{
+  DynamicalSystem<scalar>::copy(source);
+  m_observer=source.m_observer;
+  m_observerDynamics=source.m_observerDynamics;
+  m_observerSensitivity=source.m_observerOutputSensitivity;
+  m_observerOutputSensitivity=source.m_observerOutputSensitivity;
+  m_eigenValueCap=source.m_eigenValueCap;
+  m_observerDynamicsError=source.m_observerDynamicsError;
+  m_observerSensitivityError=source.m_observerSensitivityError;
+  m_observerOutputSensitivityError=source.m_observerOutputSensitivityError;
+  m_incOrderType=source.m_incOrderType;
+}
+
+/// retrieves the Jordan form of the system sampled at SampleTime
+template<class scalar>
+typename CegarSystem<scalar>::MatrixC CegarSystem<scalar>::getSampledJordanForm(scalar sampleTime)
+{
+  MatrixC eigenValues=m_eigenValues;
+  for (int i=0;i<m_dimension;i++) {
+    complexS power=eigenValues.coeffRef(i,i)*sampleTime;
+    scalar mag=exp(power.real());
+    scalar real=mag*func::cosine(power.imag());
+    scalar imag=mag*func::sine(power.imag());
+    complexS value=complexS(real,imag);
+    eigenValues.coeffRef(i,i)=value;
+    powerS div=1;
+    for (int j=1;j<m_jordanIndex[i];j++) {
+      div*=j;
+      eigenValues.coeffRef(i-j,i)=eigenValues.coeffRef(i,i)*func::pow(sampleTime,j)/scalar(div);
+    }
+  }
+  return eigenValues;
+}
+
+/// retrieves the dynamics of the system sampled at SampleTime
+template<class scalar>
+typename CegarSystem<scalar>::MatrixS CegarSystem<scalar>::getSampledDynamics(scalar sampleTime)
+{
+  MatrixS pseudoEigenValues=jordanToPseudoJordan(getSampledJordanForm(sampleTime),this->eToEigenValues);
+  return m_pseudoEigenVectors*pseudoEigenValues*m_invPseudoEigenVectors;
+}
+
+/// retrieves the delay noise matrix
+template<class scalar>
+typename CegarSystem<scalar>::MatrixS CegarSystem<scalar>::getDelayNoise(scalar sampleTime, scalar maxDelay)
+{
+  MatrixS discreteDynamics=getSampledDynamics(sampleTime);
+  MatrixS delayDynamics=getSampledDynamics(maxDelay);
+  MatrixS finalDynamics=getSampledDynamics(sampleTime-maxDelay);
+  MatrixS reverseDynamics=makeInverse(m_dynamics);
+  MatrixS vectors(2*m_outputSensitivity.rows(),m_sensitivity.cols());
+  vectors.block(0,0,m_outputSensitivity.rows(),m_sensitivity.cols())=m_outputSensitivity*reverseDynamics*(discreteDynamics-finalDynamics)*m_sensitivity;
+  vectors.block(m_outputSensitivity.rows(),0,m_outputSensitivity.rows(),m_sensitivity.cols())=m_outputSensitivity*finalDynamics*reverseDynamics*(delayDynamics-MatrixS::Identity(m_dimension,m_dimension))*m_sensitivity;
+  vectors.transposeInPlace();
+  MatrixS result;
+  m_inputs.maximiseAll(vectors,result);
+  return result;
+}
+
 /// turns a continuous time system into a discrete
 template<class scalar>
-void CegarSystem<scalar>::sample(scalar sampleTime)
+void CegarSystem<scalar>::sample(scalar sampleTime,scalar delayTime)
 {
   m_sampleTime=sampleTime;
+  m_delayTime=delayTime;
+  if (m_cosFactors.rows()<=m_dimension) m_cosFactors.conservativeResize(m_dimension+1,1);
   m_cosFactors.coeffRef(m_dimension,0)=func::ms_1;
   for (int i=0;i<m_dimension;i++) {
     complexS power=m_eigenValues.coeffRef(i,i)*sampleTime;
@@ -217,11 +285,16 @@ void CegarSystem<scalar>::sample(scalar sampleTime)
       m_cosFactors.coeffRef(i,0)=m_eigenNorms.coeffRef(i,0)/value.real();
       m_cosFactors.coeffRef(m_dimension,0)*=m_cosFactors.coeffRef(i,0);
     }
+    powerS div=1;
+    for (int j=1;j<m_jordanIndex[i];j++) {
+      div*=j;
+      m_eigenValues.coeffRef(i-j,i)=m_eigenValues.coeffRef(i,i)*func::pow(sampleTime,j)/scalar(div);
+    }
   }
   m_pseudoEigenValues=jordanToPseudoJordan(m_eigenValues,this->eToEigenValues);
   MatrixS discrete_dynamics=m_pseudoEigenVectors*m_pseudoEigenValues*m_invPseudoEigenVectors;
   MatrixS integrator=discrete_dynamics-MatrixS::Identity(m_dimension,m_dimension);
-  integrator=m_dynamics.inverse()*integrator;
+  integrator=makeInverse(m_dynamics)*integrator;
   if (ms_trace_dynamics>=eTraceDynamics) {
     ms_logger.logData(m_dynamics,"Dynamics");
     ms_logger.logData(m_sensitivity,"Sensitivity");
@@ -231,7 +304,6 @@ void CegarSystem<scalar>::sample(scalar sampleTime)
     ms_logger.logData(m_pseudoEigenVectors,"Discrete PseudoEigenVectors");
     ms_logger.logData(m_invPseudoEigenVectors,"Discrete InvPseudoEigenVectors");
   }
-
   m_sensitivity=integrator*m_sensitivity;
   m_dynamics=discrete_dynamics;
   if (ms_trace_dynamics>=eTraceDynamics) {
@@ -242,9 +314,23 @@ void CegarSystem<scalar>::sample(scalar sampleTime)
 template<class scalar>
 bool CegarSystem<scalar>::sample(std::string &sampleTime)
 {
-  scalar time;
-  if (func::toScalar(sampleTime.data(),time)==sampleTime.data()) return false;
-  sample(time);
+  scalar time,delay=0;
+  char* pEnd=func::toScalar(sampleTime.data(),time);
+  if (pEnd==sampleTime.data()) return false;
+  if (pEnd[0]==':') {
+    pEnd++;
+    if (pEnd==func::toScalar(pEnd,delay)) return false;
+  }
+  sample(time,delay);
+  return true;
+}
+
+template<class scalar>
+bool CegarSystem<scalar>::setSpeed(std::string &max)
+{
+  scalar speed;
+  if (func::toScalar(max.data(),speed)==max.data()) return false;
+  m_eigenValueCap=speed;
   return true;
 }
 
@@ -334,35 +420,25 @@ template <class scalar>
 typename CegarSystem<scalar>::MatrixS CegarSystem<scalar>::getReachableCanonicalTransformMatrix()
 {
   MatrixS result=getReachabilityMatrix()*getCanonicalReachabilityMatrix();
-  return result.inverse();
+  return makeInverse(result);
 }
 
 /// Retrieves the observability matrix [C CA CA^2 ...CA^{n-1}]^T
 template <class scalar>
 typename CegarSystem<scalar>::MatrixS CegarSystem<scalar>::getObservabilityMatrix()
 {
-  MatrixS result(m_dimension*m_outputSensitivity.rows(),m_outputSensitivity.cols());
-  result.block(0,0,m_outputSensitivity.rows(),m_outputSensitivity.cols())=m_outputSensitivity;
+  MatrixS outputSensitivity=m_outputSensitivity;
+  if (outputSensitivity.cols()==0) {
+    outputSensitivity=MatrixS::Zero(1,m_dimension);
+    outputSensitivity.coeffRef(0,0)=ms_one;
+  }
+  MatrixS result(m_dimension*outputSensitivity.rows(),outputSensitivity.cols());
+  result.block(0,0,outputSensitivity.rows(),outputSensitivity.cols())=outputSensitivity;
   MatrixS multiplier=m_dynamics;
   for (int i=1;i<m_dimension;i++)
   {
-    result.block(i*m_outputSensitivity.rows(),0,m_outputSensitivity.rows(),m_outputSensitivity.cols())=m_outputSensitivity*multiplier;
+    result.block(i*outputSensitivity.rows(),0,outputSensitivity.rows(),outputSensitivity.cols())=outputSensitivity*multiplier;
     multiplier*=m_dynamics;
-  }
-  return result;
-}
-
-/// Retrieves the observability matrix [1 0 ...;a1 1 0 ...;...;a_{n-1}...a1 1]^-1
-template <class scalar>
-typename CegarSystem<scalar>::MatrixS CegarSystem<scalar>::getInverseCanonicalObservabilityMatrix()
-{
-  //TODO: not sure how this works on MIMO
-  MatrixS result=MatrixS::Identity(m_dimension*m_outputSensitivity.rows(),m_outputSensitivity.cols());
-  MatrixS coefficients=getDynamicPolynomialCoefficients();
-  for (int i=0;i<m_dimension;i++) {
-    for (int j=0;j<i;j++) {
-      result.coeffRef(i,j)=coefficients.coeff(0,m_dimension-i-j-1);
-    }
   }
   return result;
 }
@@ -371,14 +447,17 @@ typename CegarSystem<scalar>::MatrixS CegarSystem<scalar>::getInverseCanonicalOb
 template <class scalar>
 typename CegarSystem<scalar>::MatrixS CegarSystem<scalar>::getObservableCanonicalTransformMatrix()
 {
-  return getObservabilityMatrix().inverse()*getInverseCanonicalObservabilityMatrix();
+  MatrixS CanonicalObservabilityMatrix=getCanonicalReachabilityMatrix().transpose();
+  MatrixS ObservabilityMatrix=getObservabilityMatrix();
+  return makeInverse(ObservabilityMatrix)*makeInverse(CanonicalObservabilityMatrix);
 }
 
 /// Retrieves the reference gain
 template <class scalar>
 typename CegarSystem<scalar>::MatrixS CegarSystem<scalar>::getReferenceGain()
 {
-  return m_outputSensitivity*((m_dynamics-(m_sensitivity*m_feedback)).inverse()*m_sensitivity);
+  MatrixS closedLoop=m_dynamics-(m_sensitivity*m_feedback);
+  return m_outputSensitivity*makeInverse(closedLoop)*m_sensitivity;
 }
 
 /// Retrieves the reach tube at the given iteration
@@ -386,7 +465,7 @@ template <class scalar>
 /// Retrieves refined dynamics given a safety specification
 AbstractPolyhedra<scalar>& CegarSystem<scalar>::getRefinedDynamics(int refinements,powerS iteration,int directions,inputType_t inputType)
 {
-  AbstractPolyhedra<scalar>&reachTube=getAbstractReachTube(iteration,2,directions,inputType);
+  AbstractPolyhedra<scalar>&reachTube=(!m_safeReachTube.isEmpty() && ms_incremental) ? getRefinedAbstractReachTube(iteration,2,directions,inputType) : getAbstractReachTube(iteration,2,directions,inputType);
   if (ms_trace_dynamics>=eTraceDynamics) {
     reachTube.logTableau("PreCegar:",true);
     reachTube.logVertices(true);
@@ -440,12 +519,14 @@ AbstractPolyhedra<scalar> CegarSystem<scalar>::synthesiseDynamicBounds(inputType
 
 /// Creates a model for the quantization noise as an input specification
 template<class scalar>
-AbstractPolyhedra<scalar> CegarSystem<scalar>::generateNoiseInput()
+AbstractPolyhedra<scalar> CegarSystem<scalar>::generateNoiseInput(scalar sampling,scalar delay)
 {
   int odimension=(m_odimension>0) ? m_odimension : m_dimension;
   int ndimension=1;
   AbstractPolyhedra<scalar> result(ndimension);
-  int fbits=m_paramValues.coeff(eNumBits,1)-m_paramValues.coeff(eNumBits,2);
+  int fbits;
+  if (ms_fixedBVs) fbits=m_paramValues.coeff(eNumBits,1)-m_paramValues.coeff(eNumBits,2);
+  else fbits=m_paramValues.coeff(eNumBits,2);
   if (fbits<=0) fbits=m_paramValues.coeff(eNumBits,0);
   if (fbits<=0) fbits=func::getDefaultPrec();
   scalar lsb=func::pow(this->ms_two,-fbits);
@@ -455,6 +536,7 @@ AbstractPolyhedra<scalar> CegarSystem<scalar>::generateNoiseInput()
   faces.block(ndimension,0,ndimension,ndimension)=-MatrixS::Identity(ndimension,ndimension);
   scalar fb_noise=m_feedback.cwiseAbs().sum()/*lpNorm<1>()*/+this->ms_one;//|Noise|<(|K|_1+1)lsb assuming q1,q2=1lsb,(q3:=q1->K) = (|K|_1q1+q2)
   supports.coeffRef(0,0)=lsb*(fb_noise);
+  if (!func::isZero(delay)) supports.coeffRef(0,0)+=getDelayNoise(sampling,delay).norm();
   supports.coeffRef(1,0)=supports.coeff(0,0);
   result.load(faces,supports);
   return result;
@@ -462,7 +544,7 @@ AbstractPolyhedra<scalar> CegarSystem<scalar>::generateNoiseInput()
 
 /// Creates a model for the input of the closed loop
 template<class scalar>
-AbstractPolyhedra<scalar> CegarSystem<scalar>::generateFeedbackInput(int fdimension,bool makeNoise,MatrixS &sensitivity)
+AbstractPolyhedra<scalar> CegarSystem<scalar>::generateFeedbackInput(int fdimension,bool makeNoise,MatrixS &sensitivity,scalar sampling,scalar delay)
 {
   AbstractPolyhedra<scalar> inputs(0);
   if (m_reference.getDimension()>0) {
@@ -476,7 +558,7 @@ AbstractPolyhedra<scalar> CegarSystem<scalar>::generateFeedbackInput(int fdimens
   }
   if (makeNoise) {
     //m_closedLoop.setInputType(eVariableInputs);
-    AbstractPolyhedra<scalar> noiseInputs=generateNoiseInput();
+    AbstractPolyhedra<scalar> noiseInputs=generateNoiseInput(sampling,delay);
     inputs.concatenate(noiseInputs);
     sensitivity.conservativeResize(m_dimension,inputs.getDimension());
     sensitivity.block(0,inputs.getDimension()-noiseInputs.getDimension(),m_dimension,noiseInputs.getDimension())=MatrixS::Ones(m_dimension,noiseInputs.getDimension());
@@ -805,6 +887,212 @@ void CegarSystem<scalar>::makeConvergentSystem(ParamMatrix &params,bool run,bool
   if (save) DynamicalSystem<scalar>::save();
   ms_fullAnswers=ans;
   if (run) process();
+}
+
+/// Truncates the value to the current controller precision
+template <class scalar>
+scalar CegarSystem<scalar>::truncateCoefficient(const scalar& coeff)
+{
+  int totalbits=m_paramValues.coeff(eNumBits,1);
+  long long fracbits=m_paramValues.coeff(eNumBits,2);
+  if (totalbits<=0) {
+    totalbits=m_paramValues.coeff(eNumBits,0);
+    if (totalbits<=0) totalbits=func::getDefaultPrec();
+    fracbits=totalbits;
+  }
+  else if (fracbits==0) fracbits=totalbits>>1;
+  refScalar fxp_one = (1 << fracbits);
+  if (ms_fixedBVs) {
+    int intbits=totalbits-fracbits;
+    scalar lower=floor(func::toLower(coeff) * fxp_one)/fxp_one;
+    scalar upper=floor(func::toUpper(coeff) * fxp_one)/fxp_one;
+    scalar new_coeff=func::getHull(lower,upper);
+    scalar fxp_max=(1 << intbits);
+    return (func::isPositive(new_coeff-fxp_max)) ? fxp_max : new_coeff;
+  }
+  int expMask=(1<<(totalbits-fracbits-1))-1;
+  fxp_one*=2;
+  typename func::exponent exp;
+  scalar upper=floor(func::extractExponent(func::toUpper(coeff),exp)*fxp_one);
+  if (exp>expMask) upper=(1<<(expMask+1))-(1.0/(1<<expMask));
+  else if (exp>=0) upper*=scalar(1<<exp);
+  else if (-exp>expMask) upper=0;
+  else upper/=scalar(1<<-exp);
+  scalar lower=floor(func::extractExponent(func::toLower(coeff),exp)*fxp_one);
+  if (exp>expMask) upper=(1<<(expMask+1))-(1.0/(1<<expMask));
+  else if (exp>=0) lower*=scalar(1<<exp);
+  else if (-exp>expMask) lower=0;
+  else lower/=scalar(1<<-exp);
+  scalar newCoeff=func::getHull(lower,upper);
+  newCoeff/=fxp_one;
+  return newCoeff;
+}
+
+/// Retrieves constraints on the controller coefficients based on the Dynamic constraints
+template<class scalar>
+AbstractPolyhedra<scalar> CegarSystem<scalar>::getControllerDynBounds(AbstractPolyhedra<scalar>& reachTube,int &orBlockSize)
+{
+  //max((I-A-BK)Sv)>max(Rv) -> +p_R+p_S((A-I)^T)<-p_S(BK)
+  //(A-I)S-R>-SBK -> -\sum(bji)k_{lj}S_lV_l < (A-I)Sv-B_nR_nv
+  MatrixS templates=reachTube.getDirections();
+
+  MatrixS dynamics=m_dynamics;
+  for (int i=0;i<m_dimension;i++) dynamics.coeffRef(i,i)-=ms_one;
+  MatrixS aDirections=dynamics.transpose()*templates;
+  MatrixS inDirections=m_sensitivity.transpose()*templates;
+  MatrixS aSupports;
+  reachTube.maximiseAll(aDirections,aSupports);
+
+  if (!m_reference.isEmpty()) {
+    MatrixS inSupports;
+    m_reference.maximiseAll(inDirections,inSupports);
+    aSupports-=inSupports;
+  }
+
+  MatrixS &vertices=reachTube.getVertices();
+  orBlockSize=vertices.rows();
+  MatrixS supports(aSupports.rows()*vertices.rows(),1);
+  MatrixS faces(supports.rows(),m_feedback.rows()*m_feedback.cols());
+  MatrixS coefficients=templates.transpose()*m_sensitivity;
+  for (int row=0;row<templates.cols();row++) {
+    for (int i=0;i<orBlockSize;i++) {
+      for (int j=0;j<m_feedback.rows();j++) {
+        faces.block(row*orBlockSize+i,j*m_dimension,1,m_dimension)=coefficients.coeff(row,j)*vertices.row(i);
+      }
+      supports.coeffRef(row*orBlockSize+i,0)=aSupports.coeff(row,0);
+    }
+  }
+  AbstractPolyhedra<scalar> result(faces.cols());
+  result.load(faces,supports);
+  return result;
+}
+
+/// Retrieves constraints on the controller coefficients based on the I/O constraints
+template<class scalar>
+AbstractPolyhedra<scalar> CegarSystem<scalar>::getControllerInBounds(AbstractPolyhedra<scalar>& reachTube)
+{
+  MatrixS &vertices=reachTube.getVertices();
+  MatrixS directions=m_inputs.getDirections();
+  directions.conservativeResize(m_fdimension,directions.cols());
+  MatrixS faces(vertices.rows()*directions.cols(),vertices.cols()*m_fdimension);
+  MatrixS supports(vertices.rows()*directions.cols(),1);
+  MatrixS inputSupports=m_inputs.getSupports();
+  for (int row=0;row<vertices.rows();row++) {
+    for (int col=0;col<directions.cols();col++) {
+      for (int i=0;i<m_fdimension;i++) {
+        for (int j=0;j<vertices.cols();j++) {
+          faces.coeffRef(row*directions.cols()+col,i*vertices.cols()+j)=vertices.coeff(row,j)*directions.coeff(i,col);
+        }
+      }
+      supports.coeffRef(row*directions.cols()+col)=inputSupports.coeff(col,0);
+    }
+  }
+  AbstractPolyhedra<scalar> result(vertices.cols()*m_fdimension);
+  result.load(faces,supports);
+  return result;
+}
+
+/// Creates the observer matrices (based on the FWL truncation)
+/// and returns the maximum error caused by the truncation
+/// for the eigenvalues of the observed system
+template <class scalar>
+scalar CegarSystem<scalar>::makeObserver(MatrixS &dynamics,MatrixS &sensitivity,const MatrixS &feedbackDynamics)
+{
+  m_observerDynamics.resize(m_dynamics.rows(),m_dynamics.cols());
+  for (int row=0;row<m_dynamics.rows();row++) {
+    for (int col=0;col<m_dynamics.cols();col++) {
+      m_observerDynamics.coeffRef(row,col)=truncateCoefficient(m_dynamics.coeff(row,col));
+    }
+  }
+  m_observerDynamicsError=(m_dynamics-m_observerDynamics).norm();
+  m_observerSensitivity.resize(m_sensitivity.rows(),m_sensitivity.cols());
+  for (int row=0;row<m_sensitivity.rows();row++) {
+    for (int col=0;col<m_sensitivity.cols();col++) {
+      m_observerSensitivity.coeffRef(row,col)=truncateCoefficient(m_sensitivity.coeff(row,col));
+    }
+  }
+  m_observerSensitivityError=(m_sensitivity-m_observerSensitivity).norm();
+  m_observerOutputSensitivity.resize(m_outputSensitivity.rows(),m_outputSensitivity.cols());
+  for (int row=0;row<m_outputSensitivity.rows();row++) {
+    for (int col=0;col<m_outputSensitivity.cols();col++) {
+      m_observerOutputSensitivity.coeffRef(row,col)=truncateCoefficient(m_outputSensitivity.coeff(row,col));
+    }
+  }
+  m_observerOutputSensitivityError=(m_outputSensitivity-m_observerOutputSensitivity).norm();
+  int dimension=2*m_dimension;
+  if (&dynamics!=&ms_emptyMatrix) {
+    MatrixS observerFeedback=m_observer*m_observerOutputSensitivity;
+    dynamics.conservativeResize(dimension,dimension);
+    dynamics.block(0,m_dimension,m_dimension,m_dimension)=feedbackDynamics;
+    dynamics.block(m_dimension,m_dimension,m_dimension,m_dimension)=m_dynamics-observerFeedback;
+    dynamics.block(m_dimension,0,m_dimension,m_dimension)=dynamics.block(m_dimension,m_dimension,m_dimension,m_dimension);
+    dynamics.block(m_dimension,0,m_dimension,m_dimension)-=m_observerDynamics-m_observer*m_observerOutputSensitivity;
+    dynamics.block(0,0,m_dimension,m_dimension)+=feedbackDynamics-m_observerSensitivity.block(0,0,m_dimension,m_fdimension)*m_feedback;
+  }
+  if (&sensitivity!=&ms_emptyMatrix) {
+    sensitivity.conservativeResize(dimension,sensitivity.cols()+m_observer.cols());
+    sensitivity.block(0,sensitivity.cols(),dimension,m_observer.cols())=MatrixS::Zero(dimension,m_observer.cols());
+    sensitivity.block(dimension,0,dimension,sensitivity.cols())=MatrixS::Zero(dimension,sensitivity.cols());
+    sensitivity.block(dimension,sensitivity.cols(),dimension,m_observer.cols())=m_observer;
+  }
+  return m_observerDynamicsError+m_observerSensitivityError+m_observerOutputSensitivityError;
+}
+
+template <class scalar>
+bool CegarSystem<scalar>::makeClosedSystem(CegarSystem<scalar> &closedSystem)
+{
+  int dimension=(m_inputType>eParametricInputs) ? 4*m_dimension : 2*m_dimension;
+  closedSystem.setParams(m_paramValues);
+  closedSystem.m_paramValues.coeffRef(eNumStates,0)=dimension;
+  for (int i=0;i<3;i++) {
+    closedSystem.m_paramValues.coeffRef(eNumInputs,i)=0;
+    closedSystem.m_paramValues.coeffRef(eNumVarInputs,i)=0;
+  }
+  MatrixS dynamics(dimension,dimension);
+  AbstractPolyhedra<scalar> guard;
+  AbstractPolyhedra<scalar> safeReachTube;
+  AbstractPolyhedra<scalar> inputs(m_transformedInputs.getPolyhedra());
+  AbstractPolyhedra<scalar> initialState(m_initialState.getPolyhedra());
+  if (m_inputType>eParametricInputs) {
+    dynamics.block(0,0,dimension,m_dimension)=MatrixS::Zero(dimension,m_dimension);
+    dynamics.block(0,m_dimension,m_dimension,m_dimension)=MatrixS::Identity(m_dimension,m_dimension);
+    dynamics.block(m_dimension,m_dimension,m_dimension,m_dimension)=m_dynamics;
+    dynamics.block(2*m_dimension,m_dimension,2*m_dimension,m_dimension)=MatrixS::Zero(2*m_dimension,m_dimension);
+    dynamics.block(0,2*m_dimension,m_dimension,m_dimension)=MatrixS::Identity(m_dimension,m_dimension);
+    dynamics.block(m_dimension,2*m_dimension,m_dimension,m_dimension)=MatrixS::Zero(m_dimension,m_dimension);
+    dynamics.block(2*m_dimension,2*m_dimension,m_dimension,m_dimension)=MatrixS::Identity(m_dimension,m_dimension);
+    dynamics.block(3*m_dimension,2*m_dimension,m_dimension,m_dimension)=MatrixS::Zero(m_dimension,m_dimension);
+    dynamics.block(0,3*m_dimension,2*m_dimension,m_dimension)=MatrixS::Zero(2*m_dimension,m_dimension);
+    dynamics.block(2*m_dimension,3*m_dimension,m_dimension,m_dimension)=MatrixS::Identity(m_dimension,m_dimension);
+    for (int row=0;row<m_dimension;row++) {
+      for (int col=0;col<m_dimension;col++) {
+        if (func::isPositive(m_dynamics.coeff(row,col))) dynamics.coeffRef(3*m_dimension+row,3*m_dimension+col)=m_dynamics.coeff(row,col);
+        else dynamics.coeffRef(3*m_dimension+row,3*m_dimension+col)=-m_dynamics.coeff(row,col);
+      }
+    }
+
+    m_transformedInputs.getPolyhedra().getSquareAbstraction(inputs,true);
+    AbstractPolyhedra<scalar> secondState;
+    AbstractPolyhedra<scalar> secondInput;
+    initialState.getTransformedPolyhedra(secondState,m_dynamics);
+    initialState.concatenate(secondState);
+    inputs.getTransformedPolyhedra(secondInput,m_dynamics);
+    initialState.concatenate(inputs);
+    initialState.concatenate(secondInput);
+  }
+  else {
+    dynamics.block(0,0,m_dimension,m_dimension)=m_dynamics;
+    dynamics.block(0,m_dimension,m_dimension,m_dimension)=MatrixS::Zero(m_dimension,m_dimension);
+    dynamics.block(m_dimension,0,m_dimension,m_dimension)=MatrixS::Zero(m_dimension,m_dimension);
+    dynamics.block(m_dimension,m_dimension,m_dimension,m_dimension)=MatrixS::Identity(m_dimension,m_dimension);
+    initialState.concatenate(inputs);
+  }
+  inputs.clear();
+  MatrixS sensitivity=MatrixS(0,0);
+  closedSystem.setInputType(eNoInputs);
+  closedSystem.changeDimensions(dynamics.rows(),sensitivity.cols(),0,0);
+  bool result=closedSystem.load(dynamics,sensitivity,guard,initialState,inputs,safeReachTube);
+  return result;
 }
 
 #ifdef USE_LDOUBLE

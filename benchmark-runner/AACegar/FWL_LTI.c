@@ -3,10 +3,13 @@
 
 #include "FWL_LTI.h"
 #include "types.h"
-#include "system.h"
-#if defined(__CPROVER) && !defined(_FIXEBV)
-  typedef __CPROVER_floatbv[_EXP_BITS][_FRAC_BITS] controller_floatt;
+
+vectort plant_cbmc,controller_cbmc;
+#ifdef _USE_OBSERVER
+vectort observer_plant_cbmc,observer_cbmc;
+matrixt observer_transform_cbmc,observer_posttransform_cbmc;
 #endif
+#include "system.h"
 
 void print_vector(char *name,vectort vector)
 {
@@ -32,11 +35,7 @@ void print_matrix(char *name,matrixt matrix)
 #endif
 }
 
-vectort plant_cbmc,controller_cbmc;
-#ifdef _USE_OBSERVER
-vectort observer_plant_cbmc,observer_cbmc;
-#endif
-matrixt transform_cbmc,observer_transform_cbmc;
+matrixt transform_cbmc;
 matrixt loop_cbmc;
 
 #include "FWL_LTI_FWL.h"
@@ -53,8 +52,8 @@ matrixt loop_cbmc;
 
 int initialization()
 {
-  #ifndef _CPROVER
-    printf("initializing");
+  #ifndef __CPROVER
+    printf("initializing\n");
   #endif
   get_bounds();
   int result=validation();
@@ -92,14 +91,22 @@ int main()
   for (i=0;i<_DIMENSION;i++) observerControlError+=observer[i]*observer[i];
   observerControlError=observer_output_sensitivity_error*observerControlError;
   observerControlError+=observer_dynamics_error;
-  result=check_restricted_stability(observer_plant_cbmc,1.0/(1.0-observerControlError));
+  control_floatt eigenCap=1.0;
+  eigenCap-=observerControlError;
+  control_floatt final_speed_factor=speed_factor;
+  final_speed_factor/=eigenCap;
+  result=check_restricted_stability(observer_plant_cbmc,final_speed_factor);
   
   if (result>0)
   {
     control_floatt observerInputError=0;
     for (i=0;i<_DIMENSION;i++) observerInputError+=controller[i]*controller[i];
     observerControlError+=observer_sensitivity_error*observerInputError;
-    result=check_restricted_stability(plant_cbmc,speed_factor/(1.0-observerControlError));
+    eigenCap=1.0;
+    eigenCap-=observerControlError;
+    final_speed_factor=speed_factor;
+    final_speed_factor/=eigenCap;
+    result=check_restricted_stability(plant_cbmc,final_speed_factor);
   }
 #else
   result=check_restricted_stability(plant_cbmc,speed_factor);
@@ -110,7 +117,11 @@ int main()
 #endif 
 #ifdef _NUM_ITERATIONS
 //  if (result>0) checkIterations(loop_cbmc);
-  if (result>0) checkControlIterations();
+  #ifdef _USE_OBSERVER
+    if (result>0) checkObservedIterations();
+  #else
+    if (result>0) checkControlIterations();
+  #endif
 #endif
 #ifdef __CPROVER
   __CPROVER_array_copy(controller_cbmc, controller);

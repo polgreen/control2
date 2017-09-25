@@ -70,6 +70,22 @@ void SortedTableau<scalar>::UpdateRowOrderVector(const Set &priorityRows)
 }
 
 template <class scalar>
+bool SortedTableau<scalar>::contains(const MatrixS& vector,int offset,bool fast)
+{
+  if (vector.cols()<numCols()+offset) return false;
+  if (fast)
+  {}
+  for (int row=0;row<numRows();row++) {
+    int col;
+    for (col=0;col<numCols();col++) {
+      if (!func::isZero(vector.coeff(0,col+offset)-getCoeff(row,col))) break;
+    }
+    if (col==numCols()) return true;
+  }
+  return false;
+}
+
+template <class scalar>
 long SortedTableau<scalar>::subPartition(std::vector<int> &order, const long p, const long r)
 {
   long i,j,tmp;
@@ -113,6 +129,21 @@ void SortedTableau<scalar>::QuickMatrixSort(std::vector<int> &order, const long 
     QuickMatrixSort(order, p, q);
     QuickMatrixSort(order, q+1, r);
   }
+}
+
+/// Pivots the tableau in place on the given pivot
+template <class scalar>
+void SortedTableau<scalar>::pivot(MatrixS &auxiliary,pivot_t pivot)
+{
+  int dimension=numCols();
+  MatrixS epsMatrix(dimension,1);
+  for (int col=0;col<numCols();col++) epsMatrix.coeffRef(col,0)=-getCoeff(pivot.row,col);
+  epsMatrix.coeffRef(pivot.col,0)=func::ms_1;
+  epsMatrix*=func::ms_1/((pivot.row>=numRows()) ? auxiliary.coeff(0,pivot.col) : getCoeff(pivot.row,pivot.col));
+  m_dirty=false;
+  for (int row = 0; row < numRows(); row++) setCoeff(row,pivot.col,entry(epsMatrix,row,0));
+  if (auxiliary.cols()>0) auxiliary.coeffRef(0,pivot.col)=(auxiliary*epsMatrix).coeff(0,0);
+  m_dirty=true;
 }
 
  /*  quicksorts matrix rows based on the column order (first column is most significant)
@@ -375,6 +406,7 @@ bool SortedMatrix<scalar>::copyOrder(SortedMatrix<scalar> &src)
 template <class scalar>
 scalar SortedMatrix<scalar>::entry(MatrixS &basis,const int row, const int col)
 {
+  if (m_dirty) return coeff(row,col);
   scalar temp(coeff(row,0) * basis.coeff(0,col));
   refScalar width,maxWidth=func::toWidth(temp);
   int dimension=cols();
@@ -399,6 +431,40 @@ scalar SortedMatrix<scalar>::entry(MatrixS &basis,const int row, const int col)
     }
   }
   return temp;
+}
+
+/// Pivots the tableau in place on the given pivot
+template <class scalar>
+void SortedMatrix<scalar>::pivot(MatrixS &auxiliary,pivot_t pivot)
+{
+  if (pivot.row<rows()) {
+    refScalar invXtemp0 = func::toCentre(func::ms_1/getCoeff(pivot.row,pivot.col));
+    scalar Xtemp;
+    for (int col=0;col<numCols();col++) {
+      if ((col!=pivot.col) && !func::isZero(getCoeff(pivot.row,col))) {
+        Xtemp = coeff(pivot.row,col)*invXtemp0;
+        for (int row = 0; row < numRows(); row++) {
+          func::msub(coeffRef(row,col),coeff(row,pivot.col),Xtemp);
+        }
+      }
+    }
+    col(pivot.col)*=invXtemp0;
+  }
+  else if (auxiliary.cols()!=numCols()) return;
+  else {
+    refScalar invXtemp0 = func::toCentre(func::ms_1/auxiliary.coeff(0,pivot.col));
+    scalar Xtemp;
+    for (int col=0;col<numCols();col++) {
+      if ((col!=pivot.col) && !func::isZero(auxiliary.coeff(0,col))) {
+        Xtemp = auxiliary.coeff(0,col)*invXtemp0;
+        for (int row = 0; row < numRows(); row++) {
+          func::msub(coeffRef(row,col),coeff(row,pivot.col),Xtemp);
+        }
+        func::msub(auxiliary.coeffRef(0,col),auxiliary.coeff(0,pivot.col),Xtemp);
+      }
+    }
+    col(pivot.col)*=invXtemp0;
+  }
 }
 
 template <class scalar>

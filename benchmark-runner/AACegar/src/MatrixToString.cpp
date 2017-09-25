@@ -15,7 +15,7 @@ std::string defaultSeparator=" , ";
 std::string dimensionMismatch="Dimensions do not match";
 std::string loadError="Load error";
 std::string processingError="Process error";
-std::string version="1.3.6";
+std::string version="1.3.7";
 
 namespace abstract {
 
@@ -509,29 +509,32 @@ int MatToStr<scalar>::StringToDim(ParamMatrix &paramValues,const char * pData,si
     if (pData[pos]==ms_codes[j]) found=true;
   }
   if (!found) return pos;
-  for (int j=0;j<eNumParameters;j++) {
-    for (int k=0;k<3;k++) paramValues.coeffRef(j,k)=0;
-    if (pData[pos]==ms_codes[j]) {
-      if (pData[++pos]!='=') return -pos;
-      pos++;
-      paramValues.coeffRef(j,0)=std::strtold(pData+pos,&pEnd);
-      pos=(int)(pEnd-pData);
-      pos=skipSpaces(pData,pos,end);
-      if (pData[pos]==':') {
+  for (int i=0;i<eNumParameters;i++) {
+    for (int j=0;j<eNumParameters;j++) {
+      if (i==0) for (int k=0;k<3;k++) paramValues.coeffRef(j,k)=0;
+      if (pData[pos]==ms_codes[j]) {
+        if (pData[++pos]!='=') return -pos;
         pos++;
-        paramValues.coeffRef(j,1)=std::strtold(pData+pos,&pEnd);
+        paramValues.coeffRef(j,0)=std::strtold(pData+pos,&pEnd);
         pos=(int)(pEnd-pData);
         pos=skipSpaces(pData,pos,end);
         if (pData[pos]==':') {
           pos++;
-          paramValues.coeffRef(j,2)=std::strtold(pData+pos,&pEnd);
+          paramValues.coeffRef(j,1)=std::strtold(pData+pos,&pEnd);
           pos=(int)(pEnd-pData);
           pos=skipSpaces(pData,pos,end);
+          if (pData[pos]==':') {
+            pos++;
+            paramValues.coeffRef(j,2)=std::strtold(pData+pos,&pEnd);
+           pos=(int)(pEnd-pData);
+           pos=skipSpaces(pData,pos,end);
+          }
         }
+        if (pData[pos]==',') pos++;
+        pos=skipSpaces(pData,pos,end);
       }
-      if (pData[pos]==',') pos++;
-      pos=skipSpaces(pData,pos,end);
     }
+    if (pData[pos]=='\n') return pos;
   }
   return pos;
 }
@@ -780,7 +783,7 @@ void MatToStr<scalar>::logData(scalar number,const std::string title,bool bracke
 }
 
 template <class scalar>
-void MatToStr<scalar>::logData(std::vector<int> &vector,const std::string title)
+void MatToStr<scalar>::logData(const std::vector<int> &vector,const std::string title)
 {
   std::stringstream stream;
   stream << title << vector[0];

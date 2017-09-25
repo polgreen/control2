@@ -155,6 +155,8 @@ void ProgramOptions::process()
       //DynamicalSystem<long double> ldsystem;
       MatToStr<long double>::ms_useConsole=useConsole;
       AbstractMatrix<long double>::ms_sparse=useSparse;
+      Tableau<long double>::ms_useBasis=useBasis;
+      CegarSystem<long double>::ms_fixedBVs=useFixedBV;
       Synthesiser<long double> ldsystem;
       ldsystem.m_synthType=synthType;
       ldsystem.ms_fullAnswers=!answerOnly;
@@ -172,6 +174,8 @@ void ProgramOptions::process()
       MatToStr<long double>::ms_useConsole=useConsole;
       MatToStr<ldinterval>::ms_traceIntervals=traceIntervals;
       AbstractMatrix<ldinterval>::ms_sparse=useSparse;
+      Tableau<ldinterval>::ms_useBasis=useBasis;
+      CegarSystem<ldinterval>::ms_fixedBVs=useFixedBV;
       Synthesiser<ldinterval> ldisystem;
       ldisystem.m_synthType=synthType;
       ldisystem.ms_fullAnswers=!answerOnly;
@@ -188,7 +192,9 @@ void ProgramOptions::process()
   #ifdef USE_SINGLES
       //DynamicalSystem<mpfr::mpreal> mpsystem;
       MatToStr<mpfr::mpreal>::ms_useConsole=useConsole;
+      Tableau<mpfr::mpreal>::ms_useBasis=useBasis;
       AbstractMatrix<mpfr::mpreal>::ms_sparse=useSparse;
+      CegarSystem<mpfr::mpreal>::ms_fixedBVs=useFixedBV;
       Synthesiser<mpfr::mpreal> mpsystem;
       mpsystem.m_synthType=synthType;
       mpsystem.ms_fullAnswers=!answerOnly;
@@ -205,7 +211,9 @@ void ProgramOptions::process()
       MatToStr<mpinterval>::ms_traceIntervals=traceIntervals;
       MatToStr<mpinterval>::ms_useConsole=useConsole;
       MatToStr<mpfr::mpreal>::ms_useConsole=useConsole;
+      Tableau<mpinterval>::ms_useBasis=useBasis;
       AbstractMatrix<mpinterval>::ms_sparse=useSparse;
+      CegarSystem<mpinterval>::ms_fixedBVs=useFixedBV;
       Synthesiser<mpinterval> mpisystem;
       mpisystem.m_synthType=synthType;
       mpisystem.ms_fullAnswers=!answerOnly;
@@ -230,16 +238,18 @@ ProgramOptions::ProgramOptions(int argc, char *argv[]) :
   continuous(false),
   answerOnly(true),
   useConsole(true),
+  useBasis(true),
   useSparse(false),
+  useFixedBV(false),
   parseError(false)
 {
   traceIntervals=true;
   formal=true;
 
   //Important!: these have to be in the same order as the enums
-  std::string commandOptions[eMaxStr]={"params","dynamics","isense","osense","iosense","guard","iguard","sguard","oguard","init","inputs","templates","arma","spaceex","control","ref","inc","sample","rand"};
+  std::string commandOptions[eMaxStr]={"params","dynamics","isense","osense","iosense","guard","iguard","sguard","oguard","init","inputs","templates","arma","spaceex","control","observe","ref","inc","sample","speed","rand"};
   std::string typeOptions[eAllTypes+1]={"ld","mp","ldi","mpi","all"};
-  std::string synthOptions[eCEGISSynth+1]={"aa-tube","tube","sets","init","input","sense","eigen","dynamics","CEGIS"};
+  std::string synthOptions[eMaxSynth]={"aa-tube","sq-tube","tube","sets","init","input","sense","eigen","dynamics","CEGIS","observer"};
 
   typedef std::map<std::string,optionStr_t> optionNames_t;
   typedef std::map<std::string,numericType_t> typeNames_t;
@@ -253,7 +263,7 @@ ProgramOptions::ProgramOptions(int argc, char *argv[]) :
     typeNames.insert(std::pair<std::string,numericType_t>(typeOptions[i],(numericType_t)i));
   }
   synthNames_t synthNames;
-  for (int i=0;i<=eCEGISSynth;i++) {
+  for (int i=0;i<eMaxSynth;i++) {
     synthNames.insert(std::pair<std::string,synthesisType_t>(synthOptions[i],(synthesisType_t)i));
   }
 
@@ -317,7 +327,10 @@ ProgramOptions::ProgramOptions(int argc, char *argv[]) :
       else if (strcmp(argv[i]+offset,"ii")==0)    traceIntervals=false;
       else if (strcmp(argv[i]+offset,"cont")==0)  continuous=true;
       else if (strcmp(argv[i]+offset,"mono")==0)  incremental=false;
+      else if (strcmp(argv[i]+offset,"basis")==0) useBasis=true;
+      else if (strcmp(argv[i]+offset,"nobasis")==0) useBasis=false;
       else if (strcmp(argv[i]+offset,"sparse")==0) useSparse=true;
+      else if (strcmp(argv[i]+offset,"fixedbv")==0) useFixedBV=true;
       else if (strcmp(argv[i]+offset,"norm")==0)  displayType=eNormalised;
       else if (strcmp(argv[i]+offset,"vert")==0)  displayType=eVertices;
       else if (strcmp(argv[i]+offset,"ine")==0)   displayType=eInequalities;
