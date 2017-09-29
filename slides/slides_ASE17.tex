@@ -9,7 +9,8 @@
 %       SET OPTIONS BELOW        %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\usepackage{xspace}
+\usepackage{microtype}
+\usepackage{xspace,framed}
 \usepackage{subfig}
 \usepackage{adjustbox}
 \usepackage{pifont,color,soul}
@@ -167,27 +168,361 @@ alternativetitlepage=true,
 
 \end{frame}
 
-\begin{frame}{State-feedback architecture}
-\vspace{-1cm}
-\begin{center}
-  \begin{overprint}
-    \onslide<1,2>
-    \centerline{\includegraphics[width=.9\textwidth]{figures/spirals/diagram-15.png}}
-    %% \onslide<3->
-    %% \centerline{\includegraphics[width=.9\textwidth]{figures/spirals/diagram-16.png}}
-  \end{overprint}
-  \end{center}
-  \vspace{-1cm}
-  \only<1,2>{{\bf Continuous-discrete system}}
-  %\only<3->{{\bf Digital domain}}  
-  \begin{itemize}
-  \item \only<1,2>{\colorbox{green!70}{Plant:
-    \textsc{$\dot{x}(t) = Ax(t)+ Bu(t), \quad t \in \mathbb R_0^+,~x(0)=initial~state$}}}
-    %% \only<3->{\colorbox{azure!70}{Plant:
-    %% \textsc{$x_{k+1} = A x_k+ B u_k, \quad k \in \mathbb \mathbb N,~x_0=initial~state$}}}
-  \item \colorbox{azure!50}{State-feedback controller:   \only<1>{$u_k = r_{k} - C x_k$}\only<2->{$u_k = - C x_k$}}
-  %\item \uncover<4->{Finite precision}  
-\end{itemize}
+\begin{frame}{Transfer-Function Representation}
+%
+\begin{equation}
+\small
+\label{eq:transferfunction}
+H(z)=\frac{B(z)}{A(z)}=\frac{b_{0}+b_{1}z^{-1}+...+b_{M}z^{-M}}{a_{0}+a_{1}z^{-1}+...+a_{N}z^{-N}},
+\end{equation}
+%
+In this representation, $z^{-1}$ is called the backward-shift operator;
+\\$A(z)$ and $B(z)$ are the denominator and numerator polynomials; 
+\\and $N$ and $M$ are the order of the denominator and numerator polynomials, respectively.
 \end{frame}
 
+\begin{frame}{State-Space Representation}
+In state-space form, the behavior of a system is represented via a state
+evolution equation $x(n+1)$ and an instantaneous output equation $y(n)$, as
+follows:
+%
+\begin{equation}
+\begin{split}
+x(n+1) &= A x(n) + B u(n)
+\\
+y(n) &= C x(n) + D u(n), 
+\end{split}\label{eq:ss-example}
+\end{equation}
+%
+where $A$, $B$, $C$ and $D$ are matrices that fully specify the model. 
+\end{frame}
+
+\begin{frame}{Counterexample-Guided Inductive Synthesis for Control Systems}
+
+\colorbox{green!70}{CEGIS with multi-staged verification:}
+
+\begin{figure}[htb]
+{\scriptsize
+\centering
+\resizebox{.8\textwidth}{!}
+{
+  \begin{tikzpicture}[scale=0.3,->,>=stealth',shorten >=.2pt,auto, semithick, initial text=, ampersand replacement=\&,]
+  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center
+},
+          row sep=.6cm, column sep=.9cm] {
+   \coordinate (aux1);
+   \& \coordinate (aux2);
+   \&;\\
+   \coordinate (aux3);
+   \& \coordinate (aux4);
+   \&;\\
+   \coordinate (aux5);
+   \& \coordinate (aux6);
+   \&;\\
+   \node[minimum width=1.5cm, minimum height=0.6cm, fill=gray!20] (synth) {{\sc Synthesize}};
+   \&
+   complexnode/.pic={ 
+     \node[rectangle,draw,dotted,
+	minimum width=6cm,
+	minimum height=1cm,
+        pattern=north west lines, pattern color=gray!20,
+	label={\sc ~~~~~~~~~~~~Verify},] (verif) {};
+     \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif1) at ([xshift=-2cm]verif.center) {{\sc 1.Safety}};
+     \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif2) at ([xshift=0cm]verif.center) {{\sc 2.Precision}};
+     \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif3) at ([xshift=2cm]verif.center) {{\sc 3.Complete}};
+     %\node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif4) at ([xshift=3.1cm]verif.center) {{\sc 5.Sampling}};
+   } 
+   \& \node[ellipse, fill=gray!20] (done) {{\sc Done}};\\
+   \& \\
+   \node[minimum height=0cm] (gp) {\sf Program Search};
+   \&
+   complexnode/.pic={ 
+     \coordinate (aux);
+   \node (bmc) at ([xshift=-2cm]aux.center) {\sf BMC-based \\ \sf Verifier};
+   \node (fp)  at ([xshift=0cm]aux.center) {\sf Fixed-point \\ \sf Arithmetic\\ \sf Verifier};
+   \node (sv)  at ([xshift=2cm]aux.center) {\sf Completeness\\ \sf Verifier};
+   %\node (cv)  at ([xshift=3.1cm]aux.center) {\sf Sampling\\Verifier};
+   }   
+    \\
+  };
+
+   \path
+    ([yshift=2em]synth.east) edge node[xshift=-0.5em,align=center] {K} ([yshift=2em]verif1.west)
+    ([yshift=-2em]verif1.west) edge node {C-ex} ([yshift=-2em]synth.east)
+    ([xshift=-5em]fp.north) edge node[align=center]  {} ([xshift=-5em]verif2.south)
+    ([xshift=-5em]sv.north) edge node[align=center]  {} ([xshift=-5em]verif3.south)
+    %([xshift=-5em]cv.north) edge node[align=center]  {T/F} ([xshift=-5em]verif4.south)
+    ([xshift=5em]verif1.south) edge node[align=center] {} ([xshift=5em]bmc.north)
+    ([xshift=5em]verif2.south) edge node[align=center] {} ([xshift=5em]fp.north)
+    ([xshift=5em]verif3.south) edge node[align=center] {} ([xshift=5em]sv.north)
+    %([xshift=5em]verif4.south) edge node[align=center] {$K$} ([xshift=5em]cv.north)
+    ([xshift=-5em]bmc.north) edge node[align=center]  {} ([xshift=-5em]verif1.south)
+    (verif) edge node {PASS} (done)
+    ([xshift=5em]synth.south) edge node[align=center] {} ([xshift=5em]gp.north)
+    ([xshift=-5em]gp.north) edge node[align=center] {} ([xshift=-5em]synth.south)
+    (aux3) edge (synth.north);
+   \path[-]
+   (verif2.north) edge node[align=center] {} ([xshift=0cm]aux6)
+   ([xshift=0cm]aux6) edge node[align=center] {Increase Precision} (aux5)
+   (verif3.north) edge node[align=center] {} ([xshift=6.7cm]aux4)
+   ([xshift=6.7cm]aux4) edge node[align=center] {Increase Unfolding Bound} (aux3);
+   %(verif4.north) edge node[align=center] {} ([xshift=10.5cm]aux2)
+   %([xshift=10.5cm]aux2) edge node[align=center] {Increase Sampling Rate} (aux1);
+
+ \end{tikzpicture}
+}}
+\caption{CEGIS with multi-staged verification}
+\label{fig:CEGIS-precision-increment}
+\end{figure}
+
+\end{frame}
+
+\begin{frame} {Counterexample-Guided Inductive Synthesis for Control Systems}
+
+\colorbox{green!70}{Abstraction-based CEGIS:}
+
+\begin{figure}
+\centering
+{\scriptsize
+  \resizebox{.8\textwidth}{!}
+  {
+\begin{tikzpicture}[scale=0.3,->,>=stealth',shorten >=.2pt,auto, semithick, ampersand replacement=\&,]
+  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center},row sep=.8cm, column sep=.2cm] {
+   \coordinate (aux1);
+   \& \coordinate (aux2);
+   \& ;\\
+   \&\node[fill=gray!20,align=center,xshift=-1.5cm] (pre) {{\sc 1. pre-}\\{\sc processing}};
+   \& \node[fill=gray!20,align=center] (abstract) {\sc 4. abstract};
+   \& \coordinate (aux); \\ 
+   \&
+   \& \node[fill=gray!20,align=center] (synth) {\sc 2. synthesize};
+   \& \node[fill=gray!20,align=center, minimum width=4cm] (verify) {\sc 3. verify ($\phi$)};
+      \node[draw=none] (SAT) at ([xshift=2.7cm,yshift=-.3cm]verify)  {\sc PASS};
+   \& \node[ellipse, fill=gray!20] (done) {{\sc Done}};\\
+   \&
+   \& \node[draw,rectangle,align=center] (KSAT) { \sf Program \\ \sf Search};
+   \& complexnode/.pic={
+     \coordinate (AA);
+     \node[draw,rectangle,align=center] (AAV) at ([xshift=-1.5cm]AA.center) { \sf Abstract\\ \sf Acceleration};
+     \node[draw,rectangle,align=center] (AAC) at ([xshift=1.5cm]AA.center) { \sf Abstraction \\ \sf Verifier};
+    }\\
+  };
+  \path
+    (pre.east) edge node[align=center] {} (abstract.west)
+    (abstract.south) edge node{} (synth.north)
+    ([yshift=1em]synth.east) edge node {$K$} ([yshift=1em]verify.west)
+    (aux) edge (abstract.east) 
+    (verify.east) edge (done.west);
+  \path
+    ([xshift=+.6cm]KSAT.north) edge[left] node[xshift=-.3cm] {} ([xshift=0.6cm]synth.south) 
+    ([xshift=-.6cm]synth.south) edge node[align=center,xshift=.3cm] {} ([xshift=-.6cm]KSAT.north)
+    ([yshift=.5cm]AAV.east) edge node{} ([yshift=.5cm]AAC.west)
+    ([yshift=-.5cm]AAC.west) edge node{} ([yshift=-.5cm]AAV.east)
+    (AAC.north) edge node{} ([xshift=4.9cm]verify.south)
+    ([xshift=-5cm]verify.south) edge node{} (AAV.north);
+  \path[-] 
+     (verify.north) edge node {C-ex} (aux);
+\end{tikzpicture}
+}
+}
+\caption{Abstraction-based CEGIS}
+\label{fig:CEGARIS} 
+\end{figure}
+
+\end{frame}
+
+
+\begin{frame}{DSSynth Architecture}
+
+\colorbox{green!70}{Phases of the controller synthesis:}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.9\textwidth]{figures/dssynth-flow.pdf}
+\caption{Phases of the controller synthesis}
+\label{fig:synthesis-flow}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}{DSSynth Procedures}
+
+%
+\begin{enumerate}
+%
+\item \textbf{Setup}: obtains the physical plant, fixed-point format and
+dynamic input ranges, and translates them to a specific structure in MATLAB.
+%
+\item \textbf{Parse}: obtains the digital system specification and translates 
+it into an ANSI-C program.
+%
+\item \textbf{Execution}: obtains the ANSI-C program from the previous
+(parse) step and calls our CEGIS engine as a back-end program synthesis tool
+to perform the automated synthesis.
+%
+\item \textbf{Extraction}: obtains the ``.log'' file that is generated 
+after the synthesis phase and then checks the synthesized digital controller.
+%
+\item \textbf{Report}: obtains the digital controller from the previous
+(extraction) step and translates it into MATLAB.
+%
+\end{enumerate}
+\end{frame}
+
+\begin{frame}{DSSynth Usage - Command Line}
+
+Users must provide a digital system described as a MATLAB model using a
+\texttt{tf} (for transfer function) or an \texttt{ss} (for state-space
+model) commands.  
+
+The \textbf{DSSynth} is called via the command line in MATLAB as
+
+\begin{center} 
+\texttt{synthesize(plant, intBits, fracBits, maxR, minR)}
+\end{center} 
+
+\colorbox{green!70}{Parameters:}
+
+\begin{enumerate}
+\item \textit{plant} is the physical plant in state-space or transfer function representation;
+\item \textit{intBits} is the integer part;
+\item \textit{fracBits} is the fractional part;
+\item \textit{maxR} and \textit{minR} are the maximum and minimum dynamic range.
+\end{enumerate}
+
+\end{frame}
+
+\begin{frame}{DSSynth Usage - MATLAB Application}
+
+\begin{figure}[ht]
+    \centering
+    \subfloat[Definition of the system representation and the physical plant]{
+		\includegraphics[width=0.45\textwidth]{figures/step1.png}
+		\label{step1}}
+		\hfil
+    \subfloat[Definition of implementation aspects and input ranges]{
+	\includegraphics[width=0.45\textwidth]{figures/step2.png}
+		\label{step2}}
+		\hfil
+    \label{fig:gui-for-tf}
+\end{figure}
+\end{frame}
+
+\begin{frame}{DSSynth Usage - MATLAB Application}
+
+\begin{figure}[ht]
+    \subfloat[Digital controller synthesized by DSSynth]{
+	\includegraphics[width=0.45\textwidth]{figures/step3.png}
+		\label{step3}}
+		\hfil
+    \subfloat[Step response for the synthesized digital controller]{
+	\includegraphics[width=0.495\textwidth]{figures/step4.png}
+		\label{step4}}
+		\hfil
+    \label{fig:gui-for-tf}
+\end{figure}
+
+\end{frame}
+
+\defverbatim[colored]\makeset{
+\tiny
+\begin{lstlisting}[xleftmargin=.025\textwidth,xrightmargin=.025\textwidth, frame=single,basicstyle=\tt]
+>> num = [-0.06875 0 0];
+>> den = [1.0000 -1.696 0.7089];
+>> system = tf(num,den,0.002);
+>> y = synthesize(system,8,8,1,-1);
+>> SYNTHESIS SUCCESSFUL
+>> y = 
+>>  -0.9983z^2 + 0.09587z + 0.1926
+>>  --------------------------------
+>>       z^2 + 0.5665z + 0.75
+\end{lstlisting}
+}
+
+\begin{frame}{DSSynth Usage - Illustrative Example}
+
+\colorbox{green!70}{Synthesizing a unmanned aerial vehicle (UAV) plant:}
+
+\begin{equation}
+\label{equation_plant}
+G(z)=\frac{B(z)}{A(z)}=\frac{-0.06875z^{2}}{z^2-1.696z+0.7089}
+\end{equation}
+
+\makeset
+
+\end{frame}
+
+\defverbatim[colored]\makeset{
+\tiny
+\begin{lstlisting}[xleftmargin=.025\textwidth,xrightmargin=.025\textwidth, frame=single,basicstyle=\tt]
+>> num = [-0.99832 0.09587 0.1926];
+>> den = [1 0.5665 0.75];
+>> controller = tf(num,den,0.002);
+>> num = [-0.06875 0 0];
+>> den = [1.0000 -1.696 0.7089];
+>> plant = tf(num,den,0.002);
+>> sys = feedback(series(controller, plant),1)
+>> sys =
+>>        0.06863z^4 - 0.006591z^3 - 0.01324z^2
+>> ---------------------------------------------------
+>> 1.069z^4 - 1.136z^3 + 0.4849z^2 - 0.8704z + 0.5317
+\end{lstlisting}
+}
+
+\begin{frame}{DSSynth Usage - Illustrative Example}
+
+\colorbox{green!70}{Controller Synthesized:}
+
+\begin{equation}
+\label{equation_controller}
+C(z)=\frac{-0.9983^{2}+0.09587z+0.1926}{z^2+0.5665z+0.75}.
+\end{equation}
+
+\colorbox{green!70}{Computing the general equation (plant and controller):}
+
+\makeset
+
+\end{frame}
+
+\defverbatim[colored]\makeset{
+\tiny
+\begin{lstlisting}[xleftmargin=.025\textwidth,xrightmargin=.025\textwidth, frame=single, basicstyle=\tt]
+>> den = [1.069 -1.136 0.4849 -0.8704 0.5317]
+>> r = roots(den)
+>> r =
+>>  -0.2912 + 0.8061i
+>>  -0.2912 - 0.8061i
+>>   0.8225 + 0.0219i
+>>   0.8225 - 0.0219i
+\end{lstlisting}
+}
+
+\begin{frame}{DSSynth Usage - Illustrative Example}
+
+\colorbox{green!70}{General equation (combination between plant and controller):}
+
+\begin{equation}
+\small
+\label{equation_general}
+\frac{N(z)}{D(z)}=\frac{0.06863z^{4} - 0.006591z^{3} - 0.01324z^{2}}{1.069z^{4} - 1.136z^{3} + 0.4849z^{2} -0.8704z + 0.5317}.
+\end{equation}
+ 
+\colorbox{green!70}{Computing the roots from the general equation in MATLAB:}
+
+\makeset
+
+\end{frame}
+
+\begin{frame}{DSSynth Usage - Illustrative Example}
+
+\colorbox{green!70}{Step response to check stability:}
+
+\begin{figure}[ht]
+  \includegraphics[width=0.5\textwidth]{figures/step-response.eps}
+  \caption{Step response for UAV Plant describing a stable system.}
+  \label{step-response}
+\end{figure}
+
+
+\end{frame}
 \end{document}
