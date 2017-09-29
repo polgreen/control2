@@ -523,6 +523,123 @@ C(z)=\frac{-0.9983^{2}+0.09587z+0.1926}{z^2+0.5665z+0.75}.
   \label{step-response}
 \end{figure}
 
+\end{frame}
+
+\begin{frame}{Experimental Evaluation}
+
+Our evaluation consists of $18$ SISO control system benchmarks extracted
+from the literature:
+
+\begin{block}{Benchmarks:}
+An unmanned aerial vehicle (UAV), a cruise
+control system, a spring-mass damper, a satellite, a direct current (DC)
+servo motor, a helicopter, the inverted pendulum, a pendulum, magnetic
+suspension, a magnetized pointer, 1/4 car suspension, a computer tape
+driver, a flexible beam, a guidance system, a US Coast Guard cutter, a
+continuous stirred tank reactor, a voltage regulator, and an acrobot control
+system.
+\end{block}
+\end{frame}
+
+\begin{frame}{Experimental Evaluation}
+
+\begin{block}{Experimental Setup:}
+\begin{itemize}
+\item The signal input range is between $-1$ and $1$.  
+\item  The implementation features used for digital controller are: 
+$8$~bits for the integer part and $8$~bits for the fractional part.  
+\item  We~have run the DSSynth using CEGIS with multi-staged verification.
+\end{itemize}
+All experiments with DDSynth v$1$.$0$.$0$ were conducted on an otherwise idle
+Intel Core i$7-2600$ $3.40$ GHz processor, with $24$ GB of RAM, running
+Ubuntu $64$-bit.
+\end{block}
 
 \end{frame}
+
+\begin{frame}{Experimental Evaluation}
+
+\begin{block}{Experimental Objectives:}
+
+\begin{itemize}
+\item Evaluate the DSSynth performance to produce stable and safe controllers, and also
+\item Confirm the stability and safety of the synthesized digital controllers
+outside of our model using MATLAB.
+\end{itemize}
+\end{block}
+
+\begin{block}{Experimental Results:}
+
+\begin{itemize}
+\item The median runtime for our benchmarks is $124$\,s;
+\item The average synthesis time amounts to $35.5$\,s for state-space systems;
+\item For transfer functions, the average synthesis time amounts to $123.6$\,s.
+\end{itemize}
+\end{block}
+
+\end{frame}
+
+\begin{frame}{Experimental Evaluation}
+
+\colorbox{green!70}{DC motor controller synthesized (Transfer-Function Example):}
+
+\begin{equation}
+\label{tf-synth-controller}
+C(z)=\frac{-0.3466796875z+0.015625}{-0.5z^{2}+0.19921875z}.
+\end{equation}
+
+\begin{figure}[ht]
+  \includegraphics[width=0.5\textwidth]{figures/tf-step-response.eps}
+  \caption{Step response describing a stable system for the DC motor plant.}
+  \label{tf-step-response}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}{Experimental Evaluation}
+
+\colorbox{green!70}{Pendulum controller synthesized  (State-Space Example):}
+
+\begin{equation}
+\tiny
+\label{ss-synth-controller}
+\begin{array}{c} 
+A = \left[\begin{array}{cc}-1.999909737361046&-1.000000000000000\\1&0\end{array}\right],
+B = \left [\begin{array}{c}4\\0\end{array}\right], \\
+C = \left [\begin{array}{cc}-1.756887232846049&-1.7494556607764090\end{array}\right],
+\quad D = \left [\begin{array}{c}9.8\end{array}\right].
+\end{array}
+\end{equation}
+
+\begin{figure}[ht]
+  \includegraphics[width=0.5\textwidth]{figures/ss-step-response.eps}
+  \caption{Step response describing a stable system for the pendulum plant.}
+  \label{ss-step-response}
+\end{figure}
+\end{frame}
+
+\begin{frame}{Conclusions}
+\begin{itemize}
+  
+\item {\bf Automated synthesizer for state-space and transfer-function representations that ensures stability and safety;}
+
+\item {\bf DSSynth presents a practical application of CEGIS-based program synthesis;}
+
+\item {\bf Given the current literature in controller synthesis, there is no other MATLAB toolbox for synthesizing stable and safe digital controllers
+for physical plants that considers all aspects of their digital implementation.}
+
+\end{itemize}
+
+\vspace{.5cm}
+\begin{tabular}{c}
+  \scriptsize
+  \begin{tabular}{l}
+  {\bf DSSynth Matlab toolbox:}\\
+  www.cprover.org/DSSynth/dssynth-toolbox-1.0.0.zip
+  \\\\\\\\\\\\
+  \end{tabular}
+\end{tabular}
+
+\end{frame}  
+
 \end{document}
