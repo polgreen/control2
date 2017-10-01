@@ -130,7 +130,7 @@ alternativetitlepage=true,
 %       PRESENTATION INFO        %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-  \title{\fontsize{11}{12}\selectfont DSSynth: An Automated Digital Controller Synthesis Tool
+\title{\fontsize{11}{12}\selectfont DSSynth: An Automated Digital Controller Synthesis Tool
     \newline
      for Physical Plants.}
 \subtitle{ASE 2017}
@@ -176,14 +176,18 @@ alternativetitlepage=true,
 H(z)=\frac{B(z)}{A(z)}=\frac{b_{0}+b_{1}z^{-1}+...+b_{M}z^{-M}}{a_{0}+a_{1}z^{-1}+...+a_{N}z^{-N}},
 \end{equation}
 %
-In this representation, $z^{-1}$ is called the backward-shift operator;
-\\$A(z)$ and $B(z)$ are the denominator and numerator polynomials; 
-\\and $N$ and $M$ are the order of the denominator and numerator polynomials, respectively.
+where,
+\begin{itemize}
+\item $z^{-1}$ is called the \textbf{backward-shift} operator;
+\item $A(z)$ and $B(z)$ are the \textbf{denominator} and \textbf{numerator} polynomials; 
+\item $N$ and $M$ are the \textbf{order} of the \textbf{denominator} and \textbf{numerator} polynomials, respectively.
+\end{itemize}
+
 \end{frame}
 
 \begin{frame}{State-Space Representation}
-In state-space form, the behavior of a system is represented via a state
-evolution equation $x(n+1)$ and an instantaneous output equation $y(n)$, as
+In state-space form, the behavior of a system is represented via a \textbf{state
+evolution equation} $x(n+1)$ and an \textbf{instantaneous output equation} $y(n)$, as
 follows:
 %
 \begin{equation}
@@ -194,7 +198,7 @@ y(n) &= C x(n) + D u(n),
 \end{split}\label{eq:ss-example}
 \end{equation}
 %
-where $A$, $B$, $C$ and $D$ are matrices that fully specify the model. 
+where $A$, $B$, $C$ and $D$ are \textbf{matrices} that fully \textbf{specify the model}. 
 \end{frame}
 
 \begin{frame}{Counterexample-Guided Inductive Synthesis for Control Systems}
