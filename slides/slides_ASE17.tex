@@ -519,11 +519,11 @@ C(z)=\frac{-0.9983^{2}+0.09587z+0.1926}{z^2+0.5665z+0.75}.
 
 \begin{frame}{DSSynth Usage - Illustrative Example}
 
-\colorbox{green!70}{Step response to check stability:}
+\colorbox{green!70}{Step response for the UAV plant describing a stable system:}
 
 \begin{figure}[ht]
-  \includegraphics[width=0.5\textwidth]{figures/step-response.eps}
-  \caption{Step response for UAV Plant describing a stable system.}
+  \includegraphics[width=0.6\textwidth]{figures/step-response.eps}
+%  \caption{Step response for the UAV plant describing a stable system.}
   \label{step-response}
 \end{figure}
 
@@ -549,14 +549,14 @@ system.
 
 \begin{block}{Experimental Setup:}
 \begin{itemize}
-\item The signal input range is between $-1$ and $1$.  
+\item The signal input range is between $-1$ and $1$  
 \item  The implementation features used for digital controller are: 
-$8$~bits for the integer part and $8$~bits for the fractional part.  
-\item  We~have run the DSSynth using CEGIS with multi-staged verification.
+$8$~bits for the integer part and $8$~bits for the fractional part
+\item  We~have run the DSSynth using CEGIS with multi-staged verification
 \end{itemize}
 All experiments with DDSynth v$1$.$0$.$0$ were conducted on an otherwise idle
 Intel Core i$7-2600$ $3.40$ GHz processor, with $24$ GB of RAM, running
-Ubuntu $64$-bit.
+Ubuntu $64$-bit
 \end{block}
 
 \end{frame}
@@ -566,18 +566,18 @@ Ubuntu $64$-bit.
 \begin{block}{Experimental Objectives:}
 
 \begin{itemize}
-\item Evaluate the DSSynth performance to produce stable and safe controllers, and also
+\item Evaluate the DSSynth performance to produce stable and safe controllers
 \item Confirm the stability and safety of the synthesized digital controllers
-outside of our model using MATLAB.
+outside of our model using MATLAB
 \end{itemize}
 \end{block}
 
 \begin{block}{Experimental Results:}
 
 \begin{itemize}
-\item The median runtime for our benchmarks is $124$\,s;
-\item The average synthesis time amounts to $35.5$\,s for state-space systems;
-\item For transfer functions, the average synthesis time amounts to $123.6$\,s.
+\item The median runtime for our benchmarks is $124$\,s
+\item The average synthesis time amounts to $35.5$\,s for state-space systems
+\item For transfer functions, the average synthesis time amounts to $123.6$\,s
 \end{itemize}
 \end{block}
 
@@ -622,15 +622,14 @@ C = \left [\begin{array}{cc}-1.756887232846049&-1.7494556607764090\end{array}\ri
 \end{figure}
 \end{frame}
 
-\begin{frame}{Conclusions}
+\begin{frame}{Conclusions and Future Work}
 \begin{itemize}
   
-\item {\bf Automated synthesizer for state-space and transfer-function representations that ensures stability and safety;}
+\item {\bf Automated synthesis of state-space and transfer-function representations that ensures stability and safety}
 
-\item {\bf DSSynth presents a practical application of CEGIS-based program synthesis;}
+\item {\bf DSSynth is the first fully automated synthesis tool that is algorithmically and numerically sound}
 
-\item {\bf Given the current literature in controller synthesis, there is no other MATLAB toolbox for synthesizing stable and safe digital controllers
-for physical plants that considers all aspects of their digital implementation.}
+\item {\bf We will pursue the application of CEGIS to program repair or superoptimization}
 
 \end{itemize}
 
