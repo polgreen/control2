@@ -281,59 +281,59 @@ where $A$, $B$, $C$ and $D$ are \textbf{matrices} that fully \textbf{specify the
 
 \end{frame}
 
-\begin{frame} {Counterexample-Guided Inductive Synthesis for Control Systems}
+%\begin{frame} {Counterexample-Guided Inductive Synthesis for Control Systems}
 
-\colorbox{green!70}{Abstraction-based CEGIS:}
+%\colorbox{green!70}{Abstraction-based CEGIS:}
 
-\begin{figure}
-\centering
-{\scriptsize
-  \resizebox{.8\textwidth}{!}
-  {
-\begin{tikzpicture}[scale=0.3,->,>=stealth',shorten >=.2pt,auto, semithick, ampersand replacement=\&,]
-  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center},row sep=.8cm, column sep=.2cm] {
-   \coordinate (aux1);
-   \& \coordinate (aux2);
-   \& ;\\
-   \&\node[fill=gray!20,align=center,xshift=-1.5cm] (pre) {{\sc 1. pre-}\\{\sc processing}};
-   \& \node[fill=gray!20,align=center] (abstract) {\sc 4. abstract};
-   \& \coordinate (aux); \\ 
-   \&
-   \& \node[fill=gray!20,align=center] (synth) {\sc 2. synthesize};
-   \& \node[fill=gray!20,align=center, minimum width=4cm] (verify) {\sc 3. verify ($\phi$)};
-      \node[draw=none] (SAT) at ([xshift=2.7cm,yshift=-.3cm]verify)  {\sc PASS};
-   \& \node[ellipse, fill=gray!20] (done) {{\sc Done}};\\
-   \&
-   \& \node[draw,rectangle,align=center] (KSAT) { \sf Program \\ \sf Search};
-   \& complexnode/.pic={
-     \coordinate (AA);
-     \node[draw,rectangle,align=center] (AAV) at ([xshift=-1.5cm]AA.center) { \sf Abstract\\ \sf Acceleration};
-     \node[draw,rectangle,align=center] (AAC) at ([xshift=1.5cm]AA.center) { \sf Abstraction \\ \sf Verifier};
-    }\\
-  };
-  \path
-    (pre.east) edge node[align=center] {} (abstract.west)
-    (abstract.south) edge node{} (synth.north)
-    ([yshift=1em]synth.east) edge node {$K$} ([yshift=1em]verify.west)
-    (aux) edge (abstract.east) 
-    (verify.east) edge (done.west);
-  \path
-    ([xshift=+.6cm]KSAT.north) edge[left] node[xshift=-.3cm] {} ([xshift=0.6cm]synth.south) 
-    ([xshift=-.6cm]synth.south) edge node[align=center,xshift=.3cm] {} ([xshift=-.6cm]KSAT.north)
-    ([yshift=.5cm]AAV.east) edge node{} ([yshift=.5cm]AAC.west)
-    ([yshift=-.5cm]AAC.west) edge node{} ([yshift=-.5cm]AAV.east)
-    (AAC.north) edge node{} ([xshift=4.9cm]verify.south)
-    ([xshift=-5cm]verify.south) edge node{} (AAV.north);
-  \path[-] 
-     (verify.north) edge node {C-ex} (aux);
-\end{tikzpicture}
-}
-}
+%\begin{figure}
+%\centering
+%{\scriptsize
+%  \resizebox{.8\textwidth}{!}
+%  {
+%\begin{tikzpicture}[scale=0.3,->,>=stealth',shorten >=.2pt,auto, semithick, ampersand replacement=\&,]
+%  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center},row sep=.8cm, column sep=.2cm] {
+%   \coordinate (aux1);
+%   \& \coordinate (aux2);
+%   \& ;\\
+%   \&\node[fill=gray!20,align=center,xshift=-1.5cm] (pre) {{\sc 1. pre-}\\{\sc processing}};
+%   \& \node[fill=gray!20,align=center] (abstract) {\sc 4. abstract};
+%   \& \coordinate (aux); \\ 
+%   \&
+%   \& \node[fill=gray!20,align=center] (synth) {\sc 2. synthesize};
+%   \& \node[fill=gray!20,align=center, minimum width=4cm] (verify) {\sc 3. verify ($\phi$)};
+%      \node[draw=none] (SAT) at ([xshift=2.7cm,yshift=-.3cm]verify)  {\sc PASS};
+%   \& \node[ellipse, fill=gray!20] (done) {{\sc Done}};\\
+%   \&
+%   \& \node[draw,rectangle,align=center] (KSAT) { \sf Program \\ \sf Search};
+%   \& complexnode/.pic={
+%     \coordinate (AA);
+%     \node[draw,rectangle,align=center] (AAV) at ([xshift=-1.5cm]AA.center) { \sf Abstract\\ \sf Acceleration};
+%     \node[draw,rectangle,align=center] (AAC) at ([xshift=1.5cm]AA.center) { \sf Abstraction \\ \sf Verifier};
+%    }\\
+%  };
+%  \path
+%    (pre.east) edge node[align=center] {} (abstract.west)
+%    (abstract.south) edge node{} (synth.north)
+%    ([yshift=1em]synth.east) edge node {$K$} ([yshift=1em]verify.west)
+%    (aux) edge (abstract.east) 
+%    (verify.east) edge (done.west);
+%  \path
+%    ([xshift=+.6cm]KSAT.north) edge[left] node[xshift=-.3cm] {} ([xshift=0.6cm]synth.south) 
+%    ([xshift=-.6cm]synth.south) edge node[align=center,xshift=.3cm] {} ([xshift=-.6cm]KSAT.north)
+%    ([yshift=.5cm]AAV.east) edge node{} ([yshift=.5cm]AAC.west)
+%    ([yshift=-.5cm]AAC.west) edge node{} ([yshift=-.5cm]AAV.east)
+%    (AAC.north) edge node{} ([xshift=4.9cm]verify.south)
+%    ([xshift=-5cm]verify.south) edge node{} (AAV.north);
+%  \path[-] 
+%     (verify.north) edge node {C-ex} (aux);
+%\end{tikzpicture}
+%}
+%}
 %\caption{Abstraction-based CEGIS}
-\label{fig:CEGARIS} 
-\end{figure}
+%\label{fig:CEGARIS} 
+%\end{figure}
 
-\end{frame}
+%\end{frame}
 
 
 \begin{frame}{DSSynth Architecture}
@@ -583,44 +583,44 @@ outside of our model using MATLAB
 
 \end{frame}
 
-\begin{frame}{Experimental Evaluation}
+%\begin{frame}{Experimental Evaluation}
 
-\colorbox{green!70}{DC motor controller synthesized (Transfer-Function Example):}
+%\colorbox{green!70}{DC motor controller synthesized (Transfer-Function Example):}
 
-\begin{equation}
-\label{tf-synth-controller}
-C(z)=\frac{-0.3466796875z+0.015625}{-0.5z^{2}+0.19921875z}.
-\end{equation}
+%\begin{equation}
+%\label{tf-synth-controller}
+%C(z)=\frac{-0.3466796875z+0.015625}{-0.5z^{2}+0.19921875z}.
+%\end{equation}
 
-\begin{figure}[ht]
-  \includegraphics[width=0.5\textwidth]{figures/tf-step-response.eps}
-  \caption{Step response describing a stable system for the DC motor plant.}
-  \label{tf-step-response}
-\end{figure}
+%\begin{figure}[ht]
+%  \includegraphics[width=0.5\textwidth]{figures/tf-step-response.eps}
+%  \caption{Step response describing a stable system for the DC motor plant.}
+%  \label{tf-step-response}
+%\end{figure}
 
-\end{frame}
+%\end{frame}
 
-\begin{frame}{Experimental Evaluation}
+%\begin{frame}{Experimental Evaluation}
 
-\colorbox{green!70}{Pendulum controller synthesized  (State-Space Example):}
+%\colorbox{green!70}{Pendulum controller synthesized  (State-Space Example):}
 
-\begin{equation}
-\tiny
-\label{ss-synth-controller}
-\begin{array}{c} 
-A = \left[\begin{array}{cc}-1.999909737361046&-1.000000000000000\\1&0\end{array}\right],
-B = \left [\begin{array}{c}4\\0\end{array}\right], \\
-C = \left [\begin{array}{cc}-1.756887232846049&-1.7494556607764090\end{array}\right],
-\quad D = \left [\begin{array}{c}9.8\end{array}\right].
-\end{array}
-\end{equation}
+%\begin{equation}
+%\tiny
+%\label{ss-synth-controller}
+%\begin{array}{c} 
+%A = \left[\begin{array}{cc}-1.999909737361046&-1.000000000000000\\1&0\end{array}\right],
+%B = \left [\begin{array}{c}4\\0\end{array}\right], \\
+%C = \left [\begin{array}{cc}-1.756887232846049&-1.7494556607764090\end{array}\right],
+%\quad D = \left [\begin{array}{c}9.8\end{array}\right].
+%\end{array}
+%\end{equation}
 
-\begin{figure}[ht]
-  \includegraphics[width=0.5\textwidth]{figures/ss-step-response.eps}
-  \caption{Step response describing a stable system for the pendulum plant.}
-  \label{ss-step-response}
-\end{figure}
-\end{frame}
+%\begin{figure}[ht]
+%  \includegraphics[width=0.5\textwidth]{figures/ss-step-response.eps}
+%  \caption{Step response describing a stable system for the pendulum plant.}
+%  \label{ss-step-response}
+%\end{figure}
+%\end{frame}
 
 \begin{frame}{Conclusions and Future Work}
 \begin{itemize}
