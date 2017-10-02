@@ -179,7 +179,7 @@ H(z)=\frac{B(z)}{A(z)}=\frac{b_{0}+b_{1}z^{-1}+...+b_{M}z^{-M}}{a_{0}+a_{1}z^{-1
 where,
 \begin{itemize}
 \item $z^{-1}$ is called the \textbf{backward-shift} operator;
-\item $A(z)$ and $B(z)$ are the \textbf{denominator} and \textbf{numerator} polynomials; 
+\item $A(z)$ and $B(z)$ are the \textbf{denominator} and \textbf{numerator} polynomials;
 \item $N$ and $M$ are the \textbf{order} of the \textbf{denominator} and \textbf{numerator} polynomials, respectively.
 \end{itemize}
 
@@ -275,7 +275,7 @@ where $A$, $B$, $C$ and $D$ are \textbf{matrices} that fully \textbf{specify the
 
  \end{tikzpicture}
 }}
-\caption{CEGIS with multi-staged verification}
+%\caption{CEGIS with multi-staged verification}
 \label{fig:CEGIS-precision-increment}
 \end{figure}
 
@@ -329,7 +329,7 @@ where $A$, $B$, $C$ and $D$ are \textbf{matrices} that fully \textbf{specify the
 \end{tikzpicture}
 }
 }
-\caption{Abstraction-based CEGIS}
+%\caption{Abstraction-based CEGIS}
 \label{fig:CEGARIS} 
 \end{figure}
 
@@ -343,35 +343,35 @@ where $A$, $B$, $C$ and $D$ are \textbf{matrices} that fully \textbf{specify the
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.9\textwidth]{figures/dssynth-flow.pdf}
-\caption{Phases of the controller synthesis}
+%\caption{Phases of the controller synthesis}
 \label{fig:synthesis-flow}
 \end{figure}
 
 \end{frame}
 
-\begin{frame}{DSSynth Procedures}
+%\begin{frame}{DSSynth Procedures}
 
 %
-\begin{enumerate}
+%\begin{enumerate}
 %
-\item \textbf{Setup}: obtains the physical plant, fixed-point format and
-dynamic input ranges, and translates them to a specific structure in MATLAB.
+%\item \textbf{Setup}: obtains the physical plant, fixed-point format and
+%dynamic input ranges, and translates them to a specific structure in MATLAB.
 %
-\item \textbf{Parse}: obtains the digital system specification and translates 
-it into an ANSI-C program.
+%\item \textbf{Parse}: obtains the digital system specification and translates 
+%it into an ANSI-C program.
 %
-\item \textbf{Execution}: obtains the ANSI-C program from the previous
-(parse) step and calls our CEGIS engine as a back-end program synthesis tool
-to perform the automated synthesis.
+%\item \textbf{Execution}: obtains the ANSI-C program from the previous
+%(parse) step and calls our CEGIS engine as a back-end program synthesis tool
+%to perform the automated synthesis.
 %
-\item \textbf{Extraction}: obtains the ``.log'' file that is generated 
-after the synthesis phase and then checks the synthesized digital controller.
+%\item \textbf{Extraction}: obtains the ``.log'' file that is generated 
+%after the synthesis phase and then checks the synthesized digital controller.
 %
-\item \textbf{Report}: obtains the digital controller from the previous
-(extraction) step and translates it into MATLAB.
+%\item \textbf{Report}: obtains the digital controller from the previous
+%(extraction) step and translates it into MATLAB.
 %
-\end{enumerate}
-\end{frame}
+%\end{enumerate}
+%\end{frame}
 
 \begin{frame}{DSSynth Usage - Command Line}
 
