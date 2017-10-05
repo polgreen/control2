@@ -33,11 +33,14 @@
   #include <stdio.h> 
 #endif
 
-struct implt
+typedef struct implt
 {
   cnttype int_bits;
   cnttype frac_bits;
-  cnttype mult_bits;
+  control_floatt max;
+  control_floatt min;
+  control_floatt scale;
+  signed long int fxp_one;
 };
 
 void verify_assume(_Bool expression)

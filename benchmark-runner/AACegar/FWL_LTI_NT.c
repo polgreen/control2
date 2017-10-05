@@ -1,6 +1,7 @@
 #include <assert.h>
 #include <stdbool.h>
 
+#define USE_XTRANSFORM 
 #include "FWL_LTI.h"
 #include "types.h"
 
@@ -55,8 +56,7 @@ int initialization()
   #ifndef __CPROVER
     printf("initializing\n");
   #endif
-  //get_bounds();
-  int result=validation();
+  int result=validation_cbmc();
   return result;
 }
 
@@ -80,19 +80,25 @@ int main()
 #ifndef __CPROVER
   if (result!=0) return 10;
 #endif
-  make_closed_loop();
-//  boundcbmcController();
+#ifdef USE_INTERVALS
+  make_nondet_coeffs(plant.coeffs,plant.uncertainty,plant_cbmc);
+#else
+  copy_coeffs(plant.coeffs,plant_cbmc);
+#endif
+#ifdef _USE_OBSERVER
+    //Has to be done before plant_cbmc is updated
+  for (i = 0;i<_DIMENSION;i++) observer_plant_cbmc[i]=plant_cbmc[i]-observer_cbmc[i];
+#endif
+  for (i = 0;i<_DIMENSION;i++) plant_cbmc[i]-=controller_cbmc[i];
+  boundcbmcController();
 #ifndef __CPROVER
   print_matrix("dynamics",dynamics);
   print_matrix("loop",loop_cbmc);
 #endif
 
 #ifdef _USE_OBSERVER
-  control_floatt observerControlError=0;
-  for (i=0;i<_DIMENSION;i++) observerControlError+=observer[i]*observer[i];
-  observerControlError=observer_output_sensitivity_error*observerControlError;
-  observerControlError*=implL.scale;
-  observerControlError*=implL.scale;
+  control_floatt observerControlError=observer_output_sensitivity_error*implL.scale*implL.scale*implL.max*implL.max;
+  observerControlError*=_DIMENSION;
   observerControlError+=observer_dynamics_error;
   control_floatt eigenCap=1.0;
   eigenCap-=observerControlError;
@@ -102,9 +108,11 @@ int main()
   
   if (result>0)
   {
+  #ifndef USE_XTRANSFORM
     control_floatt observerInputError=0;
     for (i=0;i<_DIMENSION;i++) observerInputError+=controller[i]*controller[i];
     observerControlError+=observer_sensitivity_error*observerInputError;
+  #endif
     eigenCap=1.0;
     eigenCap-=observerControlError;
     final_speed_factor=speed_factor;
@@ -127,9 +135,9 @@ int main()
   #endif
 #endif
 #ifdef __CPROVER
-  __CPROVER_array_copy(controller_cbmc, controller);
+  __CPROVER_array_copy(controller_cbmc, controller_cbmc);
   #ifdef _USE_OBSERVER
-    __CPROVER_array_copy(observer_cbmc, observer);
+    __CPROVER_array_copy(observer_cbmc, observer_cbmc);
   #endif
   verify_assert(0);
 #else
