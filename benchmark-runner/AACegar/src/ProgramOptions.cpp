@@ -157,6 +157,7 @@ void ProgramOptions::process()
       AbstractMatrix<long double>::ms_sparse=useSparse;
       Tableau<long double>::ms_useBasis=useBasis;
       CegarSystem<long double>::ms_fixedBVs=useFixedBV;
+      CegarSystem<long double>::ms_canonical=useCanonicalForm;
       Synthesiser<long double> ldsystem;
       ldsystem.m_synthType=synthType;
       ldsystem.ms_fullAnswers=!answerOnly;
@@ -176,6 +177,7 @@ void ProgramOptions::process()
       AbstractMatrix<ldinterval>::ms_sparse=useSparse;
       Tableau<ldinterval>::ms_useBasis=useBasis;
       CegarSystem<ldinterval>::ms_fixedBVs=useFixedBV;
+      CegarSystem<ldinterval>::ms_canonical=useCanonicalForm;
       Synthesiser<ldinterval> ldisystem;
       ldisystem.m_synthType=synthType;
       ldisystem.ms_fullAnswers=!answerOnly;
@@ -195,6 +197,7 @@ void ProgramOptions::process()
       Tableau<mpfr::mpreal>::ms_useBasis=useBasis;
       AbstractMatrix<mpfr::mpreal>::ms_sparse=useSparse;
       CegarSystem<mpfr::mpreal>::ms_fixedBVs=useFixedBV;
+      CegarSystem<mpfr::mpreal>::ms_canonical=useCanonicalForm;
       Synthesiser<mpfr::mpreal> mpsystem;
       mpsystem.m_synthType=synthType;
       mpsystem.ms_fullAnswers=!answerOnly;
@@ -214,6 +217,7 @@ void ProgramOptions::process()
       Tableau<mpinterval>::ms_useBasis=useBasis;
       AbstractMatrix<mpinterval>::ms_sparse=useSparse;
       CegarSystem<mpinterval>::ms_fixedBVs=useFixedBV;
+      CegarSystem<mpinterval>::ms_canonical=useCanonicalForm;
       Synthesiser<mpinterval> mpisystem;
       mpisystem.m_synthType=synthType;
       mpisystem.ms_fullAnswers=!answerOnly;
@@ -241,13 +245,14 @@ ProgramOptions::ProgramOptions(int argc, char *argv[]) :
   useBasis(true),
   useSparse(false),
   useFixedBV(false),
+  useCanonicalForm(false),
   parseError(false)
 {
   traceIntervals=true;
   formal=true;
 
   //Important!: these have to be in the same order as the enums
-  std::string commandOptions[eMaxStr]={"params","dynamics","isense","osense","iosense","guard","iguard","sguard","oguard","init","inputs","templates","arma","spaceex","control","observe","ref","inc","sample","speed","rand"};
+  std::string commandOptions[eMaxStr]={"params","dynamics","isense","osense","iosense","guard","iguard","sguard","oguard","init","inputs","templates","arma","spaceex","control","observe","ref","inc","sample","speed","oinit","rand"};
   std::string typeOptions[eAllTypes+1]={"ld","mp","ldi","mpi","all"};
   std::string synthOptions[eMaxSynth]={"aa-tube","sq-tube","tube","sets","init","input","sense","eigen","dynamics","CEGIS","observer"};
 
@@ -323,18 +328,19 @@ ProgramOptions::ProgramOptions(int argc, char *argv[]) :
         functions<mpfr::mpreal>::ms_formal=formal;
         functions<long double>::ms_formal=formal;
       }
-      else if (strcmp(argv[i]+offset,"full")==0)  answerOnly=false;
-      else if (strcmp(argv[i]+offset,"ii")==0)    traceIntervals=false;
-      else if (strcmp(argv[i]+offset,"cont")==0)  continuous=true;
-      else if (strcmp(argv[i]+offset,"mono")==0)  incremental=false;
-      else if (strcmp(argv[i]+offset,"basis")==0) useBasis=true;
+      else if (strcmp(argv[i]+offset,"full")==0)    answerOnly=false;
+      else if (strcmp(argv[i]+offset,"ii")==0)      traceIntervals=false;
+      else if (strcmp(argv[i]+offset,"cont")==0)    continuous=true;
+      else if (strcmp(argv[i]+offset,"mono")==0)    incremental=false;
+      else if (strcmp(argv[i]+offset,"basis")==0)   useBasis=true;
       else if (strcmp(argv[i]+offset,"nobasis")==0) useBasis=false;
-      else if (strcmp(argv[i]+offset,"sparse")==0) useSparse=true;
+      else if (strcmp(argv[i]+offset,"sparse")==0)  useSparse=true;
       else if (strcmp(argv[i]+offset,"fixedbv")==0) useFixedBV=true;
-      else if (strcmp(argv[i]+offset,"norm")==0)  displayType=eNormalised;
-      else if (strcmp(argv[i]+offset,"vert")==0)  displayType=eVertices;
-      else if (strcmp(argv[i]+offset,"ine")==0)   displayType=eInequalities;
-      else if (argv[i][offset]=='h')              help(std::cout);
+      else if (strcmp(argv[i]+offset,"CNF")==0)     useCanonicalForm=true;
+      else if (strcmp(argv[i]+offset,"norm")==0)    displayType=eNormalised;
+      else if (strcmp(argv[i]+offset,"vert")==0)    displayType=eVertices;
+      else if (strcmp(argv[i]+offset,"ine")==0)     displayType=eInequalities;
+      else if (argv[i][offset]=='h')                help(std::cout);
       else {
         std::cout << "unknown parameter " << argv[i] << std::endl;
         std::cout << "use -h for help" << std::endl;

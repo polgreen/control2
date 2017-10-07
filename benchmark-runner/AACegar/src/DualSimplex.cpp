@@ -42,7 +42,7 @@ bool DualSimplex<scalar>::load(const MatrixS &faces,const MatrixS &supports,cons
   if (!Tableau<scalar>::load (faces,supports,transpose)) return false;
   m_auxiliaryRow.resize(1,m_dimension);
   m_costs.resize(1,m_dimension);
-  m_pSortedTableau->setCoeff(m_objectiveRow,0,func::ms_hardZero);
+  m_pSortedTableau->setCoeff(m_objectiveRow,0,func::ms_0);
   return true;
 }
 
@@ -720,7 +720,7 @@ When LP is dual-inconsistent then *se returns the evidence column.
   scalar result=m_pSortedTableau->entry(m_basisInverse,m_objectiveRow,RHSCol);
   if (ms_trace_pivots>=eTracePivots) ms_logger.logData(result,"max",true);
   if (func::isNan(result)) {
-    func::imprecise(result,func::ms_hardZero);
+    func::imprecise(result,func::ms_0);
     return result;
   }
   return result;
@@ -973,7 +973,7 @@ scalar DualSimplex<scalar>::getMinSupport()
 
 /// Creates a list of redundant/non-redundant rows of the tableau
 template <class scalar>
-int DualSimplex<scalar>::findRedundancies(std::vector<bool> &isRedundant)
+int DualSimplex<scalar>::findRedundancies(std::vector<bool> &isRedundant, refScalar tolerance)
 {
   for (int i=0;i<m_faces.rows();i++) isRedundant[i] =true;
   int redundant=m_faces.rows();
@@ -989,39 +989,60 @@ int DualSimplex<scalar>::findRedundancies(std::vector<bool> &isRedundant)
     }
   }
   normalise(false);
-  SortedMatrix<scalar> faces(m_faces,LexMin);
-  for (int i=1;i<=m_faces.rows();i++)
-  {
-    int row=faces.zeroOrder(i);
-    if (isRedundant[row]) continue;
-    int count=m_faces.rows();
-    for (int j=i+1;j<=count;j++) {
-      int row2=faces.zeroOrder(j);
-      if (isRedundant[row2]) continue;
-      char sign=faces.compareZeroOrderRows(i,j);
-      if (sign==0) {
-        isRedundant[row2]=true;//TODO: should aggregate width(error) on non-redundant vector
-        if (func::isNegative(m_supports.coeff(row2,0)-m_supports.coeff(row,0))) {
-          isRedundant[row2]=false;
-          isRedundant[row]=true;
-          i=j;
-          row=row2;
+  bool useMin=func::isZero(tolerance);
+  SortedMatrix<scalar> faces(m_faces,useMin ? LexMin : LexCos);
+  if (useMin) {
+    for (int i=1;i<=m_faces.rows();i++)
+    {
+      int row=faces.zeroOrder(i);
+      if (isRedundant[row]) continue;
+      int count=m_faces.rows();
+      for (int j=i+1;j<=count;j++) {
+        int row2=faces.zeroOrder(j);
+        if (isRedundant[row2]) continue;
+        char sign=faces.compareZeroOrderRows(i,j);
+        if (sign==0) {
+          isRedundant[row2]=true;//TODO: should aggregate width(error) on non-redundant vector
+          if (func::isNegative(m_supports.coeff(row2,0)-m_supports.coeff(row,0))) {
+            isRedundant[row2]=false;
+            isRedundant[row]=true;
+            i=j;
+            row=row2;
+          }
+          redundant++;
         }
-        redundant++;
+        else break;
       }
-      else break;
+    }
+  }
+  else {
+    for (int i=1;i<=m_faces.rows();i++)
+    {
+      int row=faces.zeroOrder(i);
+      if (isRedundant[row]) continue;
+      int count=m_faces.rows();
+      for (int j=i+1;j<=count;j++) {
+        int row2=faces.zeroOrder(j);
+        if (isRedundant[row2]) continue;
+        scalar cosine=tolerance;
+        for (int col=0;col<faces.cols();col++) {
+          func::madd(cosine,faces.coeff(row,col),faces.coeff(row2,col));
+        }
+        if (func::isPositive(func::ms_1-cosine)) break;
+        isRedundant[row2]=true;
+      }
     }
   }
 }
 
 /// Clears redundant faces in the polyhedra (caused by intersections and reductions)
 template <class scalar>
-bool DualSimplex<scalar>::removeRedundancies()
+bool DualSimplex<scalar>::removeRedundancies(refScalar tolerance,bool recompute)
 {
   if (m_faces.rows()<=0) return false;
   std::vector<bool> isRedundant;
   isRedundant.resize(m_faces.rows());
-  int redundant=findRedundancies(isRedundant);
+  int redundant=findRedundancies(isRedundant,tolerance);
   if (redundant>0) {
     int pos=0;
     m_basicVars.resize(m_faces.rows()-redundant);

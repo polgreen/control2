@@ -264,8 +264,8 @@ public:
 
   static inline char hardSign(const scinterval &x)
   {
-    if (x.upper()<ms_hardZero) return -1;
-    if (x.lower()>ms_hardZero) return 1;
+    if (x.upper()<ms_0) return -1;
+    if (x.lower()>ms_0) return 1;
     if ((x.upper()>ms_zero) || (x.lower()<-ms_zero)) {
       imprecise(x,ms_zero,"hard sign error");
     }
@@ -287,7 +287,7 @@ public:
   static inline bool isZero(scinterval x,scalar zero=ms_weakZero)
   {
     UNUSED(zero);
-    return (x.upper()>=ms_hardZero) && (x.lower()<=ms_hardZero);
+    return (x.upper()>=ms_0) && (x.lower()<=ms_0);
   }
 
   static inline bool isNearZero(scinterval x,scalar epsilon)
@@ -420,8 +420,8 @@ public:
   static inline scalar getHull(const scalar &,const scalar &y)              { return y; }
   static inline c_scalar getHull(const c_scalar &,const c_scalar &y)        { return y; }
   static inline scalar madd(scalar &z,const scalar &x,const scalar &y);
-  static inline scalar tightMadd(scalar &z,const scalar &x,const scalar &y) { z+=x*y;return ms_hardZero; }
-  static inline scalar tightWidth(const scalar &x,const scalar &y)          { return ms_hardZero; }
+  static inline scalar tightMadd(scalar &z,const scalar &x,const scalar &y) { z+=x*y;return ms_0; }
+  static inline scalar tightWidth(const scalar &x,const scalar &y)          { return ms_0; }
   static inline void msub(scalar &z,const scalar &x,const scalar &y);
 
   static long double toDouble(scalar x);
@@ -452,7 +452,7 @@ public:
   static typename interval_def<scalar>::power_type   ms_infPower;
   static scalar                         ms_zero;
   static scalar                         ms_weakZero;
-  static scalar                         ms_hardZero;
+  static scalar                         ms_0;
   static c_scalar                       ms_c_1;
   static c_interval                     ms_interval_c_1;
   static scalar                         ms_1;
@@ -490,7 +490,7 @@ public:
 
 #define USE_MPREAL
 #define USE_LDOUBLE
-//#define USE_INTERVALS
+#define USE_INTERVALS
 #define USE_SINGLES
 #ifdef USE_MPREAL
 typedef mpfr::mpreal scalar_t;

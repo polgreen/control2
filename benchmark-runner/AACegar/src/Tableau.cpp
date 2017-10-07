@@ -494,7 +494,7 @@ bool Tableau<scalar>::loadTableau(bool clearObjective)
     m_pSortedTableau->negRow(row,1,m_faces.row(row));
   }
   if (m_faces.rows()<m_size) {
-    m_pSortedTableau->setCoeff(m_faces.rows(),0,func::ms_hardZero);
+    m_pSortedTableau->setCoeff(m_faces.rows(),0,func::ms_0);
     if (clearObjective) m_pSortedTableau->setRow(m_faces.rows(),1,MatrixS::Zero(1,m_faces.cols())); //artificial row for x_1 >= 0
   }
   return true;

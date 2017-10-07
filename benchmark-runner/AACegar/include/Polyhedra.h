@@ -38,6 +38,7 @@ public:
     using Tableau<scalar>::order;
     using Tableau<scalar>::getDimension;
     using Tableau<scalar>::logTableau;
+    using Tableau<scalar>::isEmpty;
     using DualSimplex<scalar>::maximiseAll;
     using DualSimplex<scalar>::removeRedundancies;
 
@@ -247,6 +248,10 @@ public:
     /// @return first row to not contain the points (-1 if none).
     int violatingSupport(const MatrixS &points);
 
+    /// Indicates the largest distance to any violating support
+    /// @param points, points in the state space to evaluate
+    scalar violatingDistance(const MatrixS &points);
+
     /// Removes any existing faces
     void clear();
 
@@ -304,7 +309,7 @@ protected:
     /// Intersects the polyhedra with another polyhedra without removing redundancies
     /// @param polyhedra polyhedra to intersect
     /// @return true if successful
-    bool pseudoIntersect(const Polyhedra &polyhedra);
+    virtual bool pseudoIntersect(const Polyhedra &polyhedra);
 
     /// Calculates the pseudoinverse of a matrix
     MatrixS pseudoInverseEigen(const MatrixS &matrix,bool &hasInverse);

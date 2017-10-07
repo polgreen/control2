@@ -403,12 +403,12 @@ bool AbstractPolyhedra<scalar>::getPlane(AbstractPolyhedra<scalar>&target,int co
 
 /// Clears redundant faces in the polyhedra (caused by intersections and reductions)
 template <class scalar>
-bool AbstractPolyhedra<scalar>::removeRedundancies()
+bool AbstractPolyhedra<scalar>::removeRedundancies(refScalar tolerance,bool recompute)
 {
   if (m_faces.rows()<=0) return false;
   std::vector<bool> isRedundant;
   isRedundant.resize(m_faces.rows());
-  int redundant=findRedundancies(isRedundant);
+  int redundant=findRedundancies(isRedundant,tolerance);
   if (redundant>0) {
     int pos=0;
     for (int i=0;i<m_faces.rows();i++) {
@@ -475,6 +475,63 @@ bool AbstractPolyhedra<scalar>::addTaggedDirection(SMatrixS &faces,MatrixS &supp
   }
   return addDirection(directions,supports,keepBasis);
 }
+
+/// Creates a polyhedra of twice the dimension with 1-1 constraints for each duplicatedvariable
+template <class scalar>
+void AbstractPolyhedra<scalar>::duplicateSpace(AbstractPolyhedra<scalar> &source,bool tight)
+{
+  if (&source!=this) copy(source);
+  int rows=m_faces.rows();
+  int dimension=m_faces.cols();
+  m_faces.conservativeResize(2*rows+(tight ? 2*dimension : 0),2*dimension);
+  m_supports.conservativeResize(m_faces.rows(),1);
+  m_faces.block(0,dimension,rows,dimension)=MatrixS::Zero(rows,dimension);
+  m_faces.block(rows,dimension,rows,dimension)=m_faces.block(0,0,rows,dimension);
+  m_faces.block(rows,0,rows,dimension)=MatrixS::Zero(rows,dimension);
+  m_supports.block(rows,0,rows,1)=m_supports.block(0,0,rows,1);
+  if (tight) {
+    m_faces.block(2*rows,0,dimension,dimension)=MatrixS::Identity(dimension,dimension);
+    m_faces.block(2*rows+dimension,0,dimension,dimension)=-MatrixS::Identity(dimension,dimension);
+    m_faces.block(2*rows,dimension,dimension,dimension)=-MatrixS::Identity(dimension,dimension);
+    m_faces.block(2*rows+dimension,dimension,dimension,dimension)=MatrixS::Identity(dimension,dimension);
+    m_supports.block(2*rows,0,2*dimension,1)=MatrixS::Zero(2*dimension,1);
+  }
+  load(m_faces,m_supports);
+}
+
+/// Constrains the polyhedra to numbers with a maximum representation of max
+template <class scalar>
+void AbstractPolyhedra<scalar>::maxConstrain(refScalar max)
+{
+  int rows=m_faces.rows();
+  int dimension=m_faces.cols();
+  m_faces.conservativeResize(rows+2*dimension,dimension);
+  m_faces.block(rows,0,dimension,dimension)=MatrixS::Identity(dimension,dimension);
+  m_faces.block(rows+dimension,0,dimension,dimension)=-MatrixS::Identity(dimension,dimension);
+  m_supports.conservativeResize(m_faces.rows(),1);
+  for (int row=rows;row<m_supports.rows();row++) m_supports.coeffRef(row,0)=max;
+  load(m_faces,m_supports);
+}
+
+/// mirrors around the origin
+template <class scalar>
+void AbstractPolyhedra<scalar>::mirror()
+{
+  m_faces=-m_faces;
+  load(m_faces,m_supports);
+}
+
+/// Intersects the polyhedra with another polyhedra without removing redundancies
+template <class scalar>
+bool AbstractPolyhedra<scalar>::pseudoIntersect(const AbstractPolyhedra<scalar> &polyhedra)
+{
+  if (polyhedra.m_dimension!=this->m_dimension) return false;
+  if (m_iterations.size()>0) m_iterations.insert(m_iterations.end(),polyhedra.m_iterations.begin(),polyhedra.m_iterations.end());
+  bool result=Polyhedra<scalar>::pseudoIntersect(polyhedra);
+  if ((m_iterations.size()>0) && (m_iterations.size()!=m_faces.rows())) m_iterations.resize(m_faces.rows(),iteration_pair());
+  return result;
+}
+
 
 #ifdef USE_LDOUBLE
   #ifdef USE_SINGLES

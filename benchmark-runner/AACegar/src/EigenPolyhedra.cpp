@@ -154,9 +154,9 @@ void EigenPolyhedra<scalar>::copy(const EigenPolyhedra<scalar> &source)
 }
 
 template <class scalar>
-void EigenPolyhedra<scalar>::clear()
+void EigenPolyhedra<scalar>::clear(bool all)
 {
-  m_polyhedra.clear();
+  if (all) m_polyhedra.clear();
   m_eigenPolyhedra.clear();
   m_singularPolyhedra.clear();
 }
@@ -241,6 +241,13 @@ AbstractPolyhedra<scalar>& EigenPolyhedra<scalar>::getSingularPolyhedra(const st
     source.getRounded(roundings,m_singularPolyhedra);
   }
   return m_singularPolyhedra;
+}
+
+template <class scalar>
+void EigenPolyhedra<scalar>::maxConstrain(refScalar max)
+{
+  m_polyhedra.maxConstrain(max);
+  clear(false);
 }
 
 #ifdef USE_LDOUBLE

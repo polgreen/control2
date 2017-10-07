@@ -84,16 +84,16 @@ template <> typename interval_def<mpfr::mpreal>::power_type
   functions<mpfr::mpreal>::ms_infPower=LONG_MAX-1;
 #endif
 
-template <class scalar> scalar functions<scalar>::ms_hardZero=0;
+template <class scalar> scalar functions<scalar>::ms_0=0;
 template <class scalar> scalar functions<scalar>::ms_infinity=std::numeric_limits<scalar>::infinity();
 template <class scalar> scalar functions<scalar>::ms_nan=std::numeric_limits<scalar>::quiet_NaN();
 template <class scalar> scalar functions<scalar>::ms_pi=functions<scalar>::ms_lowPi;
 
 template <class scalar> typename functions<scalar>::scinterval
-  functions<scalar>::ms_temp=functions<scalar>::scinterval(functions<scalar>::ms_hardZero,functions<scalar>::ms_hardZero);
+  functions<scalar>::ms_temp=functions<scalar>::scinterval(functions<scalar>::ms_0,functions<scalar>::ms_0);
 
 template <class scalar> typename functions<scalar>::scinterval
-  functions<scalar>::ms_temp2=functions<scalar>::scinterval(functions<scalar>::ms_hardZero,functions<scalar>::ms_hardZero);
+  functions<scalar>::ms_temp2=functions<scalar>::scinterval(functions<scalar>::ms_0,functions<scalar>::ms_0);
 
 template <class scalar> typename functions<scalar>::scinterval
   functions<scalar>::ms_interval_pi=functions<scalar>::scinterval(functions<scalar>::ms_lowPi,functions<scalar>::ms_highPi);
@@ -206,19 +206,19 @@ ldinterval functions<long double>::const_2_pi<ldinterval>()      { return ms_int
 template <> template <>
 mpfr::mpreal functions<mpfr::mpreal>::invtan<mpfr::mpreal>(mpfr::mpreal num,mpfr::mpreal den)
 {
-    char sign=hardSign(den);
-    if (sign==0) {
-      sign=hardSign(num);
-      if (sign>0) return ms_pi_2;
-      else if (sign<0) return -ms_pi_2;
-      else if (sign==0) {
-        //should never happen
-        imprecise(num,den,"interpolation error");
-      }
+  char sign=hardSign(den);
+  if (sign==0) {
+    sign=hardSign(num);
+    if (sign>0) return ms_pi_2;
+    else if (sign<0) return -ms_pi_2;
+    else if (sign==0) {
+      //should never happen
+      imprecise(num,den,"interpolation error");
     }
-    else if (sign<0)  return ms_pi+atan(num/den);
-    else              return atan(num/den);
-    return ms_hardZero;
+  }
+  else if (sign<0)  return ms_pi+atan(num/den);
+  else              return atan(num/den);
+  return ms_0;
 }
 
 template <> template <>
@@ -231,13 +231,13 @@ mpinterval functions<mpfr::mpreal>::invtan<mpinterval>(mpinterval num,mpinterval
     else if (sign<0) return -ms_pi_2;
     else if (sign==0) {
       //should never happen
-      imprecise(num,ms_hardZero,"interpolation error");
+      imprecise(num,ms_0,"interpolation error");
       return mpinterval(-ms_pi_2,ms_pi_2);
     }
   }
   else if (sign<0)  return ms_pi+atan(num/den);
   else              return atan(num/den);
-  return ms_hardZero;
+  return ms_0;
 }
 
 template <> template <>
@@ -285,7 +285,21 @@ template <> template <> mpinterval functions<mpfr::mpreal>::sine<mpinterval>(con
 
 template <> template <>
 long double functions<long double>::invtan<long double>(const long double num,const long double den)
-{ return atan(num/den); }
+{
+  char sign=hardSign(den);
+  if (sign==0) {
+    sign=hardSign(num);
+    if (sign>0) return ms_pi_2;
+    else if (sign<0) return -ms_pi_2;
+    else if (sign==0) {
+      //should never happen
+      imprecise(num,den,"interpolation error");
+    }
+  }
+  else if (sign<0)  return ms_pi+atan(num/den);
+  else              return atan(num/den);
+  return ms_0;
+}
 
 template <> template <>
 ldinterval functions<long double>::invtan<ldinterval>(ldinterval num,ldinterval den)
@@ -297,14 +311,13 @@ ldinterval functions<long double>::invtan<ldinterval>(ldinterval num,ldinterval 
     else if (sign<0) return -ms_pi_2;
     else if (sign==0) {
       //should never happen
-      imprecise(num,ms_hardZero,"interpolation error");
+      imprecise(num,ms_0,"interpolation error");
       return ldinterval(-ms_pi_2,ms_pi_2);
     }
   }
-  else {
-    return atan(num/den);
-  }
-  return ms_hardZero;
+  else if (sign<0)  return ms_pi+atan(num/den);
+  else              return atan(num/den);
+  return ms_0;
 }
 
 template <> template <>
@@ -438,7 +451,7 @@ template <>
 long double functions<long double>::madd(long double &z,const long double &x,const long double &y)
 {
   z+=x*y;
-  return ms_hardZero;
+  return ms_0;
 }
 
 template <>
@@ -472,7 +485,7 @@ mpfr::mpreal functions<mpfr::mpreal>::madd(mpfr::mpreal &z,const mpfr::mpreal &x
 {
 //  z+=x*y;
   mpfr_fma((mpfr_ptr)z.mpfr_ptr(),x.mpfr_ptr(),y.mpfr_ptr(),z.mpfr_ptr(),MPFR_RNDZ);
-  return ms_hardZero;
+  return ms_0;
 }
 
 template <>

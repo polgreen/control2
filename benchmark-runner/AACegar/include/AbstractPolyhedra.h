@@ -40,6 +40,7 @@ public:
     using Polyhedra<scalar>::centralize;
     using Polyhedra<scalar>::decentralize;
     using Polyhedra<scalar>::translate;
+    using Polyhedra<scalar>::copy;
     using Polyhedra<scalar>::makeVertices;
     using Polyhedra<scalar>::boundingHyperBox;
 
@@ -122,7 +123,7 @@ public:
 
     /// Clears redundant faces in the polyhedra (caused by intersections and reductions)
     /// @return true if successful
-    virtual bool removeRedundancies();
+    virtual bool removeRedundancies(refScalar tolerance=0,bool recompute=false);
 
     /// Loads a description into the tableau (Ax<b)
     /// @param faces (A-Matrix) normal to the half-spaces describing the problem
@@ -155,6 +156,22 @@ public:
     /// @return true if successful
     bool addTaggedDirection(SMatrixS &faces,MatrixS &supports,std::vector<iteration_pair>  &iterations,bool keepBasis=false);
 
+    /// Creates a polyhedra of twice the dimension
+    /// @param tight creates 1-1 constraints for each duplicated variable
+    void duplicateSpace(AbstractPolyhedra &source,bool tight);
+    void duplicateSpace(bool tight=false) {duplicateSpace(*this,tight);}
+
+    /// Constrains the polyhedra to numbers with a maximum representation of max
+    void maxConstrain(refScalar max);
+    void bitConstrain(int integerBits) { maxConstrain(1<<integerBits); }
+
+    /// mirrors around the origin
+    void mirror();
+protected:
+    /// Intersects the polyhedra with another polyhedra without removing redundancies
+    /// @param polyhedra polyhedra to intersect
+    /// @return true if successful
+    virtual bool pseudoIntersect(const AbstractPolyhedra<scalar> &polyhedra);
 public:
     std::vector<iteration_pair> m_iterations;
     static bool                 ms_trace_abstraction;

@@ -1051,6 +1051,11 @@ AbstractPolyhedra<scalar>& DynamicalSystem<scalar>::getAbstractReachTube(powerS 
     if (m_idimension>0) getAccelVertices(true);
     supports.resize(templates.cols(),1);
     for (int i=0;i<templates.cols();i++) {
+      if (ms_trace_time) {
+        std::stringstream buffer;
+        buffer << i << " of " << templates.cols();
+        ms_logger.logData(buffer.str());
+      }
       MatrixS localSupport=getAbstractReachTubeSupports(iteration,precision,dynamics,templates.col(i));
       supports.coeffRef(i,0)=localSupport.coeff(0,0);
     }
@@ -1381,7 +1386,7 @@ int DynamicalSystem<scalar>::loadARMAXModel(std::string &data,size_t pos)
       ARMAX.coeffRef(1,m_dimension-i)=temp;
     }
   }
-  if (ARMAX.coeff(0,m_dimension)==func::ms_hardZero) ARMAX.coeffRef(0,m_dimension)=ms_one;
+  if (ARMAX.coeff(0,m_dimension)==func::ms_0) ARMAX.coeffRef(0,m_dimension)=ms_one;
   else if (ARMAX.coeff(0,m_dimension)!=ms_one) ARMAX/=ARMAX.coeff(0,m_dimension);
   m_dynamics.block(0,1,m_dimension-1,m_dimension-1)=MatrixS::Identity(m_dimension-1,m_dimension-1);
   m_dynamics.block(m_dimension-1,0,1,m_dimension)=-ARMAX.block(0,0,1,m_dimension);

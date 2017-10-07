@@ -31,6 +31,7 @@ public:
   bool                              useBasis;
   bool                              useSparse;
   bool                              useFixedBV;
+  bool                              useCanonicalForm;
   bool                              parseError;
 };
 

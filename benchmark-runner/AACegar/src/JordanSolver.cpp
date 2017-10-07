@@ -439,7 +439,7 @@ bool JordanSolver<scalar>::calculateJordanForm()
     refScalar eigenVectorEpsilon=calculateEpsilon(m_eigenVectors);
     for (int row=0;row<m_eigenVectors.rows();row++) {
       for (int col=0;col<m_eigenVectors.cols();col++) {
-        if (func::norm2(m_eigenVectors.coeff(row,col))<eigenVectorEpsilon) m_eigenVectors.coeffRef(row,col)=func::ms_hardZero;
+        if (func::norm2(m_eigenVectors.coeff(row,col))<eigenVectorEpsilon) m_eigenVectors.coeffRef(row,col)=func::ms_0;
       }
     }
 

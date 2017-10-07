@@ -261,7 +261,7 @@ bool SortedMatrix<scalar>::LargerAngleRow(const int row1,const int row2)
   for (int j=0;j<cols()-1;j++) {
     scalar angle1=coeff(row1,j)/coeff(row1,j+1);
     angle1=atan(angle1);
-    if (coeff(row1,j)<func::ms_hardZero) angle1+=func::const_pi(func::ms_1);
+    if (coeff(row1,j)<func::ms_0) angle1+=func::const_pi(func::ms_1);
     scalar angle2=coeff(row2,j)/coeff(row2,j+1);
     angle2=atan(angle2);
     if (func::isNegative(coeff(row2,j))) angle2+=func::const_pi(func::ms_1);
@@ -363,11 +363,11 @@ void SortedMatrix<scalar>::cosineSort()
     m_order[pos]=rows();  
     refScalar max=-func::ms_infinity;
     refScalar invCos=func::ms_1/cosines[row];
-    refScalar lastCosine=func::ms_hardZero;
+    refScalar lastCosine=func::ms_0;
     for (std::set<int>::iterator it=remaining.begin();it!=remaining.end();it++) {
       int row2=*it;
       if ((pos>2) && (!func::isNegative(lastCosine-cosines[row2]))) {
-        if (cosines[row2]>func::ms_hardZero) cosines[row2]*=invCos;
+        if (cosines[row2]>func::ms_0) cosines[row2]*=invCos;
         else cosines[row2]+=func::ms_1-cosines[row];
         continue;
       }

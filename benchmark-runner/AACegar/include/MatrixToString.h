@@ -30,7 +30,7 @@ public:
     typedef functions<refScalar> func;
 
     void setPrecision(int precision) { m_precision=precision; }
-    MatToStr(const int precision,const std::string leftBracket,const std::string rightBracket,const std::string separator);
+    MatToStr(const int precision,const std::string leftBracket,const std::string rightBracket,const std::string separator,const std::string rowSeparator);
     MatToStr(const bool brackets);
     scalar getNumber(const char * pData,size_t &pos=0,const size_t end=0);
     scalar getNumber(const std::string &str,size_t &pos=0) { return getNumber(str.data(),pos,str.size()); }
@@ -46,7 +46,7 @@ public:
     std::string IneToString(SMatrixS &directions,const MatrixS &supports,const bool interval=ms_traceIntervals,const bool normalised=false,const bool transposed=false);
 
     /// Returns a C structure description of a matrix
-    std::string MatToC(const std::string name,const MatrixS &matrix,const bool interval=false,const bool use_cpp=true);
+    std::string MatToC(const std::string name,const MatrixS &matrix,const bool interval=false,scalar scaling=0,const bool use_cpp=true);
 
     /// Returns a C boolen statement describing a set of Inequlities
     std::string IneToC(const std::string type,const std::string cast,const std::string name,const MatrixS &directions,const MatrixS &supports,const bool interval=false,const int orBlockSize=1);
@@ -95,6 +95,7 @@ public:
     std::string         m_leftBracket;
     std::string         m_rightBracket;
     std::string         m_separator;
+    std::string         m_rowSeparator;
     static bool         ms_traceIntervals;
     static bool         ms_useConsole;
     static bool         ms_zeroBased;

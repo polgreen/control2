@@ -29,7 +29,7 @@ typedef enum
     eEigenTemplates         = 0x80
 } AbstractionFlags;
 
-typedef enum{eParamStr,eDynamicsStr,iSenseStr,oSenseStr,ioSenseStr,eGuardStr,iGuardStr,sGuardStr,oGuardStr,eInitStr,eInputStr,eTemplateStr,eARMAXStr,eSpaceXStr,eControlStr,eObserveStr,eReferenceStr,eIncOrderStr,eSampleStr,eSpeedStr,eRandStr,eMaxStr} optionStr_t;
+typedef enum{eParamStr,eDynamicsStr,iSenseStr,oSenseStr,ioSenseStr,eGuardStr,iGuardStr,sGuardStr,oGuardStr,eInitStr,eInputStr,eTemplateStr,eARMAXStr,eSpaceXStr,eControlStr,eObserveStr,eReferenceStr,eIncOrderStr,eSampleStr,eSpeedStr,eOInitStr,eRandStr,eMaxStr} optionStr_t;
 typedef std::list<std::string> stringList;
 typedef std::map<optionStr_t,std::string> optionList_t;
 
@@ -319,7 +319,7 @@ public:
     /// @param vertices indicates if the description is vertex or inequality oriented
     /// @param pos position to start parsing from
     /// @return position after parsing, negative if failed
-    int loadOutputGuard(const std::string &data,bool vertices=false,size_t pos=0,size_t end=std::string::npos);
+    virtual int loadOutputGuard(const std::string &data,bool vertices=false,size_t pos=0,size_t end=std::string::npos);
 
     /// Loads a polyhedral description for the initial state
     /// @param data buffer containing the polyhedra description

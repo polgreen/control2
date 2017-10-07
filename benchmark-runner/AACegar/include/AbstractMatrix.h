@@ -83,7 +83,7 @@ public:
 
     /// Indicates if the matrix dynamics are divergent
     /// @param strict if true returns only true if no eigenvalues are convergent
-    bool isDivergent(const bool strict=false);
+    bool isDivergent(const bool strict=false, scalar speed=func::ms_1);
 
     /// Retrieves the largest eigenvalue norm
     scalar largestEigenNorm();

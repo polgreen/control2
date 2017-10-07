@@ -151,7 +151,7 @@ bool JordanMatrix<scalar>::loadJordan(const MatrixS &matrix)
 
   m_eigenVectors=MatrixC::Identity(m_dimension,m_dimension);
   m_invEigenVectors=m_eigenVectors;
-  m_error=func::ms_hardZero;
+  m_error=func::ms_0;
   m_jordanTime=timer.elapsed()*1000;
   if (ms_trace_time) ms_logger.logData(m_jordanTime,"Pole Extraction time:",true);
   return true;
@@ -281,7 +281,7 @@ bool JordanMatrix<scalar>::calculateJordanForm(bool includeSvd)
 
   m_pseudoEigenValues=jordanToPseudoJordan(m_eigenValues,eToEigenValues);
   m_pseudoEigenVectors=jordanToPseudoJordan(m_eigenVectors,eToEigenVectors);
-  m_invPseudoEigenVectors=m_pseudoEigenVectors.inverse();
+  m_invPseudoEigenVectors=makeInverse(m_pseudoEigenVectors);
   if (ms_trace_dynamics>=eTraceDynamics) {
     MatrixS pseudoCalculated=m_pseudoEigenVectors*m_pseudoEigenValues*m_invPseudoEigenVectors;
     ms_logger.logData(m_pseudoEigenValues,"PseudoEigenValues");
@@ -366,7 +366,7 @@ typename JordanMatrix<scalar>::MatrixC JordanMatrix<scalar>::pseudoToJordan(cons
       mult=(m_conjugatePair[row]<0) ? 1 : 2;
       if (m_jordanIndex[row+mult]>0) {
         if (m_conjugatePair[row]<0) {
-          result.coeffRef(row,row)=complexS(source.coeff(row,row),func::ms_hardZero);
+          result.coeffRef(row,row)=complexS(source.coeff(row,row),func::ms_0);
         }
         else {
           result.coeffRef(row,row)=complexS(source.coeff(row,row),source.coeff(row,row+1));
@@ -649,7 +649,7 @@ typename JordanMatrix<scalar>::refScalar JordanMatrix<scalar>::calculateMinSepar
       det*=sep;
       diagNorm2+=func::squared(sep);//*sep;
     }
-    if (func::toLower(det)==0) func::imprecise(det,func::ms_hardZero,"zero det");
+    if (func::toLower(det)==0) func::imprecise(det,func::ms_0,"zero det");
     diagNorm2+=nonDiagNorm2;
     scalar maxColOrRowProd=func::pow(sqrt(diagNorm2),m_dimension-1);
     while (m_jordanIndex[i+mult]>0) i+=mult;
@@ -710,7 +710,7 @@ scalar JordanMatrix<scalar>::calculateEigenError()
   m_pseudoEigenValues=jordanToPseudoJordan(m_eigenValues,eToEigenValues);
 
   calculateMinSeparation();
-  m_verror=func::ms_hardZero;
+  m_verror=func::ms_0;
   if (type::isInterval()) {
     for (int i=0;i<m_dimension;i++) {
       scalar angleError=errorNorm;

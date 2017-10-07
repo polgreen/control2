@@ -6,6 +6,16 @@
 
 namespace abstract
 {
+
+struct Implementation
+{
+  int intbits;
+  int fracbits;
+  long double scale;
+  long double max;
+  long long fxp_one;
+};
+
 template <class scalar> class Synthesiser : public CegarSystem<scalar>
 {
 public:
@@ -60,6 +70,7 @@ public:
     using DynamicalSystem<scalar>::m_pAbstractReachTube;
     using DynamicalSystem<scalar>::m_maxIterations;
     using DynamicalSystem<scalar>::m_loadTime;
+    using CegarSystem<scalar>::m_initialOutputs;
     using CegarSystem<scalar>::m_observer;
     using CegarSystem<scalar>::m_observerDynamics;
     using CegarSystem<scalar>::m_observerSensitivity;
@@ -74,6 +85,8 @@ public:
     using DynamicalSystem<scalar>::ms_trace_time;
     using DynamicalSystem<scalar>::ms_trace_dynamics;
     using DynamicalSystem<scalar>::ms_emptyMatrix;
+    using CegarSystem<scalar>::ms_fixedBVs;
+    using CegarSystem<scalar>::ms_canonical;
 
     using JordanMatrix<scalar>::interToRef;
     using JordanMatrix<scalar>::refToInter;
@@ -122,8 +135,10 @@ public:
     using DynamicalSystem<scalar>::processError;
     using DynamicalSystem<scalar>::combineAB;
     using CegarSystem<scalar>::loadFromSpaceXFiles;
+    using CegarSystem<scalar>::loadOutputInitialState;
     using CegarSystem<scalar>::getReachableCanonicalTransformMatrix;
     using CegarSystem<scalar>::getObservableCanonicalTransformMatrix;
+    using CegarSystem<scalar>::makeReachabilityMatrices;
     using CegarSystem<scalar>::getRefinedDynamics;
     using CegarSystem<scalar>::getRefinedAbstractReachTube;
     using CegarSystem<scalar>::generateNoiseInput;
@@ -139,6 +154,13 @@ public:
     using CegarSystem<scalar>::makeConvergentSystem;
     using CegarSystem<scalar>::makeClosedSystem;
     using CegarSystem<scalar>::getControllerDynBounds;
+    using CegarSystem<scalar>::synthesiseDynamicBounds;
+    using CegarSystem<scalar>::checkExplicitReachability;
+    using CegarSystem<scalar>::capEigenValues;
+    using CegarSystem<scalar>::findMaxValue;
+    using CegarSystem<scalar>::findScale;
+    using CegarSystem<scalar>::getBits;
+    using CegarSystem<scalar>::fitToSpec;
     using CegarSystem<scalar>::copy;
 
     /// Constructs an empty buffer
@@ -153,9 +175,6 @@ public:
 
     /// Synthetises the eigenstructure of a pole location
     AbstractPolyhedra<scalar> synthesiseEigenStructure(inputType_t inputType,int precision,int directions,AbstractPolyhedra<scalar> &end,AbstractPolyhedra<scalar> &dynamics);
-
-    /// Synthesises a bound on the dynamics given a known guard and eigenvectors.
-    AbstractPolyhedra<scalar> synthesiseDynamicBounds(inputType_t inputType,AbstractPolyhedra<scalar> &end);
 
     /// Retrieves the support set for the inputs
     MatrixS& getRefinedAccelInSupports();
@@ -225,10 +244,19 @@ public:
                                             { return m_closedLoop.getAbstractDynamics(inputType); }
 
     ///Creates a c header (defines and data types) for CEGIS
-    std::string makeCEGISHeader(bool observer,bool intervals=true);
+    std::string makeCEGISHeader(bool observer,bool intervals=true,bool scaling=false);
+
+    ///Adds a transformt element to t he stream
+    void maketransformt(std::stringstream &stream, std::string name,const MatrixS &matrix, const scalar &scale, bool intervals);
+
+    ///Adds a implt element to the stream
+    void makeimplt(std::stringstream &stream, std::string name,int int_bits,int frac_bits,int spec_int_bits);
+
+    ///Adds a set of vertices, vectors and supports that describe a closed safety spec
+    void makeVertexSupportCombo(std::stringstream &stream, std::string name, MatrixS vertices, MatrixS inputs, AbstractPolyhedra<scalar> &bounds, bool normalize=true);
 
     ///Creates a c specification for CEGIS
-    std::string makeCEGISDescription(bool observer,bool intervals=true);
+    std::string makeCEGISDescription(bool observer,bool intervals=true,bool scaling=false);
 
     ///Creates a list of iterations for CEGIS
     std::string makeCEGISIterations(std::string &existing);
@@ -236,6 +264,8 @@ public:
     ///Creates a c header file for CEGIS
     bool makeCEGISFiles(bool observer=false);
 
+protected:
+    std::map<std::string, Implementation> m_implementation;
 public:
     CegarSystem<scalar>     m_closedLoop;
     CegarSystem<scalar>     m_sampled;

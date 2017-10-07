@@ -114,11 +114,11 @@ public:
     /// Creates a list of redundant/non-redundant rows of the tableau
     /// @param isRedundant vector to fill with redundant flag for each row
     /// @return number of found redundancies
-    int findRedundancies(std::vector<bool> &isRedundant);
+    int findRedundancies(std::vector<bool> &isRedundant, refScalar tolerance);
 
     /// Clears redundant faces in the polyhedra (caused by intersections and reductions)
     /// @return true if successful
-    virtual bool removeRedundancies();
+    virtual bool removeRedundancies(refScalar tolerance=0,bool recompute=false);
 
     /// Maximises a vector direction.
     /// @param vector vector data to be maximised
