@@ -40,7 +40,9 @@ public:
     using Polyhedra<scalar>::centralize;
     using Polyhedra<scalar>::decentralize;
     using Polyhedra<scalar>::translate;
+    using Polyhedra<scalar>::copy;
     using Polyhedra<scalar>::makeVertices;
+    using Polyhedra<scalar>::boundingHyperBox;
 
     /// Constructs an empty buffer
     /// @param dimension dimension of the space
@@ -53,25 +55,26 @@ public:
     AbstractPolyhedra(const AbstractPolyhedra& source,const MatrixS &transform=ms_emptyMatrix,const MatrixS &inverse=ms_emptyMatrix);
 
     /// Retrieves the corresponding circular vectors for a given set of vectors
-    /// @param rotations rotating axis to unfold
-    /// @param dilation dilating axis to unfold (Jordan blocks)
-    MatrixS getRoundedDirections(const MatrixS &vectors,const std::vector<int> &rotations,const std::vector<int> &dilations);
+    /// @param roundings marks the variables to fold
+    MatrixS getRoundedDirections(const MatrixS &vectors,const std::vector<int> &roundings);
 
     /// Retrieves an abstraction that has circular faces in the rotating axis and jordan blocks
     /// @return true if there are circular faces in the abstraction
-    bool getRoundAbstraction(int dimension,int roundDimension,const std::vector<int> &rotations,const std::vector<int> &dilations,AbstractPolyhedra<scalar> &roundAbstraction);
+    bool getRoundAbstraction(int dimension,int roundDimension,const std::vector<int> &roundings,AbstractPolyhedra<scalar> &roundAbstraction);
 
     /// Retrieves an abstraction that has circular faces along the rotating axis and jordan blocks
-    /// @param rotations rotating axis to unfold
-    /// @param dilation dilating axis to unfold (Jordan blocks)
-    AbstractPolyhedra& getRounded(const std::vector<int> &rotations,const std::vector<int> &dilations,AbstractPolyhedra &roundAbstraction,bool preCentralized=false);
+    /// @param roundings variables to fold (set as indexof beginning of block)
+    AbstractPolyhedra& getRounded(const std::vector<int> &roundings,AbstractPolyhedra &roundAbstraction,bool preCentralized=false);
+
+    /// Retrieves an abstraction that has circular faces in the rotating axis and jordan blocks
+    /// @return true if there are circular faces in the abstraction
+    bool getSquareAbstraction(AbstractPolyhedra<scalar> &squareAbstraction,bool symmetric);
 
     /// Performs the Minkowski sum of this polyhedra to another
     /// @param polyhedra polyhedra to merge
-    /// @param rotations rotating axis represented by a single vector in the added polyhedra
-    /// @param dilations dilating axis represented by a single vector in the added polyhedra
+    /// @param roundings variables to be folded in the polyhedra
     /// @return true if successful
-    bool addRounded(Polyhedra<scalar> &polyhedra,const std::vector<int> &rotations,const std::vector<int> &dilations);
+    bool addRounded(Polyhedra<scalar> &polyhedra,const std::vector<int> &roundings);
 
     /// Retrives the vertices mapped into an abstract domain of a linear matrix
     /// @param rotations rotating axis represented by a single vector in the added polyhedra
@@ -88,8 +91,6 @@ public:
     MatrixS getAbstractVertices(const MatrixS &vectors,const std::vector<int> &rotations,const std::vector<int> &dilations)
     { return getAbstractVertices(vectors,rotations,dilations,getVertices()); }
 
-    MatrixS getAbstractVertices(MatrixS &vectors);
-
     /// Sets the vertices of the polyhedra from a precalculated set
     /// @param vertices precalculated vertices
     /// @param centre if not empty, indicates a translation point to centralize the polyhedra
@@ -99,9 +100,9 @@ public:
     /// @param vectors directions to merge the vertices with
     /// @param rotations rotating axis represented by a single vector in the added polyhedra
     /// @param dilations dilating axis represented by a single vector in the added polyhedra
-    MatrixS getSynthVertices(const MatrixS &vectors,const std::vector<int> &rotations,const std::vector<int> &dilations,const MatrixS &vertices);
-    MatrixS getSynthVertices(const MatrixS &vectors,const std::vector<int> &rotations,const std::vector<int> &dilations)
-    { return getSynthVertices(vectors,rotations,dilations,getVertices()); }
+    MatrixS getSynthVertices(const MatrixS &vectors,const std::vector<int> &rotations,const std::vector<int> &dilations,const std::vector<int> &roundings,const MatrixS &vertices);
+    MatrixS getSynthVertices(const MatrixS &vectors,const std::vector<int> &rotations,const std::vector<int> &dilations,const std::vector<int> &roundings)
+    { return getSynthVertices(vectors,rotations,dilations,roundings,getVertices()); }
 
     /// Retrieves a copy of this polyhedra transformed by the given matrix
     /// @param pTransform transform matrix
@@ -122,7 +123,7 @@ public:
 
     /// Clears redundant faces in the polyhedra (caused by intersections and reductions)
     /// @return true if successful
-    virtual bool removeRedundancies();
+    virtual bool removeRedundancies(refScalar tolerance=0,bool recompute=false);
 
     /// Loads a description into the tableau (Ax<b)
     /// @param faces (A-Matrix) normal to the half-spaces describing the problem
@@ -155,6 +156,22 @@ public:
     /// @return true if successful
     bool addTaggedDirection(SMatrixS &faces,MatrixS &supports,std::vector<iteration_pair>  &iterations,bool keepBasis=false);
 
+    /// Creates a polyhedra of twice the dimension
+    /// @param tight creates 1-1 constraints for each duplicated variable
+    void duplicateSpace(AbstractPolyhedra &source,bool tight);
+    void duplicateSpace(bool tight=false) {duplicateSpace(*this,tight);}
+
+    /// Constrains the polyhedra to numbers with a maximum representation of max
+    void maxConstrain(refScalar max);
+    void bitConstrain(int integerBits) { maxConstrain(1<<integerBits); }
+
+    /// mirrors around the origin
+    void mirror();
+protected:
+    /// Intersects the polyhedra with another polyhedra without removing redundancies
+    /// @param polyhedra polyhedra to intersect
+    /// @return true if successful
+    virtual bool pseudoIntersect(const AbstractPolyhedra<scalar> &polyhedra);
 public:
     std::vector<iteration_pair> m_iterations;
     static bool                 ms_trace_abstraction;

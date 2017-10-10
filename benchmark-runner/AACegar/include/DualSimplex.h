@@ -27,6 +27,7 @@ public:
     using Tableau<scalar>::m_dimension;
     using Tableau<scalar>::m_size;
     using Tableau<scalar>::m_pSortedTableau;
+    using Tableau<scalar>::m_auxiliaryRow;
     using Tableau<scalar>::m_basisInverse;
     using Tableau<scalar>::m_objectiveRow;
     using Tableau<scalar>::m_nonBasicRow;
@@ -41,6 +42,7 @@ public:
     using Tableau<scalar>::m_evidenceCol;
     using Tableau<scalar>::m_lastPivot;
 
+    using Tableau<scalar>::ms_useBasis;
     using Tableau<scalar>::ms_logger;
     using Tableau<scalar>::ms_trace_tableau;
     using Tableau<scalar>::ms_trace_pivots;
@@ -112,11 +114,11 @@ public:
     /// Creates a list of redundant/non-redundant rows of the tableau
     /// @param isRedundant vector to fill with redundant flag for each row
     /// @return number of found redundancies
-    int findRedundancies(std::vector<bool> &isRedundant);
+    int findRedundancies(std::vector<bool> &isRedundant, refScalar tolerance);
 
     /// Clears redundant faces in the polyhedra (caused by intersections and reductions)
     /// @return true if successful
-    virtual bool removeRedundancies();
+    virtual bool removeRedundancies(refScalar tolerance=0,bool recompute=false);
 
     /// Maximises a vector direction.
     /// @param vector vector data to be maximised
@@ -183,7 +185,6 @@ protected:
     scalar auxEntry(const int col);
 public:
     LPStatusType_t      m_status;               //Indicates the status of the simplex
-    MatrixS             m_auxiliaryRow;         //Saves the auxiliary row data for the dual simplex
     MatrixS             m_costs;                //Saves the objective function costs
     int                 m_iterations;           //Number of iterations performed on the last operation
     int                 m_orBlockSize;          //Size of each block that corresponds to an or constraint

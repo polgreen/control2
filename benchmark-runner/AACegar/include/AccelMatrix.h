@@ -27,13 +27,18 @@ public:
     using JordanMatrix<scalar>::m_dimension;
     using JordanMatrix<scalar>::m_jordanIndex;
     using JordanMatrix<scalar>::m_conjugatePair;
+    using JordanMatrix<scalar>::m_roundings;
     using JordanMatrix<scalar>::m_eigenValues;
+    using JordanMatrix<scalar>::m_blockSingularValues;
     using JordanMatrix<scalar>::m_eigenVectors;
     using JordanMatrix<scalar>::m_invEigenVectors;
+    using JordanMatrix<scalar>::m_pseudoEigenValues;
     using JordanMatrix<scalar>::m_pseudoEigenVectors;
     using JordanMatrix<scalar>::m_invPseudoEigenVectors;
     using JordanMatrix<scalar>::m_isOne;
+    using JordanMatrix<scalar>::m_isNegative;
     using JordanMatrix<scalar>::m_hasOnes;
+    using JordanMatrix<scalar>::m_hasNegatives;
 
     using JordanMatrix<scalar>::ms_one;
     using JordanMatrix<scalar>::ms_logger;
@@ -43,6 +48,7 @@ public:
 
     using JordanMatrix<scalar>::calculateBlockSVD;
     using JordanMatrix<scalar>::jordanToPseudoJordan;
+    using JordanMatrix<scalar>::makeInverse;
 
     /// Constructs an empty buffer
     /// @param dimension dimension of the statespace
@@ -69,6 +75,9 @@ public:
     /// retrieves the acceleration factor (I-F)^-1
     MatrixS& getInvIminF()         { return m_invIminF; }
 
+    /// Retrieves a matrix that is Identity for positive blocks and J_s for negative ones
+    MatrixS& getJnegJ();
+
     /// retrieves the dynamics matrix for a given iteration (n)
     /// @param iteration number of iterations since the initial state
     /// @param input indicates whether we want state (A^n) or input (I-A^n/I-A) dynamics
@@ -88,12 +97,22 @@ public:
     MatrixS getRoundDynamics(const powerS iteration,const bool input=false,const bool inEigenSpace=false);
 
     /// Loads a matrix and finds its decomposition
-    bool load(const MatrixS &matrix);
+    virtual bool load(const MatrixS &matrix);
 
     /// Loads a matrix assumed to be a canonical Jordan form
-    bool loadJordan(const MatrixS &matrix);
+    virtual bool loadJordan(const MatrixS &matrix);
+
+    /// Copies an existing object
+    virtual void copy(const AccelMatrix &source);
 protected:
     scalar binomial(powerS n,int k);
+
+    /// indicates if the eigenvalue at index should be overapproximated with a spherical abstraction.
+    /// @param index index of the variable to check.
+    int roundIndex(int index);
+
+    /// Marks the round indices in a rounded vector array
+    void findRoundIndices(std::vector<int> &isRoundIndex,bool compressed);
 
     /// Calculates (I-J)^-1
     void calculateInvIminJ();
@@ -117,9 +136,8 @@ public:
     std::string getIminAnInvIMinA(const bool full);
 
 protected:
-    MatrixS             m_foldedEigenValues;
-    MatrixS             m_binomialMultipliers;
     MatrixS             m_foldedBinomialMultipliers;
+    MatrixS             m_foldedEigenValues;
     MatrixC             m_invIminJ;
     MatrixS             m_pseudoIminJ;
     MatrixS             m_pseudoInvIminJ;
@@ -128,7 +146,8 @@ protected:
     MatrixS             m_IminF;
     MatrixS             m_invIminF;
     std::vector<int>    m_svnIndex;
-
+public:
+    static bool         ms_roundJordanBlocks;
 };
 
 }

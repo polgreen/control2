@@ -24,6 +24,7 @@
   const control_floatt _zero=0.0;
   const control_floatt _one=1.0;
 #else
+  #define _FIXEDBV
   typedef double control_floatt;
   typedef unsigned int cnttype;
   const control_floatt _zero=0.0;
@@ -32,11 +33,14 @@
   #include <stdio.h> 
 #endif
 
-struct implt
+typedef struct implt
 {
   cnttype int_bits;
   cnttype frac_bits;
-  cnttype mult_bits;
+  control_floatt max;
+  control_floatt min;
+  control_floatt scale;
+  signed long int fxp_one;
 };
 
 void verify_assume(_Bool expression)
@@ -44,6 +48,7 @@ void verify_assume(_Bool expression)
 #ifdef __CPROVER
   __CPROVER_assume(expression != (_Bool)0);
 #else
+  printf("assumes %d\n", (int)expression);
   assert(expression);
 #endif
 }

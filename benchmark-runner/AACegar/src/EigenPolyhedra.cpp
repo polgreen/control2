@@ -138,10 +138,25 @@ AbstractPolyhedra<scalar>& EigenPolyhedra<scalar>::mergeLoad(AbstractPolyhedra<s
   return getPolyhedra(space);
 }
 
+// copies another EigenPolyhedra into this one
 template <class scalar>
-void EigenPolyhedra<scalar>::clear()
+void EigenPolyhedra<scalar>::copy(const EigenPolyhedra<scalar> &source)
 {
-  m_polyhedra.clear();
+  m_name=source.m_name;
+  m_dimension=source.m_dimension;
+  m_polyhedra.copy(source.m_polyhedra);
+  m_eigenPolyhedra.copy(source.m_eigenPolyhedra);
+  m_singularPolyhedra.copy(source.m_singularPolyhedra);
+  m_pEigenVectors=source.m_pEigenVectors;
+  m_pInverseEigenVectors=source.m_pInverseEigenVectors;
+  m_centre=source.m_centre;
+  m_eigenCentre=source.m_eigenCentre;
+}
+
+template <class scalar>
+void EigenPolyhedra<scalar>::clear(bool all)
+{
+  if (all) m_polyhedra.clear();
   m_eigenPolyhedra.clear();
   m_singularPolyhedra.clear();
 }
@@ -155,10 +170,10 @@ AbstractPolyhedra<scalar>& EigenPolyhedra<scalar>::getPolyhedra(space_t space,bo
 }
 
 template <class scalar>
-AbstractPolyhedra<scalar>& EigenPolyhedra<scalar>::getPolyhedra(space_t space,const std::vector<int> &rotations,const std::vector<int> &dilations)
+AbstractPolyhedra<scalar>& EigenPolyhedra<scalar>::getPolyhedra(space_t space,const std::vector<int> &roundings)
 {
   if (space==eNormalSpace) return m_polyhedra;
-  return (space==eEigenSpace) ? getEigenPolyhedra() : getSingularPolyhedra(rotations,dilations);
+  return (space==eEigenSpace) ? getEigenPolyhedra() : getSingularPolyhedra(roundings);
 }
 
 /// Retrieves a copy of this polyhedra transformed by the given matrix
@@ -219,13 +234,20 @@ AbstractPolyhedra<scalar>& EigenPolyhedra<scalar>::getEigenPolyhedra(bool force)
 }
 
 template <class scalar>
-AbstractPolyhedra<scalar>& EigenPolyhedra<scalar>::getSingularPolyhedra(const std::vector<int> &rotations,const std::vector<int> &dilations)
+AbstractPolyhedra<scalar>& EigenPolyhedra<scalar>::getSingularPolyhedra(const std::vector<int> &roundings)
 {
   if (m_singularPolyhedra.isEmpty()) {
     AbstractPolyhedra<scalar> source(getEigenPolyhedra());
-    source.getRounded(rotations,dilations,m_singularPolyhedra);
+    source.getRounded(roundings,m_singularPolyhedra);
   }
   return m_singularPolyhedra;
+}
+
+template <class scalar>
+void EigenPolyhedra<scalar>::maxConstrain(refScalar max)
+{
+  m_polyhedra.maxConstrain(max);
+  clear(false);
 }
 
 #ifdef USE_LDOUBLE

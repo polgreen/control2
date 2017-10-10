@@ -6,6 +6,16 @@
 
 namespace abstract
 {
+
+struct Implementation
+{
+  int intbits;
+  int fracbits;
+  long double scale;
+  long double max;
+  long long fxp_one;
+};
+
 template <class scalar> class Synthesiser : public CegarSystem<scalar>
 {
 public:
@@ -25,6 +35,7 @@ public:
     using JordanMatrix<scalar>::m_hasMultiplicities;
     using JordanMatrix<scalar>::m_jordanIndex;
     using JordanMatrix<scalar>::m_conjugatePair;
+    using JordanMatrix<scalar>::m_roundings;
     using DynamicalSystem<scalar>::m_idimension;
     using DynamicalSystem<scalar>::m_fdimension;
     using DynamicalSystem<scalar>::m_odimension;
@@ -36,6 +47,7 @@ public:
     using DynamicalSystem<scalar>::m_invEigenVectors;
     using DynamicalSystem<scalar>::m_pseudoEigenVectors;
     using DynamicalSystem<scalar>::m_invPseudoEigenVectors;
+    using DynamicalSystem<scalar>::m_name;
     using DynamicalSystem<scalar>::m_source;
     using DynamicalSystem<scalar>::m_guard;
     using DynamicalSystem<scalar>::m_dynamics;
@@ -58,6 +70,14 @@ public:
     using DynamicalSystem<scalar>::m_pAbstractReachTube;
     using DynamicalSystem<scalar>::m_maxIterations;
     using DynamicalSystem<scalar>::m_loadTime;
+    using CegarSystem<scalar>::m_initialOutputs;
+    using CegarSystem<scalar>::m_observer;
+    using CegarSystem<scalar>::m_observerDynamics;
+    using CegarSystem<scalar>::m_observerSensitivity;
+    using CegarSystem<scalar>::m_observerOutputSensitivity;
+    using CegarSystem<scalar>::m_observerDynamicsError;
+    using CegarSystem<scalar>::m_observerSensitivityError;
+    using CegarSystem<scalar>::m_observerOutputSensitivityError;
 
     using DynamicalSystem<scalar>::ms_one;
     using DynamicalSystem<scalar>::ms_incremental;
@@ -65,10 +85,12 @@ public:
     using DynamicalSystem<scalar>::ms_trace_time;
     using DynamicalSystem<scalar>::ms_trace_dynamics;
     using DynamicalSystem<scalar>::ms_emptyMatrix;
-
+    using CegarSystem<scalar>::ms_fixedBVs;
+    using CegarSystem<scalar>::ms_canonical;
 
     using JordanMatrix<scalar>::interToRef;
     using JordanMatrix<scalar>::refToInter;
+    using JordanMatrix<scalar>::makeInverse;
     using AbstractMatrix<scalar>::findIterations;
     using AbstractMatrix<scalar>::addSupportsAtIteration;
     using DynamicalSystem<scalar>::setName;
@@ -76,7 +98,6 @@ public:
     using DynamicalSystem<scalar>::getGuardPoly;
     using DynamicalSystem<scalar>::getInitPoly;
     using DynamicalSystem<scalar>::getInputPoly;
-    using DynamicalSystem<scalar>::getAccelInputPoly;
     using DynamicalSystem<scalar>::getReachPoly;
     using DynamicalSystem<scalar>::getTubePoly;
     using DynamicalSystem<scalar>::getAbsTubePoly;
@@ -105,6 +126,8 @@ public:
     using DynamicalSystem<scalar>::loadDynamics;
     using DynamicalSystem<scalar>::loadInitialState;
     using DynamicalSystem<scalar>::loadSensitivities;
+    using DynamicalSystem<scalar>::loadOutputSensitivities;
+    using DynamicalSystem<scalar>::loadIOSensitivities;
     using DynamicalSystem<scalar>::loadInputs;
     using DynamicalSystem<scalar>::loadSafeReachTube;
     using DynamicalSystem<scalar>::loadTemplates;
@@ -112,7 +135,10 @@ public:
     using DynamicalSystem<scalar>::processError;
     using DynamicalSystem<scalar>::combineAB;
     using CegarSystem<scalar>::loadFromSpaceXFiles;
+    using CegarSystem<scalar>::loadOutputInitialState;
     using CegarSystem<scalar>::getReachableCanonicalTransformMatrix;
+    using CegarSystem<scalar>::getObservableCanonicalTransformMatrix;
+    using CegarSystem<scalar>::makeReachabilityMatrices;
     using CegarSystem<scalar>::getRefinedDynamics;
     using CegarSystem<scalar>::getRefinedAbstractReachTube;
     using CegarSystem<scalar>::generateNoiseInput;
@@ -122,7 +148,20 @@ public:
     using CegarSystem<scalar>::calculateGuardFromOutput;
     using CegarSystem<scalar>::setIncrementalOrder;
     using CegarSystem<scalar>::sample;
+    using CegarSystem<scalar>::setSpeed;
+    using CegarSystem<scalar>::getSpeed;
+    using CegarSystem<scalar>::makeObserver;
     using CegarSystem<scalar>::makeConvergentSystem;
+    using CegarSystem<scalar>::makeClosedSystem;
+    using CegarSystem<scalar>::getControllerDynBounds;
+    using CegarSystem<scalar>::synthesiseDynamicBounds;
+    using CegarSystem<scalar>::checkExplicitReachability;
+    using CegarSystem<scalar>::capEigenValues;
+    using CegarSystem<scalar>::findMaxValue;
+    using CegarSystem<scalar>::findScale;
+    using CegarSystem<scalar>::getBits;
+    using CegarSystem<scalar>::fitToSpec;
+    using CegarSystem<scalar>::copy;
 
     /// Constructs an empty buffer
     /// @param dimension dimension of the space
@@ -137,9 +176,6 @@ public:
     /// Synthetises the eigenstructure of a pole location
     AbstractPolyhedra<scalar> synthesiseEigenStructure(inputType_t inputType,int precision,int directions,AbstractPolyhedra<scalar> &end,AbstractPolyhedra<scalar> &dynamics);
 
-    /// Synthesises a bound on the dynamics given a known guard and eigenvectors.
-    AbstractPolyhedra<scalar> synthesiseDynamicBounds(inputType_t inputType,AbstractPolyhedra<scalar> &end);
-
     /// Retrieves the support set for the inputs
     MatrixS& getRefinedAccelInSupports();
 
@@ -151,6 +187,9 @@ public:
 
     /// Loads a controller candidate for the system
     int loadController(const std::string &data,size_t pos=0);
+
+    /// Loads an observer candidate for the system
+    int loadObserver(const std::string &data,size_t pos=0);
 
     /// Loads a reference input set for the system
     int loadReference(const std::string &data,size_t pos=0,bool vertices=false);
@@ -201,29 +240,35 @@ public:
     /// Retrieves a set of viable Left Eigenvectors for given eigenvalues
     MatrixS getLeftEigenVectors(const MatrixS &pseudoEigenValues,AbstractPolyhedra<scalar> &eigenVectorSpace);
 
-    /// Retrieves constraints on the controller coefficients based on the Input constraints
-    AbstractPolyhedra<scalar> getControllerInBounds(AbstractPolyhedra<scalar>& reachTube);
-
-    /// Retrieves constraints on the controller coefficients based on the Dynamic constraints
-    AbstractPolyhedra<scalar> getControllerDynBounds(AbstractPolyhedra<scalar>& reachTube,int &orBlockSize);
-
     AbstractPolyhedra<scalar>& getAbstractClosedLoopDynamics(const inputType_t inputType)
                                             { return m_closedLoop.getAbstractDynamics(inputType); }
 
     ///Creates a c header (defines and data types) for CEGIS
-    std::string makeCEGISHeader(bool intervals=true);
+    std::string makeCEGISHeader(bool observer,bool intervals=true,bool scaling=false);
+
+    ///Adds a transformt element to t he stream
+    void maketransformt(std::stringstream &stream, std::string name,const MatrixS &matrix, const scalar &scale, bool intervals);
+
+    ///Adds a implt element to the stream
+    void makeimplt(std::stringstream &stream, std::string name,int int_bits,int frac_bits,int spec_int_bits);
+
+    ///Adds a set of vertices, vectors and supports that describe a closed safety spec
+    void makeVertexSupportCombo(std::stringstream &stream, std::string name, MatrixS vertices, MatrixS inputs, AbstractPolyhedra<scalar> &bounds, bool normalize=true);
 
     ///Creates a c specification for CEGIS
-    std::string makeCEGISDescription(bool intervals=true);
+    std::string makeCEGISDescription(bool observer,bool intervals=true,bool scaling=false);
 
     ///Creates a list of iterations for CEGIS
     std::string makeCEGISIterations(std::string &existing);
 
     ///Creates a c header file for CEGIS
-    bool makeCEGISFiles();
+    bool makeCEGISFiles(bool observer=false);
 
+protected:
+    std::map<std::string, Implementation> m_implementation;
 public:
     CegarSystem<scalar>     m_closedLoop;
+    CegarSystem<scalar>     m_sampled;
     synthesisType_t         m_synthType;
 };
 

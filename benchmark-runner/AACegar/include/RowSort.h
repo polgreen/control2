@@ -13,6 +13,11 @@ namespace abstract{
 #define RHSCol 0    //Right Hand Side Column
 typedef enum { MaxIndex, MinIndex, LexMin, LexMax, LexAngle, LexCos, LexNone } OrderType;
 
+struct pivot_t{
+  int row;
+  int col;
+};
+
 template <class scalar>
 class SortedTableau {
 public:
@@ -21,9 +26,12 @@ public:
     typedef typename type::MatrixS  MatrixS;
     typedef functions<refScalar> func;
 
+    SortedTableau() : m_dirty(false) {}
     void ComputeRowOrderVector(const OrderType &type);
 
     void UpdateRowOrderVector(const Set &priorityRows);
+
+    bool contains(const MatrixS &vector,int offset,bool fast=false);
 
     inline int order(const int row)       { return m_order[row]; }
     inline int zeroOrder(const int row)   { return m_order[row]-1; }//TODO: zero index
@@ -34,8 +42,13 @@ public:
 
     virtual int numRows()=0;
 
+    virtual int numCols()=0;
+
     // Sets the size of the tableau
     virtual void setSize(int rows,int cols)=0;
+
+    // Gets a given coefficient in the sorted Tableau
+    virtual const scalar getCoeff(int row,int col)=0;
 
     // Sets a given coefficient in the sorted Tableau
     virtual void setCoeff(int row,int col,const scalar &src)=0;
@@ -50,6 +63,9 @@ public:
     virtual void subRow(MatrixS &dest,int row)=0;
 
     virtual void normalize()=0;
+
+    /// Pivots the tableau in place on the given pivot
+    virtual void pivot(MatrixS &auxiliary,pivot_t pivot);
 
     /// Retrieves the value of a tableau entry for a given row and basis column (see revised simplex algorithm)
     virtual scalar entry(MatrixS &basis,const int row, const int col)=0;
@@ -92,6 +108,8 @@ protected:
     virtual bool LargerRow(const int row1,const int row2)=0;
 
     std::vector<int>            m_order;
+public:
+    bool                        m_dirty;              //Indicates that the tableau has been modified during operations
 };
 
 template <class scalar>
@@ -104,10 +122,13 @@ public:
 
     using MatrixS::coeff;
     using MatrixS::coeffRef;
+    using MatrixS::row;
+    using MatrixS::col;
     using MatrixS::rows;
     using MatrixS::cols;
     using MatrixS::resize;
 
+    using SortedTableau<scalar>::m_dirty;
     using SortedTableau<scalar>::m_order;
     using SortedTableau<scalar>::order;
     using SortedTableau<scalar>::zeroOrder;
@@ -123,8 +144,13 @@ public:
 
     int numRows()                       { return rows(); }
 
+    int numCols()                       { return cols(); }
+
     // Sets the size of the tableau
     void setSize(int rows,int cols)     { resize(rows,cols); }
+
+    // Gets a given coefficient in the sorted Tableau
+    const scalar getCoeff(int row,int col)              { return coeff(row,col); }
 
     // Sets a given coefficient in the sorted Tableau
     void setCoeff(int row,int col,const scalar &src)    { coeffRef(row,col)=src; }
@@ -143,6 +169,9 @@ public:
 
     /// Takes the ordering from  a different sort (eg a normalized one)
     bool copyOrder(SortedMatrix<scalar> &src);
+
+    /// Pivots the tableau in place on the given pivot
+    void pivot(MatrixS &auxiliary,pivot_t pivot);
 
     /// Retrieves the value of a tableau entry for a given row and basis column (see revised simplex algorithm)
     scalar entry(MatrixS &basis,const int row, const int col);

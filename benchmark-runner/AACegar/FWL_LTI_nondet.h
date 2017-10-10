@@ -17,12 +17,22 @@ control_floatt nondet_double()
 }
 #endif
 
+void copy_coeffs(vectort src,vectort dst)
+{
+  cnttype i=0;
+  for(i = 0; i < _DIMENSION; i++)
+  {
+    dst[i] = src[i];
+  }
+}
+
 //Accounts for errors in the CCF coefficients row
 void make_nondet_coeffs(vectort src,vectort uncertainty,vectort dst)
 {
   cnttype i=0;
   for(i = 0; i < _DIMENSION; i++)
 #ifdef __CPROVER 
+  #ifdef USE_INTERVALS
     if(uncertainty[i] > _zero)
     {
       control_floatt min=src[i] -uncertainty[i];
@@ -32,8 +42,17 @@ void make_nondet_coeffs(vectort src,vectort uncertainty,vectort dst)
       verify_assume(dst[i] <= max);
     }
     else
+  #endif
 #endif
       dst[i] = src[i];
+}
+
+void copy_transform(matrixt src,matrixt dst)
+{
+  cnttype i=0,j=0;
+  for(i = 0; i < _DIMENSION; i++)
+    for(j = 0; j < _DIMENSION; j++)
+      dst[i][j] = src[i][j];
 }
 
 //Accounts for errors in the transform matrix
@@ -43,6 +62,7 @@ void make_nondet_transform(matrixt src,matrixt uncertainty,matrixt dst)
   for(i = 0; i < _DIMENSION; i++)
     for(j = 0; j < _DIMENSION; j++)
 #ifdef __CPROVER 
+  #ifdef USE_INTERVALS
       if(uncertainty[i][j] > _zero)
       {
         control_floatt min=src[i][j]-uncertainty[i][j];
@@ -52,6 +72,7 @@ void make_nondet_transform(matrixt src,matrixt uncertainty,matrixt dst)
         verify_assume(dst[i][j] <= max);
       }
       else
+  #endif
 #endif
         dst[i][j] = src[i][j];
 }

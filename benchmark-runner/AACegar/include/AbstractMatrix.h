@@ -32,13 +32,17 @@ public:
 
     using JordanMatrix<scalar>::m_dimension;
     using JordanMatrix<scalar>::m_error;
+    using JordanMatrix<scalar>::m_isNegative;
     using JordanMatrix<scalar>::m_jordanIndex;
     using JordanMatrix<scalar>::m_conjugatePair;
+    using JordanMatrix<scalar>::m_roundings;
+    using JordanMatrix<scalar>::m_isOne;
     using JordanMatrix<scalar>::m_hasMultiplicities;
     using JordanMatrix<scalar>::m_eigenValues;
     using JordanMatrix<scalar>::m_eigenNorms;
     using JordanMatrix<scalar>::m_cosFactors;
     using AccelMatrix<scalar>::m_foldedEigenValues;
+    using AccelMatrix<scalar>::ms_roundJordanBlocks;
     using JordanMatrix<scalar>::m_zero;
     using JordanMatrix<scalar>::ms_one;
     using JordanMatrix<scalar>::ms_complexOne;
@@ -50,6 +54,7 @@ public:
     using JordanMatrix<scalar>::jordanToPseudoJordan;
     using JordanMatrix<scalar>::rotates;
     using AccelMatrix<scalar>::binomial;
+    using AccelMatrix<scalar>::roundIndex;
 
     /// Constructs an empty buffer
     /// @param pParent owner of the system
@@ -76,27 +81,34 @@ public:
     /// @param dimension dimension of the statespace
     virtual void changeDimensions(const int dimension);
 
+    /// Indicates if the matrix dynamics are divergent
+    /// @param strict if true returns only true if no eigenvalues are convergent
+    bool isDivergent(const bool strict=false, scalar speed=func::ms_1);
+
+    /// Retrieves the largest eigenvalue norm
+    scalar largestEigenNorm();
+
 protected:
     /// Retrieves the nth power of coeff in the given row of the jordan matrix
     /// Not that in a jordan block this corresponds to the kth column of J_s^n
     /// @param coef eigenvalue to exonentiate
     /// @param n power to raise coeff to
     /// @param row eigenvalue row identifying the location of the eigenvalue
-    complexS condPow(const complexS &coef,const powerS n,int row);
+    complexS condPow(complexS coef,const powerS n,int row);
 
     /// Retrieves the nth power of coeff in the given row of the jordan matrix
     /// Not that in a jordan block this corresponds to the kth column of J_s^n
     /// @param coef pseudoeigenvalue to exonentiate
     /// @param n power to raise coef to
     /// @param row pseudoeigenvalue row identifying the location of the eigenvalue
-    scalar condPow(const scalar &coef,const powerS n,const int row);
+    scalar condPow(scalar coef,const powerS n,const int row);
 
     /// Retrieves the difference between the nth and nth+1 powers of coeff in the given row of the jordan matrix
     /// Not that in a jordan block this corresponds to the kth column of J_s^n
     /// @param coef pseudoeigenvalue to exonentiate
     /// @param n power to raise coef to
     /// @param row pseudoeigenvalue row identifying the location of the eigenvalue
-    scalar diffPow(const scalar &coef,const powerS n,int row);
+    scalar diffPow(scalar coef,const powerS n,int row);
 
     /// Calculates the expected iteration of coefficient to obtain value
     /// @param coef pseudoeigenvalue to exonentiate
@@ -177,15 +189,8 @@ protected:
     /// lists the first source row for a folded set of dimensions
     void findUnfolded();
 
-    /// Marks the round indices in a rounded vector array
-    void findRoundIndices(std::vector<bool> &isRoundIndex);
-
     /// Finds the frequency of rotation of each conjugate pair and fills the corresponding vector
     void findFrequencies();
-
-    /// Indicates if the matrix dynamics are divergent
-    /// @param strict if true returns only true if no eigenvalues are convergent
-    bool isDivergent(const bool strict=false);
 
     /// Calculates the number of iterations necessary to reacha fixpoint
     powerS calculateMaxIterations(powerS max=func::ms_infPower);
@@ -246,6 +251,7 @@ protected:
     std::vector<int>            m_freq;
     std::vector<int>            m_unfolded;
     scalar                      m_sampleTime;
+    scalar                      m_delayTime;
     std::vector<iteration_pair> m_iterations;
 public:
     MatrixS                     m_supports;

@@ -1,6 +1,6 @@
 #!/bin/bash
-#export PATH=${PATH}:/media/sf_Documents/GitHub/cbmc-master/src/cbmc
-export PATH=${PATH//cbmc-5190/cbmc-trunk-diffblue-control-synthesis}
+export PATH=${PATH}:/media/sf_Documents/GitHub/cbmc-master/src/cbmc
+#export PATH=${PATH//cbmc-5190/cbmc-trunk-diffblue-control-synthesis}
 export PATH=${PATH}:/users/pkesseli/software/cpp/cbmc/cbmc-trunk-diffblue-control-synthesis/src/cegis:/users/pkesseli/software/cpp/cbmc/cbmc-trunk-diffblue-control-synthesis-analyzer/src/goto-analyzer:/users/pkesseli/software/cpp/z3/trunk/target/i686-linux/bin
 
 status_output_file='output.txt'
@@ -78,23 +78,35 @@ function get_current_cpu_millis {
 
 if [ -z "$1" ]; then
  #dkr10
- #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/cruise_ss/') #ok
- #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/dcmotor_ss/') #ok
- #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/helicopter_ss/') #ok
+ #benchmark_dirs=('/media/sf_Documents/GitHub/control-synthesis/benchmarks/state-space/linear/cruise_ss/') #ok
+ benchmark_dirs=('/media/sf_Documents/GitHub/control-synthesis/benchmarks/observer/dcmotor_ss/') #ok
+ #benchmark_dirs=('/media/sf_Documents/GitHub/control-synthesis/benchmarks/state-space/linear/helicopter_ss/') #ok
 
  #dkr11
- #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/magsuspension_ss/') #ok on 4th file
- #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/invpendulum_pendang_ss/') #ok
+ #benchmark_dirs=('/media/sf_Documents/GitHub/control-synthesis/benchmarks/state-space/linear/magsuspension_ss/') #ok on 4th file
+ #benchmark_dirs=('/media/sf_Documents/GitHub/control-synthesis/benchmarks/state-space/linear/magneticpointer_ss/')
+ #benchmark_dirs=('/media/sf_Documents/GitHub/control-synthesis/benchmarks/state-space/linear/satellite_ss/')
+ #benchmark_dirs=('/media/sf_Documents/GitHub/control-synthesis/benchmarks/state-space/linear/invpendulum_pendang_ss/') #ok
 
  #dkr12
- #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/invpendulum_cartpos_ss/') #ok
- #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/suspension_ss/') #initial controller unsat
+ #benchmark_dirs=('/media/sf_Documents/GitHub/control-synthesis/benchmarks/state-space/linear/invpendulum_cartpos_ss/') #ok
+ #benchmark_dirs=('/media/sf_Documents/GitHub/control-synthesis/benchmarks/state-space/linear/suspension_ss/') #initial controller unsat
 
  #dkr13 
- #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/tapedriver_ss/') #same controller loop (system makes no sense 10^-144?)
- benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/pendulum_ss/') #ok
+ #benchmark_dirs=('/media/sf_Documents/GitHub/control-synthesis/benchmarks/state-space/linear/tapedriver_ss/') #same controller loop (system makes no sense 10^-144?)
+ #benchmark_dirs=('/media/sf_Documents/GitHub/control-synthesis/benchmarks/state-space/linear/pendulum_ss/') #ok
 
- #benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/cruise_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/dcmotor_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/helicopter_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/invpendulum_cartpos_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/invpendulum_pendang_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/magsuspension_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/pendulum_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/suspension_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/tapedriver_ss/')
+ #benchmark_dirs=('/media/sf_Documents/GitHub/control-synthesis/benchmarks/state-space/linear/uscgtampa_ss/') #ok
+ #benchmark_dirs=('/media/sf_Documents/GitHub/control-synthesis/benchmarks/state-space/linear/ballmaglev_ss/')
+ #benchmark_dirs=('/media/sf_Documents/GitHub/control-synthesis/benchmarks/state-space/linear/pendulum_ss/')
+ #benchmark_dirs=('/media/sf_Documents/GitHub/control-synthesis/benchmarks/state-space/linear/flexbeam/')
+ #benchmark_dirs=('/media/sf_Documents/GitHub/control-synthesis/benchmarks/state-space/linear/chenhighorder/')
+ #benchmark_dirs=('/media/sf_Documents/GitHub/control-synthesis/benchmarks/state-space/linear/guidanceChen/')
+ #benchmark_dirs=('/media/sf_Documents/GitHub/control-synthesis/benchmarks/state-space/linear/acrobot/')
+ #benchmark_dirs=('/media/sf_Documents/GitHub/control-synthesis/benchmarks/state-space/linear/antenna/')
+ #benchmark_dirs=('/media/sf_Documents/GitHub/control-synthesis/benchmarks/state-space/linear/cstr/')
+
+ #benchmark_dirs=('/media/sf_Documents/GitHub/control-synthesis/benchmarks/state-space/cruise_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/dcmotor_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/helicopter_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/invpendulum_cartpos_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/invpendulum_pendang_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/magsuspension_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/pendulum_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/suspension_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/tapedriver_ss/')
  #benchmark_dirs=("${script_base_directory}/../benchmarks/state-space/dcmotor_ss/")
 else
  #benchmark_dirs=("$1")
@@ -147,7 +159,7 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
   B=$(extract_spec_matrix "${spec_content}" 'B')
   input_lower_bound=$(extract_input_lower_bound "${spec_content}")
   input_upper_bound=$(extract_input_upper_bound "${spec_content}")
-  options="-u -p -ii -mpi 256 -synth CEGIS -params \"p=${num_states},q=${num_inputs},f=1,m=256:$((impl_int_bits+impl_frac_bits)):${impl_int_bits}\" -dynamics \"[${A}]\" -init \"[cube<.5]\" -isense \"[${B}]\" -inputs \"[1>${input_lower_bound};1<${input_upper_bound}]\" -sguard \"[cube<1]\""
+  options="-u -p -ii -inc -mpi 256 -fixedbv -synth CEGIS -params \"p=${num_states},q=${num_inputs},f=1,m=256:$((impl_int_bits+impl_frac_bits)):${impl_int_bits}\" -dynamics \"[${A}]\" -init \"[cube<.5]\" -isense \"[${B}]\" -inputs \"[1>${input_lower_bound};1<${input_upper_bound}]\" -sguard \"[cube<1]\""
 
   working_directory="${working_directory_base}/accelerator-ss"
   setup_benchmark_directory ${working_directory}
@@ -159,10 +171,10 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
   integer_width=$((2*impl_int_bits))
   radix_width=$((2*impl_frac_bits))
   #radix_width=$((impl_int_bits+impl_frac_bits))
-  min_size_offset=$(((integer_width+radix_width)%8))
-  [ ${min_size_offset} -ne 0 ] && integer_width=$((integer_width+8-min_size_offset))
-  timeout_time=3600
-  kill_time=3780
+  min_size_offset=$(((integer_width+radix_width)%16))
+  [ ${min_size_offset} -ne 0 ] && integer_width=$((integer_width+16-min_size_offset))
+  timeout_time=300
+  kill_time=320
   echo_log "./axelerator $options -control \"[0]\""
   eval "./axelerator $options -control \"[0]\""
   while [ $((integer_width+radix_width)) -le ${max_length} ]; do
@@ -217,8 +229,8 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
    if [ "${solution_found}" = true ]; then
     break
    fi
-   integer_width=$((integer_width+4))
-   radix_width=$((radix_width+4))
+   integer_width=$((integer_width+8))
+   radix_width=$((radix_width+8))
   done
   # All files are the same benchmark with increased sample frequency. Exit after first.
   if [ "${solution_found}" = true ]; then

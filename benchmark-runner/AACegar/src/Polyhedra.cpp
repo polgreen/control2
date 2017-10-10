@@ -345,8 +345,10 @@ template <class scalar>
 bool Polyhedra<scalar>::intersect(const Polyhedra &polyhedra,const bool over)
 {
   if (polyhedra.isEmpty()) return true;
+  if (isEmpty()) return copy(polyhedra);
   if (pseudoIntersect(polyhedra)) {
-    MatrixS supports(m_faces.rows(),1);
+    removeRedundancies();
+/*    MatrixS supports(m_faces.rows(),1);
     bool redundant[supports.rows()];
     MatrixS matrix=m_faces.transpose();
     maximiseAll(matrix,supports);
@@ -363,7 +365,7 @@ bool Polyhedra<scalar>::intersect(const Polyhedra &polyhedra,const bool over)
       }
     }
     m_faces.conservativeResize(pos,m_faces.cols());
-    m_supports.conservativeResize(pos,1);
+    m_supports.conservativeResize(pos,1);*/
     load(m_faces,m_supports);
     return true;
   }
@@ -376,6 +378,7 @@ bool Polyhedra<scalar>::merge(Polyhedra &polyhedra,const bool extend)
 {
   boost::timer timer;
   if (polyhedra.isEmpty()) return true;
+  if (isEmpty()) return copy(polyhedra);
   MatrixS supports2(m_faces.rows(),1);
   MatrixS faceVectors2=m_faces.transpose();
   polyhedra.maximiseAll(faceVectors2,supports2);
@@ -390,7 +393,7 @@ bool Polyhedra<scalar>::merge(Polyhedra &polyhedra,const bool extend)
     if (!pseudoIntersect(polyhedra)) return false;
     for (int i=0;i<supports2.rows();i++) m_supports.coeffRef(i,0)=max(m_supports.coeff(i,0),supports2.coeff(i,0));
     for (int i=0;i<supports.rows();i++) m_supports.coeffRef(i+supports2.rows(),0)=max(polyhedra.m_supports.coeff(i,0),supports.coeff(i,0));
-    this->removeRedundancies();
+    removeRedundancies();
   }
   else {
     for (int i=0;i<supports2.rows();i++) m_supports.coeffRef(i,0)=max(m_supports.coeff(i,0),supports2.coeff(i,0));
@@ -447,7 +450,7 @@ bool Polyhedra<scalar>::add(Polyhedra &polyhedra,const bool extended)
   for (int i=0;i<supports2.rows();i++) m_supports.coeffRef(i,0)=m_supports.coeff(i,0)+supports2.coeff(i,0);
   int j=0;
   for (int i=supports2.rows();i<m_supports.rows();i++,j++) m_supports.coeffRef(i,0)=m_supports.coeff(i,0)+supports.coeff(j,0);
-  this->removeRedundancies();
+  removeRedundancies();
   return true;
 }
 
@@ -465,7 +468,7 @@ bool Polyhedra<scalar>::erode(Polyhedra &polyhedra)
   for (int i=0;i<supports2.rows();i++) m_supports.coeffRef(i,0)=m_supports.coeff(i,0)-supports2.coeff(i,0);
   int j=0;
   for (int i=supports2.rows();i<m_supports.rows();i++,j++) m_supports.coeffRef(i,0)=m_supports.coeff(i,0)-supports.coeff(j,0);
-  this->removeRedundancies();
+  removeRedundancies();
   return true;
 }
 
@@ -579,7 +582,7 @@ bool Polyhedra<scalar>::transform(const MatrixS &transform,const MatrixS& invers
         maximiseAll(vectors,supports);
         m_faces=faces;
         m_supports=supports;
-        return this->removeRedundancies();
+        return removeRedundancies();
       }
     }
   }
@@ -613,7 +616,7 @@ bool Polyhedra<scalar>::retemplate(const MatrixS& templates,refScalar aprox)
   this->m_isNormalised=false;
   if (aprox<0) {
     refScalar threshold=1+aprox;
-    this->removeRedundancies();
+    removeRedundancies();
     if (!makeVertices()) return false;
     for (int dir=0;dir<templates.cols();dir++) {
       scalar support=-func::ms_infinity;
@@ -633,7 +636,7 @@ bool Polyhedra<scalar>::retemplate(const MatrixS& templates,refScalar aprox)
     }
     addDirection(templates,supports);
     logTableau();//templog
-    this->removeRedundancies();
+    removeRedundancies();
     //m_vertices.resize(0,m_vertices.cols());
     makeVertices(true);
     if (!makeFaces()) return false;
@@ -730,6 +733,14 @@ bool Polyhedra<scalar>::makeVertices(bool force)
   if (m_faces.rows()==0) {
     return false;
   }
+  if (getDimension()==1) {
+    if (m_faces.rows()>2) removeRedundancies();
+    m_vertices=m_supports;
+    for (int row=0;row<m_faces.rows();row++) {
+      if (func::isNegative(m_faces.coeff(row,0))) m_vertices.coeffRef(row,0)=-m_vertices.coeff(row,0);
+    }
+    return true;
+  }
   boost::timer timer;
   this->normalise();
   VertexEnumerator<scalar> enumerator(m_faces.rows(),m_faces.cols());
@@ -756,11 +767,18 @@ bool Polyhedra<scalar>::makeVertices(bool force)
   m_vertices.resize(numVertices,getDimension());
 
   int row=0;
-  for (typename VertexEnumerator<scalar>::RayList::iterator it=rayList.begin();it!=rayList.end();it++,row++) {
+  for (typename VertexEnumerator<scalar>::RayList::iterator it=rayList.begin();it!=rayList.end();it++) {
     scalar scale = abs(it->data.coeff(0,0));
     if (func::isZero(scale)) scale=1;
-    for (int col=0;col<m_vertices.cols();col++) m_vertices.coeffRef(row,col)=it->data.coeff(0,col+1)/scale;
+    MatrixS vector=it->data/scale;
+    if (!m_vertices.contains(vector,1)) {
+      for (int col=0;col<m_vertices.cols();col++) {
+        m_vertices.coeffRef(row,col)=vector.coeff(0,col+1);
+      }
+      row++;
+    }
   }
+  m_vertices.conservativeResize(row,getDimension());
   m_enumerationTime=timer.elapsed()*1000;
   if (ms_trace_vertices>=eTraceVertices) {
     ms_logger.logData(m_name,false);
@@ -863,7 +881,7 @@ bool Polyhedra<scalar>::isInside(const MatrixS &points)
 template <class scalar>
 int Polyhedra<scalar>::violatingSupport(const MatrixS &points)
 {
-  if (points.cols()!=getDimension()) return false;
+  if (points.cols()!=getDimension()) return -1;
   MatrixS supports=m_faces*points.transpose();
   for (int col=0;col<supports.cols();col++) {
     supports.col(col)-=m_supports;
@@ -874,6 +892,24 @@ int Polyhedra<scalar>::violatingSupport(const MatrixS &points)
     }
   }
   return -1;
+}
+
+/// Indicates the largest distance to any violating support
+template <class scalar>
+scalar Polyhedra<scalar>::violatingDistance(const MatrixS &points)
+{
+  if (points.cols()!=getDimension()) return 0;
+  refScalar result=func::ms_0;
+  MatrixS supports=m_faces*points.transpose();
+  for (int col=0;col<supports.cols();col++) {
+    supports.col(col)-=m_supports;
+    for (int row=0;row<supports.rows();row++) {
+      if (func::toUpper(supports.coeff(row,col))>result) {
+        result=func::toUpper(supports.coeff(row,col));
+      }
+    }
+  }
+  return result;
 }
 
 template <class scalar>
@@ -897,16 +933,16 @@ template <class scalar>
 typename Tableau<scalar>::MatrixS Polyhedra<scalar>::boundingHyperBox()
 {
   int dimension=getDimension();
-  MatrixS hyperbox(2*dimension,2);
-  makeVertices();
+  MatrixS hyperbox(dimension,2);
+  if (!makeVertices()) return MatrixS(0,0);
   for (int i=0;i<dimension;i++) {
     hyperbox.coeffRef(i,0)=m_vertices.coeff(0,i);
     hyperbox.coeffRef(i,1)=m_vertices.coeff(0,i);
   }
   for  (int row=1;row<m_vertices.rows();row++) {
     for (int i=0;i<dimension;i++) {
-      if (m_vertices.coeff(row,i)<hyperbox.coeff(i,0)) hyperbox.coeffRef(i,0)=m_vertices.coeff(0,i);
-      if (m_vertices.coeff(row,i)>hyperbox.coeff(i,1)) hyperbox.coeffRef(i,1)=m_vertices.coeff(0,i);
+      if (func::isNegative(m_vertices.coeff(row,i)-hyperbox.coeff(i,0))) hyperbox.coeffRef(i,0)=m_vertices.coeff(row,i);
+      if (func::isPositive(m_vertices.coeff(row,i)-hyperbox.coeff(i,1))) hyperbox.coeffRef(i,1)=m_vertices.coeff(row,i);
     }
   }
   return hyperbox;

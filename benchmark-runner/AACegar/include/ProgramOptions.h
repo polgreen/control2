@@ -28,7 +28,10 @@ public:
   bool                              continuous;
   bool                              answerOnly;
   bool                              useConsole;
+  bool                              useBasis;
   bool                              useSparse;
+  bool                              useFixedBV;
+  bool                              useCanonicalForm;
   bool                              parseError;
 };
 

@@ -114,10 +114,12 @@ bool JordanMatrix<scalar>::loadJordan(const MatrixS &matrix)
   m_pseudoEigenVectors=MatrixS::Identity(m_dimension,m_dimension);
   m_invPseudoEigenVectors=m_pseudoEigenVectors;
   m_hasOnes=false;
+  m_hasNegatives=false;
   m_hasMultiplicities=false;
   m_isOne.resize(2*m_dimension);
+  m_isNegative.resize(2*m_dimension);
   m_conjugatePair.resize(2*m_dimension);
-  m_jordanIndex.resize(2*m_dimension);
+  m_jordanIndex.resize(2*m_dimension+1);
   m_cosFactors.resize(m_dimension+1,1);
   for (int i=0;i<m_dimension;i++) {
     m_conjugatePair[i]=-1;
@@ -130,7 +132,12 @@ bool JordanMatrix<scalar>::loadJordan(const MatrixS &matrix)
     m_jordanIndex[i+m_dimension]=0;
     if (m_jordanIndex[i]>0) m_hasMultiplicities=true;
     m_isOne[i]=func::isZero(ms_one-m_dynamics.coeff(i,i)) && (m_conjugatePair[i]<0);
+    m_isNegative[i]=false;
     m_hasOnes|=m_isOne[i];
+    if ((m_conjugatePair[i]<0) && func::isNegative(m_dynamics.coeff(i,i))) {
+      m_isNegative[i]=true;
+      m_hasNegatives=true;
+    }
   }
   m_eigenValues=pseudoToJordan(m_pseudoEigenValues,eToEigenValues);
   m_eigenNorms.resize(m_eigenValues.rows(),1);
@@ -141,12 +148,61 @@ bool JordanMatrix<scalar>::loadJordan(const MatrixS &matrix)
       m_cosFactors.coeffRef(i,0)=m_eigenNorms.coeffRef(i,0)/m_eigenValues.coeff(i,i).real();
     }
   }
+
   m_eigenVectors=MatrixC::Identity(m_dimension,m_dimension);
   m_invEigenVectors=m_eigenVectors;
-  m_error=func::ms_hardZero;
+  m_error=func::ms_0;
   m_jordanTime=timer.elapsed()*1000;
   if (ms_trace_time) ms_logger.logData(m_jordanTime,"Pole Extraction time:",true);
   return true;
+}
+
+/// Makes an inverse soundly (since eigens method does not handle interval inequalities properly)
+template <class scalar>
+typename JordanMatrix<scalar>::MatrixS JordanMatrix<scalar>::makeInverse(const MatrixS &source)
+{
+  try {
+    return source.inverse();
+  }
+  catch(...) {
+    SolverMatrixType matrix;
+    interToRef(matrix,source);
+    SolverMatrixType unsoundResult=matrix.inverse();
+    scalar error=func::setpm((matrix*unsoundResult-SolverMatrixType::Identity(matrix.rows(),matrix.cols())).norm());
+    MatrixS result;
+    refToInter(result,unsoundResult);
+    error*=result.norm()*source.norm();
+    for (int row=0;row<result.rows();row++) {
+      for (int col=0;col<result.cols();col++) {
+        result.coeffRef(row,col)+=error;
+      }
+    }
+    return result;
+  }
+}
+
+/// Makes an inverse soundly (since eigens method does not handle interval inequalities properly)
+template <class scalar>
+typename JordanMatrix<scalar>::MatrixC JordanMatrix<scalar>::makeInverse(const MatrixC &source)
+{
+  try {
+    return source.inverse();
+  }
+  catch(...) {
+    SolverComplexMatrixType matrix;
+    interToRef(matrix,source);
+    SolverComplexMatrixType unsoundResult=matrix.inverse();
+    scalar error=func::setpm((matrix*unsoundResult-SolverComplexMatrixType::Identity(matrix.rows(),matrix.cols())).norm());
+    MatrixC result;
+    refToInter(result,unsoundResult);
+    error*=result.norm()*source.norm();
+    for (int row=0;row<result.rows();row++) {
+      for (int col=0;col<result.cols();col++) {
+        result.coeffRef(row,col)+=error;
+      }
+    }
+    return result;
+  }
 }
 
 /// calculates the estimated roundoff error of a matrix operation
@@ -194,7 +250,9 @@ bool JordanMatrix<scalar>::calculateJordanForm(bool includeSvd)
   m_jordanIndex=m_eigenSpace.getJordanIndeces();
   m_conjugatePair=m_eigenSpace.getConjugatePairs();
   m_isOne=m_eigenSpace.getOnes();
+  m_isNegative=m_eigenSpace.getNegatives();
   m_hasOnes=m_eigenSpace.hasOnes();
+  m_hasNegatives=m_eigenSpace.hasNegatives();
   m_hasMultiplicities=m_eigenSpace.hasMultiplicities();
   m_eigenNorms.resize(m_eigenValues.rows(),1);
   m_cosFactors.resize(m_dimension+1,1);
@@ -223,7 +281,7 @@ bool JordanMatrix<scalar>::calculateJordanForm(bool includeSvd)
 
   m_pseudoEigenValues=jordanToPseudoJordan(m_eigenValues,eToEigenValues);
   m_pseudoEigenVectors=jordanToPseudoJordan(m_eigenVectors,eToEigenVectors);
-  m_invPseudoEigenVectors=m_pseudoEigenVectors.inverse();
+  m_invPseudoEigenVectors=makeInverse(m_pseudoEigenVectors);
   if (ms_trace_dynamics>=eTraceDynamics) {
     MatrixS pseudoCalculated=m_pseudoEigenVectors*m_pseudoEigenValues*m_invPseudoEigenVectors;
     ms_logger.logData(m_pseudoEigenValues,"PseudoEigenValues");
@@ -308,7 +366,7 @@ typename JordanMatrix<scalar>::MatrixC JordanMatrix<scalar>::pseudoToJordan(cons
       mult=(m_conjugatePair[row]<0) ? 1 : 2;
       if (m_jordanIndex[row+mult]>0) {
         if (m_conjugatePair[row]<0) {
-          result.coeffRef(row,row)=complexS(source.coeff(row,row),func::ms_hardZero);
+          result.coeffRef(row,row)=complexS(source.coeff(row,row),func::ms_0);
         }
         else {
           result.coeffRef(row,row)=complexS(source.coeff(row,row),source.coeff(row,row+1));
@@ -344,6 +402,19 @@ typename JordanMatrix<scalar>::MatrixC JordanMatrix<scalar>::pseudoToJordan(cons
     }
   }
   return result;
+}
+
+/// Retrieves a scalar matrix from a refScalar one
+template <class scalar>
+void JordanMatrix<scalar>::interToRef(SolverComplexMatrixType &dest,const MatrixC &source)
+{
+  dest.conservativeResize(source.rows(),source.cols());
+  for (int row=0;row<source.rows();row++) {
+    for (int col=0;col<source.cols();col++) {
+      complexR coef=func::toCentre(source.coeff(row,col));
+      dest.coeffRef(row,col)=coef;
+    }
+  }
 }
 
 /// Retrieves a scalar matrix from a refScalar one
@@ -578,7 +649,7 @@ typename JordanMatrix<scalar>::refScalar JordanMatrix<scalar>::calculateMinSepar
       det*=sep;
       diagNorm2+=func::squared(sep);//*sep;
     }
-    if (func::toLower(det)==0) func::imprecise(det,func::ms_hardZero,"zero det");
+    if (func::toLower(det)==0) func::imprecise(det,func::ms_0,"zero det");
     diagNorm2+=nonDiagNorm2;
     scalar maxColOrRowProd=func::pow(sqrt(diagNorm2),m_dimension-1);
     while (m_jordanIndex[i+mult]>0) i+=mult;
@@ -605,13 +676,22 @@ scalar JordanMatrix<scalar>::calculateEigenError()
   if (ms_trace_dynamics>=eTraceErrors) ms_logger.logData(calculated,"Calculated:");
   calculated-=m_dynamics;
   scalar errorNorm=calculated.norm();
+  if(func::isNan(errorNorm)) {
+    scalar kP=m_eigenVectors.norm()*m_invEigenVectors.norm();
+    MatrixC calculated=m_eigenVectors*m_eigenValues*m_invEigenVectors;
+    errorNorm=calculated.norm();
+    if (ms_trace_dynamics>=eTraceErrors) {
+      ms_logger.logData(errorNorm,"ErrorNorm:",true);
+      ms_logger.logData(kP,"Condition Number:",true);
+    }
+  }
   m_error=errorNorm*kP;
   if (func::toUpper(m_error)>m_zero) func::imprecise(m_error,m_zero,"Eigenerror too large");
 
   m_boundForError=0;
+  if (ms_trace_dynamics>=eTraceErrors) ms_logger.logData(m_error,"Error:",true);
   if (m_hasMultiplicities) return m_error;
 
-  if (ms_trace_dynamics>=eTraceErrors) ms_logger.logData(m_error,"Error:",true);
   m_error=func::setpm(m_error);
   if (type::isInterval()) {
     for (int i=0;i<m_dimension;i++) {
@@ -630,7 +710,7 @@ scalar JordanMatrix<scalar>::calculateEigenError()
   m_pseudoEigenValues=jordanToPseudoJordan(m_eigenValues,eToEigenValues);
 
   calculateMinSeparation();
-  m_verror=func::ms_hardZero;
+  m_verror=func::ms_0;
   if (type::isInterval()) {
     for (int i=0;i<m_dimension;i++) {
       scalar angleError=errorNorm;
@@ -656,7 +736,7 @@ scalar JordanMatrix<scalar>::calculateEigenError()
     }
   }
   m_pseudoEigenVectors=jordanToPseudoJordan(m_eigenVectors,eToEigenVectors);
-  m_invPseudoEigenVectors=m_pseudoEigenVectors.inverse();//jordanToPseudoJordan(m_invEigenVectors,eToInvEigenVectors);
+  m_invPseudoEigenVectors=makeInverse(m_pseudoEigenVectors);//jordanToPseudoJordan(m_invEigenVectors,eToInvEigenVectors);
   if (ms_trace_dynamics>=eTraceDynamics) {
     ms_logger.logData(m_pseudoEigenValues,"PseudoEigenValues");
     ms_logger.logData(m_pseudoEigenVectors,"PseudoEigenVectors");
@@ -693,7 +773,7 @@ scalar JordanMatrix<scalar>::calculateBoundedEigenError(scalar iteration)
   scalar invCosN=ms_one/cosn;
   scalar vError=func::getHull(cosn,invCosN);
   m_pseudoEigenVectors*=vError;
-  m_invPseudoEigenVectors=m_pseudoEigenVectors.inverse();
+  m_invPseudoEigenVectors=makeInverse(m_pseudoEigenVectors);
   return m_error;
 }
 
@@ -757,6 +837,42 @@ void JordanMatrix<scalar>::calculateBlockSVD()
     }
   }
 }
+
+/// Copies an existing object
+template <class scalar>
+void JordanMatrix<scalar>::copy(const JordanMatrix &source)
+{
+  m_dimension=source.m_dimension;
+  m_zero=source.m_zero;
+  m_largeZero=source.m_largeZero;
+  m_dynamics=source.m_dynamics;
+  m_refDynamics=source.m_refDynamics;
+  m_eigenValues=source.m_eigenValues;
+  m_eigenVectors=source.m_eigenVectors;
+  m_invEigenVectors=source.m_invEigenVectors;
+  m_pseudoEigenValues=source.m_pseudoEigenValues;
+  m_eigenNorms=source.m_eigenNorms;
+  m_blockSingularValues=source.m_blockSingularValues;
+  m_pseudoEigenVectors=source.m_pseudoEigenVectors;
+  m_invPseudoEigenVectors=source.m_invPseudoEigenVectors;
+  m_transposeInvPseudoEigenVectors=source.m_transposeInvPseudoEigenVectors;
+  m_cosFactors=source.m_cosFactors;
+  m_jordanIndex=source.m_jordanIndex;
+  m_conjugatePair=source.m_conjugatePair;
+  m_roundings=source.m_roundings;
+  m_isOne=source.m_isOne;
+  m_isNegative=source.m_isNegative;
+  m_hasOnes=source.m_hasOnes;
+  m_hasNegatives=source.m_hasNegatives;
+  m_hasMultiplicities=source.m_hasMultiplicities;
+  m_error=source.m_error;
+  m_verror=source.m_verror;
+  m_boundForError=source.m_boundForError;
+  m_maxSigma=source.m_maxSigma;
+  m_minSigma=source.m_minSigma;
+  m_minSeparation=source.m_minSeparation;
+}
+
 
 #ifdef USE_LDOUBLE
   #ifdef USE_SINGLES

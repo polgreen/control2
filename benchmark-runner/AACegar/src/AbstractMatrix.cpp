@@ -23,6 +23,7 @@ template <class scalar>
 AbstractMatrix<scalar>::AbstractMatrix(int dimension) : AccelMatrix<scalar>(dimension),
   //m_roundDimension(dimension),
   m_sampleTime(1),
+  m_delayTime(0),
   m_abstractDynamics(dimension,ms_sparse),
   m_abstractInputDynamics(dimension,ms_sparse),
   m_abstractRoundDynamics(dimension,ms_sparse)
@@ -76,15 +77,12 @@ inline void AbstractMatrix<scalar>::checkRange(const int row,const powerS iterat
 }
 
 template <class scalar>
-typename JordanMatrix<scalar>::complexS AbstractMatrix<scalar>::condPow(const complexS &coef,const powerS n,int row)
+typename JordanMatrix<scalar>::complexS AbstractMatrix<scalar>::condPow(complexS coef,const powerS n,int row)
 {
   if (row>=m_dimension) {
     if (m_inputType==eParametricInputs) row-=m_dimension;
     else {
-      scalar mag=ms_one-func::pow(func::norm2(coef),n);
-      if (func::isPositive(mag)) {
-        return complexS(mag*this->m_foldedBinomialMultipliers.coeff(row-m_dimension),0);
-      }
+      coef=complexS(m_foldedEigenValues.coeff(row-m_dimension,row-m_dimension),0);
     }
     if (m_jordanIndex[row]==0) {
       if (func::isZero(func::norm2(coef-ms_complexOne))) return complexS(n,0);
@@ -98,8 +96,7 @@ typename JordanMatrix<scalar>::complexS AbstractMatrix<scalar>::condPow(const co
     }
     if (n<m_jordanIndex[row]) return complexS(0,0);
     if (func::isZero(func::norm2(coef-ms_complexOne))) {
-      if (n<=m_jordanIndex[row]) return complexS(0,0);
-      complexS mult(binomial(n,m_jordanIndex[row]+1),0);
+      complexS mult(binomial(n+1,m_jordanIndex[row]+1),0);
       return mult;
     }
     complexS mult(binomial(n,m_jordanIndex[row]),0);
@@ -121,18 +118,15 @@ typename JordanMatrix<scalar>::complexS AbstractMatrix<scalar>::condPow(const co
 }
 
 template <class scalar>
-scalar AbstractMatrix<scalar>::condPow(const scalar &coef,const powerS n,int row)
+scalar AbstractMatrix<scalar>::condPow(scalar coef,const powerS n,int row)
 {
   if (row>=m_dimension) {
     if (m_inputType==eParametricInputs) row-=m_dimension;
     else {
-      scalar mag=ms_one-func::pow(coef,n);
-      if (func::isPositive(mag)) {
-        return mag*this->m_foldedBinomialMultipliers.coeff(row-m_dimension);
-      }
+      coef=m_foldedEigenValues.coeff(row-m_dimension,row-m_dimension);
     }
     if (m_jordanIndex[row]==0) {
-      if (abs(coef-ms_one)<m_zero) return scalar(n);
+      if (func::isZero(coef-ms_one)) return scalar(n);
       return ms_one-func::pow(coef,n);
     }
     if (ms_continuous) {
@@ -142,10 +136,7 @@ scalar AbstractMatrix<scalar>::condPow(const scalar &coef,const powerS n,int row
       return -time*func::pow(coef,n);
     }
     if (n<m_jordanIndex[row])  return 0;
-    if (abs(coef-ms_one)<m_zero) {
-      if (n<=m_jordanIndex[row])  return 0;
-      return binomial(n,m_jordanIndex[row]+1);
-    }
+    if (func::isZero(coef-ms_one)) return binomial(n+1,m_jordanIndex[row]+1);
     return -binomial(n,m_jordanIndex[row])*func::pow(coef,n-m_jordanIndex[row]);
   }
   if (m_jordanIndex[row]==0) return func::pow(coef,n);
@@ -160,19 +151,15 @@ scalar AbstractMatrix<scalar>::condPow(const scalar &coef,const powerS n,int row
 }
 
 template <class scalar>
-scalar AbstractMatrix<scalar>::diffPow(const scalar &coef,const powerS n,int row)
+scalar AbstractMatrix<scalar>::diffPow(scalar coef,const powerS n,int row)
 {
   if (row>=m_dimension) {
     if (m_inputType==eParametricInputs) row-=m_dimension;
     else {
-      scalar mag=ms_one-func::pow(coef,n);
-      if (func::isPositive(mag)) {
-        mag=func::pow(coef,n)-func::pow(coef,n+1);
-        return mag*this->m_foldedBinomialMultipliers.coeff(row-m_dimension);
-      }
+      coef=m_foldedEigenValues.coeff(row-m_dimension,row-m_dimension);
     }
     if (m_jordanIndex[row]==0) {
-      if (abs(coef-ms_one)<m_zero) return ms_one;
+      if (func::isZero(coef-ms_one)) return ms_one;
       return (ms_continuous?-log(coef):(ms_one-coef))*func::pow(coef,n);
     }
     if (ms_continuous) {
@@ -182,9 +169,8 @@ scalar AbstractMatrix<scalar>::diffPow(const scalar &coef,const powerS n,int row
       return -time*log(coef)*func::pow(coef,n);
     }
     if (n<m_jordanIndex[row])  return 0;
-    if (abs(coef-ms_one)<m_zero) {
-      if (n<m_jordanIndex[row])  return 0;
-      return binomial(n,m_jordanIndex[row]);
+    if (func::isZero(coef-ms_one)) {
+      return binomial(n+1,m_jordanIndex[row]+1)-binomial(n,m_jordanIndex[row]+1);
     }
     return (binomial(n,m_jordanIndex[row])-binomial(n+1,m_jordanIndex[row])*coef)*func::pow(coef,n-m_jordanIndex[row]);
   }
@@ -309,7 +295,10 @@ bool AbstractMatrix<scalar>::findConjugateBounds(const int row,powerS iter,power
 {
   complexS coef=m_eigenValues.coeff(row,row);
   scalar angle=func::invtan(coef.imag(),coef.real());
-  scalar rad=std::abs(coef);
+  scalar rad=func::norm2(coef);
+  scalar mag=-log(rad);
+  scalar diffAngle=func::invtan(angle,mag);
+  scalar cos=func::cosine(diffAngle);
   scalar quartFreq=abs(func::const_pi(this->ms_half)/angle);
   powerS offset=func::toInt(trunc(4*func::toLower(quartFreq)));
   offset+=m_jordanIndex[row]+1;
@@ -318,15 +307,17 @@ bool AbstractMatrix<scalar>::findConjugateBounds(const int row,powerS iter,power
   int dir=((end-start)>0) ? 1 : -1;
   powerS bot=end-dir*func::toInt(func::toUpper(quartFreq));
   if ((bot-start)*dir<0) return true;
+  complexS coef2=(start==1) ? coef : condPow(coef,start,row);
 
   //iteratively find (r^{n-1} = cos(n angle)) -> sup_{\lambda}(\lambda^n)=0
   powerS top=end;
   powerS last=(bot+top)/2;
   while((last!=bot) && (last!=top)) {
-    complexS ncoef=func::c_pow(coef,last);
-    scalar angle=func::invtan(ncoef.imag(),ncoef.real());
-    scalar max=std::abs(ncoef);
-    scalar out=coef.imag()*func::sine(angle)+coef.real()*func::cosine(angle);
+    complexS powCoef=condPow(coef,last,row);//func::c_pow(coef,last);?
+    scalar powAngle=func::invtan(powCoef.imag(),powCoef.real())+diffAngle;
+    scalar powMag=func::norm2(powCoef);
+    scalar max=powMag*cos;
+    scalar out=coef2.imag()*func::sine(powAngle)+coef2.real()*func::cosine(powAngle);
     out-=max;
     char sign=func::hardSign(out);
     if (sign<0) bot=last;
@@ -341,36 +332,42 @@ bool AbstractMatrix<scalar>::findConjugateBounds(const int row,powerS iter,power
 template <class scalar>
 void AbstractMatrix<scalar>::fillConjugateSupportFromIter(const int row1,const int row2,powerS iter)
 {
-  scalar mag=log(std::abs(m_eigenValues.coeff(row1,row1)));
-  scalar angle=func::invtan(m_eigenValues.coeff(row1,row1).imag(),m_eigenValues.coeff(row1,row1).real());
-  complexS coef=condPow(m_eigenValues.coeff(row1,row1),iter,row1);
-  angle=func::const_pi(this->ms_half)+func::invtan(angle,mag);
-  angle=func::invtan(coef.imag(),coef.real())+angle;
-  scalar max=coef.imag()*func::sine(angle)+coef.real()*func::cosine(angle);
-  fillConjugateSupport(row1,row2,angle,max,iter);
+  complexS coef=m_eigenValues.coeff(row1,row1);
+  complexS powCoef=condPow(coef,iter,row1);
+  scalar angle=func::invtan(coef.imag(),coef.real());
+  scalar powAngle=func::invtan(powCoef.imag(),powCoef.real());
+  scalar mag=-log(func::norm2(coef));
+  scalar powMag=func::norm2(powCoef);
+  scalar diffAngle=func::invtan(angle,mag);
+  if (func::isPositive(diffAngle-func::ms_pi)) diffAngle-=func::ms_pi;
+  diffAngle=func::ms_pi_2-diffAngle;
+  scalar cos=func::cosine(diffAngle);
+  scalar max=powMag*cos;
+  fillConjugateSupport(row1,row2,powAngle+diffAngle,max,iter);
 }
 
 template <class scalar>
 void AbstractMatrix<scalar>::fillConjugateSupportsFromIter(const int row1,const int row2,powerS iter,int precision)
 {
   powerS start,end;
-  if (findConjugateBounds((row1>row2) ? row2 : row1,iter,start,end))
+  complexS coef=m_eigenValues.coeff(row1,row1);
+  scalar angle=func::invtan(coef.imag(),coef.real());
+  if (!findConjugateBounds((row1>row2) ? row2 : row1,iter,start,end))
   {
-    complexS coef=condPow(m_eigenValues.coeff(row1,row1),iter,row1);
-    scalar angle=func::invtan(coef.imag()-m_eigenValues.coeff(row1,row1).imag(),coef.real()-m_eigenValues.coeff(row1,row1).real())+func::const_pi(this->ms_half);
-    scalar max=coef.imag()*func::sine(angle)+coef.real()*func::cosine(angle);
-    coef=condPow(m_eigenValues.coeff(row1,row1),2,row1);
-    scalar out=coef.imag()*func::sine(angle)+coef.real()*func::cosine(angle);
-    out-=max;
-    if (func::isPositive(out)) {
-      angle+=func::const_pi(ms_one);
-      max=-max;
-    }
-    fillConjugateSupport(row1,row2,angle,max,iter);
+    //We could refine the abstraction here
+  }
+  if (abs(angle)>func::ms_pi_2) {
+    coef=condPow(coef,start,row1);
+    scalar max=func::norm2(coef);
+    fillDirection(row1,-max,max);
+    fillDirection(row2,-max,max);
   }
   int dir=((end-start)>0) ? 1 : -1;
   refScalar iterationStep=(end-start)/precision;
-  if (iterationStep<1) iterationStep=1;
+  if (iterationStep<1) {
+    iterationStep=1;
+    precision=abs(end-start);
+  }
   for (refScalar i=0;i<=precision;i++) {
     powerS iter1=start+dir*func::toInt(floor(i*iterationStep));
     fillConjugateSupportFromIter(row1,row2,iter1);
@@ -433,7 +430,7 @@ void AbstractMatrix<scalar>::fillSupportFromIter(const int row1,const int row2,c
   scalar y1=condPow(mag2,iter,row2);
   scalar max=y1*func::sine(angle)+x1*func::cosine(angle);
   scalar out;
-  if (iter==1) out=condPow(mag2,2,row2)*func::sine(angle)+condPow(mag1,2,row1)*func::cosine(angle);
+  if (iter<=2) out=condPow(mag2,3,row2)*func::sine(angle)+condPow(mag1,3,row1)*func::cosine(angle);
   else out=mag2*func::sine(angle)+mag1*func::cosine(angle);
   out-=max;
   if (func::isPositive(out)) {
@@ -525,7 +522,7 @@ bool AbstractMatrix<scalar>::fillLastConjugateSupportFromPoints(int row1,int row
   }
   else if (sign==0) {
     //should never happen
-    func::imprecise(out,func::ms_hardZero,"Conjugate Zeros");
+    func::imprecise(out,func::ms_0,"Conjugate Zeros");
     return false;
   }
   else {
@@ -550,7 +547,7 @@ bool AbstractMatrix<scalar>::testConjugateSupportFromPoints(const scalar &x1,con
   }
   else if (sign==0) {
     //should never happen
-    func::imprecise(max,func::ms_hardZero,"Conjugate Zeros");
+    func::imprecise(max,func::ms_0,"Conjugate Zeros");
   }
   ext-=max;
   sign=func::hardSign(ext);
@@ -573,7 +570,7 @@ bool AbstractMatrix<scalar>::fillConjugateSupportFromPoints(const int row1,const
   }
   else if (sign==0) {
     //should never happen
-    func::imprecise(max,func::ms_hardZero,"Conjugate Zeros");
+    func::imprecise(max,func::ms_0,"Conjugate Zeros");
   }
   ext-=max;
   sign=func::hardSign(ext);
@@ -617,8 +614,8 @@ void AbstractMatrix<scalar>::fillQuadraticSupport(int row1,int row2,scalar mag1,
     precision=iteration;
   }
   int firstIter=1;
-  if (m_jordanIndex[row1%m_dimension]>0) firstIter=m_jordanIndex[row1%m_dimension];
-  if (m_jordanIndex[row2%m_dimension]>0) firstIter=m_jordanIndex[row2%m_dimension];
+  if (m_jordanIndex[row1]>0) firstIter=m_jordanIndex[row1];
+  if (m_jordanIndex[row2]>0) firstIter=m_jordanIndex[row2];
   for (int i=firstIter;i<precision;i++) {
     powerS iter1=func::toInt(floor(i*iterationStep));
     fillSupportFromIter(row1,row2,mag1,mag2,iter1);
@@ -634,15 +631,15 @@ void AbstractMatrix<scalar>::fillQuadraticConjugateSupport(int row1,int row2,sca
   scalar y2=condPow(mag2,iteration,row2);
   scalar x3=condPow(mag1,2,row1);
   scalar y3=condPow(mag2,2,row2);  
-  if (((row2<m_dimension) || (m_inputType<eVariableInputs)) && func::isZero(mag1-mag2)) {
+/*  if (((row2<m_dimension) || (m_inputType<eVariableInputs)) && func::isZero(mag1-mag2)) {
     fillSupportFromIter(row1,row2,mag1,mag2,iteration);
 /*    scalar angle=-func::ms_pi_2/2;
     scalar max=abs(func::getHull(x1-y1,x2-y2));
     fillConjugateSupport(row1,row2,angle,max,iteration);
     angle-=func::ms_pi_2;
-    fillConjugateSupport(row1,row2,angle,max,iteration);*/
+    fillConjugateSupport(row1,row2,angle,max,iteration);*
     return;
-  }
+  }*/
 
   scalar angle=func::invtan(y2-y1,x2-x1)-func::const_pi(this->ms_half);//invtan returns positive values (0-pi)
   scalar max=y1*func::sine(angle)+x1*func::cosine(angle);
@@ -802,21 +799,6 @@ void AbstractMatrix<scalar>::findUnfolded()
   m_unfolded.resize(pos);
 }
 
-/// Marks the round indices in a rounded vector array
-template <class scalar>
-void AbstractMatrix<scalar>::findRoundIndices(std::vector<bool> &isRoundIndex)
-{
-  int pos=0,mult;
-  isRoundIndex.resize(m_dimension);
-  for (int row=0;row<m_dimension;row+=mult,pos++) {
-    mult=(m_conjugatePair[row]<0) ? 1 : 2;
-    if (m_jordanIndex[row+mult]==0) isRoundIndex[pos]=(m_conjugatePair[row]>=0);
-    else isRoundIndex[pos]=(m_jordanIndex[row+mult]!=0);
-    while (m_jordanIndex[row+mult]!=0) row+=mult;
-  }
-  isRoundIndex.resize(pos);
-}
-
 /// Finds the frequency of rotation of each conjugate pair
 template <class scalar>
 void AbstractMatrix<scalar>::findFrequencies()
@@ -835,15 +817,28 @@ void AbstractMatrix<scalar>::findFrequencies()
 /// Indicates if the matrix dynamics are divergent
 /// @param strict if true returns only true if no eigenvalues are convergent
 template <class scalar>
-bool AbstractMatrix<scalar>::isDivergent(const bool strict)
+bool AbstractMatrix<scalar>::isDivergent(const bool strict,scalar speed)
 {
   for (int i=0;i<m_dimension;i++) {
     scalar eigenNorm=func::normsq(m_eigenValues.coeff(i,i));
-    char sign=func::hardSign(eigenNorm-ms_one);
+    char sign=func::hardSign(eigenNorm-speed);
     if (strict && (sign<0)) return false;
     else if (!strict && (sign>=0)) return true;
   }
   return strict;
+}
+
+/// Retrieves the largest eigenvalue norm
+template <class scalar>
+scalar AbstractMatrix<scalar>::largestEigenNorm()
+{
+  scalar max=0;
+  for (int i=0;i<m_dimension;i++) {
+    scalar eigenNorm=func::norm2(m_eigenValues.coeff(i,i));
+    char sign=func::hardSign(eigenNorm-max);
+    if (sign>0) max=eigenNorm;
+  }
+  return max;
 }
 
 /// Finds the coefficient, magnitude, maximum, and minimum for the abstract vector at row
@@ -854,7 +849,7 @@ void AbstractMatrix<scalar>::findCoeffBounds(int row,powerS iteration,complexS &
   else {
     int transRow=(m_inputType>=eVariableInputs) ? m_unfolded[row-m_dimension] : row-m_dimension;
     coef=m_eigenValues.coeff(transRow,transRow);
-    if ((m_inputType>=eVariableInputs) && (func::isPositive(func::norm2(coef)-ms_one))) {
+    if (m_inputType>=eVariableInputs) {// && (func::isPositive(func::norm2(coef)-ms_one))) {
       coef=m_foldedEigenValues(transRow,transRow);
     }
   }
@@ -879,10 +874,11 @@ void AbstractMatrix<scalar>::findCoeffBounds(int row,powerS iteration,complexS &
     min=-condPow(coef,1,row).imag();
     max=-condPow(coef,iteration,row).imag();
   }
-  mag=std::abs(coef);
+  mag=func::norm2(coef);
   if ((m_conjugatePair[row]<0) && ((row<m_dimension) || (m_inputType<eVariableInputs)) && (func::isNegative(coef.real()))) {
     scalar sum=min+max;
     char sign=func::hardSign(sum);
+    if (max<min) sign=-sign;
     if (sign>0) min=-max;
     else if (sign<0) max=-min;
   }
@@ -945,6 +941,7 @@ AbstractPolyhedra<scalar>& AbstractMatrix<scalar>::getAbstractDynamics(const pow
     if ((iteration<2) || (precision<2)) continue;
     if (func::isZero(mag)) continue;
     if (func::isZero(max-min)) continue;
+    if ((row<m_dimension) && (func::isZero(mag-func::ms_1))) continue;
     int maxDim=((inputType==eVariableOnlyInputs) && (row<m_dimension)) ? m_dimension : dimension;
     for (int row2=row+((m_conjugatePair[row]>row) ? 2 : 1);row2<maxDim;row2++) {
       if (row2<m_dimension) coef2=m_eigenValues.coeff(row2,row2);
@@ -960,13 +957,13 @@ AbstractPolyhedra<scalar>& AbstractMatrix<scalar>::getAbstractDynamics(const pow
       if (ms_continuous) {
         fillSupportsFromIter(row,row2,mag,mag2,iteration,precision);
       }
-      else if (m_conjugatePair[row]>=0) {
+      else if ((m_conjugatePair[row]>=0) || m_isNegative[row]) {
         if (m_conjugatePair[row2]<0) {
           fillQuadraticConjugateSupport(row,row2,func::norm2(coef),func::norm2(coef2),iteration,precision);
         }
         else fillCrossConjugateSupports(row,row2);
       }
-      else if (m_conjugatePair[row2]>=0) {
+      else if ((m_conjugatePair[row2]>=0) || m_isNegative[row2]) {
         fillQuadraticConjugateSupport(row2,row,func::norm2(coef2),func::norm2(coef),iteration,precision);
       }
       else if ((iteration==2) || func::isZero(max1-max2)) {
@@ -994,7 +991,7 @@ AbstractPolyhedra<scalar>& AbstractMatrix<scalar>::getAbstractDynamics(const pow
   if (ms_trace_dynamics>=eTraceAbstraction) {
     std::stringstream stream;
     stream << "s=" << iteration << ",l=" << precision;
-    result.logTableau(stream.str());
+    result.logTableau(stream.str(),true);
   }
   return result;
 }
@@ -1169,7 +1166,7 @@ bool AbstractMatrix<scalar>::addSupportsAtIterations(AbstractPolyhedra<scalar>& 
     m_pos=0;
     for (int i=0;i<size;i++) {
       SVectorS &data=m_directions[i];
-      scalar support=func::ms_hardZero;
+      scalar support=func::ms_0;
       for (typename SVectorS::iterator it=data.begin();it!=data.end();it++) {
         support+=it->second*resource.coeff(0,it->first);
       }
@@ -1360,8 +1357,8 @@ int AbstractMatrix<scalar>::getRoundedDimension()
   int roundDimension=0;
   for (int col=0;col<m_dimension;col++)
   {
-    if ((m_jordanIndex[col+1]>0) || (m_conjugatePair[col]>col)) dimension--;
-    else if ((m_jordanIndex[col]>0) || (m_conjugatePair[col]>=0)) roundDimension++;
+    if ((ms_roundJordanBlocks && (m_jordanIndex[col+1]>0)) || (m_conjugatePair[col]>col)) dimension--;
+    else if (roundIndex(col)>=0) roundDimension++;
   }
   return dimension;
 }
@@ -1375,20 +1372,20 @@ typename AbstractMatrix<scalar>::MatrixS& AbstractMatrix<scalar>::getRoundedDire
     int pos=0;
     for (int col=0;col<vectors.cols();col++)
     {
-      if ((m_conjugatePair[col]<0) && (m_jordanIndex[col+1]<=0)) {
+      if (roundIndex(col)<0) {
         result.col(pos)=vectors.col(col);
       }
       else {
         for (int row=0;row<vectors.rows();row++) {
           scalar value=func::squared(vectors.coeff(row,col));
-          for (int col2=col+1;(m_conjugatePair[col2]>=0) || (m_jordanIndex[col2]>0);col2++) {
+          for (int col2=col+1;roundIndex(col2)==col;col2++) {
             value+=func::squared(vectors.coeff(row,col2));
 //            func::madd(value,vectors.coeff(row,col2),vectors.coeff(row,col2));
           }
           result.coeffRef(row,pos)=sqrt(value);
         }
         col++;
-        while ((m_conjugatePair[col]>=0) || (m_jordanIndex[col]>0)) col++;
+        while ((roundIndex(col)>=0) && (roundIndex(col)!=col)) col++;
         col--;
       }
       pos++;
@@ -1399,20 +1396,20 @@ typename AbstractMatrix<scalar>::MatrixS& AbstractMatrix<scalar>::getRoundedDire
   int pos=0;
   for (int row=0;row<vectors.rows();row++)
   {
-    if ((m_conjugatePair[row]<0) && (m_jordanIndex[row+1]<=0)) {
+    if (roundIndex(row)<0) {
       result.row(pos)=vectors.row(row);
     }
     else {
       for (int col=0;col<vectors.cols();col++) {
         scalar value=func::squared(vectors.coeff(row,col));//*vectors.coeff(row,col);
-        for (int row2=row+1;(m_conjugatePair[row2]>=0) || (m_jordanIndex[row2]>0);row2++) {
+        for (int row2=row+1;roundIndex(row2)==row;row2++) {
           value+=func::squared(vectors.coeff(row2,col));
 //          func::madd(value,vectors.coeff(row2,col),vectors.coeff(row2,col));
         }
         result.coeffRef(pos,col)=sqrt(value);
       }
       row++;
-      while ((m_conjugatePair[row]>=0) || (m_jordanIndex[row]>0)) row++;
+      while ((roundIndex(row)>=0) && (roundIndex(row)!=row)) row++;
       row--;
     }
     pos++;
@@ -1426,6 +1423,7 @@ typename AbstractMatrix<scalar>::refScalar AbstractMatrix<scalar>::eigenCloudSup
 {
   MatrixS supports;
   boost::timer timer;
+  if (m_eigenCloud.rows()==0) getEigenCloud(calculateMaxIterations(1000),false);
   if (m_inputType==eVariableInputs) {
     supports=m_eigenCloud*vector.topRows(m_eigenCloud.cols());
     if (m_roundEigenCloud.rows()<=0) getRoundEigenCloud();

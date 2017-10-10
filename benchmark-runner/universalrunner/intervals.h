@@ -2,6 +2,9 @@
 #ifndef INTERVALS_H_
 #define INTERVALS_H_
 
+#define _EXP_BITS 32
+#define _FRAC_BITS 24
+
 #include "control_types.h"
 
 typedef  __plant_precisiont control_typet;
@@ -35,7 +38,7 @@ void get_bounds()
   _dbl_max = (1 << (INT_BITS-1))-1;//Integer part
   _dbl_max += (_one-_dbl_lsb);//Fractional part
 #else
-  verify_assume((_EXP_BITS>_FRAC_BITS) && (_EXP_BITS<= 32));
+  int i;
   signed long int exp=(1 << (_EXP_BITS -_FRAC_BITS -1));
   _dbl_max=_one;
   for (i=0;i<exp;i++)
@@ -63,11 +66,11 @@ signed long int fxp_control_typet_to_fxp(control_typet value)
   return tmp;
 }
 
-control_floatt fxp_check(control_floatt value)
+control_typet fxp_check(control_typet value)
 {
 #ifdef __CPROVER
   #ifdef _FIXEDBV
-    control_floatt tmp_value=value;
+    control_typet tmp_value=value;
     if (tmp_value < _zero) tmp_value=-tmp_value;
     verify_assume((~_dbl_max&tmp_value)==0);
     return value;
@@ -169,11 +172,11 @@ struct intervalt abs_interval(struct intervalt x)
   return z;
 }
 
-control_floatt fexp_round(control_floatt src, bool up)
+control_typet fexp_round(control_typet src, char up)
 {
   // Could also be done using bit masks but becomes dependent on compiler/processor
-  control_floatt power=1 << FRAC_BITS;
-  control_floatt sign=_one;
+  control_typet power=1 << FRAC_BITS;
+  control_typet sign=_one;
   // Normalize to 1.xxx
   if (src<0)
   {
@@ -205,31 +208,31 @@ control_floatt fexp_round(control_floatt src, bool up)
 
 struct intervalt interval_fxp_add(struct intervalt x,struct intervalt y)
 {
-  z=interval_add(x,y);
+  struct intervalt z=interval_add(x,y);
 #ifndef _FIXEDBV
-  z.low=fexp_round(z.low,false);
-  z.high=fexp_round(z.high,true);
+  z.low=fexp_round(z.low,0);
+  z.high=fexp_round(z.high,1);
 #endif  
 }
 
 struct intervalt interval_fxp_sub(struct intervalt x,struct intervalt y)
 {
-  z=interval_sub(x,y);
+  struct intervalt z=interval_sub(x,y);
 #ifndef _FIXEDBV
-  z.low=fexp_round(z.low,false);
-  z.high=fexp_round(z.high,true);
+  z.low=fexp_round(z.low,0);
+  z.high=fexp_round(z.high,1);
 #endif  
 }
 
 /*inline */struct intervalt interval_fxp_mult(struct intervalt x,struct intervalt y)
 {
+  struct intervalt z;
 #ifdef _FIXEDBV
   long long int xlow=x.low*_fxp_one;
   long long int xhigh=x.high*_fxp_one;
   long long int ylow=y.low*_fxp_one;
   long long int yhigh=y.high*_fxp_one;
   
-  struct intervalt z;
   long long int zlow=xlow*ylow;
   long long int zhigh=(-xlow)*ylow;
   zhigh=-zhigh;
@@ -261,8 +264,8 @@ struct intervalt interval_fxp_sub(struct intervalt x,struct intervalt y)
   z.high/=_fxp_one;
 #else
   z=interval_mult(x,y);
-  z.low=fexp_round(z.low,false);
-  z.high=fexp_round(z.high,true);
+  z.low=fexp_round(z.low,0);
+  z.high=fexp_round(z.high,1);
 #endif
   return z;
 }
@@ -311,10 +314,10 @@ void closed_fxp_mult(const int_matrixt A,const int_vectort B,const int_vectort K
     kx[i][2]=(xtemp*ktemp/_fxp_one);
     kx[i][2]/=_fxp_one;
 #else
-    kx[i][0]=fexp_round(x[i].low*K[i].low);
-    kx[i][1]=fexp_round(x[i].low*K[i].high);
-    kx[i][2]=fexp_round(x[i].high*K[i].low);
-    kx[i][3]=fexp_round(x[i].high*K[i].high);
+    kx[i][0]=fexp_round(x[i].low*K[i].low,0);
+    kx[i][1]=fexp_round(x[i].low*K[i].high,0);
+    kx[i][2]=fexp_round(x[i].high*K[i].low,0);
+    kx[i][3]=fexp_round(x[i].high*K[i].high,0);
 #endif
   }
   double up=1e-12;

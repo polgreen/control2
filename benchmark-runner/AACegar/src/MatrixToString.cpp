@@ -12,10 +12,11 @@ std::string cegisLeftBracket="{ ";
 std::string cegisRightBracket=" }\n";
 std::string defaultNoRightBracket="\n";
 std::string defaultSeparator=" , ";
+std::string defaultRowSeparator="\n  ";
 std::string dimensionMismatch="Dimensions do not match";
 std::string loadError="Load error";
 std::string processingError="Process error";
-std::string version="1.3.6";
+std::string version="1.3.7";
 
 namespace abstract {
 
@@ -24,13 +25,13 @@ template <class scalar>
 typename MatToStr<scalar>::MatrixS MatToStr<scalar>::ms_emptyMatrix(0,0);
 
 template <class scalar>
-MatToStr<scalar> MatToStr<scalar>::ms_defaultLogger(6,defaultLeftBracket,defaultRightBracket,defaultSeparator);
+MatToStr<scalar> MatToStr<scalar>::ms_defaultLogger(6,defaultLeftBracket,defaultRightBracket,defaultSeparator,defaultRowSeparator);
 
 template <class scalar>
-MatToStr<scalar> MatToStr<scalar>::ms_defaultDecoder(6,emptyString,defaultNoRightBracket,defaultSeparator);
+MatToStr<scalar> MatToStr<scalar>::ms_defaultDecoder(6,emptyString,defaultNoRightBracket,defaultSeparator,defaultRowSeparator);
 
 template <class scalar>
-MatToStr<scalar> MatToStr<scalar>::ms_cegisLogger(6,cegisLeftBracket,cegisRightBracket,defaultSeparator);
+MatToStr<scalar> MatToStr<scalar>::ms_cegisLogger(6,cegisLeftBracket,cegisRightBracket,defaultSeparator,defaultRowSeparator);
 
 template <class scalar>
 scalar MatToStr<scalar>::ms_one(1);
@@ -51,12 +52,13 @@ template <class scalar>
 const char MatToStr<scalar>::ms_codes[eNumParameters]={'p','q','v','f','o','s','t','l','m','g','e'};
 
 template <class scalar>
-MatToStr<scalar>::MatToStr(int precision,std::string leftBracket,std::string rightBracket,std::string separator) :
+MatToStr<scalar>::MatToStr(int precision,std::string leftBracket,std::string rightBracket,std::string separator,std::string rowSeparator) :
     m_zero(0),
     m_precision(precision),
     m_leftBracket(leftBracket),
     m_rightBracket(rightBracket),
-    m_separator(separator)
+    m_separator(separator),
+    m_rowSeparator(rowSeparator)
 {}
 
 template <class scalar>
@@ -65,7 +67,8 @@ MatToStr<scalar>::MatToStr(bool brackets) :
     m_precision(6),
     m_leftBracket(brackets ? "[ " : ""),
     m_rightBracket(brackets ? " ]\n" : "\n"),
-    m_separator(" , ")
+    m_separator(" , "),
+    m_rowSeparator("\n  ")
 {}
 
 template <class scalar>
@@ -509,29 +512,32 @@ int MatToStr<scalar>::StringToDim(ParamMatrix &paramValues,const char * pData,si
     if (pData[pos]==ms_codes[j]) found=true;
   }
   if (!found) return pos;
-  for (int j=0;j<eNumParameters;j++) {
-    for (int k=0;k<3;k++) paramValues.coeffRef(j,k)=0;
-    if (pData[pos]==ms_codes[j]) {
-      if (pData[++pos]!='=') return -pos;
-      pos++;
-      paramValues.coeffRef(j,0)=std::strtold(pData+pos,&pEnd);
-      pos=(int)(pEnd-pData);
-      pos=skipSpaces(pData,pos,end);
-      if (pData[pos]==':') {
+  for (int i=0;i<eNumParameters;i++) {
+    for (int j=0;j<eNumParameters;j++) {
+      if (i==0) for (int k=0;k<3;k++) paramValues.coeffRef(j,k)=0;
+      if (pData[pos]==ms_codes[j]) {
+        if (pData[++pos]!='=') return -pos;
         pos++;
-        paramValues.coeffRef(j,1)=std::strtold(pData+pos,&pEnd);
+        paramValues.coeffRef(j,0)=std::strtold(pData+pos,&pEnd);
         pos=(int)(pEnd-pData);
         pos=skipSpaces(pData,pos,end);
         if (pData[pos]==':') {
           pos++;
-          paramValues.coeffRef(j,2)=std::strtold(pData+pos,&pEnd);
+          paramValues.coeffRef(j,1)=std::strtold(pData+pos,&pEnd);
           pos=(int)(pEnd-pData);
           pos=skipSpaces(pData,pos,end);
+          if (pData[pos]==':') {
+            pos++;
+            paramValues.coeffRef(j,2)=std::strtold(pData+pos,&pEnd);
+           pos=(int)(pEnd-pData);
+           pos=skipSpaces(pData,pos,end);
+          }
         }
+        if (pData[pos]==',') pos++;
+        pos=skipSpaces(pData,pos,end);
       }
-      if (pData[pos]==',') pos++;
-      pos=skipSpaces(pData,pos,end);
     }
+    if (pData[pos]=='\n') return pos;
   }
   return pos;
 }
@@ -565,7 +571,7 @@ template <class scalar> std::string MatToStr<scalar>::MatToString(const MatrixS 
     {
       for (int row=0;row<matrix.rows();row++) result+=MakeNumber(matrix.coeff(row,col),interval,m_precision,normalised ? row : -1)+m_separator; \
       if (result.length()>3) result.resize(result.length()-3);
-      result+="\n  ";
+      result+=m_rowSeparator;
     }
   }
   else {
@@ -573,7 +579,7 @@ template <class scalar> std::string MatToStr<scalar>::MatToString(const MatrixS 
     {
       for (int col=0;col<matrix.cols();col++) result+=MakeNumber(matrix.coeff(row,col),interval,m_precision,normalised ? row : -1)+m_separator; \
       if (result.length()>3) result.resize(result.length()-3);
-      result+="\n  ";
+      result+=m_rowSeparator;
     }
   }
   if (result.length()>3) result.resize(result.length()-3);
@@ -591,7 +597,7 @@ template <class scalar> std::string MatToStr<scalar>::MatToString(SMatrixS &matr
     {
       for (int row=0;row<matrix.rows();row++) result+=MakeNumber(matrix.coeff(row,col),interval,m_precision,normalised ? row : -1)+m_separator; \
       if (result.length()>3) result.resize(result.length()-3);
-      result+="\n  ";
+      result+=m_rowSeparator;
     }
   }
   else {
@@ -605,7 +611,7 @@ template <class scalar> std::string MatToStr<scalar>::MatToString(SMatrixS &matr
         buffer << "x" << it->first;
       }
       result+=buffer.str();
-      result+="\n  ";
+      result+=m_rowSeparator;
     }
   }
   if (result.length()>3) result.resize(result.length()-3);
@@ -627,7 +633,7 @@ std::string MatToStr<scalar>::MatToString(const MatrixC &matrix,const bool inter
           result+=MakeNumber(matrix.coeff(j,i).imag(),interval,m_precision)+")"+m_separator;// , ";
         }
         result.resize(result.length()-m_separator.length());
-        result+="\n  ";
+        result+=m_rowSeparator;
       }
   }
   else {
@@ -639,7 +645,7 @@ std::string MatToStr<scalar>::MatToString(const MatrixC &matrix,const bool inter
         result+=MakeNumber(matrix.coeff(i,j).imag(),interval,m_precision)+")"+m_separator;// , ";
       }
       result.resize(result.length()-m_separator.length());
-      result+="\n  ";
+      result+=m_rowSeparator;
     }
   }
   if (result.length()>3) result.resize(result.length()-3);
@@ -780,7 +786,7 @@ void MatToStr<scalar>::logData(scalar number,const std::string title,bool bracke
 }
 
 template <class scalar>
-void MatToStr<scalar>::logData(std::vector<int> &vector,const std::string title)
+void MatToStr<scalar>::logData(const std::vector<int> &vector,const std::string title)
 {
   std::stringstream stream;
   stream << title << vector[0];
@@ -842,7 +848,7 @@ void MatToStr<scalar>::logData(SMatrixS &directions,const MatrixS &supports,cons
 }
 
 /// Returns the description of a matrix
-template <class scalar> std::string MatToStr<scalar>::MatToC(const std::string name,const MatrixS &matrix,const bool interval,const bool use_cpp)
+template <class scalar> std::string MatToStr<scalar>::MatToC(const std::string name,const MatrixS &matrix,const bool interval,scalar scaling,const bool use_cpp)
 {
   std::string result;
   if (!name.empty()) result+=name+"={.coeffs";
@@ -888,6 +894,9 @@ template <class scalar> std::string MatToStr<scalar>::MatToC(const std::string n
     }
     result+=" }";
   }
+  if (!func::isZero(scaling) && !name.empty()) {
+    result+=", .scale=" +MakeNumber(scaling,false);
+  }
   if (!name.empty()) result+="}";
   result+=";\n";
   return result;
@@ -914,6 +923,7 @@ template <class scalar> std::string MatToStr<scalar>::IneToC(const std::string t
       buffer << "(";
       for (int col=firstCol;col<directions.cols();col++) {
         scalar coeff=directions.coeff(row,col);
+        if (func::isZero(coeff)) continue;
         if ((col>firstCol) && (!func::isNegative(coeff))) buffer << "+";
         if (func::isZero(ms_one+coeff)) {
           buffer << "-";

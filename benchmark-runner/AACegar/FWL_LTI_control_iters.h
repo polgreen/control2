@@ -4,6 +4,8 @@
 #include "FWL_LTI_transform.h"
 vectort plant_base;
 vectort plant_radius;
+vectort point;
+vectort radius;
 
 void makeControllablePlant()
 {
@@ -19,8 +21,11 @@ void makeControllablePlant()
 void checkControlIteration(vectort init,control_floatt input,cnttype iter)
 {
   cnttype i,j;
-  vectort point;
-  vectort radius;
+  for (j=0;j<_DIMENSION;j++)
+  {
+    point[j]=init[j];
+    radius[j]=0;
+  }
   for (j=0;j<_DIMENSION;j++)
   {
     point[j]=init[j];
@@ -52,7 +57,7 @@ void checkControlIteration(vectort init,control_floatt input,cnttype iter)
 
 void checkControlIterations()
 {
-  cnttype i;
+  cnttype i,j;
   makeControllablePlant();
   for(i=0;i<_NUM_ITERATIONS;i++)
   {

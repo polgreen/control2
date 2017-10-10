@@ -47,11 +47,12 @@ typedef boost::numeric::interval_lib::policies<boost::numeric::interval_lib::sav
 typedef boost::numeric::interval<mpfr::mpreal, mp_interval_policies > mpinterval;
 typedef boost::numeric::interval<long double, ld_interval_policies > ldinterval;
 
-template <typename scalar,typename refScalar,typename intervalScalar,typename powerScalar> class type_def {
+template <typename scalar,typename refScalar,typename intervalScalar,typename powerScalar,typename expScalar> class type_def {
 public:
     typedef refScalar               scalar_type;
     typedef intervalScalar          scalar_interval;
     typedef powerScalar             power_type;
+    typedef expScalar               exponent_type;
     typedef refScalar               ref;
     typedef power_type              power;
     typedef std::complex<scalar>    complexS;
@@ -110,42 +111,42 @@ public:
 
 template <class scalar> class interval_def;
 #if defined (MPREAL_HAVE_INT64_SUPPORT)
-template<> class interval_def<mpfr::mpreal> : public type_def<mpfr::mpreal,mpfr::mpreal,mpinterval,long long>
+template<> class interval_def<mpfr::mpreal> : public type_def<mpfr::mpreal,mpfr::mpreal,mpinterval,long long,mp_exp_t>
 {
 public:
   static std::string ms_name;
   static bool isInterval() { return false; }
 };
 
-template<> class interval_def<mpinterval> : public type_def<mpinterval,mpfr::mpreal,mpinterval,long long>
+template<> class interval_def<mpinterval> : public type_def<mpinterval,mpfr::mpreal,mpinterval,long long,mp_exp_t>
 {
 public:
   static std::string ms_name;
   static bool isInterval() { return true; }
 };
 #else
-template<> class interval_def<mpfr::mpreal> : public type_def<mpfr::mpreal,mpfr::mpreal,mpinterval,long>
+template<> class interval_def<mpfr::mpreal> : public type_def<mpfr::mpreal,mpfr::mpreal,mpinterval,long,mp_exp_t>
 {
 public:
   static std::string ms_name;
   static bool isInterval() { return false; }
 };
 
-template<> class interval_def<mpinterval> : public type_def<mpinterval,mpfr::mpreal,mpinterval,long>
+template<> class interval_def<mpinterval> : public type_def<mpinterval,mpfr::mpreal,mpinterval,long,mp_exp_t>
 {
 public:
   static std::string ms_name;
   static bool isInterval() { return true; }
 };
 #endif
-template<> class interval_def<long double> : public type_def<long double,long double,ldinterval,long>
+template<> class interval_def<long double> : public type_def<long double,long double,ldinterval,long,int>
 {
 public:
   static std::string ms_name;
   static bool isInterval() { return false; }
 };
 
-template<> class interval_def<ldinterval> : public type_def<ldinterval,long double,ldinterval,long>
+template<> class interval_def<ldinterval> : public type_def<ldinterval,long double,ldinterval,long,int>
 {
 public:
   static std::string ms_name;
@@ -155,7 +156,7 @@ public:
 typedef enum {eNormalSpace,eEigenSpace,eSingularSpace } space_t;
 typedef enum {eComplexDynamics,ePseudoDynamics,eCombinedDynamics } dynamics_t;
 typedef enum {eNoInputs,eParametricInputs,eVariableInputs,eVariableOnlyInputs } inputType_t;
-typedef enum {eReachTubeSynth,eIterReachTubeSynth,eReachSetSynth,eInitSynth,eInputSynth,eSensitivitySynth,eEigenSynth,eDynamicSynth,eCEGISSynth} synthesisType_t;
+typedef enum {eReachTubeSynth,eClosedReachTubeSynth,eIterReachTubeSynth,eReachSetSynth,eInitSynth,eInputSynth,eSensitivitySynth,eEigenSynth,eDynamicSynth,eCEGISSynth,eObserverSynth,eMaxSynth} synthesisType_t;
 typedef enum {eInequalities, eNormalised, eTemplated, eVertices } displayType_t;
 typedef enum {eTraceNoTableau,eTraceObjectives,eTraceTableau,eTraceTransforms} traceTableau_t;
 typedef enum {eTraceNoPivots,eTracePivots,eTraceCosts,eTraceSimplex,eTraceBasis,eTraceEntries} tracePivots_t;
@@ -173,6 +174,7 @@ public:
   typedef interval_def<scalar> type;
   typedef typename type::scalar_interval scinterval;
   typedef typename type::power_type power;
+  typedef typename type::exponent_type exponent;
   typedef typename std::complex<scalar> c_scalar;
   typedef typename std::complex<scinterval> c_interval;
   typedef Eigen::Matrix<scinterval,Eigen::Dynamic,Eigen::Dynamic>     MatrixS;
@@ -262,8 +264,8 @@ public:
 
   static inline char hardSign(const scinterval &x)
   {
-    if (x.upper()<ms_hardZero) return -1;
-    if (x.lower()>ms_hardZero) return 1;
+    if (x.upper()<ms_0) return -1;
+    if (x.lower()>ms_0) return 1;
     if ((x.upper()>ms_zero) || (x.lower()<-ms_zero)) {
       imprecise(x,ms_zero,"hard sign error");
     }
@@ -285,7 +287,7 @@ public:
   static inline bool isZero(scinterval x,scalar zero=ms_weakZero)
   {
     UNUSED(zero);
-    return (x.upper()>=ms_hardZero) && (x.lower()<=ms_hardZero);
+    return (x.upper()>=ms_0) && (x.lower()<=ms_0);
   }
 
   static inline bool isNearZero(scinterval x,scalar epsilon)
@@ -418,13 +420,16 @@ public:
   static inline scalar getHull(const scalar &,const scalar &y)              { return y; }
   static inline c_scalar getHull(const c_scalar &,const c_scalar &y)        { return y; }
   static inline scalar madd(scalar &z,const scalar &x,const scalar &y);
-  static inline scalar tightMadd(scalar &z,const scalar &x,const scalar &y) { z+=x*y;return ms_hardZero; }
-  static inline scalar tightWidth(const scalar &x,const scalar &y)          { return ms_hardZero; }
+  static inline scalar tightMadd(scalar &z,const scalar &x,const scalar &y) { z+=x*y;return ms_0; }
+  static inline scalar tightWidth(const scalar &x,const scalar &y)          { return ms_0; }
   static inline void msub(scalar &z,const scalar &x,const scalar &y);
 
   static long double toDouble(scalar x);
-  static scalar toScalar(long double &x)                { return x; }
+  static scalar toScalar(long double &x)                                    { return x; }
   static scalar toScalar(mpfr::mpreal &x);
+
+  static scalar extractExponent(scalar x, exponent &exp);
+
   static char* toScalar(const char* pBegin,scalar &value);
   static char* toScalar(const char* pBegin,scinterval &value);
   static std::complex<scalar> toScalar(const std::complex<long double> &x);
@@ -447,7 +452,7 @@ public:
   static typename interval_def<scalar>::power_type   ms_infPower;
   static scalar                         ms_zero;
   static scalar                         ms_weakZero;
-  static scalar                         ms_hardZero;
+  static scalar                         ms_0;
   static c_scalar                       ms_c_1;
   static c_interval                     ms_interval_c_1;
   static scalar                         ms_1;

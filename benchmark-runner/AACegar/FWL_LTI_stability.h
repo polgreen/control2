@@ -1,17 +1,25 @@
+#ifndef USE_XTRANSFORM
 void make_closed_loop()
 {
   cnttype i,j;
+#ifdef USE_INTERVALS
   make_nondet_coeffs(plant.coeffs,plant.uncertainty,plant_cbmc);
   make_nondet_transform(transform.coeffs,transform.uncertainty,transform_cbmc);
-  fxp_check_coeffs(controller);
+#else
+  copy_coeffs(plant.coeffs,plant_cbmc);
+  copy_transform(transform.coeffs,transform_cbmc);  
+#endif    
+  fxp_check_coeffs(controller,implK);
   for (i = 0;i<_DIMENSION;i++)
   {
     controller_cbmc[i]=0;
     for (j = 0;j<_DIMENSION;j++)
     {
-      loop_cbmc[i][j]=dynamics[i][j]-sensitivity[i]*controller[j];
       controller_cbmc[i]-=transform_cbmc[j][i]*controller[j];
     }
+#ifdef USE_SCALING
+    controller_cbmc[i]*=transform.scale;
+#endif
   }
 #ifndef __CPROVER
     print_matrix("T ",transform_cbmc);
@@ -20,21 +28,33 @@ void make_closed_loop()
     print_vector("controller polynomial",controller_cbmc);
 #endif
 #ifdef _USE_OBSERVER
-  make_nondet_transform(observer_transform.coeffs,observer_transform.uncertainty,observer_transform_cbmc);
-  fxp_check_coeffs(observer);
+  #ifdef USE_INTERVALS
+    make_nondet_transform(observer_pretransform.coeffs,observer_pretransform.uncertainty,observer_transform_cbmc);
+  #else
+    copy_transform(observer_pretransform.coeffs,observer_transform_cbmc);
+  #endif
+  fxp_check_coeffs(observer,implL);
   for (i = 0;i<_DIMENSION;i++)
   {
     observer_cbmc[i]=0;
     for (j = 0;j<_DIMENSION;j++)
     {
-      observer_cbmc[i]+=observer_transform_cbmc[j][i]*observer[j];
+      observer_cbmc[i]-=observer_transform_cbmc[i][j]*observer[j];
     }
+    observer_cbmc[i]*=implL.scale;
+  #ifdef USE_SCALING
+    observer_cbmc[i]*=observer_pretransform.scale;
+  #endif
   }
   //Has to be done before plant_cbmc is updated
   for (i = 0;i<_DIMENSION;i++) observer_plant_cbmc[i]=plant_cbmc[i]-observer_cbmc[i];
 #endif
   for (i = 0;i<_DIMENSION;i++) plant_cbmc[i]-=controller_cbmc[i];
+#ifndef __CPROVER
+    print_vector("loop polynomial",plant_cbmc);
+#endif
 }
+#endif
 
 signed int check_stability_closedloop(vectort a)
 {

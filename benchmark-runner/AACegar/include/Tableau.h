@@ -17,11 +17,6 @@
 namespace abstract{
 typedef enum { IneToExt, ExtToIne, LPMax, LPMin } ConversionType_t;
 
-struct pivot_t{
-  int row;
-  int col;
-};
-
 template <class scalar> class Tableau {
 public:
     typedef interval_def<scalar> type;
@@ -83,6 +78,9 @@ protected:
 
     /// Initializes all basic and non-basic variables and sets the basis to identity
     void ResetTableau();
+
+    /// Loads the tableau from the face and supprot description
+    bool loadTableau(bool clearObjective);
 
     /// Sets an order for the Tableau given the OrderType
     /// @param type order to use for the tableau. It can be a simple index order or by column member magnitude
@@ -148,6 +146,7 @@ protected:
     SparseSortedMatrix<scalar>  m_sparseTableau;        //Full inequality set [m_supports m_faces ; 0 max]
     SortedTableau<scalar>      *m_pSortedTableau;
     MatrixS                     m_basisInverse;         //Inverse of the basis for the dual simplex problem
+    MatrixS                     m_auxiliaryRow;         //Saves the auxiliary row data for the dual simplex
     std::vector<int>            m_basicVars;            //Vector containig the basic variable corresponding to each row (-1 if none)
     std::vector<int>            m_nonBasicRow;          //Vector containing the row that corresponds to each basic variable
     MatrixS                     m_feasBasisInverse;     //Stores a pre-calculated feasible basis
@@ -162,6 +161,7 @@ public:
     static tracePivots_t        ms_trace_pivots;
     static bool                 ms_trace_errors;
     static bool                 ms_trace_time;
+    static bool                 ms_useBasis;
 };
 }
 
