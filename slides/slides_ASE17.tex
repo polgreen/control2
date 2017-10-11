@@ -351,7 +351,7 @@ where $A$, $B$, $C$ and $D$ are \textbf{matrices} that fully \textbf{specify the
 %\end{frame}
 
 
-\begin{frame}{DSSynth Architecture}
+\begin{frame}{The Proposed Synthesis Methodology}
 
 \colorbox{green!70}{Phases of the controller synthesis:}
 
@@ -387,6 +387,113 @@ where $A$, $B$, $C$ and $D$ are \textbf{matrices} that fully \textbf{specify the
 %
 %\end{enumerate}
 %\end{frame}
+
+
+\defverbatim[colored]\makeset{
+\tiny
+\begin{lstlisting}[xleftmargin=.025\textwidth,xrightmargin=.025\textwidth, frame=single,basicstyle=\tt]
+>> num = [-0.06875 0 0];
+>> den = [1.0000 -1.696 0.7089];
+>> system = tf(num,den,0.002);
+>> y = synthesize(system,8,8,1,-1);
+>> SYNTHESIS SUCCESSFUL
+>> y = 
+>>  -0.9983z^2 + 0.09587z + 0.1926
+>>  --------------------------------
+>>       z^2 + 0.5665z + 0.75
+\end{lstlisting}
+}
+
+\begin{frame}{DSSynth Usage - Steps 1, 2, and 3}
+
+\colorbox{green!70}{Synthesizing an unmanned aerial vehicle (UAV) plant:}
+
+\begin{equation}
+\label{equation_plant}
+G(z)=\frac{B(z)}{A(z)}=\frac{-0.06875z^{2}}{z^2-1.696z+0.7089}.
+\end{equation}
+
+\makeset
+
+\begin{itemize}
+\item numerical representation: $\langle 8, 8 \rangle$
+\item dynamical range: $\langle -1, 1 \rangle$
+\end{itemize}
+
+\end{frame}
+
+\defverbatim[colored]\makeset{
+\tiny
+\begin{lstlisting}[xleftmargin=.025\textwidth,xrightmargin=.025\textwidth, frame=single,basicstyle=\tt]
+>> num = [-0.99832 0.09587 0.1926];
+>> den = [1 0.5665 0.75];
+>> controller = tf(num,den,0.002);
+>> num = [-0.06875 0 0];
+>> den = [1.0000 -1.696 0.7089];
+>> plant = tf(num,den,0.002);
+>> sys = feedback(series(controller, plant),1)
+>> sys =
+>>        0.06863z^4 - 0.006591z^3 - 0.01324z^2
+>> ---------------------------------------------------
+>> 1.069z^4 - 1.136z^3 + 0.4849z^2 - 0.8704z + 0.5317
+\end{lstlisting}
+}
+
+\begin{frame}{DSSynth Usage - Steps A, B, and C}
+
+\colorbox{green!70}{Digital controller synthesized by DSSynth:}
+
+\begin{equation}
+\label{equation_controller}
+C(z)=\frac{-0.9983^{2}+0.09587z+0.1926}{z^2+0.5665z+0.75}.
+\end{equation}
+
+\colorbox{green!70}{Computing the general equation (plant and controller):}
+
+\makeset
+
+\end{frame}
+
+\defverbatim[colored]\makeset{
+\tiny
+\begin{lstlisting}[xleftmargin=.025\textwidth,xrightmargin=.025\textwidth, frame=single, basicstyle=\tt]
+>> den = [1.069 -1.136 0.4849 -0.8704 0.5317]
+>> r = roots(den)
+>> r =
+>>  -0.2912 + 0.8061i
+>>  -0.2912 - 0.8061i
+>>   0.8225 + 0.0219i
+>>   0.8225 - 0.0219i
+\end{lstlisting}
+}
+
+\begin{frame}{DSSynth Usage - Stability Check}
+
+\colorbox{green!70}{General equation (combination between plant and controller):}
+
+\begin{equation}
+\small
+\label{equation_general}
+\frac{N(z)}{D(z)}=\frac{0.06863z^{4} - 0.006591z^{3} - 0.01324z^{2}}{1.069z^{4} - 1.136z^{3} + 0.4849z^{2} -0.8704z + 0.5317}.
+\end{equation}
+ 
+\colorbox{green!70}{Computing the roots from the general equation in MATLAB:}
+
+\makeset
+
+\end{frame}
+
+\begin{frame}{DSSynth Usage - Step Response}
+
+\colorbox{green!70}{Step response for the UAV plant describing a stable system:}
+
+\begin{figure}[ht]
+  \includegraphics[width=0.6\textwidth]{figures/step-response.eps}
+%  \caption{Step response for the UAV plant describing a stable system.}
+  \label{step-response}
+\end{figure}
+
+\end{frame}
 
 \begin{frame}{DSSynth Usage - Command Line}
 
@@ -439,107 +546,6 @@ The \textbf{DSSynth} is called via the command line in MATLAB as
 		\label{step4}}
 		\hfil
     \label{fig:gui-for-tf}
-\end{figure}
-
-\end{frame}
-
-\defverbatim[colored]\makeset{
-\tiny
-\begin{lstlisting}[xleftmargin=.025\textwidth,xrightmargin=.025\textwidth, frame=single,basicstyle=\tt]
->> num = [-0.06875 0 0];
->> den = [1.0000 -1.696 0.7089];
->> system = tf(num,den,0.002);
->> y = synthesize(system,8,8,1,-1);
->> SYNTHESIS SUCCESSFUL
->> y = 
->>  -0.9983z^2 + 0.09587z + 0.1926
->>  --------------------------------
->>       z^2 + 0.5665z + 0.75
-\end{lstlisting}
-}
-
-\begin{frame}{DSSynth Usage - Illustrative Example}
-
-\colorbox{green!70}{Synthesizing an unmanned aerial vehicle (UAV) plant:}
-
-\begin{equation}
-\label{equation_plant}
-G(z)=\frac{B(z)}{A(z)}=\frac{-0.06875z^{2}}{z^2-1.696z+0.7089}.
-\end{equation}
-
-\makeset
-
-\end{frame}
-
-\defverbatim[colored]\makeset{
-\tiny
-\begin{lstlisting}[xleftmargin=.025\textwidth,xrightmargin=.025\textwidth, frame=single,basicstyle=\tt]
->> num = [-0.99832 0.09587 0.1926];
->> den = [1 0.5665 0.75];
->> controller = tf(num,den,0.002);
->> num = [-0.06875 0 0];
->> den = [1.0000 -1.696 0.7089];
->> plant = tf(num,den,0.002);
->> sys = feedback(series(controller, plant),1)
->> sys =
->>        0.06863z^4 - 0.006591z^3 - 0.01324z^2
->> ---------------------------------------------------
->> 1.069z^4 - 1.136z^3 + 0.4849z^2 - 0.8704z + 0.5317
-\end{lstlisting}
-}
-
-\begin{frame}{DSSynth Usage - Illustrative Example}
-
-\colorbox{green!70}{Digital controller synthesized by DSSynth:}
-
-\begin{equation}
-\label{equation_controller}
-C(z)=\frac{-0.9983^{2}+0.09587z+0.1926}{z^2+0.5665z+0.75}.
-\end{equation}
-
-\colorbox{green!70}{Computing the general equation (plant and controller):}
-
-\makeset
-
-\end{frame}
-
-\defverbatim[colored]\makeset{
-\tiny
-\begin{lstlisting}[xleftmargin=.025\textwidth,xrightmargin=.025\textwidth, frame=single, basicstyle=\tt]
->> den = [1.069 -1.136 0.4849 -0.8704 0.5317]
->> r = roots(den)
->> r =
->>  -0.2912 + 0.8061i
->>  -0.2912 - 0.8061i
->>   0.8225 + 0.0219i
->>   0.8225 - 0.0219i
-\end{lstlisting}
-}
-
-\begin{frame}{DSSynth Usage - Illustrative Example}
-
-\colorbox{green!70}{General equation (combination between plant and controller):}
-
-\begin{equation}
-\small
-\label{equation_general}
-\frac{N(z)}{D(z)}=\frac{0.06863z^{4} - 0.006591z^{3} - 0.01324z^{2}}{1.069z^{4} - 1.136z^{3} + 0.4849z^{2} -0.8704z + 0.5317}.
-\end{equation}
- 
-\colorbox{green!70}{Computing the roots from the general equation in MATLAB:}
-
-\makeset
-
-\end{frame}
-
-\begin{frame}{DSSynth Usage - Illustrative Example}
-
-\colorbox{green!70}{Step response for the UAV plant describing a stable system:}
-
-\begin{figure}[ht]
-  \includegraphics[width=0.6\textwidth]{figures/step-response.eps}
-%  \caption{Step response for the UAV plant describing a stable system.}
-  \label{step-response}
 \end{figure}
 
 \end{frame}
