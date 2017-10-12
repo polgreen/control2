@@ -170,25 +170,39 @@ alternativetitlepage=true,
 
 \begin{frame}{Transfer-Function Representation}
 %
+\centering
+ \includegraphics[width=.6\textwidth]{figures/closedloopseries.pdf} 
+ 
+ \uncover<2>{
+%
 \begin{equation}
 \small
 \label{eq:transferfunction}
-H(z)=\frac{B(z)}{A(z)}=\frac{b_{0}+b_{1}z^{-1}+...+b_{M}z^{-M}}{a_{0}+a_{1}z^{-1}+...+a_{N}z^{-N}},
+H(z)=\frac{B(z)}{A(z)}=\frac{b_{0}+b_{1}z^{-1}+...+b_{M}z^{-M}}{a_{0}+a_{1}z^{-1}+...+a_{N}z^{-N}}.
 \end{equation}
 %
-where,
+%\noindent where,
 \begin{itemize}
 \item $z^{-1}$ is called the \textbf{backward-shift} operator;
 \item $A(z)$ and $B(z)$ are the \textbf{denominator} and \textbf{numerator} polynomials;
-\item $N$ and $M$ are the \textbf{order} of the \textbf{denominator} and \textbf{numerator} polynomials, respectively.
-\end{itemize}
+\item $N$ and $M$ are the \textbf{order} of the respective polynomials.
+\end{itemize}}
 
 \end{frame}
 
 \begin{frame}{State-Space Representation}
-In state-space form, the behavior of a system is represented via a \textbf{state
+
+\begin{itemize}
+\item Mathematical model of a physical system as a set of \textbf{input}, \textbf{output}, and 
+\textbf{state variables} related by differential equations.
+\end{itemize}
+
+ \uncover<2>{
+ \begin{itemize}
+\item The behavior of a system is represented via a \textbf{state
 evolution equation} $x(n+1)$ and an \textbf{instantaneous output equation} $y(n)$, as
 follows:
+\end{itemize}
 %
 \begin{equation}
 \begin{split}
@@ -198,7 +212,8 @@ y(n) &= C x(n) + D u(n),
 \end{split}\label{eq:ss-example}
 \end{equation}
 %
-where $A$, $B$, $C$ and $D$ are \textbf{matrices} that fully \textbf{specify the model}. 
+where $A$, $B$, $C$ and $D$ are \textbf{matrices} that fully \textbf{specify the model}.}
+
 \end{frame}
 
 \begin{frame}{Counterexample-Guided Inductive Synthesis for Control Systems}
@@ -336,7 +351,7 @@ where $A$, $B$, $C$ and $D$ are \textbf{matrices} that fully \textbf{specify the
 %\end{frame}
 
 
-\begin{frame}{DSSynth Architecture}
+\begin{frame}{The Proposed Synthesis Methodology}
 
 \colorbox{green!70}{Phases of the controller synthesis:}
 
@@ -373,28 +388,135 @@ where $A$, $B$, $C$ and $D$ are \textbf{matrices} that fully \textbf{specify the
 %\end{enumerate}
 %\end{frame}
 
-\begin{frame}{DSSynth Usage - Command Line}
 
-Users must provide a digital system as a MATLAB model using a
-\texttt{tf} (for transfer function) or an \texttt{ss} (for state-space
-model) command  
+\defverbatim[colored]\makeset{
+\tiny
+\begin{lstlisting}[xleftmargin=.025\textwidth,xrightmargin=.025\textwidth, frame=single,basicstyle=\tt]
+>> num = [-0.06875 0 0];
+>> den = [1.0000 -1.696 0.7089];
+>> system = tf(num,den,0.002);
+>> y = synthesize(system,8,8,1,-1);
+>> SYNTHESIS SUCCESSFUL
+>> y = 
+>>  -0.9983z^2 + 0.09587z + 0.1926
+>>  --------------------------------
+>>       z^2 + 0.5665z + 0.75
+\end{lstlisting}
+}
 
-The \textbf{DSSynth} is called via the command line in MATLAB as
+\begin{frame}{DSSynth Usage - Steps 1, 2, and 3}
 
-\begin{center} 
-\texttt{synthesize(plant, intBits, fracBits, maxR, minR)}
-\end{center} 
+\colorbox{green!70}{Synthesizing an unmanned aerial vehicle (UAV) plant:}
 
-\colorbox{green!70}{Parameters:}
+\begin{equation}
+\label{equation_plant}
+G(z)=\frac{B(z)}{A(z)}=\frac{-0.06875z^{2}}{z^2-1.696z+0.7089}.
+\end{equation}
 
-\begin{enumerate}
-\item \textit{plant} is the physical plant in \texttt{tf} or \texttt{ss} representation;
-\item \textit{intBits} is the integer part;
-\item \textit{fracBits} is the fractional part;
-\item \textit{maxR} and \textit{minR} are the maximum and minimum dynamic range.
-\end{enumerate}
+\makeset
+
+\begin{itemize}
+\item numerical representation: $\langle 8, 8 \rangle$
+\item dynamical range: $\langle -1, 1 \rangle$
+\end{itemize}
 
 \end{frame}
+
+\defverbatim[colored]\makeset{
+\tiny
+\begin{lstlisting}[xleftmargin=.025\textwidth,xrightmargin=.025\textwidth, frame=single,basicstyle=\tt]
+>> num = [-0.99832 0.09587 0.1926];
+>> den = [1 0.5665 0.75];
+>> controller = tf(num,den,0.002);
+>> num = [-0.06875 0 0];
+>> den = [1.0000 -1.696 0.7089];
+>> plant = tf(num,den,0.002);
+>> sys = feedback(series(controller, plant),1)
+>> sys =
+>>        0.06863z^4 - 0.006591z^3 - 0.01324z^2
+>> ---------------------------------------------------
+>> 1.069z^4 - 1.136z^3 + 0.4849z^2 - 0.8704z + 0.5317
+\end{lstlisting}
+}
+
+\begin{frame}{DSSynth Usage - Steps A, B, and C}
+
+\colorbox{green!70}{Digital controller synthesized by DSSynth:}
+
+\begin{equation}
+\label{equation_controller}
+C(z)=\frac{-0.9983^{2}+0.09587z+0.1926}{z^2+0.5665z+0.75}.
+\end{equation}
+
+\colorbox{green!70}{Computing the general equation (plant and controller):}
+
+\makeset
+
+\end{frame}
+
+\defverbatim[colored]\makeset{
+\tiny
+\begin{lstlisting}[xleftmargin=.025\textwidth,xrightmargin=.025\textwidth, frame=single, basicstyle=\tt]
+>> den = [1.069 -1.136 0.4849 -0.8704 0.5317]
+>> r = roots(den)
+>> r =
+>>  -0.2912 + 0.8061i
+>>  -0.2912 - 0.8061i
+>>   0.8225 + 0.0219i
+>>   0.8225 - 0.0219i
+\end{lstlisting}
+}
+
+\begin{frame}{DSSynth Usage - Stability Check}
+
+\colorbox{green!70}{General equation (combination between plant and controller):}
+
+\begin{equation}
+\small
+\label{equation_general}
+\frac{N(z)}{D(z)}=\frac{0.06863z^{4} - 0.006591z^{3} - 0.01324z^{2}}{1.069z^{4} - 1.136z^{3} + 0.4849z^{2} -0.8704z + 0.5317}.
+\end{equation}
+ 
+\colorbox{green!70}{Computing the roots from the general equation in MATLAB:}
+
+\makeset
+
+\end{frame}
+
+\begin{frame}{DSSynth Usage - Step Response}
+
+\colorbox{green!70}{Step response for the UAV plant describing a stable system:}
+
+\begin{figure}[ht]
+  \includegraphics[width=0.6\textwidth]{figures/step-response.eps}
+%  \caption{Step response for the UAV plant describing a stable system.}
+  \label{step-response}
+\end{figure}
+
+\end{frame}
+
+%\begin{frame}{DSSynth Usage - Command Line}
+
+%Users must provide a digital system as a MATLAB model using a
+%\texttt{tf} (for transfer function) or an \texttt{ss} (for state-space
+%model) command  
+
+%The \textbf{DSSynth} is called via the command line in MATLAB as
+
+%\begin{center} 
+%\texttt{synthesize(plant, intBits, fracBits, maxR, minR)}
+%\end{center} 
+
+%\colorbox{green!70}{Parameters:}
+
+%\begin{enumerate}
+%\item \textit{plant} is the physical plant in \texttt{tf} or \texttt{ss} representation;
+%\item \textit{intBits} is the integer part;
+%\item \textit{fracBits} is the fractional part;
+%\item \textit{maxR} and \textit{minR} are the maximum and minimum dynamic range.
+%\end{enumerate}
+
+%\end{frame}
 
 \begin{frame}{DSSynth Usage - MATLAB Application}
 
@@ -428,120 +550,31 @@ The \textbf{DSSynth} is called via the command line in MATLAB as
 
 \end{frame}
 
-\defverbatim[colored]\makeset{
-\tiny
-\begin{lstlisting}[xleftmargin=.025\textwidth,xrightmargin=.025\textwidth, frame=single,basicstyle=\tt]
->> num = [-0.06875 0 0];
->> den = [1.0000 -1.696 0.7089];
->> system = tf(num,den,0.002);
->> y = synthesize(system,8,8,1,-1);
->> SYNTHESIS SUCCESSFUL
->> y = 
->>  -0.9983z^2 + 0.09587z + 0.1926
->>  --------------------------------
->>       z^2 + 0.5665z + 0.75
-\end{lstlisting}
-}
-
-\begin{frame}{DSSynth Usage - Illustrative Example}
-
-\colorbox{green!70}{Synthesizing an unmanned aerial vehicle (UAV) plant:}
-
-\begin{equation}
-\label{equation_plant}
-G(z)=\frac{B(z)}{A(z)}=\frac{-0.06875z^{2}}{z^2-1.696z+0.7089}.
-\end{equation}
-
-\makeset
-
-\end{frame}
-
-\defverbatim[colored]\makeset{
-\tiny
-\begin{lstlisting}[xleftmargin=.025\textwidth,xrightmargin=.025\textwidth, frame=single,basicstyle=\tt]
->> num = [-0.99832 0.09587 0.1926];
->> den = [1 0.5665 0.75];
->> controller = tf(num,den,0.002);
->> num = [-0.06875 0 0];
->> den = [1.0000 -1.696 0.7089];
->> plant = tf(num,den,0.002);
->> sys = feedback(series(controller, plant),1)
->> sys =
->>        0.06863z^4 - 0.006591z^3 - 0.01324z^2
->> ---------------------------------------------------
->> 1.069z^4 - 1.136z^3 + 0.4849z^2 - 0.8704z + 0.5317
-\end{lstlisting}
-}
-
-\begin{frame}{DSSynth Usage - Illustrative Example}
-
-\colorbox{green!70}{Digital controller synthesized by DSSynth:}
-
-\begin{equation}
-\label{equation_controller}
-C(z)=\frac{-0.9983^{2}+0.09587z+0.1926}{z^2+0.5665z+0.75}.
-\end{equation}
-
-\colorbox{green!70}{Computing the general equation (plant and controller):}
-
-\makeset
-
-\end{frame}
-
-\defverbatim[colored]\makeset{
-\tiny
-\begin{lstlisting}[xleftmargin=.025\textwidth,xrightmargin=.025\textwidth, frame=single, basicstyle=\tt]
->> den = [1.069 -1.136 0.4849 -0.8704 0.5317]
->> r = roots(den)
->> r =
->>  -0.2912 + 0.8061i
->>  -0.2912 - 0.8061i
->>   0.8225 + 0.0219i
->>   0.8225 - 0.0219i
-\end{lstlisting}
-}
-
-\begin{frame}{DSSynth Usage - Illustrative Example}
-
-\colorbox{green!70}{General equation (combination between plant and controller):}
-
-\begin{equation}
-\small
-\label{equation_general}
-\frac{N(z)}{D(z)}=\frac{0.06863z^{4} - 0.006591z^{3} - 0.01324z^{2}}{1.069z^{4} - 1.136z^{3} + 0.4849z^{2} -0.8704z + 0.5317}.
-\end{equation}
- 
-\colorbox{green!70}{Computing the roots from the general equation in MATLAB:}
-
-\makeset
-
-\end{frame}
-
-\begin{frame}{DSSynth Usage - Illustrative Example}
-
-\colorbox{green!70}{Step response for the UAV plant describing a stable system:}
-
-\begin{figure}[ht]
-  \includegraphics[width=0.6\textwidth]{figures/step-response.eps}
-%  \caption{Step response for the UAV plant describing a stable system.}
-  \label{step-response}
-\end{figure}
-
-\end{frame}
-
 \begin{frame}{Experimental Evaluation}
 
-Our evaluation consists of $18$ SISO control system benchmarks extracted
+Our evaluation consists of $18$ Single-Input and Single-Output control system benchmarks extracted
 from the literature:
 
-\begin{block}{Benchmarks:}
-An unmanned aerial vehicle (UAV), a cruise
-control system, a spring-mass damper, a satellite, a direct current (DC)
-servo motor, a helicopter, the inverted pendulum, a pendulum, magnetic
-suspension, a magnetized pointer, 1/4 car suspension, a computer tape
-driver, a flexible beam, a guidance system, a US Coast Guard cutter, a
-continuous stirred tank reactor, a voltage regulator, and an acrobot control
-system.
+\begin{block}{Examples of benchmarks:}
+
+\begin{itemize}
+\item Unmanned aerial vehicle
+\item Cruise control system
+\item Helicopter
+\item Pendulum / inverted pendulum
+\item Magnetic and car suspension
+\item Guidance system
+\item Acrobot control system
+\end{itemize}
+
+%An unmanned aerial vehicle (UAV), a cruise
+%control system, a spring-mass damper, a satellite, a direct current (DC)
+%servo motor, a helicopter, the inverted pendulum, a pendulum, magnetic
+%suspension, a magnetized pointer, 1/4 car suspension, a computer tape
+%driver, a flexible beam, a guidance system, a US Coast Guard cutter, a
+%continuous stirred tank reactor, a voltage regulator, and an acrobot control
+%system.
+
 \end{block}
 \end{frame}
 
@@ -549,14 +582,18 @@ system.
 
 \begin{block}{Experimental Setup:}
 \begin{itemize}
-\item The signal input range is between $-1$ and $1$  
-\item  The implementation features used for digital controller are: 
-$8$~bits for the integer part and $8$~bits for the fractional part
-\item  We~have run the DSSynth using CEGIS with multi-staged verification
+\item Signal input range:  $\langle -1, 1 \rangle$  
+\item Implementation features:  $\langle 8, 8 \rangle$
+\item CEGIS with multi-staged verification
+\item Intel Core i$7-2600$ $3.40$ GHz processor with $24$ GB of RAM
+\item Ubuntu $64$-bit
+\item DDSynth v$1$.$0$.$0$
 \end{itemize}
-All experiments with DDSynth v$1$.$0$.$0$ were conducted on an otherwise idle
-Intel Core i$7-2600$ $3.40$ GHz processor, with $24$ GB of RAM, running
-Ubuntu $64$-bit
+
+%All experiments with DDSynth v$1$.$0$.$0$ were conducted on an otherwise idle
+%Intel Core i$7-2600$ $3.40$ GHz processor, with $24$ GB of RAM, running
+%Ubuntu $64$-bit
+
 \end{block}
 
 \end{frame}
