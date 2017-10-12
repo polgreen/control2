@@ -50,32 +50,24 @@ Plants with Transient Performance Specifications}
 
 \begin{abstract} 
 %
-We present a sound and automated approach to synthesize safe, digital
-observer-based controllers for physical plants represented as linear,
-time-invariant models.  Models are given as dynamical equations with inputs,
-evolving over a continuous state space and accounting for errors caused by
-the digitization effects of the controller.  We use multi-staged
-counterexample-guided inductive synthesis (CEGIS) with four phases: 1)~We
-create a modular abstraction of the model and feed it to a two stage synthesiser
-to reduce computational cost.  2)~We use the coarsest level of
-abstraction to synthesise an approximate observer-based controller using
-a Bounded Model Checker(BMC), and then  3)~We feed the imprecise result to
-a second synthesiser based on eigendecomposition which uses a more precise
-abstraction to refine the result.
-The BMC is computationally more expensive, but able to reason
-about more complex models, whereas the eigensolver is fast but requires a
-reference candidate solution close to the desired result to guide the synthesis.
-The intuition is that because our solutions form sets of connected spaces, 
-the desired solution lies in the vicinity of a [possibly] unsuitable candidate
-found by the first synthesiser.  4)~The refined candidate solution is still
-unsound.  Safety and other design properties are then verified using continuous
-and discrete-time reachability analysis tools.  If either verification
-fails, a counterexample is provided to the modelling phase, which will refine
-the abstraction based on the type of counter-example and feed it back to
-the synthesisers.  The process iterates until a safe controller is obtained.
-We demonstrate the practical value of this approach by automatically
-synthesizing safe observer-based controllers for physical plant models from
-the digital control literature.
+We present a sound and automated approach to synthesizing safe,
+digital observer-based controllers for physical plants represented as
+linear, time-invariant models.  Models are given as dynamical
+equations with inputs, evolving over a continuous state space and
+accounting for errors caused by the digitization effects of the
+controller.  We use a two-stage counterexample-guided inductive
+synthesis (CEGIS) driven by abstraction refinement: (1) The first,
+coarse, synthesis stage uses a low resolution discretized model of the
+original one and, initially, only looks at static properties of the
+system.  (2) The second synthesis stage uses eigendecomposition to
+refine the imprecise result computed by the first stage.  Whenever the
+second stage is unable to find a candidate solution, it triggers an
+abstraction refinement phase, resulting in a finer abstraction being
+fed back to the first stage.  This design resulted in a significant
+speed-up compared to a traditional single stage one.  We demonstrate
+the practical value of this approach by automatically synthesizing
+safe observer-based controllers for physical plant models from the
+digital control literature.
 %
 \end{abstract}
 
@@ -134,6 +126,7 @@ and response time, which define the behaviour of the system.  In particular,
 safety requirements are frequently overlooked in conventional feedback
 control synthesis, but play an important role in systems engineering.
 
+%\todo{reword paragraph?}
 Using state of the art verifiers, we evaluate these models against
 automatically synthesised controllers using CEGIS-based synsthesis that
 incorporate the above mentioned artifacts in different models of
@@ -168,7 +161,10 @@ evaluate the synthesised controller over an even more precise
 abstraction of the concrete domain in both discrete and continuous
 space/time.  This stage uses abstraction refinement when needed to ensure
 that rejected candidates are not being discarded due to the
-over-approximation.  The nature of the counterexamples varies depending on
+over-approximation.
+
+\todo{remove until end of enumerate}
+The nature of the counterexamples varies depending on
 the following conditions:
 %
 \begin{enumerate}
