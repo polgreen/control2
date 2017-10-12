@@ -133,23 +133,26 @@ incorporate the above mentioned artifacts in different models of
 Single-Input/Single-Output (SISO) systems.  We offer a multi-tiered approach
 that exploits different aspects of the problem at each stage.
 
-The coarse synthesiser uses a low resolution discretized model of a 
+We make use of a two-stage counterexample-guided inductive
+synthesis (CEGIS) driven by abstraction refinement.
+The first, coarse, synthesis stage uses a low resolution discretized model of a 
 transformation of the original model. Furthermore, it only looks initially at
 static properties  of the system. This largely reduces the complexity of
-the problem, enabling the synthesiser to offer fast response times. If any 
-of these parameters is inadequate, the refinement loop will supply a better
-abstraction to obtain a feasible answer.
-Due to either numerical imprecision or overapproximations, the candidate
-solution presented by the first synthesiser will likely not meet the spec. A 
-second synthesiser, with a much more precise refinement including a 
-mapping between the real and transformed spaces will create a candidate
-solution that is more adequate to the real model. This second stage uses
-perturbation analysis and therefore requires an initial solution to operate.
-If the second synthesiser is unable to find a candidate solution, it will cue
-the modeller to supply a finer abstraction to the coarse synthesiser which
-will in turn provide a better candiate to the second stage.
-The combined synthesisers are thus capable of reasoning about complex
-models with high computational efficiency due to their modularity.
+the problem, enabling the synthesiser to offer fast response times. %% If any 
+%% of these parameters is inadequate, the refinement loop will supply a better
+%% abstraction to obtain a feasible answer.
+Due to either numerical imprecision or overapproximations, the
+candidate solution presented by the first synthesiser will likely not
+meet the spec. A second synthesis stage, with a much more precise
+refinement including a mapping between the real and transformed spaces
+will create a candidate solution that is more adequate to the real
+model. This second stage uses perturbation analysis and therefore
+requires an initial solution to operate.  Whenever the second stage is
+unable to find a candidate solution, it triggers an abstraction
+refinement phase, resulting in a finer abstraction being fed back to
+the first stage.  The combined synthesisers are thus capable of
+reasoning about complex models with high computational efficiency due
+to their modularity.
 
 %The synthesiser uses a discrete time model that relates to the sampling
 %time.  It begins with a very simple abstraction of the real system which
@@ -159,39 +162,38 @@ models with high computational efficiency due to their modularity.
 A candidate solution is then passed to a set of verifiers which will
 evaluate the synthesised controller over an even more precise
 abstraction of the concrete domain in both discrete and continuous
-space/time.  This stage uses abstraction refinement when needed to ensure
+space/time.  The verification phase uses abstraction refinement when needed to ensure
 that rejected candidates are not being discarded due to the
 over-approximation.
 
-\todo{remove until end of enumerate}
-The nature of the counterexamples varies depending on
-the following conditions:
-%
-\begin{enumerate}
-%
-\item Initially, we look for possible errors caused by the restricted domain
-of the synthesisers (e.g., overflows and rounding).  These will typically 
-manifest in the static properties of the system. If an error is found, the
-modeller is signalled to increase the precision of the synthesisers.
-%
-\item Next we explore the nature of the discrete-time progression to mark
-a counterexample that relates to the progression of the system. If such a
-counterexample exists, we indicate its initial conditions and time horizon,
-thus instructing the synthesiser to refine its abstraction with respect to the
-set of initial states and number of iterations. 
-%
-\item Continuous time analysis indicates the need for decreasing the
-sampling time due to continuous excursions outside the safety region in
-between samples.  This changes the problem statement of the synthesiser to a
-new discrete-time model.
-%
-\item A final condition arises when a candidate solution cannot be found,
-thus requiring higher precision of the abstraction numerical representation. 
-We initially consider the plant representation to be too conservative and
-may eventually increase the controller FWL specification when no controller
-can be found for a given precision.
-%
-\end{enumerate}
+%% The nature of the counterexamples varies depending on
+%% the following conditions:
+%% %
+%% \begin{enumerate}
+%% %
+%% \item Initially, we look for possible errors caused by the restricted domain
+%% of the synthesisers (e.g., overflows and rounding).  These will typically 
+%% manifest in the static properties of the system. If an error is found, the
+%% modeller is signalled to increase the precision of the synthesisers.
+%% %
+%% \item Next we explore the nature of the discrete-time progression to mark
+%% a counterexample that relates to the progression of the system. If such a
+%% counterexample exists, we indicate its initial conditions and time horizon,
+%% thus instructing the synthesiser to refine its abstraction with respect to the
+%% set of initial states and number of iterations. 
+%% %
+%% \item Continuous time analysis indicates the need for decreasing the
+%% sampling time due to continuous excursions outside the safety region in
+%% between samples.  This changes the problem statement of the synthesiser to a
+%% new discrete-time model.
+%% %
+%% \item A final condition arises when a candidate solution cannot be found,
+%% thus requiring higher precision of the abstraction numerical representation. 
+%% We initially consider the plant representation to be too conservative and
+%% may eventually increase the controller FWL specification when no controller
+%% can be found for a given precision.
+%% %
+%% \end{enumerate}
 
 We provide experimental results showing that our approach is able to
 efficiently synthesize safe controllers for a set of physical
