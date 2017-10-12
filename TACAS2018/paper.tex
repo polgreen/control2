@@ -331,6 +331,8 @@ technique works for both linear and non-linear systems.
 \subsection{Model Semantics}\label{sec:model_semantics}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+\todo{This section should be integrated later, closer to the use of AA}
+
 The traces of the model starting from an initial set $X_0\subseteq \mathbb{R}^p$, 
 with inputs restricted to $U \subseteq \mathbb{R}^q$, are sequences 
 $ \vec{x}_0 \xrightarrow{\vec{u}_0} \vec{x}_1 \xrightarrow{\vec{u}_1} \vec{x}_2 \xrightarrow{\vec{u}_2} \ldots $, 
@@ -373,56 +375,51 @@ extends the previous notion over an
 unbounded time horizon.
 
 %-------------------------------
-\subsection{Overapproximating continuous time dynamics using discrete models}
-\label{sec:cont_aa}
+\subsection{State-space representation of physical systems}
+\label{sec:ssrepresentation}
 %-------------------------------
 
-Thus far we wave discussed the Abstract Accelertion of Discrete Time
-systems.  However, our plant models derive from the discretization of
-continuous time systems.  We therefore seek to establish a sound
-overapproximation which does not only encompass the selected discretization,
-but any chosen discretization in the time domain.
+%% A dynamical system is a system in which a function describes the progression
+%% of a state over time.  In a continuous domain with linear dynamics, it is
+%% described by a first order Ordinary Differential Equation (ODE).
+%% \begin{equation}
+%% \dot{x}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)% +\vec{w}(t)
+%% \label{eq:dynamical}
+%% \end{equation}
 
-A dynamical system is a system in which a function describes the progression
-of a state over time.  In a continuous domain with linear dynamics, it is
-described by a first order Ordinary Differential Equation (ODE).
-\begin{equation}
-\dot{x}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)% +\vec{w}(t)
-\label{eq:dynamical}
-\end{equation}
+We consider models of physical plants expressed as ordinary differential
+equations (ODEs), which we assume to be controllable:
+%
+\begin{align}
+\label{eq:ode1}
+\dot{x}(t) = Ax(t)+ B u(t), \quad x \in \mathbb{R}^{n}, u \in \mathbb{R}^m, A \in \mathbb{R}^{n \times n}, B \in \mathbb{R}^{n \times m}, 
+\end{align}
+%
+where $t \in \mathbb R_0^+$, where $A$ and $B$ are matrices that 
+specify the continuous plant, and with initial states set as $x(0)$.
 
-%where $\vec{w}$  is a continuous zero-mean white noise source with
-%covariance $N ( 0 , Q )$ 
 Furthermore, a control system may have a derived
 output that is a linear combination of its states and inputs, which may
 restricts the observability of the statespace from the output space.
 \begin{equation}
+\label{eq:ode2}  
 \vec{y}(t)=\mat{C}\vec{x}(t)+\mat{D}\vec{u}(t)
 \end{equation}
 
-Discretization of a continuous dynamical system turns the ODE into a
-difference equation, assuming zero-order hold for the input $\vec{u}$
-%and continuous integration for the noise $\vec{w}$,
-to
+In this work, equations~\eqref{eq:ode1} and~\eqref{eq:ode2} is soundly discretized in time (see Section~\ref{sec:cont_aa}) \todo{or use another paper as reference and remove sec .1?} into
 \begin{align}
-\label{eq:discretization}
-\vec{x}_{k+1} &= \mat{A}_d\vec{x}_k+\mat{B}_d\vec{u}_k\\% + \vec{w}_k\\
-y_k &= \mat{C}_d \vec{x}_ k + \mat{D}_d \vec{u}_ k 
-\end{align}
-%with covariance for $\vec{w}_k$, $N ( 0 , Q_d )$
-where
-\begin{align}
-\label{eq:discretize}
-\mat{A}_d &= e^{\mat{A} T_s} = \mathcal{L}^{-1} { ( s \mat{I} - \mat{A} )^{-1} }_{t = T_s}\\
-\mat{B}_d &= \int_{t = 0}^{T_s} e^{\mat{A} t} dt\ \mat{B} = \mat{A}^{-1} ( \mat{A}_d - \mat{I} ) \mat{B}\\
-\mat{C}_d &= \mat{C}\\
-\mat{D}_d &= \mat{D}
-%\\Q_d &= \int_{t = 0}^{T_s} e^{\mat{A} t} Q e^{\mat{A}^T t} dt
-\end{align}
-and $T_s$ is the sample time. Then
-\begin{align*}
-x(kT_s)=x_k \text{ and } y(kT_s) = y_k, \forall k
-\end{align*}
+\label{eq:plant}
+x_{k+1} = A_d x_k+ B_d u_k\\
+y_{k} = C_d x_k + D_d u_k
+\end{align} 
+%
+where $k \in \mathbb N$ and $x_{0}=x(0)$ is the initial state. 
+$A_d$, $B_d$, $C_d$ and $D_d$ denote the matrices that describe the discretized plant dynamics, whereas $A$, $B$, $C$ and $D$ denote the continuous plant dynamics.  
+%% We synthesize for requirements over this discrete-time domain. 
+%% Later, we will address the issue of variable quantization, 
+%% as introduced by the ADC/DAC conversion blocks (Fig.~\ref{fig:digitalsystem}).
+
+
 
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  \subsubsection{Discrete dynamics using reals for systems without inputs}\label{sec:real_discrete_no_inputs}
@@ -1794,6 +1791,57 @@ Soundness is ensured by the verifiers,but once again, since these use over-appro
 \bibliography{paper}
 \newpage
 \appendix
+
+%-------------------------------
+\subsection{Overapproximating continuous time dynamics using discrete models}
+\label{sec:cont_aa}
+%-------------------------------
+Our plant models derive from the discretization of
+continuous time systems.  We therefore seek to establish a sound
+overapproximation which does not only encompass the selected discretization,
+but any chosen discretization in the time domain.
+
+A dynamical system is a system in which a function describes the progression
+of a state over time.  In a continuous domain with linear dynamics, it is
+described by a first order Ordinary Differential Equation (ODE).
+\begin{equation}
+\dot{x}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)% +\vec{w}(t)
+\label{eq:dynamical}
+\end{equation}
+
+%where $\vec{w}$  is a continuous zero-mean white noise source with
+%covariance $N ( 0 , Q )$ 
+Furthermore, a control system may have a derived
+output that is a linear combination of its states and inputs, which may
+restricts the observability of the statespace from the output space.
+\begin{equation}
+\vec{y}(t)=\mat{C}\vec{x}(t)+\mat{D}\vec{u}(t)
+\end{equation}
+
+Discretization of a continuous dynamical system turns the ODE into a
+difference equation, assuming zero-order hold for the input $\vec{u}$
+%and continuous integration for the noise $\vec{w}$,
+to
+\begin{align}
+\label{eq:discretization}
+\vec{x}_{k+1} &= \mat{A}_d\vec{x}_k+\mat{B}_d\vec{u}_k\\% + \vec{w}_k\\
+y_k &= \mat{C}_d \vec{x}_ k + \mat{D}_d \vec{u}_ k 
+\end{align}
+%with covariance for $\vec{w}_k$, $N ( 0 , Q_d )$
+where
+\begin{align}
+\label{eq:discretize}
+\mat{A}_d &= e^{\mat{A} T_s} = \mathcal{L}^{-1} { ( s \mat{I} - \mat{A} )^{-1} }_{t = T_s}\\
+\mat{B}_d &= \int_{t = 0}^{T_s} e^{\mat{A} t} dt\ \mat{B} = \mat{A}^{-1} ( \mat{A}_d - \mat{I} ) \mat{B}\\
+\mat{C}_d &= \mat{C}\\
+\mat{D}_d &= \mat{D}
+%\\Q_d &= \int_{t = 0}^{T_s} e^{\mat{A} t} Q e^{\mat{A}^T t} dt
+\end{align}
+and $T_s$ is the sample time. Then
+\begin{align*}
+x(kT_s)=x_k \text{ and } y(kT_s) = y_k, \forall k
+\end{align*}
+
 %-------------------------------
 \section{Proofs of theorems}
 %-------------------------------
