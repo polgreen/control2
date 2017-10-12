@@ -406,7 +406,7 @@ restricts the observability of the statespace from the output space.
 \vec{y}(t)=\mat{C}\vec{x}(t)+\mat{D}\vec{u}(t)
 \end{equation}
 
-In this work, equations~\eqref{eq:ode1} and~\eqref{eq:ode2} is soundly discretized in time (see Section~\ref{sec:cont_aa}) \todo{or use another paper as reference and remove sec .1?} into
+In this work, equations~\eqref{eq:ode1} and~\eqref{eq:ode2} is soundly discretized in time (see Appendix~\ref{sec:cont_aa}) \todo{or use another paper as reference and remove sec .1?} into
 \begin{align}
 \label{eq:plant}
 x_{k+1} = A_d x_k+ B_d u_k\\
@@ -424,6 +424,7 @@ $A_d$, $B_d$, $C_d$ and $D_d$ denote the matrices that describe the discretized 
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  \subsubsection{Discrete dynamics using reals for systems without inputs}\label{sec:real_discrete_no_inputs}
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ \todo{these theorems need more wording. what's their goal here?}
  \begin{theorem}
  Given $\dot{\vec{x}}=\mat{A}\vec{x}$, where $\mat{A}=\mat{S}\mat{J}\mat{S}^{-1}$, the expression
  \begin{align}
@@ -597,29 +598,17 @@ We overapproximate the effects of this vector by introducing a noise signal at t
 \label{sec:numeric_rep}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-In embedded software programs interacting and/or simulating physical plants
-it is of great importance to understand the effects of the chosen numeric 
-representation for the continuous state-space and interacting discrete dynamics. 
-\jrronly{
-These representations are almost invariably approximations to the original
-which are assumed to be precise enough as to not cause any trouble,
-but it is precisely this assumption that often results in the most difficult and
-dangerous errors.
-There are generally speaking two formats for representing numbers in
-programs. On one hand we have variable word length types which will
-attempt to use as much memory as needed to precisely represent the
-original domain (usually the reals). In this case the limitations are caused
-by memory and speed, both of which are directly affected by the
-increasingly larger word lengths. Multiple precision floating-point arithmetic
-and software rationals are good examples of these cases. It is possible for
-some of these data types to have memory constraints, at which point they
-fall into the second category.
-Fixed precision data types are most common in software programs.
-}
-Whether they be floating point or fixed point
-\jrronly{ (of which integers are the special case for 0 decimal places) }
-numbers, the problem arises in the misrepresentation of the reals%
-\jrronly{ (or equivalent data type being represented) }.
+The models we consider have two sources of error that are due to numerical  
+representation.  The first is the numerical error introduced by the
+fixed-point numbers employed to model the plant, i.e., to represent the
+plant dynamics $A_d$, $B_d$, $C_d$, $D_d$, $x_k$ and $y_k$.
+The second is the quantization error
+introduced by the digital controller, which performs operations on
+fixed-point numbers.  In this section we outline the notation for the
+representation of numbers, and briefly describe the errors
+introduced.  A~formal discussion is in
+Appendix~\ref{sec:numeric_rep}.
+
 Let $\mathbb{R}_{\langle M,F \rangle}$ be a fixed point domain with $M$ bits
 representing the binary word length of the representation and $F$ bits
 representing the prescaling $2^{-F}$ (\emph{i.e} the number of bits after
@@ -630,88 +619,74 @@ domain with $M$ bits mantissa and $E$ bits exponent.  This domain
 corresponds to $$\mathbb{R}_{\langle M,[E] \rangle} = \bigcup_F
 \mathbb{R}_{\langle M,F \rangle} \mid F \in [2^{1-E}, 2^{E-1}]$$ This
 definition important because it means that the distance between any two
-numbers in the domain depends on the location of those numbers.  Since we
-have shown that a floating point domain is a union of a number of fixed
+numbers in the domain depends on the location of those numbers.  Since
+%we have shown that
+a floating point domain is a union of a number of fixed
 point domains, we will continue our reasoning on fixed point only, which
 will apply to the floating point domain by extension.  Operations on these
 numbers will incur errors that can be bound
-by~\cite{DBLP:conf/arith/BrainTRW15}.  We examine the most relevant ones:
-%
-\begin{enumerate}
-\item Truncation\\
-Let $\mathcal{F}_{\langle M,F \rangle}(\cdot) : \mathbb{R} \rightarrow \mathbb{R}_{\langle M,F \rangle}$
-\begin{align*}
-x_{\langle M,F \rangle}=\mathcal{F}_{\langle M,F \rangle}(x) = x-\delta \mid \delta=mod_F(x,c x_{\langle M,F \rangle})
-\end{align*} 
-where $mod_F(\cdot)$ is the modulus operation performed on the last bit of the representation ($2^{-F}$).\\
-The number $\delta$ corresponds to the truncation error of the representation and it will propagate across operations.
-\jrronly{
-%
-It is worth mentioning that not all systems truncate equally.  In the
-definition above $\delta$ may be positive or negative, and even this
-decision can be made dependent on the sign of $x$.  Common cases in computer
-systems are: round downwards (\emph{ie} to $-\infty$), round upwards
-(\emph{ie} to $+\infty$), and round to zero.  Rounding errors are cumulative
-which means the overall error will statistically increase with every
-operation, thus algorithms performing fewer operations can be more precise
-in this respect than iterative ones.
-%
-}
-\item Rounding\\
-Every time an operation is performed on a number in the $\mathbb{R}_{\langle M,F \rangle}$ domain, an error may be
-introduced due to truncation of the result. 
-The following errors appear in simple operations:
-\begin{enumerate}
-\item Addition/Substraction
-\begin{align*}
-&x_{\langle M,F_1\rangle} \pm y_{\langle M,F_2\rangle}=z_{\langle M,F\rangle} + \delta,  F=\text{min}(F_1,F_2)\\
-&\text{ where } |\delta| \leq 2^{-F} \text{ and } F_1=F_2 \Rightarrow \delta=0.
-\end{align*}
-\item Multiplication
-\begin{align*}
-&x_{\langle M,F_1\rangle} * y_{\langle M,F_2\rangle}=z_{\langle M,F\rangle} + \delta, \text{ where } F=F_1+F_2 \text{ and } |\delta| \leq 2^{-F}
-\end{align*}
-%\item Division\\
-%The operations performed by our controllers in the FWL
-%domain do not include division.  However, we do use division in computations
-%at the precision of the plant.  Here the error depends on whether the
-%divisor is greater or smaller than the dividend:  $x_{\langle M,F_1\rangle} / y_{\langle M,F_2 \rangle} = c_3 + \delta_{T3}$
-%where $\delta_{T3}$ is $(\delta_{T2}\cdot x - \delta_{T1}\cdot y)/(\delta_{T2}^2 - \delta_{T2} y)$,
-\end{enumerate}
+by~\cite{DBLP:conf/arith/BrainTRW15}.
 
-\jrronly{
-\item Overflow\\
-Another source of error introduced by Finite Word Length representations is that of overflow.
-The finite word length set a maximum representable number in the domain
-$\pm \overline{M} \mid \overline{M}=2^{M-F}-2^{-F}$, which means that any number
-outside this range cannot be accurately represented by the domain (\emph{eg} $\delta=x-\overline{M}$).
-In the case of floating point, a special cases for infinity has been introduced, which addresses
-some of these issues, but once the error has gone to infinity, the numbers become meaningless.
-It is the responsibility of software designers and tools to account for overflows and either
-supply saturation functions to prevent them or raise alarms in their presence. In the case
-of verification, the latter is seen as a safety problem.
-\item Null/Zeno behaviour\\
-Whilst this work does not explore the effect of Zeno behaviours, it is worth noting that this
-effect may also be caused by rounding errors in floating point programs. The reason for this
-is that if an operation contains two numbers which belong to disjoint sub-domains
-(\emph{ie} neither number can be represented in the domain of its counterpart), the
-resulting operation may become a no-op/skip, subsequently destabilizing the program.
-}
-\end{enumerate}
 We will use the domain $\mathbb{R}_{\langle C \rangle} \mid \langle C \rangle = \langle M_c,F_c \rangle$
 to represent the fixed point precision of the controller, and 
 $\mathbb{R}_{\langle P \rangle} \supseteq \mathbb{R}_{\langle C \rangle}$
 to represent the domain of the plant model.
-Thus any mathematical operations in our modelled digital controller will be executed in the
+Thus, any mathematical operations in our modelled digital controller will be executed in the
 domain $\mathbb{R}_{\langle C \rangle}$, and all other calculations
 in our model will be carried out in the domain $\mathbb{R}_{\langle
-P \rangle}$.  The physical plant operates in the reals, which means
-our verification phase must also account for the numerical error caused by representing the
-physical plant at the finite precision $\mathbb{R}_{\langle P \rangle}$.
+  P \rangle}$.
+%% The physical plant operates in the reals, which means
+%% our verification phase must also account for the numerical error caused by representing the
+%% physical plant at the finite precision $\mathbb{R}_{\langle P \rangle}$.
 
-We will use these subindices to represent functions, number, vectors and matrices in their
-corresponding domains. We further note that by choosing $\langle C \rangle = \langle M_c,[E_c] \rangle$
+%% We will use these subindices to represent functions, number, vectors and matrices in their
+%% corresponding domains.
+
+\todo{unclear}
+We further note that by choosing $\langle C \rangle = \langle M_c,[E_c] \rangle$
 we extend the following to floating point reasoning.
+
+
+%% \subsubsection{Effect on safety specification and stability}
+
+%% Let us first consider the effect of the quantization errors on safety. 
+%% Within the controller, state values are manipulated at low precision,
+%% alongside the vector multiplication $Kx$.
+%% %
+%% %computed considering the error introduced by the digital controller caused by performing the vector multiplication $Kx$ at low digital precision.
+%% The inputs are computed using the following equation: 
+%% %
+%% \begin{align*}
+%% u_{k}&=-(\mathcal{F}_{\langle I_c,F_c \rangle}(K)\cdot\mathcal{F}_{\langle I_c,F_c \rangle}(x_{k})). 
+%% \end{align*}
+
+%% This induces two types of the errors detailed above: first, the truncation
+%% error due to representing $x_k$ as $\mathcal{F}{\langle I_c,F_c
+%% \rangle}(x_{k})$; and second, the rounding error introduced by the
+%% multiplication operation.  We represent these errors as non-deterministic
+%% additive noise.%, which might de-stabilize the closed-loop model.
+
+%% An additional error is due to the representation of the plant dynamics, namely 
+%% %
+%% \begin{align*}
+%% x_{k+1} &=\mathcal{F}_{\langle I_p,F_p \rangle}(A_d) \mathcal{F}_{\langle I_p,F_p \rangle}(x_{k}) + \mathcal{F}_{\langle I_p,F_p \rangle}(B_d)\mathcal{F}_{\langle I_p,F_p \rangle}(u_{k}).
+%% \end{align*}
+%% We address this error by use of interval
+%% arithmetic~\cite{moore1966interval} in the verification phase.
+
+%% Previous studies~\cite{gangli1} show that the FWL affects the poles and
+%% zeros positions, degrading the closed-loop dynamics, causing steady-state
+%% errors (see Appendix~\ref{sec:appendix:LTIbackground} for details) and
+%% eventually de-stabilizing the system~\cite{Bessa16}.  However, since in this
+%% paper we require stability only as a precursor to safety, it is sufficient
+%% to check that the (perturbed, noisy) model converges to a neighborhood of
+%% the equilibrium within the safe set (see Appendix~\ref{sec:stab_FWL}).
+
+%% In the following, we shall disregard these steady-state errors (caused by
+%% FWL effects) when stability is ensured by synthesis, and then verify its
+%% safety accounting for the finite-precision errors.
+
+
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsubsection{Quantization errors} \label{sec:quantization}
@@ -736,35 +711,7 @@ This induces two types of the errors detailed above: first, the truncation
 error due to the domain transformations $\mathcal{F}_{\langle *
 \rangle}(\cdot)$; and second, the rounding error introduced by the
 multiplication operation.  We represent these errors as non-deterministic
-additive noise.
-
-Let $q_c=2^{-F_c},q_a=2^{-F_a},q_d=2^{-F_d}$ be the smallest difference
-between two numbers in their corresponding domains.  Assuming that our
-system truncates numbers to the nearest value, this means thet the error
-$\delta$ introduced by the function $\mathcal{F}_{\langle * \rangle}$ is
-$\delta_*=\mathcal{F}_{\langle * \rangle}(x)-x \in \left[-\frac{q_*}{2}\
-\frac{q_*}{2}\right]$.  We note that in the case of floating point,the
-choice of $F$ is taken from the largest multiplication found (e.g.,
-$|\mat{A}|_1|\vec{x}|_\infty \mid \vec{x} \models \phi_\mathit{safety}$,
-where $\phi_\mathit{safety}$ is defined in \ref{eq:safetyspec}). From these
-equations we can define:
-%
-\begin{align*}
-\nu_1 \in \left[-\frac{q_a}{2}\ \frac{q_a}{2}\right] \cap  \left[-\frac{q_c}{2}\ \frac{q_c}{2}\right],
-\nu_2 \in \left[-\frac{q_d}{2}\ \frac{q_d}{2}\right]
-\end{align*}
-
-We may also bound $\nu_2'$ from \eqref{eq:uk} as follollows:
-\begin{align*}
-\delta\left(\mat{K}_{\langle C\rangle} \vec{x}_{\langle C\rangle} \right) &\in \left[ -p \frac{q_c}{2}\ \ p \frac{q_c}{2}\right]\\
-{\vec{\nu_e}}_i &\in \left[ -(p+2) \frac{q_c}{2}\ \ (p+2) \frac{q_c}{2}\right], i \in [1, p]\\
-\Rightarrow \nu_2' &\in \left[  -p(|\mat{K}_{\langle C \rangle}|_1+2) \frac{q_c}{2}\ \ p(|\mat{K}_{\langle C \rangle}|_1+2) \frac{q_c}{2}\right]
-\end{align*}
-Similarly we also find
-\begin{align*}
-\nu_1' &\in \left[  -p(|{\mat{C}_d}_{\langle C \rangle}|_1+2) \frac{q_c}{2}\ \ p(|{\mat{C}_d}_{\langle C \rangle}|_1+2) \frac{q_c}{2}\right]
-\end{align*}
-The proof derives from $|\mat{K}\vec{x}| \leq |\mat{K}|_1|\vec{x}|_\infty$.
+additive noise. More details can be found in Appendix~\ref{appendix:quantization}.
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsubsection{Modelling errors}
@@ -1841,6 +1788,161 @@ and $T_s$ is the sample time. Then
 \begin{align*}
 x(kT_s)=x_k \text{ and } y(kT_s) = y_k, \forall k
 \end{align*}
+
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+\subsection{Numerical representation and soundness} 
+\label{sec:numeric_rep}
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+In embedded software programs interacting and/or simulating physical plants
+it is of great importance to understand the effects of the chosen numeric 
+representation for the continuous state-space and interacting discrete dynamics. 
+\jrronly{
+These representations are almost invariably approximations to the original
+which are assumed to be precise enough as to not cause any trouble,
+but it is precisely this assumption that often results in the most difficult and
+dangerous errors.
+There are generally speaking two formats for representing numbers in
+programs. On one hand we have variable word length types which will
+attempt to use as much memory as needed to precisely represent the
+original domain (usually the reals). In this case the limitations are caused
+by memory and speed, both of which are directly affected by the
+increasingly larger word lengths. Multiple precision floating-point arithmetic
+and software rationals are good examples of these cases. It is possible for
+some of these data types to have memory constraints, at which point they
+fall into the second category.
+Fixed precision data types are most common in software programs.
+}
+Whether they be floating point or fixed point
+\jrronly{ (of which integers are the special case for 0 decimal places) }
+numbers, the problem arises in the misrepresentation of the reals%
+\jrronly{ (or equivalent data type being represented) }.
+Let $\mathbb{R}_{\langle M,F \rangle}$ be a fixed point domain with $M$ bits
+representing the binary word length of the representation and $F$ bits
+representing the prescaling $2^{-F}$ (\emph{i.e} the number of bits after
+the decimal place).  We note that a negative $F$ denotes an integer
+multiplication that adds $-F$ trailing zeros in the number represented by
+$M$.  Let also $\mathbb{R}_{\langle M,[E] \rangle}$ be a floating point
+domain with $M$ bits mantissa and $E$ bits exponent.  This domain
+corresponds to $$\mathbb{R}_{\langle M,[E] \rangle} = \bigcup_F
+\mathbb{R}_{\langle M,F \rangle} \mid F \in [2^{1-E}, 2^{E-1}]$$ This
+definition important because it means that the distance between any two
+numbers in the domain depends on the location of those numbers.  Since we
+have shown that a floating point domain is a union of a number of fixed
+point domains, we will continue our reasoning on fixed point only, which
+will apply to the floating point domain by extension.  Operations on these
+numbers will incur errors that can be bound
+by~\cite{DBLP:conf/arith/BrainTRW15}.  We examine the most relevant ones:
+%
+\begin{enumerate}
+\item Truncation\\
+Let $\mathcal{F}_{\langle M,F \rangle}(\cdot) : \mathbb{R} \rightarrow \mathbb{R}_{\langle M,F \rangle}$
+\begin{align*}
+x_{\langle M,F \rangle}=\mathcal{F}_{\langle M,F \rangle}(x) = x-\delta \mid \delta=mod_F(x,c x_{\langle M,F \rangle})
+\end{align*} 
+where $mod_F(\cdot)$ is the modulus operation performed on the last bit of the representation ($2^{-F}$).\\
+The number $\delta$ corresponds to the truncation error of the representation and it will propagate across operations.
+\jrronly{
+%
+It is worth mentioning that not all systems truncate equally.  In the
+definition above $\delta$ may be positive or negative, and even this
+decision can be made dependent on the sign of $x$.  Common cases in computer
+systems are: round downwards (\emph{ie} to $-\infty$), round upwards
+(\emph{ie} to $+\infty$), and round to zero.  Rounding errors are cumulative
+which means the overall error will statistically increase with every
+operation, thus algorithms performing fewer operations can be more precise
+in this respect than iterative ones.
+%
+}
+\item Rounding\\
+Every time an operation is performed on a number in the $\mathbb{R}_{\langle M,F \rangle}$ domain, an error may be
+introduced due to truncation of the result. 
+The following errors appear in simple operations:
+\begin{enumerate}
+\item Addition/Substraction
+\begin{align*}
+&x_{\langle M,F_1\rangle} \pm y_{\langle M,F_2\rangle}=z_{\langle M,F\rangle} + \delta,  F=\text{min}(F_1,F_2)\\
+&\text{ where } |\delta| \leq 2^{-F} \text{ and } F_1=F_2 \Rightarrow \delta=0.
+\end{align*}
+\item Multiplication
+\begin{align*}
+&x_{\langle M,F_1\rangle} * y_{\langle M,F_2\rangle}=z_{\langle M,F\rangle} + \delta, \text{ where } F=F_1+F_2 \text{ and } |\delta| \leq 2^{-F}
+\end{align*}
+%\item Division\\
+%The operations performed by our controllers in the FWL
+%domain do not include division.  However, we do use division in computations
+%at the precision of the plant.  Here the error depends on whether the
+%divisor is greater or smaller than the dividend:  $x_{\langle M,F_1\rangle} / y_{\langle M,F_2 \rangle} = c_3 + \delta_{T3}$
+%where $\delta_{T3}$ is $(\delta_{T2}\cdot x - \delta_{T1}\cdot y)/(\delta_{T2}^2 - \delta_{T2} y)$,
+\end{enumerate}
+
+\jrronly{
+\item Overflow\\
+Another source of error introduced by Finite Word Length representations is that of overflow.
+The finite word length set a maximum representable number in the domain
+$\pm \overline{M} \mid \overline{M}=2^{M-F}-2^{-F}$, which means that any number
+outside this range cannot be accurately represented by the domain (\emph{eg} $\delta=x-\overline{M}$).
+In the case of floating point, a special cases for infinity has been introduced, which addresses
+some of these issues, but once the error has gone to infinity, the numbers become meaningless.
+It is the responsibility of software designers and tools to account for overflows and either
+supply saturation functions to prevent them or raise alarms in their presence. In the case
+of verification, the latter is seen as a safety problem.
+\item Null/Zeno behaviour\\
+Whilst this work does not explore the effect of Zeno behaviours, it is worth noting that this
+effect may also be caused by rounding errors in floating point programs. The reason for this
+is that if an operation contains two numbers which belong to disjoint sub-domains
+(\emph{ie} neither number can be represented in the domain of its counterpart), the
+resulting operation may become a no-op/skip, subsequently destabilizing the program.
+}
+\end{enumerate}
+We will use the domain $\mathbb{R}_{\langle C \rangle} \mid \langle C \rangle = \langle M_c,F_c \rangle$
+to represent the fixed point precision of the controller, and 
+$\mathbb{R}_{\langle P \rangle} \supseteq \mathbb{R}_{\langle C \rangle}$
+to represent the domain of the plant model.
+Thus any mathematical operations in our modelled digital controller will be executed in the
+domain $\mathbb{R}_{\langle C \rangle}$, and all other calculations
+in our model will be carried out in the domain $\mathbb{R}_{\langle
+P \rangle}$.  The physical plant operates in the reals, which means
+our verification phase must also account for the numerical error caused by representing the
+physical plant at the finite precision $\mathbb{R}_{\langle P \rangle}$.
+
+We will use these subindices to represent functions, number, vectors and matrices in their
+corresponding domains. We further note that by choosing $\langle C \rangle = \langle M_c,[E_c] \rangle$
+we extend the following to floating point reasoning.
+
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+\subsubsection{Quantization error}
+\label{appendix:quantization}
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Let $q_c=2^{-F_c},q_a=2^{-F_a},q_d=2^{-F_d}$ be the smallest difference
+between two numbers in their corresponding domains.  Assuming that our
+system truncates numbers to the nearest value, this means thet the error
+$\delta$ introduced by the function $\mathcal{F}_{\langle * \rangle}$ is
+$\delta_*=\mathcal{F}_{\langle * \rangle}(x)-x \in \left[-\frac{q_*}{2}\
+\frac{q_*}{2}\right]$.  We note that in the case of floating point,the
+choice of $F$ is taken from the largest multiplication found (e.g.,
+$|\mat{A}|_1|\vec{x}|_\infty \mid \vec{x} \models \phi_\mathit{safety}$,
+where $\phi_\mathit{safety}$ is defined in \ref{eq:safetyspec}). From these
+equations we can define:
+%
+\begin{align*}
+\nu_1 \in \left[-\frac{q_a}{2}\ \frac{q_a}{2}\right] \cap  \left[-\frac{q_c}{2}\ \frac{q_c}{2}\right],
+\nu_2 \in \left[-\frac{q_d}{2}\ \frac{q_d}{2}\right]
+\end{align*}
+
+We may also bound $\nu_2'$ from \eqref{eq:uk} as follollows:
+\begin{align*}
+\delta\left(\mat{K}_{\langle C\rangle} \vec{x}_{\langle C\rangle} \right) &\in \left[ -p \frac{q_c}{2}\ \ p \frac{q_c}{2}\right]\\
+{\vec{\nu_e}}_i &\in \left[ -(p+2) \frac{q_c}{2}\ \ (p+2) \frac{q_c}{2}\right], i \in [1, p]\\
+\Rightarrow \nu_2' &\in \left[  -p(|\mat{K}_{\langle C \rangle}|_1+2) \frac{q_c}{2}\ \ p(|\mat{K}_{\langle C \rangle}|_1+2) \frac{q_c}{2}\right]
+\end{align*}
+Similarly we also find
+\begin{align*}
+\nu_1' &\in \left[  -p(|{\mat{C}_d}_{\langle C \rangle}|_1+2) \frac{q_c}{2}\ \ p(|{\mat{C}_d}_{\langle C \rangle}|_1+2) \frac{q_c}{2}\right]
+\end{align*}
+The proof derives from $|\mat{K}\vec{x}| \leq |\mat{K}|_1|\vec{x}|_\infty$.
+
 
 %-------------------------------
 \section{Proofs of theorems}
