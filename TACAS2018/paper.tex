@@ -337,13 +337,13 @@ The traces of the model starting from an initial set $X_0\subseteq \mathbb{R}^p$
 with inputs restricted to $U \subseteq \mathbb{R}^q$, are sequences 
 $ \vec{x}_0 \xrightarrow{\vec{u}_0} \vec{x}_1 \xrightarrow{\vec{u}_1} \vec{x}_2 \xrightarrow{\vec{u}_2} \ldots $, 
 %
-where $ \vec{x}_0 \in X_0$ and $\forall k\geq 0, \vec{x}_{k+1} = \tau(\vec{x}_k,\vec{u}_k) $, 
+where $ \vec{x}_0 \in X_0$ and $\forall k\geq 0, \vec{u}_k \in U \text{ and } \vec{x}_{k+1} = \tau(\vec{x}_k,\vec{u}_k) $, 
 where 
 %
 \begin{equation}\label{equ:reachtraj}
 \tau(\vec{x}_k,\vec{u}_k) = 
 \big( \mat{A}\vec{x}_k +
-\mat{B}\vec{u}_k \mid \mat{G}\vec{x}_k \leq \vec{h} \wedge \vec{u}_k \in U \big) \;. 
+\mat{B}\vec{u}_k \mid \mat{G}\vec{x}_k \leq \vec{h}\big)\;. 
 \end{equation}
 
 We extend the notation above to convex sets of initial conditions and inputs ($X_0$ and $U$), 
@@ -419,13 +419,14 @@ $A_d$, $B_d$, $C_d$ and $D_d$ denote the matrices that describe the discretized 
 %% Later, we will address the issue of variable quantization, 
 %% as introduced by the ADC/DAC conversion blocks (Fig.~\ref{fig:digitalsystem}).
 
-
+ %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ \subsection{Verification of Continuous time systems}\label{sec:continuous_time_accel}
+ %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+The main problem with the above discretization is that is does not allow us to observe the system at arbitrary points in time, only at integer multiples of the sample time. While this is adequate for the controller, it is not sufficient for verification. We must therefore establish a new model that allows us to observe the system at a given time $t$. We achieve this by using acceleration as described below. 
 
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  \subsubsection{Discrete dynamics using reals for systems without inputs}\label{sec:real_discrete_no_inputs}
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- \todo{these theorems need more wording. what's their goal here?}
- \todo{It's not clear to me why you look at all these symtems.}
  \begin{theorem}
  Given $\dot{\vec{x}}=\mat{A}\vec{x}$, where $\mat{A}=\mat{S}\mat{J}\mat{S}^{-1}$, the expression
  \begin{align}
@@ -616,19 +617,17 @@ representing the prescaling $2^{-F}$ (\emph{i.e} the number of bits after
 the decimal place).  We note that a negative $F$ denotes an integer
 multiplication that adds $-F$ trailing zeros in the number represented by
 $M$.
-\todo{why do we need to go into floating point?}
-Let also $\mathbb{R}_{\langle M,[E] \rangle}$ be a floating point
-domain with $M$ bits mantissa and $E$ bits exponent.  This domain
-corresponds to $$\mathbb{R}_{\langle M,[E] \rangle} = \bigcup_F
-\mathbb{R}_{\langle M,F \rangle} \mid F \in [2^{1-E}, 2^{E-1}]$$ This
-definition important because it means that the distance between any two
-numbers in the domain depends on the location of those numbers.  Since
-%we have shown that
-a floating point domain is a union of a number of fixed
-point domains, we will continue our reasoning on fixed point only, which
-will apply to the floating point domain by extension.  Operations on these
-numbers will incur errors that can be bound
-by~\cite{DBLP:conf/arith/BrainTRW15}.
+%Let also $\mathbb{R}_{\langle M,[E] \rangle}$ be a floating point
+%domain with $M$ bits mantissa and $E$ bits exponent.  This domain
+%corresponds to $$\mathbb{R}_{\langle M,[E] \rangle} = \bigcup_F
+%\mathbb{R}_{\langle M,F \rangle} \mid F \in [2^{1-E}, 2^{E-1}]$$ This
+%definition important because it means that the distance between any two
+%numbers in the domain depends on the location of those numbers.  Since
+%a floating point domain is a union of a number of fixed
+%point domains, we will continue our reasoning on fixed point only, which
+%will apply to the floating point domain by extension.  Operations on these
+%numbers will incur errors that can be bound
+%by~\cite{DBLP:conf/arith/BrainTRW15}.
 
 We will use the domain $\mathbb{R}_{\langle C \rangle} \mid \langle C \rangle = \langle M_c,F_c \rangle$
 to represent the fixed point precision of the controller, and 
@@ -636,8 +635,9 @@ $\mathbb{R}_{\langle P \rangle} \supseteq \mathbb{R}_{\langle C \rangle}$
 to represent the domain of the plant model.
 Thus, any mathematical operations in our modelled digital controller will be executed in the
 domain $\mathbb{R}_{\langle C \rangle}$, and all other calculations
-in our model will be carried out in the domain $\mathbb{R}_{\langle
-  P \rangle}$.
+in our model will be carried out in the domain $\mathbb{R}_{\langle P \rangle}$.
+Given ${\langle M,F \rangle}$ we use $\mathcal{F}_{\langle M,F \rangle} : \mathbb{R} \rightarrow \mathbb{R}_{\langle M,F \rangle}$ as the truncation function.
+
 %% The physical plant operates in the reals, which means
 %% our verification phase must also account for the numerical error caused by representing the
 %% physical plant at the finite precision $\mathbb{R}_{\langle P \rangle}$.
@@ -645,9 +645,9 @@ in our model will be carried out in the domain $\mathbb{R}_{\langle
 %% We will use these subindices to represent functions, number, vectors and matrices in their
 %% corresponding domains.
 
-\todo{unclear}
-We further note that by choosing $\langle C \rangle = \langle M_c,[E_c] \rangle$
-we extend the following to floating point reasoning.
+%\todo{unclear}
+%We further note that by choosing $\langle C \rangle = \langle M_c,[E_c] \rangle$
+%we extend the following to floating point reasoning.
 
 
 %% \subsubsection{Effect on safety specification and stability}
@@ -698,7 +698,6 @@ we extend the following to floating point reasoning.
 Let us first consider the effect of the quantization errors. 
 Within the controller, state values are manipulated at low precision,
 alongside the vector multiplication $\mat{K}\vec{x}$.
-\todo{$\mathcal{F}$ is not clearly defined}
 Furthermore, 
 the quantizers for the DAC and the ADC introduce truncation errors
 which we denote by the effect of the functions $\mathcal{F}_{\langle D \rangle}$
@@ -823,8 +822,9 @@ which comes from physical restrictions in the energy of the system, and
 \subsection{Transient response} 
 \label{ssec:transientspecification}
 %-------------------------------
-\todo{this needs some explanation before the theorem in order to explain the purpose of this section.}
-
+In many cases the speed of the response, i.e. how fast it converges to the set point, is a requirement of great importance. 
+This is given as a settling time for the system to become stable.
+ 
 \begin{theorem}
 Given a set of eigenvalues for a discrete time model of an $n^{th}$ order system $\lambda_i =e^{\omega_i}: i \in [1\ n]$, the settling time of the system is upperbounded by
 \begin{equation}
@@ -926,6 +926,13 @@ settling time is too.
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \section{Verification of a Conrollable Observed System}\label{sec:cof_verification}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+In most real implementations, the internal state of a plant cannot be directly measured. All we can do is infer its
+value through its effecton the output. A plant model that minimises the difference between the outputs is called
+an observer and it is a well known paradigm in the control literature\cite{astrom1997computer}. Since we are
+interested in synthesising controllers with observer designs, we need to look at the challenges presented by 
+the introduction of the observer.
+
 \begin{figure*}[htb]
 \centering
 \tikzset{add/.style n args={4}{
@@ -1072,7 +1079,6 @@ settling time is too.
  \caption{Closed-loop digital control system with observer\label{fig:observersystem}}
 \end{figure*}
 
-\todo{explain the purpose of this section, challenges etc...}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{Stability of an Observed System}\label{sec:cof_stability}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1794,11 +1800,11 @@ where
 \end{align}
 and $T_s$ is the sample time. Then
 \begin{align*}
-x(kT_s)=x_k \text{ and } y(kT_s) = y_k, \forall k
+\forall k, x(kT_s)=x_k \text{ and } y(kT_s) = y_k
 \end{align*}
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{Numerical representation and soundness} 
+\section{Numerical representation and soundness} 
 \label{sec:numeric_rep}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -1845,7 +1851,8 @@ by~\cite{DBLP:conf/arith/BrainTRW15}.  We examine the most relevant ones:
 %
 \begin{enumerate}
 \item Truncation\\
-Let $\mathcal{F}_{\langle M,F \rangle}(\cdot) : \mathbb{R} \rightarrow \mathbb{R}_{\langle M,F \rangle}$
+Let $\mathcal{F}_{\langle M,F \rangle} : \mathbb{R} \rightarrow \mathbb{R}_{\langle M,F \rangle}$
+be a truncation function, defined as:
 \begin{align*}
 x_{\langle M,F \rangle}=\mathcal{F}_{\langle M,F \rangle}(x) = x-\delta \mid \delta=mod_F(x,c x_{\langle M,F \rangle})
 \end{align*} 
