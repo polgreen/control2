@@ -614,7 +614,9 @@ representing the binary word length of the representation and $F$ bits
 representing the prescaling $2^{-F}$ (\emph{i.e} the number of bits after
 the decimal place).  We note that a negative $F$ denotes an integer
 multiplication that adds $-F$ trailing zeros in the number represented by
-$M$.  Let also $\mathbb{R}_{\langle M,[E] \rangle}$ be a floating point
+$M$.
+\todo{why do we need to go into floating point?}
+Let also $\mathbb{R}_{\langle M,[E] \rangle}$ be a floating point
 domain with $M$ bits mantissa and $E$ bits exponent.  This domain
 corresponds to $$\mathbb{R}_{\langle M,[E] \rangle} = \bigcup_F
 \mathbb{R}_{\langle M,F \rangle} \mid F \in [2^{1-E}, 2^{E-1}]$$ This
@@ -694,7 +696,9 @@ we extend the following to floating point reasoning.
 
 Let us first consider the effect of the quantization errors. 
 Within the controller, state values are manipulated at low precision,
-alongside the vector multiplication $\mat{K}\vec{x}$. Furthermore, 
+alongside the vector multiplication $\mat{K}\vec{x}$.
+\todo{$\mathcal{F}$ is not clearly defined}
+Furthermore, 
 the quantizers for the DAC and the ADC introduce truncation errors
 which we denote by the effect of the functions $\mathcal{F}_{\langle D \rangle}$
 and $\mathcal{F}_{\langle A \rangle}$ respectively. Finally, let us call $\vec{\nu}_e$ the
@@ -707,7 +711,7 @@ u_{k}&=\mathcal{F}_{\langle D \rangle}\left(-\mat{K}_{\langle C \rangle}\cdot\le
 \label{eq:uk}
 \end{align}
 
-This induces two types of the errors detailed above: first, the truncation
+This induces two types of the errors: first, the truncation
 error due to the domain transformations $\mathcal{F}_{\langle *
 \rangle}(\cdot)$; and second, the rounding error introduced by the
 multiplication operation.  We represent these errors as non-deterministic
@@ -1822,7 +1826,8 @@ representing the binary word length of the representation and $F$ bits
 representing the prescaling $2^{-F}$ (\emph{i.e} the number of bits after
 the decimal place).  We note that a negative $F$ denotes an integer
 multiplication that adds $-F$ trailing zeros in the number represented by
-$M$.  Let also $\mathbb{R}_{\langle M,[E] \rangle}$ be a floating point
+$M$.
+Let also $\mathbb{R}_{\langle M,[E] \rangle}$ be a floating point
 domain with $M$ bits mantissa and $E$ bits exponent.  This domain
 corresponds to $$\mathbb{R}_{\langle M,[E] \rangle} = \bigcup_F
 \mathbb{R}_{\langle M,F \rangle} \mid F \in [2^{1-E}, 2^{E-1}]$$ This
