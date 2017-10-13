@@ -842,8 +842,8 @@ Given a set of eigenvalues for a discrete time model of an $n^{th}$ order system
 t_s<-log_{|\overline{\lambda}|}({p_s}) : |\overline{\lambda}| =\max(|\lambda_i|) \wedge |\overline{\lambda}|<1,\ \forall i \in [1\ n]
 \label{eq:set_time}
 \end{equation}
-where $0\leq p_s \leq 1$ is the desired percentage of the target within to remain after $t_s$.
-\end{theorem} 
+where $0\leq p_s \leq 1$ is the desired percentage of the target within \todo{typo?} to remain after $t_s$.
+\end{theorem}
 %\begin{proof}
 %In a SISO system, there are two values that typically define the
 %response-time of the system (using a step response).
@@ -938,11 +938,15 @@ settling time is too.
 \section{Verification of a Conrollable Observed System}\label{sec:cof_verification}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-In most real implementations, the internal state of a plant cannot be directly measured. All we can do is infer its
-value through its effecton the output. A plant model that minimises the difference between the outputs is called
-an observer and it is a well known paradigm in the control literature\cite{astrom1997computer}. Since we are
-interested in synthesising controllers with observer designs, we need to look at the challenges presented by 
-the introduction of the observer.
+In most real implementations, the internal state of a plant cannot be
+directly measured but rather inferred from its
+effect on the output. A plant model that minimises the difference
+between the outputs is called an observer and it is a well known
+paradigm in the control literature~\cite{astrom1997computer}. Since we
+are interested in synthesising controllers with observer designs, in this
+section we will look at checking stability and safety in the presence of an observer.
+
+%the challenges presented by the introduction of the observer.
 
 \begin{figure*}[htb]
 \centering
@@ -1188,49 +1192,17 @@ separately.  Additionally, these correspond to the roots of the polynomials
 \end{align*}
 
 As stated in Section~\ref{ssec:stabspecification}, we use Jury's Criterion
-to assert this specification.
-
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{Safety of a Digitally Observed System}\label{sec:cof_safety}
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-Now that we have established convergence, we may examine the safety
-specification of the state space.  In the case of SISO systems, this is
-given by a range of the input and a range of the output which are considered
-safe ($\vec{u}_k \in [\underline{u}\ \ \overline{u}] \wedge \vec{y}_k \in
-[\underline{y}\ \ \overline{y}]$).  Whilst there are other properties we may
-include in the verification, we will solely focus on these for simplicity of
-the explanation.  We will assume that we do not want saturation in our
-system, hence the control loop has only one mode.  We have also identified
-the quantization noise as a bounded non-deterministic input.  First we must
-translate the safety specification into the statespace.  Replacing on the
-second part of equation \eqref{eq:observer_LTI_cf} we obtain
-%
-\begin{equation}
-\phi_{safety} := \underline{y}<\mat{C}\vec{x}_k<\overline{y}, \forall k \geq 0
-\label{eq:of_bounds}
-\end{equation}
-%
-%Note that we use the bounds of the input after the transformation by $\mat{B}$ since the matrix may reverse the bounds. 
-%
-Equation~\eqref{eq:of_bounds} can be solved using linear programming as it
-describes a polyhedral region in $\mathbb{R}^p$.  The second step is
-evaluating the progression of the system over time in order to calculate
-$\vec{x}_k$ to validate against this specification.  For this step we require
-an initial set from which the system progresses.  Obviously, this set
-$\vec{x}_0$ must satisfy the specification, otherwise the system will be
-unsafe to begin with.  We will accept a specification in the form
-$\mat{E}\mat{T}\vec{x}_0<\mat{f}$.  The presence of $\mat{T}$ is because
-this will typically be given in the original state-space.
-
+to assert this specification. \todo{Not clear to me what ``this specification'' refers to.}
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{Stability of a Digitally Observed System}\label{sec:cof_fwl_stability}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-Thus far we have presented a verification procedure for a continuous plant
-in discretized time domain (i.e., the range of the quatizers is still
-$\mathbb{R}$).  The next step we must reaize is that the controller and the
+Thus far we looked at checking stability
+%have presented a verification procedure for
+of a continuous plant in discretized time domain (i.e., the range of the quatizers is still
+$\mathbb{R}$) \todo{do you mean that we only considered time domains discretization until now and
+now we look at value domain discretization as well?}.  The next step we must realize is that the controller and the
 observer exist in a digital program, hence their domain is
 $\mathbb{R}_{\langle C \rangle}$.  This has two separate effects on the
 model.  If we recall Equation~\eqref{eq:observer_LTI}, the matrices of the observer
@@ -1314,6 +1286,47 @@ P_r'=\sum_{j=0}^p c_j\overline{\lambda'}^{p-j}s^j : \overline{\lambda'}=(1+\delt
 As a final annotation, we remark that the safety specification must be
 applied to the model described in this section, accounting for the
 representation errors of the FWL domain.
+
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+\subsection{Safety of a Digitally Observed System}\label{sec:cof_safety}
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+%% Now that we have established convergence, we may examine the safety
+%% specification of the state space.
+In the case of SISO systems, the safety specification is
+given by a range of the input and a range of the output which are considered
+safe ($\vec{u}_k \in [\underline{u}\ \ \overline{u}] \wedge \vec{y}_k \in
+[\underline{y}\ \ \overline{y}]$)
+\todo{I think the safety specification is generally on the states of the system.}.
+Whilst there are other properties we may
+include in the verification, we will solely focus on these for simplicity of
+the explanation.  We assume that we do not want saturation in our
+system, hence the control loop has only one mode.
+%We have also identified the quantization noise as a bounded non-deterministic input.
+First we must
+translate the safety specification into the statespace.  Replacing on the
+second part of equation \eqref{eq:observer_LTI_cf} we obtain
+%
+\begin{equation}
+\phi_{safety} := \underline{y}<\mat{C}\vec{x}_k<\overline{y}, \forall k \geq 0
+\label{eq:of_bounds}
+\end{equation}
+\todo{what happened to u when going from \eqref{eq:observer_LTI_cf}?}
+%
+%Note that we use the bounds of the input after the transformation by $\mat{B}$ since the matrix may reverse the bounds. 
+%
+\todo{I thought \eqref{eq:of_bounds} was the safety spec. Why is it solved?}
+Equation~\eqref{eq:of_bounds} can be solved using linear programming as it
+describes a polyhedral region in $\mathbb{R}^p$.  The second \todo{second?} step is
+evaluating the progression of the system over time in order to calculate
+$\vec{x}_k$ to validate against this specification.  For this step we require
+an initial set $\vec{x}_0$ from which the system progresses.  Obviously, this set
+%$\vec{x}_0$
+must satisfy the specification, otherwise the system will be
+unsafe to begin with.  We will accept a specification in the form
+$\mat{E}\mat{T}\vec{x}_0<\mat{f}$ \todo{ET? f?}.  The presence of $\mat{T}$ is because
+this will typically be given in the original state-space.
+
 
 %-------------------------------
 \section{Counterexample Guided Inductive Synthesis} 
