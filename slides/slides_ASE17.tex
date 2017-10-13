@@ -659,6 +659,34 @@ outside of our model using MATLAB
 %\end{figure}
 %\end{frame}
 
+\begin{frame}[fragile]{Other CEGIS Applications: Refactoring}
+
+
+  \begin{itemize}
+    \item Find element in list using external iteration:
+  
+  \begin{lstlisting}[mathescape=true]
+  Integer result = null;
+  List<Integer> data = getData();
+  for (int el : data)
+    if (el % 2 == 0) {
+      result = el; 
+      break;}
+\end{lstlisting}
+\pause
+  \item Find element in list using Java~8 Streams:
+  
+  \begin{lstlisting}[mathescape=true]
+  List<Integer> newList = getData();
+  Optional<Integer> result = list.stream()
+                          .filter(el -> el % 2)
+                          .findFirst();
+  \end{lstlisting}
+  
+  \end{itemize}
+  
+\end{frame}  
+
 \begin{frame}{Conclusions and Future Work}
 \begin{itemize}
   
