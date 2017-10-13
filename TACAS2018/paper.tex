@@ -1334,35 +1334,42 @@ this will typically be given in the original state-space.
 \label{ssec:cegis}
 %-------------------------------
 
-In order to synthesize closed-loop digital control systems, we use a program
-synthesis engine.  Our program implements Counter-Example Guided
-Inductive Synthesis (CEGIS)~\cite{DBLP:conf/asplos/Solar-LezamaTBSS06}.  We
-start by presenting its general architecture followed by describing the
-parts specific to closed-loop control systems.
+In this section, we describe our technique for synthesizing safe
+digital feedback controllers using CEGIS. Broadly speaking, CEGIS
+denotes an iterative technique where each iteration performs inductive
+generalisation based on counterexamples provided by a verification
+engine.
 
-CEGIS-based control synthesis requires a formal verifier to check whether a
-candidate controller meets the requirements when combined with the plant.
-We use the tool Axelerator~\cite{} in the verification module.  It checks the
-stability of a cyberphysical closed-loop control system and considers finite-word
-length (FWL) effects in the digital controller and continuous dynamics in continuous
-time progression in the plant.
-As part of the counterexample, Axelerator generates an ANSI-C code model
-containing information about different transforms of the system as well as other
-abstractions relating to quantization and safety which allow us to create models
-for the synthesisers. This specification (which we refer to as $\phi$) is passed to
-the Bounded Model Checker CBMC~\cite{ClarkeKL04} which uses SAT solving to
-generate a valid input for a controller and observer that meet the given specification.
-The ANSI-C code model guarantees that a synthesized solution is complete and
-sound with respect to the given abstraction since it does not depend on system
-inputs and outputs, but further analysis is required to obatin a solution that meets
-the original specification. These results are then fed back to a synthesis module in
-Axelerator which uses eigendecomposition and other linear transformations to
-refine the solution. 
 
-%-------------------------------
-\subsection{CEGIS of digital controllers} 
-\label{sssec:cegisdig}
-%-------------------------------
+%% In order to synthesize closed-loop digital control systems, we use a program
+%% synthesis engine.  Our program implements Counter-Example Guided
+%% Inductive Synthesis (CEGIS)~\cite{DBLP:conf/asplos/Solar-LezamaTBSS06}.  We
+%% start by presenting its general architecture followed by describing the
+%% parts specific to closed-loop control systems.
+
+%% CEGIS-based control synthesis requires a formal verifier to check whether a
+%% candidate controller meets the requirements when combined with the plant.
+%% We use the tool Axelerator~\cite{} in the verification module.  It checks the
+%% stability of a cyberphysical closed-loop control system and considers finite-word
+%% length (FWL) effects in the digital controller and continuous dynamics in continuous
+%% time progression in the plant.
+%% As part of the counterexample, Axelerator generates an ANSI-C code model
+%% containing information about different transforms of the system as well as other
+%% abstractions relating to quantization and safety which allow us to create models
+%% for the synthesisers. This specification (which we refer to as $\phi$) is passed to
+%% the Bounded Model Checker CBMC~\cite{ClarkeKL04} which uses SAT solving to
+%% generate a valid input for a controller and observer that meet the given specification.
+%% The ANSI-C code model guarantees that a synthesized solution is complete and
+%% sound with respect to the given abstraction since it does not depend on system
+%% inputs and outputs, but further analysis is required to obatin a solution that meets
+%% the original specification. These results are then fed back to a synthesis module in
+%% Axelerator which uses eigendecomposition and other linear transformations to
+%% refine the solution. 
+
+%% %-------------------------------
+%% \subsection{CEGIS of digital controllers} 
+%% \label{sssec:cegisdig}
+%% %-------------------------------
 
 Our approach is illustrated in Fig.~\ref{fig:CEGARIS}. It relies on the
 construction of an unsound abstract model that approximates the dynamics
@@ -1580,7 +1587,9 @@ These constraints correspond to specific iterations for which the system may be 
 %\textcolor{red}{Iury: can you please describe the benchmarks?}
 
 The benchmark suite employed to evaluate the proposed technique is 
-composed by 18 MIMO models extracted from the literature~\cite{acrobot,cstr,CHEN1979389,KOKOTOVIC198023,gajic2008optimal,Franklin15,maglev,converters} 
+composed by 18 MIMO models extracted from the literature~\cite{acrobot,cstr,CHEN1979389,KOKOTOVIC198023,gajic2008optimal,Franklin15,maglev,converters}.
+
+In the verification module, we use the tool Axelerator~\cite{} .
 
 \jrronly{
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
