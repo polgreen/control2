@@ -422,13 +422,20 @@ $A_d$, $B_d$, $C_d$ and $D_d$ denote the matrices that describe the discretized 
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  \subsection{Verification of Continuous time systems}\label{sec:continuous_time_accel}
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-The main problem with the above discretization is that is does not allow us to observe the system at arbitrary points in time, only at integer multiples of the sample time. While this is adequate for the controller, it is not sufficient for verification. We must therefore establish a new model that allows us to observe the system at a given time $t$. We achieve this by using acceleration as described below. 
+ \todo{I find this section header unclear. What is being verified here? Stability and safety only come later on.}
+ The main problem with the above discretization is that is does not allow us to observe the system at arbitrary points in time, only at integer multiples of the sample time. While this is adequate for the controller, it is not sufficient for verification. We must therefore establish a new model that allows us to observe the system at a given time $t$.
+ %We achieve this by using acceleration as described below.
+ 
+ \todo{Again, it's not clear to me what ``not sufficient for verification'' means here.}
+
+ \todo{Are all three cases, i.e. discrete dynamics using reals for systems without inputs,
+   discrete dynamics using reals for systems with parametric inputs, discrete dynamics using reals for systems with discrete time feedback inputs, relevant? If they are, then having a sentence describing the progression in this section would be useful.}
 
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  \subsubsection{Discrete dynamics using reals for systems without inputs}\label{sec:real_discrete_no_inputs}
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  \begin{theorem}
- Given $\dot{\vec{x}}=\mat{A}\vec{x}$, where $\mat{A}=\mat{S}\mat{J}\mat{S}^{-1}$, the expression
+ Given $\dot{\vec{x}}=\mat{A}\vec{x}$ \todo{$\dot{\vec{x}}(t)$?}, where $\mat{A}=\mat{S}\mat{J}\mat{S}^{-1}$, the expression
  \begin{align}
  \vec{x}_T&=\vec{x}(t=T)=\mat{A}_{T}\vec{x}_0\\
  \mat{A}_{T}&= \mat{S}
@@ -561,6 +568,7 @@ The expression
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsubsection{Time delay on discrete time feedback systems} \label{sec:delay}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+\todo{How does fit in the description at the beginning of sec 3.3?}
 
 A common ocurrence in digital systems is that they do not necessarily
 satisfy the real-time specifications.  Delays due to processing time,
@@ -571,6 +579,9 @@ the sampling instance $t$ and the output of the result is delayed at the DAC
 when it is fed back into the real world.  We~will also presume that this
 delay is much smaller than the sampling time.
 
+\todo{equations \eqref{eq:feedback_sampled_cont} and
+  \eqref{eq:feedback_cont} are in the appendix so it's preferable to not
+refer to them so directly.}
 Let us look at equations \eqref{eq:feedback_sampled_cont} and
 \eqref{eq:feedback_cont}.  When we introduce an arbitrary delay $T_d$ where
 $t_d=T_d$ and $t_s=T_s-T_d$ we obtain:
