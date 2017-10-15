@@ -420,7 +420,7 @@ $A_d$, $B_d$, $C_d$ and $D_d$ denote the matrices that describe the discretized 
 %% as introduced by the ADC/DAC conversion blocks (Fig.~\ref{fig:digitalsystem}).
 
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- \subsection{Verification of Continuous time systems}\label{sec:continuous_time_accel}
+ \section{Acceleration of Continuous time systems}\label{sec:continuous_time_accel}
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  \todo{I find this section header unclear. What is being verified here? Stability and safety only come later on.}
  The main problem with the above discretization is that is does not allow us to observe the system at arbitrary points in time, only at integer multiples of the sample time. While this is adequate for the controller, it is not sufficient for verification. We must therefore establish a new model that allows us to observe the system at a given time $t$.
@@ -432,10 +432,11 @@ $A_d$, $B_d$, $C_d$ and $D_d$ denote the matrices that describe the discretized 
    discrete dynamics using reals for systems with parametric inputs, discrete dynamics using reals for systems with discrete time feedback inputs, relevant? If they are, then having a sentence describing the progression in this section would be useful.}
 
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- \subsubsection{Discrete dynamics using reals for systems without inputs}\label{sec:real_discrete_no_inputs}
+ \subsection{Accelrated dynamics using reals for systems without inputs}\label{sec:real_discrete_no_inputs}
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ The state $\vec{x}_T$ present at time $T$ can be expressed as a linear function of $\vec{x}_0$ as described below
  \begin{theorem}
- Given $\dot{\vec{x}}=\mat{A}\vec{x}$ \todo{$\dot{\vec{x}}(t)$?}, where $\mat{A}=\mat{S}\mat{J}\mat{S}^{-1}$, the expression
+ Given $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$ \todo{$\dot{\vec{x}}(t)$?}, where $\mat{A}=\mat{S}\mat{J}\mat{S}^{-1}$, the expression
  \begin{align}
  \vec{x}_T&=\vec{x}(t=T)=\mat{A}_{T}\vec{x}_0\\
  \mat{A}_{T}&= \mat{S}
@@ -449,10 +450,10 @@ $A_d$, $B_d$, $C_d$ and $D_d$ denote the matrices that describe the discretized 
  \label{eq:continuous_tube_dyn}\\
  &\text{where } s_i=\left\{\begin{array}{cc}1&gm(\lambda_i)>1\\0&gm(\lambda_i)=1\end{array}\right.,\nonumber
  \end{align}
-$\lambda_i \in \mat{J}$ are the eigenvalues of $\mat{A}$, and $gm(\lambda_i)$ is the geometric multiplicity of $\lambda_i$.  $\vec{x}_T$ is a witness of the system $\dot{\vec{x}}(t)=\mat{A}\vec{x}$ at time t=T.
+$\lambda_i \in \mat{J}$ are the eigenvalues of $\mat{A}$, and $gm(\lambda_i)$ is the geometric multiplicity of $\lambda_i$.  $\vec{x}_T$ is a witness of the system $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$ at time t=T.
  \end{theorem}
  \begin{corollary}
- If $\mat{J}$ is diagonal and there exists a discrete dynamics matrix for a sampling time $T_d$ such that $A_d=e^{\mat{A} T_d}$, then $\vec{x}_k=A_d^k\vec{x} : k \in (0,\infty)$ is a witness of the system at time $t=kT_d$.
+ If $\mat{J}$ is diagonal and there exists a discrete dynamics matrix for a sampling time $T_d$ such that $A_d=e^{\mat{A} T_d}$, then $\vec{x}_k=A_d^k\vec{x}_0 : k \in (0,\infty)$ is a witness of the system at time $t=kT_d$.
  \end{corollary}
 % \begin{proof}
 % Let us recall equation \ref{eq:discretize}. The discrete representation of the system dynamics discretised with sample time $T_1$ is ruled by the formula
@@ -500,7 +501,7 @@ $\lambda_i \in \mat{J}$ are the eigenvalues of $\mat{A}$, and $gm(\lambda_i)$ is
 %\end{proof}
 
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- \subsubsection{Discrete dynamics using reals for systems with parametric inputs}\label{sec:real_discrete_param_inputs}
+ \subsection{Accelerated dynamics using reals for systems with parametric inputs}\label{sec:real_discrete_param_inputs}
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \begin{theorem}
 The expression
@@ -511,7 +512,7 @@ The expression
  with $\mat{A}_T$ as per \eqref{eq:continuous_tube_dyn} is a witness of the system $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)$ at time $T$ given a parametric input $\vec{u}$.
  \end{theorem}
  \begin{corollary}
- If $\mat{J}$ is diagonal and there exists a discrete dynamics matrix for a sampling time $T_d :  A_d=e^{\mat{A} T_d}$, then $\vec{x}_k=A_d^k\vec{x}+(\mat{I}-\mat{A}_d^k\mat{B}\vec{u}) : k \in (0,\infty)$ is a witness of the system at time $kT_d$.
+ If $\mat{J}$ is diagonal and there exists a discrete dynamics matrix for a sampling time $T_d :  A_d=e^{\mat{A} T_d}$, then $\vec{x}_k=A_d^k\vec{x}_0+(\mat{I}-\mat{A}_d^k\mat{B}\vec{u}) : k \in (0,\infty)$ is a witness of the system at time $kT_d$.
  \end{corollary}
 % \begin{proof}
 % We begin by expanding the equation
@@ -524,22 +525,22 @@ The expression
 % \end{proof}
 
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- \subsubsection{Discrete dynamics using reals for systems with discrete time feedback inputs}\label{sec:real_discrete_feedback_inputs}
+ \subsection{Accelerated dynamics using reals for systems with discrete time feedback inputs}\label{sec:real_discrete_feedback_inputs}
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 The final case we analyse here is that of hybrid time systems, where the
 plant dynamics evolve in continuous time while the feedback dynamics evolve
-in discrete time.
+in discrete time, i.e. a new input value is only produced for every sample interval.
 
 \begin{theorem}
 The expression
  \begin{align}
- \vec{x}_{t} &= (\mat{A}_{t-kT_s}-\mat{B}_{t-kT_s}\mat{K}) (\mat{A}_d-\mat{B}_d\mat{K})^k\vec{x}_0
+ \vec{x}_{T} &= (\mat{A}_{T-kT_s}-\mat{B}_{T-kT_s}\mat{K}) (\mat{A}_d-\mat{B}_d\mat{K})^k\vec{x}_0
  \label{eq:cyber_feedback}
  \end{align}
- with $\mat{A}_t, \mat{B}_t$ as per \eqref{eq:continuous_tube_dyn} and $\mat{A}_d, \mat{B}_d$ as per equation \eqref{eq:discretize} is a witness of the system
+ with $\mat{A}_T, \mat{B}_T$ as per \eqref{eq:continuous_tube_dyn} and $\mat{A}_d, \mat{B}_d$ as per equation \eqref{eq:discretize} is a witness of the system
  \begin{align}
- \dot{\vec{x}}_{t} &= \mat{A}\vec{x}+\mat{B}\vec{u}_t\nonumber\\
+ \dot{\vec{x}}(t) &= \mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)\nonumber\\
  \vec{u}_t&=\mat{K}\vec{x}_k  \mid  kT_s \leq t < (k+1)T_s
  \end{align}
  \end{theorem}
@@ -566,10 +567,8 @@ The expression
 %\end{proof}
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsubsection{Time delay on discrete time feedback systems} \label{sec:delay}
+\subsection{Time delay on discrete time feedback systems} \label{sec:delay}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\todo{How does fit in the description at the beginning of sec 3.3?}
-
 A common ocurrence in digital systems is that they do not necessarily
 satisfy the real-time specifications.  Delays due to processing time,
 communication lines, or other mechanisms will cause disturbances in the
@@ -579,32 +578,12 @@ the sampling instance $t$ and the output of the result is delayed at the DAC
 when it is fed back into the real world.  We~will also presume that this
 delay is much smaller than the sampling time.
 
-\todo{equations \eqref{eq:feedback_sampled_cont} and
-  \eqref{eq:feedback_cont} are in the appendix so it's preferable to not
-refer to them so directly.}
-Let us look at equations \eqref{eq:feedback_sampled_cont} and
-\eqref{eq:feedback_cont}.  When we introduce an arbitrary delay $T_d$ where
-$t_d=T_d$ and $t_s=T_s-T_d$ we obtain:
-%
+\begin{theorem}
+The error introduced by a delay $t_d$ in the control output $\vec{u}_k$ of a discrete feedback controller for a continuous LTI system can be modelled as a non-deterministic noise signal upperbound by 
 \begin{align}
-\vec{x}_{k} &=\mat{A}_{t_s}(\mat{A}_{t_d}\vec{x}_{k-1}-\mat{B}_{t_d}\mat{K}\vec{x}_{k-2})-\mat{B}\mat{K}\vec{x}_{k-1}\nonumber\\
-&=  (\mat{A}_{T_s}-\mat{B}_{t_s}\mat{K})\vec{x}_{k-1}-\mat{A}_{t_s}\mat{B}_{t_d}\mat{K}\vec{x}_{k-2}
-\label{eq:delay_cont}
+|{\vec{y}_e}_{k}|_1 \leq q_t, \text{ where } q_t=&(|\mat{C}(\mat{B}_{T_s}-\mat{B}_{t_s})|_1+|\mat{C}\mat{A}_{t_s}\mat{B}_{t_d}|_1)|U|_\infty
 \end{align}
-%
-Differentiating with the expected progression without delay, we get a delay
-error:
-%
-\begin{align}
-{\vec{x}_e}_{k}=&(\mat{B}_{T_s}-\mat{B}_{t_s})\mat{K}\vec{x}_{k-1}-\mat{A}_{t_s}\mat{B}_{t_d}\mat{K}\vec{x}_{k-2}\nonumber\\
-=&(\mat{B}_{T_s}-\mat{B}_{t_s})\vec{u}_{k}-\mat{A}_{t_s}\mat{B}_{t_d}\vec{u}_{k-1}
-\end{align}
-Rather than explicitly calculate this error, we will find an upper bound. Let $|U|_\infty=max(|\vec{u}|_\infty \mid \vec{u} \in U)$ be the maximum infinity norm of a vector set, propagating the error to the output $\vec{y}_k$ we have:
-\begin{align}
-|{\vec{y}_e}_{k}|_1 \leq q_t=&(|\mat{C}(\mat{B}_{T_s}-\mat{B}_{t_s})|_1+|\mat{C}\mat{A}_{t_s}\mat{B}_{t_d}|_1)|U|_\infty
-\end{align}
-
-We overapproximate the effects of this vector by introducing a noise signal at the output $\nu_t=[-q_t\ q_t]$ and use the dynamics of the system without delay.
+\end{theorem}
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{Numerical representation and soundness} 
@@ -612,7 +591,8 @@ We overapproximate the effects of this vector by introducing a noise signal at t
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 The models we consider have two sources of error that are due to numerical  
-representation.  The first is the numerical error introduced by the
+representation which we commonly refer to as the FWL effect.
+The first is the numerical error introduced by the
 fixed-point numbers employed to model the plant, i.e., to represent the
 plant dynamics $A_d$, $B_d$, $C_d$, $D_d$, $x_k$ and $y_k$.
 The second is the quantization error
@@ -828,7 +808,7 @@ Given a set of eigenvalues for a discrete time model of an $n^{th}$ order system
 t_s<-log_{|\overline{\lambda}|}({p_s}) : |\overline{\lambda}| =\max(|\lambda_i|) \wedge |\overline{\lambda}|<1,\ \forall i \in [1\ n]
 \label{eq:set_time}
 \end{equation}
-where $0\leq p_s \leq 1$ is the desired percentage of the target within \todo{typo?} to remain after $t_s$.
+where $0\leq p_s \leq 1$ is the desired percentage of the target within which the output must remain after $t_s$.
 \end{theorem}
 %\begin{proof}
 %In a SISO system, there are two values that typically define the
@@ -1177,11 +1157,11 @@ separately.  Additionally, these correspond to the roots of the polynomials
 \left(z^p+\sum_{i=1}^p{(a_i-k_i)z^{p-i}}\right) \left(z^p+\sum_{i=1}^p{(l_i-a_i)z^{p-i}}\right)
 \end{align*}
 
-As stated in Section~\ref{ssec:stabspecification}, we use Jury's Criterion
-to assert this specification. \todo{Not clear to me what ``this specification'' refers to.}
+As stated in Section~\ref{ssec:stabspecification}, we use Jury's Criterion on these polynomials
+to assert the stability specification.
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{Stability of a Digitally Observed System}\label{sec:cof_fwl_stability}
+\subsection{Stability of an Observed System with FWL effects}\label{sec:cof_fwl_stability}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 Thus far we looked at checking stability
@@ -1297,22 +1277,14 @@ second part of equation \eqref{eq:observer_LTI_cf} we obtain
 \phi_{safety} := \underline{y}<\mat{C}\vec{x}_k<\overline{y}, \forall k \geq 0
 \label{eq:of_bounds}
 \end{equation}
-\todo{what happened to u when going from \eqref{eq:observer_LTI_cf}?}
 %
 %Note that we use the bounds of the input after the transformation by $\mat{B}$ since the matrix may reverse the bounds. 
 %
-\todo{I thought \eqref{eq:of_bounds} was the safety spec. Why is it solved?}
-Equation~\eqref{eq:of_bounds} can be solved using linear programming as it
-describes a polyhedral region in $\mathbb{R}^p$.  The second \todo{second?} step is
-evaluating the progression of the system over time in order to calculate
-$\vec{x}_k$ to validate against this specification.  For this step we require
-an initial set $\vec{x}_0$ from which the system progresses.  Obviously, this set
-%$\vec{x}_0$
-must satisfy the specification, otherwise the system will be
-unsafe to begin with.  We will accept a specification in the form
-$\mat{E}\mat{T}\vec{x}_0<\mat{f}$ \todo{ET? f?}.  The presence of $\mat{T}$ is because
-this will typically be given in the original state-space.
-
+%We evaluate the progression of the system over time by calculating
+%$\vec{x}_k$ to validate against this specification.  For this step we require
+%an initial set $\vec{x}_0$ from which the system progresses.  Obviously, this set
+%must satisfy the specification, otherwise the system will be
+%unsafe to begin with.  For efficiency purposes, the inequality in \eqref{eq:of_bounds} is transformed into reachable form using $\mat{T}_c, \mat{T}_o$ which reduces the complexity from $\mathcal{O}(p^2)$ to $\mathcal{O}(p)$.
 
 %-------------------------------
 \section{Counterexample Guided Inductive Synthesis} 
@@ -1403,78 +1375,50 @@ as described in section \ref{ssec:transientspecification}.
 \item Calculate the noise sets $\eta_1$ and $\eta_2$ from the equations
 described in sections \ref{sec:delay} and \ref{sec:quantization}.
 \item Calculate a set of initial bounds on $\mat{K}$, $\phi_\mathit{init}^{K}$,
-based on the input constraints.  
+based on the input constraints.
 %
 $(\phi_\mathit{init} \wedge \phi_\mathit{input} \wedge u_k=-\mat{K} x_k)
 \Rightarrow \phi_\mathit{init}^{K}$.
 These bounds will be used by the {\sc synthesize} phase to reduce the size of the solution space. 
+\item Select an initial width for the bitvectors representing the controller and the plant $\phi_{\langle C \rangle}, \phi_{\langle P \rangle}$. We will increase either precision as needed.
 \end{enumerate}
-The Abstraction is fed to the synthesiser.
-\item In the {\sc synthesize} phase, we synthesize a candidate controller $\mat{K} \in \mathbb{R}_{\langle C\rangle}^p$
-and observer $\mat{L} \in \mathbb{R}_{\langle C\rangle}^p$ that satisfy
-$\phi_\mathit{stability} \wedge \phi_\mathit{safety} \wedge \phi_\mathit{init}^{K}$ by invoking a SAT solver.
+There are two abstractions created by these specifications: $\phi_{synth}$ which is given to the synthesiser and $\phi_{static}$ which is given to the synthesis refinement loop. These abstractions will be refined independently, so we will not detail what each will contain at a given stage. We only note that at all times $\phi_{static} \models \phi_{synth}$.
+
+\item In {\sc synthesize}, we synthesize a candidate controller $\mat{K}$
+and observer $\mat{L}$ that satisfy
+$\phi_{synth}$ by invoking a SAT solver.
 There are two exit conditions:
-\begin{enumerate}
-\item If there is no candidate solution we return UNSAT and signal the modeller. Based on the current abstraction,
-the {\sc  model} phase may choose to increase the precision, decrease the sample time, or return a synthesis failure.
-\item If we have a candidate solution we will feed it to the verifier in order to validate it.
-\end{enumerate}
-\item The verifier works in multiple stages.
-\begin{enumerate}
+If there is no candidate solution we return FAIL and signal {\sc Abstract}. Based on the current abstraction,
+{\sc  Abstract} may choose to increase the precision, refine the abstraction, or return a synthesis failure.
+If we have a candidate solution we will feed it to the verifier chain in order to validate it.
 %
-\item The {\sc Verify Synthesis} submodule verifies $\phi_{static}$ of  both the
+\item {\sc Verify Synthesis} verifies $\phi_{static}$ of  both the
 controller and the observer.  If one of these results does not satisfy the tighter
-specification, it feeds back to the modeller which uses sensitivity analysis to
-synthesise a refined solution. 
-Formally speaking, given a violating controller $\{ \mat{K},\mat{L} \} \not \models \phi_{static}$
-we look for a variation $\mat{\delta}_K, \mat{\delta}_L$ such that
-$\{ \mat{K}', \mat{L}' \}=\{ \mat{K}+\mat{\delta}_K,\mat{L}+\mat{\delta}_L \} \models \phi_{static}$, and similarly for the observer.
-%\mat{K}' \in \mathbb{R}_{\langle C \rangle}$. 
-If the Modeller cannot synthesise a suitable candidate($\mat{K}' \not
-\models \phi_{static}^K$), it returns to the synthesiser with a request for
-either higher precision or a lower upper bound $\overline{\lambda}$. Otherwise
-the refined candidate solution is given to the second verification stage.
+specification, it feeds back to the {\sc Refine Synthesis} phase which uses sensitivity analysis to
+synthesise a refined solution. If the candidate is valid, we feed it to {\sc Discrete Time}. 
+\item {\sc Refine Synthesis} takes $\mat{K},\mat{L} \not \models \phi_{static}$ and synthesises $\mat{K}_{\langle C \rangle} = \mat{K}+\mat{\delta}_K, \mat{L}_{\langle C \rangle}=\mat{L}+\mat{\delta}_L, where \mat{K}_{\langle C \rangle}, \mat{L}_{\langle C \rangle} \models \phi_{static}$
+If we cannot synthesise a suitable candidate, we signal the {\sc Abstract} phase to refine $\phi_{synth}$ and request {\sc Synthesise} to produce a new candidate. Otherwise the refined candidate solution is given back to {\sc Verify Synthesis}.
 %
-\item The {\sc Discrete Time} submodule verifies $\phi_{safety}$ using discrete
-time dynamics.  If the verification fails, the verifier reports to the
-modeller with a counterexample, including details of initial states and
-iterations that failed the specification.  The modeller will then create a
-refined abstraction that explores this time horizon for the given initial
-state.  If the magnitude of the violation is small, we may choose to try
-a synthesis refinement loop before feeding back to the main synthesiser.
+\item {\sc Discrete Time} verifies $\phi_{safety}^{\infty}$ using discrete
+time dynamics.  If the verification fails, we report the counterexample to
+{\sc Refine Abstraction} including details of initial states and
+iterations that failed the specification.  
+\item {\sc Refine Abstraction} changes $\phi_{safety}$ to encompass any arising conterexample. 
+This can be done by increasing the time horizon $k$ for the safety specification of the violating initial condition and input.
+It also modifies $\phi_{static}$ to account for the counterexample.
+If the magnitude of the violation is small, {\sc Refine Synthesis} may find a new candidate, otherwise it will feed through to {\sc Abstract}.
 %
-\item If the Discrete Time verification is successful, the problem is
-evaluated by the {\sc Continuous Time} submodule.  This stage verifies that the
-transitions between sample times meet the specification $\phi_{safety}$.  If
+\item {\sc Continuous Time} verifies that the
+transitions between sample times meet the specification $\phi_{safety}^{\infty}$.  If
 a counterexample is found, information about the maximum distance of the
-violation to the specification boundary is fed back to the modeller.  Once
-again, the modeller will refine the abstraction based on this information by
-creating constraints on the surrounding points (constraining the safety
-abstraction to exclude the violation based on the projection of the discrete
-time dynamics onto the continuous ones).
+violation to the specification boundary is fed to {\sc Sample}. 
+\item {\sc Sample} will select a smaller suitable sample time and modify the abstractions to meet the discretization. 
+It will then feed back to the abstraction refinement loop to look for a suitable action for the updated model.
 %
-\end{enumerate}
 
 \item If we reach the {\sc abstract} phase, it means that the candidate
-  solution is not valid, in which case we must refine the abstraction used
-  by the synthesizer.
-%
-\begin{enumerate}
-%
-\item Find the constraints that invalidate the property
- as a set of counterexamples for the eigenvalues, which we define as
-$\phi_\Lambda$.  This is a constraint in the spectrum i.e., transfer
-function) of the closed loop dynamics.
-%
-\item We use $\phi_\Lambda$ to further constrain the characteristic polynomial 
-\begin{equation*}
-z^p+\sum_{i=1}^p(a_i-k_i)z^{p-i}=\prod_{i=1}^p (z-\lambda_i) \mid |\lambda_i|<1 \wedge \lambda_i \models \phi_{\Lambda}.
-\end{equation*} 
-These constraints correspond to specific iterations for which the system may be unsafe.
-
-\item Pass the refined abstraction $\phi(K)$ with the new constraints and the list of iterations $k$ to the {\sc synthesize} phase.
-  %, as well as a counterexample plant coefficients ($P_a$) and repeat the loop again. 
-\end{enumerate} 
+  solution is not valid, in which case we must refine $\phi_{synth}$. If $\phi_{synth}$ cannot be further refined, 
+  then we cannot synthesise a new candidate and return a synthesis failure.
 \end{enumerate}
 
 \begin{figure*}[htb]
@@ -1493,9 +1437,9 @@ These constraints correspond to specific iterations for which the system may be 
 	minimum height=1cm,
         pattern=north west lines, pattern color=gray!20,
 	label={\sc Model~~~~~~~~~~~},] (model) {};
-     \node[minimum width=2cm, minimum height=0.6cm, fill=gray!20] (model2) at ([xshift=-3cm]model.center) {{\sc 3. Refine}\\{\sc Synthesis}};
-     \node[minimum width=2cm, minimum height=0.6cm, fill=gray!20] (model3) at ([xshift=0cm]model.center) {{\sc 4. Refine}\\{\sc Abstraction}};
-     \node[minimum width=2cm, minimum height=0.6cm, fill=gray!20] (model4) at ([xshift=3cm]model.center) {{\sc 5. Sample}};
+     \node[minimum width=2cm, minimum height=0.6cm, fill=gray!20] (model2) at ([xshift=-3cm]model.center) {{\sc 4. Refine}\\{\sc Synthesis}};
+     \node[minimum width=2cm, minimum height=0.6cm, fill=gray!20] (model3) at ([xshift=0cm]model.center) {{\sc 6. Refine}\\{\sc Abstraction}};
+     \node[minimum width=2cm, minimum height=0.6cm, fill=gray!20] (model4) at ([xshift=3cm]model.center) {{\sc 8. Sample}};
    } ;\\
    \node[minimum width=1.5cm, minimum height=0.6cm, fill=gray!20] (synth) {{\sc 2.Synthesize}};
    \&\&
@@ -1505,8 +1449,8 @@ These constraints correspond to specific iterations for which the system may be 
 	minimum height=1cm,
         pattern=north west lines, pattern color=gray!20,
 	label={\sc Verify~~~~~~~~~~~},] (verif) {};
-     \node[minimum width=2cm, minimum height=0.6cm, fill=gray!20] (verif1) at ([xshift=-3cm]verif.center) {{\sc 5. Verify}\\{\sc Synthesis}};
-     \node[minimum width=2cm, minimum height=0.6cm, fill=gray!20] (verif2) at ([xshift=0cm]verif.center) {{\sc 6. Discrete}\\{\sc Time}};
+     \node[minimum width=2cm, minimum height=0.6cm, fill=gray!20] (verif1) at ([xshift=-3cm]verif.center) {{\sc 3. Verify}\\{\sc Synthesis}};
+     \node[minimum width=2cm, minimum height=0.6cm, fill=gray!20] (verif2) at ([xshift=0cm]verif.center) {{\sc 5. Discrete}\\{\sc Time}};
      \node[minimum width=2cm, minimum height=0.6cm, fill=gray!20] (verif3) at ([xshift=3cm]verif.center) {{\sc 7. Continuous}\\{\sc Time}};
    } 
    \& \node[ellipse, fill=gray!20] (done) {{\sc Done}};\\
@@ -1521,37 +1465,29 @@ These constraints correspond to specific iterations for which the system may be 
    }   
     \\
   };
-   \path[-]
-    (model3.north) edge node[align=center,xshift=0.8cm] {$k$,$X_0'$} (aux2.north)
-    (aux2.west) edge (aux1.east)
-    (aux3.west) edge (aux2.east)
-    (model4.north) edge node[align=center,xshift=0.5cm] {$T_s$} (aux3.north);
    \path
-    ([yshift=2em]synth.east) edge node[xshift=-0.5em,align=center] {$\mat{K}$,$\mat{L}$} ([yshift=2em]verif1.west)
-    ([yshift=-2em]verif1.west) edge node {C-ex} ([yshift=-2em]synth.east)
-    (verif1.east) edge node {SAT} (verif2.west)
+    (synth.east) edge node[xshift=-0.5em,align=center] {$\mat{K}$,$\mat{L}$} (verif1.west)
+    (verif1.east) edge node {PASS} (verif2.west)
     (verif2.north) edge node[xshift=.8cm] {C-ex} (model3.south)
-    (verif2.east) edge node {SAT} (verif3.west)
+    (verif2.east) edge node {PASS} (verif3.west)
     (verif3.north) edge node {C-ex} (model4.south)
-    (aux1.south) edge node {$\phi$} (model1.north)
-    (model3.west) edge node {$\phi_\Lambda$} (model2.east)
-    (model4.west) edge node {$\phi_\Lambda$} (model3.east)
-    ([xshift=-5em]fp.north) edge node[align=center]  {SAT/\\C-ex} ([xshift=-5em]verif2.south)
-    ([xshift=-5em]sv.north) edge node[align=center]  {SAT/\\C-ex} ([xshift=-5em]verif3.south)
+    (model3.west) edge node {$k$,$X_0'$} (model2.east)
+    (model4.west) edge node {$T_s$} (model3.east)
+    ([xshift=-5em]fp.north) edge node[align=center]  {PASS/\\C-ex} ([xshift=-5em]verif2.south)
+    ([xshift=-5em]sv.north) edge node[align=center]  {PASS/\\C-ex} ([xshift=-5em]verif3.south)
     ([xshift=5em]verif1.south) edge node[align=center] {$\mat{A}'$} ([xshift=5em]bmc.north)
     ([xshift=5em]verif2.south) edge node[align=center] {$\mat{A}'$,$\mat{B}'$,$\phi$} ([xshift=5em]fp.north)
     ([xshift=5em]verif3.south) edge node[align=center] {{$\mat{A}$,$\mat{B}$,$\mat{C}$}\\{$\mat{A}'$,$\mat{B}'$,$\phi$}} ([xshift=5em]sv.north)
-    ([xshift=-5em]bmc.north) edge node[align=center]  {SAT/\\C-ex} ([xshift=-5em]verif1.south)
+    ([xshift=-5em]bmc.north) edge node[align=center]  {PASS/\\C-ex} ([xshift=-5em]verif1.south)
     (verif) edge node {PASS} (done)
     ([xshift=5em]synth.south) edge node[align=center] {Inputs} ([xshift=5em]gp.north)
-    ([xshift=-5em]gp.north) edge node[align=center] {UNSAT/\\$\mat{K}$,$\mat{L}$} ([xshift=-5em]synth.south)
-    ([xshift=5em]model1.south) edge node[align=center,xshift=-.65cm] {$\langle P \rangle$} ([xshift=5em]synth.north) node[align=left,yshift=-0.7cm,xshift=1.3cm] {{$\phi_{stability}(P_a,P_l,\overline{\lambda})$}\\{$\phi_{safety}(\eta,k)$}\\ {$\phi_{init}^K$}}
-   ([xshift=-5em]synth.north) edge node[align=center] {UNSAT} ([xshift=-5em]model1.south);
+    ([xshift=-5em]gp.north) edge node[align=center] {FAIL/\\$\mat{K}$,$\mat{L}$} ([xshift=-5em]synth.south)
+    ([xshift=5em]model1.south) edge node[align=center,xshift=-.65cm] {$\langle P \rangle$} ([xshift=5em]synth.north) node[align=left,yshift=-0.7cm,xshift=.8cm] {{$\phi_{stability}$}\\{$\phi_{safety}$}\\ {$\phi_{init}^K$}}
+   ([xshift=-5em]synth.north) edge node[align=center] {FAIL} ([xshift=-5em]model1.south);
    \path[->]
-    ([xshift=-5em]verif1.north) edge node[align=center]  {$\mat{K}$,$\mat{L}$} ([xshift=-5em]model2.south)
+    ([xshift=-5em]verif1.north) edge node[align=center]  {C-ex} ([xshift=-5em]model2.south)
     ([xshift=5em]model2.south) edge node[align=center]  {$\mat{K}'$,$\mat{L}'$} ([xshift=5em]verif1.north)
-    (model2.west) edge node[align=center] {$\overline{\lambda},\langle C \rangle$} (model1.east)
-    ([yshift=1em]model1.east) edge node[align=center] {$\phi_{static}$} ([yshift=1em]model2.west);
+    (model2.west) edge node[align=center] {$\phi$} (model1.east);
 
    %(verif4.north) edge node[align=center] {} ([xshift=10.5cm]aux2)
    %([xshift=10.5cm]aux2) edge node[align=center] {Increase Sampling Rate} (aux1);
@@ -1984,7 +1920,7 @@ The proof derives from $|\mat{K}\vec{x}| \leq |\mat{K}|_1|\vec{x}|_\infty$.
 
 %-------------------------------
 \section{Stability} 
-\label{ssec:stabspecification}
+\label{appendix:stabspecification}
 %-------------------------------
 
 There are a number of algorithms that can be
@@ -2176,6 +2112,41 @@ which accelerating results becomes
 \label{eq:feedback_cont}
 \end{align}
 \end{proof}
+
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+\subsubsection{Time delay on discrete time feedback systems} \label{sec:delay}
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+\begin{theorem}
+The error introduced by a delay $t_d$ in the control output $\vec{u}_k$ of a discrete feedback controller for a continuous LTI system can be modelled as a non-deterministic noise signal upperbound by 
+\begin{align}
+|{\vec{y}_e}_{k}|_1 \leq q_t, \text{ where } q_t=&(|\mat{C}(\mat{B}_{T_s}-\mat{B}_{t_s})|_1+|\mat{C}\mat{A}_{t_s}\mat{B}_{t_d}|_1)|U|_\infty
+\end{align}
+\end{theorem}
+
+\begin{proof}
+Let us look at equations \eqref{eq:feedback_sampled_cont} and
+\eqref{eq:feedback_cont}.  When we introduce an arbitrary delay $T_d$ where
+$t_d=T_d$ and $t_s=T_s-T_d$ we obtain:
+%
+\begin{align}
+\vec{x}_{k} &=\mat{A}_{t_s}(\mat{A}_{t_d}\vec{x}_{k-1}-\mat{B}_{t_d}\mat{K}\vec{x}_{k-2})-\mat{B}\mat{K}\vec{x}_{k-1}\nonumber\\
+&=  (\mat{A}_{T_s}-\mat{B}_{t_s}\mat{K})\vec{x}_{k-1}-\mat{A}_{t_s}\mat{B}_{t_d}\mat{K}\vec{x}_{k-2}
+\label{eq:delay_cont}
+\end{align}
+%
+Differentiating with the expected progression without delay, we get a delay
+error:
+%
+\begin{align}
+{\vec{x}_e}_{k}=&(\mat{B}_{T_s}-\mat{B}_{t_s})\mat{K}\vec{x}_{k-1}-\mat{A}_{t_s}\mat{B}_{t_d}\mat{K}\vec{x}_{k-2}\nonumber\\
+=&(\mat{B}_{T_s}-\mat{B}_{t_s})\vec{u}_{k}-\mat{A}_{t_s}\mat{B}_{t_d}\vec{u}_{k-1}
+\end{align}
+Rather than explicitly calculate this error, we will find an upper bound. Let $|U|_\infty=max(|\vec{u}|_\infty \mid \vec{u} \in U)$ be the maximum infinity norm of a vector set, propagating the error to the output $\vec{y}_k$ we have:
+\begin{align}
+|{\vec{y}_e}_{k}|_1 \subseteq &(\mat{C}(\mat{B}_{T_s}-\mat{B}_{t_s})+\mat{C}\mat{A}_{t_s}\mat{B}_{t_d})U
+\end{align}
+\end{proof}
+We overapproximate the effects of this vector by introducing a noise signal at the output $\nu_t=[-q_t\ q_t]$ and use the dynamics of the system without delay.
 
 %-------------------------------
 \subsection{Transient response} 
