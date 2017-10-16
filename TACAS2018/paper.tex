@@ -384,7 +384,7 @@ $A_d$, $B_d$, $C_d$ and $D_d$ denote the matrices that describe the discretized 
 %% as introduced by the ADC/DAC conversion blocks (Fig.~\ref{fig:digitalsystem}).
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{Model semantics of LTI models}\label{sec:model_semantics}
+\subsection{Semantics of LTI models}\label{sec:model_semantics}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 \todo{$\mathbb{R}^p$?}
@@ -433,20 +433,27 @@ unbounded time horizon.
 
 
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- \section{Acceleration of Continuous time systems}\label{sec:continuous_time_accel}
+ \section{Acceleration of continuous time systems}\label{sec:continuous_time_accel}
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- The main problem with the above discretization is that is does not allow us to observe the system at arbitrary points in time, only at integer multiples of the sample time. While this is adequate for the controller, it is not sufficient for verification. We must therefore establish a new model that allows us to observe the system at a given time $t$.
+ Note that the discretization in Sec.~\ref{sec:ssrepresentation} only 
+ allows us to observe the system at integer multiples of the sample time.
+ As we are interested in ensuring that certain properties of the system hold at any given
+ time (not just integer multiples of the sample time),
+ we accelerate the dynamics of the system (according to the model semantics in Sec.~\ref{sec:model_semantics}) in order to compute the state $\vec{x}_T$  at a given time $T$.
+ 
+ %While this is adequate for the controller, it is not sufficient for verification. We must therefore establish a new model that allows us to observe the system at a given time $t$.
  %We achieve this by using acceleration as described below.
  
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- \subsection{Accelrated dynamics using reals for systems without inputs}\label{sec:real_discrete_no_inputs}
+ \subsection{Accelerated dynamics for systems without inputs}\label{sec:real_discrete_no_inputs}
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- The state $\vec{x}_T$ present at time $T$ can be expressed as a linear function of $\vec{x}_0$ as described below
+ Given a specific time $T$, the state $\vec{x}_T$ present at $T$ can be expressed as a linear function of $\vec{x}_0$ as described below. Note that, as the system has no inputs, its dynamics are described by $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$.
+ 
  \begin{theorem}
- Given $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$, where $\mat{A}=\mat{S}\mat{J}\mat{S}^{-1}$, the expression
+ Given $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$, where $\mat{A}=\mat{S}\mat{J}\mat{S}^{-1}$, we have
  \begin{align}
  \vec{x}_T&=\vec{x}(t=T)=\mat{A}_{T}\vec{x}_0\\
- \mat{A}_{T}&= \mat{S}
+ \text{where }\mat{A}_{T}&= \mat{S}
  \left [ \begin{array}{cccc}
  e^{T\lambda_1}  & s_1\frac{T^{1}e^{T\lambda_i}}{(1)!} & \hdots  & s_i\frac{T^{p-1}e^{T\lambda_i}}{(p-i)!} \\
 0 & e^{T\lambda_i}  & s_i\frac{T^{j-i}e^{T\lambda_i}}{(j-i)!} & \vdots \\
@@ -455,10 +462,14 @@ unbounded time horizon.
 \end{array} \right ]
  \mat{S}^{-1}
  \label{eq:continuous_tube_dyn}\\
- &\text{where } s_i=\left\{\begin{array}{cc}1&gm(\lambda_i)>1\\0&gm(\lambda_i)=1\end{array}\right.,\nonumber
+ &\text{and } s_i=\left\{\begin{array}{cc}1&gm(\lambda_i)>1\\0&gm(\lambda_i)=1\end{array}\right.,\nonumber
  \end{align}
-$\lambda_i \in \mat{J}$ are the eigenvalues of $\mat{A}$, and $gm(\lambda_i)$ is the geometric multiplicity of $\lambda_i$.  $\vec{x}_T$ is a witness of the system $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$ at time t=T.
+$\lambda_i \in \mat{J}$ are the eigenvalues of $\mat{A}$, and $gm(\lambda_i)$ is the geometric multiplicity of $\lambda_i$.  We call $\vec{x}_T$ a witness of the system $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$ at time t=T.
  \end{theorem}
+ %% We can apply Th.~\ref{eq:continuous_tube_dyn} to discretized systems without inputs in order to
+ %% obtain a witness ..
+
+\todo{Can the corallary be motivated? The general motivation of the section was observing the system at times that are not necessarily integer multiple of the sampling time...} 
  \begin{corollary}
  If $\mat{J}$ is diagonal and there exists a discrete dynamics matrix for a sampling time $T_d$ such that $A_d=e^{\mat{A} T_d}$, then $\vec{x}_k=A_d^k\vec{x}_0 : k \in (0,\infty)$ is a witness of the system at time $t=kT_d$.
  \end{corollary}
@@ -508,8 +519,11 @@ $\lambda_i \in \mat{J}$ are the eigenvalues of $\mat{A}$, and $gm(\lambda_i)$ is
 %\end{proof}
 
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- \subsection{Accelerated dynamics using reals for systems with parametric inputs}\label{sec:real_discrete_param_inputs}
+ \subsection{Accelerated dynamics for systems with parametric inputs}\label{sec:real_discrete_param_inputs}
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ Next, we are interested in observing systems with parametric
+ inputs, described by $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)$.
+ For such systems, a witness $\vec{x}_T$ is computed next.
 \begin{theorem}
 The expression
  \begin{align}
@@ -517,7 +531,8 @@ The expression
 \vec{x}_T'&=\mat{A}\mat{A}_T\vec{x}_0 + (\mat{I}-\mat{A}_T)\mat{B}\vec{u} : \forall t \leq T,\ \vec{u}(t)=\vec{u} 
  \end{align}
  with $\mat{A}_T$ as per \eqref{eq:continuous_tube_dyn} is a witness of the system $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)$ at time $T$ given a parametric input $\vec{u}$.
- \end{theorem}
+\end{theorem}
+\todo{\eqref{eq:continuous_tube_dyn} is in the appendix}
  \begin{corollary}
  If $\mat{J}$ is diagonal and there exists a discrete dynamics matrix for a sampling time $T_d :  A_d=e^{\mat{A} T_d}$, then $\vec{x}_k=A_d^k\vec{x}_0+(\mat{I}-\mat{A}_d^k\mat{B}\vec{u}) : k \in (0,\infty)$ is a witness of the system at time $kT_d$.
  \end{corollary}
@@ -532,7 +547,7 @@ The expression
 % \end{proof}
 
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- \subsection{Accelerated dynamics using reals for systems with discrete time feedback inputs}\label{sec:real_discrete_feedback_inputs}
+ \subsection{Accelerated dynamics for systems with discrete time feedback inputs}\label{sec:real_discrete_feedback_inputs}
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 The final case we analyse here is that of hybrid time systems, where the
