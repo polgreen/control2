@@ -338,11 +338,54 @@ technique works for both linear and non-linear systems.
 \label{sec:preliminaries}
 %-------------------------------
 
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{Model Semantics}\label{sec:model_semantics}
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+%-------------------------------
+\subsection{State-space representation of physical systems}
+\label{sec:ssrepresentation}
+%-------------------------------
 
-\todo{This section should be integrated later, closer to the use of AA}
+%% A dynamical system is a system in which a function describes the progression
+%% of a state over time.  In a continuous domain with linear dynamics, it is
+%% described by a first order Ordinary Differential Equation (ODE).
+%% \begin{equation}
+%% \dot{x}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)% +\vec{w}(t)
+%% \label{eq:dynamical}
+%% \end{equation}
+
+We consider models of physical plants expressed as ordinary differential
+equations (ODEs), which we assume to be controllable:
+%
+\begin{align}
+\label{eq:ode1}
+\dot{x}(t) = Ax(t)+ B u(t), \quad x \in \mathbb{R}^{n}, u \in \mathbb{R}^m, A \in \mathbb{R}^{n \times n}, B \in \mathbb{R}^{n \times m}, 
+\end{align}
+%
+where $t \in \mathbb R_0^+$, where $A$ and $B$ are matrices that 
+specify the continuous plant, and with initial states set as $x(0)$.
+
+Furthermore, a control system may have a derived
+output that is a linear combination of its states and inputs, which may
+restrict the observability of the statespace from the output space.
+\begin{equation}
+\label{eq:ode2}  
+\vec{y}(t)=\mat{C}\vec{x}(t)+\mat{D}\vec{u}(t)
+\end{equation}
+
+In this work, equations~\eqref{eq:ode1} and~\eqref{eq:ode2} is soundly discretized in time (see Appendix~\ref{sec:cont_aa}) \todo{or use another paper as reference and remove sec .1?} into
+\begin{align}
+\label{eq:plant}
+x_{k+1} = A_d x_k+ B_d u_k\\
+y_{k} = C_d x_k + D_d u_k
+\end{align} 
+%
+where $k \in \mathbb N$ and $x_{0}=x(0)$ is the initial state. 
+$A_d$, $B_d$, $C_d$ and $D_d$ denote the matrices that describe the discretized plant dynamics, whereas $A$, $B$, $C$ and $D$ denote the continuous plant dynamics.  
+%% We synthesize for requirements over this discrete-time domain. 
+%% Later, we will address the issue of variable quantization, 
+%% as introduced by the ADC/DAC conversion blocks (Fig.~\ref{fig:digitalsystem}).
+
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+\subsection{Model semantics of LTI models}\label{sec:model_semantics}
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 The traces of the model starting from an initial set $X_0\subseteq \mathbb{R}^p$, 
 with inputs restricted to $U \subseteq \mathbb{R}^q$, are sequences 
@@ -385,50 +428,6 @@ Moreover, $\hat{X}
 extends the previous notion over an 
 unbounded time horizon.
 
-%-------------------------------
-\subsection{State-space representation of physical systems}
-\label{sec:ssrepresentation}
-%-------------------------------
-
-%% A dynamical system is a system in which a function describes the progression
-%% of a state over time.  In a continuous domain with linear dynamics, it is
-%% described by a first order Ordinary Differential Equation (ODE).
-%% \begin{equation}
-%% \dot{x}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)% +\vec{w}(t)
-%% \label{eq:dynamical}
-%% \end{equation}
-
-We consider models of physical plants expressed as ordinary differential
-equations (ODEs), which we assume to be controllable:
-%
-\begin{align}
-\label{eq:ode1}
-\dot{x}(t) = Ax(t)+ B u(t), \quad x \in \mathbb{R}^{n}, u \in \mathbb{R}^m, A \in \mathbb{R}^{n \times n}, B \in \mathbb{R}^{n \times m}, 
-\end{align}
-%
-where $t \in \mathbb R_0^+$, where $A$ and $B$ are matrices that 
-specify the continuous plant, and with initial states set as $x(0)$.
-
-Furthermore, a control system may have a derived
-output that is a linear combination of its states and inputs, which may
-restricts the observability of the statespace from the output space.
-\begin{equation}
-\label{eq:ode2}  
-\vec{y}(t)=\mat{C}\vec{x}(t)+\mat{D}\vec{u}(t)
-\end{equation}
-
-In this work, equations~\eqref{eq:ode1} and~\eqref{eq:ode2} is soundly discretized in time (see Appendix~\ref{sec:cont_aa}) \todo{or use another paper as reference and remove sec .1?} into
-\begin{align}
-\label{eq:plant}
-x_{k+1} = A_d x_k+ B_d u_k\\
-y_{k} = C_d x_k + D_d u_k
-\end{align} 
-%
-where $k \in \mathbb N$ and $x_{0}=x(0)$ is the initial state. 
-$A_d$, $B_d$, $C_d$ and $D_d$ denote the matrices that describe the discretized plant dynamics, whereas $A$, $B$, $C$ and $D$ denote the continuous plant dynamics.  
-%% We synthesize for requirements over this discrete-time domain. 
-%% Later, we will address the issue of variable quantization, 
-%% as introduced by the ADC/DAC conversion blocks (Fig.~\ref{fig:digitalsystem}).
 
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  \section{Acceleration of Continuous time systems}\label{sec:continuous_time_accel}
@@ -1744,7 +1743,7 @@ described by a first order Ordinary Differential Equation (ODE).
 %covariance $N ( 0 , Q )$ 
 Furthermore, a control system may have a derived
 output that is a linear combination of its states and inputs, which may
-restricts the observability of the statespace from the output space.
+restrict the observability of the state-space from the output space.
 \begin{equation}
 \vec{y}(t)=\mat{C}\vec{x}(t)+\mat{D}\vec{u}(t)
 \end{equation}
