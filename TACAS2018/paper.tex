@@ -719,13 +719,14 @@ Given ${\langle M,F \rangle}$ we use $\mathcal{F}_{\langle M,F \rangle} : \mathb
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 Let us first consider the effect of the quantization errors. 
-Within the controller, state values are manipulated at low precision,
-alongside the vector multiplication $\mat{K}\vec{x}$.
-Furthermore, 
-the quantizers for the DAC and the ADC introduce truncation errors
+Within the controller, state values are manipulated at low precision.
+%alongside the vector multiplication $\mat{K}\vec{x}$.
+Furthermore, the quantizers for the DAC and the ADC introduce truncation errors
 which we denote by the effect of the functions $\mathcal{F}_{\langle D \rangle}$
-and $\mathcal{F}_{\langle A \rangle}$ respectively. Finally, let us call $\vec{\nu}_e$ the
-error caused by the FWL effects on the observer (\emph{i.e} the numerical errors 
+and $\mathcal{F}_{\langle A \rangle}$, respectively. Finally, let us call $\vec{\nu}_e$ the
+error caused by the FWL effects on the observer
+\todo{the observer was not defined..}
+(\emph{i.e} the numerical errors 
 in the calculations as opposed to the estimation error).
 The inputs are computed using the following equation: 
 %
@@ -762,6 +763,8 @@ accounting for the finite-precision errors.
 \section{Specification of control systems properties} 
 \label{sec:specification}
 %-------------------------------
+\todo{all this section needs to be merged with the next one and only
+discussed for an observed model.}
 
 %-------------------------------
 \subsection{Stability} 
@@ -812,8 +815,9 @@ of oscillatory dynamics.  In~this work, the safety property is expressed as:
 \label{eq:safetyspec}
 \end{align}
 
-where $\mat{G}$ is a matrix of template directions taken as row vectors, and $\vec{h}$ is an upper
+where $\mat{G}$ is a matrix of template directions taken as row vectors \todo{unclear to me}, and $\vec{h}$ is an upper
 bound for the set in the corresponding row direction.
+
 
 Furthermore, we also need to consider the 
 constraints 
@@ -935,6 +939,7 @@ settling time is too.
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \section{Verification of a Controllable Observed System}\label{sec:cof_verification}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+\todo{the observer dynamics?}
 
 In most real implementations, the internal state of a plant cannot be
 directly measured but rather inferred from its
@@ -1199,8 +1204,7 @@ to assert the stability specification.
 Thus far we looked at checking stability
 %have presented a verification procedure for
 of a continuous plant in discretized time domain (i.e., the range of the quatizers is still
-$\mathbb{R}$) \todo{do you mean that we only considered time domains discretization until now and
-now we look at value domain discretization as well?}.  The next step we must realize is that the controller and the
+$\mathbb{R}$).  The next step we must realize is that the controller and the
 observer exist in a digital program, hence their domain is
 $\mathbb{R}_{\langle C \rangle}$.  This has two separate effects on the
 model.  If we recall Equation~\eqref{eq:observer_LTI}, the matrices of the observer
@@ -1288,6 +1292,7 @@ representation errors of the FWL domain.
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{Safety of a Digitally Observed System}\label{sec:cof_safety}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+\todo{FWL effects here?}
 
 %% Now that we have established convergence, we may examine the safety
 %% specification of the state space.
@@ -1295,7 +1300,6 @@ In the case of SISO systems, the safety specification is
 given by a range of the input and a range of the output which are considered
 safe ($\vec{u}_k \in [\underline{u}\ \ \overline{u}] \wedge \vec{y}_k \in
 [\underline{y}\ \ \overline{y}]$)
-\todo{I think the safety specification is generally on the states of the system.}.
 Whilst there are other properties we may
 include in the verification, we will solely focus on these for simplicity of
 the explanation.  We assume that we do not want saturation in our
@@ -1309,6 +1313,9 @@ second part of equation \eqref{eq:observer_LTI_cf} we obtain
 \phi_{safety} := \underline{y}<\mat{C}\vec{x}_k<\overline{y}, \forall k \geq 0
 \label{eq:of_bounds}
 \end{equation}
+\todo{Using \eqref{eq:observer_LTI_cf} doesn't result in this.}
+%
+\todo{transient response?}
 %
 %Note that we use the bounds of the input after the transformation by $\mat{B}$ since the matrix may reverse the bounds. 
 %
@@ -1371,7 +1378,7 @@ overapproximation errors and provides counterexamples for both
 discrete and continuous dynamics to feed a CEGIS loop on the synthesiser
 waiting for a new candidate solution. 
 
-\todo{this descrition does not mention two synthesis phases, which we should
+\todo{this description does not mention two synthesis phases, which we should
 focus on more.}
 
 We find a controller for a continuous initial set of states and set of inputs,
@@ -1382,8 +1389,7 @@ start with a very simple description regardless of the complexity of the
 overall dynamics, and only expand to more complex models when a solution
 cannot be found.
 
-The CEGIS loop for this approach 
-\todo{the description here is incomplete (stops at phase 4).}
+The CEGIS loop for this approach is described next.
 
 \begin{enumerate}
 \item 
@@ -1795,7 +1801,7 @@ and $T_s$ is the sample time. Then
 \end{align*}
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\section{Numerical representation and soundness} 
+\section{Numerical representation} 
 \label{sec:numeric_rep}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -2323,4 +2329,11 @@ replacing for $p_s$ , $t_s$, and $\overline{\lambda}$ we get equation
 %make it asymptomatically stable.
 %
 
+\todo{preliminaries should also contain the observer model.}
+\todo{why is sec 4 not considering the observer model or a system with output?}
+\todo{sec 6 needs to be merged into 7.}
+\todo{transient response for an observed model?}
+
 \end{document}
+
+
