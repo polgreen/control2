@@ -435,21 +435,15 @@ unbounded time horizon.
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  \section{Acceleration of Continuous time systems}\label{sec:continuous_time_accel}
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- \todo{I find this section header unclear. What is being verified here? Stability and safety only come later on.}
  The main problem with the above discretization is that is does not allow us to observe the system at arbitrary points in time, only at integer multiples of the sample time. While this is adequate for the controller, it is not sufficient for verification. We must therefore establish a new model that allows us to observe the system at a given time $t$.
  %We achieve this by using acceleration as described below.
  
- \todo{Again, it's not clear to me what ``not sufficient for verification'' means here.}
-
- \todo{Are all three cases, i.e. discrete dynamics using reals for systems without inputs,
-   discrete dynamics using reals for systems with parametric inputs, discrete dynamics using reals for systems with discrete time feedback inputs, relevant? If they are, then having a sentence describing the progression in this section would be useful.}
-
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  \subsection{Accelrated dynamics using reals for systems without inputs}\label{sec:real_discrete_no_inputs}
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  The state $\vec{x}_T$ present at time $T$ can be expressed as a linear function of $\vec{x}_0$ as described below
  \begin{theorem}
- Given $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$ \todo{$\dot{\vec{x}}(t)$?}, where $\mat{A}=\mat{S}\mat{J}\mat{S}^{-1}$, the expression
+ Given $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$, where $\mat{A}=\mat{S}\mat{J}\mat{S}^{-1}$, the expression
  \begin{align}
  \vec{x}_T&=\vec{x}(t=T)=\mat{A}_{T}\vec{x}_0\\
  \mat{A}_{T}&= \mat{S}
