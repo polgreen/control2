@@ -264,23 +264,27 @@ However, both approaches are unsuitable for the kind of control we seek to
 synthesize.
 
 The work in~\cite{hscc-paper} synthesizes stabilizing controllers for
-continuous plants given as transfer functions by exploiting bit-accurate
-verification of software-implemented digital controllers~\cite{Bessa16}. 
-While this work also uses CEGIS, the approach is restricted to digital
-controllers for stable closed-loop systems given as transfer function
-models: this results in a static check on their coefficients.  By contrast,
-in the current paper we consider a state-space representation of the
-physical system, which requires ensuring the specification over actual
-traces of the model, alongside the numerical soundness required by the
-effects of discretisation and finite-precision errors.  A state-space model
-has known advantages over the transfer function
-representation~\cite{Franklin15}: it naturally generalizes to multivariate
-systems (i.e., with multiple inputs and outputs); and it allows synthesis of
-control systems with guarantees on the internal dynamics, e.g., to
-synthesize controllers that make the closed-loop system \emph{safe}.  Our
-work focuses on the \emph{safety} of internal states, which is usually
-overlooked in the literature.  Moreover, our work integrates an
-abstraction/refinement (CEGAR) step inside the main CEGIS loop.
+continuous plants
+%given as transfer functions
+by exploiting bit-accurate verification of software-implemented
+digital controllers~\cite{Bessa16} but it is restricted to closed-loop
+systems given as transfer function models.
+
+%% While this work also uses CEGIS, the approach is restricted to digital
+%% controllers for stable closed-loop systems given as transfer function
+%% models: this results in a static check on their coefficients.  By contrast,
+%% in the current paper we consider a state-space representation of the
+%% physical system, which requires ensuring the specification over actual
+%% traces of the model, alongside the numerical soundness required by the
+%% effects of discretisation and finite-precision errors.  A state-space model
+%% has known advantages over the transfer function
+%% representation~\cite{Franklin15}: it naturally generalizes to multivariate
+%% systems (i.e., with multiple inputs and outputs); and it allows synthesis of
+%% control systems with guarantees on the internal dynamics, e.g., to
+%% synthesize controllers that make the closed-loop system \emph{safe}.  Our
+%% work focuses on the \emph{safety} of internal states, which is usually
+%% overlooked in the literature.  Moreover, our work integrates an
+%% abstraction/refinement (CEGAR) step inside the main CEGIS loop.
 
 The tool Pessoa~\cite{mazo2010pessoa} synthesizes correct-by-design embedded
 control software in a Matlab toolbox.  It is based on the abstraction of a
