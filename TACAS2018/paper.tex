@@ -78,7 +78,7 @@ the availability of low-cost devices that can perform highly non-trivial
 control tasks, with significant impact in numerous application areas such as
 life sciences, environmental control and robotics~\cite{astrom1997computer,Franklin15}.  Correct synthesis is non-trivial, even in cases with
 restricted dynamics.  We examine the case of Linear Time Invariant (LTI)
-Models, for which the synthesis of controllers is well understood.  However,
+models, for which the synthesis of controllers is well understood.  However,
 the use of digital control architectures adds new challenges caused by
 artifacts specific to digital control, such as the effects of
 finite-precision arithmetic, time discretization and quantization errors
@@ -92,23 +92,30 @@ method for synthesising safe digital stabilizing controllers for fully
 observable LTI plants.  This work differs from the vast majority of existing
 approaches in that it explores the continuous space of the system to
 synthesise correct by construction minimal digital controllers.  Contrary to
-LTL models that require thousands of states and elaborate algorithms to
+LTL models \todo{citation} that require thousands of states and elaborate algorithms to
 implement, these PID-like controllers are represented by a few parameters
 and only require a few lines of code, thus reducing the implementation cost
-and execution time while remaining resilient to the effects of digitilazation.
-However,~\cite{abate2017automated}~is still restricted to fully observed
-systems (i.e. where all the states are known) modelled in discrete time,
+and execution time while remaining resilient to the effects of digitalization.
+However,~\cite{abate2017automated}~is restricted to fully observed
+systems (i.e., where all the states are known) modelled in discrete time,
 and furthemore explores only a limited set of properties that engineers
-are interested in.
+are interested in. Conversely, 
+in most real implementations, the internal state of a plant cannot be
+directly measured but rather inferred from its
+effect on the output. A plant model that minimises the difference
+between the outputs is called an observer and it is a well known
+paradigm in the control literature~\cite{astrom1997computer}.
+
 
 In this paper we build on the ideas presented in~\cite{abate2017automated}
 and develop a new technique that addresses most of these limitations. 
 By~combining state-of-the-art synthesis and verification engines we
 automatically generate digital observer controllers for a given continuous
-plant model that are correct by construction.  This approach delivers a high
-degree of automation, promises to reduce the cost and time of development of
-digital control dramatically, and requires considerably less expertise than
-a-posteriori verification.  Specifically, we synthesize stable,
+plant model that are correct by construction.  %% This approach delivers a high
+%% degree of automation, promises to reduce the cost and time of development of
+%% digital control dramatically, and requires considerably less expertise than
+%% a-posteriori verification.
+Specifically, we synthesize stable,
 software-implemented embedded controllers along with a model of a physical
 plant (observer).  Due to the complexity of such closed-loop systems, in
 this work we focus on linear models with known configurations, and perform
@@ -158,12 +165,12 @@ to their modularity.
 %only considers the static properties of the model.  It~also uses a very low
 %precision bit vector representation of the real dynamics in order to
 %minimise synthesis time.  
-A candidate solution is then passed to a set of verifiers which will
-evaluate the synthesised controller over an even more precise
-abstraction of the concrete domain in both discrete and continuous
-space/time.  The verification phase uses abstraction refinement when needed to ensure
-that rejected candidates are not being discarded due to the
-over-approximation.
+%% A candidate solution is then passed to a set of verifiers which will
+%% evaluate the synthesised controller over an even more precise
+%% abstraction of the concrete domain in both discrete and continuous
+%% space/time.  The verification phase uses abstraction refinement when needed to ensure
+%% that rejected candidates are not being discarded due to the
+%% over-approximation.
 
 %% The nature of the counterexamples varies depending on
 %% the following conditions:
@@ -901,7 +908,7 @@ the eigenvalues are smaller than a desired magnitude, thus ensuring that the
 settling time is too.
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\section{Verification of a Conrollable Observed System}\label{sec:cof_verification}
+\section{Verification of a Controllable Observed System}\label{sec:cof_verification}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 In most real implementations, the internal state of a plant cannot be
