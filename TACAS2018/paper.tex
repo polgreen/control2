@@ -92,8 +92,8 @@ method for synthesising safe digital stabilizing controllers for fully
 observable LTI plants.  This work differs from the vast majority of existing
 approaches in that it explores the continuous space of the system to
 synthesise correct by construction minimal digital controllers.  Contrary to
-LTL models \todo{citation} that require thousands of states and elaborate algorithms to
-implement, these PID-like controllers are represented by a few parameters
+LTL models that require thousands of states and elaborate algorithms to
+implement \cite{reissig2017feedback}, these PID-like controllers are represented by a few parameters
 and only require a few lines of code, thus reducing the implementation cost
 and execution time while remaining resilient to the effects of digitalization.
 However,~\cite{abate2017automated}~is restricted to fully observed
@@ -370,7 +370,7 @@ output $\vec{y}$ that is a linear combination of its states and inputs:
 \vec{y}(t)=\mat{C}\vec{x}(t)+\mat{D}\vec{u}(t)
 \end{equation}
 
-In this work, equations~\eqref{eq:ode1} and~\eqref{eq:ode2} are soundly discretized in time (see Appendix~\ref{sec:cont_aa}) \todo{or use another paper as reference and remove sec .1?} into
+In this work, equations~\eqref{eq:ode1} and~\eqref{eq:ode2} are soundly discretized in time~\cite{van1978computing,middleton1990digital} (see Appendix~\ref{sec:cont_aa}) into
 \begin{align}
 \label{eq:plant}
 \vec{x}_{k+1} = \mat{A}_d \vec{x}_k+ \mat{B}_d \vec{u}_k\\
@@ -1801,7 +1801,7 @@ Soundness is ensured by the verifiers,but once again, since these use over-appro
 \appendix
 
 %-------------------------------
-\subsection{Overapproximating continuous time dynamics using discrete models}
+\section{Overapproximating continuous time dynamics using discrete models}
 \label{sec:cont_aa}
 %-------------------------------
 Our plant models derive from the discretization of
