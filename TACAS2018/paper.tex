@@ -999,8 +999,22 @@ A controllable and observable system will have the following dynamics:
 \end{align}
 where $\vec{x}_e=\vec{x}-\hat{\vec{x}}$ is the estimation error of the state space by the observer, and $k_r$ is a reference gain required by the model.
 
-In order for the system to be in canonical form, we must however perform a transformation. The challenge however is that we want the state space dynamics in
-reachable form and the observer error dynamics in observable form. Let 
+We want the state space dynamics in reachable form ($\mat{A}_c$) and the observer error dynamics in observable form ($\mat{A}_o$), i.e. with dynamics whose coefficients are represented solely by those of the characteristic polynomial as follows:
+\begin{align*}
+\mat{A}_{c}=\left[
+\begin{array}{cc}
+k_n-a_n&\begin{array}{cc}\cdots&k_1-a_1\end{array}\\
+\mat{I}&\mat{0}
+\end{array}\right]&&
+\mat{A}_{o}=\left[
+\begin{array}{ccc}
+a_n-l_n&&\mat{I}\\
+&&\vdots\\
+a_1-l_1&&\mat{0}
+\end{array}\right]
+\end{align*}
+where $\sum_{i=0}^p a_iz^i$ is the characteristic polynomial of the plant.
+This is achieved by the following transformation. Let
 \begin{equation}
 \left[\begin{array}{c}\vec{x}'\\ \vec{x}_e'\end{array}\right]=
 \left[\begin{array}{cc}\mat{T}_c & \mat{0}\\\mat{0} & \mat{T}_o\end{array}\right] 
@@ -1018,37 +1032,7 @@ We can transform equation \eqref{eq:observer_LTI} into the equivalent canonical 
 =& \mat{C}_{t}\vec{x}_k% + \mat{D}_{d}\vec{u}_k
 \label{eq:observer_LTI_cf}
 \end{align}
-where
-{
-\setlength{\abovedisplayskip}{0pt}
-\setlength{\belowdisplayskip}{0pt}
-%\begin{align*}
-%
-%\mat{A}_{c}=&\left[
-%\begin{array}{ccccc}
-%0&1&0&\cdots&0\\
-%0&0&1&\cdots&0\\
-%\vdots&\vdots&\vdots&\ddots&\vdots\\
-%0&0&0&\cdots&1\\
-%k_n-a_n&\cdots&k_i-a_i&\cdots&k_1-a_1
-%\end{array}\right]
-%\label{eq:cf_SISO_2}
-%\end{align*}
-\begin{align*}
-\mat{A}_{c}=\left[
-\begin{array}{cc}
-k_n-a_n&\begin{array}{cc}\cdots&k_1-a_1\end{array}\\
-\mat{I}&\mat{0}
-\end{array}\right]&&
-\mat{A}_{o}=\left[
-\begin{array}{ccc}
-a_n-l_n&&\mat{I}\\
-&&\vdots\\
-a_1-l_1&&\mat{0}
-\end{array}\right]
-\end{align*}
-}
-{\setlength{\belowdisplayskip}{0pt}
+{%\setlength{\belowdisplayskip}{0pt}
 \begin{align*}
 \mat{A}_{c}=&\mat{T}_c\left(\mat{A}_d-\mat{B}_d\mat{K}\right)\mat{T}_c^{-1}&
 \mat{A}_{o}=&\mat{T}_o\left(\mat{A}_d-\mat{L}\mat{C}_d\right)\mat{T}_o^{-1}\\
