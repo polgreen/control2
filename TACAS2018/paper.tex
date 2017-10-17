@@ -356,22 +356,21 @@ equations (ODEs), which we assume to be controllable:
 %
 \begin{align}
 \label{eq:ode1}
-\dot{x}(t) = Ax(t)+ B u(t), \quad x \in \mathbb{R}^p, u \in \mathbb{R}^q, A \in \mathbb{R}^{p \times p}, B \in \mathbb{R}^{p \times q}, 
+\dot{x}(t) = \mat{A}x(t)+ \mat{B} u(t), \quad x \in \mathbb{R}^p, u \in \mathbb{R}^q, \mat{A} \in \mathbb{R}^{p \times p}, \mat{B} \in \mathbb{R}^{p \times q},
 \end{align}
 %
-where $t \in \mathbb R_0^+$, where $A$ and $B$ are matrices that 
+where $t \in \mathbb R_0^+$, where $\mat{A}$ and $\mat{B}$ are matrices that 
 specify the continuous plant, and with initial states set as $x(0)$.
 
-\todo{we are interested in observable systems so this is the definitely the case...}
-Furthermore, a control system may have a derived
-output that is a linear combination of its states and inputs, which may
-restrict the observability of the state-space from the output space.
+Furthermore, we are interested in control systems with a derived
+output $\vec{y}$ that is a linear combination of its states and inputs:
+%, which may restrict the observability of the state-space from the output space.
 \begin{equation}
 \label{eq:ode2}  
 \vec{y}(t)=\mat{C}\vec{x}(t)+\mat{D}\vec{u}(t)
 \end{equation}
 
-In this work, equations~\eqref{eq:ode1} and~\eqref{eq:ode2} is soundly discretized in time (see Appendix~\ref{sec:cont_aa}) \todo{or use another paper as reference and remove sec .1?} into
+In this work, equations~\eqref{eq:ode1} and~\eqref{eq:ode2} are soundly discretized in time (see Appendix~\ref{sec:cont_aa}) \todo{or use another paper as reference and remove sec .1?} into
 \begin{align}
 \label{eq:plant}
 \vec{x}_{k+1} = \mat{A}_d \vec{x}_k+ \mat{B}_d \vec{u}_k\\
@@ -379,7 +378,7 @@ In this work, equations~\eqref{eq:ode1} and~\eqref{eq:ode2} is soundly discretiz
 \end{align} 
 %
 where $k \in \mathbb N$ and $x_{0}=x(0)$ is the initial state. 
-$\mat{A}_d$, $\mat{B}_d$, $\mat{C}_d$ and $\mat{D}_d$ denote the matrices that describe the discretized plant dynamics, whereas $\mat{A}$, $\mat{B}$, $\mat{C}$ and $\mat{D}$ denote the continuous plant dynamics.  In this work we will assume $\mat{D}_d=\mat{D}=\mat{0}$. Since $\vec{y}$ can be directly derived from $\vec{x}$, we will omit discussing it in the following unless strictly necessary.
+$\mat{A}_d$, $\mat{B}_d$, $\mat{C}_d$ and $\mat{D}_d$ denote the matrices that describe the discretized plant dynamics, whereas $\mat{A}$, $\mat{B}$, $\mat{C}$ and $\mat{D}$ denote the continuous plant dynamics.  In this work we assume $\mat{D}_d=\mat{D}=\mat{0}$. Also, since $\vec{y}$ can be directly derived from $\vec{x}$, we will omit discussing it in the following unless strictly necessary.
 %% We synthesize for requirements over this discrete-time domain. 
 %% Later, we will address the issue of variable quantization, 
 %% as introduced by the ADC/DAC conversion blocks (Fig.~\ref{fig:digitalsystem}).
