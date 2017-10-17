@@ -356,7 +356,7 @@ equations (ODEs), which we assume to be controllable:
 %
 \begin{align}
 \label{eq:ode1}
-\dot{x}(t) = Ax(t)+ B u(t), \quad x \in \mathbb{R}^{n}, u \in \mathbb{R}^m, A \in \mathbb{R}^{n \times n}, B \in \mathbb{R}^{n \times m}, 
+\dot{x}(t) = Ax(t)+ B u(t), \quad x \in \mathbb{R}^p, u \in \mathbb{R}^q, A \in \mathbb{R}^{p \times p}, B \in \mathbb{R}^{p \times q}, 
 \end{align}
 %
 where $t \in \mathbb R_0^+$, where $A$ and $B$ are matrices that 
@@ -374,12 +374,12 @@ restrict the observability of the state-space from the output space.
 In this work, equations~\eqref{eq:ode1} and~\eqref{eq:ode2} is soundly discretized in time (see Appendix~\ref{sec:cont_aa}) \todo{or use another paper as reference and remove sec .1?} into
 \begin{align}
 \label{eq:plant}
-x_{k+1} = A_d x_k+ B_d u_k\\
-y_{k} = C_d x_k + D_d u_k
+\vec{x}_{k+1} = \mat{A}_d \vec{x}_k+ \mat{B}_d \vec{u}_k\\
+\vec{y}_{k} = \mat{C}_d \vec{x}_k + \mat{D}_d \vec{u}_k
 \end{align} 
 %
 where $k \in \mathbb N$ and $x_{0}=x(0)$ is the initial state. 
-$A_d$, $B_d$, $C_d$ and $D_d$ denote the matrices that describe the discretized plant dynamics, whereas $A$, $B$, $C$ and $D$ denote the continuous plant dynamics.  
+$\mat{A}_d$, $\mat{B}_d$, $\mat{C}_d$ and $\mat{D}_d$ denote the matrices that describe the discretized plant dynamics, whereas $\mat{A}$, $\mat{B}$, $\mat{C}$ and $\mat{D}$ denote the continuous plant dynamics.  In this work we will assume $\mat{D}_d=\mat{D}=\mat{0}$. Since $\vec{y}$ can be directly derived from $\vec{x}$, we will omit discussing it in the following unless strictly necessary.
 %% We synthesize for requirements over this discrete-time domain. 
 %% Later, we will address the issue of variable quantization, 
 %% as introduced by the ADC/DAC conversion blocks (Fig.~\ref{fig:digitalsystem}).
@@ -388,7 +388,6 @@ $A_d$, $B_d$, $C_d$ and $D_d$ denote the matrices that describe the discretized 
 \subsection{Semantics of LTI models}\label{sec:model_semantics}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 %
-\todo{$\mathbb{R}^p$?}
 The traces of the model starting from an initial set $X_0\subseteq \mathbb{R}^p$, 
 with inputs restricted to $U \subseteq \mathbb{R}^q$, are sequences 
 $ \vec{x}_0 \xrightarrow{\vec{u}_0} \vec{x}_1 \xrightarrow{\vec{u}_1} \vec{x}_2 \xrightarrow{\vec{u}_2} \ldots $, 
@@ -402,7 +401,7 @@ where
 \mat{B}\vec{u}_k \mid \mat{G}\vec{x}_k \leq \vec{h}\big)\;. 
 \end{equation}
 %
-\todo{$\mat{G}, \vec{h}$?}
+where $\mat{G}$ and $\vec{h}$ define a set of inequalities that describe the safe state-space.
 %
 We extend the notation above to convex sets of initial conditions and inputs ($X_0$ and $U$), 
 and write $\tau(X_0,U)$ to denote the set of states $\{\vec{x} \mid \vec{x}_0 \in
@@ -472,7 +471,7 @@ $\lambda_i \in \mat{J}$ are the eigenvalues of $\mat{A}$, and $gm(\lambda_i)$ is
 %
 \todo{Can the corallary be motivated? The general motivation of the section was observing the system at times that are not necessarily integer multiple of the sampling time...} 
  \begin{corollary}
- If $\mat{J}$ is diagonal and there exists a discrete dynamics matrix for a sampling time $T_d$ such that $A_d=e^{\mat{A} T_d}$, then $\vec{x}_k=A_d^k\vec{x}_0 : k \in (0,\infty)$ is a witness of the system at time $t=kT_d$.
+ If $\mat{J}$ is diagonal and there exists a discrete dynamics matrix for a sampling time $T_d$ such that $A_d=e^{\mat{A} T_d}$, then $\vec{x}_k=A_d^k\vec{x}_0 : k \in \mathbb{R}^+$ is a witness of the system at time $t=kT_d$.
  \end{corollary}
 % \begin{proof}
 % Let us recall equation \ref{eq:discretize}. The discrete representation of the system dynamics discretised with sample time $T_1$ is ruled by the formula
@@ -534,7 +533,7 @@ The expression
  with $\mat{A}_T$ as per \eqref{eq:continuous_tube_dyn} is a witness of the system $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)$ at time $T$ given a parametric input $\vec{u}$.
 \end{theorem}
  \begin{corollary}
- If $\mat{J}$ is diagonal and there exists a discrete dynamics matrix for a sampling time $T_d :  A_d=e^{\mat{A} T_d}$, then $\vec{x}_k=A_d^k\vec{x}_0+(\mat{I}-\mat{A}_d^k\mat{B}\vec{u}) : k \in (0,\infty)$ is a witness of the system at time $kT_d$.
+ If $\mat{J}$ is diagonal and there exists a discrete dynamics matrix for a sampling time $T_d :  A_d=e^{\mat{A} T_d}$, then $\vec{x}_k=A_d^k\vec{x}_0+(\mat{I}-\mat{A}_d^k\mat{B}\vec{u}) : k \in \mathbb{R}^+$ is a witness of the system at time $kT_d$.
  \end{corollary}
 % \begin{proof}
 % We begin by expanding the equation
@@ -560,15 +559,15 @@ The expression
  \vec{x}_{T} &= (\mat{A}_{T-kT_s}-\mat{B}_{T-kT_s}\mat{K}) (\mat{A}_d-\mat{B}_d\mat{K})^k\vec{x}_0
  \label{eq:cyber_feedback}
  \end{align}
- with $\mat{A}_T, \mat{B}_T$ as per \eqref{eq:continuous_tube_dyn} and $\mat{A}_d, \mat{B}_d$ describing the discretized plant dynamics is a witness of the system
+ with $\mat{A}_T$ as per \eqref{eq:continuous_tube_dyn}, 
+ $\mat{B}_T=\mat{A}^{-1}(\mat{I}-\mat{A}_T)\mat{B}$ and 
+ $\mat{A}_d, \mat{B}_d$ describing the discretized plant dynamics is a witness of the system
  \begin{align}
  \dot{\vec{x}}(t) &= \mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)\nonumber\\
- \vec{u}_t&=\mat{K}\vec{x}_k  \mid  kT_s \leq t < (k+1)T_s
+ \vec{u}(t)&=\mat{K}\vec{x}_k  \mid  kT_s \leq t < (k+1)T_s
  \end{align}
  \end{theorem}
 %
-\todo{\eqref{eq:continuous_tube_dyn} does not define $\mat{B}_T$}
-\todo{$\vec{u}_t$?}
 %
 %\begin{proof}
 %Let $\mat{K}$ be a feedback controller such that $\vec{u}_k=-\mat{K}\vec{x}_k$ at time $t=kT_s$. Let the output of
@@ -610,13 +609,12 @@ delay is much smaller than the sampling time.
 \begin{theorem}
 The error introduced by a delay $t_d$ in the control output $\vec{u}_k$ of a discrete feedback controller for a continuous LTI system can be modelled as a non-deterministic noise signal upperbound by 
 \begin{align}
-|{\vec{y}_e}_{k}|_1 \leq q_t, \text{ where } q_t=&(|\mat{C}(\mat{B}_{T_s}-\mat{B}_{t_s})|_1+|\mat{C}\mat{A}_{t_s}\mat{B}_{t_d}|_1)|U|_\infty
+|\vec{y}_{k}-{\vec{y}_{t_d}}_{k}|_1 \leq q_t, \text{ where } q_t=&(|\mat{C}(\mat{B}_{T_s}-\mat{B}_{t_s})|_1+|\mat{C}\mat{A}_{t_s}\mat{B}_{t_d}|_1)|U|_\infty
 \end{align}
+where $\vec{y}_{t_d}$ is the output of the system with delay $t_d$.
 \end{theorem}
 %
-\todo{${\vec{y}_e}_{k}$ ?, notation $| |_x$ ?}
-\todo{also, now we do have an output $y$, why didn't we consider this case at
-\ref{sec:real_discrete_feedback_inputs}?}
+\todo{notation $| |_x$ ?}
 %
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{Errors generated by the numerical representation} 
@@ -809,15 +807,14 @@ safe system: indeed, the state values may leave the safe part of the state
 space while they converge to the equilibrium, which is typical in the case
 of oscillatory dynamics.  In~this work, the safety property is expressed as:
 %
-\todo{shouldn't this be over the states of the system?}
 \begin{align}
 \phi_\mathit{safety}\equiv& \underline{y} \leq y_k \leq \overline{y}
 \iff \forall k\geq 0.\, \mat{G}\vec{x}_k \leq \vec{h},
 \label{eq:safetyspec}
 \end{align}
 
-where $\mat{G}$ is a matrix of template directions taken as row vectors \todo{unclear to me}, and $\vec{h}$ is an upper
-bound for the set in the corresponding row direction.
+where $\mat{G}$ and $\vec{h}$ define a set of inequalities that describe the safe state-space.
+
 
 
 Furthermore, we also need to consider the 
@@ -842,7 +839,7 @@ This is given as a settling time for the system to become stable.
 \begin{theorem}
 Given a set of eigenvalues for a discrete time model of an $n^{th}$ order system $\lambda_i =e^{\omega_i}: i \in [1\ n]$, the settling time of the system is upperbounded by
 \begin{equation}
-t_s<-log_{|\overline{\lambda}|}({p_s}) : |\overline{\lambda}| =\max(|\lambda_i|) \wedge |\overline{\lambda}|<1,\ \forall i \in [1\ n]
+t_s<-log_{\overline{\lambda}}({p_s}) : \overline{\lambda} = \max(|\lambda_i|) \wedge \overline{\lambda}<1,\ \forall i \in [1\ n]
 \label{eq:set_time}
 \end{equation}
 where $0\leq p_s \leq 1$ is the desired percentage of the target within which the output must remain after $t_s$.
@@ -909,7 +906,7 @@ where $0\leq p_s \leq 1$ is the desired percentage of the target within which th
 %Hence the overall decay of the system is always smaller
 %than $d=e^{-|\overline{\omega}| t}$ where $0\leq d\leq 1$ is the remaining
 %percentage of the decay expressed.  Reversing we have
-%$t=-\frac{ln(d)}{|\overline{\omega}|}=-\frac{ln(d)}{ln(|\overline{\lambda}|)}$. 
+%$t=-\frac{ln(d)}{|\overline{\omega}|}=-\frac{ln(d)}{ln(\overline{\lambda})}$. 
 %replacing for $p_s$ , $t_s$, and $\overline{\lambda}$ we get equation
 %\eqref{eq:set_time}
 %%
@@ -1083,7 +1080,7 @@ section we will look at checking stability and safety in the presence of an obse
    (adeast) edge (Ad.east)
    (Ad.west) edge (adwest)
    (adwest) edge (o1.south)
-   (o2.west) edge (Ld.east)
+   (o2.west) edge node {$\vec{y}_e$} (Ld.east)
    (Ld.west) edge (ldwest)
    (ldwest) edge (o1.north)
    (delay.east) edge (Cd.west)
@@ -1106,15 +1103,19 @@ Let us look at observer for a SISO systems as shown in figure \ref{fig:observers
 \eta_1&=\nu_1+\nu_1'+\nu_t\\
 \eta_2&=\nu_2+\nu_2'
 \end{align*}
+where $\nu_1$ and $\nu_2$ are the quantization noises introduced by the ADC and the DAC, $\nu_t$ is the noise introduced by the delay, and $\nu_1'$ and $\nu_2'$ are quantization noises caused by roundoffs in the FWL operations.
 A controllable and observable system will have the following dynamics:
 \begin{align}
+\scriptstyle
 \left [\begin{array}{c}\vec{x}\\ \vec{x}_e \end{array}\right]_{k+1}
-&=\left [\begin{array}{cc}\mat{A}_d-\mat{B}_d\mat{K}_d&\mat{B}_d\mat{K}_d\\ \mat{0}&\mat{A}_d-\mat{L}_d\mat{C}_d\end{array}\right]
-\left [\begin{array}{c}\vec{x}\\ \vec{x}_e \end{array}\right]_k\nonumber\\
-&+\left [\begin{array}{c}\mat{B}_dk_r\\ \mat{0} \end{array}\right] \vec{r}_k
-+\left [\begin{array}{cc}\mat{B}_dk_r&\mat{0}\\ \mat{0}&-\mat{L}_d\end{array}\right]\left [\begin{array}{c}\vec{\eta}_2\\ \vec{\eta}_1\end{array}\right]
+=\left [\begin{array}{cc}\mat{A}_d-\mat{B}_d\mat{K}&\mat{B}_d\mat{K}\\ \mat{0}&\mat{A}_d-\mat{L}\mat{C}_d\end{array}\right]
+\left [\begin{array}{c}\vec{x}\\ \vec{x}_e \end{array}\right]_k
++\left [\begin{array}{c}\mat{B}_dk_r\\ \mat{0} \end{array}\right] \vec{r}_k
++\left [\begin{array}{cc}\mat{B}_dk_r&\mat{0}\\ \mat{0}&-\mat{L}\end{array}\right]\left [\begin{array}{c}\vec{\eta}_2\\ \vec{\eta}_1\end{array}\right]
 \label{eq:observer_LTI}
 \end{align}
+where $\vec{x}_e=\vec{x}-\hat{\vec{x}}$ is the estimation error of the state space by the observer, and $k_r$ is a reference gain required by the model.
+
 In order for the system to be in canonical form, we must however perform a transformation. The challenge however is that we want the state space dynamics in
 reachable form and the observer error dynamics in observable form. Let 
 \begin{equation}
@@ -1131,7 +1132,7 @@ We can transform equation \eqref{eq:observer_LTI} into the equivalent canonical 
 +\mat{B}_{\eta}\left [\begin{array}{c}\vec{\eta}_2\\ \vec{\eta}_1\end{array}\right]\nonumber\\
 \nonumber\\
 \vec{y}_k
-=& \mat{C}_{t}\vec{x}_k + \mat{D}_{d}\vec{u}_k
+=& \mat{C}_{t}\vec{x}_k% + \mat{D}_{d}\vec{u}_k
 \label{eq:observer_LTI_cf}
 \end{align}
 where
@@ -1153,29 +1154,29 @@ where
 \begin{align*}
 \mat{A}_{c}=\left[
 \begin{array}{cc}
-\mat{0}&\mat{I}\\
-k_n-a_n&\begin{array}{cc}\cdots&k_1-a_1\end{array}
+k_n-a_n&\begin{array}{cc}\cdots&k_1-a_1\end{array}\\
+\mat{I}&\mat{0}
 \end{array}\right]&&
 \mat{A}_{o}=\left[
 \begin{array}{ccc}
-\mat{0}&&a_n-l_n\\
+a_n-l_n&&\mat{I}\\
 &&\vdots\\
-\mat{I}&&a_1-l_1
+a_1-l_1&&\mat{0}
 \end{array}\right]
 \end{align*}
 }
 {\setlength{\belowdisplayskip}{0pt}
 \begin{align*}
-\mat{A}_{c}=&\mat{T}_c\left(\mat{A}_d-\mat{B}_d\mat{K}_d\right)\mat{T}_c^{-1}&
-\mat{A}_{o}=&\mat{T}_o\left(\mat{A}_d-\mat{L}_d\mat{C}_d\right)\mat{T}_o^{-1}\\
+\mat{A}_{c}=&\mat{T}_c\left(\mat{A}_d-\mat{B}_d\mat{K}\right)\mat{T}_c^{-1}&
+\mat{A}_{o}=&\mat{T}_o\left(\mat{A}_d-\mat{L}\mat{C}_d\right)\mat{T}_o^{-1}\\
 \mat{A}'=&\left [\begin{array}{cc}\mat{A}_{c}&\mat{B}_{o}\\ \mat{0}&\mat{A}_{o}\end{array}\right]&
-\mat{B}_{o}=&\mat{T}_c\mat{B}_d\mat{K}_d\mat{T}_o^{-1}\\
+\mat{B}_{o}=&\mat{T}_c\mat{B}_d\mat{K}\mat{T}_o^{-1}\\
 \mat{B}'=&\left[\begin{array}{c}\mat{T}_c\mat{B}_d\mat{k}_r\\\mat{0}\end{array}\right]&
-\mat{B}_{\eta}=&\left[\begin{array}{cc}\mat{T}_c\mat{B}_d\mat{k}_r&\mat{0}\\\mat{0}&-\mat{T}_o\mat{L}_d\end{array}\right]\\
+\mat{B}_{\eta}=&\left[\begin{array}{cc}\mat{T}_c\mat{B}_d\mat{k}_r&\mat{0}\\\mat{0}&-\mat{T}_o\mat{L}\end{array}\right]\\
 \mat{T}_c=&\mat{R}_{cf}\mat{R}^{-1}&
 \mat{T}_o=&\mat{W}_o^{-1}\mat{W}_{of}\\
 \mat{C}_t=&\mat{C}_d\mat{T}_c&
-\mat{L}_d=& \mat{T}_o^{-1}\left[ \begin{array}{ccc}l_1&\cdots&l_n\end{array}\right]^T
+\mat{L}=& \mat{T}_o^{-1}\left[ \begin{array}{ccc}l_1&\cdots&l_n\end{array}\right]^T
 \end{align*}
 }
 
@@ -1189,10 +1190,12 @@ and $\mat{W}_o$%$\mat{W}_o=\left[\begin{array}{c} mat{C}\\ \mat{C}\mat{A}\\ \vdo
 Careful examination of the above matrices reveals that because the $\mat{A}'$ is
 upper block diagonal, the spectrum of $\mat{A}'$ is equal to the union of
 the spectrum of $\mat{A}_{c}$ and $\mat{A}_{o}$, which can be calculated
-separately.  Additionally, these correspond to the roots of the polynomials
+separately.  In other words, the characteristic polynomial of the closed loop is
+equal to the multiplication of the characteristic polynomials of the controller
+and the observer when seen independently.
 %
 \begin{align*}
-\left(z^p+\sum_{i=1}^p{(a_i-k_i)z^{p-i}}\right) \left(z^p+\sum_{i=1}^p{(l_i-a_i)z^{p-i}}\right)
+P(z)=P_K(z)P_L(z)=\left(z^p+\sum_{i=1}^p{(a_i-k_i)z^{p-i}}\right) \left(z^p+\sum_{i=1}^p{(l_i-a_i)z^{p-i}}\right)
 \end{align*}
 
 As stated in Section~\ref{ssec:stabspecification}, we use Jury's Criterion on these polynomials
@@ -1233,14 +1236,14 @@ Equation \eqref{eq:observer_LTI_cf} becomes:
 \left [\begin{array}{c}\vec{x}'\\ \vec{x}_e' \end{array}\right]_k
 +\mat{B}_{c} \vec{r}_k
 +\mat{B}_{\eta}\left [\begin{array}{c}\vec{\eta}_2\\ \vec{\eta}_1\end{array}\right]\nonumber\\
-\vec{y}_k=&\mat{C}_{t}\vec{x}_k' + \mat{D}_{d}\vec{u}_k
+\vec{y}_k=&\mat{C}_{t}\vec{x}_k'% + \mat{D}_{d}\vec{u}_k
 \label{eq:observer_LTI_FWL_cf}
 \end{align}
 where
 {\setlength{\abovedisplayskip}{2pt}
 \setlength{\belowdisplayskip}{2pt}
 \begin{align*}
-\mat{A}_{c}=&\mat{T}_c\left(\mat{A}_d-\mat{B}_d\mat{K}_d\right)\mat{T}_c^{-1}&
+\mat{A}_{c}=&\mat{T}_c\left(\mat{A}_d-\mat{B}_d\mat{K}\right)\mat{T}_c^{-1}&
 \mat{A}_{o}=&\mat{T}_o\left({\mat{A}_d}_{\langle C \rangle}-\mat{L}_{\langle C \rangle}{\mat{C}_d}_{\langle C \rangle}\right)\mat{T}_o^{-1}\\
 \mat{B}_{o}=&\mat{T}_c{\mat{B}_d}_{\langle C \rangle}\mat{K}_{\langle C \rangle}\mat{T}_o^{-1}&
 \mat{B}_{e}=&\mat{T}_c(\mat{B}_d-{\mat{B}_d}_{\langle C \rangle})\mat{K}_{\langle C \rangle}\mat{T}_o^{-1}\\
@@ -1293,7 +1296,7 @@ representation errors of the FWL domain.
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{Safety of a Digitally Observed System}\label{sec:cof_safety}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\todo{FWL effects here?}
+\todo{FWL effects here? they are implicit from equation \ref{eq:observer_LTI_FWL_cf}}
 
 %% Now that we have established convergence, we may examine the safety
 %% specification of the state space.
@@ -1717,7 +1720,7 @@ The technique was applied  to the benchmarks and the results can be seen in tabl
 \# & \multicolumn{1}{|c|}{Benchmark} & \multicolumn{1}{|c|}{order}  & \multicolumn{1}{|c|}{$\mat{K}$} & \multicolumn{3}{|c|}{$\mat{K}+\mat{L}+T_s$} \\
    &                                  & & \multicolumn{1}{|c|}{Time} & \multicolumn{1}{|c|}{Min} & \multicolumn{1}{|c|}{Median} & \multicolumn{1}{|c|}{Max}\\\hline
 1  & DC Motor          & 2 & 2.1\,s& 16,16  &   4.1\,s &   4.1\,s\\
-2  & Helicopter        & 3  & 1.4\,s& 24,16  &   18.7\,s &   18.7\,s\\
+2  & Helicopter        & 3  & 1.4\,s& 8.6\,s  &   54.9\,s &   t.o.\\
 3  & Inverted Pendulum & 4 &   0.6\,s& 16,24  &  308.4\,s &  308.4\,s\\
 4  & Magnetic Pointer  & 2  & 44.1\,s& 24,16  &  7.7\,s &  7.7\,s \\
 %5  & Magnetic Suspension & 2 & 0.6\,s& 16,24  &   0\,s &   0\,s\\
@@ -2195,7 +2198,7 @@ We overapproximate the effects of this vector by introducing a noise signal at t
 \begin{theorem}
 Given a set of eigenvalues for a discrete time model of an $n^{th}$ order system $\lambda_i =e^{\omega_i}: i \in [1\ n]$, the settling time of the system is upperbounded by
 \begin{equation}
-t_s<-log_{|\overline{\lambda}|}({p_s}) : |\overline{\lambda}| =\max(|\lambda_i|) \wedge |\overline{\lambda}|<1,\ \forall i \in [1\ n]
+t_s<-log_{\overline{\lambda}}({p_s}) : \overline{\lambda} =\max(|\lambda_i|) \wedge \overline{\lambda}<1,\ \forall i \in [1\ n]
 \label{eq:set_time}
 \end{equation}
 where $0\leq p_s \leq 1$ is the desired percentage of the target within to remain after $t_s$.
@@ -2262,7 +2265,7 @@ Therefore the right hand terms dissappear and we obtain
 Hence the overall decay of the system is always smaller
 than $d=e^{-|\overline{\omega}| t}$ where $0\leq d\leq 1$ is the remaining
 percentage of the decay expressed.  Reversing we have
-$t=-\frac{ln(d)}{|\overline{\omega}|}=-\frac{ln(d)}{ln(|\overline{\lambda}|)}$. 
+$t=-\frac{ln(d)}{|\overline{\omega}|}=-\frac{ln(d)}{ln(\overline{\lambda})}$. 
 replacing for $p_s$ , $t_s$, and $\overline{\lambda}$ we get equation
 \eqref{eq:set_time}
 %
