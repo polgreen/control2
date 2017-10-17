@@ -431,7 +431,7 @@ extends the previous notion over an
 unbounded time horizon.
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{State observer}
+\subsection{State observer}\label{sec:observer}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 In most real implementations, the internal state of a plant cannot be
 directly measured but rather inferred from its effect on the output by
@@ -963,31 +963,40 @@ and the response time in the presence of an observer.
 In this work we are interested in asymptotic stability: asymptotic
 stability is a property that amounts to convergence of the model
 executions to an equilibrium point, starting from any states in a
-neighborhood of the point.
+neighborhood of the point. In the rest of the paper we refer to the
+stability specification as $\phi_\mathit{stability}$.
 
 %% There are a number of algorithms that can be
 %% used for stability analysis~\cite{daes20161,Bessa16}.
 
-A discrete-time LTI system is
-asymptotically stable if all the roots of its characteristic
+A discrete-time LTI system (as shown in Sec.~\ref{sec:ssrepresentation})
+is asymptotically stable if all the roots of its characteristic
 polynomial (i.e., the eigenvalues of the closed-loop matrix $A_d - B_d
 K$) are inside the unity circle of the complex plane, i.e., their
 absolute values are strictly less than one~\cite{astrom1997computer}
 (this simple sufficient condition can be generalised, however this is
-not necessary in our work).  In this paper, we express this stability
-specification $\phi_\mathit{stability}$ in terms of a check known as
+not necessary in our work).  We express the stability
+specification in terms of a check known as
 \emph{Jury's criterion}~\cite{fadali}: this is an easy algebraic
-formula to select the entries of matrix $K$ so that the closed-loop
-dynamics are shaped as desired.
+formula over the coefficients of the characteristic polynomial.
+%% to select the entries of matrix $K$ so that the closed-loop
+%% dynamics are shaped as desired.
+
+In order to be able to apply Jury's criterion,
+in the rest of this section, we compute the  
+characteristic polynomial of the observer model.
+Note that in this section, we consider that the model is
+discretized in the time domain, but not in the value domain.
+This essentially means that
+${\mat{A}_d}_{\langle C \rangle}=\mat{A}_d$, ${\mat{B}_d}_{\langle C \rangle}=\mat{B}_d$, ${\mat{C}_d}_{\langle C \rangle}=\mat{C}_d, \mat{L}=\mat{L}_{\langle C \rangle}$ and $\mat{K}=\mat{K}_{\langle C \rangle}$.
 
 %Let us look at observer for a SISO systems as shown in figure \ref{fig:observersystem} where ideally
-In this section we assume that
-${\mat{A}_d}_{\langle C \rangle}=\mat{A}_d$, ${\mat{B}_d}_{\langle C \rangle}=\mat{B}_d$ and ${\mat{C}_d}_{\langle C \rangle}=\mat{C}_d$ for a given time discretization.
+
 %% We will initially assume this for the description of the system and then introduce the errors caused  by misrepresentations.
 For simplicity of the description, we agregate the noises as follows:
 $\eta_1=\nu_1+\nu_1'+\nu_t$ and $\eta_2=\nu_2+\nu_2'$,
 where $\nu_1$ and $\nu_2$ are the quantization noises introduced by the ADC and the DAC, $\nu_t$ is the noise introduced by the delay, and $\nu_1'$ and $\nu_2'$ are quantization noises caused by roundoffs in the FWL operations.
-A controllable and observable system will have the following dynamics:
+Then, a controllable and observable system will have the following dynamics:
 \begin{align}
 \scriptstyle
 \left [\begin{array}{c}\vec{x}\\ \vec{x}_e \end{array}\right]_{k+1}
@@ -997,7 +1006,8 @@ A controllable and observable system will have the following dynamics:
 +\left [\begin{array}{cc}\mat{B}_dk_r&\mat{0}\\ \mat{0}&-\mat{L}\end{array}\right]\left [\begin{array}{c}\vec{\eta}_2\\ \vec{\eta}_1\end{array}\right]
 \label{eq:observer_LTI}
 \end{align}
-where $\vec{x}_e=\vec{x}-\hat{\vec{x}}$ is the estimation error of the state space by the observer, and $k_r$ is a reference gain required by the model.
+where $\vec{x}_e=\vec{x}-\hat{\vec{x}}$ is the estimation error of the state space by the observer.
+%, and $k_r$ is a reference gain required by the model.
 
 We want the state space dynamics in reachable form ($\mat{A}_c$) and the observer error dynamics in observable form ($\mat{A}_o$), i.e. with dynamics whose coefficients are represented solely by those of the characteristic polynomial as follows:
 \begin{align*}
@@ -1049,7 +1059,7 @@ We can transform equation \eqref{eq:observer_LTI} into the equivalent canonical 
 
 The matrices $\mat{R}$%$\mat{R}=\left[\begin{array}{cccc} \mat{B} & \mat{A}\mat{B} & \cdots & \mat{A}^{p-1}\mat{B} \end{array}\right]$
 ~and $\mat{R}_{cf}$%$\mat{R}_{cf}=\left[\begin{array}{cccc} mat{B}_c & \mat{A}_c\mat{B}_c & \cdots & \mat{A}_c^{p-1}\mat{B}_c \end{array}\right]$
-~are called reachability matrices (of the system and its Reachable Canonical Form respectively),
+~are called reachability matrices (of the system and its reachable canonical form, respectively),
 and $\mat{W}_o$%$\mat{W}_o=\left[\begin{array}{c} mat{C}\\ \mat{C}\mat{A}\\ \vdots \\ \mat{C}\mat{A}^{p-1} \end{array}\right]$
 ~and $\mat{W}_{of}$%$\mat{W}_{of}=\left[\begin{array}{c} mat{C}_o\\ \mat{C}_o\mat{A}_o\\ \vdots \\ \mat{C}_o\mat{A}_o^{p-1} \end{array}\right]$
 ~are its observability matrices  (of the system and its Observable Canonical Form respectively)~\cite{astrom1997computer}.
@@ -1065,19 +1075,25 @@ and the observer when seen independently.
 P(z)=P_K(z)P_L(z)=\left(z^p+\sum_{i=1}^p{(a_i-k_i)z^{p-i}}\right) \left(z^p+\sum_{i=1}^p{(l_i-a_i)z^{p-i}}\right)
 \end{align*}
 
-As stated in Section~\ref{sec:cof_stability}, we use Jury's Criterion on these polynomials
-to assert the stability specification.
+We get the stability specification by using Jury's Criterion on these polynomials.
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{Stability of an observed system with FWL effects}\label{sec:cof_fwl_stability}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-Thus far we looked at checking stability
-%have presented a verification procedure for
-of a continuous plant in discretized time domain (i.e., the range of the quatizers is still
-$\mathbb{R}$).  The next step we must realize is that the controller and the
-observer exist in a digital program, hence their domain is
-$\mathbb{R}_{\langle C \rangle}$.  This has two separate effects on the
+While in the previous section, we assumed that
+${\mat{A}_d}_{\langle C \rangle}=\mat{A}_d$, ${\mat{B}_d}_{\langle C \rangle}=\mat{B}_d$ and ${\mat{C}_d}_{\langle C \rangle}=\mat{C}_d$ for a given time discretization, in this section
+we take into consideration the numerical representation and namely the fact that the domain for both
+the controller and the observer is $\mathbb{R}_{\langle C \rangle}$.
+
+%% Thus far we looked at checking stability
+%% %have presented a verification procedure for
+%% of a continuous plant in discretized time domain (i.e., the range of the quatizers is still
+%% $\mathbb{R}$).  The next step we must realize is that the controller and the
+%% observer exist in a digital program, hence their domain is
+%% $\mathbb{R}_{\langle C \rangle}$.
+
+This has two separate effects on the
 model.  If we recall Equation~\eqref{eq:observer_LTI}, the matrices of the observer
 and the controller are not necessarily those of the plant.  In fact we have
 $\mat{A},\mat{B},\mat{C} \in \mathbb{R}^*$, ${\mat{A}_d}_{\langle C
