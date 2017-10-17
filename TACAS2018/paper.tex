@@ -339,7 +339,7 @@ technique works for both linear and non-linear systems.
 %-------------------------------
 
 %-------------------------------
-\subsection{State-space representation of physical systems}
+\subsection{State-space representation of LTI models}
 \label{sec:ssrepresentation}
 %-------------------------------
 
@@ -382,6 +382,53 @@ $\mat{A}_d$, $\mat{B}_d$, $\mat{C}_d$ and $\mat{D}_d$ denote the matrices that d
 %% We synthesize for requirements over this discrete-time domain. 
 %% Later, we will address the issue of variable quantization, 
 %% as introduced by the ADC/DAC conversion blocks (Fig.~\ref{fig:digitalsystem}).
+
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+\subsection{Semantics of LTI models}\label{sec:model_semantics}
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+%
+The traces of the model starting from an initial set $X_0\subseteq \mathbb{R}^p$, 
+with inputs restricted to $U \subseteq \mathbb{R}^q$, are sequences 
+$ \vec{x}_0 \xrightarrow{\vec{u}_0} \vec{x}_1 \xrightarrow{\vec{u}_1} \vec{x}_2 \xrightarrow{\vec{u}_2} \ldots $, 
+%
+where $ \vec{x}_0 \in X_0$ and $\forall k\geq 0, \vec{u}_k \in U \text{ and } \vec{x}_{k+1} = \tau(\vec{x}_k,\vec{u}_k) $, 
+where 
+%
+\begin{equation}\label{equ:reachtraj}
+\tau(\vec{x}_k,\vec{u}_k) = 
+\big( \mat{A}\vec{x}_k +
+\mat{B}\vec{u}_k \mid \mat{G}\vec{x}_k \leq \vec{h}\big)\;. 
+\end{equation}
+%
+where $\mat{G}$ and $\vec{h}$ define a set of inequalities that describe the safe state-space.
+%
+We extend the notation above to convex sets of initial conditions and inputs ($X_0$ and $U$), 
+and write $\tau(X_0,U)$ to denote the set of states $\{\vec{x} \mid \vec{x}_0 \in
+X_0 \wedge \vec{u} \in U \wedge \vec{x} = \tau(\vec{x}_0,\vec{u})\}$
+reached from $X_0$ by $\tau$ in one step. 
+%
+We furthermore write $\tau^n(X_0,U)$ to denote the set of states reached from
+$X_0$ via $\tau$ in $n$ steps (\emph{$n$-reach set}), i.e.\ for $n\geq 1$
+%
+\begin{align}\label{equ:reachset}
+\tau^n(X_0,U) = \{\vec{x}_n \mid &\vec{x}_0 \in X_0 \wedge \forall k\in [0,n-1]\nonumber\\ 
+ &\vec{u}_{k} \in U \wedge \vec{x}_{k+1}=\tau(\vec{x}_{k},\vec{u}_{k}) \} \;. 
+\end{align}
+%
+Since the transformations $\mat{A}$ and $\mat{B}$ are linear and
+vector sums preserve convexity, the sets $X_n = \tau^n(X_0,U)$ are also
+convex.
+
+We define the \emph{$n$-reach tube} 
+\begin{equation}\label{equ:reachtube}
+\hat{X}_n=\hat{\tau}^n(X_0,U)=\bigcup_{k\in[0,n]} \tau^k(X_0,U)
+\end{equation}
+as the union of the reachable sets over $n$ iterations.
+%
+Moreover, $\hat{X} 
+=\bigcup_{n\geq 0} \tau^n(X_0,U)$ 
+extends the previous notion over an 
+unbounded time horizon.
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{State observer}
@@ -550,63 +597,18 @@ Note that the variables of a state observer are denoted by a "$~\hat{}~$" (e.g. 
  \caption{Closed-loop digital control system with observer\label{fig:observersystem}}
 \end{figure*}
 
-
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{Semantics of LTI models}\label{sec:model_semantics}
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-%
-The traces of the model starting from an initial set $X_0\subseteq \mathbb{R}^p$, 
-with inputs restricted to $U \subseteq \mathbb{R}^q$, are sequences 
-$ \vec{x}_0 \xrightarrow{\vec{u}_0} \vec{x}_1 \xrightarrow{\vec{u}_1} \vec{x}_2 \xrightarrow{\vec{u}_2} \ldots $, 
-%
-where $ \vec{x}_0 \in X_0$ and $\forall k\geq 0, \vec{u}_k \in U \text{ and } \vec{x}_{k+1} = \tau(\vec{x}_k,\vec{u}_k) $, 
-where 
-%
-\begin{equation}\label{equ:reachtraj}
-\tau(\vec{x}_k,\vec{u}_k) = 
-\big( \mat{A}\vec{x}_k +
-\mat{B}\vec{u}_k \mid \mat{G}\vec{x}_k \leq \vec{h}\big)\;. 
-\end{equation}
-%
-where $\mat{G}$ and $\vec{h}$ define a set of inequalities that describe the safe state-space.
-%
-We extend the notation above to convex sets of initial conditions and inputs ($X_0$ and $U$), 
-and write $\tau(X_0,U)$ to denote the set of states $\{\vec{x} \mid \vec{x}_0 \in
-X_0 \wedge \vec{u} \in U \wedge \vec{x} = \tau(\vec{x}_0,\vec{u})\}$
-reached from $X_0$ by $\tau$ in one step. 
-%
-We furthermore write $\tau^n(X_0,U)$ to denote the set of states reached from
-$X_0$ via $\tau$ in $n$ steps (\emph{$n$-reach set}), i.e.\ for $n\geq 1$
-%
-\begin{align}\label{equ:reachset}
-\tau^n(X_0,U) = \{\vec{x}_n \mid &\vec{x}_0 \in X_0 \wedge \forall k\in [0,n-1]\nonumber\\ 
- &\vec{u}_{k} \in U \wedge \vec{x}_{k+1}=\tau(\vec{x}_{k},\vec{u}_{k}) \} \;. 
-\end{align}
-%
-Since the transformations $\mat{A}$ and $\mat{B}$ are linear and
-vector sums preserve convexity, the sets $X_n = \tau^n(X_0,U)$ are also
-convex.
-
-We define the \emph{$n$-reach tube} 
-\begin{equation}\label{equ:reachtube}
-\hat{X}_n=\hat{\tau}^n(X_0,U)=\bigcup_{k\in[0,n]} \tau^k(X_0,U)
-\end{equation}
-as the union of the reachable sets over $n$ iterations.
-%
-Moreover, $\hat{X} 
-=\bigcup_{n\geq 0} \tau^n(X_0,U)$ 
-extends the previous notion over an 
-unbounded time horizon.
-
+ Our goal in this work is to synthesise both $\mat{K}$ and $\mat{L}$.
 
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  \section{Acceleration of continuous time systems}\label{sec:continuous_time_accel}
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 
  Note that the discretization in Sec.~\ref{sec:ssrepresentation} only 
- allows us to observe the system at integer multiples of the sample time.
- As we are interested in ensuring that certain properties of the system hold at any given
- time (not just integer multiples of the sample time),
- we accelerate the dynamics of the system (according to the model semantics in Sec.~\ref{sec:model_semantics}) in order to compute the state $\vec{x}_T$  at a given time $T$.
+ allows us to evaluate the state of the system at integer multiples of the sample time.
+ However, in order to synthesise $\mat{K}$ and $\mat{L}$, 
+ we must be able to ensure that certain properties of the system hold at any given
+ time (not just integer multiples of the sample time).
+ Consequently, we accelerate the dynamics of the system (according to the model semantics in Sec.~\ref{sec:model_semantics}) in order to compute the state $\vec{x}_T$  at a given time $T$.
  
  %While this is adequate for the controller, it is not sufficient for verification. We must therefore establish a new model that allows us to observe the system at a given time $t$.
  %We achieve this by using acceleration as described below.
@@ -635,12 +637,12 @@ $\lambda_i \in \mat{J}$ are the eigenvalues of $\mat{A}$, and $gm(\lambda_i)$ is
  \end{theorem}
  %% We can apply Th.~\ref{eq:continuous_tube_dyn} to discretized systems without inputs in order to
  %% obtain a witness ..
-%
-\todo{Can the corallary be motivated? The general motivation of the section was observing the system at times that are not necessarily integer multiple of the sampling time...} 
+ %
  \begin{corollary}
- If $\mat{J}$ is diagonal and there exists a discrete dynamics matrix for a sampling time $T_d$ such that $A_d=e^{\mat{A} T_d}$, then $\vec{x}_k=A_d^k\vec{x}_0 : k \in \mathbb{R}^+$ is a witness of the system at time $t=kT_d$.
+ If $\mat{J}$ is diagonal and there exists a discrete dynamics matrix for a sampling time $T_d$ such that $A_d=e^{\mat{A} T_d}$, then $\vec{x}_r=A_d^r\vec{x}_0 : r \in \mathbb{R}^+$ is a witness of the system at time $t=rT_d$.
  \end{corollary}
-% \begin{proof}
+%
+ % \begin{proof}
 % Let us recall equation \ref{eq:discretize}. The discrete representation of the system dynamics discretised with sample time $T_1$ is ruled by the formula
 % $\mat{A}_1 = e^{\mat{A} T_1}$. From matrix theory, we have 
 %\begin{align}
@@ -700,7 +702,7 @@ The expression
  with $\mat{A}_T$ as per \eqref{eq:continuous_tube_dyn} is a witness of the system $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)$ at time $T$ given a parametric input $\vec{u}$.
 \end{theorem}
  \begin{corollary}
- If $\mat{J}$ is diagonal and there exists a discrete dynamics matrix for a sampling time $T_d :  A_d=e^{\mat{A} T_d}$, then $\vec{x}_k=A_d^k\vec{x}_0+(\mat{I}-\mat{A}_d^k\mat{B}\vec{u}) : k \in \mathbb{R}^+$ is a witness of the system at time $kT_d$.
+ If $\mat{J}$ is diagonal and there exists a discrete dynamics matrix for a sampling time $T_d :  A_d=e^{\mat{A} T_d}$, then $\vec{x}_r=A_d^r\vec{x}_0+(\mat{I}-\mat{A}_d^r\mat{B}\vec{u}) : r \in \mathbb{R}^+$ is a witness of the system at time $rT_d$.
  \end{corollary}
 % \begin{proof}
 % We begin by expanding the equation
@@ -1104,15 +1106,15 @@ settling time is too.
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \section{Verification of a Controllable Observed System}\label{sec:cof_verification}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\todo{the observer dynamics?}
+%% In most real implementations, the internal state of a plant cannot be
+%% directly measured but rather inferred from its
+%% effect on the output. A plant model that minimises the difference
+%% between the outputs is called an observer and it is a well known
+%% paradigm in the control literature~\cite{astrom1997computer}.
 
-In most real implementations, the internal state of a plant cannot be
-directly measured but rather inferred from its
-effect on the output. A plant model that minimises the difference
-between the outputs is called an observer and it is a well known
-paradigm in the control literature~\cite{astrom1997computer}. Since we
-are interested in synthesising controllers with observer designs, in this
-section we will look at checking stability and safety in the presence of an observer.
+Since we are interested in synthesising controllers with observer
+designs, in this section we will look at checking stability and safety
+in the presence of an observer.
 
 %the challenges presented by the introduction of the observer.
 
