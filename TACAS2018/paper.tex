@@ -1182,24 +1182,24 @@ P_r'=\sum_{j=0}^p c_j\overline{\lambda'}^{p-j}s^j : \overline{\lambda'}=(1+\delt
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{Safety of a digitally observed system}\label{sec:cof_safety}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\todo{FWL effects here? they are implicit from equation \ref{eq:observer_LTI_FWL_cf}}
-
 %% Now that we have established convergence, we may examine the safety
 %% specification of the state space.
 A safety specification gives raise to a requirement on the
-states of the model, such that the controller and the observer (namely the 
-matrices~$K$ and~$L$) must ensure that the state never violates the
+states of the model, such that the controller
+must ensure that the state never violates the
 requirement.
-
 In~this work, the safety property is expressed as:
 %
 \begin{align}
-\phi_\mathit{safety}\equiv& \underline{y} \leq y_k \leq \overline{y}
+  \phi_\mathit{safety}\equiv& \underline{y} \leq y_k \leq \overline{y}
 \iff \forall k\geq 0.\, \mat{G}\vec{x}_k \leq \vec{h},
 \label{eq:safetyspec}
 \end{align}
 %
 where $\mat{G}$ and $\vec{h}$ define a set of inequalities that describe the safe state-space.
+%
+Note that FWL effects are not explicitly captured here
+as they are implicit from equation \ref{eq:observer_LTI_FWL_cf}.
 %
 %% \begin{align}
 %% \phi_\mathit{safety}\equiv& \underline{y} \leq y_k \leq \overline{y}
@@ -1244,17 +1244,20 @@ where $\mat{G}$ and $\vec{h}$ define a set of inequalities that describe the saf
 
 %% where $\mat{G}$ and $\vec{h}$ define a set of inequalities that describe the safe state-space.
 
-Furthermore, we also need to consider the 
-constraints 
-\begin{align}
-\phi_\mathit{input}\equiv \underline{u} \leq u_k \leq \overline{u}
-\label{eq:inputspec}
-\end{align}
+Furthermore, it is practically relevant to consider the 
+constraints $\phi_\mathit{input}$ on the input
+signal $u_{k}$ and $\phi_\mathit{init}$ on the initial states $x_0$,
+which we assume have given bounds:
+%\begin{align}
+$\phi_\mathit{input}\equiv \underline{u} \leq u_k \leq \overline{u}$
+%\label{eq:inputspec}
+%\end{align}
 which comes from physical restrictions in the energy of the system, and
-\begin{align}
-\phi_\mathit{init}\equiv \mat{G}' \vec{x}_0 \leq \vec{h}'
-\label{eq:initspec}
-\end{align}
+%\begin{align}
+$\phi_\mathit{init}\equiv \mat{G}' \vec{x}_0 \leq \vec{h}'$,
+where $\mat{G}'$ and $\vec{h}'$ describe the initial state-space.
+%\label{eq:initspec}
+%\end{align}
 
 %
 %Note that we use the bounds of the input after the transformation by $\mat{B}$ since the matrix may reverse the bounds. 
