@@ -1081,22 +1081,25 @@ We get the stability specification by using Jury's Criterion on these polynomial
 \subsection{Stability of an observed system with FWL effects}\label{sec:cof_fwl_stability}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-While in the previous section, we assumed that
-${\mat{A}_d}_{\langle C \rangle}=\mat{A}_d$, ${\mat{B}_d}_{\langle C \rangle}=\mat{B}_d$ and ${\mat{C}_d}_{\langle C \rangle}=\mat{C}_d$ for a given time discretization, in this section
-we take into consideration the numerical representation and namely the fact that the domain for both
+In this section, we assume that the observer model is further discretised in
+the value domain, i.e., the domain for both
 the controller and the observer is $\mathbb{R}_{\langle C \rangle}$.
-
+%% While in the previous section, we assumed that
+%% ${\mat{A}_d}_{\langle C \rangle}=\mat{A}_d$, ${\mat{B}_d}_{\langle C \rangle}=\mat{B}_d$ and ${\mat{C}_d}_{\langle C \rangle}=\mat{C}_d$ for a given time discretization, in this section
+%% we take into consideration the numerical representation and namely
 %% Thus far we looked at checking stability
 %% %have presented a verification procedure for
 %% of a continuous plant in discretized time domain (i.e., the range of the quatizers is still
 %% $\mathbb{R}$).  The next step we must realize is that the controller and the
 %% observer exist in a digital program, hence their domain is
 %% $\mathbb{R}_{\langle C \rangle}$.
-
-This has two separate effects on the
-model.  If we recall Equation~\eqref{eq:observer_LTI}, the matrices of the observer
-and the controller are not necessarily those of the plant.  In fact we have
-$\mat{A},\mat{B},\mat{C} \in \mathbb{R}^*$, ${\mat{A}_d}_{\langle C
+%
+%% This has two separate effects on the
+%% model.  If we recall Equation~\eqref{eq:observer_LTI}, the matrices of the observer
+%% and the controller are not necessarily those of the plant.  In fact we have
+%% $\mat{A},\mat{B},\mat{C} \in \mathbb{R}^*$,
+This means that we have 
+${\mat{A}_d}_{\langle C
 \rangle},{\mat{B}_d}_{\langle C \rangle},{\mat{C}_d}_{\langle C \rangle},
 \mat{K}_{\langle C \rangle}, \mat{L}_{\langle C \rangle} \in
 \mathbb{R}_{\langle C \rangle}^*$ where $*$ represents the appropriate
@@ -1147,7 +1150,7 @@ where
 }
 The first effect of this new equation is that $\mat{A}'$ is no longer upper
 diagonal.  We must therefore compensate for the errors introduced in order
-to find a stable solution.  We can use Gershgoring disks to limit the error
+to find a stable solution.  We can use Gershgoring \todo{citation} disks to limit the error
 in the expected eigenvalues.  Let $\delta_o=\max(|{\mat{A}_e}_{i,*}|_2)$
 (\emph{i.e.} the largest row norm in $\mat{A}_e$) be the largest error bound
 for any eigenvalue in $\mat{A}_e$.  Then $\forall i \in [1, n],
@@ -1155,7 +1158,7 @@ for any eigenvalue in $\mat{A}_e$.  Then $\forall i \in [1, n],
 true eigenvalues of the observer and $\hat{\lambda_o}_{i}$ the eigenvalues of
 the perturbed observer.  We note that in the case of stability we only care
 about the error with respect to the unit circle, which is equivalent to
-upper bounding the estimation of the largest eigenvalue.  Hence given a
+upper bounding the estimation of the largest eigenvalue.  Hence, given a
 desired upper value $\overline{\lambda}$, we apply Jury's criterion on the
 polynomial.
 %
@@ -1172,36 +1175,74 @@ apply Jury's Criterion over
 P_r'=\sum_{j=0}^p c_j\overline{\lambda'}^{p-j}s^j : \overline{\lambda'}=(1+\delta_c)\overline{\lambda}
 \end{equation}
 
-As a final annotation, we remark that the safety specification must be
-applied to the model described in this section, accounting for the
-representation errors of the FWL domain.
+%% As a final annotation, we remark that the safety specification must be
+%% applied to the model described in this section, accounting for the
+%% representation errors of the FWL domain.
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{Safety of a digitally observed system}\label{sec:cof_safety}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \todo{FWL effects here? they are implicit from equation \ref{eq:observer_LTI_FWL_cf}}
 
-We are not limited to the synthesis of digital stabilizing controllers -- a
-well known task in the literature on digital control systems -- but target
-safety requirements with an overall approach that is sound and automated. 
-More specifically, we require that the closed-loop system meets given safety
-specifications.  A safety specification gives raise to a requirement on the
-states of the model, such that the feedback controller (namely the choice of
-the gains matrix~$K$) must ensure that the state never violates the
-requirement.  Note that a stable, closed-loop system is not necessarily a
-safe system: indeed, the state values may leave the safe part of the state
-space while they converge to the equilibrium, which is typical in the case
-of oscillatory dynamics.  In~this work, the safety property is expressed as:
+%% Now that we have established convergence, we may examine the safety
+%% specification of the state space.
+A safety specification gives raise to a requirement on the
+states of the model, such that the controller and the observer (namely the 
+matrices~$K$ and~$L$) must ensure that the state never violates the
+requirement.
+
+In~this work, the safety property is expressed as:
 %
 \begin{align}
 \phi_\mathit{safety}\equiv& \underline{y} \leq y_k \leq \overline{y}
 \iff \forall k\geq 0.\, \mat{G}\vec{x}_k \leq \vec{h},
 \label{eq:safetyspec}
 \end{align}
-
+%
 where $\mat{G}$ and $\vec{h}$ define a set of inequalities that describe the safe state-space.
+%
+%% \begin{align}
+%% \phi_\mathit{safety}\equiv& \underline{y} \leq y_k \leq \overline{y}
+%% \iff \forall k\geq 0.\, \mat{G}\vec{x}_k \leq \vec{h},
+%% \label{eq:safetyspec}
+%% \end{align}
+%
+%% For an observed system, the safety specification is
+%% given by a constraint on the output which are considered
+%% safe ($\vec{u}_k \in [\underline{u}\ \ \overline{u}] \wedge \vec{y}_k \in
+%% [\underline{y}\ \ \overline{y}]$)
+%% Whilst there are other properties we may
+%% include in the verification, we will solely focus on these for simplicity of
+%% the explanation.  We assume that we do not want saturation in our
+%% system, hence the control loop has only one mode.
+%% First we must
+%% translate the safety specification into the statespace.  Replacing on the
+%% second part of equation \eqref{eq:observer_LTI_cf} we obtain
+%% %
+%% \begin{equation}
+%% \phi_{safety} := \underline{y}<\mat{C}\vec{x}_k<\overline{y}, \forall k \geq 0
+%% \label{eq:of_bounds}
+%% \end{equation}
+%
+%% We are not limited to the synthesis of digital stabilizing controllers -- a
+%% well known task in the literature on digital control systems -- but target
+%% safety requirements with an overall approach that is sound and automated. 
+%% More specifically, we require that the closed-loop system meets given safety
+%% specifications.  A safety specification gives raise to a requirement on the
+%% states of the model, such that the feedback controller (namely the choice of
+%% the gains matrix~$K$) must ensure that the state never violates the
+%% requirement.  Note that a stable, closed-loop system is not necessarily a
+%% safe system: indeed, the state values may leave the safe part of the state
+%% space while they converge to the equilibrium, which is typical in the case
+%% of oscillatory dynamics.  In~this work, the safety property is expressed as:
+%% %
+%% \begin{align}
+%% \phi_\mathit{safety}\equiv& \underline{y} \leq y_k \leq \overline{y}
+%% \iff \forall k\geq 0.\, \mat{G}\vec{x}_k \leq \vec{h},
+%% \label{eq:safetyspec}
+%% \end{align}
 
-
+%% where $\mat{G}$ and $\vec{h}$ define a set of inequalities that describe the safe state-space.
 
 Furthermore, we also need to consider the 
 constraints 
@@ -1215,30 +1256,6 @@ which comes from physical restrictions in the energy of the system, and
 \label{eq:initspec}
 \end{align}
 
-%==========
-
-%% Now that we have established convergence, we may examine the safety
-%% specification of the state space.
-In the case of SISO systems, the safety specification is
-given by a range of the input and a range of the output which are considered
-safe ($\vec{u}_k \in [\underline{u}\ \ \overline{u}] \wedge \vec{y}_k \in
-[\underline{y}\ \ \overline{y}]$)
-Whilst there are other properties we may
-include in the verification, we will solely focus on these for simplicity of
-the explanation.  We assume that we do not want saturation in our
-system, hence the control loop has only one mode.
-%We have also identified the quantization noise as a bounded non-deterministic input.
-First we must
-translate the safety specification into the statespace.  Replacing on the
-second part of equation \eqref{eq:observer_LTI_cf} we obtain
-%
-\begin{equation}
-\phi_{safety} := \underline{y}<\mat{C}\vec{x}_k<\overline{y}, \forall k \geq 0
-\label{eq:of_bounds}
-\end{equation}
-\todo{Using \eqref{eq:observer_LTI_cf} doesn't result in this.}
-%
-\todo{transient response?}
 %
 %Note that we use the bounds of the input after the transformation by $\mat{B}$ since the matrix may reverse the bounds. 
 %
