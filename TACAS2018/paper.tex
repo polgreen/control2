@@ -760,7 +760,7 @@ The expression
 %\end{proof}
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\section{Error modelling and soundness}\label{sec:errors}
+\section{Error modelling}\label{sec:errors}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -927,18 +927,39 @@ following, we shall disregard these steady-state errors (caused by FWL
 effects) when stability is ensured by synthesis, and then verify its safety
 accounting for the finite-precision errors.
 
-%-------------------------------
-\section{Specification of control systems properties} 
-\label{sec:specification}
-%-------------------------------
-\todo{all this section needs to be merged with the next one and only
-discussed for an observed model.}
+%% %-------------------------------
+%% \section{Specification of control systems properties} 
+%% \label{sec:specification}
+%% %-------------------------------
 
-%-------------------------------
-\subsection{Stability} 
-\label{ssec:stabspecification}
-%-------------------------------
+%% %-------------------------------
+%% \subsection{Stability} 
+%% \label{ssec:stabspecification}
+%% %-------------------------------
 
+%% %-------------------------------
+%% \subsection{Safety} 
+%% \label{ssec:safespecification}
+%% %-------------------------------
+
+
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+\section{Properties of a controllable observed system}\label{sec:cof_verification}
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+%% In most real implementations, the internal state of a plant cannot be
+%% directly measured but rather inferred from its
+%% effect on the output. A plant model that minimises the difference
+%% between the outputs is called an observer and it is a well known
+%% paradigm in the control literature~\cite{astrom1997computer}.
+
+Since we are interested in synthesising controllers with observer
+designs, in this section we will look at checking stability, safety
+and the response time in the presence of an observer.
+
+
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+\subsection{Stability of an observed system}\label{sec:cof_stability}
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 In this work we are interested in asymptotic stability: asymptotic
 stability is a property that amounts to convergence of the model
 executions to an equilibrium point, starting from any states in a
@@ -959,10 +980,205 @@ specification $\phi_\mathit{stability}$ in terms of a check known as
 formula to select the entries of matrix $K$ so that the closed-loop
 dynamics are shaped as desired.
 
-%-------------------------------
-\subsection{Safety} 
-\label{ssec:safespecification}
-%-------------------------------
+Let us look at observer for a SISO systems as shown in figure \ref{fig:observersystem} where ideally ${\mat{A}_d}_{\langle C \rangle}=\mat{A}_d$, ${\mat{B}_d}_{\langle C \rangle}=\mat{B}_d$ and ${\mat{C}_d}_{\langle C \rangle}=\mat{C}_d$ for a given time discretization. We will initially assume this for the description of the system and then introduce the errors caused  by misrepresentations. For simplicity of the description, we will agregate the noises as follows:
+\begin{align*}
+\eta_1&=\nu_1+\nu_1'+\nu_t\\
+\eta_2&=\nu_2+\nu_2'
+\end{align*}
+where $\nu_1$ and $\nu_2$ are the quantization noises introduced by the ADC and the DAC, $\nu_t$ is the noise introduced by the delay, and $\nu_1'$ and $\nu_2'$ are quantization noises caused by roundoffs in the FWL operations.
+A controllable and observable system will have the following dynamics:
+\begin{align}
+\scriptstyle
+\left [\begin{array}{c}\vec{x}\\ \vec{x}_e \end{array}\right]_{k+1}
+=\left [\begin{array}{cc}\mat{A}_d-\mat{B}_d\mat{K}&\mat{B}_d\mat{K}\\ \mat{0}&\mat{A}_d-\mat{L}\mat{C}_d\end{array}\right]
+\left [\begin{array}{c}\vec{x}\\ \vec{x}_e \end{array}\right]_k
++\left [\begin{array}{c}\mat{B}_dk_r\\ \mat{0} \end{array}\right] \vec{r}_k
++\left [\begin{array}{cc}\mat{B}_dk_r&\mat{0}\\ \mat{0}&-\mat{L}\end{array}\right]\left [\begin{array}{c}\vec{\eta}_2\\ \vec{\eta}_1\end{array}\right]
+\label{eq:observer_LTI}
+\end{align}
+where $\vec{x}_e=\vec{x}-\hat{\vec{x}}$ is the estimation error of the state space by the observer, and $k_r$ is a reference gain required by the model.
+
+In order for the system to be in canonical form, we must however perform a transformation. The challenge however is that we want the state space dynamics in
+reachable form and the observer error dynamics in observable form. Let 
+\begin{equation}
+\left[\begin{array}{c}\vec{x}'\\ \vec{x}_e'\end{array}\right]=
+\left[\begin{array}{cc}\mat{T}_c & \mat{0}\\\mat{0} & \mat{T}_o\end{array}\right] 
+\left[\begin{array}{c}\vec{x}\\ \vec{x}_e\end{array}\right]
+\end{equation}
+We can transform equation \eqref{eq:observer_LTI} into the equivalent canonical form
+\begin{align}
+\left [\begin{array}{c}\vec{x}'\\ \vec{x}_e' \end{array}\right]_{k+1}
+=& \left [\begin{array}{cc}\mat{A}_{c}&\mat{B}_{o}\\ \mat{0}&\mat{A}_{o}\end{array}\right]
+\left [\begin{array}{c}\vec{x}'\\ \vec{x}_e' \end{array}\right]_k
++\mat{B}' \vec{r}_k
++\mat{B}_{\eta}\left [\begin{array}{c}\vec{\eta}_2\\ \vec{\eta}_1\end{array}\right]\nonumber\\
+\nonumber\\
+\vec{y}_k
+=& \mat{C}_{t}\vec{x}_k% + \mat{D}_{d}\vec{u}_k
+\label{eq:observer_LTI_cf}
+\end{align}
+where
+{
+\setlength{\abovedisplayskip}{0pt}
+\setlength{\belowdisplayskip}{0pt}
+%\begin{align*}
+%
+%\mat{A}_{c}=&\left[
+%\begin{array}{ccccc}
+%0&1&0&\cdots&0\\
+%0&0&1&\cdots&0\\
+%\vdots&\vdots&\vdots&\ddots&\vdots\\
+%0&0&0&\cdots&1\\
+%k_n-a_n&\cdots&k_i-a_i&\cdots&k_1-a_1
+%\end{array}\right]
+%\label{eq:cf_SISO_2}
+%\end{align*}
+\begin{align*}
+\mat{A}_{c}=\left[
+\begin{array}{cc}
+k_n-a_n&\begin{array}{cc}\cdots&k_1-a_1\end{array}\\
+\mat{I}&\mat{0}
+\end{array}\right]&&
+\mat{A}_{o}=\left[
+\begin{array}{ccc}
+a_n-l_n&&\mat{I}\\
+&&\vdots\\
+a_1-l_1&&\mat{0}
+\end{array}\right]
+\end{align*}
+}
+{\setlength{\belowdisplayskip}{0pt}
+\begin{align*}
+\mat{A}_{c}=&\mat{T}_c\left(\mat{A}_d-\mat{B}_d\mat{K}\right)\mat{T}_c^{-1}&
+\mat{A}_{o}=&\mat{T}_o\left(\mat{A}_d-\mat{L}\mat{C}_d\right)\mat{T}_o^{-1}\\
+\mat{A}'=&\left [\begin{array}{cc}\mat{A}_{c}&\mat{B}_{o}\\ \mat{0}&\mat{A}_{o}\end{array}\right]&
+\mat{B}_{o}=&\mat{T}_c\mat{B}_d\mat{K}\mat{T}_o^{-1}\\
+\mat{B}'=&\left[\begin{array}{c}\mat{T}_c\mat{B}_d\mat{k}_r\\\mat{0}\end{array}\right]&
+\mat{B}_{\eta}=&\left[\begin{array}{cc}\mat{T}_c\mat{B}_d\mat{k}_r&\mat{0}\\\mat{0}&-\mat{T}_o\mat{L}\end{array}\right]\\
+\mat{T}_c=&\mat{R}_{cf}\mat{R}^{-1}&
+\mat{T}_o=&\mat{W}_o^{-1}\mat{W}_{of}\\
+\mat{C}_t=&\mat{C}_d\mat{T}_c&
+\mat{L}=& \mat{T}_o^{-1}\left[ \begin{array}{ccc}l_1&\cdots&l_n\end{array}\right]^T
+\end{align*}
+}
+
+The matrices $\mat{R}$%$\mat{R}=\left[\begin{array}{cccc} \mat{B} & \mat{A}\mat{B} & \cdots & \mat{A}^{p-1}\mat{B} \end{array}\right]$
+~and $\mat{R}_{cf}$%$\mat{R}_{cf}=\left[\begin{array}{cccc} mat{B}_c & \mat{A}_c\mat{B}_c & \cdots & \mat{A}_c^{p-1}\mat{B}_c \end{array}\right]$
+~are called reachability matrices (of the system and its Reachable Canonical Form respectively),
+and $\mat{W}_o$%$\mat{W}_o=\left[\begin{array}{c} mat{C}\\ \mat{C}\mat{A}\\ \vdots \\ \mat{C}\mat{A}^{p-1} \end{array}\right]$
+~and $\mat{W}_{of}$%$\mat{W}_{of}=\left[\begin{array}{c} mat{C}_o\\ \mat{C}_o\mat{A}_o\\ \vdots \\ \mat{C}_o\mat{A}_o^{p-1} \end{array}\right]$
+~are its observability matrices  (of the system and its Observable Canonical Form respectively)~\cite{astrom1997computer}.
+
+Careful examination of the above matrices reveals that because the $\mat{A}'$ is
+upper block diagonal, the spectrum of $\mat{A}'$ is equal to the union of
+the spectrum of $\mat{A}_{c}$ and $\mat{A}_{o}$, which can be calculated
+separately.  In other words, the characteristic polynomial of the closed loop is
+equal to the multiplication of the characteristic polynomials of the controller
+and the observer when seen independently.
+%
+\begin{align*}
+P(z)=P_K(z)P_L(z)=\left(z^p+\sum_{i=1}^p{(a_i-k_i)z^{p-i}}\right) \left(z^p+\sum_{i=1}^p{(l_i-a_i)z^{p-i}}\right)
+\end{align*}
+
+As stated in Section~\ref{sec:cof_stability}, we use Jury's Criterion on these polynomials
+to assert the stability specification.
+
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+\subsection{Stability of an observed system with FWL effects}\label{sec:cof_fwl_stability}
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Thus far we looked at checking stability
+%have presented a verification procedure for
+of a continuous plant in discretized time domain (i.e., the range of the quatizers is still
+$\mathbb{R}$).  The next step we must realize is that the controller and the
+observer exist in a digital program, hence their domain is
+$\mathbb{R}_{\langle C \rangle}$.  This has two separate effects on the
+model.  If we recall Equation~\eqref{eq:observer_LTI}, the matrices of the observer
+and the controller are not necessarily those of the plant.  In fact we have
+$\mat{A},\mat{B},\mat{C} \in \mathbb{R}^*$, ${\mat{A}_d}_{\langle C
+\rangle},{\mat{B}_d}_{\langle C \rangle},{\mat{C}_d}_{\langle C \rangle},
+\mat{K}_{\langle C \rangle}, \mat{L}_{\langle C \rangle} \in
+\mathbb{R}_{\langle C \rangle}^*$ where $*$ represents the appropriate
+dimension for each matrix.  Unfortunately this means that although combined
+matrices such as $\mat{A}_t$ are in the reals, they suffer from the fixed
+word restrictions in their composing matrices.
+
+When our observer is implemented using a finite precision controller, new
+problems arise due to the FWL effects.  Let ${\mat{A}_d}_{\langle C
+\rangle}$, ${\mat{B}_d}_{\langle C \rangle}$ and ${\mat{C}_d}_{\langle C
+\rangle}$ be the dynamics represented in $\mathbb{R}_{\langle C\rangle}^*$,
+%
+%and $\mat{A}_e=\mat{A}_d-{\mat{A}_d}_{\langle C \rangle}$, $\mat{B}_e=\mat{B}_d-{\mat{B}_d}_{\langle C \rangle}$,
+%and $\mat{C}_e=\mat{C}_d-{\mat{C}_d}_{\langle C \rangle}$ their corresponding errors.  
+Equation \eqref{eq:observer_LTI_cf} becomes:
+%
+\begin{align}
+\left [\begin{array}{c}\vec{x}'\\ \vec{x}_e' \end{array}\right]_{k+1}
+=& \left [\begin{array}{cc}\mat{A}_{c}+\mat{B}_{e}&\mat{B}_{o}\\ \mat{A}_{e}&\mat{A}_{o}\end{array}\right]
+\left [\begin{array}{c}\vec{x}'\\ \vec{x}_e' \end{array}\right]_k
++\mat{B}_{c} \vec{r}_k
++\mat{B}_{\eta}\left [\begin{array}{c}\vec{\eta}_2\\ \vec{\eta}_1\end{array}\right]\nonumber\\
+\vec{y}_k=&\mat{C}_{t}\vec{x}_k'% + \mat{D}_{d}\vec{u}_k
+\label{eq:observer_LTI_FWL_cf}
+\end{align}
+where
+{\setlength{\abovedisplayskip}{2pt}
+\setlength{\belowdisplayskip}{2pt}
+\begin{align*}
+\mat{A}_{c}=&\mat{T}_c\left(\mat{A}_d-\mat{B}_d\mat{K}\right)\mat{T}_c^{-1}&
+\mat{A}_{o}=&\mat{T}_o\left({\mat{A}_d}_{\langle C \rangle}-\mat{L}_{\langle C \rangle}{\mat{C}_d}_{\langle C \rangle}\right)\mat{T}_o^{-1}\\
+\mat{B}_{o}=&\mat{T}_c{\mat{B}_d}_{\langle C \rangle}\mat{K}_{\langle C \rangle}\mat{T}_o^{-1}&
+\mat{B}_{e}=&\mat{T}_c(\mat{B}_d-{\mat{B}_d}_{\langle C \rangle})\mat{K}_{\langle C \rangle}\mat{T}_o^{-1}\\
+\mat{A}_{e}=&\mat{T}_o\left(\mat{A}_d-{\mat{A}_d}_{\langle C \rangle}-\mat{L}_{\langle C \rangle}\mat{C}_e\right)\mat{T}_o^{-1}&
+\mat{C}_{e}=&\mat{C}_d-{\mat{C}_d}_{\langle C \rangle}\\
+\mat{T}_c=&\mat{R}_{cf}\mat{R}^{-1}&
+\mat{T}_o=&\mat{W}_o^{-1}\mat{W}_{of}\\
+\mat{C}_t=&\mat{C}_d\mat{T}_c&
+\mat{L}_{\langle C \rangle}=& \mat{T}_o^{-1}\left[ \begin{array}{ccc}l_1&\cdots&l_n\end{array}\right]^T
+\end{align*}
+}
+{\setlength{\abovedisplayskip}{0pt}
+\begin{align*}
+\mat{A}'=&\left [\begin{array}{cc}\mat{A}_{c}+\mat{B}_{e}&\mat{B}_{o}\\ \mat{A}_{e}&\mat{A}_{o}\end{array}\right]&
+\mat{B}_{c}=&\left[\begin{array}{c}\mat{T}_c{\mat{B}_d}_{\langle C \rangle}\mat{k}_r\\\mat{0}\end{array}\right]&
+\mat{B}_{\eta}=&\left[\begin{array}{cc}\mat{T}_c{\mat{B}_d}_{\langle C \rangle}&\mat{0}\\\mat{0}&-\mat{T}_o\mat{L}_{\langle C \rangle}\end{array}\right]
+\end{align*}
+}
+The first effect of this new equation is that $\mat{A}'$ is no longer upper
+diagonal.  We must therefore compensate for the errors introduced in order
+to find a stable solution.  We can use Gershgoring disks to limit the error
+in the expected eigenvalues.  Let $\delta_o=\max(|{\mat{A}_e}_{i,*}|_2)$
+(\emph{i.e.} the largest row norm in $\mat{A}_e$) be the largest error bound
+for any eigenvalue in $\mat{A}_e$.  Then $\forall i \in [1, n],
+|{\lambda_o}_{i}-\hat{\lambda_o}_{i}|<\delta_o$,where ${\lambda_o}_{i}$ are the
+true eigenvalues of the observer and $\hat{\lambda_o}_{i}$ the eigenvalues of
+the perturbed observer.  We note that in the case of stability we only care
+about the error with respect to the unit circle, which is equivalent to
+upper bounding the estimation of the largest eigenvalue.  Hence given a
+desired upper value $\overline{\lambda}$, we apply Jury's criterion on the
+polynomial.
+%
+\begin{equation}
+P_o'=\sum_{j=0}^p c_j\overline{\lambda'}^{p-j}s^j : \overline{\lambda'}=(1+\delta_o)\overline{\lambda}
+\end{equation}
+%
+In the case of the reachable eigenvalues, the procedure is the same except
+that we obtain our bound $\delta_c=\max(|{\mat{A}_e}_{*,i}+{\mat{B}_e}_{*,i}|_2)$
+(\emph{i.e.} the largest column norm in $ \left[\begin{array}{c}\mat{A}_e\\ \mat{B}_e\end{array}\right]$) and
+apply Jury's Criterion over
+%
+\begin{equation}
+P_r'=\sum_{j=0}^p c_j\overline{\lambda'}^{p-j}s^j : \overline{\lambda'}=(1+\delta_c)\overline{\lambda}
+\end{equation}
+
+As a final annotation, we remark that the safety specification must be
+applied to the model described in this section, accounting for the
+representation errors of the FWL domain.
+
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+\subsection{Safety of a digitally observed system}\label{sec:cof_safety}
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+\todo{FWL effects here? they are implicit from equation \ref{eq:observer_LTI_FWL_cf}}
 
 We are not limited to the synthesis of digital stabilizing controllers -- a
 well known task in the literature on digital control systems -- but target
@@ -997,6 +1213,39 @@ which comes from physical restrictions in the energy of the system, and
 \phi_\mathit{init}\equiv \mat{G}' \vec{x}_0 \leq \vec{h}'
 \label{eq:initspec}
 \end{align}
+
+%==========
+
+%% Now that we have established convergence, we may examine the safety
+%% specification of the state space.
+In the case of SISO systems, the safety specification is
+given by a range of the input and a range of the output which are considered
+safe ($\vec{u}_k \in [\underline{u}\ \ \overline{u}] \wedge \vec{y}_k \in
+[\underline{y}\ \ \overline{y}]$)
+Whilst there are other properties we may
+include in the verification, we will solely focus on these for simplicity of
+the explanation.  We assume that we do not want saturation in our
+system, hence the control loop has only one mode.
+%We have also identified the quantization noise as a bounded non-deterministic input.
+First we must
+translate the safety specification into the statespace.  Replacing on the
+second part of equation \eqref{eq:observer_LTI_cf} we obtain
+%
+\begin{equation}
+\phi_{safety} := \underline{y}<\mat{C}\vec{x}_k<\overline{y}, \forall k \geq 0
+\label{eq:of_bounds}
+\end{equation}
+\todo{Using \eqref{eq:observer_LTI_cf} doesn't result in this.}
+%
+\todo{transient response?}
+%
+%Note that we use the bounds of the input after the transformation by $\mat{B}$ since the matrix may reverse the bounds. 
+%
+%We evaluate the progression of the system over time by calculating
+%$\vec{x}_k$ to validate against this specification.  For this step we require
+%an initial set $\vec{x}_0$ from which the system progresses.  Obviously, this set
+%must satisfy the specification, otherwise the system will be
+%unsafe to begin with.  For efficiency purposes, the inequality in \eqref{eq:of_bounds} is transformed into reachable form using $\mat{T}_c, \mat{T}_o$ which reduces the complexity from $\mathcal{O}(p^2)$ to $\mathcal{O}(p)$.
 
 %-------------------------------
 \subsection{Transient response} 
@@ -1102,256 +1351,6 @@ P'=\prod_{i=0}^p (s-\lambda_i')=\prod_{i=0}^p \left(s-\frac{\lambda_i}{\overline
 where all members are known, we may now synthesise coefficients that ensure
 the eigenvalues are smaller than a desired magnitude, thus ensuring that the
 settling time is too.
-
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\section{Verification of a Controllable Observed System}\label{sec:cof_verification}
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-%% In most real implementations, the internal state of a plant cannot be
-%% directly measured but rather inferred from its
-%% effect on the output. A plant model that minimises the difference
-%% between the outputs is called an observer and it is a well known
-%% paradigm in the control literature~\cite{astrom1997computer}.
-
-Since we are interested in synthesising controllers with observer
-designs, in this section we will look at checking stability and safety
-in the presence of an observer.
-
-%the challenges presented by the introduction of the observer.
-
-
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{Stability of an Observed System}\label{sec:cof_stability}
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-Let us look at observer for a SISO systems as shown in figure \ref{fig:observersystem} where ideally ${\mat{A}_d}_{\langle C \rangle}=\mat{A}_d$, ${\mat{B}_d}_{\langle C \rangle}=\mat{B}_d$ and ${\mat{C}_d}_{\langle C \rangle}=\mat{C}_d$ for a given time discretization. We will initially assume this for the description of the system and then introduce the errors caused  by misrepresentations. For simplicity of the description, we will agregate the noises as follows:
-\begin{align*}
-\eta_1&=\nu_1+\nu_1'+\nu_t\\
-\eta_2&=\nu_2+\nu_2'
-\end{align*}
-where $\nu_1$ and $\nu_2$ are the quantization noises introduced by the ADC and the DAC, $\nu_t$ is the noise introduced by the delay, and $\nu_1'$ and $\nu_2'$ are quantization noises caused by roundoffs in the FWL operations.
-A controllable and observable system will have the following dynamics:
-\begin{align}
-\scriptstyle
-\left [\begin{array}{c}\vec{x}\\ \vec{x}_e \end{array}\right]_{k+1}
-=\left [\begin{array}{cc}\mat{A}_d-\mat{B}_d\mat{K}&\mat{B}_d\mat{K}\\ \mat{0}&\mat{A}_d-\mat{L}\mat{C}_d\end{array}\right]
-\left [\begin{array}{c}\vec{x}\\ \vec{x}_e \end{array}\right]_k
-+\left [\begin{array}{c}\mat{B}_dk_r\\ \mat{0} \end{array}\right] \vec{r}_k
-+\left [\begin{array}{cc}\mat{B}_dk_r&\mat{0}\\ \mat{0}&-\mat{L}\end{array}\right]\left [\begin{array}{c}\vec{\eta}_2\\ \vec{\eta}_1\end{array}\right]
-\label{eq:observer_LTI}
-\end{align}
-where $\vec{x}_e=\vec{x}-\hat{\vec{x}}$ is the estimation error of the state space by the observer, and $k_r$ is a reference gain required by the model.
-
-In order for the system to be in canonical form, we must however perform a transformation. The challenge however is that we want the state space dynamics in
-reachable form and the observer error dynamics in observable form. Let 
-\begin{equation}
-\left[\begin{array}{c}\vec{x}'\\ \vec{x}_e'\end{array}\right]=
-\left[\begin{array}{cc}\mat{T}_c & \mat{0}\\\mat{0} & \mat{T}_o\end{array}\right] 
-\left[\begin{array}{c}\vec{x}\\ \vec{x}_e\end{array}\right]
-\end{equation}
-We can transform equation \eqref{eq:observer_LTI} into the equivalent canonical form
-\begin{align}
-\left [\begin{array}{c}\vec{x}'\\ \vec{x}_e' \end{array}\right]_{k+1}
-=& \left [\begin{array}{cc}\mat{A}_{c}&\mat{B}_{o}\\ \mat{0}&\mat{A}_{o}\end{array}\right]
-\left [\begin{array}{c}\vec{x}'\\ \vec{x}_e' \end{array}\right]_k
-+\mat{B}' \vec{r}_k
-+\mat{B}_{\eta}\left [\begin{array}{c}\vec{\eta}_2\\ \vec{\eta}_1\end{array}\right]\nonumber\\
-\nonumber\\
-\vec{y}_k
-=& \mat{C}_{t}\vec{x}_k% + \mat{D}_{d}\vec{u}_k
-\label{eq:observer_LTI_cf}
-\end{align}
-where
-{
-\setlength{\abovedisplayskip}{0pt}
-\setlength{\belowdisplayskip}{0pt}
-%\begin{align*}
-%
-%\mat{A}_{c}=&\left[
-%\begin{array}{ccccc}
-%0&1&0&\cdots&0\\
-%0&0&1&\cdots&0\\
-%\vdots&\vdots&\vdots&\ddots&\vdots\\
-%0&0&0&\cdots&1\\
-%k_n-a_n&\cdots&k_i-a_i&\cdots&k_1-a_1
-%\end{array}\right]
-%\label{eq:cf_SISO_2}
-%\end{align*}
-\begin{align*}
-\mat{A}_{c}=\left[
-\begin{array}{cc}
-k_n-a_n&\begin{array}{cc}\cdots&k_1-a_1\end{array}\\
-\mat{I}&\mat{0}
-\end{array}\right]&&
-\mat{A}_{o}=\left[
-\begin{array}{ccc}
-a_n-l_n&&\mat{I}\\
-&&\vdots\\
-a_1-l_1&&\mat{0}
-\end{array}\right]
-\end{align*}
-}
-{\setlength{\belowdisplayskip}{0pt}
-\begin{align*}
-\mat{A}_{c}=&\mat{T}_c\left(\mat{A}_d-\mat{B}_d\mat{K}\right)\mat{T}_c^{-1}&
-\mat{A}_{o}=&\mat{T}_o\left(\mat{A}_d-\mat{L}\mat{C}_d\right)\mat{T}_o^{-1}\\
-\mat{A}'=&\left [\begin{array}{cc}\mat{A}_{c}&\mat{B}_{o}\\ \mat{0}&\mat{A}_{o}\end{array}\right]&
-\mat{B}_{o}=&\mat{T}_c\mat{B}_d\mat{K}\mat{T}_o^{-1}\\
-\mat{B}'=&\left[\begin{array}{c}\mat{T}_c\mat{B}_d\mat{k}_r\\\mat{0}\end{array}\right]&
-\mat{B}_{\eta}=&\left[\begin{array}{cc}\mat{T}_c\mat{B}_d\mat{k}_r&\mat{0}\\\mat{0}&-\mat{T}_o\mat{L}\end{array}\right]\\
-\mat{T}_c=&\mat{R}_{cf}\mat{R}^{-1}&
-\mat{T}_o=&\mat{W}_o^{-1}\mat{W}_{of}\\
-\mat{C}_t=&\mat{C}_d\mat{T}_c&
-\mat{L}=& \mat{T}_o^{-1}\left[ \begin{array}{ccc}l_1&\cdots&l_n\end{array}\right]^T
-\end{align*}
-}
-
-The matrices $\mat{R}$%$\mat{R}=\left[\begin{array}{cccc} \mat{B} & \mat{A}\mat{B} & \cdots & \mat{A}^{p-1}\mat{B} \end{array}\right]$
-~and $\mat{R}_{cf}$%$\mat{R}_{cf}=\left[\begin{array}{cccc} mat{B}_c & \mat{A}_c\mat{B}_c & \cdots & \mat{A}_c^{p-1}\mat{B}_c \end{array}\right]$
-~are called reachability matrices (of the system and its Reachable Canonical Form respectively),
-and $\mat{W}_o$%$\mat{W}_o=\left[\begin{array}{c} mat{C}\\ \mat{C}\mat{A}\\ \vdots \\ \mat{C}\mat{A}^{p-1} \end{array}\right]$
-~and $\mat{W}_{of}$%$\mat{W}_{of}=\left[\begin{array}{c} mat{C}_o\\ \mat{C}_o\mat{A}_o\\ \vdots \\ \mat{C}_o\mat{A}_o^{p-1} \end{array}\right]$
-~are its observability matrices  (of the system and its Observable Canonical Form respectively)~\cite{astrom1997computer}.
-
-Careful examination of the above matrices reveals that because the $\mat{A}'$ is
-upper block diagonal, the spectrum of $\mat{A}'$ is equal to the union of
-the spectrum of $\mat{A}_{c}$ and $\mat{A}_{o}$, which can be calculated
-separately.  In other words, the characteristic polynomial of the closed loop is
-equal to the multiplication of the characteristic polynomials of the controller
-and the observer when seen independently.
-%
-\begin{align*}
-P(z)=P_K(z)P_L(z)=\left(z^p+\sum_{i=1}^p{(a_i-k_i)z^{p-i}}\right) \left(z^p+\sum_{i=1}^p{(l_i-a_i)z^{p-i}}\right)
-\end{align*}
-
-As stated in Section~\ref{ssec:stabspecification}, we use Jury's Criterion on these polynomials
-to assert the stability specification.
-
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{Stability of an Observed System with FWL effects}\label{sec:cof_fwl_stability}
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-Thus far we looked at checking stability
-%have presented a verification procedure for
-of a continuous plant in discretized time domain (i.e., the range of the quatizers is still
-$\mathbb{R}$).  The next step we must realize is that the controller and the
-observer exist in a digital program, hence their domain is
-$\mathbb{R}_{\langle C \rangle}$.  This has two separate effects on the
-model.  If we recall Equation~\eqref{eq:observer_LTI}, the matrices of the observer
-and the controller are not necessarily those of the plant.  In fact we have
-$\mat{A},\mat{B},\mat{C} \in \mathbb{R}^*$, ${\mat{A}_d}_{\langle C
-\rangle},{\mat{B}_d}_{\langle C \rangle},{\mat{C}_d}_{\langle C \rangle},
-\mat{K}_{\langle C \rangle}, \mat{L}_{\langle C \rangle} \in
-\mathbb{R}_{\langle C \rangle}^*$ where $*$ represents the appropriate
-dimension for each matrix.  Unfortunately this means that although combined
-matrices such as $\mat{A}_t$ are in the reals, they suffer from the fixed
-word restrictions in their composing matrices.
-
-When our observer is implemented using a finite precision controller, new
-problems arise due to the FWL effects.  Let ${\mat{A}_d}_{\langle C
-\rangle}$, ${\mat{B}_d}_{\langle C \rangle}$ and ${\mat{C}_d}_{\langle C
-\rangle}$ be the dynamics represented in $\mathbb{R}_{\langle C\rangle}^*$,
-%
-%and $\mat{A}_e=\mat{A}_d-{\mat{A}_d}_{\langle C \rangle}$, $\mat{B}_e=\mat{B}_d-{\mat{B}_d}_{\langle C \rangle}$,
-%and $\mat{C}_e=\mat{C}_d-{\mat{C}_d}_{\langle C \rangle}$ their corresponding errors.  
-Equation \eqref{eq:observer_LTI_cf} becomes:
-%
-\begin{align}
-\left [\begin{array}{c}\vec{x}'\\ \vec{x}_e' \end{array}\right]_{k+1}
-=& \left [\begin{array}{cc}\mat{A}_{c}+\mat{B}_{e}&\mat{B}_{o}\\ \mat{A}_{e}&\mat{A}_{o}\end{array}\right]
-\left [\begin{array}{c}\vec{x}'\\ \vec{x}_e' \end{array}\right]_k
-+\mat{B}_{c} \vec{r}_k
-+\mat{B}_{\eta}\left [\begin{array}{c}\vec{\eta}_2\\ \vec{\eta}_1\end{array}\right]\nonumber\\
-\vec{y}_k=&\mat{C}_{t}\vec{x}_k'% + \mat{D}_{d}\vec{u}_k
-\label{eq:observer_LTI_FWL_cf}
-\end{align}
-where
-{\setlength{\abovedisplayskip}{2pt}
-\setlength{\belowdisplayskip}{2pt}
-\begin{align*}
-\mat{A}_{c}=&\mat{T}_c\left(\mat{A}_d-\mat{B}_d\mat{K}\right)\mat{T}_c^{-1}&
-\mat{A}_{o}=&\mat{T}_o\left({\mat{A}_d}_{\langle C \rangle}-\mat{L}_{\langle C \rangle}{\mat{C}_d}_{\langle C \rangle}\right)\mat{T}_o^{-1}\\
-\mat{B}_{o}=&\mat{T}_c{\mat{B}_d}_{\langle C \rangle}\mat{K}_{\langle C \rangle}\mat{T}_o^{-1}&
-\mat{B}_{e}=&\mat{T}_c(\mat{B}_d-{\mat{B}_d}_{\langle C \rangle})\mat{K}_{\langle C \rangle}\mat{T}_o^{-1}\\
-\mat{A}_{e}=&\mat{T}_o\left(\mat{A}_d-{\mat{A}_d}_{\langle C \rangle}-\mat{L}_{\langle C \rangle}\mat{C}_e\right)\mat{T}_o^{-1}&
-\mat{C}_{e}=&\mat{C}_d-{\mat{C}_d}_{\langle C \rangle}\\
-\mat{T}_c=&\mat{R}_{cf}\mat{R}^{-1}&
-\mat{T}_o=&\mat{W}_o^{-1}\mat{W}_{of}\\
-\mat{C}_t=&\mat{C}_d\mat{T}_c&
-\mat{L}_{\langle C \rangle}=& \mat{T}_o^{-1}\left[ \begin{array}{ccc}l_1&\cdots&l_n\end{array}\right]^T
-\end{align*}
-}
-{\setlength{\abovedisplayskip}{0pt}
-\begin{align*}
-\mat{A}'=&\left [\begin{array}{cc}\mat{A}_{c}+\mat{B}_{e}&\mat{B}_{o}\\ \mat{A}_{e}&\mat{A}_{o}\end{array}\right]&
-\mat{B}_{c}=&\left[\begin{array}{c}\mat{T}_c{\mat{B}_d}_{\langle C \rangle}\mat{k}_r\\\mat{0}\end{array}\right]&
-\mat{B}_{\eta}=&\left[\begin{array}{cc}\mat{T}_c{\mat{B}_d}_{\langle C \rangle}&\mat{0}\\\mat{0}&-\mat{T}_o\mat{L}_{\langle C \rangle}\end{array}\right]
-\end{align*}
-}
-The first effect of this new equation is that $\mat{A}'$ is no longer upper
-diagonal.  We must therefore compensate for the errors introduced in order
-to find a stable solution.  We can use Gershgoring disks to limit the error
-in the expected eigenvalues.  Let $\delta_o=\max(|{\mat{A}_e}_{i,*}|_2)$
-(\emph{i.e.} the largest row norm in $\mat{A}_e$) be the largest error bound
-for any eigenvalue in $\mat{A}_e$.  Then $\forall i \in [1, n],
-|{\lambda_o}_{i}-\hat{\lambda_o}_{i}|<\delta_o$,where ${\lambda_o}_{i}$ are the
-true eigenvalues of the observer and $\hat{\lambda_o}_{i}$ the eigenvalues of
-the perturbed observer.  We note that in the case of stability we only care
-about the error with respect to the unit circle, which is equivalent to
-upper bounding the estimation of the largest eigenvalue.  Hence given a
-desired upper value $\overline{\lambda}$, we apply Jury's criterion on the
-polynomial.
-%
-\begin{equation}
-P_o'=\sum_{j=0}^p c_j\overline{\lambda'}^{p-j}s^j : \overline{\lambda'}=(1+\delta_o)\overline{\lambda}
-\end{equation}
-%
-In the case of the reachable eigenvalues, the procedure is the same except
-that we obtain our bound $\delta_c=\max(|{\mat{A}_e}_{*,i}+{\mat{B}_e}_{*,i}|_2)$
-(\emph{i.e.} the largest column norm in $ \left[\begin{array}{c}\mat{A}_e\\ \mat{B}_e\end{array}\right]$) and
-apply Jury's Criterion over
-%
-\begin{equation}
-P_r'=\sum_{j=0}^p c_j\overline{\lambda'}^{p-j}s^j : \overline{\lambda'}=(1+\delta_c)\overline{\lambda}
-\end{equation}
-
-As a final annotation, we remark that the safety specification must be
-applied to the model described in this section, accounting for the
-representation errors of the FWL domain.
-
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{Safety of a Digitally Observed System}\label{sec:cof_safety}
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\todo{FWL effects here? they are implicit from equation \ref{eq:observer_LTI_FWL_cf}}
-
-%% Now that we have established convergence, we may examine the safety
-%% specification of the state space.
-In the case of SISO systems, the safety specification is
-given by a range of the input and a range of the output which are considered
-safe ($\vec{u}_k \in [\underline{u}\ \ \overline{u}] \wedge \vec{y}_k \in
-[\underline{y}\ \ \overline{y}]$)
-Whilst there are other properties we may
-include in the verification, we will solely focus on these for simplicity of
-the explanation.  We assume that we do not want saturation in our
-system, hence the control loop has only one mode.
-%We have also identified the quantization noise as a bounded non-deterministic input.
-First we must
-translate the safety specification into the statespace.  Replacing on the
-second part of equation \eqref{eq:observer_LTI_cf} we obtain
-%
-\begin{equation}
-\phi_{safety} := \underline{y}<\mat{C}\vec{x}_k<\overline{y}, \forall k \geq 0
-\label{eq:of_bounds}
-\end{equation}
-\todo{Using \eqref{eq:observer_LTI_cf} doesn't result in this.}
-%
-\todo{transient response?}
-%
-%Note that we use the bounds of the input after the transformation by $\mat{B}$ since the matrix may reverse the bounds. 
-%
-%We evaluate the progression of the system over time by calculating
-%$\vec{x}_k$ to validate against this specification.  For this step we require
-%an initial set $\vec{x}_0$ from which the system progresses.  Obviously, this set
-%must satisfy the specification, otherwise the system will be
-%unsafe to begin with.  For efficiency purposes, the inequality in \eqref{eq:of_bounds} is transformed into reachable form using $\mat{T}_c, \mat{T}_o$ which reduces the complexity from $\mathcal{O}(p^2)$ to $\mathcal{O}(p)$.
 
 %-------------------------------
 \section{Counterexample Guided Inductive Synthesis} 
