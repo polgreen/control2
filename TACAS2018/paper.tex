@@ -980,11 +980,12 @@ specification $\phi_\mathit{stability}$ in terms of a check known as
 formula to select the entries of matrix $K$ so that the closed-loop
 dynamics are shaped as desired.
 
-Let us look at observer for a SISO systems as shown in figure \ref{fig:observersystem} where ideally ${\mat{A}_d}_{\langle C \rangle}=\mat{A}_d$, ${\mat{B}_d}_{\langle C \rangle}=\mat{B}_d$ and ${\mat{C}_d}_{\langle C \rangle}=\mat{C}_d$ for a given time discretization. We will initially assume this for the description of the system and then introduce the errors caused  by misrepresentations. For simplicity of the description, we will agregate the noises as follows:
-\begin{align*}
-\eta_1&=\nu_1+\nu_1'+\nu_t\\
-\eta_2&=\nu_2+\nu_2'
-\end{align*}
+%Let us look at observer for a SISO systems as shown in figure \ref{fig:observersystem} where ideally
+In this section we assume that
+${\mat{A}_d}_{\langle C \rangle}=\mat{A}_d$, ${\mat{B}_d}_{\langle C \rangle}=\mat{B}_d$ and ${\mat{C}_d}_{\langle C \rangle}=\mat{C}_d$ for a given time discretization.
+%% We will initially assume this for the description of the system and then introduce the errors caused  by misrepresentations.
+For simplicity of the description, we agregate the noises as follows:
+$\eta_1=\nu_1+\nu_1'+\nu_t$ and $\eta_2=\nu_2+\nu_2'$,
 where $\nu_1$ and $\nu_2$ are the quantization noises introduced by the ADC and the DAC, $\nu_t$ is the noise introduced by the delay, and $\nu_1'$ and $\nu_2'$ are quantization noises caused by roundoffs in the FWL operations.
 A controllable and observable system will have the following dynamics:
 \begin{align}
