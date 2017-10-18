@@ -25,6 +25,8 @@
 \newcommand{\xmark}{\ding{55}}
 \definecolor{azure}{rgb}{0.0, 0.5, 1.0}
 
+\usepackage{outlines}
+
 \lstnewenvironment{queryl}[1][] 
    {\lstset{linewidth=8cm, #1}}
    {}
@@ -168,55 +170,98 @@ alternativetitlepage=true,
 
 \end{frame}
 
-\begin{frame}{Transfer-Function Representation}
+\begin{frame}{ Typical closed-loop control system}
 %
 \centering
  \includegraphics[width=.6\textwidth]{figures/closedloopseries.pdf} 
- 
- \uncover<2>{
+  
+ \begin{outline}
+ \uncover<1->{\1 Representation of the digital controller and plant
+   \2 state-space: matrices $A$, $B$, $C$, and $D$
+   \2 transfer-function: coefficients $b_{0}$, $b_{1}$,\dots,$b_{m}$ and $a_{0}$, $a_{1}$,\dots,$a_{m}$}
+ \uncover<2->{\1 Stability of closed-loop systems
+   \2 A system is asymptotically stable if its executions converge to an equilibrium point}
+ \uncover<3->{\1 Safety of closed-loop systems
+   \2 defines a requirement on the states of the model}
+\end{outline}
+
 %
-\begin{equation}
-\small
-\label{eq:transferfunction}
-H(z)=\frac{B(z)}{A(z)}=\frac{b_{0}+b_{1}z^{-1}+...+b_{M}z^{-M}}{a_{0}+a_{1}z^{-1}+...+a_{N}z^{-N}}.
-\end{equation}
+%\begin{equation}
+%\small
+%\label{eq:transferfunction}
+%H(z)=\frac{B(z)}{A(z)}=\frac{b_{0}+b_{1}z^{-1}+...+b_{M}z^{-M}}{a_{0}+a_{1}z^{-1}+...+a_{N}z^{-N}}.
+%\end{equation}
 %
 %\noindent where,
-\begin{itemize}
-\item $z^{-1}$ is called the \textbf{backward-shift} operator;
-\item $A(z)$ and $B(z)$ are the \textbf{denominator} and \textbf{numerator} polynomials;
-\item $N$ and $M$ are the \textbf{order} of the respective polynomials.
-\end{itemize}}
+%\begin{itemize}
+%\item $z^{-1}$ is called the \textbf{backward-shift} operator;
+%\item $A(z)$ and $B(z)$ are the \textbf{denominator} and \textbf{numerator} polynomials;
+%\item $N$ and $M$ are the \textbf{order} of the respective polynomials.
+%\end{itemize}}
+
+%\end{frame}
+
+%\begin{frame}{State-Space Representation}
+
+%\begin{itemize}
+%\item Mathematical model of a physical system as a set of \textbf{input}, \textbf{output}, and 
+%\textbf{state variables} related by differential equations.
+%\end{itemize}
+
+% \uncover<2>{
+% \begin{itemize}
+%\item The behavior of a system is represented via a \textbf{state
+%evolution equation} $x(n+1)$ and an \textbf{instantaneous output equation} $y(n)$, as
+%follows:
+%\end{itemize}
+%
+%\begin{equation}
+%\begin{split}
+%x(n+1) &= A x(n) + B u(n)
+%\\
+%y(n) &= C x(n) + D u(n), 
+%\end{split}\label{eq:ss-example}
+%\end{equation}}
+%
+%where $A$, $B$, $C$ and $D$ are \textbf{matrices} that fully \textbf{specify the model}.}
 
 \end{frame}
 
-\begin{frame}{State-Space Representation}
+\begin{frame}{Numerical errors}
+\vspace{-1cm}
+  \begin{center}
+    \only<1>{\includegraphics[width=.9\textwidth]{figures/spirals/diagram-18.png}}
+    \only<2>{\includegraphics[width=.9\textwidth]{figures/spirals/diagram-19.png}}
+    \only<3->{\includegraphics[width=.9\textwidth]{figures/spirals/diagram-20.png}}
+  \end{center}
+  \vspace{-1cm}
+  \begin{itemize}
+  \item \uncover<1->{{\bf Truncation and rounding on the plant}}
+  \item  \uncover<2->{{\bf Truncation on the converters}}
+  \item \uncover<3->{{\bf Rounding on the controller}}
+  \end{itemize}  
+ 
+\end{frame}  
 
+\begin{frame}{Objectives}
+
+%\colorbox{green!70}{Phases of the controller synthesis:}
+
+\begin{tcolorbox}[enhanced,width=4.5in,center upper,
+    fontupper=\large\bfseries,drop shadow southwest,sharp corners]
+Generate sound digital controllers for stability and safety specifications 
+with a very high degree of automation
+\end{tcolorbox}
+    
 \begin{itemize}
-\item Mathematical model of a physical system as a set of \textbf{input}, \textbf{output}, and 
-\textbf{state variables} related by differential equations.
+\item support for transfer-function and state-space representations in closed-loop form
+\item synthesize different numerical representations of the controller using CEGIS
+\item provide a MATLAB toolbox to synthesize digital controllers while taking into account finite word-length effects
 \end{itemize}
-
- \uncover<2>{
- \begin{itemize}
-\item The behavior of a system is represented via a \textbf{state
-evolution equation} $x(n+1)$ and an \textbf{instantaneous output equation} $y(n)$, as
-follows:
-\end{itemize}
-%
-\begin{equation}
-\begin{split}
-x(n+1) &= A x(n) + B u(n)
-\\
-y(n) &= C x(n) + D u(n), 
-\end{split}\label{eq:ss-example}
-\end{equation}
-%
-where $A$, $B$, $C$ and $D$ are \textbf{matrices} that fully \textbf{specify the model}.}
-
+  
 \end{frame}
 
-\begin{frame}{Counterexample-Guided Inductive Synthesis for Control Systems}
+\begin{frame}{Counterexample-Guided Inductive Synthesis (CEGIS) for Control Systems}
 
 \colorbox{green!70}{CEGIS with multi-staged verification:}
 
@@ -350,23 +395,6 @@ where $A$, $B$, $C$ and $D$ are \textbf{matrices} that fully \textbf{specify the
 
 %\end{frame}
 
-\begin{frame}{Objectives}
-
-%\colorbox{green!70}{Phases of the controller synthesis:}
-
-\begin{tcolorbox}[enhanced,width=4.5in,center upper,
-    fontupper=\large\bfseries,drop shadow southwest,sharp corners]
-Generate sound digital controllers for stability and safety specifications 
-with a very high degree of automation
-\end{tcolorbox}
-    
-\begin{itemize}
-\item support for transfer-function and state-space representations in closed-loop form
-\item synthesize different numerical representations of the controller using CEGIS
-\item provide a MATLAB toolbox to synthesize digital controllers while taking into account finite word-length effects
-\end{itemize}
-  
-\end{frame}
 
 \begin{frame}{The Proposed Synthesis Methodology}
 
@@ -421,7 +449,7 @@ with a very high degree of automation
 \end{lstlisting}
 }
 
-\begin{frame}{DSSynth Usage - Steps 1, 2, and 3}
+\begin{frame}{DSSynth Usage - Transfer Function}
 
 \colorbox{green!70}{Synthesizing an unmanned aerial vehicle (UAV) plant:}
 
@@ -456,7 +484,7 @@ G(z)=\frac{B(z)}{A(z)}=\frac{-0.06875z^{2}}{z^2-1.696z+0.7089}.
 \end{lstlisting}
 }
 
-\begin{frame}{DSSynth Usage - Steps A, B, and C}
+\begin{frame}{DSSynth Usage - Transfer Function}
 
 \colorbox{green!70}{Digital controller synthesized by DSSynth:}
 
@@ -484,21 +512,21 @@ C(z)=\frac{-0.9983^{2}+0.09587z+0.1926}{z^2+0.5665z+0.75}.
 \end{lstlisting}
 }
 
-\begin{frame}{DSSynth Usage - Stability Check}
+%\begin{frame}{DSSynth Usage - Stability Check}
 
-\colorbox{green!70}{General equation (combination between plant and controller):}
+%\colorbox{green!70}{General equation (combination between plant and controller):}
 
-\begin{equation}
-\small
-\label{equation_general}
-\frac{N(z)}{D(z)}=\frac{0.06863z^{4} - 0.006591z^{3} - 0.01324z^{2}}{1.069z^{4} - 1.136z^{3} + 0.4849z^{2} -0.8704z + 0.5317}.
-\end{equation}
+%\begin{equation}
+%\small
+%\label{equation_general}
+%\frac{N(z)}{D(z)}=\frac{0.06863z^{4} - 0.006591z^{3} - 0.01324z^{2}}{1.069z^{4} - 1.136z^{3} + 0.4849z^{2} -0.8704z + 0.5317}.
+%\end{equation}
  
-\colorbox{green!70}{Computing the roots from the general equation in MATLAB:}
+%\colorbox{green!70}{Computing the roots from the general equation in MATLAB:}
 
-\makeset
+%\makeset
 
-\end{frame}
+%\end{frame}
 
 \begin{frame}{DSSynth Usage - Step Response}
 
@@ -631,7 +659,7 @@ outside of our model using MATLAB
 
 \begin{itemize}
 \item The digital {\bf controller order} ranges from 1 to 8
-\item The number of {\bf continuous variables} ranges from 1 to 4
+\item The number of {\bf state variables} ranges from 1 to 9
 \item The {\bf median runtime} for our benchmarks is $124$\,s
 \item The average synthesis time amounts to $35.5$\,s for state-space systems
 \item The average synthesis time amounts to $123.6$\,s for transfer functions
