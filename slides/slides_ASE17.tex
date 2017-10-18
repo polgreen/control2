@@ -254,9 +254,9 @@ with a very high degree of automation
 \end{tcolorbox}
     
 \begin{itemize}
-\item support for transfer-function and state-space representations in closed-loop form
-\item synthesize different numerical representations of the controller using CEGIS
-\item provide a MATLAB toolbox to synthesize digital controllers while taking into account finite word-length effects
+\item  \uncover<1->{support for transfer-function and state-space representations in closed-loop form}
+\item  \uncover<2->{synthesize different numerical representations of the controller using CEGIS}
+\item  \uncover<3->{provide a MATLAB toolbox to synthesize digital controllers while taking into account finite word-length effects}
 \end{itemize}
   
 \end{frame}
@@ -268,7 +268,7 @@ with a very high degree of automation
 \begin{figure}[htb]
 {\scriptsize
 \centering
-\resizebox{.8\textwidth}{!}
+\resizebox{.9\textwidth}{!}
 {
   \begin{tikzpicture}[scale=0.3,->,>=stealth',shorten >=.2pt,auto, semithick, initial text=, ampersand replacement=\&,]
   \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center
@@ -634,6 +634,7 @@ outside of our model using MATLAB
 \end{itemize}
 \end{block}
 
+\uncover<2->{
 \begin{block}{Experimental Setup:}
 \begin{itemize}
 \item Signal input range:  $\langle -1, 1 \rangle$  
@@ -642,7 +643,7 @@ outside of our model using MATLAB
 \item Intel Core i$7-2600$ $3.40$ GHz processor with $24$ GB of RAM
 \item Ubuntu $64$-bit
 %\item DDSynth v$1$.$0$.$0$
-\end{itemize}
+\end{itemize}}
 
 
 %All experiments with DDSynth v$1$.$0$.$0$ were conducted on an otherwise idle
@@ -658,12 +659,12 @@ outside of our model using MATLAB
 \begin{block}{Experimental Results:}
 
 \begin{itemize}
-\item The digital {\bf controller order} ranges from 1 to 8
-\item The number of {\bf state variables} ranges from 1 to 9
-\item The {\bf median runtime} for our benchmarks is $124$\,s
-\item The average synthesis time amounts to $35.5$\,s for state-space systems
-\item The average synthesis time amounts to $123.6$\,s for transfer functions
-\item On average our engine spent 52\% in the synthesis and 48\% in the verification phase
+%\item The digital {\bf controller order} ranges from 1 to 8
+\item \uncover<1->{The number of {\bf state variables} ranges from 1 to 9}
+\item \uncover<2->{The {\bf median runtime} for our benchmarks is $124$\,s}
+\item \uncover<3->{The average synthesis time amounts to $35.5$\,s for state-space systems}
+\item \uncover<4->{The average synthesis time amounts to $123.6$\,s for transfer functions}
+\item \uncover<5->{On average our engine spent 52\% in the synthesis and 48\% in the verification phase}
 \end{itemize}
 \end{block}
 
