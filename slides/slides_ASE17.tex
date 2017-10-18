@@ -597,15 +597,25 @@ from the literature:
 
 \begin{frame}{Experimental Evaluation}
 
+\begin{block}{Experimental Objectives:}
+
+\begin{itemize}
+\item Evaluate the DSSynth performance to produce stable and safe controllers
+\item Confirm the stability and safety of the synthesized digital controllers
+outside of our model using MATLAB
+\end{itemize}
+\end{block}
+
 \begin{block}{Experimental Setup:}
 \begin{itemize}
 \item Signal input range:  $\langle -1, 1 \rangle$  
 \item Implementation features:  $\langle 8, 8 \rangle$
-\item CEGIS with multi-staged verification
+%\item CEGIS with multi-staged verification
 \item Intel Core i$7-2600$ $3.40$ GHz processor with $24$ GB of RAM
 \item Ubuntu $64$-bit
-\item DDSynth v$1$.$0$.$0$
+%\item DDSynth v$1$.$0$.$0$
 \end{itemize}
+
 
 %All experiments with DDSynth v$1$.$0$.$0$ were conducted on an otherwise idle
 %Intel Core i$7-2600$ $3.40$ GHz processor, with $24$ GB of RAM, running
@@ -617,21 +627,15 @@ from the literature:
 
 \begin{frame}{Experimental Evaluation}
 
-\begin{block}{Experimental Objectives:}
-
-\begin{itemize}
-\item Evaluate the DSSynth performance to produce stable and safe controllers
-\item Confirm the stability and safety of the synthesized digital controllers
-outside of our model using MATLAB
-\end{itemize}
-\end{block}
-
 \begin{block}{Experimental Results:}
 
 \begin{itemize}
-\item The median runtime for our benchmarks is $124$\,s
+\item The digital {\bf controller order} ranges from 1 to 8
+\item The number of {\bf continuous variables} ranges from 1 to 4
+\item The {\bf median runtime} for our benchmarks is $124$\,s
 \item The average synthesis time amounts to $35.5$\,s for state-space systems
-\item For transfer functions, the average synthesis time amounts to $123.6$\,s
+\item The average synthesis time amounts to $123.6$\,s for transfer functions
+\item On average our engine spent 52\% in the synthesis and 48\% in the verification phase
 \end{itemize}
 \end{block}
 
@@ -692,40 +696,42 @@ outside of our model using MATLAB
   \scriptsize
   \begin{tabular}{l}
   {\bf DSSynth Matlab toolbox:}\\
-  www.cprover.org/DSSynth/dssynth-toolbox-1.0.0.zip
-  \\\\\\\\\\\\
+  www.cprover.org/DSSynth/dssynth-toolbox-1.0.0.zip \\
+  \\
+   {\bf DSSynth source code:}\\
+  https://github.com/ssvlab/dsverifier/tree/master/toolbox-dssynth
   \end{tabular}
 \end{tabular}
 
 \end{frame}  
 
 
-\begin{frame}[fragile]{Other CEGIS Applications: Refactoring}
+%\begin{frame}[fragile]{Other CEGIS Applications: Refactoring}
 
 
-  \begin{itemize}
-    \item Find element in list using external iteration:
+%  \begin{itemize}
+%    \item Find element in list using external iteration:
   
-  \begin{lstlisting}[mathescape=true]
-  Integer result = null;
-  List<Integer> data = getData();
-  for (int el : data)
-    if (el % 2 == 0) {
-      result = el; 
-      break;}
-\end{lstlisting}
-\pause
-  \item Find element in list using Java~8 Streams:
+%  \begin{lstlisting}[mathescape=true]
+%  Integer result = null;
+%  List<Integer> data = getData();
+%  for (int el : data)
+%   if (el % 2 == 0) {
+%      result = el; 
+%      break;}
+%\end{lstlisting}
+%\pause
+%  \item Find element in list using Java~8 Streams:
   
-  \begin{lstlisting}[mathescape=true]
-  List<Integer> newList = getData();
-  Optional<Integer> result = list.stream()
-                          .filter(el -> el % 2)
-                          .findFirst();
-  \end{lstlisting}
+%  \begin{lstlisting}[mathescape=true]
+%  List<Integer> newList = getData();
+%  Optional<Integer> result = list.stream()
+%                          .filter(el -> el % 2)
+%                          .findFirst();
+%  \end{lstlisting}
   
-  \end{itemize}
+%  \end{itemize}
   
-\end{frame}  
+%\end{frame}  
 
 \end{document}
