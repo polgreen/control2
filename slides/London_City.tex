@@ -136,7 +136,7 @@ Synthesis}
   \date{}
   
 \author{\normalsize Alessandro Abate, Iury Bessa, Dario Cattaruzza,\\
-  {\bf Lucas Cordeiro}, {\bf Cristina David}, Pascal Kesseli,\\
+  Lucas Cordeiro, {\bf Cristina David}, Pascal Kesseli,\\
   Daniel Kroening, Matt Lewis and Elizabeth Polgreen}
 
 \begin{document}
@@ -390,58 +390,11 @@ Verify: $\exists x . \lnot \sigma(P, x)$
 \item Genetic Programming
     \vspace{1cm}
 \pause
-\item Future work: Neural network  
+\item Future work: Neural networks  
 \end{itemize}
   
 \end{frame}
 
-\begin{frame}[fragile]{Symbolic Bounded Model Checking}
-\vspace{-.5cm}
-\centering
-\begin{minipage}[t]{.45\textwidth}
-\begin{lstlisting}[language=C++,basicstyle=\small,mathescape=true]
-void synthesise() {
-  prog_t p = nondet();
-  int out[M];
-
-  exec(p, input$_1$,out);
-  assume(check(input$_1$,out));
-  ...
-  exec(p, input$_n$,out);
-  assume(check(input$_n$,out));
-  
-  assert(false);}
-\end{lstlisting}
-\end{minipage}
-\hfill
-\begin{minipage}[t]{.45\linewidth}
-\begin{lstlisting}[language=C++,basicstyle=\small]
-void verify(prog_t p) {
-  int input[N] = nondet();
-  int out[M];
-
-  exec(p, in, out);
-  assert(check(in, out));}
-\end{lstlisting}
-\end{minipage}
-
-\end{frame}
-
-\begin{frame}{Genetic Programming}
-  
-Search through the space of programs
-for an individual that is ``fit'' in some sense.
-%(we measure fitnes by the number of INPUTS for which it satisfies the specification).
-\vspace{1cm}
-
-Evolve the population of programs:
-\begin{itemize}
-  \item CROSSOVER combines selected existing programs
-    into new ones
-    \item MUTATE randomly changes parts of a single program
-\end{itemize}
-      
-\end{frame}
 
 \begin{frame}[fragile]{Searching the program space}
  The space of programs is very large.
@@ -782,11 +735,11 @@ Evolve the population of programs:
 %\hspace{-4cm}
 
 \begin{itemize}
-\item Employ abstract
+\item Employs abstract
 acceleration to evaluate all possible progressions of the system simultaneously.
+\vspace{1cm}
 
-
-\item Made use of the abstract accelerator described in: ``Unbounded-time analysis
+\item Makes use of the abstract accelerator described in: ``Unbounded-time analysis
   of guarded LTI systems with inputs by abstract acceleration'', SAS'15, Cattaruzza, Abate, Schrammel, Kroening.
 
 \end{itemize}  
@@ -955,6 +908,56 @@ acceleration to evaluate all possible progressions of the system simultaneously.
 %%  % real c-ex.
 %%  %[figure]: two spirals within green area; add grey polygon (inside green area). 
 %% \end{frame}  
+
+%%%
+
+\begin{frame}[fragile]{Symbolic Bounded Model Checking}
+\vspace{-.5cm}
+\centering
+\begin{minipage}[t]{.45\textwidth}
+\begin{lstlisting}[language=C++,basicstyle=\small,mathescape=true]
+void synthesise() {
+  prog_t p = nondet();
+  int out[M];
+
+  exec(p, input$_1$, out);
+  assume(check(input$_1$, out));
+  ...
+  exec(p, input$_n$, out);
+  assume(check(input$_n$, out));
+  
+  assert(false);}
+\end{lstlisting}
+\end{minipage}
+%% \hfill
+%% \begin{minipage}[t]{.45\linewidth}
+%% \begin{lstlisting}[language=C++,basicstyle=\small]
+%% void verify(prog_t p) {
+%%   int input[N] = nondet();
+%%   int out[M];
+
+%%   exec(p, in, out);
+%%   assert(check(in, out));}
+%% \end{lstlisting}
+%% \end{minipage}
+
+\end{frame}
+
+\begin{frame}{Genetic Programming}
+  
+Search through the space of programs
+for an individual that is ``fit'' in some sense.
+%(we measure fitnes by the number of INPUTS for which it satisfies the specification).
+\vspace{1cm}
+
+Evolve the population of programs:
+\begin{itemize}
+  \item CROSSOVER combines selected existing programs
+    into new ones
+    \item MUTATE randomly changes parts of a single program
+\end{itemize}
+      
+\end{frame}
 
 
 \end{document}
