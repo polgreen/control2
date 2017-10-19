@@ -170,6 +170,25 @@ Synthesis}
 \centering
 Solving this formula.  %We'll be talking about it a lot.
 
+\Large
+\pause
+\begin{minipage}[t]{.42\textwidth}
+ \[
+  \exists F . \forall x \in \mathbb{N} . F(x) > x
+ \]
+\end{minipage}
+%
+\pause
+%
+\begin{minipage}[t]{.45\textwidth}
+ \begin{align*}
+% \visible<2->{
+F(x) & = x + 1 \\%}
+% \visible<3->{
+ %}
+ \end{align*}
+\end{minipage}
+
 %
 %where the $P_i$ range over functions, 
 %the $Q_i$ are either $\exists$ or $\forall$,
@@ -193,34 +212,34 @@ Solving this formula.  %We'll be talking about it a lot.
 \begin{lstlisting}[language=C]
 assume(Init);
 while(G) {
-  T;
+  B;
 }
 assert(A);
 \end{lstlisting}
 \end{minipage}
 \begin{minipage}[t]{.6\linewidth}
 \begin{align*}
-\only<2>{
+\only<2->{
   \exists I . \forall x, x' .  & Init(x) \rightarrow I(x) ~ \wedge \\
-  & I(x) \wedge G(x) \wedge T(x, x') \rightarrow I(x') ~ \wedge \\
+  & I(x) \wedge G(x) \wedge B(x, x') \rightarrow I(x') ~ \wedge \\
   & I(x) \wedge \neg G(x) \rightarrow A(x)
 %\end{align*}
 }
 %\begin{align*}
-\only<3->{
-  \exists N, x_0 . \forall x . \exists x' . & Init(x_0) \wedge N(x_0) ~\wedge \\ 
-&  N(x) \rightarrow G(x) ~ \wedge \\
-& N(x) \rightarrow T(x, x') \wedge N(x') \\\\
- %% \exists R . \forall x, x' .  & G(x) \rightarrow R(x) > 0 ~ \wedge \\
- %%  & G(x) \wedge B(x, x') \rightarrow R(x) > R(x')
-}
-%\end{align*}
-\only<4-> {
-% \begin{align*}
-  \exists N, {\color{red} S}, x_0 . \forall x . & Init(x_0) \wedge N(x_0) ~\wedge \\ 
-&  N(x) \rightarrow G(x) ~ \wedge \\
-& N(x) \rightarrow T(x, {\color{red} S(x)}) \wedge N({\color{red} S(x)})
-} 
+%% \only<3->{
+%%   \exists N, x_0 . \forall x . \exists x' . & Init(x_0) \wedge N(x_0) ~\wedge \\ 
+%% &  N(x) \rightarrow G(x) ~ \wedge \\
+%% & N(x) \rightarrow T(x, x') \wedge N(x') \\\\
+%%  %% \exists R . \forall x, x' .  & G(x) \rightarrow R(x) > 0 ~ \wedge \\
+%%  %%  & G(x) \wedge B(x, x') \rightarrow R(x) > R(x')
+%% }
+%% %\end{align*}
+%% \only<4-> {
+%% % \begin{align*}
+%%   \exists N, {\color{red} S}, x_0 . \forall x . & Init(x_0) \wedge N(x_0) ~\wedge \\ 
+%% &  N(x) \rightarrow G(x) ~ \wedge \\
+%% & N(x) \rightarrow T(x, {\color{red} S(x)}) \wedge N({\color{red} S(x)})
+%% } 
 \end{align*}
 
 \end{minipage}
@@ -230,8 +249,8 @@ assert(A);
 
 \small
 
-\only<5->{
-  Also: finding deep bugs, termination, superoptimisation, refactoring,
+\only<3->{
+  Also: finding bugs, termination, non-termination, superoptimisation, refactoring,
   synthesising digital controllers\\
 }
 %% \only<5>{
@@ -291,7 +310,7 @@ assert(A);
  \]
 \end{minipage}
 %
-\pause
+%\pause
 %
 \begin{minipage}[t]{.45\textwidth}
  \begin{align*}
