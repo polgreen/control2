@@ -599,48 +599,22 @@ C(z)=\frac{-0.9983^{2}+0.09587z+0.1926}{z^2+0.5665z+0.75}.
 Our evaluation consists of $18$ Single-Input and Single-Output control system benchmarks extracted
 from the literature:
 
-\begin{block}{Examples of benchmarks:}
+\uncover<2->{\begin{block}{Experimental Objectives:}
 
 \begin{itemize}
-\item Unmanned aerial vehicle
-\item Cruise control system
-\item Helicopter
-\item Pendulum / inverted pendulum
-\item Magnetic and car suspension
-\item Guidance system
-\item Acrobot control system
+\item Evaluate the DSSynth performance to produce digital controllers
+\item Confirm the stability and safety outside of our model using MATLAB
 \end{itemize}
+\end{block}}
 
-%An unmanned aerial vehicle (UAV), a cruise
-%control system, a spring-mass damper, a satellite, a direct current (DC)
-%servo motor, a helicopter, the inverted pendulum, a pendulum, magnetic
-%suspension, a magnetized pointer, 1/4 car suspension, a computer tape
-%driver, a flexible beam, a guidance system, a US Coast Guard cutter, a
-%continuous stirred tank reactor, a voltage regulator, and an acrobot control
-%system.
-
-\end{block}
-\end{frame}
-
-\begin{frame}{Experimental Evaluation}
-
-\begin{block}{Experimental Objectives:}
-
-\begin{itemize}
-\item Evaluate the DSSynth performance to produce stable and safe controllers
-\item Confirm the stability and safety of the synthesized digital controllers
-outside of our model using MATLAB
-\end{itemize}
-\end{block}
-
-\uncover<2->{
+\uncover<3->{
 \begin{block}{Experimental Setup:}
 \begin{itemize}
 \item Signal input range:  $\langle -1, 1 \rangle$  
 \item Implementation features:  $\langle 8, 8 \rangle$
 %\item CEGIS with multi-staged verification
 \item Intel Core i$7-2600$ $3.40$ GHz processor with $24$ GB of RAM
-\item Ubuntu $64$-bit
+%\item Ubuntu $64$-bit
 %\item DDSynth v$1$.$0$.$0$
 \end{itemize}}
 
@@ -651,7 +625,59 @@ outside of our model using MATLAB
 
 \end{block}
 
+%\begin{block}{Examples of benchmarks:}
+
+%\begin{itemize}
+%\item Unmanned aerial vehicle
+%\item Cruise control system
+%\item Helicopter
+%\item Pendulum / inverted pendulum
+%\item Magnetic and car suspension
+%\item Guidance system
+%\item Acrobot control system
+%\end{itemize}
+
+%An unmanned aerial vehicle (UAV), a cruise
+%control system, a spring-mass damper, a satellite, a direct current (DC)
+%servo motor, a helicopter, the inverted pendulum, a pendulum, magnetic
+%suspension, a magnetized pointer, 1/4 car suspension, a computer tape
+%driver, a flexible beam, a guidance system, a US Coast Guard cutter, a
+%continuous stirred tank reactor, a voltage regulator, and an acrobot control
+%system.
+
+%\end{block}
 \end{frame}
+
+%\begin{frame}{Experimental Evaluation}
+
+%\begin{block}{Experimental Objectives:}
+
+%\begin{itemize}
+%\item Evaluate the DSSynth performance to produce stable and safe controllers
+%\item Confirm the stability and safety of the synthesized digital controllers
+%outside of our model using MATLAB
+%\end{itemize}
+%\end{block}
+
+%\uncover<2->{
+%\begin{block}{Experimental Setup:}
+%\begin{itemize}
+%\item Signal input range:  $\langle -1, 1 \rangle$  
+%\item Implementation features:  $\langle 8, 8 \rangle$
+%\item CEGIS with multi-staged verification
+%\item Intel Core i$7-2600$ $3.40$ GHz processor with $24$ GB of RAM
+%\item Ubuntu $64$-bit
+%\item DDSynth v$1$.$0$.$0$
+%\end{itemize}}
+
+
+%All experiments with DDSynth v$1$.$0$.$0$ were conducted on an otherwise idle
+%Intel Core i$7-2600$ $3.40$ GHz processor, with $24$ GB of RAM, running
+%Ubuntu $64$-bit
+
+%\end{block}
+
+%\end{frame}
 
 \begin{frame}{Experimental Evaluation}
 
