@@ -1428,6 +1428,17 @@ overapproximation errors and provides counterexamples for both
 discrete and continuous dynamics to feed a CEGIS loop on the synthesiser
 waiting for a new candidate solution. 
 
+Our abstraction refinement CEGIS loop is similar to CEGIS with solution generalization \cite{}.
+However, it provides several improvements by exploiting modularity inside the loop.
+The novelty of our approach relies on the synthesis refinement phase, which enables us
+to generalise an existing candidate by means of optimisation. Rather than allow unsuitable
+candidates reach the verification phase, and possibly require further induction on the synthesiser,
+we use an optimizing algorithm which finds a local minima for the properties of interest. 
+This reduces the chances of the optimised candidate failing verification. Furthermore, it allows
+us to relax the quality of the synthesis, since unlikely candidates will still be optimised during this phase. 
+Optimization may also enter its own refinement loop, since it is possible for the
+counterexample to indicate which properties need optimizing (i.e. the ones that are failing).
+  
 \todo{this description does not mention two synthesis phases, which we should
 focus on more.}
 
