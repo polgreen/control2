@@ -5,11 +5,14 @@ tf = [497 0 34821 30222 1874 67895 1345 1647 1042 48576.33333 1350 471 0 67981 3
 
 bar(c,ss)
 legend('state-space')
+ylabel ('Time (s)')
 set(findall(gcf,'-property','LineWidth'),'LineWidth',2)
 set(findall(gcf,'-property','FontSize'),'FontSize',18);
+
 figure
 bar(c,tf)
 legend('transfer-function')
+ylabel ('Time (s)')
 set(findall(gcf,'-property','LineWidth'),'LineWidth',2)
 set(findall(gcf,'-property','FontSize'),'FontSize',18);
 
