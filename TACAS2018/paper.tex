@@ -1152,7 +1152,7 @@ where
 The first effect of this new equation is that $\mat{A}'$ is no longer upper
 diagonal.  We must therefore compensate for the errors introduced in order
 to find a stable solution.  We can use Gershgoring disks~\cite{van1996matrix} to limit the error
-in the expected eigenvalues.  Let $\delta_o=\max(|{\mat{A}_e}_{i,*}|_2)$
+in the expected eigenvalues.  Let $\delta_o=\max(\norm{{\mat{A}_e}_{i,*}}_2)$
 (\emph{i.e.} the largest row norm in $\mat{A}_e$) be the largest error bound
 for any eigenvalue in $\mat{A}_e$.  Then $\forall i \in [1, n],
 |{\lambda_o}_{i}-\hat{\lambda_o}_{i}|<\delta_o$,where ${\lambda_o}_{i}$ are the
@@ -1168,7 +1168,7 @@ P_o'=\sum_{j=0}^p c_j\overline{\lambda'}^{p-j}s^j : \overline{\lambda'}=(1+\delt
 \end{equation}
 %
 In the case of the reachable eigenvalues, the procedure is the same except
-that we obtain our bound $\delta_c=\max(|{\mat{A}_e}_{*,i}+{\mat{B}_e}_{*,i}|_2)$
+that we obtain our bound $\delta_c=\max(\norm{{\mat{A}_e}_{*,i}+{\mat{B}_e}_{*,i}}_2)$
 (\emph{i.e.} the largest column norm in $ \left[\begin{array}{c}\mat{A}_e\\ \mat{B}_e\end{array}\right]$) and
 apply Jury's Criterion over
 %
@@ -2595,11 +2595,11 @@ We may also bound $\nu_2'$ from \eqref{eq:uk} as follollows:
 \begin{align*}
 \delta\left(\mat{K}_{\langle C\rangle} \vec{x}_{\langle C\rangle} \right) &\in \left[ -p \frac{q_c}{2}\ \ p \frac{q_c}{2}\right]\\
 {\vec{\nu_e}}_i &\in \left[ -(p+2) \frac{q_c}{2}\ \ (p+2) \frac{q_c}{2}\right], i \in [1, p]\\
-\Rightarrow \nu_2' &\in \left[  -p(|\mat{K}_{\langle C \rangle}|_1+2) \frac{q_c}{2}\ \ p(|\mat{K}_{\langle C \rangle}|_1+2) \frac{q_c}{2}\right]
+\Rightarrow \nu_2' &\in \left[  -p(\norm{\mat{K}_{\langle C \rangle}}_1+2) \frac{q_c}{2}\ \ p(\norm{\mat{K}_{\langle C \rangle}}_1+2) \frac{q_c}{2}\right]
 \end{align*}
 Similarly we also find
 \begin{align*}
-\nu_1' &\in \left[  -p(|{\mat{C}_d}_{\langle C \rangle}|_1+2) \frac{q_c}{2}\ \ p(|{\mat{C}_d}_{\langle C \rangle}|_1+2) \frac{q_c}{2}\right]
+\nu_1' &\in \left[  -p(\norm{{\mat{C}_d}_{\langle C \rangle}}_1+2) \frac{q_c}{2}\ \ p(\norm{{\mat{C}_d}_{\langle C \rangle}}_1+2) \frac{q_c}{2}\right]
 \end{align*}
 The proof derives from $\norm{\mat{K}\vec{x}}_1 \leq \norm{\mat{K}}_1\norm{\vec{x}}_1$.
 
@@ -2804,7 +2804,7 @@ which accelerating results becomes
 \begin{theorem}
 The error introduced by a delay $t_d$ in the control output $\vec{u}_k$ of a discrete feedback controller for a continuous LTI system can be modelled as a non-deterministic noise signal upperbound by 
 \begin{align}
-|{\vec{y}_e}_{k}|_1 \leq q_t, \text{ where } q_t=&(|\mat{C}(\mat{B}_{T_s}-\mat{B}_{t_s})|_1+|\mat{C}\mat{A}_{t_s}\mat{B}_{t_d}|_1)|U|_\infty
+\norm{{\vec{y}_e}_{k}}_1 \leq q_t, \text{ where } q_t=&(\norm{\mat{C}(\mat{B}_{T_s}-\mat{B}_{t_s})}_1+\norm{\mat{C}\mat{A}_{t_s}\mat{B}_{t_d}}_1)\norm{U}_1
 \end{align}
 \end{theorem}
 
