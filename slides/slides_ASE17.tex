@@ -261,6 +261,74 @@ with a very high degree of automation
   
 \end{frame}
 
+%\begin{frame} {Counterexample-Guided Inductive Synthesis for Control Systems}
+
+%\colorbox{green!70}{Abstraction-based CEGIS:}
+
+%\begin{figure}
+%\centering
+%{\scriptsize
+%  \resizebox{.8\textwidth}{!}
+%  {
+%\begin{tikzpicture}[scale=0.3,->,>=stealth',shorten >=.2pt,auto, semithick, ampersand replacement=\&,]
+%  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center},row sep=.8cm, column sep=.2cm] {
+%   \coordinate (aux1);
+%   \& \coordinate (aux2);
+%   \& ;\\
+%   \&\node[fill=gray!20,align=center,xshift=-1.5cm] (pre) {{\sc 1. pre-}\\{\sc processing}};
+%   \& \node[fill=gray!20,align=center] (abstract) {\sc 4. abstract};
+%   \& \coordinate (aux); \\ 
+%   \&
+%   \& \node[fill=gray!20,align=center] (synth) {\sc 2. synthesize};
+%   \& \node[fill=gray!20,align=center, minimum width=4cm] (verify) {\sc 3. verify ($\phi$)};
+%      \node[draw=none] (SAT) at ([xshift=2.7cm,yshift=-.3cm]verify)  {\sc PASS};
+%   \& \node[ellipse, fill=gray!20] (done) {{\sc Done}};\\
+%   \&
+%   \& \node[draw,rectangle,align=center] (KSAT) { \sf Program \\ \sf Search};
+%   \& complexnode/.pic={
+%     \coordinate (AA);
+%     \node[draw,rectangle,align=center] (AAV) at ([xshift=-1.5cm]AA.center) { \sf Abstract\\ \sf Acceleration};
+%     \node[draw,rectangle,align=center] (AAC) at ([xshift=1.5cm]AA.center) { \sf Abstraction \\ \sf Verifier};
+%    }\\
+%  };
+%  \path
+%    (pre.east) edge node[align=center] {} (abstract.west)
+%    (abstract.south) edge node{} (synth.north)
+%    ([yshift=1em]synth.east) edge node {$K$} ([yshift=1em]verify.west)
+%    (aux) edge (abstract.east) 
+%    (verify.east) edge (done.west);
+%  \path
+%    ([xshift=+.6cm]KSAT.north) edge[left] node[xshift=-.3cm] {} ([xshift=0.6cm]synth.south) 
+%    ([xshift=-.6cm]synth.south) edge node[align=center,xshift=.3cm] {} ([xshift=-.6cm]KSAT.north)
+%    ([yshift=.5cm]AAV.east) edge node{} ([yshift=.5cm]AAC.west)
+%    ([yshift=-.5cm]AAC.west) edge node{} ([yshift=-.5cm]AAV.east)
+%    (AAC.north) edge node{} ([xshift=4.9cm]verify.south)
+%    ([xshift=-5cm]verify.south) edge node{} (AAV.north);
+%  \path[-] 
+%     (verify.north) edge node {C-ex} (aux);
+%\end{tikzpicture}
+%}
+%}
+%\caption{Abstraction-based CEGIS}
+%\label{fig:CEGARIS} 
+%\end{figure}
+
+%\end{frame}
+
+
+\begin{frame}{The Proposed Synthesis Methodology}
+
+\colorbox{green!70}{Phases of the controller synthesis:}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/dssynth-flow.pdf}
+%\caption{Phases of the controller synthesis}
+\label{fig:synthesis-flow}
+\end{figure}
+
+\end{frame}
+
 \begin{frame}{CEGIS for Control Systems}
 
 \colorbox{green!70}{CEGIS with multi-staged verification:}
@@ -268,7 +336,7 @@ with a very high degree of automation
 \begin{figure}[htb]
 {\scriptsize
 \centering
-\resizebox{.9\textwidth}{!}
+\resizebox{.95\textwidth}{!}
 {
   \begin{tikzpicture}[scale=0.3,->,>=stealth',shorten >=.2pt,auto, semithick, initial text=, ampersand replacement=\&,]
   \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center
@@ -341,74 +409,6 @@ with a very high degree of automation
 
 \end{frame}
 
-%\begin{frame} {Counterexample-Guided Inductive Synthesis for Control Systems}
-
-%\colorbox{green!70}{Abstraction-based CEGIS:}
-
-%\begin{figure}
-%\centering
-%{\scriptsize
-%  \resizebox{.8\textwidth}{!}
-%  {
-%\begin{tikzpicture}[scale=0.3,->,>=stealth',shorten >=.2pt,auto, semithick, ampersand replacement=\&,]
-%  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center},row sep=.8cm, column sep=.2cm] {
-%   \coordinate (aux1);
-%   \& \coordinate (aux2);
-%   \& ;\\
-%   \&\node[fill=gray!20,align=center,xshift=-1.5cm] (pre) {{\sc 1. pre-}\\{\sc processing}};
-%   \& \node[fill=gray!20,align=center] (abstract) {\sc 4. abstract};
-%   \& \coordinate (aux); \\ 
-%   \&
-%   \& \node[fill=gray!20,align=center] (synth) {\sc 2. synthesize};
-%   \& \node[fill=gray!20,align=center, minimum width=4cm] (verify) {\sc 3. verify ($\phi$)};
-%      \node[draw=none] (SAT) at ([xshift=2.7cm,yshift=-.3cm]verify)  {\sc PASS};
-%   \& \node[ellipse, fill=gray!20] (done) {{\sc Done}};\\
-%   \&
-%   \& \node[draw,rectangle,align=center] (KSAT) { \sf Program \\ \sf Search};
-%   \& complexnode/.pic={
-%     \coordinate (AA);
-%     \node[draw,rectangle,align=center] (AAV) at ([xshift=-1.5cm]AA.center) { \sf Abstract\\ \sf Acceleration};
-%     \node[draw,rectangle,align=center] (AAC) at ([xshift=1.5cm]AA.center) { \sf Abstraction \\ \sf Verifier};
-%    }\\
-%  };
-%  \path
-%    (pre.east) edge node[align=center] {} (abstract.west)
-%    (abstract.south) edge node{} (synth.north)
-%    ([yshift=1em]synth.east) edge node {$K$} ([yshift=1em]verify.west)
-%    (aux) edge (abstract.east) 
-%    (verify.east) edge (done.west);
-%  \path
-%    ([xshift=+.6cm]KSAT.north) edge[left] node[xshift=-.3cm] {} ([xshift=0.6cm]synth.south) 
-%    ([xshift=-.6cm]synth.south) edge node[align=center,xshift=.3cm] {} ([xshift=-.6cm]KSAT.north)
-%    ([yshift=.5cm]AAV.east) edge node{} ([yshift=.5cm]AAC.west)
-%    ([yshift=-.5cm]AAC.west) edge node{} ([yshift=-.5cm]AAV.east)
-%    (AAC.north) edge node{} ([xshift=4.9cm]verify.south)
-%    ([xshift=-5cm]verify.south) edge node{} (AAV.north);
-%  \path[-] 
-%     (verify.north) edge node {C-ex} (aux);
-%\end{tikzpicture}
-%}
-%}
-%\caption{Abstraction-based CEGIS}
-%\label{fig:CEGARIS} 
-%\end{figure}
-
-%\end{frame}
-
-
-\begin{frame}{The Proposed Synthesis Methodology}
-
-\colorbox{green!70}{Phases of the controller synthesis:}
-
-\begin{figure}[t]
-\centering
-\includegraphics[width=0.9\textwidth]{figures/dssynth-flow.pdf}
-%\caption{Phases of the controller synthesis}
-\label{fig:synthesis-flow}
-\end{figure}
-
-\end{frame}
-
 %\begin{frame}{DSSynth Procedures}
 
 %
@@ -451,19 +451,21 @@ with a very high degree of automation
 
 \begin{frame}{DSSynth Usage - Transfer Function}
 
-\colorbox{green!70}{Synthesizing an unmanned aerial vehicle (UAV) plant:}
+\colorbox{green!70}{Physical plant for an unmanned aerial vehicle (UAV) plant:}
 
 \begin{equation}
 \label{equation_plant}
 G(z)=\frac{B(z)}{A(z)}=\frac{-0.06875z^{2}}{z^2-1.696z+0.7089}.
 \end{equation}
 
+\colorbox{green!70}{Synthesizing the digital controller:}
+
 \makeset
 
-\begin{itemize}
-\item numerical representation: $\langle 8, 8 \rangle$
-\item dynamical range: $\langle -1, 1 \rangle$
-\end{itemize}
+%\begin{itemize}
+%\item numerical representation: $\langle 8, 8 \rangle$
+%\item dynamical range: $\langle -1, 1 \rangle$
+%\end{itemize}
 
 \end{frame}
 
@@ -500,7 +502,8 @@ C(z)=\frac{-0.9983^{2}+0.09587z+0.1926}{z^2+0.5665z+0.75}.
 \end{frame}
 
 \defverbatim[colored]\makeset{
-\tiny
+%\tiny
+%\small
 \begin{lstlisting}[xleftmargin=.025\textwidth,xrightmargin=.025\textwidth, frame=single, basicstyle=\tt]
 >> den = [1.069 -1.136 0.4849 -0.8704 0.5317]
 >> r = roots(den)
@@ -694,6 +697,17 @@ from the literature:
 \end{itemize}
 \end{block}
 
+\uncover<7->{
+%\vspace{.5cm}
+\begin{tabular}{c}
+  \scriptsize
+  \begin{tabular}{l}
+  {\bf DSSynth Matlab toolbox:}\\
+  https://www.cprover.org/DSSynth/dssynth-toolbox-1.0.0.zip \\
+  https://github.com/ssvlab/dsverifier/tree/master/toolbox-dssynth
+  \end{tabular}
+\end{tabular}}
+
 \end{frame}
 
 %\begin{frame}{Experimental Evaluation}
@@ -735,31 +749,31 @@ from the literature:
 %\end{figure}
 %\end{frame}
 
-\begin{frame}{Conclusions and Future Work}
-\begin{itemize}
+%\begin{frame}{Conclusions and Future Work}
+%\begin{itemize}
   
-\item \uncover<1->{Automated synthesis of transfer-function and state-space representations that ensures {\bf stability} and {\bf safety}}
+%\item \uncover<1->{Automated synthesis of transfer-function and state-space representations that ensures {\bf stability} and {\bf safety}}
 
-\item \uncover<2->{DSSynth is the first fully automated synthesis tool that is {\bf algorithmically} and {\bf numerically} sound}
+%\item \uncover<2->{DSSynth is the first fully automated synthesis tool that is {\bf algorithmically} and {\bf numerically} sound}
 
-\item \uncover<3->{We will pursue the application of CEGIS to {\bf program repair} or {\bf superoptimization}}
+%\item \uncover<3->{We will pursue the application of CEGIS to {\bf program repair} or {\bf superoptimization}}
 
-\end{itemize}
+%\end{itemize}
 
-\uncover<4->{
-\vspace{.5cm}
-\begin{tabular}{c}
-  \scriptsize
-  \begin{tabular}{l}
-  {\bf DSSynth Matlab toolbox:}\\
-  www.cprover.org/DSSynth/dssynth-toolbox-1.0.0.zip \\
-  \\
-   {\bf DSSynth source code:}\\
-  https://github.com/ssvlab/dsverifier/tree/master/toolbox-dssynth
-  \end{tabular}
-\end{tabular}}
+%\uncover<4->{
+%\vspace{.5cm}
+%\begin{tabular}{c}
+%  \scriptsize
+%  \begin{tabular}{l}
+%  {\bf DSSynth Matlab toolbox:}\\
+%  www.cprover.org/DSSynth/dssynth-toolbox-1.0.0.zip \\
+%  \\
+%   {\bf DSSynth source code:}\\
+%  https://github.com/ssvlab/dsverifier/tree/master/toolbox-dssynth
+%  \end{tabular}
+%\end{tabular}}
 
-\end{frame}  
+%\end{frame}  
 
 
 %\begin{frame}[fragile]{Other CEGIS Applications: Refactoring}
