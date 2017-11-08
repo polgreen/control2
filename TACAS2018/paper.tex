@@ -1440,8 +1440,10 @@ us to relax the quality of the synthesis, since unlikely candidates will still b
 Optimization may also enter its own refinement loop, since it is possible for the
 counterexample to indicate which properties need optimizing (i.e. the ones that are failing).
   
-\todo{this description does not mention two synthesis phases, which we should
-focus on more.}
+\todo{I assume the optimization problem is something like: ``find a controller and an observer that minimize some cost function''. What is the cost function in this case? I guess you want something like the
+  difference between the current candidate and the general solution? How would we capture that?}
+
+\todo{What is the optimization alg that you use? Point 4 below doesn't specify much.}
 
 We find a controller for a continuous initial set of states and set of inputs,
 over an abstraction of the continuous dynamics \cite{cattaruzza2015unbounded}
