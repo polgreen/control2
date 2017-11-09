@@ -1415,20 +1415,25 @@ waiting for a new candidate solution.
 
 Our abstraction refinement CEGIS loop is similar to CEGIS with counterexample generalization~\cite{david2017program}.
 However, it provides several improvements by exploiting modularity inside the loop.
-The novelty of our approach relies on the synthesis refinement phase, which enables us
-to generalise an existing candidate by means of optimisation. Rather than allow unsuitable
-candidates reach the verification phase, and possibly require further induction on the synthesiser,
-we use an optimizing algorithm which finds a local minima for the properties of interest. 
-This reduces the chances of the optimised candidate failing verification. Furthermore, it allows
-us to relax the quality of the synthesis, since unlikely candidates will still be optimised during this phase. 
-Optimization may also enter its own refinement loop, since it is possible for the
-counterexample to indicate which properties need optimizing (i.e. the ones that are failing).
-  
-\todo{I assume the optimization problem is something like: ``find a controller and an observer that minimize some cost function''. What is the cost function in this case? I guess you want something like the
-  difference between the current candidate and the general solution? How would we capture that?}
-
-\todo{What is the optimization alg that you use? Point 4 below doesn't specify much.}
-
+The novelty of our approach relies on the synthesis refinement phase, which
+enables us to generalise an existing candidate by means of optimisation. Rather
+than allow unsuitable candidates reach the verification phase, and possibly
+require further induction on the synthesiser, we use an optimizing algorithm
+which finds a local minima for the properties of interest.  This reduces the
+chances of the optimised candidate failing verification.  Furthermore, it
+allows us to relax the quality of the synthesis, since unlikely candidates will
+still be optimised during this phase. 
+The optimization is performed on an objective function which typically depends
+on a subset of the properties.  Hence the chosen optimization function depends
+on which properties fail verification. Optimization may also enter its own
+refinement loop, since it is possible for the counterexample to indicate which
+properties need optimizing (i.e. the ones that are failing).
+In our control synthesis problem, verification failures are typically due to
+safety (since stability and response time are maintained in the highest
+abstraction levels).  The optimization function therefore looks to minimize
+the reachspace by making the dynamics as convergent as possible (note that
+this also improves the response time of the system).
+ 
 We find a controller for a continuous initial set of states and set of inputs,
 over an abstraction of the continuous dynamics \cite{cattaruzza2015unbounded}
 that conforms to witness proofs at specific times.
@@ -1482,7 +1487,11 @@ If we have a candidate solution we will feed it to the verifier chain in order t
 controller and the observer.  If one of these results does not satisfy the tighter
 specification, it feeds back to the {\sc Refine Synthesis} phase which uses sensitivity analysis to
 synthesise a refined solution. If the candidate is valid, we feed it to {\sc Discrete Time}. 
-\item {\sc Refine Synthesis} takes $\mat{K},\mat{L} \not \models \phi_{static}$ and synthesises $\mat{K}_{\langle C \rangle} = \mat{K}+\mat{\delta}_K, \mat{L}_{\langle C \rangle}=\mat{L}+\mat{\delta}_L, where \mat{K}_{\langle C \rangle}, \mat{L}_{\langle C \rangle} \models \phi_{static}$
+\item {\sc Refine Synthesis} takes $\mat{K},\mat{L} \not \models \phi_{static}$ and synthesises $\mat{K}_{\langle C \rangle} = \mat{K}+\mat{\delta}_K, \mat{L}_{\langle C \rangle}=\mat{L}+\mat{\delta}_L, where \mat{K}_{\langle C \rangle}, \mat{L}_{\langle C \rangle} \models \phi_{static}$.
+Furthermore we perform optimization based on the violation of the safe-space (if found).
+Given a closed loop controller or observer block ($\mat{A}_c$ or $\mat{A}_o$),
+we look for a constant $c \leq 1$ such that $\mat{B}\mat{K}'=(1-c)\mat{A}_d+c\mat{B}\mat{K} \mid \mat{K}' \models \phi_K$
+(and similarly for $\mat{L}'$.
 If we cannot synthesise a suitable candidate, we signal the {\sc Abstract} phase to refine $\phi_{synth}$ and request {\sc Synthesise} to produce a new candidate. Otherwise the refined candidate solution is given back to {\sc Verify Synthesis}.
 %
 \item {\sc Discrete Time} verifies $\phi_{safety}^{\infty}$ using discrete
@@ -1792,6 +1801,21 @@ Soundness is ensured by the verifiers,but once again, since these use over-appro
 \section{Conclusions}
 \label{sec:conclusions}
 %-------------------------------
+
+Our Synthesis Algorithm shows promise in exploiting modularity for
+improved response. It however relies on the use of application
+specific optimization which means that it is necessary to find adequate tools for
+exploring different types of properties.  Our results show significant
+improvement in terms of scalability over standard approaches with an ability to
+explore complex properties, hence many synthesis tasks may be derived
+from it. In particular we note that our synthesis loop should be targeted at
+systems where the solution space is formed by connected spaces where
+optimization algorithms or localized synthesis are likely to be achieved more
+efficiently than global synthesis.
+Finally our application to control synthesis provides a solid proof
+of concept for scalable optimal control synthesis of LTI systems. There is still
+a need to extend it it MIMO systems and analyse further properties, which may
+also require exploring other optimization methods for control systems.
 
 \newpage
 \bibliographystyle{splncs03}
