@@ -460,7 +460,7 @@ A closed-loop digital control system with observer is shown in Fig.~\ref{fig:obs
 Note that the variables of a state observer are denoted by $x_k$. 
   Moreover, $y_e=\hat{y}_k - y_k$ is the output estimation error,  
 %  defined as the difference between the real output $\vec{y}_k$ and estimated one $\hat{\vec{y}_k}$, 
-  whereas $\mat{L}$ is an error gain matrix, which amplifies the output estimation error. 
+  whereas $\mat{L}$ is an error gain matrix that amplifies the output estimation error. 
 Figure \note{\ref{}} also contains references to $\nu_1$, $\nu_2$, $\nu_1'$, $\nu_2'$ and $\nu_t$, which
   denote noise terms that will be explained later.   
 %%   With respect to noises (denoted by $\nu$), 
@@ -612,7 +612,7 @@ Figure \note{\ref{}} also contains references to $\nu_1$, $\nu_2$, $\nu_1'$, $\n
   \path[->] (Kd.north) edge (circle.south);
  \end{tikzpicture}
 }
- \caption{Closed-loop digital control system with observer\label{fig:observersystem}}
+ \caption{Closed-loop digital control system with observer \note{it is unclear what we mean by digital here, we have only discretised time so far.}\label{fig:observersystem}}
 \end{figure*}
 
 
@@ -623,20 +623,23 @@ Figure \note{\ref{}} also contains references to $\nu_1$, $\nu_2$, $\nu_1'$, $\n
  
 The time discretization introduced in Sec.~\ref{sec:ssrepresentation} leads to evaluate the state of the model at integer multiples of the sample time. 
  However, in order to synthesise $\mat{K}$ and $\mat{L}$, 
- we must be able to ensure that certain properties of the system hold at any given
- time (not just integer multiples of the sample time).
- Consequently, we accelerate the dynamics of the system (according to the model semantics in Sec.~\ref{sec:model_semantics}) in order to compute the state $\vec{x}_T$  at a given time $T$.
+ we must be able to ensure that certain properties of the system hold at any given (real) time. 
+ Consequently, we accelerate the dynamics of the system according to the model semantics in Sec.~\ref{sec:model_semantics} in order to compute the state $\vec{x}_T$  at a given time $T$ \note{unclear: we did not say what ``accelerate'' means, only mention we compute the state of the discrete-time model at time step T.}.
  
  %While this is adequate for the controller, it is not sufficient for verification. We must therefore establish a new model that allows us to observe the system at a given time $t$.
  %We achieve this by using acceleration as described below.
  
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- \subsection{Accelerated dynamics for continuous time systems without inputs}\label{sec:real_discrete_no_inputs}
+ \subsection{Accelerated dynamics for continuous-time models without inputs}\label{sec:real_discrete_no_inputs}
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- Given a specific time $T$, the state $\vec{x}_T$ present at time $T$ can be expressed as a linear function of $\vec{x}_0$ as described below. Note that, as the system has no inputs, its dynamics are described by $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$.
+
+ Given a specific time step $T$, 
+ the state $\vec{x}_T$ can be expressed as a linear function of $\vec{x}_0$ as described below. 
+ Note that, as the system has no inputs, its dynamics are simply described by $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$.
  
  \begin{theorem}
  Given $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$, where $\mat{A}=\mat{S}\mat{J}\mat{S}^{-1}$, we have
+\note{unclear: next notation refers to discrete-time model}
  \begin{align}
  \vec{x}_T&=\vec{x}(t=T)=\mat{A}_{T}\vec{x}_0\\
  \text{where }\mat{A}_{T}&= \mat{S}
@@ -650,14 +653,17 @@ The time discretization introduced in Sec.~\ref{sec:ssrepresentation} leads to e
  \label{eq:continuous_tube_dyn}\\
  &\text{and } s_i=\left\{\begin{array}{cc}1&gm(\lambda_i)>1\\0&gm(\lambda_i)=1\end{array}\right.,\nonumber
  \end{align}
-$\lambda_i \in \mat{J}$ are the eigenvalues of $\mat{A}$, and $gm(\lambda_i)$ is the geometric multiplicity of $\lambda_i$.  We call $\vec{x}_T$ a witness of the system $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$ at time t=T.
+$\lambda_i \in \mat{J}$ are the eigenvalues of $\mat{A}$, and $gm(\lambda_i)$ is the geometric multiplicity of $\lambda_i$ \cite{Astrom08}.  
+We call $\vec{x}_T$ a witness of the system $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$ at time t=T.
  \end{theorem}
  %% We can apply Th.~\ref{eq:continuous_tube_dyn} to discretized systems without inputs in order to
  %% obtain a witness ..
  %
+ \note{proof?}  
  \begin{corollary}
- If $\mat{J}$ is diagonal and there exists a discrete dynamics matrix for a sampling time $T_d$ such that $A_d=e^{\mat{A} T_d}$, then $\vec{x}_r=A_d^r\vec{x}_0 : r \in \mathbb{R}^+$ is a witness of the system at time $t=rT_d$.
+ If $\mat{J}$ is diagonal and there exists a discrete-dynamics matrix for a sampling time $T_d$ such that $A_d=e^{\mat{A} T_d}$, then $\vec{x}_r=A_d^r\vec{x}_0 : r \in \mathbb{R}^+$ is a witness of the system at time $t=rT_d$.
  \end{corollary}
+  \note{proof?} 
 %
  % \begin{proof}
 % Let us recall equation \ref{eq:discretize}. The discrete representation of the system dynamics discretised with sample time $T_1$ is ruled by the formula
