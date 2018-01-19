@@ -344,7 +344,7 @@ technique works for both linear and non-linear systems.
 %-------------------------------
 
 %-------------------------------
-\subsection{State-space representation of LTI models}
+\subsection{State-space representations of LTI models}
 \label{sec:ssrepresentation}
 %-------------------------------
 
@@ -355,6 +355,8 @@ technique works for both linear and non-linear systems.
 %% \dot{x}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)% +\vec{w}(t)
 %% \label{eq:dynamical}
 %% \end{equation}
+
+\note{PLS ELIMINATE BOLD VARIABLES TO DENOTE VECTORS AND MATRICES. BTW, NOTATIONS BELOW ARE NOT CONSISTENT.}
 
 We consider models of physical plants expressed as ordinary differential
 equations (ODEs), which we assume to be controllable \cite{Astrom08,astrom1997computer}:
@@ -376,12 +378,16 @@ We are interested in control systems with an output $\vec{y}$ that is a linear c
 \end{equation}
 %
 %In this work, 
-Equations~\eqref{eq:ode1}-\eqref{eq:ode2} are soundly discretized in time~\cite{middleton1990digital,van1978computing} 
+Equations~\eqref{eq:ode1}-\eqref{eq:ode2} are soundly discretized in time~\cite{middleton1990digital,van1978computing} \note{mention sample time, referred to later.}
 (cf. Appendix~\ref{sec:cont_aa}) into
 \begin{align}
 \label{eq:plant}
+\left\{ 
+\begin{array}{l}
 \vec{x}_{k+1} = \mat{A}_d \vec{x}_k+ \mat{B}_d \vec{u}_k\\
 \vec{y}_{k} = \mat{C}_d \vec{x}_k + \mat{D}_d \vec{u}_k, 
+\end{array}
+\right.
 \end{align} 
 %
 where $k \in \mathbb N$ is a discrete counter and $x_{0}=x(0)$ is the initial state. 
@@ -400,7 +406,7 @@ In this work we make the standard assumption that $\mat{D}_d=\mat{D}=\mat{0}$ \c
 %
 The traces of model \eqref{eq:plant}, 
 starting from an initial set $X_0\subseteq \mathbb{R}^p$, 
-with inputs restricted to $U \subseteq \mathbb{R}^q$, are sequences 
+with inputs taken from the set $U \subseteq \mathbb{R}^q$, are sequences 
 $ \vec{x}_0 \xrightarrow{\vec{u}_0} \vec{x}_1 \xrightarrow{\vec{u}_1} \vec{x}_2 \xrightarrow{\vec{u}_2} \ldots $, 
 %
 where $ \vec{x}_0 \in X_0$ and $\forall k\geq 0, \vec{u}_k \in U \text{ and } \vec{x}_{k+1} = \tau(\vec{x}_k,\vec{u}_k) $, 
@@ -412,57 +418,57 @@ where
 \mat{B}\vec{u}_k \mid \mat{G}\vec{x}_k \leq \vec{h}\big)\;. 
 \end{equation}
 %
-Here $\mat{G}$ and $\vec{h}$ define a set of inequalities that describe the safe state-space.
+Here $\mat{G}$ and $\vec{h}$ define a set of inequalities that describe a safe set, within the state-space $\mathbb{R}^p$.
 %
-We extend the notation above to convex sets of initial conditions and inputs ($X_0$ and $U$), 
+We generalize this notation to convex sets of initial conditions and inputs ($X_0$ and $U$, respectively), 
 and write $\tau(X_0,U)$ to denote the set of states $\{\vec{x} \mid \vec{x}_0 \in
 X_0 \wedge \vec{u} \in U \wedge \vec{x} = \tau(\vec{x}_0,\vec{u})\}$
 reached from $X_0$ by $\tau$ in one step. 
 %
 We furthermore write $\tau^n(X_0,U)$ to denote the set of states reached from
-$X_0$ via $\tau$ in $n$ steps (\emph{$n$-reach set}), i.e.\ for $n\geq 1$
+$X_0$ via $\tau$ in $n$ steps (this is also known in literature \note{ref} as the \emph{$n$-reach set}), i.e.\ for $n\geq 1$
 %
 \begin{align}\label{equ:reachset}
-\tau^n(X_0,U) = \{\vec{x}_n \mid &\vec{x}_0 \in X_0 \wedge \forall k\in [0,n-1]\nonumber\\ 
- &\vec{u}_{k} \in U \wedge \vec{x}_{k+1}=\tau(\vec{x}_{k},\vec{u}_{k}) \} \;. 
+\tau^n(X_0,U) = \{\vec{x}_n \mid &\vec{x}_0 \in X_0 \wedge \forall k\in [0,n-1]
+%\nonumber\\ &
+\vec{u}_{k} \in U \wedge \vec{x}_{k+1}=\tau(\vec{x}_{k},\vec{u}_{k}) \} \;. 
 \end{align}
 %
-Since the transformations $\mat{A}$ and $\mat{B}$ are linear and
-vector sums preserve convexity, the sets $X_n = \tau^n(X_0,U)$ are also
-convex.
-
-We define the \emph{$n$-reach tube} 
+Since the transformations $\mat{A}$ and $\mat{B}$ are linear and vector sums preserve convexity \note{ref}, 
+the sets $X_n = \tau^n(X_0,U)$ are also convex.  
+We define the \emph{$n$-reach tube} as 
 \begin{equation}\label{equ:reachtube}
 \hat{X}_n=\hat{\tau}^n(X_0,U)=\bigcup_{k\in[0,n]} \tau^k(X_0,U)
 \end{equation}
-as the union of the reachable sets over $n$ iterations.
+as the union of $k$-reach sets over $n$ iterations. 
 %
-Moreover, $\hat{X} 
-=\bigcup_{n\geq 0} \tau^n(X_0,U)$ 
-extends the previous notion over an 
-unbounded time horizon.
+Finally, set $\hat{X} =\bigcup_{n\geq 0} \tau^n(X_0,U)$ 
+generalises the previous notions over an unbounded time horizon.
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{State observer}\label{sec:observer}
+\subsection{State observers}\label{sec:observer}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-In most real implementations, the internal state of a plant cannot be
-directly measured but rather inferred from its effect on the output by
-using an observer.  Essentially, a state observer is a system that
-provides an estimate of the internal state of a given real system,
-from measurements of the input and output of the real system.
 
-A closed-loop digital control system with observer is shown in Fig.~\ref{fig:observersystem}.
-Note that the variables of a state observer are denoted by a "$~\hat{}~$" (e.g. {$\hat {\vec{x}}(k)$})
-  to distinguish them from the variables of the actual physical system.
-  Moreover, $\vec{y}_e=\hat{\vec{y}_k}-\vec{y}_k$ is the output estimation error defined
-  as the difference between the real output $\vec{y}_k$ and estimated one $\hat{\vec{y}_k}$, whereas
-  $\mat{L}$ is the error sensitivity matrix, which amplifies the output estimation error.
-  The figure also contains references to $\nu_1$, $\nu_2$, $\nu_1'$, $\nu_2'$ and $\nu_t$, which
-  denote noise and will be explained later in the paper.
+In many models of real-world control systems, 
+the internal state $x$ cannot be directly measured,  
+but is rather inferred from its effect on the output $y$ by using an observer.  
+Essentially, a state observer is another dynamical model (below $\hat x$) 
+that provides an estimate of the internal state $x$ of the given model, 
+from measurements of the input and output of the system. \note{technical details in \ldots} 
+
+A closed-loop digital control system with observer is shown in Fig.~\ref{fig:observersystem}. 
+Note that the variables of a state observer are denoted by $x_k$. 
+  Moreover, $y_e=\hat{y}_k - y_k$ is the output estimation error,  
+%  defined as the difference between the real output $\vec{y}_k$ and estimated one $\hat{\vec{y}_k}$, 
+  whereas $\mat{L}$ is an error gain matrix, which amplifies the output estimation error. 
+Figure \note{\ref{}} also contains references to $\nu_1$, $\nu_2$, $\nu_1'$, $\nu_2'$ and $\nu_t$, which
+  denote noise terms that will be explained later.   
 %%   With respect to noises (denoted by $\nu$), 
 %% $\nu_1$ and $\nu_2$ are the quantization noises introduced by the ADC and the DAC, $\nu_t$ is the noise introduced by the delay, and $\nu_1'$ and $\nu_2'$ are quantization noises caused by roundoffs in the FWL operations.
-  Lastly, $k_r$ is a reference gain required by the model.
-
+  Lastly, $k_r$ is a reference gain required by the model.  
+  
+     Our goal in this work is to synthesise both $\mat{K}$ and $\mat{L}$. \note{K has not been discussed.}
+ 
 \begin{figure*}[htb]
 \centering
 \tikzset{add/.style n args={4}{
@@ -506,7 +512,7 @@ Note that the variables of a state observer are denoted by a "$~\hat{}~$" (e.g. 
    }   
 
    \& complexnode/.pic={ 
-      \node[rectangle,dashed,draw,minimum width=8cm,minimum height=3.5cm,label=\textbf{Plant}] (plant)  at ([yshift=-.5cm]dac.center) {};
+      \node[rectangle,dashed,draw,minimum width=8cm,minimum height=3.5cm,label=\textbf{Model}] (plant)  at ([yshift=-.5cm]dac.center) {};
       \node[rectangle,draw,minimum width=1cm,minimum height=1cm] (B) at ([xshift=-2.5cm,yshift=.5cm]plant.center)  {\sc $\mat{B}$};
       \node[draw=none] (u) at ([xshift=-1cm,yshift=.15cm]B)  {$u(t)$};
       \node[circle,add={+}{+}{}{}] (p1) at ([xshift=-1.3cm,yshift=.5cm]plant.center) {};
@@ -609,14 +615,13 @@ Note that the variables of a state observer are denoted by a "$~\hat{}~$" (e.g. 
  \caption{Closed-loop digital control system with observer\label{fig:observersystem}}
 \end{figure*}
 
- Our goal in this work is to synthesise both $\mat{K}$ and $\mat{L}$.
+
 
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- \section{Acceleration of continuous time systems}\label{sec:continuous_time_accel}
+ \section{Acceleration of continuous-time models}\label{sec:continuous_time_accel}
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  
- Note that the discretization in Sec.~\ref{sec:ssrepresentation} only 
- allows us to evaluate the state of the system at integer multiples of the sample time.
+The time discretization introduced in Sec.~\ref{sec:ssrepresentation} leads to evaluate the state of the model at integer multiples of the sample time. 
  However, in order to synthesise $\mat{K}$ and $\mat{L}$, 
  we must be able to ensure that certain properties of the system hold at any given
  time (not just integer multiples of the sample time).
