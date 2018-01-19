@@ -378,6 +378,7 @@ We are interested in control systems with an output $\vec{y}$ that is a linear c
 \end{equation}
 %
 %In this work, 
+\note{Observability requirement? Used later.}
 Equations~\eqref{eq:ode1}-\eqref{eq:ode2} are soundly discretized in time~\cite{middleton1990digital,van1978computing} \note{mention sample time, referred to later.}
 (cf. Appendix~\ref{sec:cont_aa}) into
 \begin{align}
@@ -624,7 +625,7 @@ Figure \note{\ref{}} also contains references to $\nu_1$, $\nu_2$, $\nu_1'$, $\n
 The time discretization introduced in Sec.~\ref{sec:ssrepresentation} leads to evaluate the state of the model at integer multiples of the sample time. 
  However, in order to synthesise $\mat{K}$ and $\mat{L}$, 
  we must be able to ensure that certain properties of the system hold at any given (real) time. 
- Consequently, we accelerate the dynamics of the system according to the model semantics in Sec.~\ref{sec:model_semantics} in order to compute the state $\vec{x}_T$  at a given time $T$ \note{unclear: we did not say what ``accelerate'' means, only mention we compute the state of the discrete-time model at time step T.}.
+ Consequently, we accelerate the dynamics of the system according to the model semantics in Sec.~\ref{sec:model_semantics} in order to compute the state $\vec{x}_T$  at a given time $T$ \note{unclear: we did not say what ``accelerate'' means, you only mention that we compute the state of the discrete-time (according to your notation) model at time step T.}.
  
  %While this is adequate for the controller, it is not sufficient for verification. We must therefore establish a new model that allows us to observe the system at a given time $t$.
  %We achieve this by using acceleration as described below.
@@ -654,12 +655,13 @@ The time discretization introduced in Sec.~\ref{sec:ssrepresentation} leads to e
  &\text{and } s_i=\left\{\begin{array}{cc}1&gm(\lambda_i)>1\\0&gm(\lambda_i)=1\end{array}\right.,\nonumber
  \end{align}
 $\lambda_i \in \mat{J}$ are the eigenvalues of $\mat{A}$, and $gm(\lambda_i)$ is the geometric multiplicity of $\lambda_i$ \cite{Astrom08}.  
-We call $\vec{x}_T$ a witness of the system $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$ at time t=T.
+We call $\vec{x}_T$ a witness of the system $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$ at time t=T. 
+\note{What exactly is a ``witness''? Do you mean ``the solution at that time''?}
  \end{theorem}
  %% We can apply Th.~\ref{eq:continuous_tube_dyn} to discretized systems without inputs in order to
  %% obtain a witness ..
  %
- \note{proof?}  
+ \note{proof? So what is the use of this theorem? How does it help to address the issue discussed at the beginning of the section?}  
  \begin{corollary}
  If $\mat{J}$ is diagonal and there exists a discrete-dynamics matrix for a sampling time $T_d$ such that $A_d=e^{\mat{A} T_d}$, then $\vec{x}_r=A_d^r\vec{x}_0 : r \in \mathbb{R}^+$ is a witness of the system at time $t=rT_d$.
  \end{corollary}
@@ -711,10 +713,10 @@ We call $\vec{x}_T$ a witness of the system $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$
 %\end{proof}
 
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- \subsection{Accelerated dynamics for systems with parametric inputs}\label{sec:real_discrete_param_inputs}
+ \subsection{Accelerated dynamics for models with parametric inputs}\label{sec:real_discrete_param_inputs}
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  Next, we are interested in observing systems with parametric
- inputs, described by $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)$.
+ inputs, described by $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)$ \note{confusing: if the input is parametric, it should not depend on time}. 
  For such systems, a witness $\vec{x}_T$ is computed next.
 \begin{theorem}
 The expression
@@ -722,7 +724,8 @@ The expression
  \vec{x}_T&=\vec{x}(t=T)=\mat{A}^{-1}\vec{x}_T'\nonumber\\
 \vec{x}_T'&=\mat{A}\mat{A}_T\vec{x}_0 + (\mat{I}-\mat{A}_T)\mat{B}\vec{u} : \forall t \leq T,\ \vec{u}(t)=\vec{u} 
  \end{align}
- with $\mat{A}_T$ as per \eqref{eq:continuous_tube_dyn} is a witness of the system $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)$ at time $T$ given a parametric input $\vec{u}$.
+ with $\mat{A}_T$ as per \eqref{eq:continuous_tube_dyn} is a witness of the system $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)$ at time $T$ given a parametric input $\vec{u}$. 
+ \note{Just write u, w/o time dependence.}
 \end{theorem}
  \begin{corollary}
  If $\mat{J}$ is diagonal and there exists a discrete dynamics matrix for a sampling time $T_d :  A_d=e^{\mat{A} T_d}$, then $\vec{x}_r=A_d^r\vec{x}_0+(\mat{I}-\mat{A}_d^r\mat{B}\vec{u}) : r \in \mathbb{R}^+$ is a witness of the system at time $rT_d$.
@@ -738,25 +741,26 @@ The expression
 % \end{proof}
 
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- \subsection{Accelerated dynamics for systems with discrete time feedback inputs}\label{sec:real_discrete_feedback_inputs}
+ \subsection{Accelerated dynamics for models with discrete-time feedback inputs}\label{sec:real_discrete_feedback_inputs}
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-The final case we analyse is that of hybrid time systems, where the
-plant dynamics evolve in continuous time while the feedback dynamics evolve
-in discrete time, i.e. a new input value is only produced for every sample interval.
-
+The final case we analyse is that of hybrid-time models, 
+where the plant dynamics evolve in continuous time while the feedback dynamics evolve in discrete time, 
+namely a new input value is produced only at every sample time.
+%
 \begin{theorem}
 The expression
  \begin{align}
- \vec{x}_{T} &= (\mat{A}_{T-kT_s}-\mat{B}_{T-kT_s}\mat{K}) (\mat{A}_d-\mat{B}_d\mat{K})^k\vec{x}_0
+ \vec{x}_{T} &= (\mat{A}_{T-kT_s}-\mat{B}_{T-kT_s}\mat{K}) (\mat{A}_d-\mat{B}_d\mat{K})^k\vec{x}_0, 
  \label{eq:cyber_feedback}
  \end{align}
- with $\mat{A}_T$ as per \eqref{eq:continuous_tube_dyn}, 
+ with $\mat{A}_T$ as in \eqref{eq:continuous_tube_dyn}, 
  $\mat{B}_T=\mat{A}^{-1}(\mat{I}-\mat{A}_T)\mat{B}$ and 
  $\mat{A}_d, \mat{B}_d$ describing the discretized plant dynamics is a witness of the system
  \begin{align}
- \dot{\vec{x}}(t) &= \mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)\nonumber\\
- \vec{u}(t)&=\mat{K}\vec{x}_k  \mid  kT_s \leq t < (k+1)T_s
+ \dot{\vec{x}}(t) = \mat{A}\vec{x}(t)+\mat{B}\vec{u}(t), \quad 
+ \vec{u}(t)=\mat{K}\vec{x}_k,  
+ kT_s \leq t < (k+1)T_s. 
  \end{align}
  \end{theorem}
 %
@@ -783,12 +787,13 @@ The expression
 %\end{proof}
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\section{Error modelling}\label{sec:errors}
+\section{Modelling Errors in the Control Loop}\label{sec:errors}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{Time delay on discrete time feedback systems} \label{sec:delay}
+\subsection{Time delay on discrete-time feedback models} \label{sec:delay}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 A common ocurrence in digital systems is that they do not necessarily
 satisfy the real-time specifications.  Delays due to processing time,
 communication lines, or other mechanisms will cause disturbances in the
@@ -803,11 +808,11 @@ The error introduced by a delay $t_d$ in the control output $\vec{u}_k$ of a dis
 \begin{align}
 \norm{\vec{y}_{k}-{\vec{y}_{t_d}}_{k}}_1 \leq q_t, \text{ where } q_t=&(\norm{\mat{C}(\mat{B}_{T_s}-\mat{B}_{t_s})}_1+\norm{\mat{C}\mat{A}_{t_s}\mat{B}_{t_d}}_1)\norm{U}_1
 \end{align}
-where $\vec{y}_{t_d}$ is the output of the system with delay $t_d$, and $\norm{\vec{x}}_1=\sum_{i=0}^{size(\vec{x})} |\vec{x}_i|$ is the $l_1$ norm (in for sets, $\norm{X}_1 = sup \norm{\vec{x}}_1 \mid \vec{x} \in X$). 
+where $\vec{y}_{t_d}$ is the output of the system with delay $t_d$, and $\norm{\vec{x}}_1=\sum_{i=0}^{size(\vec{x})} |\vec{x}_i|$ is the $l_1$ norm (in for sets, $\norm{X}_1 = \sup \norm{\vec{x}}_1, \vec{x} \in X$). 
 \end{theorem}
 %
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{Errors generated by the numerical representation} 
+\subsection{Errors generated by numerical representations} 
 \label{sec:numeric_rep}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -919,10 +924,10 @@ in the calculations as opposed to the estimation error).
 The inputs are computed using the following equation: 
 %
 \begin{align}
-u_{k}&=\mathcal{F}_{\langle D \rangle}\left(-\mat{K}_{\langle C \rangle}\cdot\left(\mathcal{F}_{\langle C \rangle}\left(\mathcal{F}_{\langle A \rangle}(\vec{x}_{k})\right)\right) +\vec{\nu}_e\right)
+u_{k} =\mathcal{F}_{\langle D \rangle}\left(-\mat{K}_{\langle C \rangle}\cdot\left(\mathcal{F}_{\langle C \rangle}\left(\mathcal{F}_{\langle A \rangle}(\vec{x}_{k})\right)\right) +\vec{\nu}_e\right). 
 \label{eq:uk}
 \end{align}
-
+%
 This induces two types of the errors: first, the truncation
 error due to the domain transformations $\mathcal{F}_{\langle *
 \rangle}(\cdot)$; and second, the rounding error introduced by the
@@ -938,7 +943,7 @@ accounted for but rather checked during the verification phase.  If the
 counterexample provided corresponds to a pre-existing one, the synthesiser
 then increases its precision to reduce this error.
 
-Previous studies~\cite{gangli1} show that the FWL affects the poles and
+Previous studies~\cite{gangli1} showed that the FWL affects the poles and
 zeros positions, degrading the closed-loop dynamics, causing steady-state
 errors and eventually de-stabilizing the system~\cite{Bessa16}.  However,
 since the verifier also checks for the stability of the dynamics as a
@@ -964,7 +969,7 @@ accounting for the finite-precision errors.
 
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\section{Properties of a controllable observed system}\label{sec:cof_verification}
+\section{Properties of a controllable model with observer}\label{sec:cof_verification}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 %% In most real implementations, the internal state of a plant cannot be
 %% directly measured but rather inferred from its
@@ -1630,9 +1635,8 @@ It will then feed back to the abstraction refinement loop to look for a suitable
 %\textcolor{red}{Iury: can you please describe the benchmarks?}
 
 The benchmark suite employed to evaluate the proposed technique is 
-composed by 18 MIMO models extracted from the literature~\cite{acrobot,cstr,CHEN1979389,KOKOTOVIC198023,gajic2008optimal,Franklin15,maglev,converters}.
-
-In the verification module, we use the tool Axelerator~\cite{} .
+composed by 18 MIMO models extracted from the literature~\cite{acrobot,cstr,CHEN1979389,KOKOTOVIC198023,gajic2008optimal,Franklin15,maglev,converters}. 
+In the verification module, we have used the tool Axelerator~\cite{} .
 
 \jrronly{
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1786,7 +1790,7 @@ input force, damping, and elastic force.
 \subsection{Results}
 \label{exp:results}
 %-------------------------------
-The technique was applied  to the benchmarks and the results can be seen in table \ref{tab:results}
+The technique was applied  to the benchmarks and the results can be seen in Table \ref{tab:results}. 
 \begin{table}
 \centering
 %
