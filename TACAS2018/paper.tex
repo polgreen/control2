@@ -31,6 +31,7 @@
 %\newtheorem{proof}{Proof}
 \newtheorem{assumption}{Assumption}
 
+\renewcommand{\note}[1]{\textcolor{red}{[#1]}}
 \newcommand\tool{{\sf DSSynth}}
 
 \begin{document}
@@ -55,21 +56,21 @@ Plants with Transient Performance Specifications}
 \begin{abstract} 
 %
 We present a sound and automated approach to synthesizing safe,
-digital observer-based controllers for physical plants represented as
-linear, time-invariant models.  Models are given as dynamical
-equations with inputs, evolving over a continuous state space and
-accounting for errors caused by the digitization effects of the
+digital, observer-based controllers for physical plants represented as
+linear, time-invariant models.  Models are defined as differential 
+equations with inputs, evolving over a continuous state space. The synthesis 
+accounts for errors caused by the digitization effects introduced by the
 controller.  We use a two-stage counterexample-guided inductive
-synthesis (CEGIS) driven by abstraction refinement: (1) The first,
-coarse, synthesis stage uses a low resolution discretized model of the
+synthesis (CEGIS) scheme that driven by abstraction refinement. (1) The first,
+coarse, synthesis stage uses a low-resolution discretized version of the
 original one and, initially, only looks at static properties of the
-system.  (2) The second synthesis stage uses eigendecomposition to
+system \note{model}.  (2) The second synthesis stage uses matrix eigen-decomposition to
 refine the imprecise result computed by the first stage.  Whenever the
 second stage is unable to find a candidate solution, it triggers an
-abstraction refinement phase, resulting in a finer abstraction being
-fed back to the first stage.  This design resulted in a significant
-speed-up compared to a traditional single stage one.  We demonstrate
-the practical value of this approach by automatically synthesizing
+\note{keep? abstraction} refinement phase, resulting in a finer abstraction being
+fed back to the first stage. \note{This design yields a significant
+speed-up compared to a more traditional, single-stage CEGIS scheme [reviewer not familiar with that]}.  
+We demonstrate the practical value of this approach by automatically synthesizing
 safe observer-based controllers for physical plant models from the
 digital control literature.
 %
@@ -303,7 +304,7 @@ Along this research line, \cite{Anta2010,liu16} studies the synthesis of
 digital controllers for continuous dynamics, and \cite{zamani2014} extends
 the approach to the recent setup of Network Control Systems.
 
-\textbf{Discretization Effects --}
+\noindent\textbf{Discretization Effects --}
 The classical approach to control synthesis has often disregarded
 digitalization effects, whereas more recently modern techniques have focused
 on different aspects of discretization, including delayed
@@ -356,33 +357,39 @@ technique works for both linear and non-linear systems.
 %% \end{equation}
 
 We consider models of physical plants expressed as ordinary differential
-equations (ODEs), which we assume to be controllable:
+equations (ODEs), which we assume to be controllable \cite{Astrom08,astrom1997computer}:
 %
 \begin{align}
 \label{eq:ode1}
 \dot{x}(t) = \mat{A}x(t)+ \mat{B} u(t), \quad x \in \mathbb{R}^p, u \in \mathbb{R}^q, \mat{A} \in \mathbb{R}^{p \times p}, \mat{B} \in \mathbb{R}^{p \times q},
 \end{align}
 %
-where $t \in \mathbb R_0^+$, where $\mat{A}$ and $\mat{B}$ are matrices that 
-specify the continuous plant, and with initial states set as $x(0)$.
+where $t \in \mathbb R_0^+$ denotes continuous time, 
+$\mat{A}$ and $\mat{B}$ are matrices that fully characterize the dynamics of the continuous plant, 
+and $x(0)$ is the initial state. 
 
-Furthermore, we are interested in control systems with a derived
-output $\vec{y}$ that is a linear combination of its states and inputs:
+We are interested in control systems with an output $\vec{y}$ that is a linear combination of its states and inputs:
 %, which may restrict the observability of the state-space from the output space.
 \begin{equation}
 \label{eq:ode2}  
-\vec{y}(t)=\mat{C}\vec{x}(t)+\mat{D}\vec{u}(t)
+\vec{y}(t)=\mat{C}\vec{x}(t)+\mat{D}\vec{u}(t).
 \end{equation}
-
-In this work, equations~\eqref{eq:ode1} and~\eqref{eq:ode2} are soundly discretized in time~\cite{van1978computing,middleton1990digital} (see Appendix~\ref{sec:cont_aa}) into
+%
+%In this work, 
+Equations~\eqref{eq:ode1}-\eqref{eq:ode2} are soundly discretized in time~\cite{middleton1990digital,van1978computing} 
+(cf. Appendix~\ref{sec:cont_aa}) into
 \begin{align}
 \label{eq:plant}
 \vec{x}_{k+1} = \mat{A}_d \vec{x}_k+ \mat{B}_d \vec{u}_k\\
-\vec{y}_{k} = \mat{C}_d \vec{x}_k + \mat{D}_d \vec{u}_k
+\vec{y}_{k} = \mat{C}_d \vec{x}_k + \mat{D}_d \vec{u}_k, 
 \end{align} 
 %
-where $k \in \mathbb N$ and $x_{0}=x(0)$ is the initial state. 
-$\mat{A}_d$, $\mat{B}_d$, $\mat{C}_d$ and $\mat{D}_d$ denote the matrices that describe the discretized plant dynamics, whereas $\mat{A}$, $\mat{B}$, $\mat{C}$ and $\mat{D}$ denote the continuous plant dynamics.  In this work we assume $\mat{D}_d=\mat{D}=\mat{0}$. Also, since $\vec{y}$ can be directly derived from $\vec{x}$, we will omit discussing it in the following unless strictly necessary.
+where $k \in \mathbb N$ is a discrete counter and $x_{0}=x(0)$ is the initial state. 
+Matrices $\mat{A}_d$, $\mat{B}_d$, $\mat{C}_d$ and $\mat{D}_d$ are equal-sized to $\mat{A}$, $\mat{B}$, $\mat{C}$ and $\mat{D}$ respectively,  
+and charactirize the discretized plant dynamics. 
+%, whereas the latter denote the continuous evolution.  
+In this work we make the standard assumption that $\mat{D}_d=\mat{D}=\mat{0}$ \cite{Astrom08}.  
+\note{Also, since $\vec{y}$ can be directly derived from $\vec{x}$, we will omit discussing it in the following unless strictly necessary.}
 %% We synthesize for requirements over this discrete-time domain. 
 %% Later, we will address the issue of variable quantization, 
 %% as introduced by the ADC/DAC conversion blocks (Fig.~\ref{fig:digitalsystem}).
@@ -391,7 +398,8 @@ $\mat{A}_d$, $\mat{B}_d$, $\mat{C}_d$ and $\mat{D}_d$ denote the matrices that d
 \subsection{Semantics of LTI models}\label{sec:model_semantics}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 %
-The traces of the model starting from an initial set $X_0\subseteq \mathbb{R}^p$, 
+The traces of model \eqref{eq:plant}, 
+starting from an initial set $X_0\subseteq \mathbb{R}^p$, 
 with inputs restricted to $U \subseteq \mathbb{R}^q$, are sequences 
 $ \vec{x}_0 \xrightarrow{\vec{u}_0} \vec{x}_1 \xrightarrow{\vec{u}_1} \vec{x}_2 \xrightarrow{\vec{u}_2} \ldots $, 
 %
@@ -404,7 +412,7 @@ where
 \mat{B}\vec{u}_k \mid \mat{G}\vec{x}_k \leq \vec{h}\big)\;. 
 \end{equation}
 %
-where $\mat{G}$ and $\vec{h}$ define a set of inequalities that describe the safe state-space.
+Here $\mat{G}$ and $\vec{h}$ define a set of inequalities that describe the safe state-space.
 %
 We extend the notation above to convex sets of initial conditions and inputs ($X_0$ and $U$), 
 and write $\tau(X_0,U)$ to denote the set of states $\{\vec{x} \mid \vec{x}_0 \in
