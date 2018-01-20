@@ -124,8 +124,8 @@ plant model that are correct by construction.  %% This approach delivers a high
 %% a-posteriori verification.
 Specifically, we synthesize stable,
 software-implemented embedded controllers along with a model of a physical
-plant (observer).  Due to the complexity of such closed-loop systems, in
-this work we focus on linear models with known configurations, and perform
+plant (observer).  Due to the complexity of such closed-loop systems, we focus
+on linear models with known configurations, and perform
 parametric synthesis of controllers meeting a number of properties that
 define their desired behaviour.
 
@@ -162,47 +162,6 @@ a counterexample to the first synthesiser in a traditional CEGIS manner.
 The combined synthesisers are thus capable of reasoning about complex
 models with high computational efficiency due to their modularity.
 
-%The synthesiser uses a discrete time model that relates to the sampling
-%time.  It begins with a very simple abstraction of the real system which
-%only considers the static properties of the model.  It~also uses a very low
-%precision bit vector representation of the real dynamics in order to
-%minimise synthesis time.  
-%% A candidate solution is then passed to a set of verifiers which will
-%% evaluate the synthesised controller over an even more precise
-%% abstraction of the concrete domain in both discrete and continuous
-%% space/time.  The verification phase uses abstraction refinement when needed to ensure
-%% that rejected candidates are not being discarded due to the
-%% over-approximation.
-
-%% The nature of the counterexamples varies depending on
-%% the following conditions:
-%% %
-%% \begin{enumerate}
-%% %
-%% \item Initially, we look for possible errors caused by the restricted domain
-%% of the synthesisers (e.g., overflows and rounding).  These will typically 
-%% manifest in the static properties of the system. If an error is found, the
-%% modeller is signalled to increase the precision of the synthesisers.
-%% %
-%% \item Next we explore the nature of the discrete-time progression to mark
-%% a counterexample that relates to the progression of the system. If such a
-%% counterexample exists, we indicate its initial conditions and time horizon,
-%% thus instructing the synthesiser to refine its abstraction with respect to the
-%% set of initial states and number of iterations. 
-%% %
-%% \item Continuous time analysis indicates the need for decreasing the
-%% sampling time due to continuous excursions outside the safety region in
-%% between samples.  This changes the problem statement of the synthesiser to a
-%% new discrete-time model.
-%% %
-%% \item A final condition arises when a candidate solution cannot be found,
-%% thus requiring higher precision of the abstraction numerical representation. 
-%% We initially consider the plant representation to be too conservative and
-%% may eventually increase the controller FWL specification when no controller
-%% can be found for a given precision.
-%% %
-%% \end{enumerate}
-
 We provide experimental results showing that our approach is able to
 efficiently synthesize safe controllers for a set of physical
 plant models taken from the digital control literature.
@@ -210,7 +169,10 @@ plant models taken from the digital control literature.
 In summary, this paper makes the following original contributions.
 %
 \begin{enumerate}
-
+\item We develop a model for inductive synthesis that combines CEGIS with
+abstraction refinement and synthesis optimization in order to minimize the
+synthesis cost. 
+%
 \item We automatically generate \emph{correct-by-construction} digital
   state-feedback observer controllers that guarantee a given safety property
   alongside stability and response time specifications.  We note that
@@ -221,17 +183,11 @@ In summary, this paper makes the following original contributions.
  such as quantization, and time discretization as well as delays in the
  sampling and processing times which introduce control errors in real
  implementations.
+ %
  \item We present a model for soundly evaluating reachability in a combined 
  continuous-discrete time/space. Sound tools for continuous time reachability 
  are scarce and to the authors' knowledge no tool provides a model that 
  combines both. 
-%
-\item We develop a model for inductive synthesis that combines CEGIS with
-abstraction refinement and synthesis optimization in order to minimize the
-synthesis cost. In particular we explore the idea of a multi-tiered model where
-different verification, synthesis and modelling tools/modules explore different
-parts of the problem to deliver an optimal response.
-%
 \end{enumerate}
 
 %-------------------------------
@@ -353,14 +309,12 @@ technique works for both linear and non-linear systems.
 %% \label{eq:dynamical}
 %% \end{equation}
 
-\note{NOTATIONS BELOW ARE NOT CONSISTENT.}
-
 We consider models of physical plants expressed as ordinary differential
 equations (ODEs), which we assume to be controllable \cite{Astrom08,astrom1997computer}:
 %
 \begin{align}
 \label{eq:ode1}
-\dot{x}(t) = \mat{A}x(t)+ \mat{B} u(t), \quad x \in \mathbb{R}^p, u \in \mathbb{R}^q, \mat{A} \in \mathbb{R}^{p \times p}, \mat{B} \in \mathbb{R}^{p \times q},
+\dot{x}(t) = \mat{A}\vec{x}(t)+ \mat{B} \vec{u}(t), \quad \vec{x} \in \mathbb{R}^p, \vec{u} \in \mathbb{R}^q, \mat{A} \in \mathbb{R}^{p \times p}, \mat{B} \in \mathbb{R}^{p \times q},
 \end{align}
 %
 where $t \in \mathbb R_0^+$ denotes continuous time, 
@@ -389,7 +343,7 @@ duration we refer to as the sample time (cf. Appendix~\ref{sec:continuous_LTI}) 
 \right.
 \end{align} 
 %
-where $k \in \mathbb N$ is a discrete counter and $x_{0}=x(0)$ is the initial state. 
+where $k \in \mathbb N$ is a discrete counter and $\vec{x}_{0}=\vec{x}(0)$ is the initial state. 
 Matrices $\mat{A}_d$, $\mat{B}_d$, $\mat{C}_d$ and $\mat{D}_d$ are equal-sized to $\mat{A}$, $\mat{B}$, $\mat{C}$ and $\mat{D}$ respectively,  
 and charactirize the discretized plant dynamics. 
 %, whereas the latter denote the continuous evolution.  
@@ -447,14 +401,14 @@ generalises the previous notions over an unbounded time horizon.
 
 In many models of real-world control systems, 
 the internal state $x$ cannot be directly measured,  
-but is rather inferred from its effect on the output $y$ by using an observer.  
-Essentially, a state observer is another dynamical model (below $\hat x$) 
+but is rather inferred from its effect on the output $\vec{y}$ by using an observer.  
+Essentially, a state observer is another dynamical model (below $\hat{\vec{x}}$) 
 that provides an estimate of the internal state $x$ of the given model, 
-from measurements of the input and output of the system. \note{technical details in \ldots} 
+from measurements of the input and output of the system (See~\ref{sec:observable}).
 
 A closed-loop digital control system with observer is shown in Figure~\ref{fig:observersystem}. 
-Note that the variables of a state observer are denoted by $x_k$. 
-  Moreover, $y_e=\hat{y}_k - y_k$ is the output estimation error,  
+The feedback controller $\mat{K}$ is driven by the observer state $\hat{\vec{x}}$.
+Moreover, $\vec{y}_e=\hat{\vec{y}}_k - \vec{y}_k$ is the output estimation error,  
 %  defined as the difference between the real output $\vec{y}_k$ and estimated one $\hat{\vec{y}_k}$, 
   whereas $\mat{L}$ is an error gain matrix that amplifies the output estimation error. 
 Figure~\ref{fig:observersystem} also contains references to $\nu_1$, $\nu_2$, $\nu_1'$, $\nu_2'$ and $\nu_t$, which
@@ -462,8 +416,7 @@ Figure~\ref{fig:observersystem} also contains references to $\nu_1$, $\nu_2$, $\
 %%   With respect to noises (denoted by $\nu$), 
 %% $\nu_1$ and $\nu_2$ are the quantization noises introduced by the ADC and the DAC, $\nu_t$ is the noise introduced by the delay, and $\nu_1'$ and $\nu_2'$ are quantization noises caused by roundoffs in the FWL operations.
   Lastly, $k_r$ is a reference gain required by the model.  
-  
-     Our goal in this work is to synthesise both $\mat{K}$ and $\mat{L}$. \note{K has not been discussed.}
+  Our goal in this work is to synthesise both $\mat{K}$ and $\mat{L}$.
  
 \begin{figure*}[t!]
 \centering
@@ -608,15 +561,12 @@ Figure~\ref{fig:observersystem} also contains references to $\nu_1$, $\nu_2$, $\
   \path[->] (Kd.north) edge (circle.south);
  \end{tikzpicture}
 }
- \caption{Closed-loop digital control system with observer \note{it is unclear what we mean by digital here, we have only discretised time so far.}\label{fig:observersystem2}}
+ \caption{Closed-loop digital control system with observer where the controller and the observer are implemented in a discrete domain\label{fig:observersystem2}}
 \end{figure*}
-
-
 
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  \section{Acceleration of continuous-time models}\label{sec:continuous_time_accel}
- %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 
+ %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
  The time discretization in Sec.~\ref{sec:model} only 
  allows us to evaluate the state of the system at integer multiples of the sample time.
  However, in order to synthesise $\mat{K}$ and $\mat{L}$, 
@@ -624,8 +574,9 @@ Figure~\ref{fig:observersystem} also contains references to $\nu_1$, $\nu_2$, $\
  Consequently, we accelerate the dynamics of the system according to the model semantics in Sec.~\ref{sec:model_semantics} in order to compute the state $\vec{x}_T$  at a given time $T$. i.e. we find an equation for $\tau^n(\vec{x},\vec{u})$ given $\tau(\vec{x},\vec{u})$.
  
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- \subsubsection{Accelerated dynamics for continuous-time models without inputs}\label{sec:cont_acc_no_inputs}
+ \subsection{Accelerated dynamics for continuous-time models without inputs}\label{sec:cont_acc_no_inputs}
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 
  Given a specific time $T$, the state $\vec{x}(t=T)$ can be expressed as a linear function of $\vec{x}_0$ as described below.
  Note that, as the system has no inputs, its dynamics are simply described by $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$.
  
@@ -675,7 +626,7 @@ See Appendix~\ref{sec:proofs}
 \end{proof}
 
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- \subsection{Accelerated dynamics for models with discrete-time feedback inputs}\label{sec:real_discrete_feedback_inputs}
+ \subsection{Accelerated dynamics for models with discrete-time feedback}\label{sec:real_discrete_feedback_inputs}
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 The final case we analyse is that of hybrid-time models, 
@@ -869,7 +820,7 @@ equations we can define:
 \nu_2 \in \left[-\frac{q_d}{2}, \frac{q_d}{2}\right]
 \end{align*}
 
-We may also bound $\nu_2'$ from \eqref{eq:uk} as follows:
+We may also bound $\nu_2'$ as follows:
 \begin{align*}
 \delta\left(\mat{K}_{\langle C\rangle} \vec{x}_{\langle C\rangle} \right) &\in \left[ -p \frac{q_c}{2},\, p \frac{q_c}{2}\right]\\
 {\vec{\nu_e}}_i &\in \left[ -(p+2) \frac{q_c}{2}, (p+2) \frac{q_c}{2}\right], i \in [1, ...\,,p]\\
@@ -941,7 +892,7 @@ Equation \eqref{eq:observer_LTI_cf} becomes:
 =& \left [\begin{array}{cc}\mat{A}_{c}+\mat{B}_{e}&\mat{B}_{o}\\ \mat{A}_{e}&\mat{A}_{o}\end{array}\right]
 \left [\begin{array}{c}\vec{x}'\\ \vec{x}_e' \end{array}\right]_k
 +\left[\begin{array}{cc}\mat{T}_c{\mat{B}_d}_{\langle C \rangle}&\mat{0}\\\mat{0}&-\mat{T}_o\mat{L}_{\langle C \rangle}\end{array}\right]\left [\begin{array}{c} \vec{r}_k + \vec{\eta}_2\\ \vec{\eta}_1\end{array}\right]\nonumber\\
-\vec{y}_k=&\mat{C}_{t}\vec{x}_k'% + \mat{D}_{d}\vec{u}_k
+\vec{y}_k=&\mat{C}_d\mat{T}_c\vec{x}_k'% + \mat{D}_{d}\vec{u}_k
 \label{eq:observer_LTI_FWL_cf}
 \end{align}
 where $\mat{T}_c$ and $\mat{T}_o$ trasfrom the system into canonical form~\cite{Astrom08} and
@@ -953,8 +904,7 @@ where $\mat{T}_c$ and $\mat{T}_o$ trasfrom the system into canonical form~\cite{
 \mat{B}_{o}=&\mat{T}_c{\mat{B}_d}_{\langle C \rangle}\mat{K}_{\langle C \rangle}\mat{T}_o^{-1}&
 \mat{B}_{e}=&\mat{T}_c(\mat{B}_d-{\mat{B}_d}_{\langle C \rangle})\mat{K}_{\langle C \rangle}\mat{T}_o^{-1}\\
 \mat{A}_{e}=&\mat{T}_o\left(\mat{A}_d-{\mat{A}_d}_{\langle C \rangle}-\mat{L}_{\langle C \rangle}\mat{C}_e\right)\mat{T}_o^{-1}&
-\mat{C}_{e}=&\mat{C}_d-{\mat{C}_d}_{\langle C \rangle}\\
-\mat{C}_t=&\mat{C}_d\mat{T}_c
+\mat{C}_{e}=&\mat{C}_d-{\mat{C}_d}_{\langle C \rangle}
 \end{align*}
 }
 {\setlength{\abovedisplayskip}{0pt}
@@ -1516,9 +1466,9 @@ so it is impossible to tell if a solution exists in these cases.
 %\subsection{Threats to validity}
 %\label{exp:threats-to-validity}
 %%-------------------------------
-Since our synthesisers use abstract aproximations of the real dynamics, our solution is not complete.
-it is possible to have models where a true solution is not found although it exists.
-Soundness is ensured by the verifiers,but once again, since these use over-approximations of the real dynamics, they may also reject valid solutions, hence affecting completeness. 
+%Since our synthesisers use abstract aproximations of the real dynamics, our solution is not complete.
+%it is possible to have models where a true solution is not found although it exists.
+%Soundness is ensured by the verifiers,but once again, since these use over-approximations of the real dynamics, they may also reject valid solutions, hence affecting completeness. 
 
 %-------------------------------
 \section{Conclusions}
