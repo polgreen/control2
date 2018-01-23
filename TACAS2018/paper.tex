@@ -691,7 +691,7 @@ We over-approximate the effects of this vector by introducing a noise signal at 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 The models we consider have two sources of error that are due to numerical  
-representation which we commonly refer to as the FWL effect.
+representation which we commonly refer to as FWL effects.
 The first is the numerical error introduced by the
 fixed-point numbers employed to model the plant, i.e., to represent the
 plant dynamics $A_d$, $B_d$, $C_d$, $D_d$, $x_k$ and $y_k$.
@@ -733,6 +733,7 @@ Given ${\langle M,F \rangle}$ we use $\mathcal{F}_{\langle M,F \rangle} : \mathb
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{Modeling quantization as noise} \label{sec:quantization-noise}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+\note{Add a summary sentence and move the rest to the appendix.}
 In Figure \ref{fig:observersystem2} we introduced
 several sources of noise, which are due to quantization effects. We now describe
 their nature and create a sound model for them to be used during our synthesis
@@ -1394,7 +1395,7 @@ The benchmark suite employed to evaluate the proposed technique is
 composed by 7 SISO models extracted from the literature~\cite{acrobot,cstr,CHEN1979389,KOKOTOVIC198023,gajic2008optimal,Franklin15,maglev,converters}.
 In order to obtain statistically relevant results, we have taken these models
 and modified each possible combination of their parameters by a 10\% tolerance,
-thus creating hundreds of different benchmarks from this base.
+thus creating hundreds \note{how many?} of different benchmarks from this base.
 In the verification module, we have used the tool Axelerator~\cite{} .
 
 
@@ -1402,6 +1403,12 @@ In the verification module, we have used the tool Axelerator~\cite{} .
 \subsection{Results}
 \label{exp:results}
 %-------------------------------
+\note{Start with a description of the results, e.g. ``We managed to synthesise controllers in X of the cases. Average time ... In the rest of the cases ...''}.
+
+\note{In order to show the improvements due to our optimization-enhanced CEGIS, we also compared our approach against a standard CEGIS procedure..}
+
+\note{remove some of the subcases of CEGIS and CEGORS. Those that are still used need to be explained in the actual section, not in the table's caption.}
+
 \begin{table}
 \centering
 \footnotesize
