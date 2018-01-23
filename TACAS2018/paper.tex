@@ -858,20 +858,24 @@ The proof derives from $\norm{\mat{K}\vec{x}}_1 \leq \norm{\mat{K}}_1\norm{\vec{
 
 Since we are interested in synthesising controllers with observer
 designs, in this section we will look at checking stability, safety
-and the response time in the presence of an observer. A full description of
-the theory related to the observer design is provided in appendix \ref{sec:control_theory}.
+and the response time in the presence of an observer. \footnote{A full description of
+the theory related to the observer design is provided in appendix \ref{sec:control_theory}.}
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{Stability of an observed system with FWL effects}\label{sec:cof_fwl_stability}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-The ability of a system to remain within a bounded set of states is called stability.  
-There are different types of stability, such as Bounded Input/Bounded Output (BIBO)
-in which the requirement is that given a bounded input the output remains within
-certain limits, or asymptothic stability in which the output is expected to
-converge to a certain value. In our model, stability is directly related to
-convergence, which means it directly relates to the eigenvalues of the dynamics. 
-In this paper we use Jury's criterion~\ref{sec:closed_stability} to verify stability. 
+The ability of a system to remain within a bounded set of states is called stability.
+In this paper, we are interested in
+%% There are different types of stability, such as Bounded Input/Bounded Output (BIBO)
+%% in which the requirement is that given a bounded input the output remains within
+%% certain limits, or
+asymptothic stability, where the output is expected to
+converge to a certain value. %% In our model, we are concerned with the latter
+%% type of stability is directly related to
+%% convergence, which means it directly relates to the eigenvalues of the dynamics.
+As we want to use Jury's criterion~\cite{fadali}\footnote{More details on Jury's criterion can be found in~\ref{sec:closed_stability}}, which is expressed 
+by an easy algebraic formula, we must ... \note{summarise what we do in the rest of this section.}
 
 In this section, we assume that the observer model is further discretised in
 the value domain, i.e., the domain for both
