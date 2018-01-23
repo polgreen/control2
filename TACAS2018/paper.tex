@@ -60,21 +60,24 @@ Plants with Transient Performance Specifications}
 %
 We present a sound and automated approach to synthesizing safe,
 digital, observer-based controllers for physical plants represented as
-linear, time-invariant models.  Models are defined as differential 
-equations with inputs, evolving over a continuous state space. The synthesis 
-accounts for errors caused by the digitization effects introduced by the
-controller.  We use a two-stage counterexample-guided inductive
-synthesis (CEGIS) scheme that driven by abstraction refinement. (1) The first,
-coarse, synthesis stage uses a low-resolution discretized version of the
-original one and, initially, only looks at static properties of the
-model.  (2) The second synthesis stage uses matrix eigen-decomposition 
-and objective functions to iteratively optimize results computed by the first stage.
-Whenever the optimization is unable to yield further results, it feeds back to the
-synthesiser in a traditional CEGIS manner. This design yields a significant
-speed-up compared to a traditional CEGIS scheme (i.e. without optimization).
-We demonstrate the practical value of this approach by automatically synthesizing
-safe observer-based controllers for physical plant models from the
-digital control literature.
+linear, time-invariant models.  Models are defined as differential
+equations with inputs, evolving over a continuous state space. The
+synthesis accounts for errors caused by the digitization effects
+introduced by the controller.  We use an optimization-based
+counterexample-guided inductive synthesis (CEGIS) procedure that is
+driven by abstraction refinement, where in each iteration we take the
+following steps: (1) We start by only considering a low-resolution
+discretized model of the system and only static properties, which
+enables us to find candidate solutions fast.  (2) Once we have a
+candidate, we use matrix eigen-decomposition
+and objective functions to iteratively optimize it.
+%Whenever the optimization is unable to yield further results, it feeds back to the
+%synthesiser in a traditional CEGIS manner.
+This design yields a significant speed-up compared to a traditional
+CEGIS scheme (i.e. without optimization).  We demonstrate the
+practical value of this approach by automatically synthesizing safe
+observer-based controllers for physical plant models from the digital
+control literature.
 %
 \end{abstract}
 
