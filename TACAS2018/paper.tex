@@ -1065,7 +1065,7 @@ the eigenvalues are smaller too (which we can do with Jury's criterion).
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{Using optimization refinement for CEGIS of control systems}\label{sec:cof_synth}
+%\subsection{Using optimization refinement for CEGIS of control systems}\label{sec:cof_synth}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 In this section, we describe our technique for synthesizing safe
 digital feedback controllers using CEGIS. Broadly speaking, CEGIS
@@ -1074,11 +1074,43 @@ generalisation based on counterexamples provided by a verification
 engine.
 
 We build upon this paradigm to create CEGORS (Counter Example Guided, Optimization
-Refined Synthesis).  The main advantage of this approach, is that by optimizing the
-synthesis results with respect to some objective function, we are able to reduce the
-number of times the loop iterations, thus improving its performance.  Furthermore,
-because later stages of synthesis will use more complex abstractions, the reduction
-is on increasingly expensive formulas and therefore the improvent can be exponential.
+Refined Synthesis) \note{not sure whether we need an acronym for this, we could just call it
+CEGIS with optimization and abstraction refinement}.
+Our approach is illustrated in Figure~\ref{fig:CEGORS} and consists of three main
+phases:
+  \note{explain broadly what each phase does}
+\begin{itemize}
+\item {\sc Abstract}: constructs of an unsound abstract model that over-approximates
+the dynamics of the system.
+\item {\sc synthesize}: generates a candidate controller and observer \note{are these obeying the stability spec?}.
+\item {\sc model}
+\item {\sc verify}: verifies the behaviour of the candidate controller and observer
+  against a sound over-approximation of the concrete dynamics of the system for an infinite space over an infinite time horizon.
+\end{itemize}
+
+The verifier's abstraction uses a CEGAR loop in order to minimise 
+over-approximation errors and provides counterexamples for both
+discrete and continuous dynamics to feed a CEGIS loop on the synthesiser
+waiting for a new candidate solution. \note{not sure about this sentence.
+  Which is the CEGAR loop?}
+
+The main advantage of this approach is two-fold:
+\begin{itemize}
+\item[1.] Optimizing the candidate solution in each
+  iteration of the CEGIS loop by computing the local optimum
+  enables us to obtain high quality counterexamples in the {\sc verify} phase.
+  In turn, this has the potential to reduce the number of iteration of the CEGIS
+  loop required to obtain a solution.
+  \note{probably explain high quality counterexample}
+\item[2.] We start with simpler (i.e. imprecise)
+  abstractions that get
+  refined into more complex ones as the procedure progresses. Thus, solutions
+  that don't require a high level of precision are obtained fast. 
+\end{itemize}
+  
+%% because later stages of synthesis will use more complex abstractions, the reduction
+%% is on increasingly expensive formulas and therefore the improvent can be exponential.
+
 %% In order to synthesize closed-loop digital control systems, we use a program
 %% synthesis engine.  Our program implements Counter-Example Guided
 %% Inductive Synthesis (CEGIS)~\cite{DBLP:conf/asplos/Solar-LezamaTBSS06}.  We
@@ -1109,34 +1141,38 @@ is on increasingly expensive formulas and therefore the improvent can be exponen
 %% \label{sssec:cegisdig}
 %% %-------------------------------
 
-Our approach is illustrated in Figure~\ref{fig:CEGORS}. It relies on the
-construction of an unsound abstract model ({\sc ABSTRACT} phase) that approximates the dynamics
-of the cyber-physical system in order to synthesise a candidate controller
-and observer and then verify their behaviour against a sound over-approximation
-of the concrete dynamics of the system for an infinite space over an infinite
-time horizon.
-The verifier's abstraction uses a CEGAR loop in order to minimise 
-over-approximation errors and provides counterexamples for both
-discrete and continuous dynamics to feed a CEGIS loop on the synthesiser
-waiting for a new candidate solution. 
+%%  It relies on the
+%% construction of an unsound abstract model ({\sc ABSTRACT} phase) that approximates the dynamics
+%% of the cyber-physical system in order to synthesise a candidate controller
+%% and observer and then verify their behaviour against a sound over-approximation
+%% of the concrete dynamics of the system for an infinite space over an infinite
+%% time horizon.
 
-Our CEGORS loop is similar to CEGIS with solution generalization~\cite{david2017program}.
-The novelty of our approach relies on the synthesis refinement phase, which
-enables us to generalise an existing candidate by means of optimisation. Rather
-than allow unsuitable candidates reach the verification phase, and possibly
-require further induction on the synthesiser, we use an optimizing algorithm
-which finds a local minima for the properties of interest.  This reduces the
-chances of the optimised candidate failing verification.  Furthermore, it
-allows us to relax the quality of the synthesis, since unlikely candidates will
-still be optimised during this phase. 
-The optimization is performed on an objective function which will typically depend
-on a subset of the properties.  Hence the chosen optimization function depends
-on which properties fail verification. In our case, the minimal abstraction
-used by the synthesiser almost always ensures stability, so our objective function
-focuses on safety, although we manage to do optimizations that
-simultaneously target safety, stability and response time. This is done by
-making the dynamics as convergent as possible while maintaining the
-verification properties that exclude excesively convergent ones.
+%Our CEGORS loop is similar to CEGIS with solution generalization~\cite{david2017program}.
+
+%% The novelty of our approach relies on the synthesis refinement phase, which
+%% enables us to generalise an existing candidate by means of optimisation.
+%% Rather
+%% than allow unsuitable candidates reach the verification phase, and possibly
+%% require further induction on the synthesiser, we use an optimizing algorithm
+%% which finds a local minima for the properties of interest.  This reduces the
+%% chances of the optimised candidate failing verification.  Furthermore, it
+%% allows us to relax the quality of the synthesis, since unlikely candidates will
+%% still be optimised during this phase. 
+%% The optimization is performed on an objective function which will typically depend
+%% on a subset of the properties.  Hence the chosen optimization function depends
+%% on which properties fail verification.
+
+During the optimization, the minimal abstraction used by the synthesiser almost
+always ensures stability, so our objective function focuses on safety,
+although we manage to do optimizations that simultaneously target
+safety, stability and response time.
+\note{Are all the
+  candidates computed by {\sc synthesize} stable? State clearly if
+  so. You say ``almost always''.}
+This is done by making the
+dynamics as convergent as possible while maintaining the verification
+properties that exclude excesively convergent ones.  
 
 %dcmt{this should go or be moved}
 %We find a controller for a continuous initial set of states and set of inputs,
@@ -1146,8 +1182,6 @@ verification properties that exclude excesively convergent ones.
 %start with a very simple description regardless of the complexity of the
 %overall dynamics, and only expand to more complex models when a solution
 %cannot be found.
-
-The CEGORS loop for this approach is described next.
 
 %  The naive approach described in Sec.~\ref{sec:CEGIS-precision-incrementation}
 %  synthesizes a controller for an individual initial state
@@ -1206,10 +1240,12 @@ The CEGORS loop for this approach is described next.
 %\end{enumerate}
 
 
-\begin{enumerate}
-\item 
-The {\sc ABSTRACT} module starts by creating an abstraction from the initial specification,
-\begin{enumerate}
+%\begin{enumerate}
+%\item 
+
+The CEGORS loop for this approach is described next.
+\paragraph{1. {\sc abstract}} creates an abstraction from the initial specificationas follows:
+\begin{itemize}
 \item Select a sample time that minimizes the magnitudes of the matrices used in both the
 implementation and the abstraction. This ensures that a small bit vector size is required for
 the synthesis process.
@@ -1224,19 +1260,21 @@ as $P_a(z) = z^p+\sum_{i=1}^p{(a_i-k_i)z^{p-i}}$.
 as $P_l(z) = z^p+\sum_{i=1}^p{(l_i-a_i)z^{p-i}}$. 
 \item Create a stability specification based on the characteristic polynomials, perturbation
 error ($\mat{A}_e$,$\mat{B}_e$), and response time $\phi_{stability}(P_a,P_l,\overline{\lambda})$
-as described in Section~\ref{sec:transientspecification}.
+as described in Section~\ref{sec:transientspecification} \note{broken reference}.
 \item Calculate the noise sets $\eta_1$ and $\eta_2$ from the equations
-described in Section~\ref{sec:FWL_effects}.
+described in Section~\ref{sec:FWL_effects} \note{broken reference}.
 \item Calculate a set of initial bounds on $\mat{K}$, $\phi_\mathit{init}^{K}$,
 based on the input constraints.
 $(\phi_\mathit{init} \wedge \phi_\mathit{input} \wedge u_k=-\mat{K} \vec{x}_k)
 \Rightarrow \phi_\mathit{init}^{K}$.
 These bounds will be used by the {\sc synthesize} phase to reduce the size of the solution space. 
 \item Select an initial width for the bit vectors representing the controller and the plant $\phi_{\langle C \rangle}, \phi_{\langle P \rangle}$. We will increase either precision as needed.
-\end{enumerate}
+\end{itemize}
+\note{This paragraph needs to be moved before the itemize and it needs to be improved: give an intuition for what $\phi_{static}$ and $\phi_{synth}$ represent, e.g. the system's abstraction + stability spec + safety spec...}
 There are two abstractions created by these specifications: $\phi_{synth}$ which is given to the synthesiser and $\phi_{static}$ which is given to the synthesis refinement loop. These abstractions will be refined independently, so we will not detail what each will contain at a given stage. We only note that at all times $\phi_{static} \models \phi_{synth}$.
-
-\item In {\sc synthesize}, we synthesize a candidate controller $\mat{K}$
+%
+%\item
+\paragraph{2. {\sc synthesize}} generates a candidate controller $\mat{K}$
 and observer $\mat{L}$ that satisfy
 $\phi_{synth}$ by invoking a SAT solver.
 There are two exit conditions:
@@ -1244,69 +1282,84 @@ If there is no candidate solution we return FAIL and signal {\sc Abstract}. Base
 {\sc  Abstract} may choose to increase the precision, refine the abstraction, or return a synthesis failure.
 If we have a candidate solution we will feed it to the verifier chain in order to validate it.
 %
-\item {\sc Verify Synthesis} verifies $\phi_{static}$ of  both the
-controller and the observer.  If one of these results does not satisfy the tighter
-specification, it feeds back to the {\sc Optimise} phase which optimises
-an objective functiion in order to minimise the magnitude of the error in the verification.
-If the candidate is valid, we feed it to {\sc Discrete Time}. 
+%\item
+\paragraph{3. {\sc Verify Synthesis}} verifies $\phi_{static}$ of  both the
+controller and the observer.  If one of these results does not satisfy this tighter
+specification, it feeds back to the {\sc Optimise} phase.
+If the candidate is valid, we feed it to the next {\sc verify} stage, {\sc Discrete Time}. 
 
-\item {\sc Optimise} 
+%\item
+\paragraph{4. {\sc Optimise}} computes the local optimum in the neighborhood of
+the current candidate solution. \note{is this really a local optimum?}
 % starts by taking $\mat{K},\mat{L} \not \models \phi_{static}$
 % and synthesises $\mat{K}_{\langle C \rangle} = \mat{K}+\mat{\delta}_K, \mat{L}_{\langle C \rangle}=\mat{L}+\mat{\delta}_L$,
 % where $\mat{K}_{\langle C \rangle}, \mat{L}_{\langle C \rangle} \models \phi_{static}$.  
 % If $\mat{K},\mat{L} \models \phi_{static}$ but we have a counterexample for $\mat{K},\mat{L} \models \phi$,
 % then we proceed to optimise the controller.
-
+%
 Our optimization is iterative, following two stages.  The first stage seeks to
 make the dynamics as convergent as possible, since convergent dynamics are
 less likely to stray outside of the safe region (we say less likely because the
 change in the eigenvectors changes the shape of the space and may cause some 
-trajectories to go further).  In this case, we take the largest eigenvalue and
-reduce it by a factor (smaller than .5) that still satisfies $\phi_{static}$.  The
-resulting observer controller is then verified against the full specification and
-the maximum deviation from the safe region is measured (maximum distance from
-the discovered reach set to the safety region, measured perpendicularly to any
-of the faces of the safe region). 
-While this number is monotonically decreasing we continue to iterate until
-it reaches a negative value (i.e. safe). If the number increases, we change
-our objective function to the second stage.
+trajectories to go further).
+\note{Can we formally define the objective function?}
+
+In this case, we take the largest eigenvalue and reduce it by a factor
+(smaller than .5) that still satisfies $\phi_{static}$.  The resulting
+observer controller is then verified against the full specification
+\note{full specification?}
+and the maximum deviation from the safe region is measured (i.e. maximum
+distance from the discovered reach set to the safety region, measured
+perpendicularly to any of the faces of the safe region).  While this
+number is monotonically decreasing we continue to iterate until it
+reaches a negative value (i.e. safe). If the number increases, we
+change our objective function to the second stage.
+\note{again, formal description? what is the objective function in this stage?}
 
 In the second stage, at each iteration we take the complex eigenvalue
 with the largest phase (largest angle in the complex space), and reduce its
 imaginary component while maintaining the specification $\phi_{static}$.
 The process ends when no imaginary part can be further reduced.
 The resulting closed loop form converges faster than the original and may have a
-smaller rotation, which facilitates meeting the safety specification (we note
+smaller rotation, which facilitates meeting the safety specification
+\note{$\phi_{safety}$?}
+(we note
 that real convergent eigenvalues are trivially safe).
 
-If we cannot synthesise a suitable candidate using optimisation, we signal the
-{\sc Abstract} phase to refine $\phi_{synth}$ and request {\sc Synthesise} to
-produce a new candidate.  Otherwise the refined candidate solution is given back
-to {\sc Verify Synthesis}.
+If we cannot optimize the candidate such that it passes the {\sc
+  verify synthesis} check, we signal the {\sc Abstract} phase to
+refine $\phi_{synth}$ and request {\sc Synthesise} to produce a new
+candidate.  Otherwise the refined candidate solution is given back to
+{\sc Verify Synthesis}.
 %
-\item {\sc Discrete Time} verifies $\phi_{safety}^{\infty}$ (unbounded time)
+%\item
+\paragraph{5. {\sc Discrete Time}} verifies $\phi_{safety}^{\infty}$ (unbounded time)
 using discrete time dynamics.  If the verification fails, we report the
 counterexample to {\sc Refine Abstraction} including details of initial states
 and iterations that failed the specification.  
-\item {\sc Refine Abstraction} changes $\phi_{safety}$ to encompass any arising
+%\item
+\paragraph{6. {\sc Refine Abstraction}} changes $\phi_{safety}$ to encompass any arising
 counterexample.  This can be done by increasing the time horizon $k$ for the
 safety specification of the violating initial condition and input.
 It also modifies $\phi_{static}$ to account for the counterexample.
 If the magnitude of the violation is small, {\sc Optimise} may find a new
 candidate, otherwise it will feed through to {\sc Abstract}.
 %
-\item {\sc Continuous Time} verifies that the
+%\item
+\paragraph{7. {\sc Continuous Time}} verifies that the
 transitions between sample times meet the specification $\phi_{safety}^{\infty}$.  If
 a counterexample is found, information about the maximum distance of the
 violation to the specification boundary is fed to {\sc Sample}. 
-\item {\sc Sample} will select a smaller suitable sample time and modify the abstractions to meet the discretization. 
+%\item
+\paragraph{8. {\sc Sample}} selects a smaller suitable sample time and modify the abstractions to meet the discretization. 
 It will then feed back to the abstraction refinement loop to look for a suitable action for the updated model.
 %
 
-\item If we reach the {\sc abstract} phase, it means that the candidate
+%\item
+If we reach the {\sc abstract} phase, it means that the candidate
   solution is not valid, in which case we must refine $\phi_{synth}$. If $\phi_{synth}$ cannot be further refined, 
   then we cannot synthesise a new candidate and return a synthesis failure.
-\end{enumerate}
+%\end{enumerate}
 
 \begin{figure}[t!]
 {
