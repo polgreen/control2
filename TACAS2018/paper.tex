@@ -790,9 +790,12 @@ where $\mat{T}_c$ and $\mat{T}_o$ trasfrom the system into canonical form~\cite{
 {\setlength{\abovedisplayskip}{0pt}
 \begin{align*}
 \mat{A}'=&\left [\begin{array}{cc}\mat{A}_{c}+\mat{B}_{e}&\mat{B}_{o}\\ \mat{A}_{e}&\mat{A}_{o}\end{array}\right]&
-\mat{B}'=&\left[\begin{array}{cc}\mat{T}_c{\mat{B}_d}_{\langle C \rangle}&\mat{0}\\\mat{0}&-\mat{T}_o\mat{L}_{\langle C \rangle}\end{array}\right]
+\mat{B}'=&\left[\begin{array}{cc}\mat{T}_c{\mat{B}_d}_{\langle C \rangle}&\mat{0}\\\mat{0}&-\mat{T}_o\mat{L}_{\langle C \rangle}\end{array}\right]\\
+\eta_1=&\nu_1+\nu_1'+\nu_t& \eta_2=&\nu_2+\nu_2'
 \end{align*}
 }
+where $\nu_1$ and $\nu_2$ are the quantization noises introduced by the ADC and the DAC, $\nu_t$ is the noise introduced by the delay, and $\nu_1'$ and $\nu_2'$ are quantization noises caused by roundoffs in the FWL operations (see Section~\ref{sec:quantization-noise}).
+
 The first effect of this digitalization is that $\mat{A}'$ is no longer upper
 diagonal.  We must therefore compensate for the errors introduced in order
 to find a stable solution.  We can use Gershgorin disks~\cite{van1996matrix} to limit the error
@@ -895,7 +898,7 @@ where $\mat{G}'$ and $\vec{h}'$ describe the initial state-space.
 
 %-------------------------------
 \subsection{Transient response} 
-\label{ssec:transientspecification}
+\label{sec:transientspecification}
 %-------------------------------
 In many cases the speed of the response, i.e. how fast it converges to the set point, is a requirement of great importance. 
 This is given as a settling time for the system to become stable.
@@ -958,28 +961,29 @@ phases:
 \begin{itemize}
 \item {\sc Abstract}: constructs of an unsound abstract model that over-approximates
 the dynamics of the system.
-\item {\sc synthesize}: generates a candidate controller and observer \note{are these obeying the stability spec?}.
-\item {\sc model}
+\item {\sc synthesize}: generates a candidate controller and observer.  Since
+  we are using coarse approximations, these do not necessarily meet any portion
+  of the specification, but either through optimization or refinement become
+  more precise (therefore more likely to meet the specification) with each iteration.
+\item {\sc model}: refines or redefines the abstractions needed by {\sc Abstract}
+  in order to reduce the probability of failure in the next iteration.
 \item {\sc verify}: verifies the behaviour of the candidate controller and observer
   against a sound over-approximation of the concrete dynamics of the system for an infinite space over an infinite time horizon.
 \end{itemize}
 
-The verifier's abstraction uses a CEGAR loop in order to minimise 
-over-approximation errors and provides counterexamples for both
-discrete and continuous dynamics to feed a CEGIS loop on the synthesiser
-waiting for a new candidate solution. \note{not sure about this sentence.
-  Which is the CEGAR loop?}
+%The verifier's abstraction uses a CEGAR loop in order to minimise 
+%over-approximation errors and provides counterexamples for both
+%discrete and continuous dynamics to feed a CEGIS loop on the synthesiser
+%waiting for a new candidate solution. \note{not sure about this sentence.
+%  Which is the CEGAR loop?}
 
 The main advantage of this approach is two-fold:
 \begin{itemize}
-\item[1.] Optimizing the candidate solution in each
-  iteration of the CEGIS loop by computing the local optimum
-  enables us to obtain high quality counterexamples in the {\sc verify} phase.
-  In turn, this has the potential to reduce the number of iteration of the CEGIS
-  loop required to obtain a solution.
-  \note{probably explain high quality counterexample}
-\item[2.] We start with simpler (i.e. imprecise)
-  abstractions that get
+\item[1.] Optimizing the candidate solution in each iteration of the CEGIS loop
+  enables us to obtain better candidates that are more likely to meet the
+  specification or fail by a smaller margin.  This has the potential to reduce
+  the number of iteration of the CEGIS loop required to obtain a solution.
+\item[2.] We start with simpler (i.e. imprecise) abstractions that get
   refined into more complex ones as the procedure progresses. Thus, solutions
   that don't require a high level of precision are obtained fast. 
 \end{itemize}
@@ -1039,16 +1043,15 @@ The main advantage of this approach is two-fold:
 %% on a subset of the properties.  Hence the chosen optimization function depends
 %% on which properties fail verification.
 
-During the optimization, the minimal abstraction used by the synthesiser almost
-always ensures stability, so our objective function focuses on safety,
-although we manage to do optimizations that simultaneously target
-safety, stability and response time.
-\note{Are all the
-  candidates computed by {\sc synthesize} stable? State clearly if
-  so. You say ``almost always''.}
-This is done by making the
-dynamics as convergent as possible while maintaining the verification
-properties that exclude excesively convergent ones.  
+We use two objective functions for optimization.  Both aim at reducing the
+size of the reach space of the closed loop system while maintaining other
+verification properties.  The first one aims at making the system as
+convergent as possible.  This does not only ensure stability, but reduces
+the response time of the system, moving away from the unsafe states faster.
+The second one seeks to minimize rotations.  If the system rotates slower, it
+is less likely to reach unsafe states before converging.
+In both cases, the shape of the eigenspace may affect us negativey, so we
+use a measure of the size of the reach space to guide our optimization.
 
 %dcmt{this should go or be moved}
 %We find a controller for a continuous initial set of states and set of inputs,
@@ -1136,9 +1139,9 @@ as $P_a(z) = z^p+\sum_{i=1}^p{(a_i-k_i)z^{p-i}}$.
 as $P_l(z) = z^p+\sum_{i=1}^p{(l_i-a_i)z^{p-i}}$. 
 \item Create a stability specification based on the characteristic polynomials, perturbation
 error ($\mat{A}_e$,$\mat{B}_e$), and response time $\phi_{stability}(P_a,P_l,\overline{\lambda})$
-as described in Section~\ref{sec:transientspecification} \note{broken reference}.
+as described in Section~\ref{sec:transientspecification}.
 \item Calculate the noise sets $\eta_1$ and $\eta_2$ from the equations
-described in Section~\ref{sec:FWL_effects} \note{broken reference}.
+described in Section~\ref{sec:observable}.
 \item Calculate a set of initial bounds on $\mat{K}$, $\phi_\mathit{init}^{K}$,
 based on the input constraints.
 $(\phi_\mathit{init} \wedge \phi_\mathit{input} \wedge u_k=-\mat{K} \vec{x}_k)
@@ -1165,42 +1168,34 @@ specification, it feeds back to the {\sc Optimise} phase.
 If the candidate is valid, we feed it to the next {\sc verify} stage, {\sc Discrete Time}. 
 
 %\item
-\paragraph{4. {\sc Optimise}} computes the local optimum in the neighborhood of
-the current candidate solution. \note{is this really a local optimum?}
-% starts by taking $\mat{K},\mat{L} \not \models \phi_{static}$
-% and synthesises $\mat{K}_{\langle C \rangle} = \mat{K}+\mat{\delta}_K, \mat{L}_{\langle C \rangle}=\mat{L}+\mat{\delta}_L$,
-% where $\mat{K}_{\langle C \rangle}, \mat{L}_{\langle C \rangle} \models \phi_{static}$.  
-% If $\mat{K},\mat{L} \models \phi_{static}$ but we have a counterexample for $\mat{K},\mat{L} \models \phi$,
-% then we proceed to optimise the controller.
-%
+\paragraph{4. {\sc Optimise}} refines the candidate solution towards
+a local optimum.  We seek to minimize the distance of the farthest point in the
+reach space to the closest point to it in the safe region
+\begin{equation}
+e=max(\{min(\{\vec{x}-\vec{g} \mid \vec{g}\in G\}) \mid \vec{x} \in \hat{X}_\infty \}.
+\label{eq:objective}
+\end{equation}
+
 Our optimization is iterative, following two stages.  The first stage seeks to
 make the dynamics as convergent as possible, since convergent dynamics are
 less likely to stray outside of the safe region (we say less likely because the
 change in the eigenvectors changes the shape of the space and may cause some 
 trajectories to go further).
-\note{Can we formally define the objective function?}
 
-In this case, we take the largest eigenvalue and reduce it by a factor
-(smaller than .5) that still satisfies $\phi_{static}$.  The resulting
-observer controller is then verified against the full specification
-\note{full specification?}
-and the maximum deviation from the safe region is measured (i.e. maximum
-distance from the discovered reach set to the safety region, measured
-perpendicularly to any of the faces of the safe region).  While this
-number is monotonically decreasing we continue to iterate until it
-reaches a negative value (i.e. safe). If the number increases, we
-change our objective function to the second stage.
-\note{again, formal description? what is the objective function in this stage?}
+In this case, we take the largest eigenvalue and reduce it by a factor $f$
+that still satisfies the controller constraints ($f \overline{\lambda} \models \phi_{static}$).
+The resulting observer controller is then verified against the safety specification $\phi_{safety}$
+and the objective $e$ is measured (Equation \eqref{eq:objective}).
+If for each iteration $k$, the objective $e_k<e_{k-1}$, we continue to iterate until 
+$e_k \leq 0$ (i.e. we found a safe controller), otherwise we move to the second stage.
 
-In the second stage, at each iteration we take the complex eigenvalue
-with the largest phase (largest angle in the complex space), and reduce its
-imaginary component while maintaining the specification $\phi_{static}$.
+In the second stage, we take the complex eigenvalue
+with the largest angle ($max\{|tan^{-1}\left(\frac{im(\lambda)}{re(\lambda)}\right)| \mid \lambda \in \Lambda\}$)
+and reduce its imaginary component only  ($re(\lambda) + f im(\lambda) \models \phi_{static}$).
 The process ends when no imaginary part can be further reduced.
-The resulting closed loop form converges faster than the original and may have a
-smaller rotation, which facilitates meeting the safety specification
-\note{$\phi_{safety}$?}
-(we note
-that real convergent eigenvalues are trivially safe).
+The resulting closed loop form converges faster than the original and has a
+smaller rotation, which facilitates meeting the safety specification $\phi_{safety}$
+(we note that real convergent eigenvalues are trivially safe).
 
 If we cannot optimize the candidate such that it passes the {\sc
   verify synthesis} check, we signal the {\sc Abstract} phase to
@@ -2116,7 +2111,7 @@ be the observability matrix of the system, and
 the observability matrix of the canonical form (see eg~\cite{Astrom08}). Then the matrix $\mat{T}_o=\mat{W}^{-1}\mat{W}_{o}$ will transform an observable system into its canonical form.
 For simplicity of the description, we aggregate the noises as follows:
 $\eta_1=\nu_1+\nu_1'+\nu_t$ and $\eta_2=\nu_2+\nu_2'$,
-where $\nu_1$ and $\nu_2$ are the quantization noises introduced by the ADC and the DAC, $\nu_t$ is the noise introduced by the delay, and $\nu_1'$ and $\nu_2'$ are quantization noises caused by roundoffs in the FWL operations (see Section~\ref{sec:FWL_effects}).
+where $\nu_1$ and $\nu_2$ are the quantization noises introduced by the ADC and the DAC, $\nu_t$ is the noise introduced by the delay, and $\nu_1'$ and $\nu_2'$ are quantization noises caused by roundoffs in the FWL operations (see Section~\ref{sec:quantization-noise}).
 Assuming that the observer dynamics are an exact copy of the real ones, ($\mat{*}_{\langle C \rangle}=\mat{*}$), the closed loop dynamics of this system are given by:
 \begin{align}
 \left [\begin{array}{c}\vec{x}\\ \vec{x}_e \end{array}\right]_{k+1}
@@ -2538,7 +2533,7 @@ We over-approximate the effects of this vector by introducing a noise signal at 
 
 %-------------------------------
 \subsection{Transient response} 
-\label{sec:transientspecification}
+\label{sec:transientspecificationproof}
 %-------------------------------
 \begin{theorem}
 Given a set of eigenvalues for a discrete time model of an $p^{th}$ order system $\lambda_i =e^{\omega_i}, i \in [1, ...\,,p]$, the settling time of the system is upper-bounded by
