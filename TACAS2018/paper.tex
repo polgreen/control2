@@ -334,8 +334,9 @@ We are interested in control systems with an output $\vec{y}$ that is a linear c
 %In this work, 
 \note{Observability requirement? Used later.}
 Equations~\eqref{eq:ode1}-\eqref{eq:ode2} are soundly discretized in
-time~\cite{middleton1990digital,van1978computing} at constant intervals whose
-duration we refer to as the sample time (cf. Appendix~\ref{sec:continuous_LTI}) into
+time~\cite{middleton1990digital,van1978computing} at constant intervals, whose 
+duration we refer to as the sample time (cf. Appendix~\ref{sec:continuous_LTI}), 
+into the difference equation 
 \begin{align}
 \label{eq:plant}
 \left\{ 
@@ -350,7 +351,7 @@ where $k \in \mathbb N$ is a discrete counter and $\vec{x}_{0}=\vec{x}(0)$ is th
 Matrices $\mat{A}_d$, $\mat{B}_d$, $\mat{C}_d$ and $\mat{D}_d$ are equal-sized to $\mat{A}$, $\mat{B}$, $\mat{C}$ and $\mat{D}$ respectively,  
 and charactirize the discretized plant dynamics. 
 %, whereas the latter denote the continuous evolution.  
-In this work we make the standard assumption that $\mat{D}_d=\mat{D}=\mat{0}$ \cite{Astrom08}.  
+In this work we raise the standard assumption that $\mat{D}_d=\mat{D}=\mat{0}$ \cite{Astrom08}.  
 %Also, since $\vec{y}$ can be directly derived from $\vec{x}$, we will omit discussing it in the following unless strictly necessary.
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -367,24 +368,25 @@ where
 %
 \begin{equation}\label{equ:reachtraj}
 \tau(\vec{x}_k,\vec{u}_k) = 
-\big( \mat{A}\vec{x}_k +
-\mat{B}\vec{u}_k \mid \mat{G}\vec{x}_k \leq \vec{h}\big)\;. 
+\big\{ \mat{A}\vec{x}_k +
+\mat{B}\vec{u}_k \mid \mat{G}\vec{x}_k \leq \vec{h}\big\}\;. 
 \end{equation}
 %
 Here $\mat{G}$ and $\vec{h}$ define a set of inequalities that describe a safe set, within the state-space $\mathbb{R}^p$.
 %
 We generalize this notation to convex sets of initial conditions and inputs ($X_0$ and $U$, respectively), 
-and write $\tau(X_0,U)$ to denote the set of states $\{\vec{x} \mid \vec{x}_0 \in
-X_0 \wedge \vec{u} \in U \wedge \vec{x} = \tau(\vec{x}_0,\vec{u})\}$
+and write $\tau(X_0,U)$ to denote the set of states $\{\vec{x} \mid \vec{x} = \tau(\vec{x}_0,\vec{u}),\, \vec{x}_0 \in
+X_0,\, \vec{u} \in U \}$
 reached from $X_0$ by $\tau$ in one step. 
 %
 We furthermore define the $n$-reach set $\tau^n(X_0,U)$ as the set of states reached from
 $X_0$ via $\tau$ in $n$ steps.
 %
 \begin{align}\label{equ:reachset}
-\tau^n(X_0,U) = \{\vec{x}_n \mid &\vec{x}_0 \in X_0 \wedge \forall k\in [0,n-1]
-%\nonumber\\ &
-\vec{u}_{k} \in U \wedge \vec{x}_{k+1}=\tau(\vec{x}_{k},\vec{u}_{k}) \} \;. 
+\tau^n(X_0,U) = \{\vec{x}_n \mid & 
+\vec{x}_{k+1}=\tau(\vec{x}_{k},\vec{u}_{k}) \, \forall k\in [0,n-1], \,
+\vec{x}_0 \in X_0, \,
+\vec{u}_{k} \in U  \} \;. 
 \end{align}
 %
 Since the transformations $\mat{A}$ and $\mat{B}$ are linear and vector sums preserve convexity \note{ref}, 
@@ -393,7 +395,7 @@ We define the \emph{$n$-reach tube} as
 \begin{equation}\label{equ:reachtube}
 \hat{X}_n=\hat{\tau}^n(X_0,U)=\bigcup_{k\in[0,n]} \tau^k(X_0,U)
 \end{equation}
-as the union of $k$-reach sets over $n$ iterations  (transitive closure). 
+as the union of $k$-reach sets over $n$ iterations (transitive closure \note{the T.Closure refers to the fixpoint, right? That is, it is what is defined next.}). 
 %
 Finally, set $\hat{X} =\bigcup_{n\geq 0} \tau^n(X_0,U)$ 
 generalises the previous notions over an unbounded time horizon.
@@ -404,16 +406,17 @@ generalises the previous notions over an unbounded time horizon.
 
 In many models of real-world control systems, 
 the internal state $x$ cannot be directly measured,  
-but is rather inferred from its effect on the output $\vec{y}$ by using an observer.  
-Essentially, a state observer is another dynamical model (below $\hat{\vec{x}}$) 
+but is rather inferred from its effect on the output $\vec{y}$ using an observer.  
+Essentially, a state observer is another dynamical model (denoted below with variable $\hat{\vec{x}}$) 
 that provides an estimate of the internal state $x$ of the given model, 
-from measurements of the input and output of the system (See~\ref{sec:observable}).
+from measurements of the input and output of the system (See~\ref{sec:observable}). 
 
 A closed-loop digital control system with observer is shown in Figure~\ref{fig:observersystem}. 
-The feedback controller $\mat{K}$ is driven by the observer state $\hat{\vec{x}}$.
+The feedback controller is driven by the observer state $\hat{\vec{x}}$, 
+and is characterised by a gain matrix $\mat{K}$ \note{has index in figure} that influences the closed-loop dynamics.  
 Moreover, $\vec{y}_e=\hat{\vec{y}}_k - \vec{y}_k$ is the output estimation error,  
 %  defined as the difference between the real output $\vec{y}_k$ and estimated one $\hat{\vec{y}_k}$, 
-  whereas $\mat{L}$ is an error gain matrix that amplifies the output estimation error. 
+  whereas $\mat{L}$ \note{with index in figure} is an error gain matrix that amplifies the output estimation error. 
 Figure~\ref{fig:observersystem} also contains references to $\nu_1$, $\nu_2$, $\nu_1'$, $\nu_2'$ and $\nu_t$, which
   denote noise terms that will be explained later.   
 %%   With respect to noises (denoted by $\nu$), 
@@ -564,7 +567,8 @@ Figure~\ref{fig:observersystem} also contains references to $\nu_1$, $\nu_2$, $\
   \path[->] (Kd.north) edge (circle.south);
  \end{tikzpicture}
 }
- \caption{Closed-loop digital control system with observer where the controller and the observer are implemented in a discrete domain\label{fig:observersystem2}}
+ \caption{Closed-loop digital control system with an observer, where the controller and the observer (bottom part) are implemented in a discrete domain, 
+ whereas the plant is continuous \label{fig:observersystem2}}
 \end{figure*}
 
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -573,21 +577,24 @@ Figure~\ref{fig:observersystem} also contains references to $\nu_1$, $\nu_2$, $\
  The time discretization in Sec.~\ref{sec:model} only 
  allows us to evaluate the state of the system at integer multiples of the sample time.
  However, in order to synthesise $\mat{K}$ and $\mat{L}$, 
- we must be able to ensure that certain properties of the system hold at any given (real) time. 
- Consequently, we accelerate the dynamics of the system according to the model semantics in Sec.~\ref{sec:model_semantics} in order to compute the state $\vec{x}_T$  at a given time $T$. i.e. we find an equation for $\tau^n(\vec{x},\vec{u})$ given $\tau(\vec{x},\vec{u})$.
+ we must be able to ensure that certain properties of the plant hold at any given real time. 
+ In order to do so, 
+ we accelerate the dynamics of the system according to the model semantics in Sec.~\ref{sec:model_semantics} and compute the state $\vec{x}_T$  at a given time $T$, 
+% namely we find an equation for $\tau^n(\vec{x},\vec{u})$ given $\tau(\vec{x},\vec{u})$. 
+namely the state of the system $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$ at time $t=T$.
  
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  \subsection{Accelerated dynamics for continuous-time models without inputs}\label{sec:cont_acc_no_inputs}
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  
  Given a specific time $T$, the state $\vec{x}(t=T)$ can be expressed as a linear function of $\vec{x}_0$ as described below.
- Note that, as the system has no inputs, its dynamics are simply described by $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$.
+We assume that the system has no inputs, and its dynamics are described by $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$.
  
  \begin{theorem}
  The solution to the differential equation $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$, where $\mat{A}=\mat{S}\mat{J}\mat{S}^{-1}$,
  evaluated at time $T$ is
  \begin{align}
- \vec{x}_T&=\vec{x}(t=T)=\mat{A}_{T}\vec{x}_0\\
+ \vec{x}_T&=\vec{x}(t=T)=\mat{A}_{T}\vec{x} (0)\\
  \mat{A}_{T}&= \mat{S}
  \left [ \begin{array}{cccc}
  e^{T\lambda_1}  & s_1\frac{T^{1}e^{T\lambda_i}}{(2)!} & \hdots  & s_i\frac{T^{p-1}e^{T\lambda_i}}{(p-i)!} \\
@@ -597,12 +604,13 @@ Figure~\ref{fig:observersystem} also contains references to $\nu_1$, $\nu_2$, $\
 \end{array} \right ]
  \mat{S}^{-1}
  \label{eq:continuous_tube_dyn}\\
- &\text{where } s_i=\left\{\begin{array}{cc}1&gm(\lambda_i)>1\\0&gm(\lambda_i)=1\end{array}\right.,\nonumber
+ &\text{where } s_i=\left\{\begin{array}{cc}1&\quad gm(\lambda_i)>1\\0&\quad gm(\lambda_i)=1\end{array}\right.,\nonumber
  \end{align}
-$\lambda_i \in \mat{J}$ are the eigenvalues of $\mat{A}$, and $gm(\lambda_i)$ is the geometric multiplicity of $\lambda_i$.  $\vec{x}_T$ is the state of the system $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$ at time t=T.
+$\lambda_i$ are the eigenvalues of $\mat{A}$, and $gm(\lambda_i)$ is the geometric multiplicity of $\lambda_i$.  
+%$\vec{x}_T$ is the state of the system $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$ at time t=T.
  \end{theorem}
  \begin{corollary}
- If $\mat{J}$ is diagonal and there exists a discrete dynamics matrix for a sampling time $T_d$ such that $A_d=e^{\mat{A} T_d}$, then $\vec{x}_k=A_d^k\vec{x} \text{ with } k \in \mathbb{R}^+$ is a witness of the system at time $t=kT_d$.
+ If $\mat{J}$ is diagonal and there exists a discrete dynamics matrix for a sampling time $T_d$ such that $A_d=e^{\mat{A} T_d}$, then $\vec{x}_k=A_d^k\vec{x} \text{ with } k \in \mathbb{R}^+$ \note{naturals N?} is a witness of the system at time $t=kT_d$.
  \end{corollary}
 \begin{proof}
 See Appendix~\ref{sec:proofs}
@@ -610,31 +618,34 @@ See Appendix~\ref{sec:proofs}
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  \subsection{Accelerated dynamics for models with parametric inputs}\label{sec:real_discrete_param_inputs}
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- Next, we are interested in observing systems with parametric
- inputs, described by $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)$, where $\forall t, \mat{B}\vec{u}(t)=\vec{u}(0)$. 
- For such systems, a witness $\vec{x}_T$ is computed next.
+ Next, we are interested in studying models with parametric inputs, 
+ which are described by $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)$, where $\forall t\geq 0, \mat{B}\vec{u}(t)=\vec{u}(0)$. 
+ For such models, a witness $\vec{x}_T$ is computed next.  
+ \note{Need to assume A invertible?}
 \begin{theorem}
 The expression
  \begin{align}
  \vec{x}_T&=\vec{x}(t=T)=\mat{A}^{-1}\vec{x}_T'\nonumber\\
 \vec{x}_T'&=\mat{A}\mat{A}_T\vec{x}_0 + (\mat{I}-\mat{A}_T)\mat{B}\vec{u} \text{ where } \forall t \leq T,\ \vec{u}(t)=\vec{u} 
  \end{align}
- with $\mat{A}_T$ as per \eqref{eq:continuous_tube_dyn} is a witness of the system $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)$ at time $T$ given a parametric input $\vec{u}$.
+ with $\mat{A}_T$ as in \eqref{eq:continuous_tube_dyn}, 
+ is a witness of the model $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)$ at time $T$ given a parametric input $\vec{u}$.
  \end{theorem}
  \begin{corollary}
- If $\mat{J}$ is diagonal and there exists a discrete dynamics matrix for a sampling time $T_d$ such that $A_d=e^{\mat{A} T_d}$, then $\vec{x}_k=A_d^k\vec{x}+(\mat{I}-\mat{A}_d^k\mat{B}\vec{u}) \text{ with } k \in \mathbb{R}^+$ is the state of the system at time $kT_d$.
+ If $\mat{J}$ is diagonal and there exists a discrete dynamics matrix for a sampling time $T_d$ such that $A_d=e^{\mat{A} T_d}$, then $\vec{x}_k=A_d^k\vec{x}+(\mat{I}-\mat{A}_d^k\mat{B}\vec{u}) \text{ with } k \in \mathbb{R}^+$ \note{naturals N?} is the state of the system at time $kT_d$.
  \end{corollary}
 \begin{proof}
 See Appendix~\ref{sec:proofs}
 \end{proof}
 
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- \subsection{Accelerated dynamics for models with discrete-time feedback}\label{sec:real_discrete_feedback_inputs}
+ \subsection{Accelerated dynamics for models with a sampled-time feedback}\label{sec:real_discrete_feedback_inputs}
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 The final case we analyse is that of hybrid-time models, 
 where the plant dynamics evolve in continuous time while the feedback dynamics evolve in discrete time, 
-namely a new input value is produced only at every sample time.
+namely a new input value is produced only at every sample time but implemented onto the continuous-time plant dynamics. 
+ \note{Need to assume A invertible?}
 %
 \begin{theorem}
 The expression
@@ -643,11 +654,12 @@ The expression
  \label{eq:cyber_feedback}
  \end{align}
  with $\mat{A}_T$ as in \eqref{eq:continuous_tube_dyn}, 
- $\mat{B}_T=\mat{A}^{-1}(\mat{I}-\mat{A}_T)\mat{B}$ and 
- $\mat{A}_d, \mat{B}_d$ describing the discretized plant dynamics is the state of the system
+ and where $\mat{B}_T=\mat{A}^{-1}(\mat{I}-\mat{A}_T)\mat{B}$ and 
+ $\mat{A}_d, \mat{B}_d$ describe the discretized plant dynamics, 
+ is the state of the model 
  \begin{align}
  \dot{\vec{x}}(t) = \mat{A}\vec{x}(t)+\mat{B}\vec{u}(t), \quad 
- \vec{u}(t)=\mat{K}\vec{x}_k,  
+ \vec{u}(t)=\mat{K}\vec{x}_k,  \,
  kT_s \leq t < (k+1)T_s. 
  \end{align}
  \end{theorem}
