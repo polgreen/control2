@@ -668,28 +668,31 @@ See Appendix~\ref{sec:proofs}
 \end{proof}
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\section{Modelling Errors in the Control Loop}\label{sec:errors}
+\section{Modelling errors in the control loop}\label{sec:errors}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+A common occurrence in digital systems is that they do not necessarily satisfy real-time specifications, 
+in view of many errors introduced in the dynamics. 
+Errors might results from delays due to processing time,
+corruptions over communication lines in the control loop, 
+approximations due to digitalisation.  
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{Time delay on discrete-time feedback models} \label{sec:delay}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-A common occurrence in digital systems is that they do not necessarily
-satisfy the real-time specifications.  Delays due to processing time,
-communication lines, or other mechanisms will cause disturbances in the
-control loop.  In our model these delays are all deferred to the ZOH, i.e.,
-we presume that everything that happens in the digital world takes place at
-the sampling instance $t$ and the output of the result is delayed at the DAC
-when it is fed back into the real world.  We~will also presume that this
-delay is much smaller than the sampling time.
+In our model delays are all deferred to the ZOH \note{acronym undefined - define these and others, with reference to the Figure 1 above}, 
+i.e., we presume that \note{qualitative: everything that happens in the digital world takes place at
+the sampling instance $t$} and the output of the result is delayed at the DAC 
+when it is fed back into the real world.  
+We will also presume that this delay is much smaller than the sampling time \note{does this assumption make practical sense? why? add reference?}.
 
 \begin{theorem}
 The error introduced by a delay $t_d$ in the control output $\vec{u}_k$ of a discrete feedback controller for a continuous LTI system can be modelled as a non-deterministic noise signal upper bound by 
 \begin{align}
 \norm{\vec{y}_{k}-{\vec{y}_{t_d}}_{k}}_1 \leq q_t, \text{ where } q_t=&(\norm{\mat{C}(\mat{B}_{T_s}-\mat{B}_{t_s})}_1+\norm{\mat{C}\mat{A}_{t_s}\mat{B}_{t_d}}_1)\norm{U}_1
 \end{align}
-where $\vec{y}_{t_d}$ is the output of the system with delay $t_d$, and $\norm{\vec{x}}_1=\sum_{i=0}^{size(\vec{x})} |\vec{x}_i|$ is the $l_1$ norm (in for sets, $\norm{X}_1 = sup \{\norm{\vec{x}}_1 \mid \vec{x} \in X\}$). 
+where $\vec{y}_{t_d}$ is the output of the system with delay $t_d$, and $\norm{\vec{x}}_1=\sum_{i=0}^{size(\vec{x})} |\vec{x}_i|$ is the $l_1$ norm (\note{what? unclear?} in for sets, $\norm{X}_1 = sup \{\norm{\vec{x}}_1 \mid \vec{x} \in X\}$). 
 \end{theorem}
 
 \begin{proof}
@@ -708,7 +711,7 @@ of imprecise numerical representations over the reals in the digital domain
 of the controller which is an important consideration when trying to synthesise
 sound controllers.
 The models we consider have two sources of error that are due to numerical  
-representation which we commonly refer to as FWL effects.
+representation which we commonly refer to as FWL \note{undefined acronym} effects.
 The first is the numerical error introduced by the
 fixed-point numbers employed to model the plant, i.e., to represent the
 plant dynamics $A_d$, $B_d$, $C_d$, $D_d$, $x_k$ and $y_k$.
@@ -724,8 +727,7 @@ representing the binary word length of the representation and $F$ bits
 representing the prescaling $2^{-F}$ (\emph{i.e} the number of bits after
 the decimal place).  We note that a negative $F$ denotes an integer
 multiplication that adds $-F$ trailing zeros in the number represented by
-$M$.
-
+$M$. 
 We will use the domain $\mathbb{R}_{\langle C \rangle} \text{ where } \langle C \rangle = \langle M_c,F_c \rangle$
 to represent the fixed point precision of the controller, and 
 $\mathbb{R}_{\langle P \rangle} \supseteq \mathbb{R}_{\langle C \rangle}$
@@ -740,9 +742,8 @@ Given ${\langle M,F \rangle}$ we use $\mathcal{F}_{\langle M,F \rangle} : \mathb
 \section{Properties of a controllable model with observer}\label{sec:cof_verification}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-Since we are interested in synthesising controllers with observer
-designs, in this section we will look at checking stability, safety
-and the response time in the presence of an observer. \footnote{A full description of
+Since we are interested in synthesising controllers with observers, 
+in this section we will look at checking stability, safety and the response time in the presence of an observer. \footnote{A full description of
 the theory related to the observer design is provided in appendix \ref{sec:control_theory}.}
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1495,7 +1496,7 @@ intervals smaller than the maximum composing frequency of the source signal
 $T_s<\frac{\pi}{\omega_max}$.  This is the so called Nyquist Criterion~\cite{Astrom08}.  
 The maximum amplitude of the original signal can be upper bounded from the
 observed values using the inverse cosine of the sampling function.
-Since equation \eqref{eq:discretization} models \eqref{eq:dynamical}, we may use the semantics defined in Section
+Since equation \eqref{eq:discretization} models \eqref{eq:dynamical} \note{fix ref}, we may use the semantics defined in Section
 \ref{sec:model_semantics} to analyse continuous dynamical systems.
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -2437,7 +2438,7 @@ The eigenvalues remain the same as in the diagonal case, but the upper triangula
 &=\frac{1}{(j-i)!}\sum_{k=j-i}^\infty \frac{1}{(k-(j-i))!} \lambda_i^{k-(j-i)}T_1^k\nonumber\\
 &=\frac{T_1^{j-i}e^{\lambda_i T_1}}{(j-i)!}\nonumber
 \end{align}
-which completes the proof for $gm(\lambda_i)>1$.
+which completes the proof for $gm(\lambda_i)>1$. \qed
 \end{proof}
 
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
