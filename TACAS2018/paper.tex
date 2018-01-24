@@ -965,10 +965,9 @@ denotes an iterative technique where each iteration performs inductive
 generalisation based on counterexamples provided by a verification
 engine.
 
-We build upon this paradigm to create CEGORS (Counter Example Guided, Optimization
-Refined Synthesis) \note{not sure whether we need an acronym for this, we could just call it
-CEGIS with optimization and abstraction refinement}.
-Our approach is illustrated in Figure~\ref{fig:CEGORS} and consists of three main
+We build upon this paradigm to create CEGIS-OR (CEGIS with Optimization
+Refinement).
+Our approach is illustrated in Figure~\ref{fig:CEGIS-OR} and consists of three main
 phases:
   \note{explain broadly what each phase does}
 \begin{itemize}
@@ -1041,7 +1040,7 @@ The main advantage of this approach is two-fold:
 %% of the concrete dynamics of the system for an infinite space over an infinite
 %% time horizon.
 
-%Our CEGORS loop is similar to CEGIS with solution generalization~\cite{david2017program}.
+%Our CEGIS-OR loop is similar to CEGIS with solution generalization~\cite{david2017program}.
 
 %% The novelty of our approach relies on the synthesis refinement phase, which
 %% enables us to generalise an existing candidate by means of optimisation.
@@ -1135,7 +1134,7 @@ use a measure of the size of the reach space to guide our optimization.
 %\begin{enumerate}
 %\item 
 
-The CEGORS loop for this approach is described next.
+The CEGIS-OR loop for this approach is described next.
 \paragraph{1. {\sc abstract}} creates an abstraction from the initial specificationas follows:
 \begin{itemize}
 \item Select a sample time that minimizes the magnitudes of the matrices used in both the
@@ -1320,7 +1319,7 @@ If we reach the {\sc abstract} phase, it means that the candidate
 }
 \caption{CEGIS with Optimization Refinement. Orange boxes (light) are modelling
 stages, blue boxes (dark) are verification stages, and the red box is the synthesis stage.}
-\label{fig:CEGORS}
+\label{fig:CEGIS-OR}
 \end{figure}
 
 %-------------------------------
@@ -1344,7 +1343,7 @@ In the verification module, we have used the tool Axelerator~\cite{} .
 
 \note{In order to show the improvements due to our optimization-enhanced CEGIS, we also compared our approach against a standard CEGIS procedure..}
 
-\note{remove some of the subcases of CEGIS and CEGORS. Those that are still used need to be explained in the actual section, not in the table's caption.}
+\note{remove some of the subcases of CEGIS and CEGIS-OR. Those that are still used need to be explained in the actual section, not in the table's caption.}
 
 \begin{table}
 \centering
@@ -1353,7 +1352,7 @@ In the verification module, we have used the tool Axelerator~\cite{} .
 \begin{tabular}{| r | l | c | c | r | r | r | r | r | r | r |}
 %
 \hline
-\# & \multicolumn{1}{|c|}{Benchmark} & \multicolumn{1}{|c|}{order} & \multicolumn{1}{|c|}{Number of} & \multicolumn{3}{|c|}{CEGIS} & \multicolumn{3}{|c|}{CEGORS} \\
+\# & \multicolumn{1}{|c|}{Benchmark} & \multicolumn{1}{|c|}{order} & \multicolumn{1}{|c|}{Number of} & \multicolumn{3}{|c|}{CEGIS} & \multicolumn{3}{|c|}{CEGIS-OR} \\
    &                                 & & \multicolumn{1}{|c|}{benchmarks}  & \multicolumn{1}{|c|}{Min} & \multicolumn{1}{|c|}{Median} & \multicolumn{1}{|c|}{Max} & \multicolumn{1}{|c|}{Min} & \multicolumn{1}{|c|}{Median} & \multicolumn{1}{|c|}{Max}\\\hline
 1  & DC Motor          & 2 & 100 & 9.5\,s & 1.9\,s& \xmark& 1.2\,s &   3.1\,s &   14.1\,s\\
 2  & Helicopter        & 3  & 100 & \xmark & \xmark & \xmark & 6.7\,s  &   18.9\,s & \xmark\\
@@ -1370,7 +1369,7 @@ In the verification module, we have used the tool Axelerator~\cite{} .
 \end{tabular}
 \vspace{0.05in}
 \caption{\label{tab:cegis_results}
-Experimental results. Minimum, Maximum and Median times for standard CEGIS vs CEGORS on multiple benchmarks. \xmark~indicates failure to find a controller, either due to timeout or insufficient numeric precision (bitvectors are limited to 64bits).}
+Experimental results. Minimum, Maximum and Median times for standard CEGIS vs CEGIS-OR on multiple benchmarks. \xmark~indicates failure to find a controller, either due to timeout or insufficient numeric precision (bitvectors are limited to 64bits).}
 \end{table}
 
 For the majority of our benchmarks, we observe that our approach is
@@ -1381,13 +1380,13 @@ largely dependent on the shape of the problem.
 %When the tighter restriction isdependent on the optimization parameters the overall speed is 
 
 The smaller benchmarks (order=2) tend to show little or no improvement when we
-apply CEGORS.  The reason is that for these benchmarks the synthesis time using
+apply CEGIS-OR.  The reason is that for these benchmarks the synthesis time using
 Solution Generalization is already small, and the overhead of the abstraction is
 often equal or larger than the gain obtained.
 
 More interesting cases appear when we increase the order, showing initially that
 benchmarks that timed-out using standard CEGIS are now running in under 2
-minutes using CEGORS. This is the result of removing several multiplications which are
+minutes using CEGIS-OR. This is the result of removing several multiplications which are
 known to be difficult for SAT solvers.  Furthermore, when we introduce Optimization
 Refinement there is a further improvement up to an order of magnitude.  This second
 improvement is due to the elimination of counterexamples that would have been
