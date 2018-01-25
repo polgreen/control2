@@ -953,7 +953,7 @@ a certain magnitude by ensuring that
 the eigenvalues are smaller too (which we can do with Jury's criterion).
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\section{Synthesising dynamics}\label{sec:dynamic_synth}
+\section{Synthesising digital controllers with state observers}\label{sec:dynamic_synth}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -964,24 +964,43 @@ digital feedback controllers using CEGIS. Broadly speaking, CEGIS
 denotes an iterative technique where each iteration performs inductive
 generalisation based on counterexamples provided by a verification
 engine.
-
+%
 We build upon this paradigm to create CEGIS-OR (CEGIS with Optimization
-Refinement).
-Our approach is illustrated in Figure~\ref{fig:CEGIS-OR} and consists of three main
+and Refinement).
+Our approach is illustrated in Figure~\ref{fig:CEGIS-OR} and consists of four main
 phases:
-  \note{explain broadly what each phase does}
 \begin{itemize}
-\item {\sc Abstract}: constructs of an unsound abstract model that over-approximates
+\item {\sc Abstract}: constructs an unsound abstract model that over-approximates
 the dynamics of the system.
-\item {\sc synthesize}: generates a candidate controller and observer.  Since
-  we are using coarse approximations, these do not necessarily meet any portion
-  of the specification, but either through optimization or refinement become
-  more precise (therefore more likely to meet the specification) with each iteration.
-\item {\sc model}: refines or redefines the abstractions needed by {\sc Abstract}
+\note{what does it mean to be over-approximating but unsound?}
+\item {\sc synthesize}: generates a candidate controller and observer.
+  As it makes use of the potentially coarse abstraction constructed by {\sc Abstract},
+  the candidate doesn't necessarily meet the stability or safety specification.
+  %% these do not necessarily meet any portion
+  %% of the specification, but either through optimization or refinement become
+  %% more precise (therefore more likely to meet the specification) with each iteration.
+\item {\sc model}: refines the abstraction needed by {\sc Abstract}
   in order to reduce the probability of failure in the next iteration.
+  \note{{\sc abstract} doesn't need an abstraction.}
+  \note{how about optimization?}
 \item {\sc verify}: verifies the behaviour of the candidate controller and observer
-  against a sound over-approximation of the concrete dynamics of the system for an infinite space over an infinite time horizon.
+  against a sound over-approximation of the concrete dynamics of the system for an infinite space over an infinite time horizon. If the verification fails, produces a counterexample
+  describing the reason for failure.
 \end{itemize}
+
+\note{this needs to be integrated in the above enumeration}
+Our optimization procedure aims at reducing the
+size of the reach space of the closed loop system while maintaining other
+verification properties. \note{what are other verification properties?
+if you mean safety and stability say so.}
+%% The first one aims at making the system as
+%% convergent as possible.  This does not only ensure stability, but reduces
+%% the response time of the system, moving away from the unsafe states faster.
+%% The second one seeks to minimize rotations.  If the system rotates slower, it
+%% is less likely to reach unsafe states before converging.
+%% In both cases, the shape of the eigenspace may affect us negativey, so we
+%% use a measure of the size of the reach space to guide our optimization.
+
 
 %The verifier's abstraction uses a CEGAR loop in order to minimise 
 %over-approximation errors and provides counterexamples for both
@@ -991,13 +1010,16 @@ the dynamics of the system.
 
 The main advantage of this approach is two-fold:
 \begin{itemize}
-\item[1.] Optimizing the candidate solution in each iteration of the CEGIS loop
-  enables us to obtain better candidates that are more likely to meet the
-  specification or fail by a smaller margin.  This has the potential to reduce
-  the number of iteration of the CEGIS loop required to obtain a solution.
-\item[2.] We start with simpler (i.e. imprecise) abstractions that get
+\item[1.] We start with simpler (i.e. imprecise) abstractions that get
   refined into more complex ones as the procedure progresses. Thus, solutions
   that don't require a high level of precision are obtained fast. 
+\item[2.] Although {\sc synthesize} makes use of a potentially coarse abstraction,
+  by optimizing the candidate solution in each iteration of the CEGIS loop
+  we obtain better candidates that are more likely to meet the
+  specification or produce high quality counterexamples in the
+  {\sc verify} phase.
+  This has the potential to reduce
+  the number of iterations of the CEGIS loop required to obtain a solution.
 \end{itemize}
   
 %% because later stages of synthesis will use more complex abstractions, the reduction
@@ -1055,15 +1077,6 @@ The main advantage of this approach is two-fold:
 %% on a subset of the properties.  Hence the chosen optimization function depends
 %% on which properties fail verification.
 
-We use two objective functions for optimization.  Both aim at reducing the
-size of the reach space of the closed loop system while maintaining other
-verification properties.  The first one aims at making the system as
-convergent as possible.  This does not only ensure stability, but reduces
-the response time of the system, moving away from the unsafe states faster.
-The second one seeks to minimize rotations.  If the system rotates slower, it
-is less likely to reach unsafe states before converging.
-In both cases, the shape of the eigenspace may affect us negativey, so we
-use a measure of the size of the reach space to guide our optimization.
 
 %dcmt{this should go or be moved}
 %We find a controller for a continuous initial set of states and set of inputs,
@@ -1134,7 +1147,21 @@ use a measure of the size of the reach space to guide our optimization.
 %\begin{enumerate}
 %\item 
 
-The CEGIS-OR loop for this approach is described next.
+\note{the next paragraph doesn't sound right, we need to separate the notions
+  of abstraction and specification. they should not be the same. for now, just give an
+intuition and we'll think more...}
+
+The CEGIS-OR loop for this approach is described next.  \note{give an
+  intuition for what $\phi_{static}$ and $\phi_{synth}$ represent,
+  e.g. the system's abstraction + stability spec + safety spec...}
+Note that we make use of two abstractions corresponding to two
+specifications: $\phi_{synth}$ used by the synthesiser and
+$\phi_{static}$ which is given to the synthesis refinement loop. These
+abstractions will be refined independently, so we will not detail what
+each will contain at a given stage. We only note that at all times
+$\phi_{static} \models \phi_{synth}$.
+
+
 \paragraph{1. {\sc abstract}} creates an abstraction from the initial specificationas follows:
 \begin{itemize}
 \item Select a sample time that minimizes the magnitudes of the matrices used in both the
@@ -1161,8 +1188,6 @@ $(\phi_\mathit{init} \wedge \phi_\mathit{input} \wedge u_k=-\mat{K} \vec{x}_k)
 These bounds will be used by the {\sc synthesize} phase to reduce the size of the solution space. 
 \item Select an initial width for the bit vectors representing the controller and the plant $\phi_{\langle C \rangle}, \phi_{\langle P \rangle}$. We will increase either precision as needed.
 \end{itemize}
-\note{This paragraph needs to be moved before the itemize and it needs to be improved: give an intuition for what $\phi_{static}$ and $\phi_{synth}$ represent, e.g. the system's abstraction + stability spec + safety spec...}
-There are two abstractions created by these specifications: $\phi_{synth}$ which is given to the synthesiser and $\phi_{static}$ which is given to the synthesis refinement loop. These abstractions will be refined independently, so we will not detail what each will contain at a given stage. We only note that at all times $\phi_{static} \models \phi_{synth}$.
 %
 %\item
 \paragraph{2. {\sc synthesize}} generates a candidate controller $\mat{K}$
