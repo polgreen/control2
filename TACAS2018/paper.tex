@@ -91,7 +91,7 @@ restricted dynamics.  We examine the case of Linear Time Invariant (LTI)
 models, for which the synthesis of controllers is well understood.  However,
 the use of digital control architectures adds new challenges caused by
 artifacts specific to digital control, such as the effects of
-finite-precision arithmetic, time discretization and quantization errors
+finite-precision arithmetic (referred to here as Finite Word Length or FWL effects), time discretization and quantization errors
 introduced by A/D and D/A conversion.
 
 While research on digital control is well
@@ -264,7 +264,7 @@ the approach to the recent setup of Network Control Systems.
 The classical approach to control synthesis has often disregarded
 digitalization effects, whereas more recently modern techniques have focused
 on different aspects of discretization, including delayed
-response~\cite{Duggirala2015} and finite word length (FWL) semantics, with
+response~\cite{Duggirala2015} and Finite Word Length (FWL) semantics, with
 the goal either to verify (e.g.,~\cite{daes20161}) or to optimize
 (e.g.,~\cite{oudjida2014design}) given implementations.
 
@@ -395,10 +395,10 @@ We define the \emph{$n$-reach tube} as
 \begin{equation}\label{equ:reachtube}
 \hat{X}_n=\hat{\tau}^n(X_0,U)=\bigcup_{k\in[0,n]} \tau^k(X_0,U)
 \end{equation}
-as the union of $k$-reach sets over $n$ iterations (transitive closure \note{the T.Closure refers to the fixpoint, right? That is, it is what is defined next.}). 
+as the union of $k$-reach sets over $n$ iterations. 
 %
 Finally, set $\hat{X} =\bigcup_{n\geq 0} \tau^n(X_0,U)$ 
-generalises the previous notions over an unbounded time horizon.
+generalises the previous notions over an unbounded time horizon (transitive closure).
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{State observers}\label{sec:observer}
@@ -413,16 +413,16 @@ from measurements of the input and output of the system (See~\ref{sec:observable
 
 A closed-loop digital control system with observer is shown in Figure~\ref{fig:observersystem}. 
 The feedback controller is driven by the observer state $\hat{\vec{x}}$, 
-and is characterised by a gain matrix $\mat{K}$ \note{has index in figure} that influences the closed-loop dynamics.  
+and is characterised by a gain matrix $\mat{K}_{\langle C \rangle}$ that influences the closed-loop dynamics.  
 Moreover, $\vec{y}_e=\hat{\vec{y}}_k - \vec{y}_k$ is the output estimation error,  
 %  defined as the difference between the real output $\vec{y}_k$ and estimated one $\hat{\vec{y}_k}$, 
-  whereas $\mat{L}$ \note{with index in figure} is an error gain matrix that amplifies the output estimation error. 
+  whereas $\mat{L}_{\langle C \rangle}$ is an error gain matrix that amplifies the output estimation error. 
 Figure~\ref{fig:observersystem} also contains references to $\nu_1$, $\nu_2$, $\nu_1'$, $\nu_2'$ and $\nu_t$, which
   denote noise terms that will be explained later.   
 %%   With respect to noises (denoted by $\nu$), 
 %% $\nu_1$ and $\nu_2$ are the quantization noises introduced by the ADC and the DAC, $\nu_t$ is the noise introduced by the delay, and $\nu_1'$ and $\nu_2'$ are quantization noises caused by roundoffs in the FWL operations.
   Lastly, $k_r$ is a reference gain required by the model.  
-  Our goal in this work is to synthesise both $\mat{K}$ and $\mat{L}$.
+  Our goal in this work is to synthesise both $\mat{K}_{\langle C \rangle}$ and $\mat{L}_{\langle C \rangle}$.
  
 \begin{figure*}[t!]
 \centering
@@ -576,8 +576,8 @@ Figure~\ref{fig:observersystem} also contains references to $\nu_1$, $\nu_2$, $\
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
  The time discretization in Sec.~\ref{sec:model} only 
  allows us to evaluate the state of the system at integer multiples of the sample time.
- However, in order to synthesise $\mat{K}$ and $\mat{L}$, 
- we must be able to ensure that certain properties of the plant hold at any given real time. 
+ However, in order to synthesise $\mat{K}=\mat{K}_{\langle C \rangle}$ and $\mat{L}=\mat{L}_{\langle C \rangle}$, 
+ we must be able to ensure that certain properties of the plant hold at any given real time.
  In order to do so, 
  we accelerate the dynamics of the system according to the model semantics in Sec.~\ref{sec:model_semantics} and compute the state $\vec{x}_T$  at a given time $T$, 
 % namely we find an equation for $\tau^n(\vec{x},\vec{u})$ given $\tau(\vec{x},\vec{u})$. 
@@ -610,7 +610,7 @@ $\lambda_i$ are the eigenvalues of $\mat{A}$, and $gm(\lambda_i)$ is the geometr
 %$\vec{x}_T$ is the state of the system $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$ at time t=T.
  \end{theorem}
  \begin{corollary}
- If $\mat{J}$ is diagonal and there exists a discrete dynamics matrix for a sampling time $T_d$ such that $A_d=e^{\mat{A} T_d}$, then $\vec{x}_k=A_d^k\vec{x} \text{ with } k \in \mathbb{R}^+$ \note{naturals N?} is a witness of the system at time $t=kT_d$.
+ If $\mat{J}$ is diagonal and there exists a discrete dynamics matrix for a sampling time $T_d$ such that $A_d=e^{\mat{A} T_d}$, then $\vec{x}_T=A_d^{\frac{T}{T_d}}\vec{x} \text{ with } T \in \mathbb{R}^+$ is the state of the system at time $t=T$.
  \end{corollary}
 \begin{proof}
 See Appendix~\ref{sec:proofs}
@@ -620,8 +620,8 @@ See Appendix~\ref{sec:proofs}
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  Next, we are interested in studying models with parametric inputs, 
  which are described by $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)$, where $\forall t\geq 0, \mat{B}\vec{u}(t)=\vec{u}(0)$. 
- For such models, a witness $\vec{x}_T$ is computed next.  
- \note{Need to assume A invertible?}
+ We will assume $\mat{A}$ is invertible when there are geometric multiplicities $>1$.
+ For such models, a the state $\vec{x}_T$ is computed next.  
 \begin{theorem}
 The expression
  \begin{align}
@@ -629,10 +629,10 @@ The expression
 \vec{x}_T'&=\mat{A}\mat{A}_T\vec{x}_0 + (\mat{I}-\mat{A}_T)\mat{B}\vec{u} \text{ where } \forall t \leq T,\ \vec{u}(t)=\vec{u} 
  \end{align}
  with $\mat{A}_T$ as in \eqref{eq:continuous_tube_dyn}, 
- is a witness of the model $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)$ at time $T$ given a parametric input $\vec{u}$.
+ is the state of the model $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)$ at time $T$ given a parametric input $\vec{u}$.
  \end{theorem}
  \begin{corollary}
- If $\mat{J}$ is diagonal and there exists a discrete dynamics matrix for a sampling time $T_d$ such that $A_d=e^{\mat{A} T_d}$, then $\vec{x}_k=A_d^k\vec{x}+(\mat{I}-\mat{A}_d^k\mat{B}\vec{u}) \text{ with } k \in \mathbb{R}^+$ \note{naturals N?} is the state of the system at time $kT_d$.
+ If $\mat{J}$ is diagonal and there exists a discrete dynamics matrix for a sampling time $T_d$ such that $A_d=e^{\mat{A} T_d}$, then $\vec{x}_T=A_d^{\frac{T}{T_d}}\vec{x}+(\mat{I}-\mat{A}_d^{\frac{T}{T_d}}\mat{B}\vec{u}) \text{ with } T \in \mathbb{R}^+$ is the state of the system at time $T$.
  \end{corollary}
 \begin{proof}
 See Appendix~\ref{sec:proofs}
@@ -645,7 +645,8 @@ See Appendix~\ref{sec:proofs}
 The final case we analyse is that of hybrid-time models, 
 where the plant dynamics evolve in continuous time while the feedback dynamics evolve in discrete time, 
 namely a new input value is produced only at every sample time but implemented onto the continuous-time plant dynamics. 
- \note{Need to assume A invertible?}
+We will assume $\mat{A}$ is invertible, since otherwise $B_T$ would have to be calculated by integration which is impractical.
+
 %
 \begin{theorem}
 The expression
@@ -681,24 +682,22 @@ approximations due to digitalisation.
 \subsection{Time delay on discrete-time feedback models} \label{sec:delay}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-In our model delays are all deferred to the ZOH \note{acronym undefined - define these and others, with reference to the Figure 1 above}, 
-i.e., we presume that \note{qualitative: everything that happens in the digital world takes place at
-the sampling instance $t$} and the output of the result is delayed at the DAC 
-when it is fed back into the real world.  
-We will also presume that this delay is much smaller than the sampling time \note{does this assumption make practical sense? why? add reference?}.
+In our model, delays are all deferred to the Zero Order Holder (ZOH) of the DAC (See Figure \ref{fig:observersystem2}). 
+Everything that happens in the digital world takes place at times $t=kT_s, k \in \mathbb{N}$ (discrete time progression),
+and the output of the result is delayed at the DAC when it is fed back into the continuous time domain at time ($t=kT_s+t_d$).
 
 \begin{theorem}
 The error introduced by a delay $t_d$ in the control output $\vec{u}_k$ of a discrete feedback controller for a continuous LTI system can be modelled as a non-deterministic noise signal upper bound by 
 \begin{align}
 \norm{\vec{y}_{k}-{\vec{y}_{t_d}}_{k}}_1 \leq q_t, \text{ where } q_t=&(\norm{\mat{C}(\mat{B}_{T_s}-\mat{B}_{t_s})}_1+\norm{\mat{C}\mat{A}_{t_s}\mat{B}_{t_d}}_1)\norm{U}_1
 \end{align}
-where $\vec{y}_{t_d}$ is the output of the system with delay $t_d$, and $\norm{\vec{x}}_1=\sum_{i=0}^{size(\vec{x})} |\vec{x}_i|$ is the $l_1$ norm (\note{what? unclear?} in for sets, $\norm{X}_1 = sup \{\norm{\vec{x}}_1 \mid \vec{x} \in X\}$). 
+where $\vec{y}_{t_d}$ is the output of the system with delay $t_d$, and $\norm{\vec{x}}_1=\sum_{i=0}^{size(\vec{x})} |\vec{x}_i|$ is the $l_1$ norm (which we extend to sets as $\norm{X}_1 = sup \{\norm{\vec{x}}_1 \mid \vec{x} \in X\}$). 
 \end{theorem}
 
 \begin{proof}
 See Appendix~\ref{sec:proofs}
 \end{proof}
-We over-approximate the effects of this vector by introducing a noise signal at the output $\nu_t=[-q_t, q_t]$ and use the dynamics of the system without delay.
+We over-approximate the effects of this vector by introducing a noise signal at the output $\nu_t=[-q_t, q_t]$ and use the dynamics of the system without delay.  This noise will be small when the delay is much smaller than the sampling time.
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{Errors generated by numerical representations} 
@@ -710,8 +709,8 @@ which are due to quantization effects.  These effects are caused by the use
 of imprecise numerical representations over the reals in the digital domain
 of the controller which is an important consideration when trying to synthesise
 sound controllers.
-The models we consider have two sources of error that are due to numerical  
-representation which we commonly refer to as FWL \note{undefined acronym} effects.
+The models we consider have two sources of error that are due to Finite Word Length (FWL)
+representation.
 The first is the numerical error introduced by the
 fixed-point numbers employed to model the plant, i.e., to represent the
 plant dynamics $A_d$, $B_d$, $C_d$, $D_d$, $x_k$ and $y_k$.
@@ -751,16 +750,10 @@ the theory related to the observer design is provided in appendix \ref{sec:contr
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 The ability of a system to remain within a bounded set of states is called stability.
-In this paper, we are interested in
-%% There are different types of stability, such as Bounded Input/Bounded Output (BIBO)
-%% in which the requirement is that given a bounded input the output remains within
-%% certain limits, or
-asymptothic stability, where the output is expected to
-converge to a certain value. %% In our model, we are concerned with the latter
-%% type of stability is directly related to
-%% convergence, which means it directly relates to the eigenvalues of the dynamics.
+In this paper, we are interested in asymptothic stability, where the output is expected to
+converge to a certain value.  
 As we want to use Jury's criterion~\cite{fadali}\footnote{More details on Jury's criterion can be found in~\ref{sec:closed_stability}}, which is expressed 
-by an easy algebraic formula, we must ... \note{summarise what we do in the rest of this section.}
+by an easy algebraic formula, we transform the model into a representation that contains the desired coefficients expressed as sums of values (no multiplications).  Such representations are called Controllable and Observable Canonical Forms~\cite{Astrom08} \footnote{See~\ref{sec:reachable} and~\ref{sec:observable}}.  In this section we explore the implications of using these canonical forms alongside an FWL representation.
 
 In this section, we assume that the observer model is further discretised in
 the value domain, i.e., the domain for both
@@ -792,7 +785,7 @@ where $\mat{T}_c$ and $\mat{T}_o$ trasfrom the system into canonical form~\cite{
 {\setlength{\abovedisplayskip}{2pt}
 \setlength{\belowdisplayskip}{2pt}
 \begin{align*}
-\mat{A}_{c}=&\mat{T}_c\left(\mat{A}_d-\mat{B}_d\mat{K}\right)\mat{T}_c^{-1}&
+\mat{A}_{c}=&\mat{T}_c\left(\mat{A}_d-\mat{B}_d\mat{K}_{\langle C \rangle}\right)\mat{T}_c^{-1}&
 \mat{A}_{o}=&\mat{T}_o\left({\mat{A}_d}_{\langle C \rangle}-\mat{L}_{\langle C \rangle}{\mat{C}_d}_{\langle C \rangle}\right)\mat{T}_o^{-1}\\
 \mat{B}_{o}=&\mat{T}_c{\mat{B}_d}_{\langle C \rangle}\mat{K}_{\langle C \rangle}\mat{T}_o^{-1}&
 \mat{B}_{e}=&\mat{T}_c(\mat{B}_d-{\mat{B}_d}_{\langle C \rangle})\mat{K}_{\langle C \rangle}\mat{T}_o^{-1}\\
@@ -951,6 +944,7 @@ P'=\prod_{i=0}^p (s-\lambda_i')=\prod_{i=0}^p \left(s-\frac{\lambda_i}{\overline
 where all members are known. Thus, we can ensure that the settling time is smaller than
 a certain magnitude by ensuring that 
 the eigenvalues are smaller too (which we can do with Jury's criterion).
+We will use $\phi_{stability}$ to refer to the combined stability and transient response specifications.
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \section{Synthesising digital controllers with state observers}\label{sec:dynamic_synth}
@@ -992,38 +986,20 @@ maintaining other verification properties. \note{what are other
 Our approach is illustrated in Figure~\ref{fig:CEGIS-OR} and consists of four main
 phases:
 \begin{itemize}
-\item {\sc Abstract}: constructs an unsound abstract model that over-approximates
+\item {\sc Abstract}: constructs an unsound abstract model that approximates
 the dynamics of the system.
-\note{what does it mean to be over-approximating but unsound?}
 \item {\sc synthesize}: generates a candidate controller and observer.
   As it makes use of the potentially coarse abstraction constructed by {\sc Abstract},
   the candidate doesn't necessarily meet the stability or safety specification.
-  %% these do not necessarily meet any portion
-  %% of the specification, but either through optimization or refinement become
-  %% more precise (therefore more likely to meet the specification) with each iteration.
-\item {\sc model}: refines the abstraction needed by {\sc Abstract}
-  in order to reduce the probability of failure in the next iteration.
-  \note{{\sc abstract} doesn't need an abstraction.}
-  \note{how about optimization?}
+\item {\sc model}: defines the properties needed by {\sc Abstract} and {\sc Optimise} to create 
+  adequate abstractions at each stage in order to reduce the probability
+  of failure in the next iteration.  Our optimization procedure aims at reducing the
+  size of the reach space of the closed loop system while preserving the verification
+  properties (safety, stability and response time).  This phase will first attempt this objective
+  and failing this feed the {\sc Abstract} phase the necessary information to produce a better candidate.
 \item {\sc verify}: verifies the behaviour of the candidate controller and observer
-  against a sound over-approximation of the concrete dynamics of the system for an infinite space over an infinite time horizon. If the verification fails, produces a counterexample
-  describing the reason for failure.
+  against a sound over-approximation of the concrete dynamics of the system for an infinite space over an infinite time horizon. If the verification fails, produces a counterexample describing the reason for failure.
 \end{itemize}
-
-%% The first one aims at making the system as
-%% convergent as possible.  This does not only ensure stability, but reduces
-%% the response time of the system, moving away from the unsafe states faster.
-%% The second one seeks to minimize rotations.  If the system rotates slower, it
-%% is less likely to reach unsafe states before converging.
-%% In both cases, the shape of the eigenspace may affect us negativey, so we
-%% use a measure of the size of the reach space to guide our optimization.
-
-
-%The verifier's abstraction uses a CEGAR loop in order to minimise 
-%over-approximation errors and provides counterexamples for both
-%discrete and continuous dynamics to feed a CEGIS loop on the synthesiser
-%waiting for a new candidate solution. \note{not sure about this sentence.
-%  Which is the CEGAR loop?}
 
 The main advantage of this approach is two-fold:
 \begin{itemize}
@@ -1164,20 +1140,27 @@ The main advantage of this approach is two-fold:
 %\begin{enumerate}
 %\item 
 
-\note{the next paragraph doesn't sound right, we need to separate the notions
-  of abstraction and specification. they should not be the same. for now, just give an
-intuition and we'll think more...}
-
-The CEGIS-OR loop for this approach is described next.  \note{give an
-  intuition for what $\phi_{static}$ and $\phi_{synth}$ represent,
-  e.g. the system's abstraction + stability spec + safety spec...}
-Note that we make use of two abstractions corresponding to two
+The CEGIS-OR loop for this approach is described next.
+We make use of two abstractions corresponding to two
 specifications: $\phi_{synth}$ used by the synthesiser and
-$\phi_{static}$ which is given to the synthesis refinement loop. These
-abstractions will be refined independently, so we will not detail what
-each will contain at a given stage. We only note that at all times
-$\phi_{static} \models \phi_{synth}$.
-
+$\phi_{static}$ which is given to the synthesis refinement loop. 
+Both specifications will be updated during execution and new abstractions will be constructed for each.
+Let us define the properties 
+\begin{align*}
+\phi_{FWL}^C&:= \mat{K}=\mat{K}_{\langle C \rangle} \wedge \mat{L}=\mat{L}_{\langle C \rangle}\\
+\phi_{sample}^{d}&:= \mat{A}_d, \mat{B}_d, \mat{C}_d
+\end{align*}
+We start our loop with 
+\begin{align*}
+\phi_{synth}&:=\phi_{sample}^{d} \wedge \phi_{stability} \wedge \phi_{input} \wedge \phi_{init}\\
+\phi_{static}&:=\phi_{synth} \wedge \phi_{FWL}^C.
+\end{align*}
+When a counterexample is found, we add it to $\phi_{synth} = \phi_{synth} \wedge \phi_{safety}^k$, 
+where k is the iteration found for the counterexample.  The ${\sc Abstract}$ phase will then construct a abstraction (in the form of a program) that meets this property (unsoundly since the program uses FWL).
+It is also possible, when the modeller is unable to increase $k$, to change $\phi_{synth} = \phi_{synth} \wedge \phi_{sample}^{d'}$ or $\phi_{synth} = \phi_{synth} \wedge \phi_{FWL}^C$.  What we point out here is that these specifications may grow up to the full specification, thus making for increasingly complex astractions.
+Finally, we also note that the abstract phase uses a given precision ($\phi_{FWL}^P$) which we will increase when no candidates can be generated for a given $\phi_{synth}$.
+In the modeller, $\phi_{static} = \phi_{static} \wedge \phi_{safety}^{k'} \wedge \phi{objective}$ where $k' \geq k$, and $\phi{objective}$ defines a set of rules for the current optimization stage (see {\sc Opimise}).  We only note that at all times $\phi_{static} \models \phi_{synth}$.
+Let us see how the loop updates these specifications.
 
 \paragraph{1. {\sc abstract}} creates an abstraction from the initial specificationas follows:
 \begin{itemize}
@@ -1383,10 +1366,6 @@ In the verification module, we have used the tool Axelerator~\cite{} .
 %-------------------------------
 \note{Start with a description of the results, e.g. ``We managed to synthesise controllers in X of the cases. Average time ... In the rest of the cases ...''}.
 
-\note{In order to show the improvements due to our optimization-enhanced CEGIS, we also compared our approach against a standard CEGIS procedure..}
-
-\note{remove some of the subcases of CEGIS and CEGIS-OR. Those that are still used need to be explained in the actual section, not in the table's caption.}
-
 \begin{table}
 \centering
 \footnotesize
@@ -1414,12 +1393,13 @@ In the verification module, we have used the tool Axelerator~\cite{} .
 Experimental results. Minimum, Maximum and Median times for standard CEGIS vs CEGIS-OR on multiple benchmarks. \xmark~indicates failure to find a controller, either due to timeout or insufficient numeric precision (bitvectors are limited to 64bits).}
 \end{table}
 
-For the majority of our benchmarks, we observe that our approach is
-significantly faster than using standard CEGIS. We further note the cases where
-standard CEGIS times out, which represent an improvement of several orders of
-magnitude for our optimization approach.  The magnitude of the improvement is 
-largely dependent on the shape of the problem. 
-%When the tighter restriction isdependent on the optimization parameters the overall speed is 
+In order to show the improvements due to our optimization-enhanced CEGIS, we
+compared our approach against a standard CEGIS procedure.  For the majority of
+our benchmarks, we observe that our approach is significantly faster than
+standard CEGIS. We further note the cases where standard CEGIS times out, which
+represent an improvement of several orders of magnitude for our optimization
+approach.  The magnitude of the improvement is largely dependent on the shape
+of the problem. 
 
 The smaller benchmarks (order=2) tend to show little or no improvement when we
 apply CEGIS-OR.  The reason is that for these benchmarks the synthesis time using
@@ -2433,9 +2413,7 @@ We get the stability specification by applying Jury's Criterion to these polynom
 $\lambda_i \in \mat{J}$ are the eigenvalues of $\mat{A}$, and $gm(\lambda_i)$ is the geometric multiplicity of $\lambda_i$.  
 $\vec{x}_T$ is the state of the system $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$ at time t=T.
  \end{theorem}
- \begin{corollary}
- If $\mat{J}$ is diagonal and there exists a discrete dynamics matrix for a sampling time $T_d$ such that $A_d=e^{\mat{A} T_d}$, then $\vec{x}_k=A_d^k\vec{x} \text{ with } k \in \mathbb{R}^+$ is the state of the system at time $t=kT_d$.
- \end{corollary}
+  If $\mat{J}$ is diagonal and there exists a discrete dynamics matrix for a sampling time $T_d$ such that $A_d=e^{\mat{A} T_d}$, then $\vec{x}_T=A_d^{\frac{T}{T_d}}\vec{x} \text{ with } T \in \mathbb{R}^+$ is the state of the system at time $t=T$.
  \begin{proof}
  Let us recall equation \ref{eq:discretize}. The discrete representation of the system dynamics discretised with sample time $T_1$ is ruled by the formula
  $\mat{A}_1 = e^{\mat{A} T_1}$. From matrix theory, we have 
@@ -2494,7 +2472,7 @@ The expression
  with $\mat{A}_T$ as per \eqref{eq:continuous_tube_dyn} is the state of the system $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)$ at time $T$ given a parametric input $\vec{u}$.
  \end{theorem}
  \begin{corollary}
- If $\mat{J}$ is diagonal and there exists a discrete dynamics matrix for a sampling time $T_d$ such that $A_d=e^{\mat{A} T_d}$, then $\vec{x}_k=A_d^k\vec{x}+(\mat{I}-\mat{A}_d^k\mat{B}\vec{u}) \text{ with } k \in \mathbb{R}^+$ is the state of the system at time $kT_d$.
+ If $\mat{J}$ is diagonal and there exists a discrete dynamics matrix for a sampling time $T_d$ such that $A_d=e^{\mat{A} T_d}$, then $\vec{x}_T=A_d^{\frac{T}{T_d}}\vec{x}+(\mat{I}-\mat{A}_d^{\frac{T}{T_d}}\mat{B}\vec{u}) \text{ with } k \in \mathbb{R}^+$ is the state of the system at time $kT_d$.
  \end{corollary}
  \begin{proof}
  We begin by expanding the equation
