@@ -959,14 +959,36 @@ the eigenvalues are smaller too (which we can do with Jury's criterion).
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 %\subsection{Using optimization refinement for CEGIS of control systems}\label{sec:cof_synth}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 In this section, we describe our technique for synthesizing safe
 digital feedback controllers using CEGIS. Broadly speaking, CEGIS
 denotes an iterative technique where each iteration performs inductive
 generalisation based on counterexamples provided by a verification
-engine.
+engine. In each iteration, an inductive synthesiser produces a
+candidate solution that obeys the specification for a limited number
+of inputs. Subsequently, this candidate is passed to a verification
+oracle that checks it against the specification for all possible
+inputs. If the verification fails, then the witness counterexample is
+passed back to the synthesis phase, where it is added to the set of
+inputs to be considered in the next loop iteration. Otherwise, we are
+done.
+
 %
-We build upon this paradigm to create CEGIS-OR (CEGIS with Optimization
-and Refinement).
+We enhance the standard CEGIS architecture with abstraction refinement
+and optimization, resulting in CEGIS-OR (CEGIS with Optimization and
+Refinement).  By using abstraction refinement, CEGIS-OR tackles the
+scalability issues inherent in program synthesis as it allows using
+potentially coarse abstractions of a system that are only refined on
+demand.  Given that the use of coarse abstractions could result in low
+quality candidate solutions (i.e. candidates that fail the
+specification on a very large number of inputs), after each synthesis
+phase we use optimization techniques to improve the produced
+candidates.  In particular, our optimization procedure aims at
+reducing the size of the reach space of the closed loop system while
+maintaining other verification properties. \note{what are other
+  verification properties?  if you mean safety and stability say so.}
+
+
 Our approach is illustrated in Figure~\ref{fig:CEGIS-OR} and consists of four main
 phases:
 \begin{itemize}
@@ -988,11 +1010,6 @@ the dynamics of the system.
   describing the reason for failure.
 \end{itemize}
 
-\note{this needs to be integrated in the above enumeration}
-Our optimization procedure aims at reducing the
-size of the reach space of the closed loop system while maintaining other
-verification properties. \note{what are other verification properties?
-if you mean safety and stability say so.}
 %% The first one aims at making the system as
 %% convergent as possible.  This does not only ensure stability, but reduces
 %% the response time of the system, moving away from the unsafe states faster.
@@ -1010,7 +1027,7 @@ if you mean safety and stability say so.}
 
 The main advantage of this approach is two-fold:
 \begin{itemize}
-\item[1.] We start with simpler (i.e. imprecise) abstractions that get
+\item[1.] We start with coarse abstractions that get
   refined into more complex ones as the procedure progresses. Thus, solutions
   that don't require a high level of precision are obtained fast. 
 \item[2.] Although {\sc synthesize} makes use of a potentially coarse abstraction,
