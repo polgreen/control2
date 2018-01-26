@@ -968,7 +968,7 @@ We will use $\phi_{stability}$ to refer to the combined stability and transient 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 In this section, we describe our technique for synthesizing safe
-digital feedback controllers using CEGIS. Broadly speaking, CEGIS
+digital feedback controllers using CEGIS \note{add ref}. Broadly speaking, CEGIS
 denotes an iterative technique where each iteration performs inductive
 generalisation based on counterexamples provided by a verification
 engine. In each iteration, an inductive synthesiser produces a
@@ -991,7 +991,7 @@ quality candidate solutions (i.e. candidates that fail the
 specification on a very large number of inputs), after each synthesis
 phase we use optimization techniques to improve the produced
 candidates.  In particular, our optimization procedure aims at
-reducing the size of the reach space of the closed loop system while
+reducing the size of the reach space \note{define reach space} of the closed loop system while
 maintaining other verification properties. \note{what are other
   verification properties?  if you mean safety and stability say so.}
 
@@ -1366,7 +1366,7 @@ stages, blue boxes (dark) are verification stages, and the red box is the synthe
 %-------------------------------
 
 The benchmark suite employed to evaluate the proposed technique is 
-composed by 7 SISO models extracted from the literature~\cite{acrobot,cstr,CHEN1979389,KOKOTOVIC198023,gajic2008optimal,Franklin15,maglev,converters}.
+composed by seven SISO \note{defined SISO} models extracted from the control literature~\cite{acrobot,cstr,CHEN1979389,KOKOTOVIC198023,gajic2008optimal,Franklin15,maglev,converters}.
 In order to obtain statistically relevant results, we have taken these models
 and modified each possible combination of their parameters by a 10\% tolerance,
 thus creating seven hundred benchmarks from this base.
