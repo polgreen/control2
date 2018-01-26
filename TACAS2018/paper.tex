@@ -755,25 +755,25 @@ the theory related to observer design is in Appendix \ref{sec:control_theory}.}
 \subsection{Stability of an observed model with FWL effects}\label{sec:cof_fwl_stability}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-The ability of a system to remain within a bounded set of states is called stability.
-In this paper, we are interested in asymptothic stability, where the output is expected to
-converge to a certain value.  
-As we want to use Jury's criterion~\cite{fadali}\footnote{More details on Jury's criterion is in Appendix~\ref{sec:closed_stability}}, which is expressed 
-by an easy algebraic formula, we transform the model into a representation that contains the desired coefficients expressed as sums of values (no multiplications).  Such representations are called Controllable and Observable Canonical Forms~\cite{Astrom08} \footnote{See parts~\ref{sec:reachable} and~\ref{sec:observable} in the Appendix}.  In this section we explore the implications of using these canonical forms alongside an FWL representation.
+Stability denotes the property of a model to remain within a bounded set of states around an equilibrium point. 
+In this paper, we are interested in asymptotic stability, where the output is expected to converge to a certain steady state value.  
+We specify model stability via Jury's criterion~\cite{fadali}\footnote{More details on Jury's criterion is in Appendix~\ref{sec:closed_stability}}, 
+which allows for an expression with an algebraic formula. 
+We transform the model into a representation that contains the desired coefficients expressed as sums of values (with no multiplications).  
+Such a representation is called Controllable and Observable Canonical Form~\cite{Astrom08} \footnote{See parts~\ref{sec:reachable} and~\ref{sec:observable} in the Appendix}.  
+In this Section we explore the implications of using these canonical forms alongside an FWL representation. 
 
-In this section, we assume that the observer model is further discretised in
-the value domain, i.e., the domain for both
-the controller and the observer is $\mathbb{R}_{\langle C \rangle}$.
+We assume that the domain of the observer model is further discretised, 
+i.e., the domain for both the controller and the observer is $\mathbb{R}_{\langle C \rangle}$.
 This means that we have 
 ${\mat{A}_d}_{\langle C
 \rangle},{\mat{B}_d}_{\langle C \rangle},{\mat{C}_d}_{\langle C \rangle},
 \mat{K}_{\langle C \rangle}, \mat{L}_{\langle C \rangle} \in
 \mathbb{R}_{\langle C \rangle}^*$ where $*$ represents the appropriate
-dimension for each matrix.  Unfortunately this means that although combined
-matrices such as $\mat{A}_c$ are in the reals, they suffer from the fixed
-word restrictions in their composing matrices.
+dimension for each matrix.  \note{unclear next:} Unfortunately this means that although combined
+matrices such as $\mat{A}_c$ are in the reals, they suffer from the fixed-word restrictions in their composing matrices.
 
-When our observer is implemented using a finite precision controller, new
+When our observer is implemented using a finite-precision controller, new
 problems arise due to the FWL effects.  Let ${\mat{A}_d}_{\langle C
 \rangle}$, ${\mat{B}_d}_{\langle C \rangle}$ and ${\mat{C}_d}_{\langle C
 \rangle}$ be the dynamics represented in $\mathbb{R}_{\langle C\rangle}^*$,
@@ -784,7 +784,8 @@ Equation \eqref{eq:observer_LTI_cf} becomes:
 =& \left [\begin{array}{cc}\mat{A}_{c}+\mat{B}_{e}&\mat{B}_{o}\\ \mat{A}_{e}&\mat{A}_{o}\end{array}\right]
 \left [\begin{array}{c}\vec{x}'\\ \vec{x}_e' \end{array}\right]_k
 +\left[\begin{array}{cc}\mat{T}_c{\mat{B}_d}_{\langle C \rangle}&\mat{0}\\\mat{0}&-\mat{T}_o\mat{L}_{\langle C \rangle}\end{array}\right]\left [\begin{array}{c} \vec{r}_k + \vec{\eta}_2\\ \vec{\eta}_1\end{array}\right]\nonumber\\
-\vec{y}_k=&\mat{C}_d\mat{T}_c\vec{x}_k'% + \mat{D}_{d}\vec{u}_k
+\vec{y}_k=&\mat{C}_d\mat{T}_c\vec{x}_k', 
+% + \mat{D}_{d}\vec{u}_k
 \label{eq:observer_LTI_FWL_cf}
 \end{align}
 where $\mat{T}_c$ and $\mat{T}_o$ trasfrom the system into canonical form~\cite{Astrom08} and
@@ -803,9 +804,10 @@ where $\mat{T}_c$ and $\mat{T}_o$ trasfrom the system into canonical form~\cite{
 \begin{align*}
 \mat{A}'=&\left [\begin{array}{cc}\mat{A}_{c}+\mat{B}_{e}&\mat{B}_{o}\\ \mat{A}_{e}&\mat{A}_{o}\end{array}\right]&
 \mat{B}'=&\left[\begin{array}{cc}\mat{T}_c{\mat{B}_d}_{\langle C \rangle}&\mat{0}\\\mat{0}&-\mat{T}_o\mat{L}_{\langle C \rangle}\end{array}\right]\\
-\eta_1=&\nu_1+\nu_1'+\nu_t& \eta_2=&\nu_2+\nu_2'
+\eta_1=&\nu_1+\nu_1'+\nu_t& \eta_2=&\nu_2+\nu_2',
 \end{align*}
 }
+\note{it is very hard if not impossible to understand these operations without having thoroughly gone through the whole Appendix, which is unlikely for a reviewer to do.}
 where $\nu_1$ and $\nu_2$ are the quantization noises introduced by the ADC and the DAC, $\nu_t$ is the noise introduced by the delay, and $\nu_1'$ and $\nu_2'$ are quantization noises caused by roundoffs in the FWL operations (see Section~\ref{sec:quantization-noise}).
 
 The first effect of this digitalization is that $\mat{A}'$ is no longer upper
@@ -845,8 +847,8 @@ requirement.
 In~this work, the safety property is expressed as:
 %
 \begin{align}
-  \phi_\mathit{safety}\equiv& \underline{y} \leq y_k \leq \overline{y}
-\iff \forall k\geq 0.\, \mat{G}\vec{x}_k \leq \vec{h},
+  \phi_\mathit{safety}: = & \underline{y} \leq y_k \leq \overline{y}
+\equiv \forall k\geq 0.\, \mat{G}\vec{x}_k \leq \vec{h},
 \label{eq:safetyspec}
 \end{align}
 %
@@ -854,7 +856,7 @@ where $\mat{G}$ and $\vec{h}$ define a set of inequalities that describe
 a safe set, within the state-space $\mathbb{R}^p$.
 %
 Note that FWL effects are not explicitly captured here
-as they are implicit from equation \ref{eq:observer_LTI_FWL_cf}.
+as they are implicit from Equation \ref{eq:observer_LTI_FWL_cf}.
 %% We assume that we do not want saturation in our
 %% system, hence the control loop has only one mode.
 %% First we must
@@ -869,11 +871,11 @@ as they are implicit from equation \ref{eq:observer_LTI_FWL_cf}.
 Furthermore, it is practically relevant to consider the 
 constraints $\phi_\mathit{input}$ on the input
 signal $u_{k}$ and $\phi_\mathit{init}$ on the initial states $x_0$,
-which we assume have given bounds:
-$\phi_\mathit{input}\equiv \underline{u} \leq u_k \leq \overline{u}$
-which comes from physical restrictions in the energy of the system, and
+which we assume have given bounds, namely 
+$\phi_\mathit{input} := \underline{u} \leq u_k \leq \overline{u}$, 
+which comes from physical restrictions in the energy of the system; and
 $\phi_\mathit{init}\equiv \mat{G}' \vec{x}_0 \leq \vec{h}'$,
-where $\mat{G}'$ and $\vec{h}'$ describe the initial state-space.
+where $\mat{G}'$ and $\vec{h}'$ describe the initial state-space. 
 
 %
 %Note that we use the bounds of the input after the transformation by $\mat{B}$ since the matrix may reverse the bounds. 
