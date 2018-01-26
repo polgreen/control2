@@ -697,9 +697,10 @@ The error introduced by a delay $t_d$ in the control output $\vec{u}_k$ of a dis
 \begin{align}
 \norm{\vec{y}_{k}-{\vec{y}_{t_d}}_{k}}_1 \leq q_t, \text{ where } q_t=&(\norm{\mat{C}(\mat{B}_{T_s}-\mat{B}_{t_s})}_1+\norm{\mat{C}\mat{A}_{t_s}\mat{B}_{t_d}}_1)\norm{U}_1
 \end{align}
+\note{what is ts, as opposed to Ts?}
 where $\vec{y}_{t_d}$ is the output of the system with delay $t_d$, 
 and $\norm{\vec{x}}_1=\sum_{i=0}^{size(\vec{x})} |\vec{x}_i|$ is the $l_1$ norm, 
-which we extend to sets as $\norm{X}_1 = \sup \{\norm{\vec{x}}_1, \vec{x} \in X\}$. 
+which we extend to sets as $\norm{X}_1 = \sup \{\norm{\vec{x}}_1, \vec{x} \in X\}$.  
 \end{theorem}
 %
 \begin{proof}
@@ -759,7 +760,7 @@ Stability denotes the property of a model to remain within a bounded set of stat
 In this paper, we are interested in asymptotic stability, where the output is expected to converge to a certain steady state value.  
 We specify model stability via Jury's criterion~\cite{fadali}\footnote{More details on Jury's criterion is in Appendix~\ref{sec:closed_stability}}, 
 which allows for an expression with an algebraic formula. 
-We transform the model into a representation that contains the desired coefficients expressed as sums of values (with no multiplications).  
+We transform the model into a representation that contains \note{unclear next} the desired coefficients expressed as sums of values (with no multiplications) \note{why is this form important?}.  
 Such a representation is called Controllable and Observable Canonical Form~\cite{Astrom08} \footnote{See parts~\ref{sec:reachable} and~\ref{sec:observable} in the Appendix}.  
 In this Section we explore the implications of using these canonical forms alongside an FWL representation. 
 
@@ -769,7 +770,7 @@ This means that we have
 ${\mat{A}_d}_{\langle C
 \rangle},{\mat{B}_d}_{\langle C \rangle},{\mat{C}_d}_{\langle C \rangle},
 \mat{K}_{\langle C \rangle}, \mat{L}_{\langle C \rangle} \in
-\mathbb{R}_{\langle C \rangle}^*$ where $*$ represents the appropriate
+\mathbb{R}_{\langle C \rangle}^*$, where $*$ represents the appropriate
 dimension for each matrix.  \note{unclear next:} Unfortunately this means that although combined
 matrices such as $\mat{A}_c$ are in the reals, they suffer from the fixed-word restrictions in their composing matrices.
 
@@ -777,7 +778,7 @@ When our observer is implemented using a finite-precision controller, new
 problems arise due to the FWL effects.  Let ${\mat{A}_d}_{\langle C
 \rangle}$, ${\mat{B}_d}_{\langle C \rangle}$ and ${\mat{C}_d}_{\langle C
 \rangle}$ be the dynamics represented in $\mathbb{R}_{\langle C\rangle}^*$,
-Equation \eqref{eq:observer_LTI_cf} becomes:
+\note{You cannot refer to a formula in the appendix} Equation \eqref{eq:observer_LTI_cf} becomes:
 %
 \begin{align}
 \left [\begin{array}{c}\vec{x}'\\ \vec{x}_e' \end{array}\right]_{k+1}
@@ -788,7 +789,8 @@ Equation \eqref{eq:observer_LTI_cf} becomes:
 % + \mat{D}_{d}\vec{u}_k
 \label{eq:observer_LTI_FWL_cf}
 \end{align}
-where $\mat{T}_c$ and $\mat{T}_o$ trasfrom the system into canonical form~\cite{Astrom08} and
+\note{what is the meaning of the new dashed variables?}
+where $\mat{T}_c$ and $\mat{T}_o$ trasform the system into canonical form~\cite{Astrom08} \note{this statement will not be understood} and
 {\setlength{\abovedisplayskip}{2pt}
 \setlength{\belowdisplayskip}{2pt}
 \begin{align*}
@@ -810,8 +812,10 @@ where $\mat{T}_c$ and $\mat{T}_o$ trasfrom the system into canonical form~\cite{
 \note{it is very hard if not impossible to understand these operations without having thoroughly gone through the whole Appendix, which is unlikely for a reviewer to do.}
 where $\nu_1$ and $\nu_2$ are the quantization noises introduced by the ADC and the DAC, $\nu_t$ is the noise introduced by the delay, and $\nu_1'$ and $\nu_2'$ are quantization noises caused by roundoffs in the FWL operations (see Section~\ref{sec:quantization-noise}).
 
+\note{the remainder of this section is not self contained and totally unclear.}
+
 The first effect of this digitalization is that $\mat{A}'$ is no longer upper
-diagonal.  We must therefore compensate for the errors introduced in order
+diagonal \note{you mean, unlike the Cont-Obs form of A -- this will not be clear to the reader.}.  We must therefore compensate for the errors introduced in order
 to find a stable solution.  We can use Gershgorin disks~\cite{van1996matrix} to limit the error
 in the expected eigenvalues.  Let $\delta_o=\max(\norm{{\mat{A}_e}_{i,*}}_1)$
 (\emph{i.e.} the largest row norm in $\mat{A}_e$) be the largest error bound
@@ -914,8 +918,8 @@ where $\mat{G}'$ and $\vec{h}'$ describe the initial state-space.
 \subsection{Transient response} 
 \label{sec:transientspecification}
 %-------------------------------
-In many cases the speed of the response, i.e. how fast it converges to the set point, is a requirement of great importance. 
-This is given as a settling time for the system to become stable.
+In many cases the speed of the response \note{you mean the step response - this concept is undefined}, i.e. how fast it converges to the set point, is a requirement of great importance. 
+This is given as a ``settling time.'' 
  
 \begin{theorem}
 Given a set of eigenvalues for a discrete time model of an $p^{th}$ order system $\lambda_i =e^{\omega_i}, i \in [1, ...\,,p]$, the settling time of the system is upper-bounded by
@@ -923,7 +927,8 @@ Given a set of eigenvalues for a discrete time model of an $p^{th}$ order system
 t_s<-log_{\overline{\lambda}}({P_s}), \text{ where }  \overline{\lambda} = \max(|\lambda_i|) \text{ and } \overline{\lambda}<1,\ \forall i \in [1, ...\,,p]
 \label{eq:set_time}
 \end{equation}
-where $0\leq P_s \leq 1$ is the desired percentage of the target within which the output must remain after $t_s$.
+\note{you are assuming that the DT model has stable dynamics?}
+where $0\leq P_s \leq 1$ is the desired percentage \note{you mean portion?} of the target within which the output must remain after $t_s$.
 \end{theorem}
 
 \begin{proof}
