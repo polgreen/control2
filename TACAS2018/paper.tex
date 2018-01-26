@@ -384,9 +384,10 @@ $X_0$ via $\tau$ in $n$ steps.
 %
 \begin{align}\label{equ:reachset}
 \tau^n(X_0,U) = \{\vec{x}_n \mid & 
-\vec{x}_{k+1}=\tau(\vec{x}_{k},\vec{u}_{k}) \, \forall k\in [0,n-1], \,
-\vec{x}_0 \in X_0, \,
-\vec{u}_{k} \in U  \} \;. 
+\forall k\in [0,n-1] \, \vec{x}_{k+1}=\tau(\vec{x}_{k},\vec{u}_{k}), \,
+\vec{u}_{k} \in U, \,   
+\vec{x}_0 \in X_0
+\} \;. 
 \end{align}
 %
 Since the transformations $\mat{A}$ and $\mat{B}$ are linear and vector sums preserve convexity \note{ref}, 
@@ -406,23 +407,24 @@ generalises the previous notions over an unbounded time horizon (transitive clos
 
 In many models of real-world control systems, 
 the internal state $x$ cannot be directly measured,  
-but is rather inferred from its effect on the output $\vec{y}$ using an observer.  
-Essentially, a state observer is another dynamical model (denoted below with variable $\hat{\vec{x}}$) 
+but is rather inferred from its effect on the output $\vec{y}$ using an observer~~\cite{Astrom08}.  
+Essentially, a state observer is a new dynamical model (with variable denoted below as $\hat{\vec{x}}$) 
 that provides an estimate of the internal state $x$ of the given model, 
-from measurements of the input and output of the system (See~\ref{sec:observable}). 
+from measurements of its inputs and outputs (See~\ref{sec:observable}). 
 
 A closed-loop digital control system with observer is shown in Figure~\ref{fig:observersystem}. 
-The feedback controller is driven by the observer state $\hat{\vec{x}}$, 
-and is characterised by a gain matrix $\mat{K}_{\langle C \rangle}$ that influences the closed-loop dynamics.  
-Moreover, $\vec{y}_e=\hat{\vec{y}}_k - \vec{y}_k$ is the output estimation error,  
+The linear feedback controller *bottom left) and is characterised by a gain matrix $\mat{K}_{\langle C \rangle}$ that influences the closed-loop dynamics, 
+and is driven by the observer state $\hat{\vec{x}}$.  
+Moreover, $\vec{y}_e=\hat{\vec{y}} - \vec{y}$ is the output estimation error,  
 %  defined as the difference between the real output $\vec{y}_k$ and estimated one $\hat{\vec{y}_k}$, 
-  whereas $\mat{L}_{\langle C \rangle}$ is an error gain matrix that amplifies the output estimation error. 
+ which is amplified by a gain matrix $\mat{L}_{\langle C \rangle}$. 
 Figure~\ref{fig:observersystem} also contains references to $\nu_1$, $\nu_2$, $\nu_1'$, $\nu_2'$ and $\nu_t$, which
   denote noise terms that will be explained later.   
 %%   With respect to noises (denoted by $\nu$), 
 %% $\nu_1$ and $\nu_2$ are the quantization noises introduced by the ADC and the DAC, $\nu_t$ is the noise introduced by the delay, and $\nu_1'$ and $\nu_2'$ are quantization noises caused by roundoffs in the FWL operations.
   Lastly, $k_r$ is a reference gain required by the model.  
-  Our goal in this work is to synthesise both $\mat{K}_{\langle C \rangle}$ and $\mat{L}_{\langle C \rangle}$.
+  Our goal in this work is to synthesise both $\mat{K}_{\langle C \rangle}$ and $\mat{L}_{\langle C \rangle}$, 
+  so that specific closed-loop properties of the overall interconnection are satisfied.
  
 \begin{figure*}[t!]
 \centering
@@ -575,16 +577,16 @@ Figure~\ref{fig:observersystem} also contains references to $\nu_1$, $\nu_2$, $\
  \section{Acceleration of continuous-time models}\label{sec:continuous_time_accel}
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
  The time discretization in Sec.~\ref{sec:model} only 
- allows us to evaluate the state of the system at integer multiples of the sample time.
+ allows us to evaluate the state of the plant at integer multiples of the sample time.
  However, in order to synthesise $\mat{K}=\mat{K}_{\langle C \rangle}$ and $\mat{L}=\mat{L}_{\langle C \rangle}$, 
  we must be able to ensure that certain properties of the plant hold at any given real time.
  In order to do so, 
- we accelerate the dynamics of the system according to the model semantics in Sec.~\ref{sec:model_semantics} and compute the state $\vec{x}_T$  at a given time $T$, 
+ we accelerate the dynamics of the plant according to the model semantics in Sec.~\ref{sec:model_semantics} and compute the state $\vec{x}_T$  at a given time $T$, 
 % namely we find an equation for $\tau^n(\vec{x},\vec{u})$ given $\tau(\vec{x},\vec{u})$. 
 namely the state of the system $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$ at time $t=T$.
  
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- \subsection{Accelerated dynamics for continuous-time models without inputs}\label{sec:cont_acc_no_inputs}
+ \subsection{Accelerated\! dynamics\! for\! continuous-time\! models\! without\! inputs}\label{sec:cont_acc_no_inputs}
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  
  Given a specific time $T$, the state $\vec{x}(t=T)$ can be expressed as a linear function of $\vec{x}_0$ as described below.
@@ -619,20 +621,22 @@ See Appendix~\ref{sec:proofs}
  \subsection{Accelerated dynamics for models with parametric inputs}\label{sec:real_discrete_param_inputs}
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  Next, we are interested in studying models with parametric inputs, 
- which are described by $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)$, where $\forall t\geq 0, \mat{B}\vec{u}(t)=\vec{u}(0)$. 
- We will assume $\mat{A}$ is invertible when there are geometric multiplicities $>1$.
+ which are described by $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)$, where $\forall t\geq 0, \mat{B}\vec{u}(t)=\vec{u}$. 
+ We will assume $\mat{A}$ is invertible when there are non-trivial geometric multiplicities.
  For such models, a the state $\vec{x}_T$ is computed next.  
 \begin{theorem}
-The expression
+The state of the model $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)$ at time $T$ given a parametric input $\vec{u}$ is 
  \begin{align}
  \vec{x}_T&=\vec{x}(t=T)=\mat{A}^{-1}\vec{x}_T'\nonumber\\
-\vec{x}_T'&=\mat{A}\mat{A}_T\vec{x}_0 + (\mat{I}-\mat{A}_T)\mat{B}\vec{u} \text{ where } \forall t \leq T,\ \vec{u}(t)=\vec{u} 
+\vec{x}_T'&=\mat{A}\mat{A}_T\vec{x}_0 + (\mat{I}-\mat{A}_T)\mat{B}\vec{u} 
  \end{align}
- with $\mat{A}_T$ as in \eqref{eq:continuous_tube_dyn}, 
- is the state of the model $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)$ at time $T$ given a parametric input $\vec{u}$.
+ \note{can you simplify in a single line?}
+ where $\forall t \leq T,\ \vec{u}(t)=\vec{u}$,  
+ and $\mat{A}_T$ as in \eqref{eq:continuous_tube_dyn}.  
  \end{theorem}
  \begin{corollary}
- If $\mat{J}$ is diagonal and there exists a discrete dynamics matrix for a sampling time $T_d$ such that $A_d=e^{\mat{A} T_d}$, then $\vec{x}_T=A_d^{\frac{T}{T_d}}\vec{x}+(\mat{I}-\mat{A}_d^{\frac{T}{T_d}}\mat{B}\vec{u}) \text{ with } T \in \mathbb{R}^+$ is the state of the system at time $T$.
+ If $\mat{J}$ is diagonal and there exists \note{there always exist one, since you define it from A} a discrete matrix for a sampling time $T_d$ such that $A_d=e^{\mat{A} T_d}$, 
+ then $\vec{x}_T=A_d^{\frac{T}{T_d}}\vec{x}+(\mat{I}-\mat{A}_d^{\frac{T}{T_d}}\mat{B}\vec{u}) \text{ with } T \in \mathbb{R}^+$ \note{the formula appears to not be working for T=0 - why? Also, it is not clear what the real-power of a matrix A is?} is the state of the system at time $T$.
  \end{corollary}
 \begin{proof}
 See Appendix~\ref{sec:proofs}
