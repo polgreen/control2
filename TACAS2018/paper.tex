@@ -570,7 +570,7 @@ Figure~\ref{fig:observersystem} also contains references to $\nu_1$, $\nu_2$, $\
  \end{tikzpicture}
 }
  \caption{Closed-loop digital control system with an observer, where the controller and the observer (bottom part) are implemented in a discrete domain, 
- whereas the plant is continuous \label{fig:observersystem2}}
+ whereas the plant is continuous \note{comment on C index in some of the matrices} \label{fig:observersystem2}}
 \end{figure*}
 
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -584,6 +584,8 @@ Figure~\ref{fig:observersystem} also contains references to $\nu_1$, $\nu_2$, $\
  we accelerate the dynamics of the plant according to the model semantics in Sec.~\ref{sec:model_semantics} and compute the state $\vec{x}_T$  at a given time $T$, 
 % namely we find an equation for $\tau^n(\vec{x},\vec{u})$ given $\tau(\vec{x},\vec{u})$. 
 namely the state of the system $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$ at time $t=T$.
+
+\note{ [add?] In this section we work with fully observed models, namely where $y = x$. } 
  
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  \subsection{Accelerated\! dynamics\! for\! continuous-time\! models\! without\! inputs}\label{sec:cont_acc_no_inputs}
@@ -622,7 +624,7 @@ See Appendix~\ref{sec:proofs}
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  Next, we are interested in studying models with parametric inputs, 
  which are described by $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)$, where $\forall t\geq 0, \mat{B}\vec{u}(t)=\vec{u}$. 
- We will assume $\mat{A}$ is invertible when there are non-trivial geometric multiplicities.
+ We will assume $\mat{A}$ is invertible \note{else?} when there are non-trivial geometric multiplicities \note{why?}.
  For such models, a the state $\vec{x}_T$ is computed next.  
 \begin{theorem}
 The state of the model $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)$ at time $T$ given a parametric input $\vec{u}$ is 
@@ -647,9 +649,9 @@ See Appendix~\ref{sec:proofs}
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 The final case we analyse is that of hybrid-time models, 
-where the plant dynamics evolve in continuous time while the feedback dynamics evolve in discrete time, 
-namely a new input value is produced only at every sample time but implemented onto the continuous-time plant dynamics. 
-We will assume $\mat{A}$ is invertible, since otherwise $B_T$ would have to be calculated by integration which is impractical.
+where the plant dynamics evolve in continuous time while the feedback dynamics evolve in discrete time.  
+A new input value is produced only at every sample time but implemented over the continuous-time plant dynamics. 
+We assume that $\mat{A}$ is invertible, since otherwise the term $B_T$ below would have to be calculated by integration, which is impractical.
 
 %
 \begin{theorem}
@@ -659,8 +661,8 @@ The expression
  \label{eq:cyber_feedback}
  \end{align}
  with $\mat{A}_T$ as in \eqref{eq:continuous_tube_dyn}, 
- and where $\mat{B}_T=\mat{A}^{-1}(\mat{I}-\mat{A}_T)\mat{B}$ and 
- $\mat{A}_d, \mat{B}_d$ describe the discretized plant dynamics, 
+ and where $\mat{B}_T=\mat{A}^{-1}(\mat{I}-\mat{A}_T)\mat{B}$, 
+ and $\mat{A}_d, \mat{B}_d$ describe the discretized plant dynamics with sample time $T_s$, 
  is the state of the model 
  \begin{align}
  \dot{\vec{x}}(t) = \mat{A}\vec{x}(t)+\mat{B}\vec{u}(t), \quad 
@@ -687,47 +689,46 @@ approximations due to digitalisation.
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 In our model, delays are all deferred to the Zero Order Holder (ZOH) of the DAC (See Figure \ref{fig:observersystem2}). 
-Everything that happens in the digital world takes place at times $t=kT_s, k \in \mathbb{N}$ (discrete time progression),
-and the output of the result is delayed at the DAC when it is fed back into the continuous time domain at time ($t=kT_s+t_d$).
+In the digital world everything takes place at times $t=kT_s, k \in \mathbb{N}$ (discrete time progression),
+and the output signal is delayed at the DAC when fed back to the continuous-time domain at time ($t=kT_s+t_d$).
 
 \begin{theorem}
-The error introduced by a delay $t_d$ in the control output $\vec{u}_k$ of a discrete feedback controller for a continuous LTI system can be modelled as a non-deterministic noise signal upper bound by 
+The error introduced by a delay $t_d$ in the control output $\vec{u}_k$ of a discrete feedback controller for a continuous LTI system can be modelled as a non-deterministic disturbance signal \note{where is the signal placed? is it in  the figure above?} upper bounded by 
 \begin{align}
 \norm{\vec{y}_{k}-{\vec{y}_{t_d}}_{k}}_1 \leq q_t, \text{ where } q_t=&(\norm{\mat{C}(\mat{B}_{T_s}-\mat{B}_{t_s})}_1+\norm{\mat{C}\mat{A}_{t_s}\mat{B}_{t_d}}_1)\norm{U}_1
 \end{align}
-where $\vec{y}_{t_d}$ is the output of the system with delay $t_d$, and $\norm{\vec{x}}_1=\sum_{i=0}^{size(\vec{x})} |\vec{x}_i|$ is the $l_1$ norm (which we extend to sets as $\norm{X}_1 = sup \{\norm{\vec{x}}_1 \mid \vec{x} \in X\}$). 
+where $\vec{y}_{t_d}$ is the output of the system with delay $t_d$, 
+and $\norm{\vec{x}}_1=\sum_{i=0}^{size(\vec{x})} |\vec{x}_i|$ is the $l_1$ norm, 
+which we extend to sets as $\norm{X}_1 = \sup \{\norm{\vec{x}}_1, \vec{x} \in X\}$. 
 \end{theorem}
-
+%
 \begin{proof}
 See Appendix~\ref{sec:proofs}
 \end{proof}
-We over-approximate the effects of this vector by introducing a noise signal at the output $\nu_t=[-q_t, q_t]$ and use the dynamics of the system without delay.  This noise will be small when the delay is much smaller than the sampling time.
+This results allows to over-approximate the effects of the delay by introducing a disturbance signal $\nu_t=[-q_t, q_t]$ at the output \note{Fig 1?}.
+ %and use the dynamics of the system without delay.  
+ This noise will be small when the delay is much smaller than the sampling time \note{where do you see this in the formula above?}.
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{Errors generated by numerical representations} 
 \label{sec:numeric_rep2}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-In Figure \ref{fig:observersystem2} we introduced several sources of noise,
-which are due to quantization effects.  These effects are caused by the use
-of imprecise numerical representations over the reals in the digital domain
-of the controller which is an important consideration when trying to synthesise
-sound controllers.
-The models we consider have two sources of error that are due to Finite Word Length (FWL)
-representation.
-The first is the numerical error introduced by the
-fixed-point numbers employed to model the plant, i.e., to represent the
-plant dynamics $A_d$, $B_d$, $C_d$, $D_d$, $x_k$ and $y_k$.
-The second is the quantization error
-introduced by the digital controller, which performs operations on
-fixed-point numbers.  In this section we outline the notation for the
-representation of numbers, and briefly describe the errors
-introduced.  A~formal discussion is in
-Appendix~\ref{sec:numeric_rep}.
+In Figure \ref{fig:observersystem2} we have introduced sources of noise that are due to quantization effects.  
+These effects are caused by imprecise numerical representations of real numbers in the digital domain of the controller: 
+these play an important role in the synthesis of sound controllers. 
+The model has two sources of error are due to Finite Word Length (FWL) representations. 
+The first is the numerical error introduced by the fixed-point numbers employed to model the plant, 
+i.e., to represent the plant dynamics $A_d$, $B_d$, $C_d$, $D_d$, $x_k$ and $y_k$. 
+The second is the quantization error introduced by the digital controller, 
+which performs operations over fixed-point numbers.  
+In this section we outline the notation for the finite representation of numbers, 
+and briefly describe the introduced errors.  
+A formal discussion is in Appendix~\ref{sec:numeric_rep}.
 
 Let $\mathbb{R}_{\langle M,F \rangle}$ be a fixed point domain with $M$ bits
 representing the binary word length of the representation and $F$ bits
-representing the prescaling $2^{-F}$ (\emph{i.e} the number of bits after
+representing the pre-scaling $2^{-F}$ (\emph{i.e} the number of bits after
 the decimal place).  We note that a negative $F$ denotes an integer
 multiplication that adds $-F$ trailing zeros in the number represented by
 $M$. 
@@ -735,29 +736,30 @@ We will use the domain $\mathbb{R}_{\langle C \rangle} \text{ where } \langle C 
 to represent the fixed point precision of the controller, and 
 $\mathbb{R}_{\langle P \rangle} \supseteq \mathbb{R}_{\langle C \rangle}$
 to represent the domain of a digital model of the dynamics of a real plant when
-evaluated by a verification tool.
-Thus, any mathematical operations in our modelled digital controller will be executed in the
+evaluated by a verification tool. \note{refer back to notation in Figure 1.}
+Thus, any mathematical operation within the digital controller is executed in the
 domain $\mathbb{R}_{\langle C \rangle}$, and all other calculations
 in our model will be carried out in the domain $\mathbb{R}_{\langle P \rangle}$.
-Given ${\langle M,F \rangle}$ we use $\mathcal{F}_{\langle M,F \rangle} : \mathbb{R} \rightarrow \mathbb{R}_{\langle M,F \rangle}$ as the truncation function.
+Given ${\langle M,F \rangle}$, 
+we denote as $\mathcal{F}_{\langle M,F \rangle} : \mathbb{R} \rightarrow \mathbb{R}_{\langle M,F \rangle}$ the corresponding truncation function. 
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \section{Properties of a controllable model with observer}\label{sec:cof_verification}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 Since we are interested in synthesising controllers with observers, 
-in this section we will look at checking stability, safety and the response time in the presence of an observer. \footnote{A full description of
-the theory related to the observer design is provided in appendix \ref{sec:control_theory}.}
+in this section we will look at checking stability, safety and the response time in the presence of an observer.\footnote{A full description of
+the theory related to observer design is in Appendix \ref{sec:control_theory}.}
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{Stability of an observed system with FWL effects}\label{sec:cof_fwl_stability}
+\subsection{Stability of an observed model with FWL effects}\label{sec:cof_fwl_stability}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 The ability of a system to remain within a bounded set of states is called stability.
 In this paper, we are interested in asymptothic stability, where the output is expected to
 converge to a certain value.  
-As we want to use Jury's criterion~\cite{fadali}\footnote{More details on Jury's criterion can be found in~\ref{sec:closed_stability}}, which is expressed 
-by an easy algebraic formula, we transform the model into a representation that contains the desired coefficients expressed as sums of values (no multiplications).  Such representations are called Controllable and Observable Canonical Forms~\cite{Astrom08} \footnote{See~\ref{sec:reachable} and~\ref{sec:observable}}.  In this section we explore the implications of using these canonical forms alongside an FWL representation.
+As we want to use Jury's criterion~\cite{fadali}\footnote{More details on Jury's criterion is in Appendix~\ref{sec:closed_stability}}, which is expressed 
+by an easy algebraic formula, we transform the model into a representation that contains the desired coefficients expressed as sums of values (no multiplications).  Such representations are called Controllable and Observable Canonical Forms~\cite{Astrom08} \footnote{See parts~\ref{sec:reachable} and~\ref{sec:observable} in the Appendix}.  In this section we explore the implications of using these canonical forms alongside an FWL representation.
 
 In this section, we assume that the observer model is further discretised in
 the value domain, i.e., the domain for both
