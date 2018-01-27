@@ -1188,7 +1188,7 @@ Next, we describe the CEGIS-OR loop in Figure~\ref{fig:CEGIS-OR}.
 
 \paragraph{\underline{{\sc abstract}}} computes an initial version of $\phi$
 and decides the sample time $T_d$,
-the plant precision $\mathbb{R}_{\langle P \rangle}$ and the controller's precision
+the plant precision $\mathbb{R}_{\langle P \rangle}$ and the controller precision
 $\mathbb{R}_{\langle C \rangle}$.
  %width for the bit vectors
  %for representing the controller and the plant, respectively.
@@ -1226,11 +1226,11 @@ $(\phi_\mathit{init} \wedge \phi_\mathit{input} \wedge u_k=-\mat{K} \vec{x}_k)
 These bounds will be used by the {\sc synthesize} phase to reduce the size of the solution space. 
 \end{itemize}
 \note{$\phi_{safety}^k$ is undefined!!!}
-\paragraph{\underline{{\sc synthesize}}} generates a candidate controller $\mat{K}$
-and observer $\mat{L}$ that satisfy
+\paragraph{\underline{{\sc synthesize}}} generates a candidate controller matrix $\mat{K}$
+and observer matrix $\mat{L}$ that satisfy
 $\phi$ by invoking a SAT solver.
 If there is no candidate solution it signals {\sc Abstract}, 
-which may choose to increase the plant's precision or return a synthesis failure.
+which may choose to increase the plant precision or return a synthesis failure.
 If {\sc synthesize} generates a candidate solution, it is fed to the {\sc verify} chain in order to validate it.
 %
 %\item
@@ -1245,7 +1245,7 @@ and iterations that failed the specification.
 \item {\sc verify synthesis}
 verifies that the candidate controller
 and observer obey $\phi$ (remember that we now use
-$\mathbb{R}_{\langle C \rangle}$ for the controller's representation
+$\mathbb{R}_{\langle C \rangle}$ for the controller representation
 and reals for the plant).  %% If the verification fails, the candidate is
 %% fed to the {\sc Optimise} phase.
 If the candidate is valid, we feed
@@ -1263,20 +1263,20 @@ transitions between sample times meet the specification $\phi_{safety}^{\infty}$
 %\item
 
 \paragraph{\underline{{\sc Refine Abstraction and optimize}}} refines the
-system's abstraction as well as optimizes the current candidate
+model abstraction as well as optimizes the current candidate
 solution.
 %
 %% When a counterexample is found, we add it to $\phi_{synth} = \phi_{synth} \wedge \phi_{safety}^k$, 
 %% where k is the iteration found for the counterexample.  
-First, the system's abstraction must be refined in order to eliminate
+First, the model abstraction must be refined in order to eliminate
 the newly received counterexample. For this purpose,
 we increase the time horizon $k$ for the
 safety specification so that it captures the violating iteration
-(for the given initial state) and adjust $\phi$:
-$\phi = \phi \wedge \phi_{safety}^k$.
+(for the given initial state) and adjust $\phi$ as 
+$\phi := \phi \wedge \phi_{safety}^k$.
 If the counterexample is provided by the {\sc continuous time} stage,
 then we must select a smaller suitable sample time to be used
-for the plant's discretization.
+for the model discretization.
 %% and modify the abstractions to meet the discretization 
 %% ($\phi_{synth} = \phi_{synth} \wedge \phi_{sample}^{T_d'}$ and $\phi_{static} = \phi_{static} \wedge \phi_{sample}^{T_d'}$).
 %% It will then feed back to the abstraction refinement loop to look for a suitable action for the updated model.
@@ -1287,7 +1287,7 @@ Secondly, we try to optimizes the failed candidate solution.
 For this purpose, we seek to minimize the distance of the farthest point in the
 reach space to the closest point to it in the safe region
 \begin{equation}
-e=max(\{min(\{\vec{x}-\vec{g} \mid \vec{g}\in G\}) \mid \vec{x} \in \hat{X}_\infty \}).
+e = \max(\{\min(\{\vec{x}-\vec{g}, \vec{g}\in G\}), \vec{x} \in \hat{X}_\infty \}).
 \label{eq:objective}
 \end{equation}
 
@@ -1300,7 +1300,7 @@ purpose, we take the largest eigenvalue and reduce it by a factor $f$
 that still satisfies the controller constraints ($f \overline{\lambda}
 \models \phi$).  The resulting observer and controller are then
 verified against the safety specification $\phi_{safety}$ and the
-objective $e$ is measured (Equation \eqref{eq:objective}).  If for
+objective $e$ is measured as in Equation \eqref{eq:objective}.   If for
 each iteration $k$, the objective $e_k<e_{k-1}$, we continue to
 iterate until $e_k \leq 0$ (i.e. we found a safe controller),
 otherwise we move to the second stage.
@@ -1397,7 +1397,7 @@ candidate.  Otherwise the optimized candidate solution is given back to
 
  \end{tikzpicture}
 }
-\caption{CEGIS with Optimization Refinement. Orange boxes (light) are modelling
+\caption{CEGIS-OR: CEGIS with Optimization Refinement. Orange boxes (light) are modelling
 stages, blue boxes (dark) are verification stages, and the red box is the synthesis stage.}
 \label{fig:CEGIS-OR}
 \end{figure}
@@ -1495,20 +1495,20 @@ require multiple counterexamples.
 \label{sec:conclusions}
 %-------------------------------
 
-Our Synthesis Algorithm shows promise in exploiting modularity for
-improved response. It however relies on the use of application
-specific optimization which means that it is necessary to find adequate tools for
-exploring different types of properties.  Our results show significant
-improvement in terms of scalability over standard approaches with an ability to
-explore complex properties, hence many synthesis tasks may be derived
-from it. In particular we note that our synthesis loop should be targeted at
-systems where the solution space is formed by connected spaces where
+CEGIS-OR shows promise in exploiting modularity for improved response. 
+It however relies on the use of application-specific optimization, 
+which requires adequate tools for exploring different types of properties.  
+Our results show significant improvement in terms of scalability over standard CEGIS approaches, 
+with an ability to explore complex properties, hence many synthesis tasks may be tackled with it. 
+In particular we note that our synthesis loop should be targeted at 
+models where the solution space is formed by connected spaces where
 optimization algorithms or localized synthesis are likely to be achieved more
-efficiently than global synthesis.
+efficiently than global synthesis \note{such solution spaces are unlikely classifiable a priori}. 
 Finally our application to control synthesis provides a solid proof
-of concept for scalable optimal control synthesis of LTI systems. There is still
-a need to extend it it MIMO systems and analyse further properties, which may
-also require exploring other optimization methods for control systems.
+of concept for scalable optimal control synthesis of LTI systems. 
+
+There is still a need to extend CEGIS-OR to MIMO models and to analyse more general properties, 
+which may also require exploring other optimization methods for control systems. 
 
 \newpage
 \bibliographystyle{splncs03}
