@@ -910,7 +910,7 @@ where $\mat{G}'$ and $\vec{h}'$ describe the initial state-space.
 \subsection{Transient response} 
 \label{sec:transientspecification}
 %-------------------------------
-In many cases the speed of the response \note{you mean the step response - this concept is undefined}, i.e. how fast it converges to the set point, is a requirement of great importance. 
+In many cases the response time of the system\note{you mean the step response - this concept is undefined}, i.e. how fast it converges to the set point, is a requirement of great importance. 
 This is given as a ``settling time.'' 
  
 \begin{theorem}
@@ -1365,7 +1365,6 @@ In the verification module, we have used the tool Axelerator~\cite{} .
 \subsection{Results}
 \label{exp:results}
 %-------------------------------
-\note{Start with a description of the results, e.g. ``We managed to synthesise controllers in X of the cases. Average time ... In the rest of the cases ...''}.
 
 \begin{table}
 \centering
@@ -1394,6 +1393,14 @@ In the verification module, we have used the tool Axelerator~\cite{} .
 Experimental results. Minimum, Maximum and Median times for standard CEGIS vs CEGIS-OR on multiple benchmarks. \xmark~indicates failure to find a controller, either due to timeout or insufficient numeric precision (bitvectors are limited to 64bits).}
 \end{table}
 
+Using the described technique we managed to synthesize controllers for X benchmarks, with a median synthesis time of $18.8$ seconds.
+%and the maximum observed synthesis time was under 10 minutes for a $4^{th}$ order system ($8^{th}$ order considering the observer).
+We consider these times short enough to be of practical use to control engineers.
+There are cases for which the system fails to find a controller.  We use a
+relatively short timeout, so it is possible longer timeouts would result in a
+valid solution. However, as stated before, the solution is sound but incomplete,
+so it is impossible to tell if a solution exists in these cases. 
+
 In order to show the improvements due to our optimization-enhanced CEGIS, we
 compared our approach against a standard CEGIS procedure.  For the majority of
 our benchmarks, we observe that our approach is significantly faster than
@@ -1420,16 +1427,6 @@ suitable, we gain nothing with the refinement and therefore find similar times.
 Improvements using this approach will therefore be observed in higher order
 systems or when the safety specification is tight and the original loop would
 require multiple counterexamples.
-
-The median run-times for our benchmark sets are under a minute, and the
-maximum observed synthesis time was under 10 minutes for a $4^{th}$ order system
-($8^{th}$ order considering the observer).  We consider these times
-short enough to be of practical use to control engineers.
-
-There are cases for which the system fails to find a controller.  We use a
-relatively short timeout, so it is possible longer timeouts would result in a
-valid solution. However, as stated before, the solution is sound but incomplete,
-so it is impossible to tell if a solution exists in these cases. 
 
 %%-------------------------------
 %\subsection{Threats to validity}
