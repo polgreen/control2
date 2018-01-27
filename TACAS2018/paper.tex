@@ -570,7 +570,7 @@ Figure~\ref{fig:observersystem} also contains references to $\nu_1$, $\nu_2$, $\
   \path[->] (Kd.north) edge (circle.south);
  \end{tikzpicture}
 }
- \caption{Closed-loop digital control system with an observer, where the controller and the observer (bottom part) are implemented in a discrete domain (identified by the subindex $\langle C \rangle$), whereas the plant is continuous \label{fig:observersystem2}}
+ \caption{Closed-loop digital control system with an observer, where the controller and the observer (bottom part) are implemented in a discrete domain (quantities within this domain are identified by the index $\langle C \rangle$), whereas the plant is continuous \label{fig:observersystem2}}
 \end{figure*}
 
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -591,8 +591,8 @@ namely the state of the system $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$ at time $t=T
  \subsection{Accelerated\! dynamics\! for\! continuous-time\! models\! without\! inputs}\label{sec:cont_acc_no_inputs}
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  
- Given a specific time $T$, the state $\vec{x}(t=T)$ can be expressed as a linear function of $\vec{x}_0$ as described below.
-We assume that the system has no inputs, and its dynamics are described by $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$.
+ Given a specific time $T$, the state $\vec{x}(t=T)$ can be expressed as a linear function of $\vec{x}_0$ as shown below.
+We assume that the system has no inputs, so its dynamics are described by $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$.
  
  \begin{theorem}
  The solution to the differential equation $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$, where $\mat{A}=\mat{S}\mat{J}\mat{S}^{-1}$,
@@ -614,7 +614,7 @@ $\lambda_i$ are the eigenvalues of $\mat{A}$, and $gm(\lambda_i)$ is the geometr
 %$\vec{x}_T$ is the state of the system $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$ at time t=T.
  \end{theorem}
  \begin{corollary}
- If $\mat{J}$ is diagonal and there exists a discrete dynamics matrix for a sampling time $T_d$ such that $A_d=e^{\mat{A} T_d}$, then $\vec{x}_T=A_d^{\frac{T}{T_d}}\vec{x} \text{ with } T \in \mathbb{R}^+$ is the state of the system at time $t=T$.
+ If $\mat{J}$ is diagonal and there exists a discrete dynamics matrix for a sampling time $T_d$ such that $A_d=e^{\mat{A} T_d}$, then $\vec{x}_T=A_d^{\frac{T}{T_d}}\vec{x} \text{ with } T \in \mathbb{R}^+_0$ is the state of the system at time $t=T$.
  \end{corollary}
 \begin{proof}
 See Appendix~\ref{sec:proofs}
@@ -624,18 +624,19 @@ See Appendix~\ref{sec:proofs}
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  Next, we are interested in studying models with parametric inputs, 
  which are described by $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)$, where $\forall t\geq 0, \mat{B}\vec{u}(t)=\vec{u}$. 
+ \note{you mean u(t) = u?}
  For such models, a the state $\vec{x}_T$ is computed next.  
 \begin{theorem}
 The state of the model $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)$ at time $T$ given a parametric input $\vec{u}$ is 
  \begin{align}
  \vec{x}_T&=\vec{x}(t=T)=\mat{A}_T\vec{x}_0 + \mat{B}_T\vec{u} \text{ where } \mat{B}_T=\mat{A}^{-1}(\mat{I}-\mat{A}_T)\mat{B} 
  \end{align}
- where $\forall t \leq T,\ \vec{u}(t)=\vec{u}$, and $\mat{A}_T$ as in \eqref{eq:continuous_tube_dyn}
+ where $\forall t \leq T,\ \vec{u}(t)=\vec{u}$, and $\mat{A}_T$ as in \eqref{eq:continuous_tube_dyn} \note{pls no fwd ref to the appendix- can you use (8)?}
  \footnote{when $\mat{A}$ is not invertible, we use $\left[\begin{array}{cc}\mat{A}_T&\mat{B}_T\\ 0&\mat{I}\end{array}\right]=e^{\left[\begin{array}{cc}\mat{A}&\mat{B}\\0&0\end{array}\right]}$}.
  \end{theorem}
  \begin{corollary}
  If $\mat{J}$ is diagonal and given a sampling time $T_d$ such that $A_d=e^{\mat{A} T_d}$, 
- then $\vec{x}_T=A_d^{\frac{T}{T_d}}\vec{x}+(\mat{I}-\mat{A}_d^{\frac{T}{T_d}}\mat{B}_d\vec{u}) \text{ with } T \in \mathbb{R}_0^+$ (where $\mat{A}_d^{\frac{T}{T_d}} = e^{log(\mat{A}_d) \frac{T}{T_d}} = e^{\mat{A} T}$) is the state of the system at time $T$.
+ then $\vec{x}_T=A_d^{\frac{T}{T_d}}\vec{x}+(\mat{I}-\mat{A}_d^{\frac{T}{T_d}}\mat{B}_d\vec{u}) \text{ with } T \in \mathbb{R}_0^+$ \note{here there must be an x that is actually a x0?} (where $\mat{A}_d^{\frac{T}{T_d}} = e^{log(\mat{A}_d) \frac{T}{T_d}} = e^{\mat{A} T}$) is the state of the system at time $T$.
  \end{corollary}
 \begin{proof}
 See Appendix~\ref{sec:proofs}
@@ -657,7 +658,7 @@ The expression
  \vec{x}_{T} &= (\mat{A}_{T-kT_s}-\mat{B}_{T-kT_s}\mat{K}) (\mat{A}_d-\mat{B}_d\mat{K})^k\vec{x}_0, 
  \label{eq:cyber_feedback}
  \end{align}
- with $\mat{A}_T$ as in \eqref{eq:continuous_tube_dyn}, 
+ with $\mat{A}_T$ as in \eqref{eq:continuous_tube_dyn} \note{no ref to appendix}, 
  and where $\mat{B}_T=\mat{A}^{-1}(\mat{I}-\mat{A}_T)\mat{B}$, 
  and $\mat{A}_d, \mat{B}_d$ describe the discretized plant dynamics with sample time $T_s$, 
  is the state of the model 
