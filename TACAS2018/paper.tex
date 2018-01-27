@@ -1306,15 +1306,11 @@ It will then feed back to the abstraction refinement loop to look for a suitable
   \coordinate (aux2);
   \coordinate (aux3) at ([xshift=3cm]aux2); \\
   \node[minimum width=2.2cm, minimum height=0.8cm, fill=orange!20] (model1) {{\sc 1. Abstract}};
-  \& complexnode/.pic={ 
-     \node[rectangle,draw,dotted,
-	minimum width=9cm,
-	minimum height=1cm,
-        pattern=north west lines, pattern color=gray!20,
-	label={\sc Model~~~~~~~~~~~},] (model) {};
-     \node[minimum width=2.2cm, minimum height=0.8cm, fill=orange!20] (model2) at ([xshift=-3cm]model.center) {{\sc 4. Optimise}};
-     \node[minimum width=2.2cm, minimum height=0.8cm, fill=orange!20] (model3) at ([xshift=0cm]model.center) {{\sc 6. Refine}\\{\sc Abstraction}};
-     \node[minimum width=2.2cm, minimum height=0.8cm, fill=orange!20] (model4) at ([xshift=3cm]model.center) {{\sc 8. Sample}};
+  \& complexnode/.pic={
+    \coordinate (model);
+    \node[minimum width=2.2cm, minimum height=0.8cm, fill=orange!20] (model2) at ([xshift=-3cm]model.center) {{\sc 4. Refine Abstraction}\\{\sc and Optimise}};
+     \coordinate (model3) at ([xshift=0cm]model.center);
+     \coordinate (model4) at ([xshift=3cm]model.center);
    } ;\\
    \node[minimum width=2.2cm, minimum height=0.8cm, fill=purple!20] (synth) {{\sc 2. Synthesize}};
    \&
@@ -1345,9 +1341,9 @@ It will then feed back to the abstraction refinement loop to look for a suitable
     (verif1.east) edge node {PASS} (verif2.west)
     (verif2.north) edge node[xshift=.8cm] {C-ex} (model3.south)
     (verif2.east) edge node {PASS} (verif3.west)
-    (verif3.north) edge node {C-ex} (model4.south)
-    (model3.west) edge node {$k$,$X_0'$} (model2.east)
-    (model4.west) edge node {$T_s$} (model3.east)
+    (verif3.north) edge[-] node {C-ex} (model4.south)
+    %(model2.west) edge node {$k$,$X_0'$} (model2.east)
+    (model4.west) edge node {} (model2.east)
     ([xshift=-5em]fp.north) edge node[align=center]  {PASS/\\C-ex} ([xshift=-5em]verif2.south)
     ([xshift=-5em]sv.north) edge node[align=center]  {PASS/\\C-ex} ([xshift=-5em]verif3.south)
     ([xshift=5em]verif1.south) edge node[align=center] {$\mat{A}'$} ([xshift=5em]bmc.north)
