@@ -1145,21 +1145,21 @@ The main advantage of this approach is two-fold:
 The CEGIS-OR loop for this approach is described next.
 We make use of two abstractions corresponding to two
 specifications: $\phi_{synth}$ used by the synthesiser and
-$\phi_{static}$ which is given to the synthesis refinement loop. 
-Both specifications will be updated during execution and new abstractions will be constructed for each.
+$\phi_{static}$ which is given to the optimiser. 
+Both specifications are updated during execution and new abstractions are constructed for each.
 Let us define the properties 
 \begin{align*}
 \phi_{\langle C \rangle}&:= \mat{K}=\mat{K}_{\langle C \rangle} \wedge \mat{L}=\mat{L}_{\langle C \rangle}\\
-\phi_{dynamics}^{T_d}&:= \mat{A}_d, \mat{B}_d, \mat{C}_d
+\phi_{dynamics}^{T_d}&:= \{\mat{A}_d, \mat{B}_d, \mat{C}_d \mid \mat{A}_d=e^{\mat{A}T_d}\}
 \end{align*}
-The first one defines the word length of the digital controller ($\mathbb{R}_{\langle C \rangle}$) and its effect on the system dynamics.
-The second one defines the sampling time ($T_d$) and its effect on the system dynamics (as per Section \ref{sec:continuous_time_accel}).
+$\phi_{\langle C \rangle}$ defines the word length of the digital controller ($\mathbb{R}_{\langle C \rangle}$)
+and $\phi_{dynamics}^{T_d}$ defines the sampling time ($T_d$) and its effect on the system dynamics (as per Section \ref{sec:continuous_time_accel}).
 We start our loop with 
 \begin{align*}
 \phi_{synth}&:=\phi_{dynamics}^{T_d} \wedge \phi_{stability} \wedge \phi_{input} \wedge \phi_{init}\\
 \phi_{static}&:=\phi_{synth} \wedge \phi_{\langle C \rangle}.
 \end{align*}
-These specifications will vary as the loop progresses.  We only note that at all times $\phi_{static} \models \phi_{synth}$.
+These specifications will vary as the loop progresses.  However, at all times $\phi_{static} \models \phi_{synth}$.
 Let us see how the loop updates these specifications.
 
 \paragraph{1. {\sc abstract}} creates an abstraction from the initial specification as follows:
