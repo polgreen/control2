@@ -1142,108 +1142,134 @@ The main advantage of this approach is two-fold:
 %\begin{enumerate}
 %\item 
 
-The CEGIS-OR loop for this approach is described next.
-We make use of two abstractions corresponding to two
-specifications: $\phi_{synth}$ used by the synthesiser and
-$\phi_{static}$ which is given to the optimiser. 
-Both specifications are updated during execution and new abstractions are constructed for each.
-Let us define the properties 
-\begin{align*}
-\phi_{\langle C \rangle}&:= \mat{K}=\mat{K}_{\langle C \rangle} \wedge \mat{L}=\mat{L}_{\langle C \rangle}\\
-\phi_{dynamics}^{T_d}&:= \{\mat{A}_d, \mat{B}_d, \mat{C}_d \mid \mat{A}_d=e^{\mat{A}T_d}\}
-\end{align*}
-$\phi_{\langle C \rangle}$ defines the word length of the digital controller ($\mathbb{R}_{\langle C \rangle}$)
-and $\phi_{dynamics}^{T_d}$ defines the sampling time ($T_d$) and its effect on the system dynamics (as per Section \ref{sec:continuous_time_accel}).
-We start our loop with 
-\begin{align*}
-\phi_{synth}&:=\phi_{dynamics}^{T_d} \wedge \phi_{stability} \wedge \phi_{input} \wedge \phi_{init}\\
-\phi_{static}&:=\phi_{synth} \wedge \phi_{\langle C \rangle}.
-\end{align*}
-These specifications will vary as the loop progresses.  However, at all times $\phi_{static} \models \phi_{synth}$.
-Let us see how the loop updates these specifications.
+%The CEGIS-OR loop for this approach is described next.
+Throughout the CEGIS-OR loop we make use of a specification $\phi$
+which encompasses the abstraction of the system's dynamics.
+Note that, given that the system's abstraction gets refined
+in each iteration, $\phi$ will also be adjusted appropriately.
+Initially, $\phi$ is given by: 
+$\phi=\phi_{stability} \wedge \phi_{input} \wedge \phi_{init}$.
 
-\paragraph{1. {\sc abstract}} creates an abstraction from the initial specification as follows:
+%% We make use of two abstractions corresponding to two
+%% specifications: $\phi_{synth}$ used by the synthesiser and
+%% $\phi_{static}$ which is given to the optimiser. 
+%% While both specifications are updated during execution, for now we describe their
+%% meaning at the beginning of the synthesis process.
+%% If we denote by $\phi_{dynamics}^{T_d}$ the discretized system's dynamics with respect to the
+%% sampling time ($T_d$),
+%% $\phi_{dynamics}^{T_d}:= \{\mat{A}_d, \mat{B}_d, \mat{C}_d \mid \mat{A}_d=e^{\mat{A}T_d}\},$
+%% then initially $\phi_{synth}$ and $\phi_{static}$ are equal to:
+
+Note that there is a major difference between
+the way $\phi$ is being used in different phases in Figure~\ref{fig:CEGIS-OR}: while the
+{\sc synthesise} phase checks $\phi$ by using the plant's precision
+$\mathbb{R}_{\langle P \rangle}$ for the controller, observer and
+plant, the {\sc model} and {\sc verify} phases use reals to represent
+the plant and $\mathbb{R}_{\langle C \rangle}$ for the controller and
+the observer. The reason for this is that, as we want the
+synthesis to be fast, we allow it to generate unsound results
+and we restore soundness during the verification and modeling stages.
+%% While these specifications are updated throughout the synthesis process (as appropriately described below), at all times $\phi_{static} \models \phi_{synth}$.
+%Let us see how the loop updates these specifications.
+
+Next, we describe the CEGIS-OR loop in Figure~\ref{fig:CEGIS-OR}:
+\paragraph{1. {\sc abstract}} computes an initial version of $\phi$
+and decides the sample time $T_d$,
+the plant's precision $\mathbb{R}_{\langle P \rangle}$ and the controller's precision
+$\mathbb{R}_{\langle C \rangle}$.
+ %width for the bit vectors
+ %for representing the controller and the plant, respectively.
+%
+%For this creates an abstraction from the initial specification as follows:
 \begin{itemize}
 \item Select a sample time ($T_d$) that minimizes the magnitudes of the matrices used in both the
 implementation and the abstraction. This ensures that a small bit vector size is required for
 the synthesis process.
+\note{implementation and abstraction?}
+\item Select initial precisions $\mathbb{R}_{\langle P \rangle}$ and $\mathbb{R}_{\langle C \rangle}$
+  %width for the bit vectors
+  for representing the controller and the plant, respectively. These will be increased as needed.
+ % $\phi_{\langle C \rangle}, \phi_{\langle P \rangle}$. We will increase either precision as needed. 
 \item Build the observer matrices ${\mat{A}_d}_{\langle C \rangle}$, ${\mat{B}_d}_{\langle C \rangle}$
-and ${\mat{C}_d}_{\langle C \rangle}$ using the truncation described in Section~\ref{sec:numeric_rep2}.
+and ${\mat{C}_d}_{\langle C \rangle}$. % using the truncation described in Section~\ref{sec:numeric_rep2}.
 \item Transform the system into canonical form and add nondeterminism for the errors
-using the techniques described in Section~\ref{sec:cof_fwl_stability}. 
+as described in Section~\ref{sec:cof_fwl_stability}. 
 %The transformation matrices will be needed to obtain an FWL compliant controller and observer.
-\item Compute the characteristic polynomial of the matrix $(\mat{A}_d-\mat{B}_d\mat{K}_{\langle C \rangle})$
-as $P_a(z) = z^p+\sum_{i=1}^p{(a_i-k_i)z^{p-i}}$. 
-\item Compute the characteristic polynomial of the matrix $({\mat{A}_d}_{\langle C \rangle}-\mat{L}_{\langle C \rangle}{\mat{C}_d}_{\langle C \rangle})$
-as $P_l(z) = z^p+\sum_{i=1}^p{(l_i-a_i)z^{p-i}}$. 
-\item Create a stability specification based on the characteristic polynomials, perturbation
-error ($\mat{A}_e$,$\mat{B}_e$), and response time $\phi_{stability}(P_a,P_l,\overline{\lambda})$
-as described in Section~\ref{sec:transientspecification}.
 \item Calculate the noise sets $\eta_1$ and $\eta_2$ from the equations
 described in Section~\ref{sec:cof_fwl_stability}.
+\item Compute necessary characteristic polynomials. 
+%% \item Compute the characteristic polynomial of the matrix $(\mat{A}_d-\mat{B}_d\mat{K}_{\langle C \rangle})$
+%% as $P_a(z) = z^p+\sum_{i=1}^p{(a_i-k_i)z^{p-i}}$. 
+%% \item Compute the characteristic polynomial of the matrix $({\mat{A}_d}_{\langle C \rangle}-\mat{L}_{\langle C \rangle}{\mat{C}_d}_{\langle C \rangle})$
+%% as $P_l(z) = z^p+\sum_{i=1}^p{(l_i-a_i)z^{p-i}}$. 
+\item Create a stability specification $\phi_{stability}$ based on the characteristic polynomials, perturbation
+error ($\mat{A}_e$,$\mat{B}_e$), and response time %%(P_a,P_l,\overline{\lambda})$
+as described in Section~\ref{sec:transientspecification}.
+\note{could not find perturbation error anywhere}
 \item Calculate a set of initial bounds on $\mat{K}$, $\phi_\mathit{init}^{K}$,
 based on the input constraints.
 $(\phi_\mathit{init} \wedge \phi_\mathit{input} \wedge u_k=-\mat{K} \vec{x}_k)
 \Rightarrow \phi_\mathit{init}^{K}$.
 These bounds will be used by the {\sc synthesize} phase to reduce the size of the solution space. 
-\item Select an initial width for the bit vectors representing the controller and the plant $\phi_{\langle C \rangle}, \phi_{\langle P \rangle}$. We will increase either precision as needed.
+%% \item Under certain circumstances (i.e. when {\sc optimize} did not manage to improve the s) When a counterexample is found, we add it to $\phi_{synth} = \phi_{synth} \wedge \phi_{safety}^k$, 
+%% where k is the iteration found for the counterexample.  The ${\sc Abstract}$
+%% phase will then construct a abstraction (in the form of a program) that meets
+%% this property (unsoundly since the program uses FWL).
 \end{itemize}
-When a counterexample is found, we add it to $\phi_{synth} = \phi_{synth} \wedge \phi_{safety}^k$, 
-where k is the iteration found for the counterexample.  The ${\sc Abstract}$
-phase will then construct a abstraction (in the form of a program) that meets
-this property (unsoundly since the program uses FWL).
-
+\note{$\phi_{safety}^k$ is undefined!!!}
 %
 %\item
 \paragraph{2. {\sc synthesize}} generates a candidate controller $\mat{K}$
 and observer $\mat{L}$ that satisfy
 $\phi_{synth}$ by invoking a SAT solver.
-There are two exit conditions:
-If there is no candidate solution we return FAIL and signal {\sc Abstract}. Based on the current abstraction,
-{\sc  Abstract} may choose to increase the precision ($\phi_{\langle P \rangle}$), or return a synthesis failure.
-If we have a candidate solution we will feed it to the verifier chain in order to validate it.
+If there is no candidate solution it signals {\sc Abstract}, 
+which may choose to increase the plant's precision or return a synthesis failure.
+If {\sc synthesize} generates a candidate solution, it is fed to the {\sc verify} chain in order to validate it.
 %
 %\item
-\paragraph{3. {\sc Verify Synthesis}} verifies $\phi_{static}$ of  both the
-controller and the observer.  If one of these results does not satisfy this tighter
-specification, it feeds back to the {\sc Optimise} phase.
-If the candidate is valid, we feed it to the next {\sc verify} stage, {\sc Discrete Time}. 
+\paragraph{3. {\sc Verify Synthesis}} verifies that the candidate controller
+and observer obey $\phi$ (remember that we now use
+$\mathbb{R}_{\langle C \rangle}$ for the controller's representation
+and reals for the plant).  If the verification fails, the candidate is
+fed to the {\sc Optimise} phase.  If the candidate is valid, we feed
+it to the next {\sc verify} stage, {\sc Discrete Time}.
 
 %\item
-\paragraph{4. {\sc Optimise}} refines the candidate solution towards
-a local optimum.  We seek to minimize the distance of the farthest point in the
+\paragraph{4. {\sc Optimise}} optimises the failed candidate solution.
+We seek to minimize the distance of the farthest point in the
 reach space to the closest point to it in the safe region
 \begin{equation}
-e=max(\{min(\{\vec{x}-\vec{g} \mid \vec{g}\in G\}) \mid \vec{x} \in \hat{X}_\infty \}.
+e=max(\{min(\{\vec{x}-\vec{g} \mid \vec{g}\in G\}) \mid \vec{x} \in \hat{X}_\infty \}).
 \label{eq:objective}
 \end{equation}
 
-Our optimization is iterative, following two stages.  The first stage seeks to
-make the dynamics as convergent as possible, since convergent dynamics are
-less likely to stray outside of the safe region (we say less likely because the
-change in the eigenvectors changes the shape of the space and may cause some 
-trajectories to go further).
-
-In this case, we take the largest eigenvalue and reduce it by a factor $f$
-that still satisfies the controller constraints ($f \overline{\lambda} \models \phi_{static}$).
-The resulting observer controller is then verified against the safety specification $\phi_{safety}$
-and the objective $e$ is measured (Equation \eqref{eq:objective}).
-If for each iteration $k$, the objective $e_k<e_{k-1}$, we continue to iterate until 
-$e_k \leq 0$ (i.e. we found a safe controller), otherwise we move to the second stage.
+Our optimization is iterative, following two stages.  The first stage
+seeks to make the dynamics as convergent as possible, since convergent
+dynamics are less likely to stray outside of the safe region (we say
+less likely because the change in the eigenvectors changes the shape
+of the space and may cause some trajectories to go further). For this
+purpose, we take the largest eigenvalue and reduce it by a factor $f$
+that still satisfies the controller constraints ($f \overline{\lambda}
+\models \phi$).  The resulting observer and controller are then
+verified against the safety specification $\phi_{safety}$ and the
+objective $e$ is measured (Equation \eqref{eq:objective}).  If for
+each iteration $k$, the objective $e_k<e_{k-1}$, we continue to
+iterate until $e_k \leq 0$ (i.e. we found a safe controller),
+otherwise we move to the second stage.
 
 In the second stage, we take the complex eigenvalue
 with the largest angle ($max\{|tan^{-1}\left(\frac{im(\lambda)}{re(\lambda)}\right)| \mid \lambda \in \Lambda\}$)
-and reduce its imaginary component only  ($re(\lambda) + f im(\lambda) \models \phi_{static}$).
+and reduce its imaginary component only  ($re(\lambda) + f im(\lambda) \models \phi$).
 The process ends when no imaginary part can be further reduced.
 The resulting closed loop form converges faster than the original and has a
-smaller rotation, which facilitates meeting the safety specification $\phi_{safety}$
-(we note that real convergent eigenvalues are trivially safe).
+smaller rotation, which facilitates meeting the safety specification $\phi_{safety}$.
+%(we note that real convergent eigenvalues are trivially safe).
 
-We denote these sets of rules as $\phi_{objective}$ (which varies depending on which optimization stage we're in).
-At each optimizing iteration, the modeller updates $\phi_{static} = \phi_{static} \wedge \phi_{objective}$% \wedge \phi_{safety}^{k'} $ where $k' \geq k$.
+%% We denote these sets of rules as $\phi_{objective}$ (which varies depending on which optimization stage we're in).
+%% At each optimizing iteration, the modeller updates $\phi_{static} = \phi_{static} \wedge \phi_{objective}$% \wedge \phi_{safety}^{k'} $ where $k' \geq k$.
 
 If we cannot optimize the candidate, we signal the {\sc Abstract} phase to
-refine $\phi_{synth}$ and request {\sc Synthesise} to produce a new
+refine $\phi$ and request {\sc Synthesise} to produce a new
 candidate.  Otherwise the optimised candidate solution is given back to
 {\sc Verify Synthesis}.
 
@@ -1331,7 +1357,9 @@ It will then feed back to the abstraction refinement loop to look for a suitable
     (verif3.east) edge node {PASS} (done)
     ([xshift=5em]synth.south) edge node[align=center] {Inputs} ([xshift=5em]gp.north)
     ([xshift=-5em]gp.north) edge node[align=center] {FAIL/\\$\mat{K}$,$\mat{L}$} ([xshift=-5em]synth.south)
-    ([xshift=5em]model1.south) edge node[align=center,xshift=-.65cm] {$\langle P \rangle$} ([xshift=5em]synth.north) node[align=left,yshift=-0.7cm,xshift=.8cm] {{$\phi_{stability}$}\\{$\phi_{safety}$}\\ {$\phi_{init}^K$}}
+   ([xshift=5em]model1.south) edge node[align=center,xshift=-.7cm] {$\mathbb{R}_{\langle P \rangle}$} 
+([xshift=5em]synth.north)
+   node[align=left,yshift=-0.7cm,xshift=.5cm] {{$\phi$}\\{$\phi_{init}^K$}} %{$\phi_{safety}$}\\ 
    ([xshift=-5em]synth.north) edge node[align=center] {FAIL} ([xshift=-5em]model1.south);
    \path[->]
     ([xshift=-5em]verif1.north) edge node[align=center]  {C-ex} ([xshift=-5em]model2.south)
