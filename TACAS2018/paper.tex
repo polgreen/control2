@@ -753,13 +753,24 @@ the theory related to observer design is in Appendix \ref{sec:control_theory}.}
 \subsection{Stability of an observed model with FWL effects}\label{sec:cof_fwl_stability}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-Stability denotes the property of a model to remain within a bounded set of states around an equilibrium point. 
-In this paper, we are interested in asymptotic stability, where the output is expected to converge to a certain steady state value.  
-We specify model stability via Jury's criterion~\cite{fadali}\footnote{More details on Jury's criterion is in Appendix~\ref{sec:closed_stability}}, 
-which allows for an expression with an algebraic formula. 
-We transform the model into a representation that contains the coefficients of the characteristic polynomial (used by Jury's criterion) expressed as sums of controller and plant values (with no multiplications, which are expensive for the SAT solver).  
-Such a representation is called Controllable and Observable Canonical Form~\cite{Astrom08} \footnote{See parts~\ref{sec:reachable} and~\ref{sec:observable} in the Appendix}.  
-In this Section we explore the implications of using these canonical forms alongside an FWL representation. 
+Stability denotes the property of a model to unfold staying within a bounded set around an equilibrium point. 
+In this paper, we are interested in asymptotic stability, where the model is further expected to converge to the steady state value (i.e., the equilibrium point).   
+%
+We specify model stability via Jury's criterion~\cite{fadali}\footnote{More details on Jury's criterion is in Appendix~\ref{sec:closed_stability}.}, 
+which boils down to a requirement expressed as an algebraic formula - a SAT solver will manipulate its coefficients. 
+%
+We transform the model into a representation that contains the coefficients of its characteristic polynomial, which are used in Jury's criterion, 
+that are expressed as sums of controller and plant values: 
+this representation has no multiplications, which are expensive for a SAT solver.   
+%
+Such a representation is known as 
+% is called Controllable and Observable 
+``canonical form''~\cite{Astrom08}\footnote{See parts~\ref{sec:reachable} and~\ref{sec:observable} in the Appendix.} 
+and is dynamically equivalent to the given model.  
+In this Section we explore the implications of using this canonical form, 
+alongside the use of a FWL representation. 
+
+\medskip
 
 We assume that the domain of the observer model is further discretised, 
 i.e., the domain for both the controller and the observer is $\mathbb{R}_{\langle C \rangle}$.
@@ -769,19 +780,20 @@ ${\mat{A}_d}_{\langle C
 \mat{K}_{\langle C \rangle}, \mat{L}_{\langle C \rangle} \in
 \mathbb{R}_{\langle C \rangle}^*$, where $*$ represents the appropriate
 dimension for each matrix.
-New problems arise due to the FWL effects on these matrices.  The Canonical
-form of the resulting system is expressed by the formula:
+New problems arise due to the FWL effects on these matrices.  
+The canonical form of the resulting model is expressed by:
 %
 \begin{align}
 \left [\begin{array}{c}\vec{x}'\\ \vec{x}_e' \end{array}\right]_{k+1}
 =& \left [\begin{array}{cc}\mat{A}_{c}+\mat{B}_{e}&\mat{B}_{o}\\ \mat{A}_{e}&\mat{A}_{o}\end{array}\right]
 \left [\begin{array}{c}\vec{x}'\\ \vec{x}_e' \end{array}\right]_k
 +\left[\begin{array}{cc}\mat{T}_c{\mat{B}_d}_{\langle C \rangle}&\mat{0}\\\mat{0}&-\mat{T}_o\mat{L}_{\langle C \rangle}\end{array}\right]\left [\begin{array}{c} \vec{r}_k + \vec{\eta}_2\\ \vec{\eta}_1\end{array}\right]\nonumber\\
-\vec{y}_k=&\mat{C}_d\mat{T}_c\vec{x}_k', 
+\vec{y}_k= &\mat{C}_d\mat{T}_c\vec{x}_k', 
 % + \mat{D}_{d}\vec{u}_k
 \label{eq:observer_LTI_FWL_cf}
 \end{align}
-where $\mat{T}_c$ and $\mat{T}_o$ trasform the system into Canonical Form~\cite{Astrom08}, $\vec{x}'$ and $\vec{x}_e'$ are the state of the system and the error of the observer evaluated in the transformed domain \note{this statement will not be understood} and
+where the matrices $\mat{T}_c$ and $\mat{T}_o$ linearly transform the model into canonical form~\cite{Astrom08}, $\vec{x}'$ and $\vec{x}_e'$ are the state of the system and the error of the observer evaluated in the transformed domain, 
+and we have introduced the following terms: 
 {\setlength{\abovedisplayskip}{2pt}
 \setlength{\belowdisplayskip}{2pt}
 \begin{align*}
@@ -801,7 +813,7 @@ where $\mat{T}_c$ and $\mat{T}_o$ trasform the system into Canonical Form~\cite{
 \end{align*}
 }
 \note{it is very hard if not impossible to understand these operations without having thoroughly gone through the whole Appendix, which is unlikely for a reviewer to do.}
-where $\nu_1$ and $\nu_2$ are the quantization noises introduced by the ADC and the DAC, $\nu_t$ is the noise introduced by the delay, and $\nu_1'$ and $\nu_2'$ are quantization noises caused by roundoffs in the FWL operations (see Section~\ref{sec:quantization-noise}).
+Here $\nu_1$ and $\nu_2$ are the quantization noises introduced by the ADC and the DAC, $\nu_t$ is the noise introduced by the delay, and $\nu_1'$ and $\nu_2'$ are quantization noises caused by roundoffs in the FWL operations (see Section~\ref{sec:quantization-noise}).
 
 \note{the remainder of this section is not self contained and totally unclear.}
 
@@ -844,8 +856,8 @@ requirement.
 In~this work, the safety property is expressed as:
 %
 \begin{align}
-  \phi_\mathit{safety}: = & \underline{y} \leq y_k \leq \overline{y}
-\equiv \forall k\geq 0.\, \mat{G}\vec{x}_k \leq \vec{h},
+  \phi_\mathit{safety}: = & \, \underline{y} \leq y_k \leq \overline{y}
+\equiv \forall k\geq 0 \, \mat{G}\vec{x}_k \leq \vec{h},
 \label{eq:safetyspec}
 \end{align}
 %
@@ -872,7 +884,7 @@ which we assume have given bounds, namely
 $\phi_\mathit{input} := \underline{u} \leq u_k \leq \overline{u}$, 
 which comes from physical restrictions in the energy of the system; and
 $\phi_\mathit{init}\equiv \mat{G}' \vec{x}_0 \leq \vec{h}'$,
-where $\mat{G}'$ and $\vec{h}'$ describe the initial state-space. 
+where $\mat{G}'$ and $\vec{h}'$ limits the initial conditions of the model. 
 
 %
 %Note that we use the bounds of the input after the transformation by $\mat{B}$ since the matrix may reverse the bounds. 
