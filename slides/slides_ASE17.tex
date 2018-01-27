@@ -25,6 +25,8 @@
 \newcommand{\xmark}{\ding{55}}
 \definecolor{azure}{rgb}{0.0, 0.5, 1.0}
 
+\usepackage{outlines}
+
 \lstnewenvironment{queryl}[1][] 
    {\lstset{linewidth=8cm, #1}}
    {}
@@ -163,52 +165,178 @@ alternativetitlepage=true,
 \uncover<2>{
  %\vspace{-.5cm}
   \small
-{\bf Automatically synthesise feedback digital controllers that ensure
-{\color {red} stability} and {\color {red} safety}}}
+{\bf Automatically synthesise digital controllers}}
 
 \end{frame}
 
-\begin{frame}{Transfer-Function Representation}
+\begin{frame}{ Typical closed-loop control system}
 %
-\begin{equation}
-\small
-\label{eq:transferfunction}
-H(z)=\frac{B(z)}{A(z)}=\frac{b_{0}+b_{1}z^{-1}+...+b_{M}z^{-M}}{a_{0}+a_{1}z^{-1}+...+a_{N}z^{-N}},
-\end{equation}
+\centering
+ \includegraphics[width=.7\textwidth]{figures/closedloopseries.jpg} 
+  
+ \begin{outline}
+ \uncover<1->{\1 Representation of the digital controller and plant
+   \2 state-space: matrices $A$, $B$, $C$, and $D$
+   \2 transfer-function: coefficients $b_{0}$, $b_{1}$,\dots,$b_{m}$ and $a_{0}$, $a_{1}$,\dots,$a_{m}$}
+ \uncover<2->{\1 Stability of closed-loop systems
+   \2 presents a bounded response for any bounded excitation}
+ \uncover<3->{\1 Safety of closed-loop systems
+   \2 defines a requirement on the states of the model}
+    \uncover<4->{\1 Numerical erros (truncation and rounding)}
+\end{outline}
+
 %
-where,
+%\begin{equation}
+%\small
+%\label{eq:transferfunction}
+%H(z)=\frac{B(z)}{A(z)}=\frac{b_{0}+b_{1}z^{-1}+...+b_{M}z^{-M}}{a_{0}+a_{1}z^{-1}+...+a_{N}z^{-N}}.
+%\end{equation}
+%
+%\noindent where,
+%\begin{itemize}
+%\item $z^{-1}$ is called the \textbf{backward-shift} operator;
+%\item $A(z)$ and $B(z)$ are the \textbf{denominator} and \textbf{numerator} polynomials;
+%\item $N$ and $M$ are the \textbf{order} of the respective polynomials.
+%\end{itemize}}
+
+%\end{frame}
+
+%\begin{frame}{State-Space Representation}
+
+%\begin{itemize}
+%\item Mathematical model of a physical system as a set of \textbf{input}, \textbf{output}, and 
+%\textbf{state variables} related by differential equations.
+%\end{itemize}
+
+% \uncover<2>{
+% \begin{itemize}
+%\item The behavior of a system is represented via a \textbf{state
+%evolution equation} $x(n+1)$ and an \textbf{instantaneous output equation} $y(n)$, as
+%follows:
+%\end{itemize}
+%
+%\begin{equation}
+%\begin{split}
+%x(n+1) &= A x(n) + B u(n)
+%\\
+%y(n) &= C x(n) + D u(n), 
+%\end{split}\label{eq:ss-example}
+%\end{equation}}
+%
+%where $A$, $B$, $C$ and $D$ are \textbf{matrices} that fully \textbf{specify the model}.}
+
+\end{frame}
+
+%\begin{frame}{Numerical errors}
+%\vspace{-1cm}
+%  \begin{center}
+%    \only<1>{\includegraphics[width=.9\textwidth]{figures/spirals/diagram-18.png}}
+%    \only<2>{\includegraphics[width=.9\textwidth]{figures/spirals/diagram-19.png}}
+%    \only<3->{\includegraphics[width=.9\textwidth]{figures/spirals/diagram-20.png}}
+%  \end{center}
+%  \vspace{-1cm}
+%  \begin{itemize}
+%  \item \uncover<1->{{\bf Truncation and rounding on the plant}}
+%  \item  \uncover<2->{{\bf Truncation on the converters}}
+%  \item \uncover<3->{{\bf Rounding on the controller}}
+%  \end{itemize}  
+ 
+%\end{frame}  
+
+\begin{frame}{Objectives}
+
+%\colorbox{green!70}{Phases of the controller synthesis:}
+
+\begin{tcolorbox}[enhanced,width=4.5in,center upper,
+    fontupper=\large\bfseries,drop shadow southwest,sharp corners]
+Generate sound digital controllers for stability and safety specifications 
+with a very high degree of automation
+\end{tcolorbox}
+    
 \begin{itemize}
-\item $z^{-1}$ is called the \textbf{backward-shift} operator;
-\item $A(z)$ and $B(z)$ are the \textbf{denominator} and \textbf{numerator} polynomials;
-\item $N$ and $M$ are the \textbf{order} of the \textbf{denominator} and \textbf{numerator} polynomials, respectively.
+\item  \uncover<2->{support for transfer-function and state-space representations in closed-loop form}
+\item  \uncover<3->{synthesize different numerical representations of the controller using CounterExample Guided Inductive Synthesis (CEGIS)}
+\item  \uncover<4->{provide a MATLAB toolbox to synthesize digital controllers while taking into account finite word-length effects}
 \end{itemize}
+  
+\end{frame}
+
+%\begin{frame} {Counterexample-Guided Inductive Synthesis for Control Systems}
+
+%\colorbox{green!70}{Abstraction-based CEGIS:}
+
+%\begin{figure}
+%\centering
+%{\scriptsize
+%  \resizebox{.8\textwidth}{!}
+%  {
+%\begin{tikzpicture}[scale=0.3,->,>=stealth',shorten >=.2pt,auto, semithick, ampersand replacement=\&,]
+%  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center},row sep=.8cm, column sep=.2cm] {
+%   \coordinate (aux1);
+%   \& \coordinate (aux2);
+%   \& ;\\
+%   \&\node[fill=gray!20,align=center,xshift=-1.5cm] (pre) {{\sc 1. pre-}\\{\sc processing}};
+%   \& \node[fill=gray!20,align=center] (abstract) {\sc 4. abstract};
+%   \& \coordinate (aux); \\ 
+%   \&
+%   \& \node[fill=gray!20,align=center] (synth) {\sc 2. synthesize};
+%   \& \node[fill=gray!20,align=center, minimum width=4cm] (verify) {\sc 3. verify ($\phi$)};
+%      \node[draw=none] (SAT) at ([xshift=2.7cm,yshift=-.3cm]verify)  {\sc PASS};
+%   \& \node[ellipse, fill=gray!20] (done) {{\sc Done}};\\
+%   \&
+%   \& \node[draw,rectangle,align=center] (KSAT) { \sf Program \\ \sf Search};
+%   \& complexnode/.pic={
+%     \coordinate (AA);
+%     \node[draw,rectangle,align=center] (AAV) at ([xshift=-1.5cm]AA.center) { \sf Abstract\\ \sf Acceleration};
+%     \node[draw,rectangle,align=center] (AAC) at ([xshift=1.5cm]AA.center) { \sf Abstraction \\ \sf Verifier};
+%    }\\
+%  };
+%  \path
+%    (pre.east) edge node[align=center] {} (abstract.west)
+%    (abstract.south) edge node{} (synth.north)
+%    ([yshift=1em]synth.east) edge node {$K$} ([yshift=1em]verify.west)
+%    (aux) edge (abstract.east) 
+%    (verify.east) edge (done.west);
+%  \path
+%    ([xshift=+.6cm]KSAT.north) edge[left] node[xshift=-.3cm] {} ([xshift=0.6cm]synth.south) 
+%    ([xshift=-.6cm]synth.south) edge node[align=center,xshift=.3cm] {} ([xshift=-.6cm]KSAT.north)
+%    ([yshift=.5cm]AAV.east) edge node{} ([yshift=.5cm]AAC.west)
+%    ([yshift=-.5cm]AAC.west) edge node{} ([yshift=-.5cm]AAV.east)
+%    (AAC.north) edge node{} ([xshift=4.9cm]verify.south)
+%    ([xshift=-5cm]verify.south) edge node{} (AAV.north);
+%  \path[-] 
+%     (verify.north) edge node {C-ex} (aux);
+%\end{tikzpicture}
+%}
+%}
+%\caption{Abstraction-based CEGIS}
+%\label{fig:CEGARIS} 
+%\end{figure}
+
+%\end{frame}
+
+
+\begin{frame}{The Proposed Synthesis Methodology}
+
+\colorbox{green!70}{Phases of the controller synthesis:}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.99\textwidth]{figures/dssynth-flow.pdf}
+%\caption{Phases of the controller synthesis}
+\label{fig:synthesis-flow}
+\end{figure}
 
 \end{frame}
 
-\begin{frame}{State-Space Representation}
-In state-space form, the behavior of a system is represented via a \textbf{state
-evolution equation} $x(n+1)$ and an \textbf{instantaneous output equation} $y(n)$, as
-follows:
-%
-\begin{equation}
-\begin{split}
-x(n+1) &= A x(n) + B u(n)
-\\
-y(n) &= C x(n) + D u(n), 
-\end{split}\label{eq:ss-example}
-\end{equation}
-%
-where $A$, $B$, $C$ and $D$ are \textbf{matrices} that fully \textbf{specify the model}. 
-\end{frame}
-
-\begin{frame}{Counterexample-Guided Inductive Synthesis for Control Systems}
+\begin{frame}{CEGIS for Control Systems}
 
 \colorbox{green!70}{CEGIS with multi-staged verification:}
 
 \begin{figure}[htb]
 {\scriptsize
 \centering
-\resizebox{.8\textwidth}{!}
+\resizebox{.95\textwidth}{!}
 {
   \begin{tikzpicture}[scale=0.3,->,>=stealth',shorten >=.2pt,auto, semithick, initial text=, ampersand replacement=\&,]
   \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center
@@ -281,74 +409,6 @@ where $A$, $B$, $C$ and $D$ are \textbf{matrices} that fully \textbf{specify the
 
 \end{frame}
 
-%\begin{frame} {Counterexample-Guided Inductive Synthesis for Control Systems}
-
-%\colorbox{green!70}{Abstraction-based CEGIS:}
-
-%\begin{figure}
-%\centering
-%{\scriptsize
-%  \resizebox{.8\textwidth}{!}
-%  {
-%\begin{tikzpicture}[scale=0.3,->,>=stealth',shorten >=.2pt,auto, semithick, ampersand replacement=\&,]
-%  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center},row sep=.8cm, column sep=.2cm] {
-%   \coordinate (aux1);
-%   \& \coordinate (aux2);
-%   \& ;\\
-%   \&\node[fill=gray!20,align=center,xshift=-1.5cm] (pre) {{\sc 1. pre-}\\{\sc processing}};
-%   \& \node[fill=gray!20,align=center] (abstract) {\sc 4. abstract};
-%   \& \coordinate (aux); \\ 
-%   \&
-%   \& \node[fill=gray!20,align=center] (synth) {\sc 2. synthesize};
-%   \& \node[fill=gray!20,align=center, minimum width=4cm] (verify) {\sc 3. verify ($\phi$)};
-%      \node[draw=none] (SAT) at ([xshift=2.7cm,yshift=-.3cm]verify)  {\sc PASS};
-%   \& \node[ellipse, fill=gray!20] (done) {{\sc Done}};\\
-%   \&
-%   \& \node[draw,rectangle,align=center] (KSAT) { \sf Program \\ \sf Search};
-%   \& complexnode/.pic={
-%     \coordinate (AA);
-%     \node[draw,rectangle,align=center] (AAV) at ([xshift=-1.5cm]AA.center) { \sf Abstract\\ \sf Acceleration};
-%     \node[draw,rectangle,align=center] (AAC) at ([xshift=1.5cm]AA.center) { \sf Abstraction \\ \sf Verifier};
-%    }\\
-%  };
-%  \path
-%    (pre.east) edge node[align=center] {} (abstract.west)
-%    (abstract.south) edge node{} (synth.north)
-%    ([yshift=1em]synth.east) edge node {$K$} ([yshift=1em]verify.west)
-%    (aux) edge (abstract.east) 
-%    (verify.east) edge (done.west);
-%  \path
-%    ([xshift=+.6cm]KSAT.north) edge[left] node[xshift=-.3cm] {} ([xshift=0.6cm]synth.south) 
-%    ([xshift=-.6cm]synth.south) edge node[align=center,xshift=.3cm] {} ([xshift=-.6cm]KSAT.north)
-%    ([yshift=.5cm]AAV.east) edge node{} ([yshift=.5cm]AAC.west)
-%    ([yshift=-.5cm]AAC.west) edge node{} ([yshift=-.5cm]AAV.east)
-%    (AAC.north) edge node{} ([xshift=4.9cm]verify.south)
-%    ([xshift=-5cm]verify.south) edge node{} (AAV.north);
-%  \path[-] 
-%     (verify.north) edge node {C-ex} (aux);
-%\end{tikzpicture}
-%}
-%}
-%\caption{Abstraction-based CEGIS}
-%\label{fig:CEGARIS} 
-%\end{figure}
-
-%\end{frame}
-
-
-\begin{frame}{DSSynth Architecture}
-
-\colorbox{green!70}{Phases of the controller synthesis:}
-
-\begin{figure}[t]
-\centering
-\includegraphics[width=0.9\textwidth]{figures/dssynth-flow.pdf}
-%\caption{Phases of the controller synthesis}
-\label{fig:synthesis-flow}
-\end{figure}
-
-\end{frame}
-
 %\begin{frame}{DSSynth Procedures}
 
 %
@@ -373,28 +433,138 @@ where $A$, $B$, $C$ and $D$ are \textbf{matrices} that fully \textbf{specify the
 %\end{enumerate}
 %\end{frame}
 
-\begin{frame}{DSSynth Usage - Command Line}
 
-Users must provide a digital system as a MATLAB model using a
-\texttt{tf} (for transfer function) or an \texttt{ss} (for state-space
-model) command  
+\defverbatim[colored]\makeset{
+\tiny
+\begin{lstlisting}[xleftmargin=.025\textwidth,xrightmargin=.025\textwidth, frame=single,basicstyle=\tt]
+>> num = [-0.06875 0 0];
+>> den = [1.0000 -1.696 0.7089];
+>> system = tf(num,den,0.002);
+>> y = synthesize(system,8,8,1,-1);
+>> SYNTHESIS SUCCESSFUL
+>> y = 
+>>  -0.9983z^2 + 0.09587z + 0.1926
+>>  --------------------------------
+>>       z^2 + 0.5665z + 0.75
+\end{lstlisting}
+}
 
-The \textbf{DSSynth} is called via the command line in MATLAB as
+\begin{frame}{DSSynth Usage - Transfer Function}
 
-\begin{center} 
-\texttt{synthesize(plant, intBits, fracBits, maxR, minR)}
-\end{center} 
+\colorbox{green!70}{Physical plant for an unmanned aerial vehicle (UAV) plant:}
 
-\colorbox{green!70}{Parameters:}
+\begin{equation}
+\label{equation_plant}
+G(z)=\frac{B(z)}{A(z)}=\frac{-0.06875z^{2}}{z^2-1.696z+0.7089}.
+\end{equation}
 
-\begin{enumerate}
-\item \textit{plant} is the physical plant in \texttt{tf} or \texttt{ss} representation;
-\item \textit{intBits} is the integer part;
-\item \textit{fracBits} is the fractional part;
-\item \textit{maxR} and \textit{minR} are the maximum and minimum dynamic range.
-\end{enumerate}
+\colorbox{green!70}{Synthesizing the digital controller:}
+
+\makeset
+
+%\begin{itemize}
+%\item numerical representation: $\langle 8, 8 \rangle$
+%\item dynamical range: $\langle -1, 1 \rangle$
+%\end{itemize}
 
 \end{frame}
+
+\defverbatim[colored]\makeset{
+\tiny
+\begin{lstlisting}[xleftmargin=.025\textwidth,xrightmargin=.025\textwidth, frame=single,basicstyle=\tt]
+>> num = [-0.99832 0.09587 0.1926];
+>> den = [1 0.5665 0.75];
+>> controller = tf(num,den,0.002);
+>> num = [-0.06875 0 0];
+>> den = [1.0000 -1.696 0.7089];
+>> plant = tf(num,den,0.002);
+>> sys = feedback(series(controller, plant),1)
+>> sys =
+>>        0.06863z^4 - 0.006591z^3 - 0.01324z^2
+>> ---------------------------------------------------
+>> 1.069z^4 - 1.136z^3 + 0.4849z^2 - 0.8704z + 0.5317
+\end{lstlisting}
+}
+
+\begin{frame}{DSSynth Usage - Transfer Function}
+
+\colorbox{green!70}{Digital controller synthesized by DSSynth:}
+
+\begin{equation}
+\label{equation_controller}
+C(z)=\frac{-0.9983^{2}+0.09587z+0.1926}{z^2+0.5665z+0.75}.
+\end{equation}
+
+\colorbox{green!70}{Computing the general equation (plant and controller):}
+
+\makeset
+
+\end{frame}
+
+\defverbatim[colored]\makeset{
+%\tiny
+%\small
+\begin{lstlisting}[xleftmargin=.025\textwidth,xrightmargin=.025\textwidth, frame=single, basicstyle=\tt]
+>> den = [1.069 -1.136 0.4849 -0.8704 0.5317]
+>> r = roots(den)
+>> r =
+>>  -0.2912 + 0.8061i
+>>  -0.2912 - 0.8061i
+>>   0.8225 + 0.0219i
+>>   0.8225 - 0.0219i
+\end{lstlisting}
+}
+
+%\begin{frame}{DSSynth Usage - Stability Check}
+
+%\colorbox{green!70}{General equation (combination between plant and controller):}
+
+%\begin{equation}
+%\small
+%\label{equation_general}
+%\frac{N(z)}{D(z)}=\frac{0.06863z^{4} - 0.006591z^{3} - 0.01324z^{2}}{1.069z^{4} - 1.136z^{3} + 0.4849z^{2} -0.8704z + 0.5317}.
+%\end{equation}
+ 
+%\colorbox{green!70}{Computing the roots from the general equation in MATLAB:}
+
+%\makeset
+
+%\end{frame}
+
+\begin{frame}{DSSynth Usage - Step Response}
+
+\colorbox{green!70}{Step response for the UAV plant describing a stable system:}
+
+\begin{figure}[ht]
+  \includegraphics[width=0.6\textwidth]{figures/step-response.eps}
+%  \caption{Step response for the UAV plant describing a stable system.}
+  \label{step-response}
+\end{figure}
+
+\end{frame}
+
+%\begin{frame}{DSSynth Usage - Command Line}
+
+%Users must provide a digital system as a MATLAB model using a
+%\texttt{tf} (for transfer function) or an \texttt{ss} (for state-space
+%model) command  
+
+%The \textbf{DSSynth} is called via the command line in MATLAB as
+
+%\begin{center} 
+%\texttt{synthesize(plant, intBits, fracBits, maxR, minR)}
+%\end{center} 
+
+%\colorbox{green!70}{Parameters:}
+
+%\begin{enumerate}
+%\item \textit{plant} is the physical plant in \texttt{tf} or \texttt{ss} representation;
+%\item \textit{intBits} is the integer part;
+%\item \textit{fracBits} is the fractional part;
+%\item \textit{maxR} and \textit{minR} are the maximum and minimum dynamic range.
+%\end{enumerate}
+
+%\end{frame}
 
 \begin{frame}{DSSynth Usage - MATLAB Application}
 
@@ -428,158 +598,115 @@ The \textbf{DSSynth} is called via the command line in MATLAB as
 
 \end{frame}
 
-\defverbatim[colored]\makeset{
-\tiny
-\begin{lstlisting}[xleftmargin=.025\textwidth,xrightmargin=.025\textwidth, frame=single,basicstyle=\tt]
->> num = [-0.06875 0 0];
->> den = [1.0000 -1.696 0.7089];
->> system = tf(num,den,0.002);
->> y = synthesize(system,8,8,1,-1);
->> SYNTHESIS SUCCESSFUL
->> y = 
->>  -0.9983z^2 + 0.09587z + 0.1926
->>  --------------------------------
->>       z^2 + 0.5665z + 0.75
-\end{lstlisting}
-}
-
-\begin{frame}{DSSynth Usage - Illustrative Example}
-
-\colorbox{green!70}{Synthesizing an unmanned aerial vehicle (UAV) plant:}
-
-\begin{equation}
-\label{equation_plant}
-G(z)=\frac{B(z)}{A(z)}=\frac{-0.06875z^{2}}{z^2-1.696z+0.7089}.
-\end{equation}
-
-\makeset
-
-\end{frame}
-
-\defverbatim[colored]\makeset{
-\tiny
-\begin{lstlisting}[xleftmargin=.025\textwidth,xrightmargin=.025\textwidth, frame=single,basicstyle=\tt]
->> num = [-0.99832 0.09587 0.1926];
->> den = [1 0.5665 0.75];
->> controller = tf(num,den,0.002);
->> num = [-0.06875 0 0];
->> den = [1.0000 -1.696 0.7089];
->> plant = tf(num,den,0.002);
->> sys = feedback(series(controller, plant),1)
->> sys =
->>        0.06863z^4 - 0.006591z^3 - 0.01324z^2
->> ---------------------------------------------------
->> 1.069z^4 - 1.136z^3 + 0.4849z^2 - 0.8704z + 0.5317
-\end{lstlisting}
-}
-
-\begin{frame}{DSSynth Usage - Illustrative Example}
-
-\colorbox{green!70}{Digital controller synthesized by DSSynth:}
-
-\begin{equation}
-\label{equation_controller}
-C(z)=\frac{-0.9983^{2}+0.09587z+0.1926}{z^2+0.5665z+0.75}.
-\end{equation}
-
-\colorbox{green!70}{Computing the general equation (plant and controller):}
-
-\makeset
-
-\end{frame}
-
-\defverbatim[colored]\makeset{
-\tiny
-\begin{lstlisting}[xleftmargin=.025\textwidth,xrightmargin=.025\textwidth, frame=single, basicstyle=\tt]
->> den = [1.069 -1.136 0.4849 -0.8704 0.5317]
->> r = roots(den)
->> r =
->>  -0.2912 + 0.8061i
->>  -0.2912 - 0.8061i
->>   0.8225 + 0.0219i
->>   0.8225 - 0.0219i
-\end{lstlisting}
-}
-
-\begin{frame}{DSSynth Usage - Illustrative Example}
-
-\colorbox{green!70}{General equation (combination between plant and controller):}
-
-\begin{equation}
-\small
-\label{equation_general}
-\frac{N(z)}{D(z)}=\frac{0.06863z^{4} - 0.006591z^{3} - 0.01324z^{2}}{1.069z^{4} - 1.136z^{3} + 0.4849z^{2} -0.8704z + 0.5317}.
-\end{equation}
- 
-\colorbox{green!70}{Computing the roots from the general equation in MATLAB:}
-
-\makeset
-
-\end{frame}
-
-\begin{frame}{DSSynth Usage - Illustrative Example}
-
-\colorbox{green!70}{Step response for the UAV plant describing a stable system:}
-
-\begin{figure}[ht]
-  \includegraphics[width=0.6\textwidth]{figures/step-response.eps}
-%  \caption{Step response for the UAV plant describing a stable system.}
-  \label{step-response}
-\end{figure}
-
-\end{frame}
-
 \begin{frame}{Experimental Evaluation}
 
-Our evaluation consists of $18$ SISO control system benchmarks extracted
+Our evaluation consists of $18$ Single-Input and Single-Output control system benchmarks extracted
 from the literature:
 
-\begin{block}{Benchmarks:}
-An unmanned aerial vehicle (UAV), a cruise
-control system, a spring-mass damper, a satellite, a direct current (DC)
-servo motor, a helicopter, the inverted pendulum, a pendulum, magnetic
-suspension, a magnetized pointer, 1/4 car suspension, a computer tape
-driver, a flexible beam, a guidance system, a US Coast Guard cutter, a
-continuous stirred tank reactor, a voltage regulator, and an acrobot control
-system.
-\end{block}
-\end{frame}
+\uncover<2->{\begin{block}{Experimental Objectives:}
 
-\begin{frame}{Experimental Evaluation}
+\begin{itemize}
+\item Evaluate the DSSynth performance to produce digital controllers
+\item Confirm the stability and safety outside of our model using MATLAB
+\end{itemize}
+\end{block}}
 
+\uncover<3->{
 \begin{block}{Experimental Setup:}
 \begin{itemize}
-\item The signal input range is between $-1$ and $1$  
-\item  The implementation features used for digital controller are: 
-$8$~bits for the integer part and $8$~bits for the fractional part
-\item  We~have run the DSSynth using CEGIS with multi-staged verification
-\end{itemize}
-All experiments with DDSynth v$1$.$0$.$0$ were conducted on an otherwise idle
-Intel Core i$7-2600$ $3.40$ GHz processor, with $24$ GB of RAM, running
-Ubuntu $64$-bit
+\item Signal input range:  $\langle -1, 1 \rangle$  
+\item Implementation features:  $\langle 8, 8 \rangle$
+%\item CEGIS with multi-staged verification
+\item Intel Core i$7-2600$ $3.40$ GHz processor with $24$ GB of RAM
+%\item Ubuntu $64$-bit
+%\item DDSynth v$1$.$0$.$0$
+\end{itemize}}
+
+
+%All experiments with DDSynth v$1$.$0$.$0$ were conducted on an otherwise idle
+%Intel Core i$7-2600$ $3.40$ GHz processor, with $24$ GB of RAM, running
+%Ubuntu $64$-bit
+
 \end{block}
 
+%\begin{block}{Examples of benchmarks:}
+
+%\begin{itemize}
+%\item Unmanned aerial vehicle
+%\item Cruise control system
+%\item Helicopter
+%\item Pendulum / inverted pendulum
+%\item Magnetic and car suspension
+%\item Guidance system
+%\item Acrobot control system
+%\end{itemize}
+
+%An unmanned aerial vehicle (UAV), a cruise
+%control system, a spring-mass damper, a satellite, a direct current (DC)
+%servo motor, a helicopter, the inverted pendulum, a pendulum, magnetic
+%suspension, a magnetized pointer, 1/4 car suspension, a computer tape
+%driver, a flexible beam, a guidance system, a US Coast Guard cutter, a
+%continuous stirred tank reactor, a voltage regulator, and an acrobot control
+%system.
+
+%\end{block}
 \end{frame}
 
+%\begin{frame}{Experimental Evaluation}
+
+%\begin{block}{Experimental Objectives:}
+
+%\begin{itemize}
+%\item Evaluate the DSSynth performance to produce stable and safe controllers
+%\item Confirm the stability and safety of the synthesized digital controllers
+%outside of our model using MATLAB
+%\end{itemize}
+%\end{block}
+
+%\uncover<2->{
+%\begin{block}{Experimental Setup:}
+%\begin{itemize}
+%\item Signal input range:  $\langle -1, 1 \rangle$  
+%\item Implementation features:  $\langle 8, 8 \rangle$
+%\item CEGIS with multi-staged verification
+%\item Intel Core i$7-2600$ $3.40$ GHz processor with $24$ GB of RAM
+%\item Ubuntu $64$-bit
+%\item DDSynth v$1$.$0$.$0$
+%\end{itemize}}
+
+
+%All experiments with DDSynth v$1$.$0$.$0$ were conducted on an otherwise idle
+%Intel Core i$7-2600$ $3.40$ GHz processor, with $24$ GB of RAM, running
+%Ubuntu $64$-bit
+
+%\end{block}
+
+%\end{frame}
+
 \begin{frame}{Experimental Evaluation}
-
-\begin{block}{Experimental Objectives:}
-
-\begin{itemize}
-\item Evaluate the DSSynth performance to produce stable and safe controllers
-\item Confirm the stability and safety of the synthesized digital controllers
-outside of our model using MATLAB
-\end{itemize}
-\end{block}
 
 \begin{block}{Experimental Results:}
 
 \begin{itemize}
-\item The median runtime for our benchmarks is $124$\,s
-\item The average synthesis time amounts to $35.5$\,s for state-space systems
-\item For transfer functions, the average synthesis time amounts to $123.6$\,s
+\item \uncover<1->{The digital {\bf controller order} ranges from 1 to 8}
+\item \uncover<2->{The number of {\bf state variables} ranges from 1 to 9}
+%\item \uncover<3->{The {\bf median runtime} for our benchmarks is $124$\,s}
+\item \uncover<3->{The average synthesis time amounts to $35.5$\,s for state-space systems}
+\item \uncover<4->{The average synthesis time amounts to $123.6$\,s for transfer functions}
+\item \uncover<5->{On average our engine spent 52\% in the synthesis and 48\% in the verification phase}
 \end{itemize}
 \end{block}
+
+\uncover<6->{
+%\vspace{.5cm}
+\begin{tabular}{c}
+  \scriptsize
+  \begin{tabular}{l}
+  {\bf DSSynth Matlab toolbox:}\\
+  https://www.cprover.org/DSSynth/dssynth-toolbox-1.0.0.zip \\
+  https://github.com/ssvlab/dsverifier/tree/master/toolbox-dssynth
+  \end{tabular}
+\end{tabular}}
 
 \end{frame}
 
@@ -622,27 +749,59 @@ outside of our model using MATLAB
 %\end{figure}
 %\end{frame}
 
-\begin{frame}{Conclusions and Future Work}
-\begin{itemize}
+%\begin{frame}{Conclusions and Future Work}
+%\begin{itemize}
   
-\item {\bf Automated synthesis of state-space and transfer-function representations that ensures stability and safety}
+%\item \uncover<1->{Automated synthesis of transfer-function and state-space representations that ensures {\bf stability} and {\bf safety}}
 
-\item {\bf DSSynth is the first fully automated synthesis tool that is algorithmically and numerically sound}
+%\item \uncover<2->{DSSynth is the first fully automated synthesis tool that is {\bf algorithmically} and {\bf numerically} sound}
 
-\item {\bf We will pursue the application of CEGIS to program repair or superoptimization}
+%\item \uncover<3->{We will pursue the application of CEGIS to {\bf program repair} or {\bf superoptimization}}
 
-\end{itemize}
+%\end{itemize}
 
-\vspace{.5cm}
-\begin{tabular}{c}
-  \scriptsize
-  \begin{tabular}{l}
-  {\bf DSSynth Matlab toolbox:}\\
-  www.cprover.org/DSSynth/dssynth-toolbox-1.0.0.zip
-  \\\\\\\\\\\\
-  \end{tabular}
-\end{tabular}
+%\uncover<4->{
+%\vspace{.5cm}
+%\begin{tabular}{c}
+%  \scriptsize
+%  \begin{tabular}{l}
+%  {\bf DSSynth Matlab toolbox:}\\
+%  www.cprover.org/DSSynth/dssynth-toolbox-1.0.0.zip \\
+%  \\
+%   {\bf DSSynth source code:}\\
+%  https://github.com/ssvlab/dsverifier/tree/master/toolbox-dssynth
+%  \end{tabular}
+%\end{tabular}}
 
-\end{frame}  
+%\end{frame}  
+
+
+%\begin{frame}[fragile]{Other CEGIS Applications: Refactoring}
+
+
+%  \begin{itemize}
+%    \item Find element in list using external iteration:
+  
+%  \begin{lstlisting}[mathescape=true]
+%  Integer result = null;
+%  List<Integer> data = getData();
+%  for (int el : data)
+%   if (el % 2 == 0) {
+%      result = el; 
+%      break;}
+%\end{lstlisting}
+%\pause
+%  \item Find element in list using Java~8 Streams:
+  
+%  \begin{lstlisting}[mathescape=true]
+%  List<Integer> newList = getData();
+%  Optional<Integer> result = list.stream()
+%                          .filter(el -> el % 2)
+%                          .findFirst();
+%  \end{lstlisting}
+  
+%  \end{itemize}
+  
+%\end{frame}  
 
 \end{document}

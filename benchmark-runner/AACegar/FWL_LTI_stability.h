@@ -179,6 +179,7 @@ signed int check_restricted_stability(vectort a,control_floatt speed_factor)
     for (j=0;j<=i;j++) polynomial[i]*=speed_factor;
   }
   #ifndef __CPROVER
+    printf("speed factor=%f\n",speed_factor);
     print_vector("a ",polynomial);  
     print_vector("P ",polynomial);
   #endif

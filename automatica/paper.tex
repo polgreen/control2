@@ -74,8 +74,7 @@
 
 %\thanksref{footnoteinfo}
 
-\title{Safe and Robust Formal Synthesis of Digital Controllers
-       for Continuous Plants with Transient Performance Specifications}
+\title{Safe and Robust Formal Synthesis of Digital Controllers for Continuous Plants}
 % Title, preferably not more
 % than 10 words.
 
@@ -1774,8 +1773,10 @@ the eigenvalues are smaller than a desired magnitue, thus ensuring that the
 settling time is too.
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\section{Verification of a Conrollable Observed System}\label{sec:cof_verification}
+\section{Verification of a Controllable Observed System}\label{sec:cof_verification}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+\textcolor{red}{Dario: Do we still need this section? Where would the continuous time proof fit?}
 
 \begin{figure*}[htb]
 \centering
@@ -2112,26 +2113,6 @@ As a final annotation, we remark that the safety specification must be
 applied to the model described in this section, accounting for the
 representation errors of the FWL domain.
 
-%---------------janus----------------
-\section{CEGIS of digital control system with transient specifications}
-\label{sec:method}
-%-------------------------------
-
-%-------------------------------
-\subsection{Synthesis in frequency domain}
-\label{ssec:frequencycegis}
-%-------------------------------
-
-%-------------------------------
-\subsection{Synthesis of state feedback controllers}
-\label{ssec:sscegis}
-%-------------------------------
-
-%-------------------------------
-\subsection{Synthesis of state observers}
-\label{ssec:sobsvcegis}
-%-------------------------------
-
 %-------------------------------
 \section{Experimental Evaluation}
 \label{exp:evaluation}
@@ -2144,159 +2125,62 @@ representation errors of the FWL domain.
 
 %\textcolor{red}{Iury: can you please describe the benchmarks?}
 
-The benchmark suite employed to evaluate the proposed technique is 
-composed by 18 MIMO models extracted from the literature~\cite{acrobot,cstr,CHEN1979389,KOKOTOVIC198023,gajic2008optimal,Franklin15, maglev, converters, CTMS} and discretized with different sample time
-resulting in 167 benchmarks. 
+Our benchmark suite consists of 18 MIMO models extracted from the 
+control literature~\cite{acrobot,cstr,CHEN1979389,KOKOTOVIC198023,gajic2008optimal,Franklin15, maglev, converters, CTMS};
+these models are discretized with different sample times, which thus leads to $167$ different benchmarks
+to evaluate our proposal approach. 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph*{DC Motor}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-DC Motor benchmark describes the velocity dynamics of a basic 
-brushed direct current electrical machine.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph*{Automotive Cruise System}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-An automotive cruise control system is used to keep constant the speed 
-of an automobile  tracking a desired speed reference, compensating 
-disturbances and uncertainties related to relief and terrain.
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph*{Pendulum}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-A pendulum is system composed by a swinging point mass suspended from 
-a frictionless pivot through a negligible mass rod.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph*{Inverted Pendulum}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-An inverted pendulum is a system similar to the pendulum but the point 
-mass must be equilibrated above the pivot point that is mounted on an 
+The DC motor benchmark describes the velocity dynamics of a basic 
+brushed direct current electrical machine. The automotive cruise control system 
+benchmark is used to keep constant the speed of an automobile, 
+tracking a desired speed reference, compensating disturbances and 
+uncertainties related to relief and terrain.The pendulum benchmark consists of a swinging point mass suspended from 
+a frictionless pivot by means of a negligible mass rod, while the inverted pendulum 
+benchmark is a system similar to the pendulum, but the point 
+mass must be equilibrated above the pivot point, which is mounted on an 
 one degree of freedom cart that moves over a track through a DC motor.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph*{Magnetic Suspension}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-Magnetic suspension benchmark corresponds to the discrete model of a 
-simple eletromagnet-ball system where a steel ball is levitated in air 
+The magnetic suspension benchmark corresponds to the discrete model of a 
+simple eletromagnet-ball system, where a steel ball is levitated in air 
 by the action of an electromagnetic force generated by an electromagnet.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph*{Magnetic Pointer}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-Magnetic pointer is a pointer, that is usually employed in analogue 
+The magnetic pointer benchmark is a pointer employed in analogue 
 gauges and indicators, whose angular position dynamics is controlled 
-by a magnetic field.
+by a magnetic field. The 1/4 car suspension benchmark corresponds to the model of a single 
+wheel suspension system of a car, {\it i.e.}, the relative motion dynamics 
+of a mass springer damp model, which connects the car to one of its wheels.
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph*{1/4 Car Suspension}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-The 1/4 Car Suspension benchmark corresponds to the model of a single 
-wheel suspension system of a car, {\it i.e.} the relative motion dynamics 
-of a mass springer damp model that connects the car to one of its wheels.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph*{Computer Tape Driver}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-Computer Tape Drive is a computer storage device used to read and write 
-data on magnetic tapes.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph*{Acrobot - Robot Manipulator}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-The Acrobot benchmark corresponds to the model of an two-link 
-underactuated robot manipulator, named Acrobot, linearized by partial 
-feedback linearization~\cite{acrobot}.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph*{High-order Systems from Chen et. al.}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-These benchmarks corresponds to a series of high-order system model 
+The computer tape driver benchmark is a computer storage device used to read and write 
+data on magnetic tapes. The acrobot benchmark corresponds to the model of a two-link 
+underactuated robot manipulator, named acrobot, linearized by partial 
+feedback linearization~\cite{acrobot}. The high-order system benchmarks correspond to a series of high-order control system model 
 generally used as example for order reduction techniques~\cite{CHEN1979389}.
- In this work, these benchmarks are used for evaluate the proposed control
- synthesis technique under critical conditions, {\it i.e.} with a greater 
- number of parameters to be considered.
+Here, these benchmarks are used to evaluate the proposed control 
+synthesis technique under critical conditions, {\it i.e.}, with a large number of parameters 
+to be considered.
 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph*{Continuous Stirred Tank Reactor}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-This benchmark describes a linear model for PH dynamics of a PH 
+The continuous stirred tank reactor benchmark describes a linear model for PH dynamics of a PH 
 neutralization process of an aqueous solution of sodium acetate with 
-hydrochloric acid in a continuous flow stirred-tank reactor.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph*{Flexible Beam}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-A Flexible Beam is a plant usually employed in vibration studies. It is 
-composed by a flexible metallic structure with piezoceramic actuators 
-and sensors.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph*{Helicopter Longitudinal Motion}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-The Helicopter Longitudinal Motion benchmark describes the dynamics of 
+hydrochloric acid in a continuous flow stirred-tank reactor. The flexible beam benchmark is a plant 
+usually employed in vibration studies; it consists of a flexible metallic structure with piezoceramic actuators and sensors.
+The helicopter longitudinal motion benchmark describes the dynamics of 
 transitional motion with respect to a longitudinal plane and the 
 rotational motion around the longitudinal axis.
+The USCG cutter tampa heading angle benchmark describes the heading angle 
+dynamics of a Coast Guard cutter. The voltage regulator benchmark~\cite{KOKOTOVIC198023} consists 
+of a linear model of a synchronous machine connected to an  infinite bus.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph*{USCG cutter Tampa Heading Angle}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-The USCG cutter Tampa Heading Angle describes the heading angle 
-dynamics of a Coast Guard cutter.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph*{Voltage regulator}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-The voltage regulator benchmark~\cite{KOKOTOVIC198023} consists 
-in a linear model of a synchronous machine connected to an 
-infinite bus.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph*{Guidance Control System}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-The Guidance Control System benchmark is another high-order system 
-model used by Chen et al.~\cite{CHEN1979389}  in order reduction 
+The guidance control system benchmark is another high-order system 
+model used by Chen et al.~\cite{CHEN1979389}  to evaluate reduction 
 techniques. Guidance systems are used to determine the path of an 
 autonomous vehicle movement.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph*{Satellite Attitude Control System}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-This benchmark describes the dynamics of a satellite attitude, 
-{\it i.e.} the orientation angles. An attitude control system must 
-maintain the desired orientation of satellite with respect to an 
-inertial frame during all the excursion. 
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\paragraph*{Springer-mass damper}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-The springer-mass damper systems are classic models for a lot of 
-mechanical systems dynamics. This benchmark describes a mass that is 
-fixed to a node through a springer and moves under the action of a 
+The satellite attitude control system benchmark describes the dynamics of a satellite attitude, 
+{\it i.e.}, the orientation angles. An attitude control system must 
+maintain the desired orientation of a satellite with respect to an 
+inertial frame during all the excursion. The springer-mass damper system benchmark 
+is classic model for several mechanical systems dynamics. This benchmark describes a mass,
+which is fixed to a node by means of a springer and moves under the action of a 
 input force, damping, and elastic force.
-
-
 
 %-------------------------------
 \subsection{Objectives}

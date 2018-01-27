@@ -92,29 +92,24 @@ int main()
   for (i = 0;i<_DIMENSION;i++) plant_cbmc[i]-=controller_cbmc[i];
   boundcbmcController();
 #ifndef __CPROVER
+  print_vector("plant coeffs",plant.coeffs);
+  print_vector("observer coeffs",observer_plant_cbmc);
+  print_vector("controller coeffs",plant_cbmc);
   print_matrix("dynamics",dynamics);
   print_matrix("loop",loop_cbmc);
 #endif
 
 #ifdef _USE_OBSERVER
-  control_floatt observerControlError=observer_output_sensitivity_error*implL.scale*implL.scale*implL.max*implL.max;
-  observerControlError*=_DIMENSION;
-  observerControlError+=observer_dynamics_error;
   control_floatt eigenCap=1.0;
-  eigenCap-=observerControlError;
+  eigenCap-=observer_control_error;
   control_floatt final_speed_factor=observer_speed_factor;
   final_speed_factor/=eigenCap;
   result=check_restricted_stability(observer_plant_cbmc,final_speed_factor);
   
   if (result>0)
   {
-  #ifndef USE_XTRANSFORM
-    control_floatt observerInputError=0;
-    for (i=0;i<_DIMENSION;i++) observerInputError+=controller[i]*controller[i];
-    observerControlError+=observer_sensitivity_error*observerInputError;
-  #endif
     eigenCap=1.0;
-    eigenCap-=observerControlError;
+    eigenCap-=observer_input_error;
     final_speed_factor=speed_factor;
     final_speed_factor/=eigenCap;
     result=check_restricted_stability(plant_cbmc,final_speed_factor);
