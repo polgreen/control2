@@ -983,25 +983,25 @@ specification on a very large number of inputs), after each synthesis
 phase we use optimization techniques to improve the produced
 candidates.  In particular, our optimization procedure aims at
 reducing the size of the reach space of the closed loop system while
-maintaining other verification properties (safety, stability, and response time).
+maintaining other properties (safety, stability, and response time).
 
-Our approach is illustrated in Figure~\ref{fig:CEGIS-OR} and consists of four main
-phases:
-\begin{itemize}
-\item {\sc Abstract}: constructs an unsound abstract model that approximates
-the dynamics of the system.
-\item {\sc synthesize}: generates a candidate controller and observer.
-  As it makes use of the potentially coarse abstraction constructed by {\sc Abstract},
-  the candidate doesn't necessarily meet the stability or safety specification.
-\item {\sc model}: defines the properties needed by {\sc Abstract} and {\sc Optimise} to create 
-  adequate abstractions at each stage in order to reduce the probability
-  of failure in the next iteration.  Our optimization procedure aims at reducing the
-  size of the reach space of the closed loop system while preserving the verification
-  properties (safety, stability and response time).  This phase will first attempt this objective
-  and failing this feed the {\sc Abstract} phase the necessary information to produce a better candidate.
-\item {\sc verify}: verifies the behaviour of the candidate controller and observer
-  against a sound over-approximation of the concrete dynamics of the system for an infinite space over an infinite time horizon. If the verification fails, produces a counterexample describing the reason for failure.
-\end{itemize}
+%% Our approach is illustrated in Figure~\ref{fig:CEGIS-OR} and consists of four main
+%% phases:
+%% \begin{itemize}
+%% \item {\sc Abstract}: constructs an unsound abstract model that approximates
+%% the dynamics of the system.
+%% \item {\sc synthesize}: generates a candidate controller and observer.
+%%   As it makes use of the potentially coarse abstraction constructed by {\sc Abstract},
+%%   the candidate doesn't necessarily meet the stability or safety specification.
+%% \item {\sc model}: defines the properties needed by {\sc Abstract} and {\sc Optimize} to create 
+%%   adequate abstractions at each stage in order to reduce the probability
+%%   of failure in the next iteration.  Our optimization procedure aims at reducing the
+%%   size of the reach space of the closed loop system while preserving the verification
+%%   properties (safety, stability and response time).  This phase will first attempt this objective
+%%   and failing this feed the {\sc Abstract} phase the necessary information to produce a better candidate.
+%% \item {\sc verify}: verifies the behaviour of the candidate controller and observer
+%%   against a sound over-approximation of the concrete dynamics of the system for an infinite space over an infinite time horizon. If the verification fails, produces a counterexample describing the reason for failure.
+%% \end{itemize}
 
 The main advantage of this approach is two-fold:
 \begin{itemize}
@@ -1173,7 +1173,7 @@ and we restore soundness during the verification and modeling stages.
 %Let us see how the loop updates these specifications.
 
 Next, we describe the CEGIS-OR loop in Figure~\ref{fig:CEGIS-OR}:
-\paragraph{1. {\sc abstract}} computes an initial version of $\phi$
+\paragraph{\underline{{\sc abstract}}} computes an initial version of $\phi$
 and decides the sample time $T_d$,
 the plant's precision $\mathbb{R}_{\langle P \rangle}$ and the controller's precision
 $\mathbb{R}_{\langle C \rangle}$.
@@ -1185,7 +1185,7 @@ $\mathbb{R}_{\langle C \rangle}$.
 \item Select a sample time ($T_d$) that minimizes the magnitudes of the matrices used in both the
 implementation and the abstraction. This ensures that a small bit vector size is required for
 the synthesis process.
-\note{implementation and abstraction?}
+\note{do you mean small plant precision?}
 \item Select initial precisions $\mathbb{R}_{\langle P \rangle}$ and $\mathbb{R}_{\langle C \rangle}$
   %width for the bit vectors
   for representing the controller and the plant, respectively. These will be increased as needed.
@@ -1211,32 +1211,67 @@ based on the input constraints.
 $(\phi_\mathit{init} \wedge \phi_\mathit{input} \wedge u_k=-\mat{K} \vec{x}_k)
 \Rightarrow \phi_\mathit{init}^{K}$.
 These bounds will be used by the {\sc synthesize} phase to reduce the size of the solution space. 
-%% \item Under certain circumstances (i.e. when {\sc optimize} did not manage to improve the s) When a counterexample is found, we add it to $\phi_{synth} = \phi_{synth} \wedge \phi_{safety}^k$, 
-%% where k is the iteration found for the counterexample.  The ${\sc Abstract}$
-%% phase will then construct a abstraction (in the form of a program) that meets
-%% this property (unsoundly since the program uses FWL).
 \end{itemize}
 \note{$\phi_{safety}^k$ is undefined!!!}
-%
-%\item
-\paragraph{2. {\sc synthesize}} generates a candidate controller $\mat{K}$
+\paragraph{\underline{{\sc synthesize}}} generates a candidate controller $\mat{K}$
 and observer $\mat{L}$ that satisfy
-$\phi_{synth}$ by invoking a SAT solver.
+$\phi$ by invoking a SAT solver.
 If there is no candidate solution it signals {\sc Abstract}, 
 which may choose to increase the plant's precision or return a synthesis failure.
 If {\sc synthesize} generates a candidate solution, it is fed to the {\sc verify} chain in order to validate it.
 %
 %\item
-\paragraph{3. {\sc Verify Synthesis}} verifies that the candidate controller
+\paragraph{\underline{{\sc Verify}}} checks whether the candidate
+solution found by {\sc synthesize} is a solution for the whole synthesis
+problem. It does this in three subsequent stages as explained below.
+If  in any of the stages the verification fails, then
+a counterexample is fed to the {\sc refine abstraction and optimize} phase,
+including details of initial states
+and iterations that failed the specification.
+\begin{itemize}
+\item {\sc verify synthesis}
+verifies that the candidate controller
 and observer obey $\phi$ (remember that we now use
 $\mathbb{R}_{\langle C \rangle}$ for the controller's representation
-and reals for the plant).  If the verification fails, the candidate is
-fed to the {\sc Optimise} phase.  If the candidate is valid, we feed
+and reals for the plant).  %% If the verification fails, the candidate is
+%% fed to the {\sc Optimise} phase.
+If the candidate is valid, we feed
 it to the next {\sc verify} stage, {\sc Discrete Time}.
+\item {\sc Discrete Time} verifies $\phi_{safety}^{\infty}$ (unbounded time)
+using discrete time dynamics.  %% If the verification fails, we report the
+%% counterexample to {\sc Refine Abstraction} including details of initial states
+%% and iterations that failed the specification.
+\item {\sc Continuous Time} verifies that the
+transitions between sample times meet the specification $\phi_{safety}^{\infty}$.  %% If
+%% a counterexample is found, information about the maximum distance of the
+%% violation to the specification boundary is fed to {\sc Sample}. 
+\end{itemize}
 
 %\item
-\paragraph{4. {\sc Optimise}} optimises the failed candidate solution.
-We seek to minimize the distance of the farthest point in the
+
+\paragraph{\underline{{\sc Refine Abstraction and optimize}}} refines the
+system's abstraction as well as optimizes the current candidate
+solution.
+%
+%% When a counterexample is found, we add it to $\phi_{synth} = \phi_{synth} \wedge \phi_{safety}^k$, 
+%% where k is the iteration found for the counterexample.  
+First, the system's abstraction must be refined in order to eliminate
+the newly received counterexample. For this purpose,
+we increase the time horizon $k$ for the
+safety specification so that it captures the violating iteration
+(for the given initial state) and adjust $\phi$:
+$\phi = \phi \wedge \phi_{safety}^k$.
+If the counterexample is provided by the {\sc continuous time} stage,
+then we must select a smaller suitable sample time to be used
+for the plant's discretization.
+%% and modify the abstractions to meet the discretization 
+%% ($\phi_{synth} = \phi_{synth} \wedge \phi_{sample}^{T_d'}$ and $\phi_{static} = \phi_{static} \wedge \phi_{sample}^{T_d'}$).
+%% It will then feed back to the abstraction refinement loop to look for a suitable action for the updated model.
+%\end{enumerate}
+
+
+Secondly, we try to optimizes the failed candidate solution.
+For this purpose, we seek to minimize the distance of the farthest point in the
 reach space to the closest point to it in the safe region
 \begin{equation}
 e=max(\{min(\{\vec{x}-\vec{g} \mid \vec{g}\in G\}) \mid \vec{x} \in \hat{X}_\infty \}).
@@ -1268,33 +1303,15 @@ smaller rotation, which facilitates meeting the safety specification $\phi_{safe
 %% We denote these sets of rules as $\phi_{objective}$ (which varies depending on which optimization stage we're in).
 %% At each optimizing iteration, the modeller updates $\phi_{static} = \phi_{static} \wedge \phi_{objective}$% \wedge \phi_{safety}^{k'} $ where $k' \geq k$.
 
-If we cannot optimize the candidate, we signal the {\sc Abstract} phase to
-refine $\phi$ and request {\sc Synthesise} to produce a new
-candidate.  Otherwise the optimised candidate solution is given back to
+If we cannot optimize the candidate  we signal the {\sc Abstract} phase to potentially 
+increase the precision and 
+%phase to
+%refine $\phi$ and
+request {\sc Synthesise} to produce a new
+candidate.  Otherwise the optimized candidate solution is given back to
 {\sc Verify Synthesis}.
+\note{when is the precision increased in abstract?}
 
-%\item
-\paragraph{5. {\sc Discrete Time}} verifies $\phi_{safety}^{\infty}$ (unbounded time)
-using discrete time dynamics.  If the verification fails, we report the
-counterexample to {\sc Refine Abstraction} including details of initial states
-and iterations that failed the specification.  
-%\item
-\paragraph{6. {\sc Refine Abstraction}} changes $\phi_{static} = \phi_{static} \wedge \phi_{safety}^k$
-to encompass any arising counterexample.  This is done by increasing the time horizon $k$ for the
-safety specification of the violating initial condition and input.
-If the magnitude of the violation is small, {\sc Optimise} may find a new
-candidate, otherwise it will feed through to {\sc Abstract}.
-%
-%\item
-\paragraph{7. {\sc Continuous Time}} verifies that the
-transitions between sample times meet the specification $\phi_{safety}^{\infty}$.  If
-a counterexample is found, information about the maximum distance of the
-violation to the specification boundary is fed to {\sc Sample}. 
-%\item
-\paragraph{8. {\sc Sample}} selects a smaller suitable sample time and modify the abstractions to meet the discretization 
-($\phi_{synth} = \phi_{synth} \wedge \phi_{sample}^{T_d'}$ and $\phi_{static} = \phi_{static} \wedge \phi_{sample}^{T_d'}$).
-It will then feed back to the abstraction refinement loop to look for a suitable action for the updated model.
-%\end{enumerate}
 
 \begin{figure}[t!]
 {
@@ -1308,7 +1325,7 @@ It will then feed back to the abstraction refinement loop to look for a suitable
   \node[minimum width=2.2cm, minimum height=0.8cm, fill=orange!20] (model1) {{\sc 1. Abstract}};
   \& complexnode/.pic={
     \coordinate (model);
-    \node[minimum width=2.2cm, minimum height=0.8cm, fill=orange!20] (model2) at ([xshift=-3cm]model.center) {{\sc 4. Refine Abstraction}\\{\sc and Optimise}};
+    \node[minimum width=2.2cm, minimum height=0.8cm, fill=orange!20] (model2) at ([xshift=-3cm]model.center) {{\sc 4. Refine Abstraction}\\{\sc and Optimize}};
      \coordinate (model3) at ([xshift=0cm]model.center);
      \coordinate (model4) at ([xshift=3cm]model.center);
    } ;\\
@@ -1346,9 +1363,9 @@ It will then feed back to the abstraction refinement loop to look for a suitable
     (model4.west) edge node {} (model2.east)
     ([xshift=-5em]fp.north) edge node[align=center]  {PASS/\\C-ex} ([xshift=-5em]verif2.south)
     ([xshift=-5em]sv.north) edge node[align=center]  {PASS/\\C-ex} ([xshift=-5em]verif3.south)
-    ([xshift=5em]verif1.south) edge node[align=center] {$\mat{A}'$} ([xshift=5em]bmc.north)
-    ([xshift=5em]verif2.south) edge node[align=center] {$\mat{A}'$,$\mat{B}'$,$\phi$} ([xshift=5em]fp.north)
-    ([xshift=5em]verif3.south) edge node[align=center] {{$\mat{A}$,$\mat{B}$,$\mat{C}$}\\{$\mat{A}'$,$\mat{B}'$,$\phi$}} ([xshift=5em]sv.north)
+    ([xshift=5em]verif1.south) edge node[align=center] {} ([xshift=5em]bmc.north)
+    ([xshift=5em]verif2.south) edge node[align=center] {} ([xshift=5em]fp.north)
+    ([xshift=5em]verif3.south) edge node[align=center] {} ([xshift=5em]sv.north)
     ([xshift=-5em]bmc.north) edge node[align=center]  {PASS/\\C-ex} ([xshift=-5em]verif1.south)
     (verif3.east) edge node {PASS} (done)
     ([xshift=5em]synth.south) edge node[align=center] {Inputs} ([xshift=5em]gp.north)
