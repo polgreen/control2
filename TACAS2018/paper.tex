@@ -973,7 +973,7 @@ We will use $\phi_{stability}$ to refer to the combined stability and transient 
 
 In this section, we describe our technique for synthesizing safe
 digital feedback controllers using CEGIS~\cite{DBLP:conf/asplos/2006}. Broadly speaking, CEGIS
-denotes an iterative technique where each iteration performs inductive
+denotes an iterative technique where each step performs inductive
 generalisation based on counterexamples provided by a verification
 engine. In each iteration, an inductive synthesiser produces a
 candidate solution that obeys the specification for a limited number
@@ -981,22 +981,20 @@ of inputs. Subsequently, this candidate is passed to a verification
 oracle that checks it against the specification for all possible
 inputs. If the verification fails, then the witness counterexample is
 passed back to the synthesis phase, where it is added to the set of
-inputs to be considered in the next loop iteration. Otherwise, we are
-done.
+inputs to be considered in the next loop iteration. Otherwise, the process terminates.
 
 %
-We enhance the standard CEGIS architecture with abstraction refinement
-and optimization, resulting in CEGIS-OR (CEGIS with Optimization and
-Refinement).  By using abstraction refinement, CEGIS-OR tackles the
+We enhance the standard CEGIS architecture \cite{abate2017automated} with an abstraction-refinement approach 
+and with optimization, resulting in the novel CEGIS-OR (CEGIS with Optimization and Refinement).  
+By using abstraction refinement, CEGIS-OR tackles the
 scalability issues inherent in program synthesis as it allows using
-potentially coarse abstractions of a system that are only refined on
-demand.  Given that the use of coarse abstractions could result in low
-quality candidate solutions (i.e. candidates that fail the
-specification on a very large number of inputs), after each synthesis
+potentially coarse abstractions of the given model that are only refined on
+demand.  Since the use of coarse abstractions may result in low-quality candidate solutions 
+(i.e. candidates that fail the specification on a very large number of inputs), after each synthesis
 phase we use optimization techniques to improve the produced
 candidates.  In particular, our optimization procedure aims at
-reducing the size of the reach space of the closed loop system while
-maintaining other properties (safety, stability, and response time).
+reducing the size of the reach space of the closed loop system, 
+while maintaining other dynamical properties (safety, stability, and response time).
 
 %% Our approach is illustrated in Figure~\ref{fig:CEGIS-OR} and consists of four main
 %% phases:
@@ -1016,18 +1014,18 @@ maintaining other properties (safety, stability, and response time).
 %%   against a sound over-approximation of the concrete dynamics of the system for an infinite space over an infinite time horizon. If the verification fails, produces a counterexample describing the reason for failure.
 %% \end{itemize}
 
-The main advantage of this approach is two-fold:
+The main advantage of the new CEGIS-OR is twofold:
 \begin{itemize}
 \item[1.] We start with coarse abstractions that get
   refined into more complex ones as the procedure progresses. Thus, solutions
-  that don't require a high level of precision are obtained fast. 
+  that do not require a high level of precision are obtained faster. 
 \item[2.] Although {\sc synthesize} makes use of a potentially coarse abstraction,
   by optimizing the candidate solution in each iteration of the CEGIS loop
   we obtain better candidates that are more likely to meet the
   specification or produce high quality counterexamples in the
   {\sc verify} phase.
   This has the potential to reduce
-  the number of iterations of the CEGIS loop required to obtain a solution.
+  the overall number of iterations of the CEGIS loop required to obtain a complete solution.
 \end{itemize}
   
 %% because later stages of synthesis will use more complex abstractions, the reduction
@@ -1156,12 +1154,11 @@ The main advantage of this approach is two-fold:
 %\item 
 
 %The CEGIS-OR loop for this approach is described next.
-Throughout the CEGIS-OR loop we make use of a specification $\phi$
-which encompasses the abstraction of the system's dynamics.
-Note that, given that the system's abstraction gets refined
-in each iteration, $\phi$ will also be adjusted appropriately.
-Initially, $\phi$ is given by: 
-$\phi=\phi_{stability} \wedge \phi_{input} \wedge \phi_{init}$.
+Throughout the CEGIS-OR loop we make use of a specification $\phi$ that deals with the abstraction of the model dynamics.
+Note that since the model abstraction gets refined at each iteration, 
+$\phi$ will also be adjusted accordingly.
+Initially, $\phi$ is simply given as the defined 
+$\phi := \phi_{stability} \wedge \phi_{input} \wedge \phi_{init}$.
 
 %% We make use of two abstractions corresponding to two
 %% specifications: $\phi_{synth}$ used by the synthesiser and
@@ -1175,7 +1172,7 @@ $\phi=\phi_{stability} \wedge \phi_{input} \wedge \phi_{init}$.
 
 Note that there is a major difference between
 the way $\phi$ is being used in different phases in Figure~\ref{fig:CEGIS-OR}: while the
-{\sc synthesise} phase checks $\phi$ by using the plant's precision
+{\sc synthesise} phase checks $\phi$ by using the plant precision
 $\mathbb{R}_{\langle P \rangle}$ for the controller, observer and
 plant, the {\sc model} and {\sc verify} phases use reals to represent
 the plant and $\mathbb{R}_{\langle C \rangle}$ for the controller and
@@ -1185,10 +1182,13 @@ and we restore soundness during the verification and modeling stages.
 %% While these specifications are updated throughout the synthesis process (as appropriately described below), at all times $\phi_{static} \models \phi_{synth}$.
 %Let us see how the loop updates these specifications.
 
-Next, we describe the CEGIS-OR loop in Figure~\ref{fig:CEGIS-OR}:
+\medskip
+
+Next, we describe the CEGIS-OR loop in Figure~\ref{fig:CEGIS-OR}.
+
 \paragraph{\underline{{\sc abstract}}} computes an initial version of $\phi$
 and decides the sample time $T_d$,
-the plant's precision $\mathbb{R}_{\langle P \rangle}$ and the controller's precision
+the plant precision $\mathbb{R}_{\langle P \rangle}$ and the controller's precision
 $\mathbb{R}_{\langle C \rangle}$.
  %width for the bit vectors
  %for representing the controller and the plant, respectively.
