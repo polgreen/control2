@@ -1149,31 +1149,29 @@ $\phi_{static}$ which is given to the synthesis refinement loop.
 Both specifications will be updated during execution and new abstractions will be constructed for each.
 Let us define the properties 
 \begin{align*}
-\phi_{FWL}^C&:= \mat{K}=\mat{K}_{\langle C \rangle} \wedge \mat{L}=\mat{L}_{\langle C \rangle}\\
-\phi_{sample}^{d}&:= \mat{A}_d, \mat{B}_d, \mat{C}_d
+\phi_{\langle C \rangle}&:= \mat{K}=\mat{K}_{\langle C \rangle} \wedge \mat{L}=\mat{L}_{\langle C \rangle}\\
+\phi_{dynamics}^{T_d}&:= \mat{A}_d, \mat{B}_d, \mat{C}_d
 \end{align*}
+The first one defines the word length of the digital controller ($\mathbb{R}_{\langle C \rangle}$) and its effect on the system dynamics.
+The second one defines the sampling time ($T_d$) and its effect on the system dynamics (as per Section \ref{sec:continuous_time_accel}).
 We start our loop with 
 \begin{align*}
-\phi_{synth}&:=\phi_{sample}^{d} \wedge \phi_{stability} \wedge \phi_{input} \wedge \phi_{init}\\
-\phi_{static}&:=\phi_{synth} \wedge \phi_{FWL}^C.
+\phi_{synth}&:=\phi_{dynamics}^{T_d} \wedge \phi_{stability} \wedge \phi_{input} \wedge \phi_{init}\\
+\phi_{static}&:=\phi_{synth} \wedge \phi_{\langle C \rangle}.
 \end{align*}
-When a counterexample is found, we add it to $\phi_{synth} = \phi_{synth} \wedge \phi_{safety}^k$, 
-where k is the iteration found for the counterexample.  The ${\sc Abstract}$ phase will then construct a abstraction (in the form of a program) that meets this property (unsoundly since the program uses FWL).
-It is also possible, when the modeller is unable to increase $k$, to change $\phi_{synth} = \phi_{synth} \wedge \phi_{sample}^{d'}$ or $\phi_{synth} = \phi_{synth} \wedge \phi_{FWL}^C$.  What we point out here is that these specifications may grow up to the full specification, thus making for increasingly complex astractions.
-Finally, we also note that the abstract phase uses a given precision ($\phi_{FWL}^P$) which we will increase when no candidates can be generated for a given $\phi_{synth}$.
-In the modeller, $\phi_{static} = \phi_{static} \wedge \phi_{safety}^{k'} \wedge \phi{objective}$ where $k' \geq k$, and $\phi{objective}$ defines a set of rules for the current optimization stage (see {\sc Opimise}).  We only note that at all times $\phi_{static} \models \phi_{synth}$.
+These specifications will vary as the loop progresses.  We only note that at all times $\phi_{static} \models \phi_{synth}$.
 Let us see how the loop updates these specifications.
 
-\paragraph{1. {\sc abstract}} creates an abstraction from the initial specificationas follows:
+\paragraph{1. {\sc abstract}} creates an abstraction from the initial specification as follows:
 \begin{itemize}
-\item Select a sample time that minimizes the magnitudes of the matrices used in both the
+\item Select a sample time ($T_d$) that minimizes the magnitudes of the matrices used in both the
 implementation and the abstraction. This ensures that a small bit vector size is required for
 the synthesis process.
 \item Build the observer matrices ${\mat{A}_d}_{\langle C \rangle}$, ${\mat{B}_d}_{\langle C \rangle}$
-and ${\mat{C}_d}_{\langle C \rangle}$ using the truncation described in Section~\ref{sec:numeric_rep}.
+and ${\mat{C}_d}_{\langle C \rangle}$ using the truncation described in Section~\ref{sec:numeric_rep2}.
 \item Transform the system into canonical form and add nondeterminism for the errors
-using the techniques described in Section~\ref{sec:cof_fwl_stability}. The transformation
-matrices will be needed to obtain an FWL compliant controller and observer.
+using the techniques described in Section~\ref{sec:cof_fwl_stability}. 
+%The transformation matrices will be needed to obtain an FWL compliant controller and observer.
 \item Compute the characteristic polynomial of the matrix $(\mat{A}_d-\mat{B}_d\mat{K}_{\langle C \rangle})$
 as $P_a(z) = z^p+\sum_{i=1}^p{(a_i-k_i)z^{p-i}}$. 
 \item Compute the characteristic polynomial of the matrix $({\mat{A}_d}_{\langle C \rangle}-\mat{L}_{\langle C \rangle}{\mat{C}_d}_{\langle C \rangle})$
@@ -1182,7 +1180,7 @@ as $P_l(z) = z^p+\sum_{i=1}^p{(l_i-a_i)z^{p-i}}$.
 error ($\mat{A}_e$,$\mat{B}_e$), and response time $\phi_{stability}(P_a,P_l,\overline{\lambda})$
 as described in Section~\ref{sec:transientspecification}.
 \item Calculate the noise sets $\eta_1$ and $\eta_2$ from the equations
-described in Section~\ref{sec:observable}.
+described in Section~\ref{sec:cof_fwl_stability}.
 \item Calculate a set of initial bounds on $\mat{K}$, $\phi_\mathit{init}^{K}$,
 based on the input constraints.
 $(\phi_\mathit{init} \wedge \phi_\mathit{input} \wedge u_k=-\mat{K} \vec{x}_k)
@@ -1190,6 +1188,11 @@ $(\phi_\mathit{init} \wedge \phi_\mathit{input} \wedge u_k=-\mat{K} \vec{x}_k)
 These bounds will be used by the {\sc synthesize} phase to reduce the size of the solution space. 
 \item Select an initial width for the bit vectors representing the controller and the plant $\phi_{\langle C \rangle}, \phi_{\langle P \rangle}$. We will increase either precision as needed.
 \end{itemize}
+When a counterexample is found, we add it to $\phi_{synth} = \phi_{synth} \wedge \phi_{safety}^k$, 
+where k is the iteration found for the counterexample.  The ${\sc Abstract}$
+phase will then construct a abstraction (in the form of a program) that meets
+this property (unsoundly since the program uses FWL).
+
 %
 %\item
 \paragraph{2. {\sc synthesize}} generates a candidate controller $\mat{K}$
@@ -1197,7 +1200,7 @@ and observer $\mat{L}$ that satisfy
 $\phi_{synth}$ by invoking a SAT solver.
 There are two exit conditions:
 If there is no candidate solution we return FAIL and signal {\sc Abstract}. Based on the current abstraction,
-{\sc  Abstract} may choose to increase the precision, refine the abstraction, or return a synthesis failure.
+{\sc  Abstract} may choose to increase the precision ($\phi_{\langle P \rangle}$), or return a synthesis failure.
 If we have a candidate solution we will feed it to the verifier chain in order to validate it.
 %
 %\item
@@ -1236,22 +1239,23 @@ The resulting closed loop form converges faster than the original and has a
 smaller rotation, which facilitates meeting the safety specification $\phi_{safety}$
 (we note that real convergent eigenvalues are trivially safe).
 
-If we cannot optimize the candidate such that it passes the {\sc
-  verify synthesis} check, we signal the {\sc Abstract} phase to
+We denote these sets of rules as $\phi_{objective}$ (which varies depending on which optimization stage we're in).
+At each optimizing iteration, the modeller updates $\phi_{static} = \phi_{static} \wedge \phi_{objective}$% \wedge \phi_{safety}^{k'} $ where $k' \geq k$.
+
+If we cannot optimize the candidate, we signal the {\sc Abstract} phase to
 refine $\phi_{synth}$ and request {\sc Synthesise} to produce a new
-candidate.  Otherwise the refined candidate solution is given back to
+candidate.  Otherwise the optimised candidate solution is given back to
 {\sc Verify Synthesis}.
-%
+
 %\item
 \paragraph{5. {\sc Discrete Time}} verifies $\phi_{safety}^{\infty}$ (unbounded time)
 using discrete time dynamics.  If the verification fails, we report the
 counterexample to {\sc Refine Abstraction} including details of initial states
 and iterations that failed the specification.  
 %\item
-\paragraph{6. {\sc Refine Abstraction}} changes $\phi_{safety}$ to encompass any arising
-counterexample.  This can be done by increasing the time horizon $k$ for the
+\paragraph{6. {\sc Refine Abstraction}} changes $\phi_{static} = \phi_{static} \wedge \phi_{safety}^k$
+to encompass any arising counterexample.  This is done by increasing the time horizon $k$ for the
 safety specification of the violating initial condition and input.
-It also modifies $\phi_{static}$ to account for the counterexample.
 If the magnitude of the violation is small, {\sc Optimise} may find a new
 candidate, otherwise it will feed through to {\sc Abstract}.
 %
@@ -1261,14 +1265,9 @@ transitions between sample times meet the specification $\phi_{safety}^{\infty}$
 a counterexample is found, information about the maximum distance of the
 violation to the specification boundary is fed to {\sc Sample}. 
 %\item
-\paragraph{8. {\sc Sample}} selects a smaller suitable sample time and modify the abstractions to meet the discretization. 
+\paragraph{8. {\sc Sample}} selects a smaller suitable sample time and modify the abstractions to meet the discretization 
+($\phi_{synth} = \phi_{synth} \wedge \phi_{sample}^{T_d'}$ and $\phi_{static} = \phi_{static} \wedge \phi_{sample}^{T_d'}$).
 It will then feed back to the abstraction refinement loop to look for a suitable action for the updated model.
-%
-
-%\item
-If we reach the {\sc abstract} phase, it means that the candidate
-  solution is not valid, in which case we must refine $\phi_{synth}$. If $\phi_{synth}$ cannot be further refined, 
-  then we cannot synthesise a new candidate and return a synthesis failure.
 %\end{enumerate}
 
 \begin{figure}[t!]
@@ -1355,7 +1354,7 @@ stages, blue boxes (dark) are verification stages, and the red box is the synthe
 %-------------------------------
 
 The benchmark suite employed to evaluate the proposed technique is 
-composed by seven SISO \note{defined SISO} models extracted from the control literature~\cite{acrobot,cstr,CHEN1979389,KOKOTOVIC198023,gajic2008optimal,Franklin15,maglev,converters}.
+composed by seven models extracted from the control literature~\cite{acrobot,cstr,CHEN1979389,KOKOTOVIC198023,gajic2008optimal,Franklin15,maglev,converters}.
 In order to obtain statistically relevant results, we have taken these models
 and modified each possible combination of their parameters by a 10\% tolerance,
 thus creating seven hundred benchmarks from this base.
