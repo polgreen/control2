@@ -63,21 +63,23 @@ digital, observer-based controllers for physical plants represented as
 linear, time-invariant models.  Models are defined as differential
 equations with inputs, evolving over a continuous state space. The
 synthesis accounts for errors caused by the digitization effects
-introduced by the controller.  We use an optimization-based
-counterexample-guided inductive synthesis (CEGIS) procedure that is
-driven by abstraction refinement, where in each iteration we take the
-following steps: (1) We start by only considering a low-resolution
-discretized model of the system and only static properties, which
-enables us to find candidate solutions fast.  (2) Once we have a
-candidate, we use matrix eigen-decomposition
-and objective functions to iteratively optimize it.
+introduced by the controller.  We use a counterexample-guided
+inductive synthesis procedure enhanced with abstraction
+refinement and optimization, which allows us to start by considering
+a low-resolution discretized model of the system and %, which enables us to
+find candidate solutions fast. This model gets refined on demand.
+Moreover, in order to improve our chances of finding a solution even
+when considering coarse abstractions of the system, in each iteration of the CEGIS
+loop we use matrix eigen-decomposition to optimize our candidate.
+%% Once we have a candidate, we use matrix eigen-decomposition
+%% and objective functions to iteratively optimize it.
 %Whenever the optimization is unable to yield further results, it feeds back to the
 %synthesiser in a traditional CEGIS manner.
 This design yields a significant speed-up compared to a traditional
-CEGIS scheme (i.e. without optimization).  We demonstrate the
-practical value of this approach by automatically synthesizing safe
-observer-based controllers for physical plant models from the digital
-control literature.
+CEGIS scheme (i.e. without abstraction refinement and optimization).
+We demonstrate the practical value of this approach by automatically
+synthesizing safe observer-based controllers for physical plant models
+from the digital control literature.
 %
 \end{abstract}
 
