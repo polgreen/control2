@@ -1012,13 +1012,15 @@ passed back to the synthesis phase, where it is added to the set of
 inputs to be considered in the next loop iteration. Otherwise, the process terminates.
 
 %
-We enhance the standard CEGIS architecture 
-with an abstraction-refinement approach and with optimization,
-resulting in the novel CEGIS-OR (CEGIS with Optimization and
-Refinement).  By using abstraction refinement, CEGIS-OR tackles the
-scalability issues inherent in program synthesis as it allows using
-potentially coarse abstractions of the given model that are only
-refined on demand.  Since the use of coarse abstractions may result in
+We enhance the standard CEGIS architecture with an
+abstraction-refinement approach and with optimization, resulting in
+the novel CEGIS-OR (CEGIS with Optimization and Refinement).  By using
+abstraction refinement, CEGIS-OR tackles the scalability issues
+inherent in program synthesis as it allows us to handle complex
+systems, which we coarsely abstract and only refine on demand.
+%potentially coarse abstractions of the given model that are only
+%refined on demand.
+Since the use of coarse abstractions may result in
 low-quality candidate solutions (i.e. candidates that fail the
 specification on a very large number of inputs), after each synthesis
 phase we use optimization techniques to improve the produced
