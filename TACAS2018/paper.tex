@@ -149,21 +149,42 @@ control synthesis, but play an important role in systems engineering.
 %% Single-Input/Single-Output (SISO) systems.  We offer a multi-tiered approach
 %% that exploits different aspects of the problem at each stage.
 
-We make use of a two-stage counterexample-guided inductive
-synthesis (CEGIS) driven by optimization refinement.
-The first, coarse, synthesis stage uses a low resolution discretized model of a 
-transformation of the original model. Furthermore, it only looks initially at
-static properties  of the system. This largely reduces the complexity of
-the problem, enabling the synthesiser to offer fast response times.
+We use a CounterExample-Guided Inductive Synthesis (CEGIS)
+\cite{jha-icse10,DBLP:conf/pldi/Solar-LezamaRBE05} approach,
+which we enhance with abstraction refinement and optimization
+resulting in the novel CEGIS-OR (CEGIS with Optimization and
+Refinement).  This design uses an iterative process where each
+iteration performs inductive generalisation based on counterexamples
+provided by a verification oracle.  Essentially, the inductive
+generalisation uses information about a limited number of inputs to
+make claims in the form of candidate solutions about all the possible
+inputs.  By using abstraction refinement, CEGIS-OR allows us to handle
+complex systems which are initially represented by coarse abstractions
+that only get refined on demand.  Consequently, solutions that do not
+require a high level of precision are obtained fast.  Since the use
+of coarse abstractions may result in low-quality candidate solutions
+(i.e. candidates that fail the specification on a very large number of
+inputs), after each inductive generalization phase we use optimization
+techniques to improve the produced candidates.  In particular, our
+optimization procedure aims at reducing the size of the reach space of
+the closed loop system, while maintaining other dynamical properties
+of interest (safety, stability, and response time).
 
-Due to either numerical imprecision or overapproximations, the
-candidate solution presented by the first synthesiser will likely not
-meet the spec. A second synthesis stage uses matrix eigen-decomposition 
-and objective functions to iteratively optimize results computed by the first
-stage.  Whenever the optimization is unable to yield further results, it feeds
-a counterexample to the first synthesiser in a traditional CEGIS manner.
-The combined synthesisers are thus capable of reasoning about complex
-models with high computational efficiency due to their modularity.
+%% We make use of a two-stage counterexample-guided inductive
+%% synthesis (CEGIS) driven by optimization refinement.
+%% The first, coarse, synthesis stage uses a low resolution discretized model of a 
+%% transformation of the original model. Furthermore, it only looks initially at
+%% static properties  of the system. This largely reduces the complexity of
+%% the problem, enabling the synthesiser to offer fast response times.
+
+%% Due to either numerical imprecision or overapproximations, the
+%% candidate solution presented by the first synthesiser will likely not
+%% meet the spec. A second synthesis stage uses matrix eigen-decomposition 
+%% and objective functions to iteratively optimize results computed by the first
+%% stage.  Whenever the optimization is unable to yield further results, it feeds
+%% a counterexample to the first synthesiser in a traditional CEGIS manner.
+%% The combined synthesisers are thus capable of reasoning about complex
+%% models with high computational efficiency due to their modularity.
 
 We provide experimental results showing that our approach is able to
 efficiently synthesize safe controllers for a set of physical
@@ -173,14 +194,14 @@ In summary, this paper makes the following original contributions.
 %
 \begin{enumerate}
 \item We develop a model for inductive synthesis that combines CEGIS with
-abstraction refinement and synthesis optimization in order to minimize the
-synthesis cost. 
+  abstraction refinement and optimization in order to handle complex
+  systems. 
 %
 \item We automatically generate \emph{correct-by-construction} digital
   state-feedback observer controllers that guarantee a given safety property
   alongside stability and response time specifications.  We note that
   observers are much more complex and difficult to synthesise than standard
-  full-state feedback controllers.
+  full-state feedback controllers (hence the need for abstraction refinement).
 %
 \item  Our synthesis addresses challenges created by digitalization errors
  such as quantization, and time discretization as well as delays in the
@@ -984,17 +1005,20 @@ passed back to the synthesis phase, where it is added to the set of
 inputs to be considered in the next loop iteration. Otherwise, the process terminates.
 
 %
-We enhance the standard CEGIS architecture \cite{abate2017automated} with an abstraction-refinement approach 
-and with optimization, resulting in the novel CEGIS-OR (CEGIS with Optimization and Refinement).  
-By using abstraction refinement, CEGIS-OR tackles the
+We enhance the standard CEGIS architecture %\cite{abate2017automated}
+with an abstraction-refinement approach and with optimization,
+resulting in the novel CEGIS-OR (CEGIS with Optimization and
+Refinement).  By using abstraction refinement, CEGIS-OR tackles the
 scalability issues inherent in program synthesis as it allows using
-potentially coarse abstractions of the given model that are only refined on
-demand.  Since the use of coarse abstractions may result in low-quality candidate solutions 
-(i.e. candidates that fail the specification on a very large number of inputs), after each synthesis
+potentially coarse abstractions of the given model that are only
+refined on demand.  Since the use of coarse abstractions may result in
+low-quality candidate solutions (i.e. candidates that fail the
+specification on a very large number of inputs), after each synthesis
 phase we use optimization techniques to improve the produced
 candidates.  In particular, our optimization procedure aims at
-reducing the size of the reach space of the closed loop system, 
-while maintaining other dynamical properties (safety, stability, and response time).
+reducing the size of the reach space of the closed loop system, while
+maintaining other dynamical properties (safety, stability, and
+response time).
 
 %% Our approach is illustrated in Figure~\ref{fig:CEGIS-OR} and consists of four main
 %% phases:
@@ -1283,7 +1307,7 @@ for the model discretization.
 %\end{enumerate}
 
 
-Secondly, we try to optimizes the failed candidate solution.
+Secondly, we try to optimize the failed candidate solution.
 For this purpose, we seek to minimize the distance of the farthest point in the
 reach space to the closest point to it in the safe region
 \begin{equation}
