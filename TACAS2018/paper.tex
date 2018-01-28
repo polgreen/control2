@@ -216,6 +216,11 @@ In summary, this paper makes the following original contributions.
  combines both. 
 \end{enumerate}
 
+Note that, while we have several reference to the appendix throughout
+the paper, the paper can be read on its own and these references are
+only meant as an aid for the reader less familiar with control theory or
+for the proofs of theorems.
+
 %-------------------------------
 \section{Related Work}
 \label{sec:relw}
@@ -394,6 +399,7 @@ where
 \big\{ \mat{A}\vec{x}_k +
 \mat{B}\vec{u}_k \mid \mat{G}\vec{x}_k \leq \vec{h}\big\}\;. 
 \end{equation}
+\note{do we actually need to mention the safety spec here given that it is formally introduced only in Sec~\ref{sec:cof_safety}?}
 %
 Here $\mat{G}$ and $\vec{h}$ define a set of inequalities that describe a safe set, within the state-space $\mathbb{R}^p$.
 %
@@ -423,7 +429,7 @@ as the union of $k$-reach sets over $n$ iterations.
 %
 Finally, set $\hat{X} =\bigcup_{n\geq 0} \tau^n(X_0,U)$ which we refer to as
 the reach space of the system generalises the previous notions over an unbounded
-time horizon (transitive closure).
+time horizon (transitive closure). \note{this sentence is grammatically incorrect.}
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{State observers}\label{sec:observer}
@@ -431,13 +437,13 @@ time horizon (transitive closure).
 
 In many models of real-world control systems, 
 the internal state $x$ cannot be directly measured,  
-but is rather inferred from its effect on the output $\vec{y}$ using an observer~~\cite{Astrom08}.  
+but is rather inferred from its effect on the output $\vec{y}$ using an observer~\cite{Astrom08}.  
 Essentially, a state observer is a new dynamical model (with variable denoted below as $\hat{\vec{x}}$) 
 that provides an estimate of the internal state $x$ of the given model, 
-from measurements of its inputs and outputs (See~\ref{sec:observable}). 
+from measurements of its inputs and outputs (see Appendix~\ref{sec:observable}). 
 
 A closed-loop digital control system with observer is shown in Figure~\ref{fig:observersystem}. 
-The linear feedback controller *bottom left) and is characterised by a gain matrix $\mat{K}_{\langle C \rangle}$ that influences the closed-loop dynamics, 
+The linear feedback controller (bottom left) is characterised by a gain matrix $\mat{K}_{\langle C \rangle}$ that influences the closed-loop dynamics, 
 and is driven by the observer state $\hat{\vec{x}}$.  
 Moreover, $\vec{y}_e=\hat{\vec{y}} - \vec{y}$ is the output estimation error,  
 %  defined as the difference between the real output $\vec{y}_k$ and estimated one $\hat{\vec{y}_k}$, 
@@ -647,7 +653,7 @@ See Appendix~\ref{sec:proofs}
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  Next, we are interested in studying models with parametric inputs, 
  which are described by $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)$, where $\forall t\geq 0, \vec{u}(t)=\vec{u}$. 
- For such models, a the state $\vec{x}_T$ is computed next.  
+ For such models, a state $\vec{x}_T$ is computed next.  
 \begin{theorem}
 The state of the model $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)$ at time $T$ given a parametric input $\vec{u}$ is 
  \begin{align}
@@ -671,7 +677,8 @@ See Appendix~\ref{sec:proofs}
 The final case we analyse is that of hybrid-time models, 
 where the plant dynamics evolve in continuous time while the feedback dynamics evolve in discrete time.  
 A new input value is produced only at every sample time but implemented over the continuous-time plant dynamics. 
-We assume that $\mat{A}$ is invertible, since otherwise the term $B_T$ below would have to be calculated by integration, which is impractical.
+We assume that $\mat{A}$ is invertible, since otherwise the term $B_T$ below would have to be calculated by integration, which is impractical. \note{can we say something like: for simplicity and
+without loss of generality, or is this assumption restrictive?}
 
 %
 \begin{theorem}
@@ -700,7 +707,7 @@ See Appendix~\ref{sec:proofs}
 
 A common occurrence in digital systems is that they do not necessarily satisfy real-time specifications, 
 in view of many errors introduced in the dynamics. 
-Errors might results from delays due to processing time,
+Errors might result from delays due to processing time,
 corruptions over communication lines in the control loop, 
 approximations due to digitalisation.  
 
