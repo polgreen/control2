@@ -628,7 +628,7 @@ We assume that the system has no inputs, so its dynamics are described by $\dot{
 0 & \cdots & 0  &e^{T\lambda_i} \\
 \end{array} \right ]
  \mat{S}^{-1}
- \label{eq:continuous_tube_dyn}\\
+ \label{eq:continuous_tube_dyn2}\\
  &\text{where } s_i=\left\{\begin{array}{cc}1&\quad gm(\lambda_i)>1\\0&\quad gm(\lambda_i)=1\end{array}\right.,\nonumber
  \end{align}
 $\lambda_i$ are the eigenvalues of $\mat{A}$, and $gm(\lambda_i)$ is the geometric multiplicity of $\lambda_i$.  
@@ -644,20 +644,19 @@ See Appendix~\ref{sec:proofs}
  \subsection{Accelerated dynamics for models with parametric inputs}\label{sec:real_discrete_param_inputs}
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  Next, we are interested in studying models with parametric inputs, 
- which are described by $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)$, where $\forall t\geq 0, \mat{B}\vec{u}(t)=\vec{u}$. 
- \note{you mean u(t) = u?}
+ which are described by $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)$, where $\forall t\geq 0, \vec{u}(t)=\vec{u}$. 
  For such models, a the state $\vec{x}_T$ is computed next.  
 \begin{theorem}
 The state of the model $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)$ at time $T$ given a parametric input $\vec{u}$ is 
  \begin{align}
  \vec{x}_T&=\vec{x}(t=T)=\mat{A}_T\vec{x}_0 + \mat{B}_T\vec{u} \text{ where } \mat{B}_T=\mat{A}^{-1}(\mat{I}-\mat{A}_T)\mat{B} 
  \end{align}
- where $\forall t \leq T,\ \vec{u}(t)=\vec{u}$, and $\mat{A}_T$ as in \eqref{eq:continuous_tube_dyn} \note{pls no fwd ref to the appendix- can you use (8)?}
+ where $\forall t \leq T,\ \vec{u}(t)=\vec{u}$, and $\mat{A}_T$ as in \eqref{eq:continuous_tube_dyn2}
  \footnote{when $\mat{A}$ is not invertible, we use $\left[\begin{array}{cc}\mat{A}_T&\mat{B}_T\\ 0&\mat{I}\end{array}\right]=e^{\left[\begin{array}{cc}\mat{A}&\mat{B}\\0&0\end{array}\right]}$}.
  \end{theorem}
  \begin{corollary}
  If $\mat{J}$ is diagonal and given a sampling time $T_d$ such that $A_d=e^{\mat{A} T_d}$, 
- then $\vec{x}_T=A_d^{\frac{T}{T_d}}\vec{x}+(\mat{I}-\mat{A}_d^{\frac{T}{T_d}}\mat{B}_d\vec{u}) \text{ with } T \in \mathbb{R}_0^+$ \note{here there must be an x that is actually a x0?} (where $\mat{A}_d^{\frac{T}{T_d}} = e^{log(\mat{A}_d) \frac{T}{T_d}} = e^{\mat{A} T}$) is the state of the system at time $T$.
+ then $\vec{x}_T=A_d^{\frac{T}{T_d}}\vec{x}_0+(\mat{I}-\mat{A}_d^{\frac{T}{T_d}}\mat{B}_d\vec{u}) \text{ with } T \in \mathbb{R}_0^+$ (where $\mat{A}_d^{\frac{T}{T_d}} = e^{log(\mat{A}_d) \frac{T}{T_d}} = e^{\mat{A} T}$) is the state of the system at time $T$.
  \end{corollary}
 \begin{proof}
 See Appendix~\ref{sec:proofs}
@@ -679,7 +678,7 @@ The expression
  \vec{x}_{T} &= (\mat{A}_{T-kT_s}-\mat{B}_{T-kT_s}\mat{K}) (\mat{A}_d-\mat{B}_d\mat{K})^k\vec{x}_0, 
  \label{eq:cyber_feedback}
  \end{align}
- with $\mat{A}_T$ as in \eqref{eq:continuous_tube_dyn} \note{no ref to appendix}, 
+ with $\mat{A}_T$ as in \eqref{eq:continuous_tube_dyn2}, 
  and where $\mat{B}_T=\mat{A}^{-1}(\mat{I}-\mat{A}_T)\mat{B}$, 
  and $\mat{A}_d, \mat{B}_d$ describe the discretized plant dynamics with sample time $T_s$, 
  is the state of the model 
@@ -877,8 +876,8 @@ requirement.
 In~this work, the safety property is expressed as:
 %
 \begin{align}
-  \phi_\mathit{safety}: = & \, \underline{y} \leq y_k \leq \overline{y}
-\equiv \forall k\geq 0 \, \mat{G}\vec{x}_k \leq \vec{h},
+\phi_\mathit{safety}^n: = & \forall k \in [0, ... , n], \mat{G}\vec{x}_k \leq \vec{h} \text{ and } \underline{y} \leq y_k \leq \overline{y}\nonumber\\
+\phi_\mathit{safety}: = & \phi_\mathit{safety}^\infty
 \label{eq:safetyspec}
 \end{align}
 %
@@ -887,16 +886,6 @@ a safe set, within the state-space $\mathbb{R}^p$.
 %
 Note that FWL effects are not explicitly captured here
 as they are implicit from Equation \ref{eq:observer_LTI_FWL_cf}.
-%% We assume that we do not want saturation in our
-%% system, hence the control loop has only one mode.
-%% First we must
-%% translate the safety specification into the statespace.  Replacing on the
-%% second part of equation \eqref{eq:observer_LTI_cf} we obtain
-%% %
-%% \begin{equation}
-%% \phi_{safety} := \underline{y}<\mat{C}\vec{x}_k<\overline{y}, \forall k \geq 0
-%% \label{eq:of_bounds}
-%% \end{equation}
 
 Furthermore, it is practically relevant to consider the 
 constraints $\phi_\mathit{input}$ on the input
@@ -1219,10 +1208,9 @@ $\mathbb{R}_{\langle C \rangle}$.
 %
 %For this creates an abstraction from the initial specification as follows:
 \begin{itemize}
-\item Select a sample time ($T_d$) that minimizes the magnitudes of the matrices used in both the
-implementation and the abstraction. This ensures that a small bit vector size is required for
+\item Select a sample time ($T_d$) that minimizes the magnitudes of the used matrices.
+This ensures that a small word length for the plant precision is required for
 the synthesis process.
-\note{do you mean small plant precision?}
 \item Select initial precisions $\mathbb{R}_{\langle P \rangle}$ and $\mathbb{R}_{\langle C \rangle}$
   %width for the bit vectors
   for representing the controller and the plant, respectively. These will be increased as needed.
@@ -1239,17 +1227,15 @@ described in Section~\ref{sec:cof_fwl_stability}.
 %% as $P_a(z) = z^p+\sum_{i=1}^p{(a_i-k_i)z^{p-i}}$. 
 %% \item Compute the characteristic polynomial of the matrix $({\mat{A}_d}_{\langle C \rangle}-\mat{L}_{\langle C \rangle}{\mat{C}_d}_{\langle C \rangle})$
 %% as $P_l(z) = z^p+\sum_{i=1}^p{(l_i-a_i)z^{p-i}}$. 
-\item Create a stability specification $\phi_{stability}$ based on the characteristic polynomials, perturbation
+\item Create a stability specification $\phi_{stability}$ based on the characteristic polynomials, FWL
 error ($\mat{A}_e$,$\mat{B}_e$), and response time %%(P_a,P_l,\overline{\lambda})$
 as described in Section~\ref{sec:transientspecification}.
-\note{could not find perturbation error anywhere}
 \item Calculate a set of initial bounds on $\mat{K}$, $\phi_\mathit{init}^{K}$,
 based on the input constraints.
 $(\phi_\mathit{init} \wedge \phi_\mathit{input} \wedge u_k=-\mat{K} \vec{x}_k)
 \Rightarrow \phi_\mathit{init}^{K}$.
 These bounds will be used by the {\sc synthesize} phase to reduce the size of the solution space. 
 \end{itemize}
-\note{$\phi_{safety}^k$ is undefined!!!}
 \paragraph{\underline{{\sc synthesize}}} generates a candidate controller matrix $\mat{K}$
 and observer matrix $\mat{L}$ that satisfy
 $\phi$ by invoking a SAT solver.
@@ -1274,12 +1260,12 @@ and reals for the plant).  %% If the verification fails, the candidate is
 %% fed to the {\sc Optimise} phase.
 If the candidate is valid, we feed
 it to the next {\sc verify} stage, {\sc Discrete Time}.
-\item {\sc Discrete Time} verifies $\phi_{safety}^{\infty}$ (unbounded time)
+\item {\sc Discrete Time} verifies $\phi_\mathit{safety}^{\infty}$ (unbounded time)
 using discrete time dynamics.  %% If the verification fails, we report the
 %% counterexample to {\sc Refine Abstraction} including details of initial states
 %% and iterations that failed the specification.
 \item {\sc Continuous Time} verifies that the
-transitions between sample times meet the specification $\phi_{safety}^{\infty}$.  %% If
+transitions between sample times meet the specification $\phi_\mathit{safety}^{\infty}$.  %% If
 %% a counterexample is found, information about the maximum distance of the
 %% violation to the specification boundary is fed to {\sc Sample}. 
 \end{itemize}
@@ -1290,14 +1276,12 @@ transitions between sample times meet the specification $\phi_{safety}^{\infty}$
 model abstraction as well as optimizes the current candidate
 solution.
 %
-%% When a counterexample is found, we add it to $\phi_{synth} = \phi_{synth} \wedge \phi_{safety}^k$, 
-%% where k is the iteration found for the counterexample.  
 First, the model abstraction must be refined in order to eliminate
 the newly received counterexample. For this purpose,
-we increase the time horizon $k$ for the
+we increase the time horizon $n$ for the
 safety specification so that it captures the violating iteration
 (for the given initial state) and adjust $\phi$ as 
-$\phi := \phi \wedge \phi_{safety}^k$.
+$\phi := \phi \wedge \phi_\mathit{safety}^n$.
 If the counterexample is provided by the {\sc continuous time} stage,
 then we must select a smaller suitable sample time to be used
 for the model discretization.
@@ -1323,7 +1307,7 @@ of the space and may cause some trajectories to go further). For this
 purpose, we take the largest eigenvalue and reduce it by a factor $f$
 that still satisfies the controller constraints ($f \overline{\lambda}
 \models \phi$).  The resulting observer and controller are then
-verified against the safety specification $\phi_{safety}$ and the
+verified against the safety specification $\phi_\mathit{safety}$ and the
 objective $e$ is measured as in Equation \eqref{eq:objective}.   If for
 each iteration $k$, the objective $e_k<e_{k-1}$, we continue to
 iterate until $e_k \leq 0$ (i.e. we found a safe controller),
@@ -1334,21 +1318,16 @@ with the largest angle ($max\{|tan^{-1}\left(\frac{im(\lambda)}{re(\lambda)}\rig
 and reduce its imaginary component only  ($re(\lambda) + f im(\lambda) \models \phi$).
 The process ends when no imaginary part can be further reduced.
 The resulting closed loop form converges faster than the original and has a
-smaller rotation, which facilitates meeting the safety specification $\phi_{safety}$.
+smaller rotation, which facilitates meeting the safety specification $\phi_\mathit{safety}$.
 %(we note that real convergent eigenvalues are trivially safe).
 
 %% We denote these sets of rules as $\phi_{objective}$ (which varies depending on which optimization stage we're in).
-%% At each optimizing iteration, the modeller updates $\phi_{static} = \phi_{static} \wedge \phi_{objective}$% \wedge \phi_{safety}^{k'} $ where $k' \geq k$.
+%% At each optimizing iteration, the modeller updates $\phi_{static} = \phi_{static} \wedge \phi_{objective}$% \wedge \phi_\mathit{safety}^{n'} $ where $n' \geq n$.
 
-If we cannot optimize the candidate  we signal the {\sc Abstract} phase to potentially 
-increase the precision and 
-%phase to
-%refine $\phi$ and
-request {\sc Synthesise} to produce a new
+If we cannot optimize the candidate  we signal the {\sc Abstract} phase to 
+use the updated $\phi_\mathit{synth}$ and request {\sc Synthesise} to produce a new
 candidate.  Otherwise the optimized candidate solution is given back to
 {\sc Verify Synthesis}.
-\note{when is the precision increased in abstract?}
-
 
 \begin{figure}[t!]
 {
@@ -1409,7 +1388,7 @@ candidate.  Otherwise the optimized candidate solution is given back to
     ([xshift=-5em]gp.north) edge node[align=center] {FAIL/\\$\mat{K}$,$\mat{L}$} ([xshift=-5em]synth.south)
    ([xshift=5em]model1.south) edge node[align=center,xshift=-.7cm] {$\mathbb{R}_{\langle P \rangle}$} 
 ([xshift=5em]synth.north)
-   node[align=left,yshift=-0.7cm,xshift=.5cm] {{$\phi$}\\{$\phi_{init}^K$}} %{$\phi_{safety}$}\\ 
+   node[align=left,yshift=-0.7cm,xshift=.5cm] {{$\phi$}\\{$\phi_{init}^K$}} %{$\phi_\mathit{safety}$}\\ 
    ([xshift=-5em]synth.north) edge node[align=center] {FAIL} ([xshift=-5em]model1.south);
    \path[->]
     ([xshift=-5em]verif1.north) edge node[align=center]  {C-ex} ([xshift=-5em]model2.south)
@@ -1526,7 +1505,7 @@ Our results show significant improvement in terms of scalability over standard C
 with an ability to explore complex properties, hence many synthesis tasks may be tackled with it. 
 In particular we note that our synthesis loop should be targeted at 
 models where the solution space is formed by connected spaces where
-optimization algorithms or localized synthesis are likely to be achieved more
+optimization algorithms or localized synthesis are likely to be more
 efficiently than global synthesis \note{such solution spaces are unlikely classifiable a priori}. 
 Finally our application to control synthesis provides a solid proof
 of concept for scalable optimal control synthesis of LTI systems. 
