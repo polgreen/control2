@@ -982,7 +982,7 @@ We will use $\phi_{stability}$ to refer to the combined stability and transient 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 In this section, we describe our technique for synthesizing safe
-digital feedback controllers using CEGIS~\cite{DBLP:conf/asplos/2006}. Broadly speaking, CEGIS
+digital feedback controllers using CEGIS. Broadly speaking, CEGIS
 denotes an iterative technique where each step performs inductive
 generalisation based on counterexamples provided by a verification
 engine. In each iteration, an inductive synthesiser produces a
@@ -994,7 +994,7 @@ passed back to the synthesis phase, where it is added to the set of
 inputs to be considered in the next loop iteration. Otherwise, the process terminates.
 
 %
-We enhance the standard CEGIS architecture %\cite{abate2017automated}
+We enhance the standard CEGIS architecture 
 with an abstraction-refinement approach and with optimization,
 resulting in the novel CEGIS-OR (CEGIS with Optimization and
 Refinement).  By using abstraction refinement, CEGIS-OR tackles the
@@ -1325,7 +1325,7 @@ smaller rotation, which facilitates meeting the safety specification $\phi_\math
 %% At each optimizing iteration, the modeller updates $\phi_{static} = \phi_{static} \wedge \phi_{objective}$% \wedge \phi_\mathit{safety}^{n'} $ where $n' \geq n$.
 
 If we cannot optimize the candidate  we signal the {\sc Abstract} phase to 
-use the updated $\phi_\mathit{synth}$ and request {\sc Synthesise} to produce a new
+use the updated $\phi$ and request {\sc Synthesise} to produce a new
 candidate.  Otherwise the optimized candidate solution is given back to
 {\sc Verify Synthesis}.
 
