@@ -732,7 +732,7 @@ which we extend to sets as $\norm{X}_1 = \sup \{\norm{\vec{x}}_1, \vec{x} \in X\
 \begin{proof}
 See Appendix~\ref{sec:proofs}
 \end{proof}
-This results allows to over-approximate the effects of the delay by introducing a disturbance signal $\nu_t=[-q_t, q_t]$ at the output.
+This result allows to over-approximate the effects of the delay by introducing a disturbance signal $\nu_t=[-q_t, q_t]$ at the output.
  %and use the dynamics of the system without delay.  
  This noise will be small when the delay is much smaller than the sampling time ($t_s\approx T_s$ and $\mat{B}_{t_d} \approx 0$).
 
@@ -742,9 +742,8 @@ This results allows to over-approximate the effects of the delay by introducing 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 In Figure \ref{fig:observersystem2} we have introduced sources of noise that are due to quantization effects.  
-These effects are caused by imprecise numerical representations of real numbers in the digital domain of the controller: 
-these play an important role in the synthesis of sound controllers. 
-The model has two sources of error are due to Finite Word Length (FWL) representations. 
+These effects are caused by imprecise numerical representations of real numbers in the digital domain of the controller and play an important role in the synthesis of sound controllers. 
+The model has two sources of error due to Finite Word Length (FWL) representations. 
 The first is the numerical error introduced by the fixed-point numbers employed to model the plant, 
 i.e., to represent the plant dynamics $A_d$, $B_d$, $C_d$, $D_d$, $x_k$ and $y_k$. 
 The second is the quantization error introduced by the digital controller, 
@@ -770,6 +769,9 @@ in our model will be carried out in the domain $\mathbb{R}_{\langle P \rangle}$.
 Given ${\langle M,F \rangle}$, 
 we denote as $\mathcal{F}_{\langle M,F \rangle} : \mathbb{R} \rightarrow \mathbb{R}_{\langle M,F \rangle}$ the corresponding truncation function. 
 
+\note{Can we just mention what each $\nu_1$, $\nu_2$, $\nu_1'$, $\nu_2'$ and $\nu_t$ in Figure~\ref{fig:observersystem} denotes -- just in plain english? In sec 3.3 we say that they will be explained later but they never are.}   
+
+
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \section{Properties of a controllable model with observer}\label{sec:cof_verification}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -786,17 +788,19 @@ Stability denotes the property of a model to unfold staying within a bounded set
 In this paper, we are interested in asymptotic stability, where the model is further expected to converge to the steady state value (i.e., the equilibrium point).   
 %
 We specify model stability via Jury's criterion~\cite{fadali}\footnote{More details on Jury's criterion is in Appendix~\ref{sec:closed_stability}.}, 
-which boils down to a requirement expressed as an algebraic formula - a SAT solver will manipulate its coefficients. 
+which boils down to a requirement expressed as an algebraic formula - a SAT solver will manipulate the coefficients of the model's characteristic polynomial. 
 %
-We transform the model into a representation that contains the coefficients of its characteristic polynomial, which are used in Jury's criterion, 
-that are expressed as sums of controller and plant values: 
-this representation has no multiplications, which are expensive for a SAT solver.   
+To facilitate the use of Jury's criterion, we transform the model into
+a representation that contains the coefficients of its characteristic
+polynomial expressed as sums of controller and plant values: this
+representation has no multiplications, which are expensive for a SAT
+solver.
 %
 Such a representation is known as 
 % is called Controllable and Observable 
 ``canonical form''~\cite{Astrom08}\footnote{See parts~\ref{sec:reachable} and~\ref{sec:observable} in the Appendix.} 
 and is dynamically equivalent to the given model.  
-In this Section we explore the implications of using this canonical form, 
+In this section we explore the implications of using this canonical form, 
 alongside the use of a FWL representation. 
 
 \medskip
@@ -878,11 +882,10 @@ P_r'=\sum_{j=0}^p c_j\overline{\lambda'}^{p-j}s^j, \text{ where }  \overline{\la
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{Safety of a digitally observed system}\label{sec:cof_safety}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-A safety specification gives raise to a requirement on the
-states of the model, such that the controller
-must ensure that the state never violates the
-requirement.
-In~this work, the safety property is expressed as:
+A safety specification gives raise to a requirement on the states of
+the model. Consequently, the controller must ensure that the state
+never violates the requirement.  In~this work, the safety property is
+expressed as:
 %
 \begin{align}
 \phi_\mathit{safety}^n: = & \forall k \in [0, ... , n], \mat{G}\vec{x}_k \leq \vec{h} \text{ and } \underline{y} \leq y_k \leq \overline{y}\nonumber\\
@@ -980,6 +983,7 @@ P'=\prod_{i=0}^p (s-\lambda_i')=\prod_{i=0}^p \left(s-\frac{\lambda_i}{\overline
 where all members are known. Thus, we can ensure that the settling time is smaller than
 a certain magnitude by ensuring that 
 the eigenvalues are smaller too (which we can do with Jury's criterion).
+
 We will use $\phi_{stability}$ to refer to the combined stability and transient response specifications.
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
