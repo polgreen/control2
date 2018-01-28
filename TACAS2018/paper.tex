@@ -216,6 +216,7 @@ In summary, this paper makes the following original contributions.
  combines both. 
 \end{enumerate}
 
+\note{something like this (also, we should probably still remove some of the obvious references where they can find material themselves): }
 Note that, while we have several reference to the appendix throughout
 the paper, the paper can be read on its own and these references are
 only meant as an aid for the reader less familiar with control theory or
@@ -443,11 +444,13 @@ that provides an estimate of the internal state $x$ of the given model,
 from measurements of its inputs and outputs (see Appendix~\ref{sec:observable}). 
 
 A closed-loop digital control system with observer is shown in Figure~\ref{fig:observersystem}. 
-The linear feedback controller (bottom left) is characterised by a gain matrix $\mat{K}_{\langle C \rangle}$ that influences the closed-loop dynamics, 
+The linear feedback controller (bottom left) is characterized by a gain matrix $\mat{K}_{\langle C \rangle}$ that influences the closed-loop dynamics, 
 and is driven by the observer state $\hat{\vec{x}}$.  
 Moreover, $\vec{y}_e=\hat{\vec{y}} - \vec{y}$ is the output estimation error,  
 %  defined as the difference between the real output $\vec{y}_k$ and estimated one $\hat{\vec{y}_k}$, 
- which is amplified by a gain matrix $\mat{L}_{\langle C \rangle}$. 
+which is amplified by a gain matrix $\mat{L}_{\langle C \rangle}$.
+Note that the controller and the observer are implemented in a discrete domain 
+(quantities within this domain are identified by the index $\langle C \rangle$), whereas the plant is continuous.
 Figure~\ref{fig:observersystem} also contains references to $\nu_1$, $\nu_2$, $\nu_1'$, $\nu_2'$ and $\nu_t$, which
   denote noise terms that will be explained later.   
 %%   With respect to noises (denoted by $\nu$), 
@@ -599,7 +602,9 @@ Figure~\ref{fig:observersystem} also contains references to $\nu_1$, $\nu_2$, $\
   \path[->] (Kd.north) edge (circle.south);
  \end{tikzpicture}
 }
- \caption{Closed-loop digital control system with an observer, where the controller and the observer (bottom part) are implemented in a discrete domain (quantities within this domain are identified by the index $\langle C \rangle$), whereas the plant is continuous \label{fig:observersystem2}}
+\caption{Closed-loop digital control system with an observer, where the controller and the observer (bottom part) are implemented in a discrete domain,
+  %(quantities within this domain are identified by the index $\langle C \rangle$),
+  whereas the plant is continuous. \label{fig:observersystem2}}
 \end{figure*}
 
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
