@@ -1184,8 +1184,8 @@ $\mathbb{R}_{\langle C \rangle}$.
 %
 %For this creates an abstraction from the initial specification as follows:
 \begin{itemize}
-\item Select a sample time ($T_d$) that minimizes the magnitudes of the matrices used in both the
-implementation and the abstraction. This ensures that a small word length for the plant precision is required for
+\item Select a sample time ($T_d$) that minimizes the magnitudes of the used matrices.
+This ensures that a small word length for the plant precision is required for
 the synthesis process.
 \item Select initial precisions $\mathbb{R}_{\langle P \rangle}$ and $\mathbb{R}_{\langle C \rangle}$
   %width for the bit vectors
@@ -1300,15 +1300,10 @@ smaller rotation, which facilitates meeting the safety specification $\phi_\math
 %% We denote these sets of rules as $\phi_{objective}$ (which varies depending on which optimization stage we're in).
 %% At each optimizing iteration, the modeller updates $\phi_{static} = \phi_{static} \wedge \phi_{objective}$% \wedge \phi_\mathit{safety}^{n'} $ where $n' \geq n$.
 
-If we cannot optimize the candidate  we signal the {\sc Abstract} phase to potentially 
-increase the precision and 
-%phase to
-%refine $\phi$ and
-request {\sc Synthesise} to produce a new
+If we cannot optimize the candidate  we signal the {\sc Abstract} phase to 
+use the updated $\phi_\mathit{synth}$ and request {\sc Synthesise} to produce a new
 candidate.  Otherwise the optimized candidate solution is given back to
 {\sc Verify Synthesis}.
-\note{when is the precision increased in abstract?}
-
 
 \begin{figure}[t!]
 {
@@ -1486,7 +1481,7 @@ Our results show significant improvement in terms of scalability over standard C
 with an ability to explore complex properties, hence many synthesis tasks may be tackled with it. 
 In particular we note that our synthesis loop should be targeted at 
 models where the solution space is formed by connected spaces where
-optimization algorithms or localized synthesis are likely to be achieved more
+optimization algorithms or localized synthesis are likely to be more
 efficiently than global synthesis \note{such solution spaces are unlikely classifiable a priori}. 
 Finally our application to control synthesis provides a solid proof
 of concept for scalable optimal control synthesis of LTI systems. 
