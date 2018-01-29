@@ -69,6 +69,9 @@ signed int check_stability_closedloop(vectort a)
 #endif
   for(i = 0 ; i < _DIMENSION; i++) 
   { 
+    // The first check ensures there are no negative roots which have no meaning in the continuous space
+    if ((i&1)==1) verify_assume(a[i]>0);
+    else          verify_assume(a[i]<0);
     m[0][i+1]=a[i];
     sum += a[i];
 #ifndef __CPROVER
@@ -108,7 +111,8 @@ signed int check_stability_closedloop(vectort a)
     return 0;
   }
 #endif
-  sum = _zero;
+// If the negative root restriction is removed, this should be added
+/*  sum = _zero;
   for(i = 0 ; i < n; i++)
   {
     if (((n -i)&1)!=0) sum+=m[0][i];
@@ -121,6 +125,7 @@ signed int check_stability_closedloop(vectort a)
   printf("sum_o-sum_e=%f>0\n",sum);
   if (!(sum > _sum_error)) return 0;
 #endif
+*/
   columns--;
   control_floatt error=_transform_error;
   control_floatt mag=1;

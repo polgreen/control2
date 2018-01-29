@@ -100,19 +100,10 @@ int main()
 #endif
 
 #ifdef _USE_OBSERVER
-  control_floatt eigenCap=1.0;
-  eigenCap-=observer_control_error;
-  control_floatt final_speed_factor=observer_speed_factor;
-  final_speed_factor/=eigenCap;
-  result=check_restricted_stability(observer_plant_cbmc,final_speed_factor);
-  
+  result=check_restricted_stability(observer_plant_cbmc,observer_speed_factor);
   if (result>0)
   {
-    eigenCap=1.0;
-    eigenCap-=observer_input_error;
-    final_speed_factor=speed_factor;
-    final_speed_factor/=eigenCap;
-    result=check_restricted_stability(plant_cbmc,final_speed_factor);
+    result=check_restricted_stability(plant_cbmc,speed_factor);
   }
 #else
   result=check_restricted_stability(plant_cbmc,speed_factor);
