@@ -998,7 +998,7 @@ generalisation based on counterexamples provided by a verification
 engine. In each iteration, an inductive synthesiser produces a
 candidate solution that obeys the specification for a limited number
 of inputs. Subsequently, this candidate is passed to a verification
-oracle that checks it against the specification for all possible
+phase that checks it against the specification for all possible
 inputs. If the verification fails, then the witness counterexample is
 passed back to the synthesis phase, where it is added to the set of
 inputs to be considered in the next loop iteration. Otherwise, the process terminates.
@@ -1009,7 +1009,9 @@ abstraction-refinement approach and with optimization, resulting in
 the novel CEGIS-OR (CEGIS with Optimization and Refinement).  By using
 abstraction refinement, CEGIS-OR tackles the scalability issues
 inherent in program synthesis as it allows us to handle complex
-systems, which we coarsely abstract and only refine on demand.
+systems, which we coarsely abstract and only refine on demand --
+refinements are triggered by counterexamples returned by the
+verification phase.
 %potentially coarse abstractions of the given model that are only
 %refined on demand.
 Since the use of coarse abstractions may result in
