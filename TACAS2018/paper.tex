@@ -766,7 +766,8 @@ We will use the domain $\mathbb{R}_{\langle C \rangle} \text{ where } \langle C 
 to represent the fixed point precision of the controller, and 
 $\mathbb{R}_{\langle P \rangle} \supseteq \mathbb{R}_{\langle C \rangle}$
 to represent the domain of a digital model of the dynamics of a real plant when
-evaluated by a verification tool. \note{refer back to notation in Figure 1.}
+evaluated by a verification tool.  Elements in this domain are marked with an
+underscore~${\langle C \rangle}$ (see Figure \ref{fig:observersystem2}).
 Thus, any mathematical operation within the digital controller is executed in the
 domain $\mathbb{R}_{\langle C \rangle}$, and all other calculations
 in our model will be carried out in the domain $\mathbb{R}_{\langle P \rangle}$.
@@ -1455,7 +1456,7 @@ In the verification module, we have used the tool Axelerator~\cite{} .
 3  & Inverted Pendulum & 4 & 100 &   9.7\,s & \xmark &\xmark () & 12.0\,s  &  18.1\,s &  \xmark ()\\
 4  & Magnetic Pointer  & 2  & 100 & 5.7\,s & 229.9\,s & \xmark (38) & 3.9\,s  &  11.4\,s &  \xmark (5) \\
 %5 & Magnetic Suspension          & 2 & 1 & 12.2\,s& 0.6\,s & & & N/A  &   N/A &   N/A\\
-5  & Pendulum          & 2 & 100 & 14.0\,s & 2.0\,s & \xmark ()&0.7\,s  &   6.3\,s & \xmark  (3)\\
+5  & Pendulum          & 2 & 100 & 14.0\,s & 2.0\,s & \xmark ()&0.4\,s  &   4.9\,s & \xmark  (6)\\
 6  & Suspension        & 4 & 100 & 73.7\,s& \xmark & \xmark ()&24.0\,s  &   46.1\,s & \xmark ()\\
 7  & Tape Driver       & 3 & 100 & 10.1\,s& 140.3\,s & \xmark ()&2.6\,s  &   10.5\,s & \xmark ()\\
 %9 & Satellite          & 2 & 1 & 9.4\,s& 0.7\,s & & & N/A  &   N/A &   N/A\\
@@ -1472,22 +1473,16 @@ Using the described technique we managed to synthesize controllers for X benchma
 %and the maximum observed synthesis time was under 10 minutes for a $4^{th}$ order system ($8^{th}$ order considering the observer).
 We consider these times short enough to be of practical use to control engineers.
 There are cases for which the system fails to find a controller.  We use a
-relatively short timeout, so it is possible longer timeouts would result in a
+relatively short timeout, so it is possible that longer timeouts would result in a
 valid solution. However, as stated before, the solution is sound but incomplete,
 so it is impossible to tell if a solution exists in these cases. 
 
 In order to show the improvements due to our optimization-enhanced CEGIS, we
 compared our approach against a standard CEGIS procedure.  For the majority of
 our benchmarks, we observe that our approach is significantly faster than
-standard CEGIS. We further note the cases where standard CEGIS times out, which
-represent an improvement of several orders of magnitude for our optimization
-approach.  The magnitude of the improvement is largely dependent on the shape
-of the problem. 
-
-The smaller benchmarks (order=2) tend to show little or no improvement when we
-apply CEGIS-OR.  The reason is that for these benchmarks the synthesis time using
-Solution Generalization is already small, and the overhead of the abstraction is
-often equal or larger than the gain obtained.
+standard CEGIS. We further note that the number of times standard CEGIS times
+out is much larger than CEGIS-OR which results in more found solutions.
+The magnitude of the improvement is however, largely dependent on the shape of the problem. 
 
 More interesting cases appear when we increase the order, showing initially that
 benchmarks that timed-out using standard CEGIS are now running in under 2
