@@ -354,14 +354,15 @@ $\mat{A}$ and $\mat{B}$ are matrices that fully characterize the dynamics of the
 and $x(0)$ is the initial state. 
 
 We are interested in control systems with an output $\vec{y}$ that is a linear combination of its states and inputs
-\footnote{This restricts the observability of the state-space $\vec{x}$, since we can only measure $\vec{y}$}:
+\footnote{This restricts the observability of the state-space $\vec{x}$, since we can only measure $\vec{y}$. 
+\note{what does this mean? do you assume observability? don't you need that if you later compute the observable canonical form?}}:
 %, which may restrict the observability of the state-space from the output space.
 \begin{equation}
 \label{eq:ode2}  
 \vec{y}(t)=\mat{C}\vec{x}(t)+\mat{D}\vec{u}(t).
 \end{equation}
 %
-%In this work, 
+\note{what is the dimension of C, D?}
 Equations~\eqref{eq:ode1}-\eqref{eq:ode2} are soundly discretized in
 time~\cite{middleton1990digital,van1978computing} at constant intervals, whose 
 duration we refer to as the sample time (cf. Appendix~\ref{sec:continuous_LTI}), 
@@ -627,6 +628,7 @@ We assume that the system has no inputs, so its dynamics are described by $\dot{
  
  \begin{theorem}
  The solution to the differential equation $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$, where $\mat{A}=\mat{S}\mat{J}\mat{S}^{-1}$,
+ \note{matrices S are not defined}
  evaluated at time $T$ is
  \begin{align}
  \vec{x}_T&=\vec{x}(t=T)=\mat{A}_{T}\vec{x} (0)\\
@@ -642,10 +644,12 @@ We assume that the system has no inputs, so its dynamics are described by $\dot{
  &\text{where } s_i=\left\{\begin{array}{cc}1&\quad gm(\lambda_i)>1\\0&\quad gm(\lambda_i)=1\end{array}\right.,\nonumber
  \end{align}
 $\lambda_i$ are the eigenvalues of $\mat{A}$, and $gm(\lambda_i)$ is the geometric multiplicity of $\lambda_i$.  
-%$\vec{x}_T$ is the state of the system $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$ at time t=T.
+%$\vec{x}_T$ is the state of the system $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$ at time t=T. 
+\note{so: the statement of this theorem is a standard result in the control literature - why is this a new theorem? we do not prove anything new here.}
  \end{theorem}
  \begin{corollary}
- If $\mat{J}$ is diagonal and there exists a discrete dynamics matrix for a sampling time $T_d$ such that $A_d=e^{\mat{A} T_d}$, then $\vec{x}_T=A_d^{\frac{T}{T_d}}\vec{x} \text{ with } T \in \mathbb{R}^+_0$ is the state of the system at time $t=T$.
+ If $\mat{J}$ is diagonal and there exists a discrete dynamics matrix for a sampling time $T_d$ such that $A_d=e^{\mat{A} T_d}$, then $\vec{x}_T=A_d^{\frac{T}{T_d}}\vec{x} \text{ with } T \in \mathbb{R}^+_0$ is the state of the system at time $t=T$. \note{there needs to be an x0}
+ \note{so I assume this is the new contribution?}
  \end{corollary}
 \begin{proof}
 See Appendix~\ref{sec:proofs}
