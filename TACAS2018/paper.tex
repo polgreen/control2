@@ -353,7 +353,8 @@ where $t \in \mathbb R_0^+$ denotes continuous time,
 $\mat{A}$ and $\mat{B}$ are matrices that fully characterize the dynamics of the continuous plant, 
 and $x(0)$ is the initial state. 
 
-We are interested in control systems with an output $\vec{y}$ that is a linear combination of its states and inputs:
+We are interested in control systems with an output $\vec{y}$ that is a linear combination of its states and inputs
+\footnote{This restricts the observability of the state-space $\vec{x}$, since we can only measure $\vec{y}$}:
 %, which may restrict the observability of the state-space from the output space.
 \begin{equation}
 \label{eq:ode2}  
@@ -361,7 +362,6 @@ We are interested in control systems with an output $\vec{y}$ that is a linear c
 \end{equation}
 %
 %In this work, 
-\note{Observability requirement? Used later.}
 Equations~\eqref{eq:ode1}-\eqref{eq:ode2} are soundly discretized in
 time~\cite{middleton1990digital,van1978computing} at constant intervals, whose 
 duration we refer to as the sample time (cf. Appendix~\ref{sec:continuous_LTI}), 
@@ -420,7 +420,7 @@ $X_0$ via $\tau$ in $n$ steps.
 \} \;. 
 \end{align}
 %
-Since the transformations $\mat{A}$ and $\mat{B}$ are linear and vector sums preserve convexity \note{ref}, 
+Since the transformations $\mat{A}$ and $\mat{B}$ are linear and linear transformations preserve convexity~\cite{boyd2004convex}, 
 the sets $X_n = \tau^n(X_0,U)$ are also convex.  
 We define the \emph{$n$-reach tube} as 
 \begin{equation}\label{equ:reachtube}
@@ -784,7 +784,7 @@ the theory related to observer design is in Appendix \ref{sec:control_theory}.}
 Stability denotes the property of a model to unfold staying within a bounded set around an equilibrium point. 
 In this paper, we are interested in asymptotic stability, where the model is further expected to converge to the steady state value (i.e., the equilibrium point).   
 %
-We specify model stability via Jury's criterion~\cite{fadali}\footnote{More details on Jury's criterion is in Appendix~\ref{sec:closed_stability}.}, 
+We specify model stability via Jury's criterion~\cite{fadali},%\footnote{More details on Jury's criterion is in Appendix~\ref{sec:closed_stability}.}, 
 which boils down to a requirement expressed as an algebraic formula - a SAT solver will manipulate the coefficients of the model's characteristic polynomial. 
 %
 To facilitate the use of Jury's criterion, we transform the model into
@@ -795,7 +795,7 @@ solver.
 %
 Such a representation is known as 
 % is called Controllable and Observable 
-``canonical form''~\cite{Astrom08}\footnote{See parts~\ref{sec:reachable} and~\ref{sec:observable} in the Appendix.} 
+``canonical form''~\cite{Astrom08} %\footnote{See parts~\ref{sec:reachable} and~\ref{sec:observable} in the Appendix.} 
 and is dynamically equivalent to the given model.  
 In this section we explore the implications of using this canonical form, 
 alongside the use of a FWL representation. 
@@ -843,7 +843,7 @@ and we have introduced the following terms:
 \end{align*}
 }
 \note{it is very hard if not impossible to understand these operations without having thoroughly gone through the whole Appendix, which is unlikely for a reviewer to do.}
-Here $\nu_1$ and $\nu_2$ are the quantization noises introduced by the ADC and the DAC, $\nu_t$ is the noise introduced by the delay, and $\nu_1'$ and $\nu_2'$ are quantization noises caused by roundoffs in the FWL operations (see Section~\ref{sec:quantization-noise}).
+Here $\nu_1$ and $\nu_2$ are the quantization noises introduced by the ADC and the DAC, $\nu_t$ is the noise introduced by the delay, and $\nu_1'$ and $\nu_2'$ are quantization noises caused by roundoffs in the FWL operations \footnote{see Appendix~\ref{sec:quantization-noise}}.
 
 \note{the remainder of this section is not self contained and totally unclear.}
 
@@ -1446,14 +1446,14 @@ In the verification module, we have used the tool Axelerator~\cite{} .
 \hline
 \# & \multicolumn{1}{|c|}{Benchmark} & \multicolumn{1}{|c|}{order} & \multicolumn{1}{|c|}{Number of} & \multicolumn{3}{|c|}{CEGIS} & \multicolumn{3}{|c|}{CEGIS-OR} \\
    &                                 & & \multicolumn{1}{|c|}{benchmarks}  & \multicolumn{1}{|c|}{Min} & \multicolumn{1}{|c|}{Median} & \multicolumn{1}{|c|}{Max} & \multicolumn{1}{|c|}{Min} & \multicolumn{1}{|c|}{Median} & \multicolumn{1}{|c|}{Max}\\\hline
-1  & DC Motor          & 2 & 100 & 9.5\,s & 1.9\,s& \xmark& 1.2\,s &   3.1\,s &   14.1\,s\\
-2  & Helicopter        & 3  & 100 & \xmark & \xmark & \xmark & 6.7\,s  &   18.9\,s & \xmark\\
-3  & Inverted Pendulum & 4 & 100 &   9.7\,s & \xmark &\xmark & 12.0\,s  &  18.1\,s &  414.0\,s\\
-4  & Magnetic Pointer  & 2  & 100 & \xmark & \xmark & \xmark& 4.6\,s  &  39.0\,s &  \xmark \\
+1  & DC Motor          & 2 & 100 & 1.3\,s & 26.9\,s& \xmark (22)& 1.1\,s &   3.8\,s &   \xmark (2)\\
+2  & Helicopter        & 3  & 100 & 57.2\,s & \xmark (54) & \xmark (54) & 7.1\,s  &   18.0\,s & \xmark (9)\\
+3  & Inverted Pendulum & 4 & 100 &   9.7\,s & \xmark &\xmark () & 12.0\,s  &  18.1\,s &  \xmark ()\\
+4  & Magnetic Pointer  & 2  & 100 & 5.7\,s & 229.9\,s & \xmark (38) & 3.9\,s  &  11.4\,s &  \xmark (5) \\
 %5 & Magnetic Suspension          & 2 & 1 & 12.2\,s& 0.6\,s & & & N/A  &   N/A &   N/A\\
-5  & Pendulum          & 2 & 100 & 14.0\,s & 2.0\,s & \xmark&1.2\,s  &   1.5\,s &   4.3\,s\\
-6  & Suspension        & 4 & 100 & 73.7\,s& \xmark & \xmark &24.0\,s  &   46.1\,s &  557.9\,s\\
-7  & Tape Driver       & 3 & 100 & 10.1\,s& 140.3\,s & \xmark &2.6\,s  &   10.5\,s &   104.6\,s\\
+5  & Pendulum          & 2 & 100 & 14.0\,s & 2.0\,s & \xmark ()&0.7\,s  &   6.3\,s & \xmark  (3)\\
+6  & Suspension        & 4 & 100 & 73.7\,s& \xmark & \xmark ()&24.0\,s  &   46.1\,s & \xmark ()\\
+7  & Tape Driver       & 3 & 100 & 10.1\,s& 140.3\,s & \xmark ()&2.6\,s  &   10.5\,s & \xmark ()\\
 %9 & Satellite          & 2 & 1 & 9.4\,s& 0.7\,s & & & N/A  &   N/A &   N/A\\
 %   & Total                 &   & 2002 & & & & & 1.2\,s & 16.1\,s & 876.8\,s\\
 \hline
@@ -1461,7 +1461,7 @@ In the verification module, we have used the tool Axelerator~\cite{} .
 \end{tabular}
 \vspace{0.05in}
 \caption{\label{tab:cegis_results}
-Experimental results. Minimum, Maximum and Median times for standard CEGIS vs CEGIS-OR on multiple benchmarks. \xmark~indicates failure to find a controller, either due to timeout or insufficient numeric precision (bitvectors are limited to 64bits).}
+Experimental results. Minimum, Maximum and Median times for standard CEGIS vs CEGIS-OR on multiple benchmarks. \xmark~indicates timeout, with the number of benchmarks that timed out in parenthesis.}
 \end{table}
 
 Using the described technique we managed to synthesize controllers for X benchmarks, with a median synthesis time of $18.8$ seconds.
