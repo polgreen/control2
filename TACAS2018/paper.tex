@@ -363,23 +363,28 @@ We are interested in control systems with an output $\vec{y}$ that is a linear c
 %
 Equations~\eqref{eq:ode1}-\eqref{eq:ode2} are soundly discretized in
 time~\cite{middleton1990digital,van1978computing} at constant intervals, whose 
-duration we refer to as the sample time (cf. Appendix~\ref{sec:continuous_LTI}), 
+duration we refer to as the sample time $T_s$, 
 into the difference equation 
 \begin{align}
 \label{eq:plant}
-\left\{ 
-\begin{array}{l}
-\vec{x}_{k+1} = \mat{A}_d \vec{x}_k+ \mat{B}_d \vec{u}_k\\
-\vec{y}_{k} = \mat{C}_d \vec{x}_k + \mat{D}_d \vec{u}_k, 
+\left\{
+\begin{array}{rl}
+\vec{x}_{k+1} =& \mat{A}_d \vec{x}_k+ \mat{B}_d \vec{u}_k\\
+\vec{y}_{k} =& \mat{C} \vec{x}_k + \mat{D} \vec{u}_k, 
 \end{array}
 \right.
+\text{ where }
+\left\{
+\begin{array}{l}
+\mat{A}_d=e^\mat{A}\\
+\mat{B}_d = \int_{t = 0}^{T_s} e^{\mat{A} t} dt\ \mat{B}
+\end{array}
+\right.,
 \end{align} 
 %
-where $k \in \mathbb N$ is a discrete counter and $\vec{x}_{0}=\vec{x}(0)$ is the initial state. 
-Matrices $\mat{A}_d$, $\mat{B}_d$, $\mat{C}_d$ and $\mat{D}_d$ are equal-sized to $\mat{A}$, $\mat{B}$, $\mat{C}$ and $\mat{D}$ respectively,  
-and charactirize the discretized plant dynamics. 
-%, whereas the latter denote the continuous evolution.  
-In this work we raise the standard assumption that $\mat{D}_d=\mat{D}=\mat{0}$ \cite{Astrom08}.  
+%where $\mat{A}_d=e^\mat{A}$, $\mat{B}_d = \int_{t = 0}^{T_s} e^{\mat{A} t} dt\ \mat{B}$,
+$k \in \mathbb N$ is a discrete counter and $\vec{x}_{0}=\vec{x}(0)$ is the initial state. 
+In this work we raise the standard assumption that $\mat{D}=\mat{0}$ \cite{Astrom08}.  
 %Also, since $\vec{y}$ can be directly derived from $\vec{x}$, we will omit discussing it in the following unless strictly necessary.
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -525,7 +530,7 @@ $\nu_2'$ (rounding of the observer state), and $\nu_t$ (output delay of the digi
       \coordinate (xdsouth) at ([xshift=1.3cm]delay);
       \coordinate (fbsouth) at ([xshift=1.3cm,yshift=-3cm]delay);
       \node[draw=none] (xdp) at ([xshift=1cm,yshift=.15cm]delay)  {$\hat{\vec{x}}_k$};   
-      \node[rectangle,draw,minimum width=1cm,minimum height=1cm] (Cd) at ([xshift=2.7cm]observer.center)  {\sc ${\mat{C}_d}_{\langle C \rangle}$};
+      \node[rectangle,draw,minimum width=1cm,minimum height=1cm] (Cd) at ([xshift=2.7cm]observer.center)  {\sc $\mat{C}_{\langle C \rangle}$};
       \node[draw=none] (y) at ([xshift=.4cm,yshift=.8cm]Cd)  {$\hat{\vec{y}}_k$};   
       \node[rectangle,draw,minimum width=1cm,minimum height=1cm] (Ad) at ([xshift=.5cm,yshift=-1.5cm]observer.center)  {\sc ${\mat{A}_d}_{\langle C \rangle}$};
       \coordinate (adeast) at ([xshift=1.3cm]Ad);
@@ -782,8 +787,8 @@ the theory related to observer design is in Appendix \ref{sec:control_theory}.}
 Stability denotes the property of a model to unfold staying within a bounded set around an equilibrium point. 
 In this paper, we are interested in asymptotic stability, where the model is further expected to converge to the steady state value (i.e., the equilibrium point).   
 %
-We specify model stability via Jury's criterion~\cite{fadali},%\footnote{More details on Jury's criterion is in Appendix~\ref{sec:closed_stability}.}, 
-which boils down to a requirement expressed as an algebraic formula - a SAT solver will manipulate the coefficients of the model's characteristic polynomial. 
+We specify model stability via Jury's criterion~\cite{fadali}, %\footnote{More details on Jury's criterion is in Appendix~\ref{sec:closed_stability}.}, 
+ which boils down to a requirement expressed as an algebraic formula - a SAT solver will manipulate the coefficients of the model's characteristic polynomial. 
 %
 To facilitate the use of Jury's criterion, we transform the model into
 a representation that contains the coefficients of its characteristic
@@ -804,7 +809,7 @@ We assume that the domain of the observer model is further discretised,
 i.e., the domain for both the controller and the observer is $\mathbb{R}_{\langle C \rangle}$.
 This means that we have 
 ${\mat{A}_d}_{\langle C
-\rangle},{\mat{B}_d}_{\langle C \rangle},{\mat{C}_d}_{\langle C \rangle},
+\rangle},{\mat{B}_d}_{\langle C \rangle},\mat{C}_{\langle C \rangle},
 \mat{K}_{\langle C \rangle}, \mat{L}_{\langle C \rangle} \in
 \mathbb{R}_{\langle C \rangle}^*$, where $*$ represents the appropriate
 dimension for each matrix.
@@ -816,23 +821,23 @@ The canonical form of the resulting model is expressed by:
 =& \left [\begin{array}{cc}\mat{A}_{c}+\mat{B}_{e}&\mat{B}_{o}\\ \mat{A}_{e}&\mat{A}_{o}\end{array}\right]
 \left [\begin{array}{c}\vec{x}'\\ \vec{x}_e' \end{array}\right]_k
 +\mat{B}'\left [\begin{array}{c} \vec{r}_k + \nu_2+\nu_2'\\ \nu_1+\nu_1'+\nu_t\end{array}\right]%\nonumber\\
-%\vec{y}_k= &\mat{C}_d\mat{T}_c\vec{x}_k', 
+%\vec{y}_k= &\mat{C}\mat{T}_c\vec{x}_k', 
 % + \mat{D}_{d}\vec{u}_k
 \label{eq:observer_LTI_FWL_cf}
 \end{align}
 where $\vec{x}'$ and $\vec{x}_e'$ are the state of the system and the error of the observer evaluated in the transformed domain, 
 $\mat{A}_{c}$ the closed loop dynamics of the controller, $\mat{A}_{o}$ the closed loop dynamics of the observer, $\mat{B}_{o}$ the feedback gain, 
- $\mat{B}'$ the noise sensitivity, and $\mat{A}_{e}$ and $\mat{B}_{e}$ the error introduced on these matrices by the FWL representation.
+ $\mat{B}'$ the noise sensitivity, and $\mat{A}_{e}$ and $\mat{B}_{e}$ the error caused by the FWL representation.
 %and we have introduced the following terms: 
 %{\setlength{\abovedisplayskip}{2pt}
 %\setlength{\belowdisplayskip}{2pt}
 %\begin{align*}
 %\mat{A}_{c}=&\mat{T}_c\left(\mat{A}_d-\mat{B}_d\mat{K}_{\langle C \rangle}\right)\mat{T}_c^{-1}&
-%\mat{A}_{o}=&\mat{T}_o\left({\mat{A}_d}_{\langle C \rangle}-\mat{L}_{\langle C \rangle}{\mat{C}_d}_{\langle C \rangle}\right)\mat{T}_o^{-1}\\
+%\mat{A}_{o}=&\mat{T}_o\left({\mat{A}_d}_{\langle C \rangle}-\mat{L}_{\langle C \rangle}\mat{C}_{\langle C \rangle}\right)\mat{T}_o^{-1}\\
 %\mat{B}_{o}=&\mat{T}_c{\mat{B}_d}_{\langle C \rangle}\mat{K}_{\langle C \rangle}\mat{T}_o^{-1}&
 %\mat{B}_{e}=&\mat{T}_c(\mat{B}_d-{\mat{B}_d}_{\langle C \rangle})\mat{K}_{\langle C \rangle}\mat{T}_o^{-1}\\
 %\mat{A}_{e}=&\mat{T}_o\left(\mat{A}_d-{\mat{A}_d}_{\langle C \rangle}-\mat{L}_{\langle C \rangle}\mat{C}_e\right)\mat{T}_o^{-1}&
-%\mat{C}_{e}=&\mat{C}_d-{\mat{C}_d}_{\langle C \rangle}
+%\mat{C}_{e}=&\mat{C}-\mat{C}_{\langle C \rangle}
 %\end{align*}
 %}
 %{\setlength{\abovedisplayskip}{0pt}
@@ -854,7 +859,7 @@ Gershgorin disks~\cite{van1996matrix} allow us to limit the error
 in the expected eigenvalues.  Let $\delta_o=\max(\norm{{\mat{A}_e}_{i,*}}_1)$
 (\emph{i.e.} the largest row norm in $\mat{A}_e$) be the largest error bound
 for any eigenvalue in $\mat{A}_e$.  Then $\forall i \in [1, ...\,,n],
-|{\lambda_o}_{i}-\hat{\lambda_o}_{i}|<\delta_o$,where ${\lambda_o}_{i}$ are the
+|{\lambda_o}_{i}-\hat{\lambda_o}_{i}|<\delta_o$, where ${\lambda_o}_{i}$ are the
 true eigenvalues of the observer and $\hat{\lambda_o}_{i}$ the eigenvalues of
 the perturbed observer.  We note that in the case of stability we only care
 about the error with respect to the unit circle, which is equivalent to
@@ -1193,7 +1198,7 @@ $\phi := \phi_{stability} \wedge \phi_{input} \wedge \phi_{init}$.
 %% meaning at the beginning of the synthesis process.
 %% If we denote by $\phi_{dynamics}^{T_d}$ the discretized system's dynamics with respect to the
 %% sampling time ($T_d$),
-%% $\phi_{dynamics}^{T_d}:= \{\mat{A}_d, \mat{B}_d, \mat{C}_d \mid \mat{A}_d=e^{\mat{A}T_d}\},$
+%% $\phi_{dynamics}^{T_d}:= \{\mat{A}_d, \mat{B}_d, \mat{C} \mid \mat{A}_d=e^{\mat{A}T_d}\},$
 %% then initially $\phi_{synth}$ and $\phi_{static}$ are equal to:
 
 Note that there is a major difference between
@@ -1225,11 +1230,10 @@ $\mathbb{R}_{\langle C \rangle}$.
 This ensures that a small word length for the plant precision is required for
 the synthesis process.
 \item Select initial precisions $\mathbb{R}_{\langle P \rangle}$ and $\mathbb{R}_{\langle C \rangle}$
-  %width for the bit vectors
   for representing the controller and the plant, respectively. These will be increased as needed.
  % $\phi_{\langle C \rangle}, \phi_{\langle P \rangle}$. We will increase either precision as needed. 
 \item Build the observer matrices ${\mat{A}_d}_{\langle C \rangle}$, ${\mat{B}_d}_{\langle C \rangle}$
-and ${\mat{C}_d}_{\langle C \rangle}$. % using the truncation described in Section~\ref{sec:numeric_rep2}.
+and $\mat{C}_{\langle C \rangle}$. % using the truncation described in Section~\ref{sec:numeric_rep2}.
 \item Transform the system into canonical form and add nondeterminism for the errors
 as described in Section~\ref{sec:cof_fwl_stability}. 
 %The transformation matrices will be needed to obtain an FWL compliant controller and observer.
@@ -1238,7 +1242,7 @@ described in Section~\ref{sec:cof_fwl_stability}.
 \item Compute necessary characteristic polynomials. 
 %% \item Compute the characteristic polynomial of the matrix $(\mat{A}_d-\mat{B}_d\mat{K}_{\langle C \rangle})$
 %% as $P_a(z) = z^p+\sum_{i=1}^p{(a_i-k_i)z^{p-i}}$. 
-%% \item Compute the characteristic polynomial of the matrix $({\mat{A}_d}_{\langle C \rangle}-\mat{L}_{\langle C \rangle}{\mat{C}_d}_{\langle C \rangle})$
+%% \item Compute the characteristic polynomial of the matrix $({\mat{A}_d}_{\langle C \rangle}-\mat{L}_{\langle C \rangle}\mat{C}_{\langle C \rangle})$
 %% as $P_l(z) = z^p+\sum_{i=1}^p{(l_i-a_i)z^{p-i}}$. 
 \item Create a stability specification $\phi_{stability}$ based on the characteristic polynomials, FWL
 error ($\mat{A}_e$,$\mat{B}_e$), and response time %%(P_a,P_l,\overline{\lambda})$
@@ -1448,11 +1452,11 @@ In the verification module, we have used the tool Axelerator~\cite{} .
 1  & DC Motor          & 2 & 100 & 1.3\,s & 26.9\,s& 22& 1.1\,s &   3.8\,s & 2\\
 2  & Helicopter        & 3  & 100 & 57.2\,s & t.o. & 54 & 7.1\,s  &   18.0\,s & 9\\
 3  & Inverted Pendulum & 4 & 100 &   9.7\,s & \xmark &\xmark & 12.0\,s  &  18.1\,s &\\
-4  & Magnetic Pointer  & 2  & 100 & 5.7\,s & 229.9\,s & 38 & 3.9\,s  &  11.4\,s & 5 \\
+4  & Magnetic Pointer  & 2  & 100 & 5.7\,s & 229.9\,s & 38 & 3.0\,s  &  9.5\,s & 7 \\
 %5 & Magnetic Suspension          & 2 & 1 & 12.2\,s& 0.6\,s & & & N/A  &   N/A &   N/A\\
-5  & Pendulum          & 2 & 100 & 14.0\,s & 2.0\,s & \xmark&0.4\,s  &   4.9\,s & 6\\
+5  & Pendulum          & 2 & 100 & 0.8\,s & 53.6\,s & 33 &0.4\,s  &   4.9\,s & 6\\
 6  & Suspension        & 4 & 100 & 73.7\,s& \xmark & \xmark&24.0\,s  &   46.1\,s & \xmark\\
-7  & Tape Driver       & 3 & 100 & 10.1\,s& 140.3\,s & \xmark&2.6\,s  &   10.5\,s & \xmark\\
+7  & Tape Driver       & 3 & 100 & 10.1\,s& 140.3\,s & \xmark&3.4\,s  &   19.3\,s & 8\\
 %9 & Satellite          & 2 & 1 & 9.4\,s& 0.7\,s & & & N/A  &   N/A &   N/A\\
 %   & Total                 &   & 2002 & & & & & 1.2\,s & 16.1\,s & 876.8\,s\\
 \hline
@@ -1728,7 +1732,7 @@ We may also bound $\nu_2'$ as follows:
 \end{align*}
 Similarly we also find
 \begin{align*}
-\nu_1' &\in \left[  -p(\norm{{\mat{C}_d}_{\langle C \rangle}}_1+2) \frac{q_c}{2},\, p(\norm{{\mat{C}_d}_{\langle C \rangle}}_1+2) \frac{q_c}{2}\right]
+\nu_1' &\in \left[  -p(\norm{\mat{C}_{\langle C \rangle}}_1+2) \frac{q_c}{2},\, p(\norm{\mat{C}_{\langle C \rangle}}_1+2) \frac{q_c}{2}\right]
 \end{align*}
 The proof derives from $\norm{\mat{K}\vec{x}}_1 \leq \norm{\mat{K}}_1\norm{\vec{x}}_1$.
 
@@ -1758,7 +1762,11 @@ The objective of the feedback is to adhere to some properties we decide to contr
 In most cases these properties include stability.  We define stability as the ability of
 the system output to remain bounded given a bounded input. This is known as BIBO
 stability. Further constraints to this property may be added to enforce stronger stability 
-(e.g. convergent).  We discuss the requirements we are interested in in the following.
+(e.g. convergent).  Generally speaking, we wish to simplify the model of the system to
+so that the values of the controller can be directly related to the effect they have on the
+dynamics of the closed loop.  Such representation is called a Canonical form and its shape
+and transformation depend on the shape of the controller.  We discuss the requirements
+we are interested in in the following.
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{Controllable canonical form} \label{sec:reachable}
@@ -1829,27 +1837,27 @@ with $\mat{I}_i,\mat{M}_i \in \mathbb{R}^{q_i \times q_i}, \mat{a}_i \in \mathbb
 
 Any LTI system can be transformed into a controllable canonical form by a matrix $\mat{T}_c$ such that $\vec{x}=\mat{T}_c\hat{\vec{x}}$
 Then the dynamics of the controllable form are
-\begin{align}
+\begin{align*}
 \hat{\vec{x}}_{k+1}=&\mat{A}_c\hat{\vec{x}}_k+\mat{B}_cu_k, \text{ where } \mat{A}_c=\mat{T}_c\mat{A}\mat{T}_c^{-1} \text{ and } \mat{B}_c=\mat{T}_c\mat{B}\\
 y_k=&\mat{C}_c\hat{\vec{x}}_k + b_0u_k, \text{ where } \mat{C}_c=\mat{C}\mat{T}_c^{-1}\nonumber
-\end{align}
+\end{align*}
 where $\mat{T}_c$ can be calculated as follows:
 
 Let 
-\begin{equation}
+\begin{equation*}
 \mat{R}=[\begin{array}{ccccc}\mat{B}&\mat{A}\mat{B}&\mat{A}^2\mat{B}&\hdots&\mat{A}^{p-1}\mat{B}\end{array}]
 \label{eq:rncf}
-\end{equation}
+\end{equation*}
 be the reachability matrix of the system, and
-\begin{equation}
+\begin{equation*}
 \mat{R}_{c}=\left[\begin{array}{ccccc}1&a_{p-1}&a_{p-2}&\hdots&a_1\\0&1&a_{p-1}&\hdots&a_2\\ \vdots&\ddots&\ddots&\ddots&\ddots\end{array}\right]
 \label{eq:rcf}
-\end{equation}
+\end{equation*}
 the reachability matrix of the canonical form. Then 
-\begin{equation}
+\begin{equation*}
 \mat{T}_c=\mat{R}_{c}\mat{R}^{-1}
 \label{eq:to_cf}
-\end{equation}
+\end{equation*}
 
 %-------------------------------
 \subsection{Stability of a controlled system} 
@@ -1933,19 +1941,19 @@ The figure also contains references to $\nu_1$, $\nu_2$, $\nu_1'$, $\nu_2'$ and 
 denote noise and will be explained later in the dissertation.
 Lastly, $k_r$ is a reference gain required by the model.
 
-Presuming a sampled model of the plant as described in \eqref{eq:discretize}, the dynamics of the observer are:
+Presuming a sampled model of the plant as described in \eqref{eq:plant}, the dynamics of the observer are:
 \begin{equation}
 \label{eq:to_of}
-\hat{\vec{x}}_{k+1}=({\mat{A}_d}_{\langle C \rangle}-\mat{L}{\mat{C}_d}_{\langle C \rangle})\hat{\vec{x}}_k+{\mat{B}_d}_{\langle C \rangle}\vec{u}+\mat{L}\vec{y}
+\hat{\vec{x}}_{k+1}=({\mat{A}_d}_{\langle C \rangle}-\mat{L}\mat{C}_{\langle C \rangle})\hat{\vec{x}}_k+{\mat{B}_d}_{\langle C \rangle}\vec{u}+\mat{L}\vec{y}
 \end{equation}
-where the subindex ${\langle C \rangle}$ represents the domain of the controller $\mathbb{R}_{\langle C \rangle}$ such that ${\mat{A}_{\langle C \rangle}=\mathcal{F}_{\langle C \rangle}(\mat{A}_d)}$, ${\mat{B}_{\langle C \rangle}=\mathcal{F}_{\langle C \rangle}(\mat{B}_d)}$ and ${\mat{C}_{\langle C \rangle}=\mathcal{F}_{\langle C \rangle}(\mat{C}_d)}$.
+where the subindex ${\langle C \rangle}$ represents the domain of the controller $\mathbb{R}_{\langle C \rangle}$ such that ${\mat{A}_{\langle C \rangle}=\mathcal{F}_{\langle C \rangle}(\mat{A}_d)}$, ${\mat{B}_{\langle C \rangle}=\mathcal{F}_{\langle C \rangle}(\mat{B}_d)}$ and ${\mat{C}_{\langle C \rangle}=\mathcal{F}_{\langle C \rangle}(\mat{C})}$.
 The differentiation between $\mat{*}_{\langle C \rangle}$ and $\mat{*}$ will be exploited later in this work. For the time being we will assume they are the same. 
 %is an observer of the system $\vec{x}_{k+1}=\mat{A}\vec{x}+\mat{B}\vec{u} : \vec{y}=\mat{C}\vec{x}$. 
 %$p_i$ are user selected values which will affect the error of the observer estimator. 
 Since the feedback of this system depends on $\mat{C}$ rather than $\mat{B}$, the Reachable
 Canonical form is no longer suitable. Hence we require an Observable Canonical Form.
 For SISO systems, this is:
-\begin{align}
+\begin{align*}
 \label{of_SISO}
 \mat{A}_o=&\left[
 \begin{array}{cccccc}
@@ -1960,21 +1968,21 @@ For SISO systems, this is:
 \Gamma_{p-1}\\ \Gamma_{p-2}\\ \vdots\\ \Gamma_0
 \end{array}\right]\\
 \mat{C}_o=&[\begin{array}{cccccc}\ \ \ \ 1&\ \ \ \ 0&0&0&\cdots&0\end{array}] \nonumber
-\end{align}
+\end{align*}
 
 We notice here that $\mat{A}_o=\mat{A}_c^T, \mat{C}_o=\mat{B}_c^T$
 and $\mat{B}_o=\mat{C}_c^T$, which also applies to the MIMO case.
 
 Let 
-\begin{equation}
+\begin{equation*}
 \label{eq:wnof}
 \mat{W}=\left[\begin{array}{c}\mat{C}\\ \mat{C}\mat{A}\\ \mat{C}\mat{A}^2\\ \vdots\\ \mat{C}\mat{A}^{p-1}\end{array}\right]
-\end{equation}
+\end{equation*}
 be the observability matrix of the system, and
-\begin{equation}
+\begin{equation*}
 \label{eq:wof}
 \mat{W}_{o}=\mat{R}_{c}^{-1}
-\end{equation}
+\end{equation*}
 the observability matrix of the canonical form (see eg~\cite{Astrom08}). Then the matrix $\mat{T}_o=\mat{W}^{-1}\mat{W}_{o}$ will transform an observable system into its canonical form.
 For simplicity of the description, we aggregate the noises as follows:
 $\eta_1=\nu_1+\nu_1'+\nu_t$ and $\eta_2=\nu_2+\nu_2'$,
@@ -1982,7 +1990,7 @@ where $\nu_1$ and $\nu_2$ are the quantization noises introduced by the ADC and 
 Assuming that the observer dynamics are an exact copy of the real ones, ($\mat{*}_{\langle C \rangle}=\mat{*}$), the closed loop dynamics of this system are given by:
 \begin{align}
 \left [\begin{array}{c}\vec{x}\\ \vec{x}_e \end{array}\right]_{k+1}
-=\left [\begin{array}{cc}\mat{A}_d-\mat{B}_d\mat{K}&\mat{B}_d\mat{K}\\ \mat{0}&\mat{A}_d-\mat{L}\mat{C}_d\end{array}\right]
+=\left [\begin{array}{cc}\mat{A}_d-\mat{B}_d\mat{K}&\mat{B}_d\mat{K}\\ \mat{0}&\mat{A}_d-\mat{L}\mat{C}\end{array}\right]
 \left [\begin{array}{c}\vec{x}\\ \vec{x}_e \end{array}\right]_k
 +\left [\begin{array}{cc}\mat{B}_dk_r&\mat{0}\\ \mat{0}&-\mat{L}\end{array}\right]\left [\begin{array}{c}\vec{r}_k+\vec{\eta}_2\\ \vec{\eta}_1\end{array}\right]
 \label{eq:observer_LTI}
@@ -1990,11 +1998,11 @@ Assuming that the observer dynamics are an exact copy of the real ones, ($\mat{*
 where $\vec{x}_e=\vec{x}-\hat{\vec{x}}$ is the estimation error of the state space by the observer.
 Note that this matrix is not in canonical form. A transformation using both reachability and observability matrices is required. This is achieved as follows:
 By translating the coordinate system to 
-\begin{equation}
+\begin{equation*}
 \left[\begin{array}{c}\vec{x}'\\ \vec{x}_e'\end{array}\right]=
 \left[\begin{array}{cc}\mat{T}_c & \mat{0}\\\mat{0} & \mat{T}_o\end{array}\right]
 \left[\begin{array}{c}\vec{x}\\ \vec{x}_e\end{array}\right]
-\end{equation}
+\end{equation*}
 where $\mat{T}_c=\mat{R}_{c}\mat{R}^{-1}$ and $\mat{T}_o=\mat{W}^{-1}\mat{W}_{o}$, we can transform equation \eqref{eq:observer_LTI} into the equivalent canonical form
 \begin{align}
 \left [\begin{array}{c}\vec{x}'\\ \vec{x}_e' \end{array}\right]_{k+1}
@@ -2009,9 +2017,9 @@ where
 {
 \begin{align*}
 \mat{A}_{c}=&\mat{T}_c\left(\mat{A}_d-\mat{B}_d\mat{K}\right)\mat{T}_c^{-1}&
-\mat{A}_{o}=&\mat{T}_o\left(\mat{A}_d-\mat{L}\mat{C}_d\right)\mat{T}_o^{-1}\\
+\mat{A}_{o}=&\mat{T}_o\left(\mat{A}_d-\mat{L}\mat{C}\right)\mat{T}_o^{-1}\\
 \mat{B}_{o}=&\mat{T}_c\mat{B}_d\mat{K}\mat{T}_o^{-1}&
-\mat{C}_t=&\mat{C}_d\mat{T}_c
+\mat{C}_t=&\mat{C}\mat{T}_c
 \end{align*}
 Replacing the matrices in \eqref{eq:observer_LTI_cf} with appropriate symbols:
 \begin{align}
@@ -2027,7 +2035,7 @@ we get
 \tilde{\vec{u}}_k=\left [\begin{array}{c}\vec{r}_k+\vec{\eta}_2\\ \vec{\eta}_1\end{array}\right]
 \label{eq:simple_observer_LTI}
 \end{displaymath}
-This has a similar structure to \eqref{eq:discretization} which will be helpful in our analysis.
+This has a similar structure to \eqref{equ:reachtraj} which will be helpful in our analysis.
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{Stability of an observed system}\label{sec:cof_stability}
@@ -2103,34 +2111,33 @@ $\vec{x}_T$ is the state of the system $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$ at t
   If $\mat{J}$ is diagonal and there exists a discrete dynamics matrix for a sampling time $T_d$ such that $A_d=e^{\mat{A} T_d}$, then $\vec{x}_T=A_d^{\frac{T}{T_d}}\vec{x}_0 \text{ with } T \in \mathbb{R}^+$ is the state of the system at time $t=T$.
  \end{lemma}
  \begin{proof}
- Let us recall equation \ref{eq:discretize}. The discrete representation of the system dynamics discretised with sample time $T_1$ is ruled by the formula
+ Let us recall equation \ref{eq:plant}. The discrete representation of the system dynamics discretised with sample time $T_1$ is ruled by the formula
  $\mat{A}_1 = e^{\mat{A} T_1}$. From matrix theory, we have 
-\begin{align}
+\begin{align*}
  e^{\mat{A}}&=\sum_{k=0}^\infty \frac{1}{k!}\mat{A}^k
-\end{align} 
-\begin{align} 
+\end{align*} 
+\begin{align*} 
  e^{\mat{S}\mat{J}\mat{S}^{-1}}&=\sum_{k=0}^\infty \frac{1}{k!}\left(\mat{S}\mat{J}\mat{S}^{-1}\right)^k
  =\mat{S} \left (\sum_{k=0}^\infty \frac{1}{k!}\mat{J}^k\right) \mat{S}^{-1}\nonumber\\
  &=\mat{S}e^{\mat{J}}\mat{S}^{-1}
-\end{align} 
-\begin{equation}
+\end{align*} 
+\begin{equation*}
 \mat{A}=\mat{S}\mat{J}\mat{S}^{-1} \Rightarrow \vec{A}_1 = \mat{S}\mat{J}_1\mat{S}^{-1}= \mat{S}e^{\mat{J} T_1}\mat{S}^{-1}.
- \end{equation}
+ \end{equation*}
  
  Let $\mat{J}$ be a diagonal matrix, such that 
  $${\lambda_1}_i=e^{\lambda_i T_1}, \forall \lambda_i \in \mat{J}.$$
  Let us now take a different sample rate $T_2$, such that 
  $${\lambda_2}_i=e^{\lambda_i T_2}, \forall \lambda_i \in \mat{J}.$$
  We can then say that 
- \begin{equation}
+ \begin{equation*}
  {\lambda_2}_i=e^{\lambda_i T_1 \frac{T_2}{T_1}}={\lambda_1}_i^{\frac{T_2}{T_1}} \Rightarrow A_2=A_1^{\frac{T_2}{T_1}}.
- \end{equation}
+ \end{equation*}
  This proves the theorem for $gm(\lambda_i)=1$.
  We now note that given an exponentiated Jordan form with geometric multiplicity, the upper diagonal terms can be
  referenced to the original eigenvalues modified by the sampling rate.
-  Let $\mat{J}\in \mathbb{R}^{p \times p}$ be a Jordan Canonical matrix whose powers are described in Equation \eqref{jord:pow}
- Then
-\begin{align}
+  Let $\mat{J}\in \mathbb{R}^{p \times p}$ be a Jordan Canonical matrix, then
+\begin{align*}
  \mat{J}_1&=\sum_{k=0}^\infty \frac{1}{k!}\left(\mat{J}T_1\right)^k\nonumber\\
  &=\sum_{k=0}^\infty \frac{1}{k!} \left [ \begin{array}{cccc}
  \lambda_i^k  & \binom{k}{1}  \lambda^{k-1} & \hdots  & \binom{k}{p-1} \lambda_i^{k-p+1} \\
@@ -2138,13 +2145,13 @@ $\vec{x}_T$ is the state of the system $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$ at t
 \vdots & \ddots & \ddots & \vdots \\
 & &  &\lambda_i^k \\
 \end{array} \right ] T_1^k
-\end{align}
+\end{align*}
 The eigenvalues remain the same as in the diagonal case, but the upper triangular terms are of the form:
-\begin{align}
+\begin{align*}
 \forall j>i, c_{ij}&=\sum_{k=j-i}^\infty \frac{1}{k!}\binom{k}{j-i} \lambda_i^{k-(j-i)}T_1^k\\
 &=\frac{1}{(j-i)!}\sum_{k=j-i}^\infty \frac{1}{(k-(j-i))!} \lambda_i^{k-(j-i)}T_1^k\nonumber\\
 &=\frac{T_1^{j-i}e^{\lambda_i T_1}}{(j-i)!}\nonumber
-\end{align}
+\end{align*}
 which completes the proof for $gm(\lambda_i)>1$. \qed
 \end{proof}
 
@@ -2154,8 +2161,8 @@ which completes the proof for $gm(\lambda_i)>1$. \qed
 \begin{theorem}
 The expression
  \begin{align}
- \vec{x}_T&=\vec{x}(t=T)=\mat{A}^{-1}\vec{x}_T'\nonumber\\
-\vec{x}_T'&=\mat{A}\mat{A}_T\vec{x}_0 + (\mat{I}-\mat{A}_T)\mat{B}\vec{u} \text{ where } \forall t \leq T,\ \vec{u}(t)=\vec{u} 
+ \vec{x}_T&=\vec{x}(t=T)=\mat{A}_T\vec{x}_0 + \mat{B}_T\vec{u} \text{ where } \mat{B}_T=\mat{A}^{-1}(\mat{I}-\mat{A}_T)\mat{B} 
+ \label{eq:param_discretize}
  \end{align}
  with $\mat{A}_T$ as per \eqref{eq:continuous_tube_dyn} is the state of the system $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)$ at time $T$ given a parametric input $\vec{u}$.
  \end{theorem}
@@ -2163,13 +2170,8 @@ The expression
  If $\mat{J}$ is diagonal and there exists a discrete dynamics matrix for a sampling time $T_d$ such that $A_d=e^{\mat{A} T_d}$, then $\vec{x}_T=A_d^{\frac{T}{T_d}}\vec{x}+(\mat{I}-\mat{A}_d^{\frac{T}{T_d}}\mat{B}\vec{u}) \text{ with } k \in \mathbb{R}^+$ is the state of the system at time $kT_d$.
  \end{corollary}
  \begin{proof}
- We begin by expanding the equation
- \begin{align}
- \vec{x}_T&=\mat{A}^{-1}\vec{x}_T'\nonumber\\
- &=\mat{A}_T\vec{x}_0 + \mat{A}^{-1}(\mat{I}-\mat{A}_T)\mat{B}\vec{u}\nonumber\\
- &= \mat{A}_T\vec{x}_0 + \mat{B}_T\vec{u}
- \end{align}
- where $\mat{A}_T=e^{\mat{A}T}$ and $\mat{B}_T=\mat{A}^{-1}(\mat{I}-\mat{A}_T)\mat{B}$ correspond to $\mat{A}_d$ and $\mat{B}_d$ in equation \eqref{eq:discretize}
+ The first part of the equation ($\mat{A}_T\vec{x}_0$) is proven in the previous section.  As for the second part, we have from equation \eqref{eq:plant}
+that $\mat{B}_T = \int_{t = 0}^{T} e^{\mat{A} t} dt\ \mat{B}$ which expands to $\mat{B}_T= (\mat{A}^{-1} e^{\mat{A}T}-\mat{A}^{-1} e^{\mat{A} 0}) \mat{B}=\mat{A}^{-1}(\mat{I}-\mat{A}_T)\mat{B}$, thus proving the theorem.
  \end{proof}
   
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -2186,25 +2188,25 @@ The expression
  \vec{x}_{T} &= (\mat{A}_{T-kT_s}-\mat{B}_{T-kT_s}\mat{K}) (\mat{A}_d-\mat{B}_d\mat{K})^k\vec{x}_0
  \label{eq:cyber_feedback}
  \end{align}
- with $\mat{A}_T, \mat{B}_T$ as per \eqref{eq:continuous_tube_dyn} and $\mat{A}_d, \mat{B}_d$ as per equation \eqref{eq:discretize} is a witness of the system
- \begin{align}
+ with $\mat{A}_T, \mat{B}_T$ as per \eqref{eq:continuous_tube_dyn} and \eqref{eq:param_discretize} and $\mat{A}_d, \mat{B}_d$ as per equation \eqref{eq:plant} is the state of the system
+ \begin{align*}
  \dot{\vec{x}}({t}) &= \mat{A}\vec{x}+\mat{B}\vec{u}(t)\nonumber\\
  \vec{u}(t)&=\mat{K}\vec{x}_k, \text{ where }  kT_s \leq t < (k+1)T_s
- \end{align}
+ \end{align*}
  \end{theorem}
 
 \begin{proof}
 Let $\mat{K}$ be a feedback controller such that $\vec{u}_k=-\mat{K}\vec{x}_k$ at time $t=kT_s$. Let the output of
 the feedback system be a zero order holder such that $\vec{u}(t'+kT_s)=\vec{u}(kT_s), \text{ for }  0 \leq t' < T_s$.
 The closed loop dynamics of the system between times $kT_s$ and $kT_s+T_s$ are
-\begin{equation}
+\begin{equation*}
 \vec{x}_{k,t'}=\mat{A}_{t'}\vec{x}_k-\mat{B}_{t'}\mat{K}\vec{x}_k = (\mat{A}_{t'}-\mat{B}_{t'}\mat{K})\vec{x}_k, \text{ where }  0 \leq t' < T_s
-\end{equation}
+\end{equation*}
 We further explore the dynamics across discrete time boundaries. Let $\mat{A}_d=\mat{A}_{T_s}$ and $\mat{B}_d=\mat{B}_{T_s}$
-\begin{align}
+\begin{align*}
 \vec{x}_{k}&=\vec{x}_{k-1,T_s}= (\mat{A}_d-\mat{B}_d\mat{K})\vec{x}_{k-1}\\
 \vec{x}_{k,T_s} &= (\mat{A}_d-\mat{B}_d\mat{K}) (\mat{A}_d-\mat{B}_d\mat{K})\vec{x}_{k-1}
-\end{align}
+\end{align*}
 which accelerating results and setting $T=kT_s+t'$ becomes
 \begin{align}
 \label{eq:feedback_sampled_cont}
@@ -2230,24 +2232,24 @@ Let us look at equations \eqref{eq:feedback_sampled_cont} and
 \eqref{eq:feedback_cont}.  When we introduce an arbitrary delay $T_d$ where
 $t_d=T_d$ and $t_s=T_s-T_d$ we obtain:
 %
-\begin{align}
+\begin{align*}
 \vec{x}_{k} &=\mat{A}_{t_s}(\mat{A}_{t_d}\vec{x}_{k-1}-\mat{B}_{t_d}\mat{K}\vec{x}_{k-2})-\mat{B}\mat{K}\vec{x}_{k-1}\nonumber\\
 &=  (\mat{A}_{T_s}-\mat{B}_{t_s}\mat{K})\vec{x}_{k-1}-\mat{A}_{t_s}\mat{B}_{t_d}\mat{K}\vec{x}_{k-2}
 \label{eq:delay_cont}
-\end{align}
+\end{align*}
 %
 Differentiating with the expected progression without delay, we get a delay
 error:
 %
-\begin{align}
+\begin{align*}
 {\vec{x}_e}_{k}=&(\mat{B}_{T_s}-\mat{B}_{t_s})\mat{K}\vec{x}_{k-1}-\mat{A}_{t_s}\mat{B}_{t_d}\mat{K}\vec{x}_{k-2}\nonumber\\
 =&(\mat{B}_{T_s}-\mat{B}_{t_s})\vec{u}_{k}-\mat{A}_{t_s}\mat{B}_{t_d}\vec{u}_{k-1}
-\end{align}
+\end{align*}
 Rather than explicitly calculate this error, we will find an upper bound. Let $U = \bigcup \vec{u}_k$. Propagating the error to the output $\vec{y}_k$ we have:
-\begin{align}
+\begin{align*}
 {\vec{y}_e}_{k} \subseteq &\mat{C}(\mat{B}_{T_s}-\mat{B}_{t_s})U\oplus\mat{C}\mat{A}_{t_s}\mat{B}_{t_d}U\\
 \Rightarrow \norm{{\vec{y}_e}_{k}}_1 \leq & (\norm{\mat{C}(\mat{B}_{T_s}-\mat{B}_{t_s})}_1+\norm{\mat{C}\mat{A}_{t_s}\mat{B}_{t_d}}_1)\norm{U}_1
-\end{align}
+\end{align*}
 \end{proof}
 We over-approximate the effects of this vector by introducing a noise signal at the output $\nu_t=[-q_t, q_t]$ and use the dynamics of the system without delay.
 
@@ -2308,25 +2310,25 @@ obtain
 %the states $\vec{x}'_T$.  Expanding equation \eqref{eq:eigendynamics} we
 %obtain
 %
-\begin{align}
+\begin{align*}
 y_k&=\mat{C}'\mat{J}^k\vec{x}_0 = \sum_{i=0}^p \left( c_i \lambda_i^k{\vec{x}_0}_i + \sum\limits_{j=1}^{gm(i)}c_{i+j}\binom{k}{j} \lambda_i^{k-j}{\vec{x}_0}_j\right)\\
 |y_k|&\leq \sum_{i=0}^p \left( c_i{\vec{x}_0}_i + \sum\limits_{j=1}^{gm(i)}c_{i+j}\binom{k}{j} \lambda_i^{-j}{\vec{x}_0}_j\right)|\lambda_i^k|
 %y_T&=\mat{C}'\mat{J}_T\vec{x}_0' = \sum_{i=0}^p e^{T\lambda_i}\left( c_i'{\vec{x}_0'}_i + \sum\limits_{j=1}^{gm(i)}c_{i+j}'T^j{\vec{x}_0'}_j\right)
-\end{align}
+\end{align*}
 where the second  part of the equation corresponds to the upper diagonal
 terms of the Jordan blocks.  We also have $|\lambda_i^k|\leq
 |\overline{\omega}^k|$,hence
 %
-\begin{align}
+\begin{align*}
 |y_k|&\leq |\overline{\omega}^k|\sum_{i=0}^p \left|c_i + \sum\limits_{j=1}^{gm(i)}c_{i+j}\binom{k}{j} \lambda_i^{-j}\right|
-\end{align}
+\end{align*}
 %
 In the case of closed loop forms without geometric multiplicity (which is by far the most common case),
 the right hand terms disappear and we obtain
 %
-\begin{align}
+\begin{align*}
 |y_k|&\leq |\overline{\omega}^k|\sum_{i=0}^p |c_i|
-\end{align}
+\end{align*}
 
 Hence the overall decay of the system is always smaller
 than $d=e^{-|\overline{\omega}| t}$ where $0\leq d\leq 1$ is the remaining
