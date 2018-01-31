@@ -41,7 +41,7 @@
 \title{Formal Synthesis of Digital Controllers for Observable Continuous
 Plants with Transient Performance Specifications}
 
-\author{%Dario Cattaruzza, Cristina David, Alessandro Abate, Daniel Kroening
+\author{Anonymous%Dario Cattaruzza, Cristina David, Alessandro Abate, Daniel Kroening
 }%\email{alessandro.abate@cs.ox.ac.uk}
 %\email{dario.cattaruzza@cs.ox.ac.uk}
 %\author{Cristina David}\email{cristina.david@cs.ox.ac.uk}
@@ -60,28 +60,29 @@ Plants with Transient Performance Specifications}
 
 \begin{abstract} 
 %
-We present a sound and automated approach to synthesizing safe,
-digital, observer-based controllers for physical plants represented as
-linear, time-invariant models.  Models are defined as differential
-equations with inputs, evolving over a continuous state space. The
-synthesis accounts for errors caused by the digitization effects
-introduced by the controller.  We use a counterexample-guided
-inductive synthesis procedure enhanced with abstraction
-refinement and optimization, which allows us to start by considering
-a low-resolution discretized model of the system and %, which enables us to
-find candidate solutions fast. This model gets refined on demand.
-Moreover, in order to improve our chances of finding a solution even
-when considering coarse abstractions of the system, in each iteration of the CEGIS
-loop we use matrix eigen-decomposition to optimize our candidate.
+We present a sound and automated approach to synthesizing safe, digital,
+observer-based controllers for physical plants represented as linear,
+time-invariant models.  Models are defined as differential equations with
+inputs, evolving over a continuous state space.  The synthesis accounts for
+errors caused by the digitization effects introduced by the controller. 
+We~use counterexample-guided inductive synthesis enhanced with abstraction
+refinement and optimization, which allows us to start with a low-resolution
+discretized model and find candidate solutions fast.  This model is refined
+on demand.  Moreover, in order to improve our chances of finding a solution
+even when considering coarse abstractions of the system, in each iteration
+of the CEGIS loop we use matrix eigen-decomposition to optimize our
+candidate.
+%
 %% Once we have a candidate, we use matrix eigen-decomposition
 %% and objective functions to iteratively optimize it.
 %Whenever the optimization is unable to yield further results, it feeds back to the
 %synthesiser in a traditional CEGIS manner.
-This design yields a significant speed-up compared to a traditional
-CEGIS scheme (i.e. without abstraction refinement and optimization).
-We demonstrate the practical value of this approach by automatically
-synthesizing safe observer-based controllers for physical plant models
-from the digital control literature.
+%
+This design yields a significant speed-up compared to traditional CEGIS
+(i.e., without abstraction refinement and optimization).  We~demonstrate the
+practical value of this approach by automatically synthesizing safe
+observer-based controllers for physical plant models from the digital
+control literature.
 %
 \end{abstract}
 
