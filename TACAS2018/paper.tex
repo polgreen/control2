@@ -1322,8 +1322,8 @@ dynamics are less likely to stray outside of the safe region (we say
 less likely because the change in the eigenvectors changes the shape
 of the space and may cause some trajectories to go further). For this
 purpose, we take the largest eigenvalue and reduce it by a factor $f$
-that still satisfies the controller constraints ($f \overline{\lambda}
-\models \phi$).  The resulting observer and controller are then
+that still satisfies the controller constraints.
+The resulting observer and controller are then
 verified against the safety specification $\phi_\mathit{safety}$ and the
 objective $e$ is measured as in Equation \eqref{eq:objective}.   If for
 each iteration $k$, the objective $e_k<e_{k-1}$, we continue to
@@ -1332,7 +1332,7 @@ otherwise we move to the second stage.
 
 In the second stage, we take the complex eigenvalue
 with the largest angle ($max\{|tan^{-1}\left(\frac{im(\lambda)}{re(\lambda)}\right)| \mid \lambda \in \Lambda\}$)
-and reduce its imaginary component only  ($re(\lambda) + f im(\lambda) \models \phi$).
+and reduce its imaginary component only.
 The process ends when no imaginary part can be further reduced.
 The resulting closed loop form converges faster than the original and has a
 smaller rotation, which facilitates meeting the safety specification $\phi_\mathit{safety}$.
@@ -1464,7 +1464,7 @@ In the verification module, we have used the tool Axelerator~\cite{} .
 \end{tabular}
 \vspace{0.05in}
 \caption{\label{tab:cegis_results}
-Experimental results. Minimum, and Median times for standard CEGIS vs CEGIS-OR on multiple benchmarks. t.o.~indicates timeouts.}
+Experimental results. Minimum, and Median times for standard CEGIS vs CEGIS-OR on multiple benchmarks. the t.o. column ~indicates number of timeouts.}
 \end{table}
 
 Using the described technique we managed to synthesize controllers for X benchmarks, with a median synthesis time of $18.8$ seconds.
@@ -1474,6 +1474,7 @@ There are cases for which the system fails to find a controller.  We use a
 relatively short timeout, so it is possible that longer timeouts would result in a
 valid solution. However, as stated before, the solution is sound but incomplete,
 so it is impossible to tell if a solution exists in these cases. 
+\note{I don't think this is stated before so explain it here.}
 
 In order to show the improvements due to our optimization-enhanced CEGIS, we
 compared our approach against a standard CEGIS procedure.  For the majority of
@@ -1482,19 +1483,21 @@ standard CEGIS. We further note that the number of times standard CEGIS times
 out is much larger than CEGIS-OR which results in more found solutions.
 The magnitude of the improvement is however, largely dependent on the shape of the problem. 
 
-More interesting cases appear when we increase the order, showing initially that
-benchmarks that timed-out using standard CEGIS are now running in under 2
-minutes using CEGIS-OR. This is the result of removing several multiplications which are
-known to be difficult for SAT solvers.  Furthermore, when we introduce Optimization
-Refinement there is a further improvement up to an order of magnitude.  This second
-improvement is due to the elimination of counterexamples that would have been
-created without the refinement. Since further synthesis require increasingly
-complex models which are linear in the number of multiplications, eliminating 
-these results in large improvements.  In cases when the initial candidate is
-suitable, we gain nothing with the refinement and therefore find similar times.
-Improvements using this approach will therefore be observed in higher order
-systems or when the safety specification is tight and the original loop would
-require multiple counterexamples.
+More interesting cases appear when we increase the order, showing
+initially that benchmarks that timed-out using standard CEGIS are now
+running in under 2 minutes using CEGIS-OR. This is the result of
+removing several multiplications which are known to be difficult for
+SAT solvers.  Furthermore, when we introduce Optimization Refinement
+there is a further improvement up to an order of magnitude.  This
+second improvement is due to the elimination of counterexamples that
+would have been created without the refinement. Since further
+synthesis require increasingly complex models which are linear in the
+number of multiplications, eliminating these results in large
+improvements.  In cases when the initial candidate is suitable, we
+gain nothing with the refinement.  Improvements using this approach
+will therefore be observed in higher order systems or when the safety
+specification is tight and the original loop would require multiple
+counterexamples.
 
 %%-------------------------------
 %\subsection{Threats to validity}
