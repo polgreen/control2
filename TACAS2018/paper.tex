@@ -290,6 +290,8 @@ Along this research line, \cite{Anta2010,liu16} studies the synthesis of
 digital controllers for continuous dynamics, and \cite{zamani2014} extends
 the approach to the recent setup of Network Control Systems.
 
+\smallskip
+
 \noindent\textbf{Discretization Effects --}
 The classical approach to control synthesis has often disregarded
 digitalization effects, whereas more recently modern techniques have focused
@@ -354,12 +356,11 @@ where $t \in \mathbb R_0^+$ denotes continuous time,
 $\mat{A}$ and $\mat{B}$ are matrices that fully characterize the dynamics of the continuous plant, 
 and $x(0)$ is the initial state. 
 
-We are interested in control systems with an output $\vec{y}$ that is a linear combination of its states and inputs
-\footnote{Since we can only measure $\vec{y}$, the state-space $\vec{x}$ is not fully observable}.
+We are interested in control systems with an output $\vec{y}$ that is a linear combination of its states and inputs\footnote{Notice that since we can only measure $\vec{y}$, the state-space $\vec{x}$ is not fully observable.}.
 %, which may restrict the observability of the state-space from the output space.
 \begin{equation}
 \label{eq:ode2}  
-\vec{y}(t)=\mat{C}\vec{x}(t)+\mat{D}\vec{u}(t), \vec{y} \in \mathbb{R}^o, \mat{C} \in \mathbb{R}^{o \times p}, \mat{D} \in \mathbb{R}^{o \times q}
+\vec{y}(t)=\mat{C}\vec{x}(t)+\mat{D}\vec{u}(t), \vec{y} \in \mathbb{R}^o, \mat{C} \in \mathbb{R}^{o \times p}, \mat{D} \in \mathbb{R}^{o \times q}. 
 \end{equation}
 %
 Equations~\eqref{eq:ode1}-\eqref{eq:ode2} are soundly discretized in
@@ -383,6 +384,7 @@ into the difference equation
 \right.,
 \end{align} 
 %
+\note{Ad is ill defined?}
 %where $\mat{A}_d=e^\mat{A}$, $\mat{B}_d = \int_{t = 0}^{T_s} e^{\mat{A} t} dt\ \mat{B}$,
 $k \in \mathbb N$ is a discrete counter and $\vec{x}_{0}=\vec{x}(0)$ is the initial state. 
 In this work we raise the standard assumption that $\mat{D}=\mat{0}$ \cite{Astrom08}.  
@@ -443,22 +445,24 @@ time horizon (transitive closure).
 
 In many models of real-world control systems, 
 the internal state $x$ cannot be directly measured,  
-but is rather inferred from its effect on the output $\vec{y}$ using an observer~\cite{Astrom08}.  
-Essentially, a state observer is a new dynamical model (with variable denoted below as $\hat{\vec{x}}$) 
+but is rather inferred from its effect on the measured output $\vec{y}$ using an observer~\cite{Astrom08}.  
+Essentially, a state observer is a new dynamical model (with variable denoted as $\hat{\vec{x}}$) 
 that provides an estimate of the internal state $x$ of the given model, 
-from measurements of its inputs and outputs (see Appendix~\ref{sec:observable}). 
+from measurements of its inputs and outputs \note{(see Appendix~\ref{sec:observable})}. 
 
-A closed-loop digital control system with observer is shown in Figure~\ref{fig:observersystem}. 
+A closed-loop digital control interconnection with observer is shown in Figure~\ref{fig:observersystem}. 
 The linear feedback controller (bottom left) is characterized by a gain matrix $\mat{K}_{\langle C \rangle}$ that influences the closed-loop dynamics, 
 and is driven by the observer state $\hat{\vec{x}}$.  
-Moreover, $\vec{y}_e=\hat{\vec{y}} - \vec{y}$ is the output estimation error,  
+Moreover, $\vec{y}_e=\hat{\vec{y}} - \vec{y}$ is the error on the output estimator,  
 %  defined as the difference between the real output $\vec{y}_k$ and estimated one $\hat{\vec{y}_k}$, 
 which is amplified by a gain matrix $\mat{L}_{\langle C \rangle}$.
 Note that the controller and the observer are implemented in a discrete domain 
-(quantities within this domain are identified by the index $\langle C \rangle$), whereas the plant is continuous.
-We futher model the effects of using a discrete controller as the noise signals $\nu_1$(ADC quantization), $\nu_2$ (DAC quantization), $\nu_1'$ (rounding of the observer state error),
+(quantities within this domain are identified by the index $\langle C \rangle$), 
+whereas the plant evolves in a continuous domain. 
+We further model the effects of using a discrete controller as the noise signals $\nu_1$(ADC quantization), $\nu_2$ (DAC quantization), $\nu_1'$ (rounding of the observer state error),
 $\nu_2'$ (rounding of the observer state), and $\nu_t$ (output delay of the digital system) 
   Lastly, $k_r$ is a reference gain required by the model.  
+  
   Our goal in this work is to synthesise both $\mat{K}_{\langle C \rangle}$ and $\mat{L}_{\langle C \rangle}$, 
   so that specific closed-loop properties of the overall interconnection are satisfied.
  
@@ -605,9 +609,9 @@ $\nu_2'$ (rounding of the observer state), and $\nu_t$ (output delay of the digi
   \path[->] (Kd.north) edge (circle.south);
  \end{tikzpicture}
 }
-\caption{Closed-loop digital control system with an observer, where the controller and the observer (bottom part) are implemented in a discrete domain,
+\caption{Closed-loop digital control interconnection with an observer, where the controller and the observer (bottom part) are implemented in a discrete domain,
   %(quantities within this domain are identified by the index $\langle C \rangle$),
-  whereas the plant is continuous. \label{fig:observersystem}}
+  whereas the plant (top part) is continuous. \label{fig:observersystem}}
 \end{figure*}
 
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -658,14 +662,13 @@ See Appendix~\ref{sec:proofs}
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  Next, we are interested in studying models with parametric inputs, 
  which are described by $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)$, where $\forall t\geq 0, \vec{u}(t)=\vec{u}$. 
- For such models, a state $\vec{x}_T$ is computed next.  
+ For such models, a state $\vec{x}_T$ is computed next.  \note{The next result is again known from literature, it's not a new theorem.}
 \begin{theorem}
 The state of the model $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)$ at time $T$ given a parametric input $\vec{u}$ is 
  \begin{align}
  \vec{x}_T&=\vec{x}(t=T)=\mat{A}_T\vec{x}_0 + \mat{B}_T\vec{u} \text{ where } \mat{B}_T=\mat{A}^{-1}(\mat{I}-\mat{A}_T)\mat{B} 
  \end{align}
- where $\forall t \leq T,\ \vec{u}(t)=\vec{u}$, and $\mat{A}_T$ as in \eqref{eq:continuous_tube_dyn2}
- \footnote{when $\mat{A}$ is not invertible, we use $\left[\begin{array}{cc}\mat{A}_T&\mat{B}_T\\ 0&\mat{I}\end{array}\right]=e^{\left[\begin{array}{cc}\mat{A}&\mat{B}\\0&0\end{array}\right]}$}.
+ where $\forall t \leq T,\ \vec{u}(t)=\vec{u}$, and $\mat{A}_T$ as in \eqref{eq:continuous_tube_dyn2}\footnote{When $\mat{A}$ is not invertible, we use $\left[\begin{array}{cc}\mat{A}_T&\mat{B}_T\\ 0&\mat{I}\end{array}\right]=e^{\left[\begin{array}{cc}\mat{A}&\mat{B}\\0&0\end{array}\right]}$}.
  \end{theorem}
  \begin{corollary}
  If $\mat{J}$ is diagonal and given a sampling time $T_d$ such that $A_d=e^{\mat{A} T_d}$, 
@@ -690,8 +693,8 @@ The expression
  \label{eq:cyber_feedback}
  \end{align}
  with $\mat{A}_T$ as in \eqref{eq:continuous_tube_dyn2}, 
- and where $\mat{B}_T=\mat{A}^{-1}(\mat{I}-\mat{A}_T)\mat{B}$
-  \footnote{as before, when $\mat{A}$ is not invertible, we use $\left[\begin{array}{cc}\mat{A}_T&\mat{B}_T\\ 0&\mat{I}\end{array}\right]=e^{\left[\begin{array}{cc}\mat{A}&\mat{B}\\0&0\end{array}\right]}$}, 
+ and where $\mat{B}_T=\mat{A}^{-1}(\mat{I}-\mat{A}_T)\mat{B}$, 
+%  \footnote{as before, when $\mat{A}$ is not invertible, we use $\left[\begin{array}{cc}\mat{A}_T&\mat{B}_T\\ 0&\mat{I}\end{array}\right]=e^{\left[\begin{array}{cc}\mat{A}&\mat{B}\\0&0\end{array}\right]}$}, 
  and $\mat{A}_d, \mat{B}_d$ describe the discretized plant dynamics with sample time $T_s$, 
  is the state of the model 
  \begin{align}
@@ -712,7 +715,7 @@ A common occurrence in digital systems is that they do not necessarily satisfy r
 in view of many errors introduced in the dynamics. 
 Errors might result from delays due to processing time,
 corruptions over communication lines in the control loop, 
-approximations due to digitalisation.  
+and approximations due to digitalisation.  
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{Time delay on discrete-time feedback models} \label{sec:delay}
@@ -785,36 +788,37 @@ in this section we will look at checking stability, safety and the response time
 \subsection{Stability of an observed model with FWL effects}\label{sec:cof_fwl_stability}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-Stability denotes the property of a model to unfold staying within a bounded set around an equilibrium point. 
+Stability qualitatively denotes the property of a model to evolve within a bounded set around an equilibrium point. 
 In this paper, we are interested in asymptotic stability, where the model is further expected to converge to the steady state value (i.e., the equilibrium point).   
 %
-We specify model stability via Jury's criterion~\cite{fadali}, %\footnote{More details on Jury's criterion is in Appendix~\ref{sec:closed_stability}.}, 
- which boils down to a requirement expressed as an algebraic formula - a SAT solver will manipulate the coefficients of the model's characteristic polynomial. 
+We specify model stability via Jury's criterion~\cite{fadali}, 
+as classical in Control Theory,  %\footnote{More details on Jury's criterion is in Appendix~\ref{sec:closed_stability}.}, 
+ which boils down to a requirement expressed as an algebraic formula 
+ on the characteristic polynomial of the model - a SAT solver will manipulate its coefficients. 
 %
-To facilitate the use of Jury's criterion, we transform the model into
+In order to facilitate the use of Jury's criterion, we transform the model into
 a representation that contains the coefficients of its characteristic
-polynomial expressed as sums of controller and plant values: this
-representation has no multiplications, which are expensive for a SAT
-solver.
+polynomial expressed as sums of controller and plant values. 
+The benefit of this representation is that it has no multiplications, which are expensive to handle by SAT solvers. 
 %
-Such a representation is known as 
+Such a representation is a model known as 
 % is called Controllable and Observable 
 ``canonical form''~\cite{Astrom08} %\footnote{See parts~\ref{sec:reachable} and~\ref{sec:observable} in the Appendix.} 
 and is dynamically equivalent to the given model.  
-In this section we explore the implications of using this canonical form, 
-alongside the use of a FWL representation. 
+In this section we explore the implications of using the canonical form, 
+alongside the use of FWL representations.  
 
 \medskip
 
-We assume that the domain of the observer model is further discretised, 
+We assume that the domain of the observer model is discretised, 
 i.e., the domain for both the controller and the observer is $\mathbb{R}_{\langle C \rangle}$.
-This means that we have 
+This means that we have matrices 
 ${\mat{A}_d}_{\langle C
 \rangle},{\mat{B}_d}_{\langle C \rangle},\mat{C}_{\langle C \rangle},
 \mat{K}_{\langle C \rangle}, \mat{L}_{\langle C \rangle} \in
-\mathbb{R}_{\langle C \rangle}^*$, where $*$ represents the appropriate
-dimension for each matrix.
-New problems arise due to the FWL effects on these matrices.
+\mathbb{R}_{\langle C \rangle}^*$, 
+where $*$ represents the appropriate dimension for each matrix.
+New problems arise due to FWL effects on these matrices. 
 These are reflected in the canonical form of the resulting model,
 which is expressed by:
 %
@@ -823,7 +827,7 @@ which is expressed by:
 \left [\begin{array}{c}\vec{x}'\\ \vec{x}_e' \end{array}\right]_{k+1}
 =& \left [\begin{array}{cc}\mat{A}_{c}+\mat{B}_{e}&\mat{B}_{o}\\ \mat{A}_{e}&\mat{A}_{o}\end{array}\right]
 \left [\begin{array}{c}\vec{x}'\\ \vec{x}_e' \end{array}\right]_k
-+\mat{B}'\left [\begin{array}{c} \vec{r}_k + \nu_2+\nu_2'\\ \nu_1+\nu_1'+\nu_t\end{array}\right]%\nonumber\\
++\mat{B}'\left [\begin{array}{c} \vec{r}_k + \nu_2+\nu_2'\\ \nu_1+\nu_1'+\nu_t\end{array}\right], %\nonumber\\
 %\vec{y}_k= &\mat{C}\mat{T}_c\vec{x}_k', 
 % + \mat{D}_{d}\vec{u}_k
 \label{eq:observer_LTI_FWL_cf}
@@ -839,13 +843,15 @@ which is expressed by:
 \mat{A}_o=&\left[\begin{array}{cc}
 \begin{array}{c}l_{p-1}-a_{p-1}\\ \vdots\\ l_1-a_1\end{array}&\mat{I}\\
 l_0-a_0&\begin{array}{ccc}0&\cdots&0\end{array}
-\end{array}\right]
+\end{array}\right], 
 \end{align*}
 }
-
-where $\vec{x}'$ and $\vec{x}_e'$ are the state of the system and the error of the observer evaluated in the transformed domain, 
-$\mat{A}_{c}$ the closed loop dynamics of the controller in canonical form, $\mat{A}_{o}$ the closed loop dynamics of the observer in canonical form, $\mat{B}_{o}$ the feedback gain, 
- $\mat{B}'$ the noise sensitivity, and $\mat{A}_{e}$ and $\mat{B}_{e}$ the error caused by the FWL representation.
+where $\vec{x}'$ is the state of the model in canonical form and $\vec{x}_e'$ is the error of the observer evaluated in the transformed domain; 
+further, $\mat{A}_{c}$ the closed-loop matrix of the controller in canonical form, 
+$\mat{A}_{o}$ the closed-loop matrix of the observer in canonical form, 
+$\mat{B}_{o}$ the a feedback gain matrix, 
+ $\mat{B}'$ the noise sensitivity matrix, 
+\note{[next is unclear - how are matrices related to FWL errors? are they related to the quantities discussed in the previous section 5.2?] and $\mat{A}_{e}$ and $\mat{B}_{e}$ are the error caused by the FWL representation}.
 %and we have introduced the following terms: 
 %{\setlength{\abovedisplayskip}{2pt}
 %\setlength{\belowdisplayskip}{2pt}
@@ -865,7 +871,7 @@ $\mat{A}_{c}$ the closed loop dynamics of the controller in canonical form, $\ma
 %\eta_1=&\nu_1+\nu_1'+\nu_t& \eta_2=&\nu_2+\nu_2',
 %\end{align*}
 %}
-Here $\nu_1$ and $\nu_2$ are the quantization noises introduced by the ADC and the DAC, $\nu_t$ is the noise introduced by the delay, and $\nu_1'$ and $\nu_2'$ are quantization noises caused by roundoffs in the FWL operations (details are in Appendix~\ref{sec:quantization-noise}).
+Moreover, $\nu_1$ and $\nu_2$ are the quantization noises introduced by the ADC and the DAC, $\nu_t$ is the noise introduced by the delay, and $\nu_1'$ and $\nu_2'$ are quantization noises caused by roundoffs in the FWL operations (details are in Appendix~\ref{sec:quantization-noise}).
 
 In a continuous time domain, the characteristic polynomial
 of the closed loop dynamics is defined by the characteristic polynomials of~$\mat{A}_c$
