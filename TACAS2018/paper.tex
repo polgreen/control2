@@ -921,8 +921,7 @@ which is expressed by:
 \begin{array}{c}l_{p-1}-a_{p-1}\\ \vdots\\ l_1-a_1\end{array}&\mat{I}\\
 l_0-a_0&\begin{array}{ccc}0&\cdots&0\end{array}
 \end{array}\right], 
-\end{align*}
-}
+\end{align*}}
 %
 where $\vec{x}'$ is the state of the model in canonical form and
 $\vec{x}_e'$ is the error of the observer evaluated in the transformed
@@ -978,8 +977,8 @@ the true coefficients of the closed loop matrix.
 
 Gershgorin disks~\cite{van1996matrix} allow us to limit the error in the
 expected eigenvalues.  Let $\delta_o=\max(\norm{{\mat{A}_e}_{i,*}}_1)$
-(\emph{i.e.} the largest row norm in $\mat{A}_e$) be the largest error bound
-for any eigenvalue in $\mat{A}_e$.  Then $\forall i \in \{1, \ldots,n\},
+(i.e., the largest row norm in $\mat{A}_e$) be the largest error bound
+for any eigenvalue in $\mat{A}_e$.  Then $\forall i \in \{1, \ldots,n\}.\,
 |{\lambda_o}_{i}-\hat{\lambda}_{oi}|<\delta_o$, where ${\lambda_o}_{i}$ are
 the true eigenvalues of the observer $\mat{A}_o$ and $\hat{\lambda}_{oi}$
 the corresponding eigenvalues of the closed loop.  We note that in the case
@@ -993,10 +992,11 @@ polynomial
 P_L'(z)=\sum_{j=0}^p c_j\overline{\lambda'}^{p-j}z^j, \text{ where }  \overline{\lambda'}=(1+\delta_o)\overline{\lambda} \text{ and } c_j=l_j-a_j.
 \end{equation}
 %
-In the case of $\mat{A}_c$, the procedure is the same except that we need to look at the columns shared with $\mat{A}_c$.
-Thus we obtain our bound $\delta_c=\max(\norm{{\mat{A}_e}_{*,i}+{\mat{B}_e}_{*,i}}_1)$
-(\emph{i.e.} the largest column norm in $ \left[\begin{array}{c}\mat{A}_e\\ \mat{B}_e\end{array}\right]$) and
-apply Jury's Criterion over
+In the case of $\mat{A}_c$, the procedure is the same except that we need to
+look at the columns shared with $\mat{A}_c$.  Thus we obtain our bound
+$\delta_c=\max(\norm{{\mat{A}_e}_{*,i}+{\mat{B}_e}_{*,i}}_1)$ (i.e.,
+the largest column norm in $ \left[\begin{array}{c}\mat{A}_e\\
+\mat{B}_e\end{array}\right]$) and apply Jury's Criterion over
 %
 \begin{equation}
 P_K'(z)=\sum_{j=0}^p c_j\overline{\lambda'}^{p-j}z^j, \text{ where }  \overline{\lambda'}=(1+\delta_c)\overline{\lambda} \text{ and } c_j=k_j-a_j.
@@ -1069,14 +1069,14 @@ $\mat{G}'$ and $\vec{h}'$ limits the initial conditions of the model.
 \label{sec:transientspecification}
 %-------------------------------
 
-In many cases the response time of the system, i.e.  how fast it converges
-to the set point, is a requirement of great importance.  This is given as a
+In many cases the response time of the system, i.e., how fast it converges
+to the set point, is a high-priority requirement.  This is given as a
 ``settling time''.
  
 \begin{theorem}
 %
 Given a set of eigenvalues for a discrete time model of a $p^{th}$ order
-stable system $\{\lambda_i =e^{\omega_i} \mid i \in [1, ...\,,p],
+stable system $\{\lambda_i =e^{\omega_i} \mid i \in \{1, \ldots,p\},
 |\lambda_i| \leq 1 \}$, the settling time of the system is upper-bounded by
 %
 \begin{equation}
@@ -1089,8 +1089,8 @@ t_s<-log_{\overline{\lambda}}({P_s}), \text{ where }
 \end{equation}
 %
 where $0\leq P_s \leq 1$ is the desired portion of the target within which
-the output must remain after $t_s$.  For the proof see
-Appendix~\ref{sec:proofs}
+the output must remain after $t_s$.  The proof is in
+Appendix~\ref{sec:proofs}.
 %
 \end{theorem}
 
@@ -1109,7 +1109,7 @@ P(z)=\prod_{i=0}^p (z-\lambda_i)=\sum_{j=0}^p c_jz^j.
 %We can use Jury's criterion to limit $|\lambda_i| \leq 1$.
 Let us now define a
 transformation $\lambda_i'=\frac{\lambda_i}{\overline{\lambda}}$.  We want
-to ensure $\lambda_i' \leq 1$ which can be done by applying Jury's criterion
+to ensure $\lambda_i' \leq 1$, which can be done by applying Jury's criterion
 to $P'(z)=\prod_{i=0}^p (z-\lambda_i')=\sum_{j=0}^p c_j'z^j$ where $c_j'$ are
 unknown.  By replacing $\lambda_i$, we obtain
 %
@@ -1117,11 +1117,12 @@ unknown.  By replacing $\lambda_i$, we obtain
 P'(z)=\prod_{i=0}^p (z-\lambda_i')=\prod_{i=0}^p \left(z-\frac{\lambda_i}{\overline{\lambda}}\right)=\sum_{j=0}^p \frac{c_j}{\overline{\lambda}^{p-j}}z^j, 
 \end{equation}
 %
-where all values are known. Thus, we can ensure that the settling time is smaller than
-a certain magnitude by ensuring that 
-the eigenvalues are smaller too (which we can do with Jury's criterion).
+where all values are known.  Thus, we can ensure that the settling time is
+smaller than a certain magnitude by ensuring that the eigenvalues are
+smaller too (which we can do with Jury's criterion).
 
-We will use $\phi_{stability}$ to refer to the combined stability and transient response specifications.
+We will use $\phi_\mathit{stability}$ to refer to the combined stability and
+transient response specifications.
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \section{Synthesising digital controllers with state observers}\label{sec:dynamic_synth}
@@ -1132,35 +1133,34 @@ We will use $\phi_{stability}$ to refer to the combined stability and transient 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 In this section, we describe our technique for synthesizing safe digital
-feedback controllers using CEGIS.  Broadly speaking, CEGIS denotes an
-iterative technique where each step performs inductive generalization based
-on counterexamples provided by a verification engine.  In each iteration, an
-inductive synthesizer produces a candidate solution that obeys the
-specification for a limited number of inputs.  Subsequently, this candidate
-is passed to a verification phase that checks it against the specification
-for all possible inputs.  If the verification fails, then the witness
-counterexample is passed back to the synthesis phase, where it is added to
-the set of inputs to be considered in the next loop iteration.  Otherwise,
-the process terminates.
+feedback controllers.  We use CEGIS, which is an iterative technique where
+each step performs inductive generalization based on counterexamples
+provided by a verification engine.  In each iteration, an inductive
+synthesizer produces a candidate solution that obeys the specification for a
+limited number of inputs.  Subsequently, this candidate is passed to a
+verification phase that checks it against the specification for all possible
+inputs.  If the verification fails, then the witness counterexample is
+passed back to the synthesis phase, where it is added to the set of inputs
+to be considered in the next loop iteration.  Otherwise, the process
+terminates.
 
+We enhance the standard CEGIS architecture with an abstraction-refinement
+approach and with optimization.  We call the resulting new technique
+\emph{CEGIS-OR} (CEGIS with Optimization and Refinement).  By using
+abstraction refinement, CEGIS-OR addresses the scalability issues inherent
+in program synthesis and enables us to handle complex systems, which we
+coarsely abstract and only refine on demand -- refinements are triggered by
+counterexamples returned by the verification phase.
 %
-We enhance the standard CEGIS architecture with an
-abstraction-refinement approach and with optimization, resulting in
-the novel CEGIS-OR (CEGIS with Optimization and Refinement).  By using
-abstraction refinement, CEGIS-OR tackles the scalability issues
-inherent in program synthesis as it allows us to handle complex
-systems, which we coarsely abstract and only refine on demand --
-refinements are triggered by counterexamples returned by the
-verification phase.
 %potentially coarse abstractions of the given model that are only
 %refined on demand.
-Since the use of coarse abstractions may result in
-low-quality candidate solutions (i.e. candidates that fail the
-specification on a very large number of inputs), after each synthesis
-phase we use optimization techniques to improve the produced
-candidates.  In particular, our optimization procedure aims at
-reducing the size of the reach space of the closed loop system, while
-maintaining other dynamical properties (safety, stability, and
+%
+Since the use of coarse abstractions may result in low-quality candidate
+solutions (i.e.  candidates that fail the specification on a very large
+number of inputs), after each synthesis phase we use optimization techniques
+to improve the produced candidates.  In particular, our optimization
+procedure aims at reducing the size of the reach space of the closed loop
+system, while maintaining other dynamical properties (safety, stability, and
 response time).
 
 %% Our approach is illustrated in Figure~\ref{fig:CEGIS-OR} and consists of four main
@@ -1577,7 +1577,7 @@ stages, blue boxes (dark) are verification stages, and the red box is the synthe
 The benchmark suite employed to evaluate the proposed technique is composed
 by seven models extracted from the control literature~\cite{acrobot, cstr,
 CHEN1979389, KOKOTOVIC198023, gajic2008optimal, Franklin15, maglev,
-converters}.  In order to obtain statistically relevant results, we have
+converters}.  In~order to obtain statistically relevant results, we have
 taken these models and modified each possible combination of their
 parameters by a 10\% tolerance, thus creating seven hundred benchmarks from
 this base.
@@ -1726,12 +1726,12 @@ times obtained with CEGIS-OR).
 CEGIS-OR shows promise in exploiting modularity for improved response. 
 It~however relies on the use of application-specific optimization, which
 requires adequate tools for exploring different types of properties.  Our
-results show significant improvement in terms of scalability over standard
+results show significant improvements in terms of scalability over standard
 CEGIS approaches, with an ability to explore complex properties, hence many
-synthesis tasks may be tackled with it.  In particular we note that our
+synthesis tasks may be solved with it.  In particular, we note that our
 synthesis loop is more efficient for models where the solution space is
 formed by connected spaces where optimization algorithms or localized
-synthesis are likely to be more efficiently than global synthesis.  Finally
+synthesis are likely to be more efficiently than global synthesis.  Finally,
 our application to control synthesis provides a solid proof of concept for
 scalable optimal control synthesis of LTI systems.
 
