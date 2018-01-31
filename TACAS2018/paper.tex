@@ -211,16 +211,17 @@ In summary, this paper makes the following original contributions.
  implementations.
  %
  \item We present a model for soundly evaluating reachability in a combined 
- continuous-discrete time/space. Sound tools for continuous time reachability 
- are scarce and to the authors' knowledge no tool provides a model that 
- combines both. 
+ continuous-discrete time/space. 
+% Sound tools for continuous time reachability are scarce and to the authors'
+% knowledge no tool provides a model that combines both. 
 \end{enumerate}
 
-\note{something like this (also, we should probably still remove some of the obvious references where they can find material themselves): }
+\note{
 Note that, while we have several reference to the appendix throughout
 the paper, the paper can be read on its own and these references are
 only meant as an aid for the reader less familiar with control theory or
 for the proofs of theorems.
+}
 
 %-------------------------------
 \section{Related Work}
@@ -832,11 +833,11 @@ The canonical form of the resulting model is expressed by:
 \setlength{\belowdisplayskip}{2pt}
 \begin{align*}
 \mat{A}_c=&\left[\begin{array}{cc}
-\begin{array}{ccc}k_{n-1}-a_{n-1}&\cdots&k_1-a_1\end{array}&k_0-a_0\\
+\begin{array}{ccc}k_{p-1}-a_{p-1}&\cdots&k_1-a_1\end{array}&k_0-a_0\\
 \mat{I}&\begin{array}{c}0\\ \vdots \\ 0\end{array}
 \end{array}\right]&
 \mat{A}_o=&\left[\begin{array}{cc}
-\begin{array}{c}l_{n-1}-a_{n-1}\\ \vdots\\ l_1-a_1\end{array}&\mat{I}\\
+\begin{array}{c}l_{p-1}-a_{p-1}\\ \vdots\\ l_1-a_1\end{array}&\mat{I}\\
 l_0-a_0&\begin{array}{ccc}0&\cdots&0\end{array}
 \end{array}\right]
 \end{align*}
@@ -868,7 +869,11 @@ Here $\nu_1$ and $\nu_2$ are the quantization noises introduced by the ADC and t
 
 In a continuous time domain, the characteristic polynomial
 of the closed loop dynamics is defined by the characteristic polynomials of~$\mat{A}_c$
-and~$\mat{A}_o$.  The introduction of the FWL errors causes this to no longer
+and~$\mat{A}_o$.  
+\begin{align*}
+P(z)=P_K(z)P_L(z)=\left(z^p+\sum_{i=0}^{p-1}{(a_i-k_i)z^{i}}\right) \left(z^p+\sum_{i=0}^{p-1}{(a_i-l_i)z^{i}}\right)
+\end{align*}
+The introduction of the FWL errors causes this to no longer
 be true.  We must therefore find a suitable solution to maintain this separation.
 
 Gershgorin disks~\cite{van1996matrix} allow us to limit the error
@@ -1836,24 +1841,6 @@ k_{n-1}-a_{n-1}&k_{n-2}-a_{n-2}&\cdots&k_1-a_1&k_0-a_0\\
 \label{eq:cf_SISO_fb}
 \end{align}
 which means we can directly modify each coefficient by selecting a controller parameter.
-In the MIMO case, the Controllable Canonical Form has the following shape:
-\begin{align}
-\mat{A}_c=&\left[
-\begin{array}{ccccc}
--\mat{a}_{p-1}\mat{M}_{p-1}&-\mat{a}_{p-2}\mat{M}_{p-2}&\cdots&-\mat{a}_{2}\mat{M}_{2}&-\mat{a}_0\mat{M}_0\\
-\mat{I}_{n-1}&0&0&\cdots&0\\
-0&\mat{I}_{n-2}&0&\cdots&0\\
-\vdots&\ddots&\ddots&\ddots&\vdots\\
-0&0&\cdots&\mat{I}_0&0
-\end{array}\right],
-\mat{B}_c=\left[
-\begin{array}{c}
-\mat{M}_0\\0\\ \vdots\\ 0\\ 0
-\end{array}\right]\nonumber\\
-\mat{C}_c=&[\begin{array}{ccccc}\mat{\Gamma}_{0}&\mat{\Gamma}_{1}&\cdots&\mat{\Gamma}_{p-1}\end{array}] 
-\label{eq:cf_MIMO}
-\end{align}
-with $\mat{I}_i,\mat{M}_i \in \mathbb{R}^{q_i \times q_i}, \mat{a}_i \in \mathbb{R}^{q \times q_i}, \mat{\Gamma}_i \in \mathbb{R}^o \text{ and for }  i \in [0, ...\,,p-q], \mat{\Gamma}_{i}=0$, where $q$ is the number of inputs, $q_i$ the number of inputs with a transfer function of order of at least $i$, $\mat{I}_i$ an identity matrix, $\mat{M}_i$ an upper triangular matrix with 1s in its diagonal, $\mat{a_i}$ a matrix of coefficients of the $i^{th}$ order on its diagonal, and $o$ the number of outputs. Ideally, $\forall i>0, \mat{M}_i=\mat{I}_i$
 
 Any LTI system can be transformed into a controllable canonical form by a matrix $\mat{T}_c$ such that $\vec{x}=\mat{T}_c\hat{\vec{x}}$
 Then the dynamics of the controllable form are
@@ -1861,23 +1848,23 @@ Then the dynamics of the controllable form are
 \hat{\vec{x}}_{k+1}=&\mat{A}_c\hat{\vec{x}}_k+\mat{B}_cu_k, \text{ where } \mat{A}_c=\mat{T}_c\mat{A}\mat{T}_c^{-1} \text{ and } \mat{B}_c=\mat{T}_c\mat{B}\\
 y_k=&\mat{C}_c\hat{\vec{x}}_k + b_0u_k, \text{ where } \mat{C}_c=\mat{C}\mat{T}_c^{-1}\nonumber
 \end{align*}
-where $\mat{T}_c$ can be calculated as follows:
-
-Let 
-\begin{equation*}
-\mat{R}=[\begin{array}{ccccc}\mat{B}&\mat{A}\mat{B}&\mat{A}^2\mat{B}&\hdots&\mat{A}^{p-1}\mat{B}\end{array}]
-\label{eq:rncf}
-\end{equation*}
-be the reachability matrix of the system, and
-\begin{equation*}
-\mat{R}_{c}=\left[\begin{array}{ccccc}1&a_{p-1}&a_{p-2}&\hdots&a_1\\0&1&a_{p-1}&\hdots&a_2\\ \vdots&\ddots&\ddots&\ddots&\ddots\end{array}\right]
-\label{eq:rcf}
-\end{equation*}
-the reachability matrix of the canonical form. Then 
-\begin{equation*}
-\mat{T}_c=\mat{R}_{c}\mat{R}^{-1}
-\label{eq:to_cf}
-\end{equation*}
+%where $\mat{T}_c$ can be calculated as follows:
+%
+%Let 
+%\begin{equation*}
+%\mat{R}=[\begin{array}{ccccc}\mat{B}&\mat{A}\mat{B}&\mat{A}^2\mat{B}&\hdots&\mat{A}^{p-1}\mat{B}\end{array}]
+%\label{eq:rncf}
+%\end{equation*}
+%be the reachability matrix of the system, and
+%\begin{equation*}
+%\mat{R}_{c}=\left[\begin{array}{ccccc}1&a_{p-1}&a_{p-2}&\hdots&a_1\\0&1&a_{p-1}&\hdots&a_2\\ \vdots&\ddots&\ddots&\ddots&\ddots\end{array}\right]
+%\label{eq:rcf}
+%\end{equation*}
+%the reachability matrix of the canonical form. Then 
+%\begin{equation*}
+%\mat{T}_c=\mat{R}_{c}\mat{R}^{-1}
+%\label{eq:to_cf}
+%\end{equation*}
 
 %-------------------------------
 \subsection{Stability of a controlled system} 
@@ -1974,7 +1961,6 @@ Since the feedback of this system depends on $\mat{C}$ rather than $\mat{B}$, th
 Canonical form is no longer suitable. Hence we require an Observable Canonical Form.
 For SISO systems, this is:
 \begin{align*}
-\label{of_SISO}
 \mat{A}_o=&\left[
 \begin{array}{cccccc}
 -a_{p-1}&1&0&0&\cdots&0\\
@@ -1989,21 +1975,20 @@ For SISO systems, this is:
 \end{array}\right]\\
 \mat{C}_o=&[\begin{array}{cccccc}\ \ \ \ 1&\ \ \ \ 0&0&0&\cdots&0\end{array}] \nonumber
 \end{align*}
+We notice here that $\mat{A}_o=\mat{T}_o\mat{A}\mat{T}_o^{-1}=\mat{A}_c^T, \mat{C}_o=\mat{C}\mat{T}_o^{-1}=\mat{B}_c^T$
+and $\mat{B}_o=\mat{T}_o\mat{B}=\mat{C}_c^T$, where $\mat{T}_o$ is a transformtion of the system into observable canonical form%, which also applies to the MIMO case.
+%Let 
+%\begin{equation*}
+%\label{eq:wnof}
+%\mat{W}=\left[\begin{array}{c}\mat{C}\\ \mat{C}\mat{A}\\ \mat{C}\mat{A}^2\\ \vdots\\ \mat{C}\mat{A}^{p-1}\end{array}\right]
+%\end{equation*}
+%be the observability matrix of the system, and
+%\begin{equation*}
+%\label{eq:wof}
+%\mat{W}_{o}=\mat{R}_{c}^{-1}
+%\end{equation*}
+%the observability matrix of the canonical form (see eg~\cite{Astrom08}). Then the matrix $\mat{T}_o=\mat{W}^{-1}\mat{W}_{o}$ will transform an observable system into its canonical form.
 
-We notice here that $\mat{A}_o=\mat{A}_c^T, \mat{C}_o=\mat{B}_c^T$
-and $\mat{B}_o=\mat{C}_c^T$, which also applies to the MIMO case.
-
-Let 
-\begin{equation*}
-\label{eq:wnof}
-\mat{W}=\left[\begin{array}{c}\mat{C}\\ \mat{C}\mat{A}\\ \mat{C}\mat{A}^2\\ \vdots\\ \mat{C}\mat{A}^{p-1}\end{array}\right]
-\end{equation*}
-be the observability matrix of the system, and
-\begin{equation*}
-\label{eq:wof}
-\mat{W}_{o}=\mat{R}_{c}^{-1}
-\end{equation*}
-the observability matrix of the canonical form (see eg~\cite{Astrom08}). Then the matrix $\mat{T}_o=\mat{W}^{-1}\mat{W}_{o}$ will transform an observable system into its canonical form.
 For simplicity of the description, we aggregate the noises as follows:
 $\eta_1=\nu_1+\nu_1'+\nu_t$ and $\eta_2=\nu_2+\nu_2'$,
 where $\nu_1$ and $\nu_2$ are the quantization noises introduced by the ADC and the DAC, $\nu_t$ is the noise introduced by the delay, and $\nu_1'$ and $\nu_2'$ are quantization noises caused by roundoffs in the FWL operations (see Section~\ref{sec:quantization-noise}).
@@ -2023,7 +2008,8 @@ By translating the coordinate system to
 \left[\begin{array}{cc}\mat{T}_c & \mat{0}\\\mat{0} & \mat{T}_o\end{array}\right]
 \left[\begin{array}{c}\vec{x}\\ \vec{x}_e\end{array}\right]
 \end{equation*}
-where $\mat{T}_c=\mat{R}_{c}\mat{R}^{-1}$ and $\mat{T}_o=\mat{W}^{-1}\mat{W}_{o}$, we can transform equation \eqref{eq:observer_LTI} into the equivalent canonical form
+%where $\mat{T}_c=\mat{R}_{c}\mat{R}^{-1}$ and $\mat{T}_o=\mat{W}^{-1}\mat{W}_{o}$, 
+we can transform equation \eqref{eq:observer_LTI} into the equivalent canonical form
 \begin{align}
 \left [\begin{array}{c}\vec{x}'\\ \vec{x}_e' \end{array}\right]_{k+1}
 =& \left [\begin{array}{cc}\mat{A}_{c}&\mat{B}_{o}\\ \mat{0}&\mat{A}_{o}\end{array}\right]
