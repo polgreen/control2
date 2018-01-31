@@ -889,24 +889,24 @@ $\mat{B}_{o}$ the a feedback gain matrix,
 %\eta_1=&\nu_1+\nu_1'+\nu_t& \eta_2=&\nu_2+\nu_2',
 %\end{align*}
 %}
-Moreover, $\nu_1$ and $\nu_2$ are the quantization noises introduced by the ADC and the DAC, $\nu_t$ is the noise introduced by the delay, and $\nu_1'$ and $\nu_2'$ are quantization noises caused by roundoffs in the FWL operations (details are in Appendix~\ref{sec:quantization-noise}).
+Moreover, $\nu_1$ and $\nu_2$ are the quantization noises introduced by the ADC and the DAC, $\nu_t$ is the noise introduced by the delay, and $\nu_1'$ and $\nu_2'$ are quantization noises caused by roundoffs in the FWL operations \note{[How is this related to the previously mentioned FWL errors?]} Full details are in Appendix~\ref{sec:quantization-noise}. 
 
-In a continuous time domain, the characteristic polynomial
+In a continuous time domain \note{confusing: we work in a discrete-time domain here.}, the characteristic polynomial
 of the closed loop dynamics is defined by the characteristic polynomials of~$\mat{A}_c$
 and~$\mat{A}_o$.  
 \begin{align*}
 P(z)=P_K(z)P_L(z)=\left(z^p+\sum_{i=0}^{p-1}{(a_i-k_i)z^{i}}\right) \left(z^p+\sum_{i=0}^{p-1}{(a_i-l_i)z^{i}}\right)
 \end{align*}
 The introduction of the FWL errors causes this to no longer
-be true.  We must therefore find a suitable solution to maintain this separation of polynomials.
+be true.  We must therefore find a suitable solution to maintain this \note{[unclear:] separation} of polynomials.
 
 Gershgorin disks~\cite{van1996matrix} allow us to limit the error
-in the expected eigenvalues.  Let $\delta_o=\max(\norm{{\mat{A}_e}_{i,*}}_1)$
+in the \note{[?]expected} eigenvalues.  Let $\delta_o=\max(\norm{{\mat{A}_e}_{i,*}}_1)$
 (\emph{i.e.} the largest row norm in $\mat{A}_e$) be the largest error bound
 for any eigenvalue in $\mat{A}_e$.  Then $\forall i \in [1, ...\,,n],
 |{\lambda_o}_{i}-\hat{\lambda}_{oi}|<\delta_o$, where ${\lambda_o}_{i}$ are the
-true eigenvalues of the observer and $\hat{\lambda}_{oi}$ the eigenvalues of
-the perturbed observer.  We note that in the case of stability we only care
+true eigenvalues of the observer \note{clarify what matrix you're computing the eigenvalues of} and $\hat{\lambda}_{oi}$ the eigenvalues of
+the perturbed observer \note{ditto}.  We note that in the case of stability we only care
 about the error with respect to the unit circle, which is equivalent to
 upper bounding the estimation of the largest eigenvalue.  Hence, given a
 desired upper value $\overline{\lambda}$, we apply Jury's criterion on the
