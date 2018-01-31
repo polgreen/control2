@@ -722,7 +722,7 @@ parametric input $\vec{u}$ is
 where $\forall t \leq T.\, \vec{u}(t)=\vec{u}$, and $\mat{A}_T$ as in
 \eqref{eq:continuous_tube_dyn2} \footnote{When $\mat{A}$ is not invertible,
 we use $\left[\begin{array}{cc}\mat{A}_T&\mat{B}_T\\
-0&\mat{I}\end{array}\right]=e^{\left[\begin{array}{cc}\mat{A}&\mat{B}\\0&0\end{array}\right]}$}. 
+0&\mat{I}\end{array}\right]=e^{\left[\begin{array}{cc}\mat{A}&\mat{B}\\0&0\end{array}\right]}$.}. 
 If $\mat{J}$ is diagonal and given a sampling time $T_d$ such that
 $A_d=e^{\mat{A} T_d}$, then
 $\vec{x}_T=A_d^{\frac{T}{T_d}}\vec{x}_0+(\mat{I}-\mat{A}_d^{\frac{T}{T_d}}\mat{B}_d\vec{u})
@@ -738,25 +738,31 @@ system at time $T$.
 
 The final case we analyze is that of hybrid-time models, where the plant
 dynamics evolve in continuous time while the feedback dynamics evolve in
-discrete time.  A new input value is produced only at every sample time but
+discrete time.  A~new input value is produced only at every sample time but
 implemented over the continuous-time plant dynamics.
 %
 \begin{theorem}
 The expression
+%
  \begin{align}
  \vec{x}_{T} &= (\mat{A}_{T-kT_s}-\mat{B}_{T-kT_s}\mat{K}) (\mat{A}_d-\mat{B}_d\mat{K})^k\vec{x}_0, 
  \label{eq:cyber_feedback}
  \end{align}
- with $\mat{A}_T$ as in \eqref{eq:continuous_tube_dyn2}, $\mat{B}_T$ as in \eqref{eq:continuous_tube_param}, 
- and $\mat{A}_d=\mat{A}_{T_s}, \mat{B}_d=\mat{B}_{T_s}$ describe the discretized plant dynamics with sample time $T_s$, 
- is the state of the model 
- \begin{align*}
+%
+with $\mat{A}_T$ as in \eqref{eq:continuous_tube_dyn2}, $\mat{B}_T$ as in
+\eqref{eq:continuous_tube_param}, and where $\mat{A}_d=\mat{A}_{T_s},
+\mat{B}_d=\mat{B}_{T_s}$ describe the discretized plant dynamics with
+sample time $T_s$, is the state of the model
+%
+\begin{align*}
  \dot{\vec{x}}(t) = \mat{A}\vec{x}(t)+\mat{B}\vec{u}(t), \quad 
  \vec{u}(t)=\mat{K}\vec{x}_k,  \,
- kT_s \leq t < (k+1)T_s. 
- \end{align*}
- For the proof see Appendix~\ref{sec:proofs}
- \end{theorem}
+ kT_s \leq t < (k+1)T_s \,. 
+\end{align*}
+%
+For the proof see Appendix~\ref{sec:proofs}
+%
+\end{theorem}
 %\begin{proof}
 %See Appendix~\ref{sec:proofs}
 %\end{proof}
@@ -777,12 +783,17 @@ due to digitalization.
 
 In our model, delays are all deferred to the Zero Order Holder (ZOH) of the
 DAC (See Figure \ref{fig:observersystem}).  In the digital world everything
-takes place at times $t=kT_s, k \in \mathbb{N}$ (discrete time progression),
-and the output signal is delayed at the DAC when fed back to the
-continuous-time domain at time ($t=kT_s+t_d$).
+takes place at times $t=kT_s$ for $k \in \mathbb{N}$ (discrete time
+progression), and the output signal is delayed at the DAC when fed back to
+the continuous-time domain at time ($t=kT_s+t_d$).
 
 \begin{theorem}
-The error introduced by a delay $t_d$ in the control output $\vec{u}_k$ of a discrete feedback controller for a continuous LTI system can be modeled as a non-deterministic disturbance signal ($\nu_t$ in Figure \ref{fig:observersystem}) upper bounded by 
+%
+The error introduced by a delay $t_d$ in the control output $\vec{u}_k$ of a
+discrete feedback controller for a continuous LTI system can be modeled as a
+non-deterministic disturbance signal ($\nu_t$ in
+Figure~\ref{fig:observersystem}) upper bounded by
+%
 \begin{align}
 \norm{\vec{y}_{k}-{\vec{y}_{t_d}}_{k}}_1 \leq q_t, \text{ where } q_t=&(\norm{\mat{C}(\mat{B}_{T_s}-\mat{B}_{t_s})}_1+\norm{\mat{C}\mat{A}_{t_s}\mat{B}_{t_d}}_1)\norm{U}_1
 \end{align}
