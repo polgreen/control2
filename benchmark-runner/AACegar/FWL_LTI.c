@@ -88,28 +88,10 @@ int main()
 #endif
 
 #ifdef _USE_OBSERVER
-  control_floatt observerControlError=0;
-  for (i=0;i<_DIMENSION;i++) observerControlError+=observer[i]*observer[i];
-  observerControlError=observer_output_sensitivity_error*observerControlError;
-  observerControlError*=implL.scale;
-  observerControlError*=implL.scale;
-  observerControlError+=observer_dynamics_error;
-  control_floatt eigenCap=1.0;
-  eigenCap-=observerControlError;
-  control_floatt final_speed_factor=observer_speed_factor;
-  final_speed_factor/=eigenCap;
-  result=check_restricted_stability(observer_plant_cbmc,final_speed_factor);
-  
+  result=check_restricted_stability(observer_plant_cbmc,observer_speed_factor);  
   if (result>0)
   {
-    control_floatt observerInputError=0;
-    for (i=0;i<_DIMENSION;i++) observerInputError+=controller[i]*controller[i];
-    observerControlError+=observer_sensitivity_error*observerInputError;
-    eigenCap=1.0;
-    eigenCap-=observerControlError;
-    final_speed_factor=speed_factor;
-    final_speed_factor/=eigenCap;
-    result=check_restricted_stability(plant_cbmc,final_speed_factor);
+    result=check_restricted_stability(plant_cbmc,speed_factor);
   }
 #else
   result=check_restricted_stability(plant_cbmc,speed_factor);
