@@ -1567,8 +1567,10 @@ times obtained with CEGIS-OR).
 
 There are cases where newly found controllers are due to the fact that the
 optimiser can reason about infinite precision numbers and may therefore find
-solutions that are not available using 64 bit plant precision (the maximum
-allowed by the synthesiser in our implementation of standard CEGIS).
+solutions that are not available using 64 bit plant precision, which
+is the maximum allowed by the {\sc synthesize} phase in our implementation
+(in standard CEGIS {\sc synthesize} is the only phase that can generate a
+candidate controller).
 
 
 %%-------------------------------
