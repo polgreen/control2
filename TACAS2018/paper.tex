@@ -378,13 +378,12 @@ into the difference equation
 \text{ where }
 \left\{
 \begin{array}{l}
-\mat{A}_d=e^\mat{A}\\
+\mat{A}_d=e^{\mat{A}T_s}\\
 \mat{B}_d = \int_{t = 0}^{T_s} e^{\mat{A} t} dt\ \mat{B}
 \end{array}
 \right.,
 \end{align} 
 %
-\note{Ad is ill defined?}
 %where $\mat{A}_d=e^\mat{A}$, $\mat{B}_d = \int_{t = 0}^{T_s} e^{\mat{A} t} dt\ \mat{B}$,
 $k \in \mathbb N$ is a discrete counter and $\vec{x}_{0}=\vec{x}(0)$ is the initial state. 
 In this work we raise the standard assumption that $\mat{D}=\mat{0}$ \cite{Astrom08}.  
@@ -447,11 +446,7 @@ the internal state $x$ cannot be directly measured,
 but is rather inferred from its effect on the measured output $\vec{y}$ using an observer~\cite{Astrom08}.  
 Essentially, a state observer is a new dynamical model (with variable denoted as $\hat{\vec{x}}$) 
 that provides an estimate of the internal state $x$ of the given model, 
-<<<<<<< HEAD
-from measurements of its inputs and outputs \note{(see Appendix~\ref{sec:observable})}. 
-=======
 from measurements of its inputs and outputs. 
->>>>>>> 47994b0211a56a3e76ec2e413851a0b687d47697
 
 A closed-loop digital control interconnection with observer is shown in Figure~\ref{fig:observersystem}. 
 The linear feedback controller (bottom left) is characterized by a gain matrix $\mat{K}_{\langle C \rangle}$ that influences the closed-loop dynamics, 
@@ -464,16 +459,9 @@ Note that the controller and the observer are implemented in a discrete domain
 whereas the plant evolves in a continuous domain. 
 We further model the effects of using a discrete controller as the noise signals $\nu_1$(ADC quantization), $\nu_2$ (DAC quantization), $\nu_1'$ (rounding of the observer state error),
 $\nu_2'$ (rounding of the observer state), and $\nu_t$ (output delay of the digital system) 
-<<<<<<< HEAD
-  Lastly, $k_r$ is a reference gain required by the model.  
-  
-  Our goal in this work is to synthesise both $\mat{K}_{\langle C \rangle}$ and $\mat{L}_{\langle C \rangle}$, 
-  so that specific closed-loop properties of the overall interconnection are satisfied.
-=======
 Lastly, $k_r$ is a reference gain required by the model.  
 Our goal in this work is to synthesise both $\mat{K}_{\langle C \rangle}$ and $\mat{L}_{\langle C \rangle}$, 
  so that specific closed-loop properties of the overall interconnection are satisfied.
->>>>>>> 47994b0211a56a3e76ec2e413851a0b687d47697
  
 \begin{figure*}[t!]
 \centering
@@ -662,34 +650,23 @@ $\lambda_i$ are the eigenvalues of $\mat{A}$, and $gm(\lambda_i)$ is the geometr
 %$\vec{x}_T$ is the state of the system $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$ at time t=T. 
  If $\mat{J}$ is diagonal and there exists a discrete dynamics matrix for a sampling time $T_d$ such that $A_d=e^{\mat{A} T_d}$, then $\vec{x}_T=A_d^{\frac{T}{T_d}}\vec{x}_0 \text{ with } T \in \mathbb{R}^+_0$ is the state of the system at time $t=T$. 
  \end{lemma}
-\begin{proof}
-See Appendix~\ref{sec:proofs}
-\end{proof}
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  \subsection{Accelerated dynamics for models with parametric inputs}\label{sec:real_discrete_param_inputs}
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  Next, we are interested in studying models with parametric inputs, 
  which are described by $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)$, where $\forall t\geq 0, \vec{u}(t)=\vec{u}$. 
- For such models, a state $\vec{x}_T$ is computed next.  \note{The next result is again known from literature, it's not a new theorem.}
-\begin{theorem}
+ For such models, a state $\vec{x}_T$ is computed next.
+\begin{lemma}
 The state of the model $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)$ at time $T$ given a parametric input $\vec{u}$ is 
  \begin{align}
  \vec{x}_T&=\vec{x}(t=T)=\mat{A}_T\vec{x}_0 + \mat{B}_T\vec{u} \text{ where } \mat{B}_T=\mat{A}^{-1}(\mat{I}-\mat{A}_T)\mat{B} 
+ \label{eq:continuous_tube_param}
  \end{align}
-<<<<<<< HEAD
- where $\forall t \leq T,\ \vec{u}(t)=\vec{u}$, and $\mat{A}_T$ as in \eqref{eq:continuous_tube_dyn2}\footnote{When $\mat{A}$ is not invertible, we use $\left[\begin{array}{cc}\mat{A}_T&\mat{B}_T\\ 0&\mat{I}\end{array}\right]=e^{\left[\begin{array}{cc}\mat{A}&\mat{B}\\0&0\end{array}\right]}$}.
-=======
  where $\forall t \leq T,\ \vec{u}(t)=\vec{u}$, and $\mat{A}_T$ as in \eqref{eq:continuous_tube_dyn2}
- \footnote{when $\mat{A}$ is not invertible, we use $\left[\begin{array}{cc}\mat{A}_T&\mat{B}_T\\ 0&\mat{I}\end{array}\right]=e^{\left[\begin{array}{cc}\mat{A}&\mat{B}\\0&0\end{array}\right]T}$}.
->>>>>>> 47994b0211a56a3e76ec2e413851a0b687d47697
- \end{theorem}
- \begin{corollary}
+ \footnote{When $\mat{A}$ is not invertible, we use $\left[\begin{array}{cc}\mat{A}_T&\mat{B}_T\\ 0&\mat{I}\end{array}\right]=e^{\left[\begin{array}{cc}\mat{A}&\mat{B}\\0&0\end{array}\right]}$}.
  If $\mat{J}$ is diagonal and given a sampling time $T_d$ such that $A_d=e^{\mat{A} T_d}$, 
  then $\vec{x}_T=A_d^{\frac{T}{T_d}}\vec{x}_0+(\mat{I}-\mat{A}_d^{\frac{T}{T_d}}\mat{B}_d\vec{u}) \text{ with } T \in \mathbb{R}_0^+$ (where $\mat{A}_d^{\frac{T}{T_d}} = e^{log(\mat{A}_d) \frac{T}{T_d}} = e^{\mat{A} T}$) is the state of the system at time $T$.
- \end{corollary}
-\begin{proof}
-See Appendix~\ref{sec:proofs}
-\end{proof}
+ \end{lemma}
 
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  \subsection{Accelerated dynamics for models with a sampled-time feedback}\label{sec:real_discrete_feedback_inputs}
@@ -705,21 +682,14 @@ The expression
  \vec{x}_{T} &= (\mat{A}_{T-kT_s}-\mat{B}_{T-kT_s}\mat{K}) (\mat{A}_d-\mat{B}_d\mat{K})^k\vec{x}_0, 
  \label{eq:cyber_feedback}
  \end{align}
- with $\mat{A}_T$ as in \eqref{eq:continuous_tube_dyn2}, 
-<<<<<<< HEAD
- and where $\mat{B}_T=\mat{A}^{-1}(\mat{I}-\mat{A}_T)\mat{B}$, 
-%  \footnote{as before, when $\mat{A}$ is not invertible, we use $\left[\begin{array}{cc}\mat{A}_T&\mat{B}_T\\ 0&\mat{I}\end{array}\right]=e^{\left[\begin{array}{cc}\mat{A}&\mat{B}\\0&0\end{array}\right]}$}, 
-=======
- and where $\mat{B}_T=\mat{A}^{-1}(\mat{I}-\mat{A}_T)\mat{B}$
-  \footnote{as before, when $\mat{A}$ is not invertible, we use $\left[\begin{array}{cc}\mat{A}_T&\mat{B}_T\\ 0&\mat{I}\end{array}\right]=e^{\left[\begin{array}{cc}\mat{A}&\mat{B}\\0&0\end{array}\right]T}$}, 
->>>>>>> 47994b0211a56a3e76ec2e413851a0b687d47697
- and $\mat{A}_d, \mat{B}_d$ describe the discretized plant dynamics with sample time $T_s$, 
+ with $\mat{A}_T$ as in \eqref{eq:continuous_tube_dyn2}, $\mat{B}_T$ as in \eqref{eq:continuous_tube_param}, 
+ and $\mat{A}_d=\mat{A}_{T_s}, \mat{B}_d=\mat{B}_{T_s}$ describe the discretized plant dynamics with sample time $T_s$, 
  is the state of the model 
- \begin{align}
+ \begin{align*}
  \dot{\vec{x}}(t) = \mat{A}\vec{x}(t)+\mat{B}\vec{u}(t), \quad 
  \vec{u}(t)=\mat{K}\vec{x}_k,  \,
  kT_s \leq t < (k+1)T_s. 
- \end{align}
+ \end{align*}
  \end{theorem}
 \begin{proof}
 See Appendix~\ref{sec:proofs}
@@ -1303,7 +1273,7 @@ $\phi_\mathit{init}^{K}$,
 based on the input constraints.
 $(\phi_\mathit{init} \wedge \phi_\mathit{input} \wedge u_k=-\mat{K} \vec{x}_k)
 \Rightarrow \phi_\mathit{init}^{K}$.
-These bounds will be used by the {\sc synthesize} phase to reduce the size of the solution space. 
+These bounds will be used by the {\sc synthesize} phase to reduce the size of the solution space.
 \end{itemize}
 \paragraph{\underline{{\sc synthesize}}} generates a candidate controller matrix $\mat{K}$
 and observer matrix $\mat{L}$ that satisfy
@@ -2244,17 +2214,15 @@ which completes the proof for $gm(\lambda_i)>1$. \qed
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  \subsubsection{Accelerated dynamics for continuous time models with parametric inputs}\label{sec:cont_acc_param_inputs}
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\begin{theorem}
+\begin{lemma}
 The expression
  \begin{align}
  \vec{x}_T&=\vec{x}(t=T)=\mat{A}_T\vec{x}_0 + \mat{B}_T\vec{u} \text{ where } \mat{B}_T=\mat{A}^{-1}(\mat{I}-\mat{A}_T)\mat{B} 
  \label{eq:param_discretize}
  \end{align}
  with $\mat{A}_T$ as per \eqref{eq:continuous_tube_dyn} is the state of the system $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)$ at time $T$ given a parametric input $\vec{u}$.
- \end{theorem}
- \begin{corollary}
  If $\mat{J}$ is diagonal and there exists a discrete dynamics matrix for a sampling time $T_d$ such that $A_d=e^{\mat{A} T_d}$, then $\vec{x}_T=A_d^{\frac{T}{T_d}}\vec{x}+(\mat{I}-\mat{A}_d^{\frac{T}{T_d}}\mat{B}\vec{u}) \text{ with } k \in \mathbb{R}^+$ is the state of the system at time $kT_d$.
- \end{corollary}
+ \end{lemma}
  \begin{proof}
  The first part of the equation ($\mat{A}_T\vec{x}_0$) is proven in the previous section.  As for the second part, we have from equation \eqref{eq:plant}
 that $\mat{B}_T = \int_{t = 0}^{T} e^{\mat{A} t} dt\ \mat{B}$ which expands to $\mat{B}_T= (\mat{A}^{-1} e^{\mat{A}T}-\mat{A}^{-1} e^{\mat{A} 0}) \mat{B}=\mat{A}^{-1}(\mat{I}-\mat{A}_T)\mat{B}$, thus proving the theorem.
