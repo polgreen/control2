@@ -699,7 +699,6 @@ The expression
  \vec{u}(t)=\mat{K}\vec{x}_k,  \,
  kT_s \leq t < (k+1)T_s. 
  \end{align}
-\note{shouldn't K be denoted with index, so that it belongs to the domain of the controller?}
  \end{theorem}
 \begin{proof}
 See Appendix~\ref{sec:proofs}
@@ -1447,7 +1446,7 @@ candidate.  Otherwise the optimized candidate solution is given back to
 }
 \caption{CEGIS-OR: CEGIS with Optimization Refinement. Orange boxes (light) are modelling
 stages, blue boxes (dark) are verification stages, and the red box is the synthesis stage. 
-\note{shouldn't K-L be denoted with index, so that it belongs to the domain of the controller?}}
+\note{shouldn't K-L be $\mat{K}_{\langle C \rangle},\mat{L}_{\langle C \rangle}$?}}
 \label{fig:CEGIS-OR}
 \end{figure}
 
@@ -1480,11 +1479,11 @@ thus creating seven hundred benchmarks from this base.
    &                                 & & \multicolumn{1}{|c|}{}  & \multicolumn{1}{|c|}{Min} & \multicolumn{1}{|c|}{Median} & \multicolumn{1}{|c|}{t.o.} & \multicolumn{1}{|c|}{found} & \multicolumn{1}{|c|}{Min} & \multicolumn{1}{|c|}{Median} & \multicolumn{1}{|c|}{t.o.} & \multicolumn{1}{|c|}{found}\\\hline
 1  & DC Motor          & 2 & 100 & 1.3\,s & 26.9\,s& 22& 20& 1.1\,s &   3.8\,s & 2 & 58\\
 2  & Helicopter        & 3  & 100 & 57.2\,s & t.o. & 54 & 15 & 7.1\,s  &   18.0\,s & 9 & 90\\
-3  & Inverted Pendulum & 4 & 100 &  277\,s& t.o. & 25& 0 & 20.0\,s  &  t.o. & 37 & 19\\
+3  & Inverted Pendulum & 4 & 100 &  277\,s& t.o. & 32& 0 & 20.0\,s  &  t.o. & 37 & 19\\
 4  & Magnetic Pointer  & 2  & 100 & 5.7\,s & 229.9\,s & 38 & 42 & 3.0\,s  &  9.5\,s & 5 & 95 \\
 %5 & Magnetic Suspension          & 2 & 1 & 12.2\,s& 0.6\,s & & & N/A  &   N/A &   N/A\\
 5  & Pendulum          & 2 & 100 & 0.8\,s & 53.6\,s & 27 & 71 &0.4\,s  &   4.9\,s & 6 & 92\\
-6  & Suspension        & 4 & 100 &15.0\,s & 146.3\,s & 25 & 62 & 14.8\,s&166.9\,s  & 26 & 73\\
+6  & Suspension        & 4 & 100 &15.0\,s & 177.2\,s & 30 & 70 & 14.8\,s&166.9\,s  & 26 & 73\\
 7  & Tape Driver       & 3 & 100 & 4.0\,s& 17.7\,s & 11 & 80 &3.1\,s  &   16.8\,s & 8 & 82\\
 %9 & Satellite          & 2 & 1 & 9.4\,s& 0.7\,s & & & N/A  &   N/A &   N/A\\
 %   & Total                 &   & 2002 & & & & & 1.2\,s & 16.1\,s & 876.8\,s\\
@@ -1500,11 +1499,11 @@ Experimental results. Minimum, and Median times for standard CEGIS vs CEGIS-OR o
 Using the described technique we managed to synthesize controllers for $509$ benchmarks (compared to $290$ found by our baseline), with a median synthesis time of $16.8$ seconds.
 %and the maximum observed synthesis time was under 10 minutes for a $4^{th}$ order system ($8^{th}$ order considering the observer).
 We consider these times short enough to be of practical use to control engineers.
-There are cases for which the system fails to find a controller.  We use a
+In those cases for which the system fails to find a controller, we use a
 relatively short timeout, so it is possible that longer timeouts would instead lead to a
-valid solution. However, as stated before, the solution is sound but incomplete,
-so it is impossible to tell if a solution exists in these cases. 
-\note{I don't think this is stated before so explain it here.}
+valid solution. However, the solution is sound but incomplete, 
+since we use approximations and over-approximations that may exclude
+valid candidates in early stages, so it is impossible to tell if a solution exists in these cases. 
 
 In order to show the improvements due to our optimization-enhanced CEGIS, we
 compared our approach against a standard CEGIS procedure.  For the majority of
@@ -1515,8 +1514,8 @@ out is much larger than CEGIS-OR which results in more found solutions.e
 %% We observe that the magnitude of the improvement is however, largely dependent on the shape of the problem. 
 
 Overall, we observed more improvements with CEGIS-OR for
-higher order systems or systems where the safety
-specification is tight, meaning that the standard CEGIS loop would require many iterations.
+systems where the safety specification is tight, 
+meaning that the standard CEGIS loop would require many iterations.
 %  We obtain the most improvements for the models with large orders?}
 %More interesting cases appear when we increase the order, showing
 %% For instance, benchmark X, which timed-out when using standard CEGIS,
@@ -1541,6 +1540,10 @@ abstraction resulting in many refinements
 others allow us to find solutions with rather coarse
 abstractions (this is reflected in the smaller minimum
 times obtained with CEGIS-OR). 
+Since further synthesis require increasingly
+complex models which are linear in the number of multiplications,
+eliminating  these results in large improvements.  In cases when the initial candidate is
+suitable, we gain nothing with the refinement and therefore find similar times.
 
 %% Additionally, as abstraction refinement allows us to start with coarse initial
 %% abstraction, CEGIS-OR has smaller minimum times than CEGIS, obtained
@@ -1566,8 +1569,8 @@ times obtained with CEGIS-OR).
 %% specification is tight and the original loop would require multiple counterexamples.
 %% >>>>>>> 24cc6678b474c2e2bd6bed94342b2d9daca1abee
 
-There are cases where newly found controllers are not due to the elimination of
-timeouts, but to the fact that the optimiser can reason about infinite precision
+There are cases where newly found controllers are not due to time improvements,
+but to the fact that the optimiser can reason about infinite precision
 numbers and may therefore find solutions that are not available using 64 bit 
 plant precision (the maximum allowed by our SAT solving tool).
 
@@ -2094,22 +2097,22 @@ we get
 \end{displaymath}
 This has a similar structure to \eqref{equ:reachtraj} which will be helpful in our analysis.
 
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{Stability of an observed system}\label{sec:cof_stability}
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-Careful examination of the matrices of the observed system\eqref{eq:of_dynamics} reveals that because $\mat{A}'$ is
-upper block diagonal, the spectrum of $\mat{A}'$ is equal to the union of
-the spectrum of $\mat{A}_{c}$ and $\mat{A}_{o}$, which can be calculated
-separately.  In other words, the characteristic polynomial of the closed loop is
-equal to the multiplication of the characteristic polynomials of the controller closed loop
-and the observer error when seen independently.
+%%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+%\subsection{Stability of an observed system}\label{sec:cof_stability}
+%%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 %
-\begin{align*}
-P(z)=P_K(z)P_L(z)=\left(z^p+\sum_{i=0}^{p-1}{(a_i-k_i)z^{i}}\right) \left(z^p+\sum_{i=0}^{p-1}{(a_i-l_i)z^{i}}\right)
-\end{align*}
-
-We get the stability specification by applying Jury's Criterion to these polynomials.
+%Careful examination of the matrices of the observed system\eqref{eq:of_dynamics} reveals that because $\mat{A}'$ is
+%upper block diagonal, the spectrum of $\mat{A}'$ is equal to the union of
+%the spectrum of $\mat{A}_{c}$ and $\mat{A}_{o}$, which can be calculated
+%separately.  In other words, the characteristic polynomial of the closed loop is
+%equal to the multiplication of the characteristic polynomials of the controller closed loop
+%and the observer error when seen independently.
+%%
+%\begin{align*}
+%P(z)=P_K(z)P_L(z)=\left(z^p+\sum_{i=0}^{p-1}{(a_i-k_i)z^{i}}\right) \left(z^p+\sum_{i=0}^{p-1}{(a_i-l_i)z^{i}}\right)
+%\end{align*}
+%
+%We get the stability specification by applying Jury's Criterion to these polynomials.
 
 %For a stabilised closed loop, we need these roots to remain within the unit circle (left hand side of the plane for continuous time).
 %Whilst this is not a sufficient condition for verifying safety properties, it is a necessary one, therefore we will review this verification process.
@@ -2331,20 +2334,20 @@ response-time of the system (using a step response).
 \item The \emph{settling time} is defined as the time it takes the output to stabilize within a margin of the target value (eg $10\%$).
 \end{enumerate} 
 %
-In the case of first and second order systems, the decay is governed by the equations 
-%
-\begin{align*}
-&y_{decay}=
-&\left\{
-\begin{array}{cc}
-e^{-|\omega| t}& 1^{st} order\\
-e^{\zeta |\omega| t}\left(\frac{\sin\left(|\omega| t\sqrt{1-\zeta^2}+\sin^{-1}\sqrt{1-\zeta^2}\right)}{\sqrt{1-\zeta^2}} \right)&\zeta<1\\
-e^{-|\omega| t}-|\omega| t e^{-|\omega| t}&\zeta=1\\
-\frac{|\omega| e^{-|\omega_2| t}-|\omega_2| e^{-|\omega| t}}{|\omega|-|\omega_2|}&\zeta>1\end{array}\right.
-\end{align*}
-where $|\omega|$ and $|\omega_2|$ are the magnitudes of the eigenvalues (roots) of the system and  $\zeta=-\cos(\theta)$ where $\theta$ is the polar angle of the conjugate pair if it exists ($\zeta \geq 1$ if it doesn't).
-These equations become increasingly complicated for higher order systems. However, we note their strong dependency on the magnitude of the eigenvalues, and use this property to define an upperbound on the decay function.
-All of the above equations will decay faster than $e^{-|\omega| t}$ given $|\omega| < |\omega_2|$, hence we may use this function as our upper bound.
+%In the case of first and second order systems, the decay is governed by the equations 
+%%
+%\begin{align*}
+%&y_{decay}=
+%&\left\{
+%\begin{array}{cc}
+%e^{-|\omega| t}& 1^{st} order\\
+%e^{\zeta |\omega| t}\left(\frac{\sin\left(|\omega| t\sqrt{1-\zeta^2}+\sin^{-1}\sqrt{1-\zeta^2}\right)}{\sqrt{1-\zeta^2}} \right)&\zeta<1\\
+%e^{-|\omega| t}-|\omega| t e^{-|\omega| t}&\zeta=1\\
+%\frac{|\omega| e^{-|\omega_2| t}-|\omega_2| e^{-|\omega| t}}{|\omega|-|\omega_2|}&\zeta>1\end{array}\right.
+%\end{align*}
+%where $|\omega|$ and $|\omega_2|$ are the magnitudes of the eigenvalues (roots) of the system and  $\zeta=-\cos(\theta)$ where $\theta$ is the polar angle of the conjugate pair if it exists ($\zeta \geq 1$ if it doesn't).
+%These equations become increasingly complicated for higher order systems. However, we note their strong dependency on the magnitude of the eigenvalues, and use this property to define an upperbound on the decay function.
+%All of the above equations will decay faster than $e^{-|\omega| t}$ given $|\omega| < |\omega_2|$, hence we may use this function as our upper bound.
 
 Given a closed loop single output LTI system of order $p$ with dynamics
 \begin{equation}
@@ -2374,7 +2377,8 @@ y_k&=\mat{C}'\mat{J}^k\vec{x}_0 = \sum_{i=0}^p \left( c_i \lambda_i^k{\vec{x}_0}
 \end{align*}
 where the second  part of the equation corresponds to the upper diagonal
 terms of the Jordan blocks.  We also have $|\lambda_i^k|\leq
-|\overline{\omega}^k|$,hence
+|\overline{\omega}^k|$, where $|\overline{\omega}^k|$ is the norm of the largest
+eigenvalue in the system. Hence
 %
 \begin{align*}
 |y_k|&\leq |\overline{\omega}^k|\sum_{i=0}^p \left|c_i + \sum\limits_{j=1}^{gm(i)}c_{i+j}\binom{k}{j} \lambda_i^{-j}\right|
