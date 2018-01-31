@@ -817,6 +817,7 @@ dimension for each matrix.
 New problems arise due to the FWL effects on these matrices.  
 The canonical form of the resulting model is expressed by:
 %
+{\setlength{\belowdisplayskip}{2pt}
 \begin{align}
 \left [\begin{array}{c}\vec{x}'\\ \vec{x}_e' \end{array}\right]_{k+1}
 =& \left [\begin{array}{cc}\mat{A}_{c}+\mat{B}_{e}&\mat{B}_{o}\\ \mat{A}_{e}&\mat{A}_{o}\end{array}\right]
@@ -826,8 +827,23 @@ The canonical form of the resulting model is expressed by:
 % + \mat{D}_{d}\vec{u}_k
 \label{eq:observer_LTI_FWL_cf}
 \end{align}
+}
+{\setlength{\abovedisplayskip}{2pt}
+\setlength{\belowdisplayskip}{2pt}
+\begin{align*}
+\mat{A}_c=&\left[\begin{array}{cc}
+\begin{array}{ccc}k_{n-1}-a_{n-1}&\cdots&k_1-a_1\end{array}&k_0-a_0\\
+\mat{I}&\begin{array}{c}0\\ \vdots \\ 0\end{array}
+\end{array}\right]&
+\mat{A}_o=&\left[\begin{array}{cc}
+\begin{array}{c}l_{n-1}-a_{n-1}\\ \vdots\\ l_1-a_1\end{array}&\mat{I}\\
+l_0-a_0&\begin{array}{ccc}0&\cdots&0\end{array}
+\end{array}\right]
+\end{align*}
+}
+
 where $\vec{x}'$ and $\vec{x}_e'$ are the state of the system and the error of the observer evaluated in the transformed domain, 
-$\mat{A}_{c}$ the closed loop dynamics of the controller, $\mat{A}_{o}$ the closed loop dynamics of the observer, $\mat{B}_{o}$ the feedback gain, 
+$\mat{A}_{c}$ the closed loop dynamics of the controller in canonical form, $\mat{A}_{o}$ the closed loop dynamics of the observer in canonical form, $\mat{B}_{o}$ the feedback gain, 
  $\mat{B}'$ the noise sensitivity, and $\mat{A}_{e}$ and $\mat{B}_{e}$ the error caused by the FWL representation.
 %and we have introduced the following terms: 
 %{\setlength{\abovedisplayskip}{2pt}
@@ -850,12 +866,11 @@ $\mat{A}_{c}$ the closed loop dynamics of the controller, $\mat{A}_{o}$ the clos
 %}
 Here $\nu_1$ and $\nu_2$ are the quantization noises introduced by the ADC and the DAC, $\nu_t$ is the noise introduced by the delay, and $\nu_1'$ and $\nu_2'$ are quantization noises caused by roundoffs in the FWL operations (details are in Appendix~\ref{sec:quantization-noise}).
 
-\note{the remainder of this section is not self contained and totally unclear.}
-
 In a continuous time domain, the characteristic polynomial
 of the closed loop dynamics is defined by the characteristic polynomials of~$\mat{A}_c$
 and~$\mat{A}_o$.  The introduction of the FWL errors causes this to no longer
 be true.  We must therefore find a suitable solution to maintain this separation.
+
 Gershgorin disks~\cite{van1996matrix} allow us to limit the error
 in the expected eigenvalues.  Let $\delta_o=\max(\norm{{\mat{A}_e}_{i,*}}_1)$
 (\emph{i.e.} the largest row norm in $\mat{A}_e$) be the largest error bound
@@ -869,7 +884,7 @@ desired upper value $\overline{\lambda}$, we apply Jury's criterion on the
 polynomial.
 %
 \begin{equation}
-P_o'=\sum_{j=0}^p c_j\overline{\lambda'}^{p-j}s^j, \text{ where }  \overline{\lambda'}=(1+\delta_o)\overline{\lambda}. 
+P_o'=\sum_{j=0}^p c_j\overline{\lambda'}^{p-j}s^j, \text{ where }  \overline{\lambda'}=(1+\delta_o)\overline{\lambda} \text{ and } c_j=l_j-a_j.
 \end{equation}
 %
 In the case of the reachable eigenvalues, the procedure is the same except
@@ -878,7 +893,7 @@ that we obtain our bound $\delta_c=\max(\norm{{\mat{A}_e}_{*,i}+{\mat{B}_e}_{*,i
 apply Jury's Criterion over
 %
 \begin{equation}
-P_r'=\sum_{j=0}^p c_j\overline{\lambda'}^{p-j}s^j, \text{ where }  \overline{\lambda'}=(1+\delta_c)\overline{\lambda}. 
+P_r'=\sum_{j=0}^p c_j\overline{\lambda'}^{p-j}s^j, \text{ where }  \overline{\lambda'}=(1+\delta_c)\overline{\lambda} \text{ and } c_j=k_j-a_j.
 \end{equation}
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1459,7 +1474,7 @@ In the verification module, we have used the tool \note{Axelerator~\cite{}}.
 4  & Magnetic Pointer  & 2  & 100 & 5.7\,s & 229.9\,s & 38 & 3.0\,s  &  9.5\,s & 7 \\
 %5 & Magnetic Suspension          & 2 & 1 & 12.2\,s& 0.6\,s & & & N/A  &   N/A &   N/A\\
 5  & Pendulum          & 2 & 100 & 0.8\,s & 53.6\,s & 33 &0.4\,s  &   4.9\,s & 6\\
-6  & Suspension        & 4 & 100 & & & \xmark& &  & \xmark\\
+6  & Suspension        & 4 & 100 & & & \xmark& 14.8\,s&166.9\,s  & 26 \\
 7  & Tape Driver       & 3 & 100 & 4.0\,s& 17.7\,s & 11&3.1\,s  &   16.8\,s & 8\\
 %9 & Satellite          & 2 & 1 & 9.4\,s& 0.7\,s & & & N/A  &   N/A &   N/A\\
 %   & Total                 &   & 2002 & & & & & 1.2\,s & 16.1\,s & 876.8\,s\\
