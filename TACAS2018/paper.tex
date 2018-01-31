@@ -440,13 +440,12 @@ time horizon (transitive closure).
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{State observers}\label{sec:observer}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
 In many models of real-world control systems, 
 the internal state $x$ cannot be directly measured,  
 but is rather inferred from its effect on the output $\vec{y}$ using an observer~\cite{Astrom08}.  
 Essentially, a state observer is a new dynamical model (with variable denoted below as $\hat{\vec{x}}$) 
 that provides an estimate of the internal state $x$ of the given model, 
-from measurements of its inputs and outputs (see Appendix~\ref{sec:observable}). 
+from measurements of its inputs and outputs. 
 
 A closed-loop digital control system with observer is shown in Figure~\ref{fig:observersystem}. 
 The linear feedback controller (bottom left) is characterized by a gain matrix $\mat{K}_{\langle C \rangle}$ that influences the closed-loop dynamics, 
@@ -458,9 +457,9 @@ Note that the controller and the observer are implemented in a discrete domain
 (quantities within this domain are identified by the index $\langle C \rangle$), whereas the plant is continuous.
 We futher model the effects of using a discrete controller as the noise signals $\nu_1$(ADC quantization), $\nu_2$ (DAC quantization), $\nu_1'$ (rounding of the observer state error),
 $\nu_2'$ (rounding of the observer state), and $\nu_t$ (output delay of the digital system) 
-  Lastly, $k_r$ is a reference gain required by the model.  
-  Our goal in this work is to synthesise both $\mat{K}_{\langle C \rangle}$ and $\mat{L}_{\langle C \rangle}$, 
-  so that specific closed-loop properties of the overall interconnection are satisfied.
+Lastly, $k_r$ is a reference gain required by the model.  
+Our goal in this work is to synthesise both $\mat{K}_{\langle C \rangle}$ and $\mat{L}_{\langle C \rangle}$, 
+ so that specific closed-loop properties of the overall interconnection are satisfied.
  
 \begin{figure*}[t!]
 \centering
@@ -493,8 +492,6 @@ $\nu_2'$ (rounding of the observer state), and $\nu_t$ (output delay of the digi
    \node[draw=none] (v2p)  at ([yshift=1.2cm]circle) {$\nu_2'$};
    \node[rectangle,draw,minimum width=1cm,minimum height=1cm] (Kd) at ([xshift=0,yshift=-5.5cm]circle)  {\sc $\mat{K}_{\langle C \rangle}$};
    \coordinate (kdsouth) at ([yshift=-3cm]Kd);
-   
-      
    
    \& complexnode/.pic={ 
       \node[rectangle,dashed,draw,minimum width=3cm,minimum height=1.6cm,label=\textbf{DAC}] (dac) {};
@@ -609,7 +606,6 @@ $\nu_2'$ (rounding of the observer state), and $\nu_t$ (output delay of the digi
   %(quantities within this domain are identified by the index $\langle C \rangle$),
   whereas the plant is continuous. \label{fig:observersystem}}
 \end{figure*}
-
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  \section{Acceleration of continuous-time models}\label{sec:continuous_time_accel}
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
@@ -626,7 +622,6 @@ namely the state of the system $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$ at time $t=T
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
  \subsection{Accelerated\! dynamics\! for\! continuous-time\! models\! without\! inputs}\label{sec:cont_acc_no_inputs}
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 
  Given a specific time $T$, the state $\vec{x}(t=T)$ can be expressed as a linear function of $\vec{x}_0$ as shown below.
 We assume that the system has no inputs, so its dynamics are described by $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$.
  
@@ -665,7 +660,7 @@ The state of the model $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)$ at
  \vec{x}_T&=\vec{x}(t=T)=\mat{A}_T\vec{x}_0 + \mat{B}_T\vec{u} \text{ where } \mat{B}_T=\mat{A}^{-1}(\mat{I}-\mat{A}_T)\mat{B} 
  \end{align}
  where $\forall t \leq T,\ \vec{u}(t)=\vec{u}$, and $\mat{A}_T$ as in \eqref{eq:continuous_tube_dyn2}
- \footnote{when $\mat{A}$ is not invertible, we use $\left[\begin{array}{cc}\mat{A}_T&\mat{B}_T\\ 0&\mat{I}\end{array}\right]=e^{\left[\begin{array}{cc}\mat{A}&\mat{B}\\0&0\end{array}\right]}$}.
+ \footnote{when $\mat{A}$ is not invertible, we use $\left[\begin{array}{cc}\mat{A}_T&\mat{B}_T\\ 0&\mat{I}\end{array}\right]=e^{\left[\begin{array}{cc}\mat{A}&\mat{B}\\0&0\end{array}\right]T}$}.
  \end{theorem}
  \begin{corollary}
  If $\mat{J}$ is diagonal and given a sampling time $T_d$ such that $A_d=e^{\mat{A} T_d}$, 
@@ -691,7 +686,7 @@ The expression
  \end{align}
  with $\mat{A}_T$ as in \eqref{eq:continuous_tube_dyn2}, 
  and where $\mat{B}_T=\mat{A}^{-1}(\mat{I}-\mat{A}_T)\mat{B}$
-  \footnote{as before, when $\mat{A}$ is not invertible, we use $\left[\begin{array}{cc}\mat{A}_T&\mat{B}_T\\ 0&\mat{I}\end{array}\right]=e^{\left[\begin{array}{cc}\mat{A}&\mat{B}\\0&0\end{array}\right]}$}, 
+  \footnote{as before, when $\mat{A}$ is not invertible, we use $\left[\begin{array}{cc}\mat{A}_T&\mat{B}_T\\ 0&\mat{I}\end{array}\right]=e^{\left[\begin{array}{cc}\mat{A}&\mat{B}\\0&0\end{array}\right]T}$}, 
  and $\mat{A}_d, \mat{B}_d$ describe the discretized plant dynamics with sample time $T_s$, 
  is the state of the model 
  \begin{align}
@@ -1537,10 +1532,10 @@ abstraction resulting in many refinements
 others allow us to find solutions with rather coarse
 abstractions (this is reflected in the smaller minimum
 times obtained with CEGIS-OR). 
-Since further synthesis require increasingly
-complex models which are linear in the number of multiplications,
-eliminating  these results in large improvements.  In cases when the initial candidate is
-suitable, we gain nothing with the refinement and therefore find similar times.
+%Since further synthesis require increasingly
+%complex models which are linear in the number of multiplications,
+%eliminating  these results in large improvements.  In cases when the initial candidate is
+%suitable, we gain nothing with the refinement and therefore find similar times.
 
 %% Additionally, as abstraction refinement allows us to start with coarse initial
 %% abstraction, CEGIS-OR has smaller minimum times than CEGIS, obtained
