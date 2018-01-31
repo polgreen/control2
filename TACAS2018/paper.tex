@@ -698,6 +698,7 @@ The expression
  \vec{u}(t)=\mat{K}\vec{x}_k,  \,
  kT_s \leq t < (k+1)T_s. 
  \end{align}
+\note{shouldn't K be denoted with index, so that it belongs to the domain of the controller?}
  \end{theorem}
 \begin{proof}
 See Appendix~\ref{sec:proofs}
@@ -847,7 +848,7 @@ $\mat{A}_{c}$ the closed loop dynamics of the controller, $\mat{A}_{o}$ the clos
 %\eta_1=&\nu_1+\nu_1'+\nu_t& \eta_2=&\nu_2+\nu_2',
 %\end{align*}
 %}
-Here $\nu_1$ and $\nu_2$ are the quantization noises introduced by the ADC and the DAC, $\nu_t$ is the noise introduced by the delay, and $\nu_1'$ and $\nu_2'$ are quantization noises caused by roundoffs in the FWL operations \footnote{see Appendix~\ref{sec:quantization-noise}}.
+Here $\nu_1$ and $\nu_2$ are the quantization noises introduced by the ADC and the DAC, $\nu_t$ is the noise introduced by the delay, and $\nu_1'$ and $\nu_2'$ are quantization noises caused by roundoffs in the FWL operations (details are in Appendix~\ref{sec:quantization-noise}).
 
 \note{the remainder of this section is not self contained and totally unclear.}
 
@@ -859,8 +860,8 @@ Gershgorin disks~\cite{van1996matrix} allow us to limit the error
 in the expected eigenvalues.  Let $\delta_o=\max(\norm{{\mat{A}_e}_{i,*}}_1)$
 (\emph{i.e.} the largest row norm in $\mat{A}_e$) be the largest error bound
 for any eigenvalue in $\mat{A}_e$.  Then $\forall i \in [1, ...\,,n],
-|{\lambda_o}_{i}-\hat{\lambda_o}_{i}|<\delta_o$, where ${\lambda_o}_{i}$ are the
-true eigenvalues of the observer and $\hat{\lambda_o}_{i}$ the eigenvalues of
+|{\lambda_o}_{i}-\hat{\lambda}_{oi}|<\delta_o$, where ${\lambda_o}_{i}$ are the
+true eigenvalues of the observer and $\hat{\lambda}_{oi}$ the eigenvalues of
 the perturbed observer.  We note that in the case of stability we only care
 about the error with respect to the unit circle, which is equivalent to
 upper bounding the estimation of the largest eigenvalue.  Hence, given a
@@ -868,7 +869,7 @@ desired upper value $\overline{\lambda}$, we apply Jury's criterion on the
 polynomial.
 %
 \begin{equation}
-P_o'=\sum_{j=0}^p c_j\overline{\lambda'}^{p-j}s^j, \text{ where }  \overline{\lambda'}=(1+\delta_o)\overline{\lambda}
+P_o'=\sum_{j=0}^p c_j\overline{\lambda'}^{p-j}s^j, \text{ where }  \overline{\lambda'}=(1+\delta_o)\overline{\lambda}. 
 \end{equation}
 %
 In the case of the reachable eigenvalues, the procedure is the same except
@@ -877,13 +878,13 @@ that we obtain our bound $\delta_c=\max(\norm{{\mat{A}_e}_{*,i}+{\mat{B}_e}_{*,i
 apply Jury's Criterion over
 %
 \begin{equation}
-P_r'=\sum_{j=0}^p c_j\overline{\lambda'}^{p-j}s^j, \text{ where }  \overline{\lambda'}=(1+\delta_c)\overline{\lambda}
+P_r'=\sum_{j=0}^p c_j\overline{\lambda'}^{p-j}s^j, \text{ where }  \overline{\lambda'}=(1+\delta_c)\overline{\lambda}. 
 \end{equation}
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{Safety of a digitally observed system}\label{sec:cof_safety}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-A safety specification gives raise to a requirement on the states of
+A safety specification leads to a requirement on the states of
 the model. Consequently, the controller must ensure that the state
 never violates the requirement.  In~this work, the safety property is
 expressed as:
@@ -1247,7 +1248,9 @@ described in Section~\ref{sec:cof_fwl_stability}.
 \item Create a stability specification $\phi_{stability}$ based on the characteristic polynomials, FWL
 error ($\mat{A}_e$,$\mat{B}_e$), and response time %%(P_a,P_l,\overline{\lambda})$
 as described in Section~\ref{sec:transientspecification}.
-\item Calculate a set of initial bounds on $\mat{K}$, $\phi_\mathit{init}^{K}$,
+\item Calculate a set of initial bounds on $\mat{K}$, 
+\note{shouldn't K be denoted with index, so that it belongs to the domain of the controller? Recall the notations used in the Figure.}
+$\phi_\mathit{init}^{K}$,
 based on the input constraints.
 $(\phi_\mathit{init} \wedge \phi_\mathit{input} \wedge u_k=-\mat{K} \vec{x}_k)
 \Rightarrow \phi_\mathit{init}^{K}$.
@@ -1312,7 +1315,7 @@ Secondly, we try to optimize the failed candidate solution.
 For this purpose, we seek to minimize the distance of the farthest point in the
 reach space to the closest point to it in the safe region
 \begin{equation}
-e = \max(\{\min(\{\vec{x}-\vec{g}, \vec{g}\in G\}), \vec{x} \in \hat{X}_\infty \}).
+e = \max\{\min\{\vec{x}-\vec{g}, \vec{g}\in G\}, \vec{x} \in \hat{X}_\infty \}.
 \label{eq:objective}
 \end{equation}
 
@@ -1322,8 +1325,8 @@ dynamics are less likely to stray outside of the safe region (we say
 less likely because the change in the eigenvectors changes the shape
 of the space and may cause some trajectories to go further). For this
 purpose, we take the largest eigenvalue and reduce it by a factor $f$
-that still satisfies the controller constraints.
-The resulting observer and controller are then
+that still satisfies the controller constraints ($f \overline{\lambda}
+\models \phi$ \note{wrong notation: it's not that the eigenvalue satisfies a constraint - rather, the corresponding model does? }).  The resulting observer and controller are then
 verified against the safety specification $\phi_\mathit{safety}$ and the
 objective $e$ is measured as in Equation \eqref{eq:objective}.   If for
 each iteration $k$, the objective $e_k<e_{k-1}$, we continue to
@@ -1331,8 +1334,9 @@ iterate until $e_k \leq 0$ (i.e. we found a safe controller),
 otherwise we move to the second stage.
 
 In the second stage, we take the complex eigenvalue
-with the largest angle ($max\{|tan^{-1}\left(\frac{im(\lambda)}{re(\lambda)}\right)| \mid \lambda \in \Lambda\}$)
-and reduce its imaginary component only.
+with the largest angle ($\max\{|\tan^{-1}\left(\frac{im(\lambda)}{re(\lambda)}\right)| \mid \lambda \in \Lambda\}$)
+and reduce its imaginary component only  ($re(\lambda) + f\, im(\lambda) \models \phi$).
+\note{notation again.}
 The process ends when no imaginary part can be further reduced.
 The resulting closed loop form converges faster than the original and has a
 smaller rotation, which facilitates meeting the safety specification $\phi_\mathit{safety}$.
@@ -1418,7 +1422,8 @@ candidate.  Otherwise the optimized candidate solution is given back to
  \end{tikzpicture}
 }
 \caption{CEGIS-OR: CEGIS with Optimization Refinement. Orange boxes (light) are modelling
-stages, blue boxes (dark) are verification stages, and the red box is the synthesis stage.}
+stages, blue boxes (dark) are verification stages, and the red box is the synthesis stage. 
+\note{shouldn't K-L be denoted with index, so that it belongs to the domain of the controller?}}
 \label{fig:CEGIS-OR}
 \end{figure}
 
@@ -1432,7 +1437,7 @@ composed by seven models extracted from the control literature~\cite{acrobot,cst
 In order to obtain statistically relevant results, we have taken these models
 and modified each possible combination of their parameters by a 10\% tolerance,
 thus creating seven hundred benchmarks from this base.
-In the verification module, we have used the tool Axelerator~\cite{} .
+In the verification module, we have used the tool \note{Axelerator~\cite{}}.
 
 
 %-------------------------------
@@ -1464,14 +1469,14 @@ In the verification module, we have used the tool Axelerator~\cite{} .
 \end{tabular}
 \vspace{0.05in}
 \caption{\label{tab:cegis_results}
-Experimental results. Minimum, and Median times for standard CEGIS vs CEGIS-OR on multiple benchmarks. the t.o. column ~indicates number of timeouts.}
+Experimental results. Minimum, and Median times for standard CEGIS vs CEGIS-OR on multiple benchmarks.  the t.o. column ~indicates number of timeouts. \note{It is unclear what the difference is btw t.o. used in the third column header, and that used within the table - the latter is corresponding to a cross?} \note{recall what a model order is.}}
 \end{table}
 
-Using the described technique we managed to synthesize controllers for X benchmarks, with a median synthesis time of $18.8$ seconds.
+Using the described technique we managed to synthesize controllers for \note{X} benchmarks, with a median synthesis time of $18.8$ seconds.
 %and the maximum observed synthesis time was under 10 minutes for a $4^{th}$ order system ($8^{th}$ order considering the observer).
 We consider these times short enough to be of practical use to control engineers.
 There are cases for which the system fails to find a controller.  We use a
-relatively short timeout, so it is possible that longer timeouts would result in a
+relatively short timeout, so it is possible that longer timeouts would instead lead to a
 valid solution. However, as stated before, the solution is sound but incomplete,
 so it is impossible to tell if a solution exists in these cases. 
 \note{I don't think this is stated before so explain it here.}
@@ -1480,24 +1485,51 @@ In order to show the improvements due to our optimization-enhanced CEGIS, we
 compared our approach against a standard CEGIS procedure.  For the majority of
 our benchmarks, we observe that our approach is significantly faster than
 standard CEGIS. We further note that the number of times standard CEGIS times
-out is much larger than CEGIS-OR which results in more found solutions.
-The magnitude of the improvement is however, largely dependent on the shape of the problem. 
+out is much larger than CEGIS-OR which results in more found solutions.e 
 
-More interesting cases appear when we increase the order, showing
-initially that benchmarks that timed-out using standard CEGIS are now
-running in under 2 minutes using CEGIS-OR. This is the result of
+%% We observe that the magnitude of the improvement is however, largely dependent on the shape of the problem. 
+
+Overall, we observed more improvements with CEGIS-OR for
+higher order systems or systems where the safety
+specification is tight, meaning that the standard CEGIS loop would require many iterations.
+%  We obtain the most improvements for the models with large orders?}
+%More interesting cases appear when we increase the order, showing
+For instance, benchmark X, which timed-out when using standard CEGIS,
+is running under 2 minutes using CEGIS-OR. This is the result of
 removing several multiplications which are known to be difficult for
-SAT solvers.  Furthermore, when we introduce Optimization Refinement
-there is a further improvement up to an order of magnitude.  This
-second improvement is due to the elimination of counterexamples that
-would have been created without the refinement. Since further
-synthesis require increasingly complex models which are linear in the
-number of multiplications, eliminating these results in large
-improvements.  In cases when the initial candidate is suitable, we
-gain nothing with the refinement.  Improvements using this approach
-will therefore be observed in higher order systems or when the safety
-specification is tight and the original loop would require multiple
-counterexamples.
+SAT solvers \note{I'm not sure readers will relate to where this is happening in the paper. is it the fact that you use that canonical form? then say that. however, i would have thought you do that in
+both approaches..}.
+Another factor that brings an improvement of one order of
+magnitude is the Abstraction Refinement and Optimization in CEGIS-OR
+\note{on average/an improvement of up to an order of magnitude/for some specific case?}.
+While abstraction refinement enables us to start with coarse abstractions
+that are only refined on demand, 
+the optimization
+allows to locally improve candidate solutions and avoid entire iterations of the CEGIS loop
+(which would have also required more refined abstractions).
+%% elimination of counterexamples that
+%% would have been created without the refinement. Since further
+%% synthesis require increasingly complex models which are linear in the
+%% number of multiplications, eliminating these results in large
+%% improvements.
+While some systems might still require a very pecise
+abstraction resulting in many refinements
+(this is generally the cause of time-outs in CEGIS-OR),
+others allow us to find solutions with rather coarse
+abstractions (this is reflected in the smaller minimum
+times obtained with CEGIS-OR). 
+
+%% Additionally, as abstraction refinement allows us to start with coarse initial
+%% abstraction, CEGIS-OR has smaller minimum times than CEGIS, obtained
+%% when the initial coarse abstractions were sufficient to synthesise a
+%% solution.
+
+%% In cases when the initial candidate is suitable, we
+%% gain nothing with the refinement.
+%% Overall, we observed more improvements with CEGIS-OR for
+%% higher order systems or systems where the safety
+%% specification is tight, where the standard CEGIS loop would require many iterations.
+%multiple counterexamples.
 
 %%-------------------------------
 %\subsection{Threats to validity}
