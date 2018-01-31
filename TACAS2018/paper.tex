@@ -817,6 +817,7 @@ dimension for each matrix.
 New problems arise due to the FWL effects on these matrices.  
 The canonical form of the resulting model is expressed by:
 %
+{\setlength{\belowdisplayskip}{2pt}
 \begin{align}
 \left [\begin{array}{c}\vec{x}'\\ \vec{x}_e' \end{array}\right]_{k+1}
 =& \left [\begin{array}{cc}\mat{A}_{c}+\mat{B}_{e}&\mat{B}_{o}\\ \mat{A}_{e}&\mat{A}_{o}\end{array}\right]
@@ -826,8 +827,23 @@ The canonical form of the resulting model is expressed by:
 % + \mat{D}_{d}\vec{u}_k
 \label{eq:observer_LTI_FWL_cf}
 \end{align}
+}
+{\setlength{\abovedisplayskip}{2pt}
+\setlength{\belowdisplayskip}{2pt}
+\begin{align*}
+\mat{A}_c=&\left[\begin{array}{cc}
+\begin{array}{ccc}k_{n-1}-a_{n-1}&\cdots&k_1-a_1\end{array}&k_0-a_0\\
+\mat{I}&\begin{array}{c}0\\ \vdots \\ 0\end{array}
+\end{array}\right]&
+\mat{A}_o=&\left[\begin{array}{cc}
+\begin{array}{c}l_{n-1}-a_{n-1}\\ \vdots\\ l_1-a_1\end{array}&\mat{I}\\
+l_0-a_0&\begin{array}{ccc}0&\cdots&0\end{array}
+\end{array}\right]
+\end{align*}
+}
+
 where $\vec{x}'$ and $\vec{x}_e'$ are the state of the system and the error of the observer evaluated in the transformed domain, 
-$\mat{A}_{c}$ the closed loop dynamics of the controller, $\mat{A}_{o}$ the closed loop dynamics of the observer, $\mat{B}_{o}$ the feedback gain, 
+$\mat{A}_{c}$ the closed loop dynamics of the controller in canonical form, $\mat{A}_{o}$ the closed loop dynamics of the observer in canonical form, $\mat{B}_{o}$ the feedback gain, 
  $\mat{B}'$ the noise sensitivity, and $\mat{A}_{e}$ and $\mat{B}_{e}$ the error caused by the FWL representation.
 %and we have introduced the following terms: 
 %{\setlength{\abovedisplayskip}{2pt}
@@ -850,12 +866,11 @@ $\mat{A}_{c}$ the closed loop dynamics of the controller, $\mat{A}_{o}$ the clos
 %}
 Here $\nu_1$ and $\nu_2$ are the quantization noises introduced by the ADC and the DAC, $\nu_t$ is the noise introduced by the delay, and $\nu_1'$ and $\nu_2'$ are quantization noises caused by roundoffs in the FWL operations (details are in Appendix~\ref{sec:quantization-noise}).
 
-\note{the remainder of this section is not self contained and totally unclear.}
-
 In a continuous time domain, the characteristic polynomial
 of the closed loop dynamics is defined by the characteristic polynomials of~$\mat{A}_c$
 and~$\mat{A}_o$.  The introduction of the FWL errors causes this to no longer
 be true.  We must therefore find a suitable solution to maintain this separation.
+
 Gershgorin disks~\cite{van1996matrix} allow us to limit the error
 in the expected eigenvalues.  Let $\delta_o=\max(\norm{{\mat{A}_e}_{i,*}}_1)$
 (\emph{i.e.} the largest row norm in $\mat{A}_e$) be the largest error bound
@@ -869,7 +884,7 @@ desired upper value $\overline{\lambda}$, we apply Jury's criterion on the
 polynomial.
 %
 \begin{equation}
-P_o'=\sum_{j=0}^p c_j\overline{\lambda'}^{p-j}s^j, \text{ where }  \overline{\lambda'}=(1+\delta_o)\overline{\lambda}. 
+P_o'=\sum_{j=0}^p c_j\overline{\lambda'}^{p-j}s^j, \text{ where }  \overline{\lambda'}=(1+\delta_o)\overline{\lambda} \text{ and } c_j=l_j-a_j.
 \end{equation}
 %
 In the case of the reachable eigenvalues, the procedure is the same except
@@ -878,7 +893,7 @@ that we obtain our bound $\delta_c=\max(\norm{{\mat{A}_e}_{*,i}+{\mat{B}_e}_{*,i
 apply Jury's Criterion over
 %
 \begin{equation}
-P_r'=\sum_{j=0}^p c_j\overline{\lambda'}^{p-j}s^j, \text{ where }  \overline{\lambda'}=(1+\delta_c)\overline{\lambda}. 
+P_r'=\sum_{j=0}^p c_j\overline{\lambda'}^{p-j}s^j, \text{ where }  \overline{\lambda'}=(1+\delta_c)\overline{\lambda} \text{ and } c_j=k_j-a_j.
 \end{equation}
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1325,8 +1340,9 @@ dynamics are less likely to stray outside of the safe region (we say
 less likely because the change in the eigenvectors changes the shape
 of the space and may cause some trajectories to go further). For this
 purpose, we take the largest eigenvalue and reduce it by a factor $f$
-that still satisfies the controller constraints ($f \overline{\lambda}
-\models \phi$ \note{wrong notation: it's not that the eigenvalue satisfies a constraint - rather, the corresponding model does? }).  The resulting observer and controller are then
+that still satisfies the controller constraints $\phi_\mathit{init}^{K}$.
+%($f \overline{\lambda}\models \phi$ \note{wrong notation: it's not that the eigenvalue satisfies a constraint - rather, the corresponding model does? }). 
+The resulting observer and controller are then
 verified against the safety specification $\phi_\mathit{safety}$ and the
 objective $e$ is measured as in Equation \eqref{eq:objective}.   If for
 each iteration $k$, the objective $e_k<e_{k-1}$, we continue to
@@ -1437,7 +1453,7 @@ composed by seven models extracted from the control literature~\cite{acrobot,cst
 In order to obtain statistically relevant results, we have taken these models
 and modified each possible combination of their parameters by a 10\% tolerance,
 thus creating seven hundred benchmarks from this base.
-In the verification module, we have used the tool \note{Axelerator~\cite{}}.
+%In the verification module, we have used the tool \note{Axelerator~\cite{}}.
 
 
 %-------------------------------
@@ -1449,19 +1465,19 @@ In the verification module, we have used the tool \note{Axelerator~\cite{}}.
 \centering
 \footnotesize
 %
-\begin{tabular}{| r | l | c | c | r | r | r | r | r | r | r |}
+\begin{tabular}{| r | l | c | c | r | r | r | r | r | r | r | r | r |}
 %
 \hline
-\# & \multicolumn{1}{|c|}{Benchmark} & \multicolumn{1}{|c|}{order} & \multicolumn{1}{|c|}{Number of} & \multicolumn{3}{|c|}{CEGIS} & \multicolumn{3}{|c|}{CEGIS-OR} \\
-   &                                 & & \multicolumn{1}{|c|}{benchmarks}  & \multicolumn{1}{|c|}{Min} & \multicolumn{1}{|c|}{Median} & \multicolumn{1}{|c|}{t.o.} & \multicolumn{1}{|c|}{Min} & \multicolumn{1}{|c|}{Median} & \multicolumn{1}{|c|}{t.o.}\\\hline
-1  & DC Motor          & 2 & 100 & 1.3\,s & 26.9\,s& 22& 1.1\,s &   3.8\,s & 2\\
-2  & Helicopter        & 3  & 100 & 57.2\,s & t.o. & 54 & 7.1\,s  &   18.0\,s & 9\\
-3  & Inverted Pendulum & 4 & 100 &   & \xmark &\xmark & 20.0\,s  &  348.1\,s & 19\\
-4  & Magnetic Pointer  & 2  & 100 & 5.7\,s & 229.9\,s & 38 & 3.0\,s  &  9.5\,s & 7 \\
+\# & \multicolumn{1}{|c|}{Benchmark} & \multicolumn{1}{|c|}{order} & \multicolumn{1}{|c|}{No.} & \multicolumn{4}{|c|}{CEGIS} & \multicolumn{4}{|c|}{CEGIS-OR} \\
+   &                                 & & \multicolumn{1}{|c|}{}  & \multicolumn{1}{|c|}{Min} & \multicolumn{1}{|c|}{Median} & \multicolumn{1}{|c|}{t.o.} & \multicolumn{1}{|c|}{found} & \multicolumn{1}{|c|}{Min} & \multicolumn{1}{|c|}{Median} & \multicolumn{1}{|c|}{t.o.} & \multicolumn{1}{|c|}{found}\\\hline
+1  & DC Motor          & 2 & 100 & 1.3\,s & 26.9\,s& 22& 20& 1.1\,s &   3.8\,s & 2 & 58\\
+2  & Helicopter        & 3  & 100 & 57.2\,s & t.o. & 54 & 15 & 7.1\,s  &   18.0\,s & 9 & 90\\
+3  & Inverted Pendulum & 4 & 100 &  277\,s& t.o. & 25& 0 & 20.0\,s  &  t.o. & 37 & 19\\
+4  & Magnetic Pointer  & 2  & 100 & 5.7\,s & 229.9\,s & 38 & 42 & 3.0\,s  &  9.5\,s & 5 & 95 \\
 %5 & Magnetic Suspension          & 2 & 1 & 12.2\,s& 0.6\,s & & & N/A  &   N/A &   N/A\\
-5  & Pendulum          & 2 & 100 & 0.8\,s & 53.6\,s & 33 &0.4\,s  &   4.9\,s & 6\\
-6  & Suspension        & 4 & 100 & & & \xmark& &  & \xmark\\
-7  & Tape Driver       & 3 & 100 & 4.0\,s& 17.7\,s & 11&3.1\,s  &   16.8\,s & 8\\
+5  & Pendulum          & 2 & 100 & 0.8\,s & 53.6\,s & 27 & 71 &0.4\,s  &   4.9\,s & 6 & 92\\
+6  & Suspension        & 4 & 100 &15.0\,s & 146.3\,s & 25 & 62 & 14.8\,s&166.9\,s  & 26 & 73\\
+7  & Tape Driver       & 3 & 100 & 4.0\,s& 17.7\,s & 11 & 80 &3.1\,s  &   16.8\,s & 8 & 82\\
 %9 & Satellite          & 2 & 1 & 9.4\,s& 0.7\,s & & & N/A  &   N/A &   N/A\\
 %   & Total                 &   & 2002 & & & & & 1.2\,s & 16.1\,s & 876.8\,s\\
 \hline
@@ -1469,10 +1485,11 @@ In the verification module, we have used the tool \note{Axelerator~\cite{}}.
 \end{tabular}
 \vspace{0.05in}
 \caption{\label{tab:cegis_results}
-Experimental results. Minimum, and Median times for standard CEGIS vs CEGIS-OR on multiple benchmarks.  the t.o. column ~indicates number of timeouts. \note{It is unclear what the difference is btw t.o. used in the third column header, and that used within the table - the latter is corresponding to a cross?} \note{recall what a model order is.}}
+Experimental results. Minimum, and Median times for standard CEGIS vs CEGIS-OR on multiple benchmarks. No. indicates Number of benchmarks,
+ t.o.~indicates timeouts (in the median case, it indicates more than half of the benchmarks timed out). Order is the number of states of the system.}
 \end{table}
 
-Using the described technique we managed to synthesize controllers for \note{X} benchmarks, with a median synthesis time of $18.8$ seconds.
+Using the described technique we managed to synthesize controllers for $509$ benchmarks (compared to $290$ found by our baseline), with a median synthesis time of $16.8$ seconds.
 %and the maximum observed synthesis time was under 10 minutes for a $4^{th}$ order system ($8^{th}$ order considering the observer).
 We consider these times short enough to be of practical use to control engineers.
 There are cases for which the system fails to find a controller.  We use a
@@ -1494,14 +1511,12 @@ higher order systems or systems where the safety
 specification is tight, meaning that the standard CEGIS loop would require many iterations.
 %  We obtain the most improvements for the models with large orders?}
 %More interesting cases appear when we increase the order, showing
-For instance, benchmark X, which timed-out when using standard CEGIS,
-is running under 2 minutes using CEGIS-OR. This is the result of
-removing several multiplications which are known to be difficult for
-SAT solvers \note{I'm not sure readers will relate to where this is happening in the paper. is it the fact that you use that canonical form? then say that. however, i would have thought you do that in
-both approaches..}.
-Another factor that brings an improvement of one order of
-magnitude is the Abstraction Refinement and Optimization in CEGIS-OR
-\note{on average/an improvement of up to an order of magnitude/for some specific case?}.
+%% For instance, benchmark X, which timed-out when using standard CEGIS,
+%% is running under 2 minutes using CEGIS-OR. This is the result of
+%% removing several multiplications which are known to be difficult for
+%% SAT solvers \note{I'm not sure readers will relate to where this is happening in the paper. is it the fact that you use that canonical form? then say that. however, i would have thought you do that in
+%% both approaches..}.
+These improvements are due to the Abstraction Refinement and Optimization in CEGIS-OR.
 While abstraction refinement enables us to start with coarse abstractions
 that are only refined on demand, 
 the optimization
@@ -1530,6 +1545,24 @@ times obtained with CEGIS-OR).
 %% higher order systems or systems where the safety
 %% specification is tight, where the standard CEGIS loop would require many iterations.
 %multiple counterexamples.
+%% =======
+%% out is much larger than CEGIS-OR which results in more found solutions by the latter.
+%% The magnitude of the improvement is however, largely dependent on the shape of the problem. 
+
+%% This largest improvement however, is due to the elimination of counterexamples that would have been
+%% created without the refinement. Since further synthesis require increasingly
+%% complex models which are linear in the number of multiplications, eliminating 
+%% these results in large improvements.  In cases when the initial candidate is
+%% suitable, we gain nothing with the refinement and therefore find similar times.
+%% Improvements using this approach will therefore be observed when the safety
+%% specification is tight and the original loop would require multiple counterexamples.
+%% >>>>>>> 24cc6678b474c2e2bd6bed94342b2d9daca1abee
+
+There are cases where newly found controllers are not due to the elimination of
+timeouts, but to the fact that the optimiser can reason about infinite precision
+numbers and may therefore find solutions that are not available using 64 bit 
+plant precision (the maximum allowed by our SAT solving tool).
+
 
 %%-------------------------------
 %\subsection{Threats to validity}
