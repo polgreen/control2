@@ -763,6 +763,7 @@ domain $\mathbb{R}_{\langle C \rangle}$, and all other calculations
 in our model will be carried out in the domain $\mathbb{R}_{\langle P \rangle}$.
 Given ${\langle M,F \rangle}$, 
 we denote as $\mathcal{F}_{\langle M,F \rangle} : \mathbb{R} \rightarrow \mathbb{R}_{\langle M,F \rangle}$ the corresponding truncation function. 
+We further note that the results of mathematical operations in these domains are also truncated. This is referred to as roundoff errors.
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \section{Properties of a controllable model with observer}\label{sec:cof_verification}
@@ -859,7 +860,7 @@ and $\mat{A}_{e}$ and $\mat{B}_{e}$ are the error caused by the FWL truncation, 
 %\eta_1=&\nu_1+\nu_1'+\nu_t& \eta_2=&\nu_2+\nu_2',
 %\end{align*}
 %}
-Moreover, $\nu_1$ and $\nu_2$ are the quantization noises introduced by the ADC and the DAC, $\nu_t$ is the noise introduced by the delay, and $\nu_1'$ and $\nu_2'$ are quantization noises caused by roundoffs in the FWL operations \note{[How is this related to the previously mentioned FWL errors?]} Full details are in Appendix~\ref{sec:quantization-noise}. 
+Moreover, $\nu_1$ and $\nu_2$ are the quantization noises introduced by the ADC and the DAC, $\nu_t$ is the noise introduced by the delay, and $\nu_1'$ and $\nu_2'$ are quantization noises caused by roundoffs in the FWL operations. 
 
 In a real domain $\mathbb{R}$, the characteristic polynomial
 of the closed loop dynamics is defined by the characteristic polynomials of~$\mat{A}_c$
@@ -1011,8 +1012,6 @@ We will use $\phi_{stability}$ to refer to the combined stability and transient 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 %\subsection{Using optimization refinement for CEGIS of control systems}\label{sec:cof_synth}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-\note{At times the gain matrices K, L, do not appear with C/P indices  -  clarify why. }
 
 In this section, we describe our technique for synthesizing safe
 digital feedback controllers using CEGIS. Broadly speaking, CEGIS
@@ -1224,11 +1223,13 @@ Note that there is a major difference between
 the way $\phi$ is being used in different phases in Figure~\ref{fig:CEGIS-OR}: while the
 {\sc synthesise} phase checks $\phi$ by using the plant precision
 $\mathbb{R}_{\langle P \rangle}$ for the controller, observer and
-plant, the {\sc model} and {\sc verify} phases use reals to represent
+plant, the {\sc model} and {\sc verify} phases use infinite precision ($\mathbb{R}$) to represent
 the plant and $\mathbb{R}_{\langle C \rangle}$ for the controller and
 the observer. The reason for this is that, as we want the
 synthesis to be fast, we allow it to generate unsound results
-and we restore soundness during the verification and modeling stages.
+and we restore soundness during the verification and modeling stages. 
+Since we use different precisions at different stages, we will often use $\mat{K}$ and $\mat{L}$ to indicate that the domain they belong to is unspecified
+(these are always truncated to the corresponding domain at each stage).
 %% While these specifications are updated throughout the synthesis process (as appropriately described below), at all times $\phi_{static} \models \phi_{synth}$.
 %Let us see how the loop updates these specifications.
 
@@ -1274,8 +1275,8 @@ $(\phi_\mathit{init} \wedge \phi_\mathit{input} \wedge u_k=-\mat{K} \vec{x}_k)
 \Rightarrow \phi_\mathit{init}^{K}$.
 These bounds will be used by the {\sc synthesize} phase to reduce the size of the solution space.
 \end{itemize}
-\paragraph{\underline{{\sc synthesize}}} generates a candidate controller matrix $\mat{K}$
-and observer matrix $\mat{L}$ that satisfy
+\paragraph{\underline{{\sc synthesize}}} generates a candidate controller matrix $\mat{K}_{\langle P \rangle}$
+and observer matrix $\mat{L}_{\langle P \rangle}$ that satisfy
 $\phi$ by invoking a SAT solver.
 If there is no candidate solution it signals {\sc Abstract}, 
 which may choose to increase the plant precision or return a synthesis failure.
@@ -1294,7 +1295,7 @@ and iterations that failed the specification.
 verifies that the candidate controller
 and observer obey $\phi$ (remember that we now use
 $\mathbb{R}_{\langle C \rangle}$ for the controller representation
-and reals for the plant).  %% If the verification fails, the candidate is
+and $\mathbb{R}$ for the plant).  %% If the verification fails, the candidate is
 %% fed to the {\sc Optimise} phase.
 If the candidate is valid, we feed
 it to the next {\sc verify} stage, {\sc Discrete Time}.
