@@ -813,6 +813,7 @@ We specify model stability via Jury's criterion~\cite{fadali},
 as classical in Control Theory,  %\footnote{More details on Jury's criterion is in Appendix~\ref{sec:closed_stability}.}, 
  which boils down to a requirement expressed as an algebraic formula 
  on the characteristic polynomial of the model - a SAT solver will manipulate its coefficients. 
+ \note{unclear really how SAT relates to manipulating real coefficients.... }
 %
 In order to facilitate the use of Jury's criterion, we transform the model into
 a representation that contains the coefficients of its characteristic
@@ -897,6 +898,7 @@ and~$\mat{A}_o$.
 \begin{align*}
 P(z)=P_K(z)P_L(z)=\left(z^p+\sum_{i=0}^{p-1}{(a_i-k_i)z^{i}}\right) \left(z^p+\sum_{i=0}^{p-1}{(a_i-l_i)z^{i}}\right)
 \end{align*}
+\note{we should perhaps provide a qualitative hint on what are the conditions of JC? I'm afraid leaving it to the polynomials here isn't quite complete or clear.}
 The introduction of the FWL errors causes this to no longer
 be true.  We must therefore find a suitable solution to maintain this \note{[unclear:] separation} of polynomials.
 
@@ -906,18 +908,18 @@ in the \note{[?]expected} eigenvalues.  Let $\delta_o=\max(\norm{{\mat{A}_e}_{i,
 for any eigenvalue in $\mat{A}_e$.  Then $\forall i \in [1, ...\,,n],
 |{\lambda_o}_{i}-\hat{\lambda}_{oi}|<\delta_o$, where ${\lambda_o}_{i}$ are the
 true eigenvalues of the observer \note{clarify what matrix you're computing the eigenvalues of} and $\hat{\lambda}_{oi}$ the eigenvalues of
-the perturbed observer \note{ditto}.  We note that in the case of stability we only care
-about the error with respect to the unit circle, which is equivalent to
+the perturbed observer \note{ditto}.  \note{unclear next, unless you're a control guy.} We note that in the case of stability we only care
+about the error with respect to the \note{undefined: unit circle}, which is equivalent to
 upper bounding the estimation of the largest eigenvalue.  Hence, given a
-desired upper value $\overline{\lambda}$, we apply Jury's criterion on the
-polynomial.
+desired upper value $\overline{\lambda}$ \note{clarify 'desired' = how do you pick lambda bar?}, we apply Jury's criterion on the
+polynomial \note{you need to relate the coefficients in the polynomial to the constants in the matrices discussed before.}
 %
 \begin{equation}
 P_L'=\sum_{j=0}^p c_j\overline{\lambda'}^{p-j}s^j, \text{ where }  \overline{\lambda'}=(1+\delta_o)\overline{\lambda} \text{ and } c_j=l_j-a_j.
 \end{equation}
 %
-In the case of the reachable eigenvalues, the procedure is the same except
-that we obtain our bound $\delta_c=\max(\norm{{\mat{A}_e}_{*,i}+{\mat{B}_e}_{*,i}}_1)$
+In the case of the \note{[unclear - undefined] reachable eigenvalues}, the procedure is the same except
+that we obtain our bound $\delta_c=\max(\norm{{\mat{A}_e}_{*,i}+{\mat{B}_e}_{*,i}}_1)$ \note{why? explain in close connection with formulae used.}
 (\emph{i.e.} the largest column norm in $ \left[\begin{array}{c}\mat{A}_e\\ \mat{B}_e\end{array}\right]$) and
 apply Jury's Criterion over
 %
