@@ -144,11 +144,11 @@ number of properties that define their desired behavior.
 
 We perform digital control synthesis over a hybrid model, where the plant
 exhibits continuous behavior whereas the controller operates in discrete
-time and over a quantized domain.  Our model evaluates the effects of the
+time and over a quantized domain.  Our model incorporates the effects of the
 quantizers (A/D and D/A converters) and of time discretization, as well as
 representation errors introduced by modeling artifacts such as an
-observer~\cite{astrom1997computer} in a finite precision domain, while
-reasoning about high level properties such as stability, robustness, safety,
+observer~\cite{astrom1997computer} in a finite-precision domain, while
+reasoning about high-level properties such as stability, robustness, safety,
 and response time, which define the behavior of the system.  In particular,
 safety requirements are frequently overlooked in conventional feedback
 control synthesis, but play an important role in systems engineering.
@@ -168,16 +168,16 @@ counterexamples provided by a verification oracle.  Essentially, the
 inductive generalization uses information about a limited number of inputs
 to make claims in the form of candidate solutions about all the possible
 inputs.  By using abstraction refinement, CEGIS-OR allows us to handle
-complex systems which are initially represented by coarse abstractions that
+complex systems, which are initially represented by coarse abstractions that
 only get refined on demand.  Consequently, solutions that do not require a
 high level of precision are obtained fast.  Since the use of coarse
-abstractions may result in low-quality candidate solutions (i.e.  candidates
-that fail the specification on a very large number of inputs), after each
-inductive generalization phase we use optimization techniques to improve the
-produced candidates.  In particular, our optimization procedure aims at
-reducing the size of the reach space of the closed loop system, while
-maintaining other dynamical properties of interest (safety, stability, and
-response time).
+abstractions may result in low-quality candidate solutions (i.e., candidates
+that fail the specification on a very large number of inputs), we use
+optimization techniques after each inductive generalization phase to improve
+the produced candidates.  In particular, our optimization procedure reduces
+the size of the reach space of the closed loop system, while maintaining
+other dynamical properties of interest (safety, stability, and response
+time).
 
 %% We make use of a two-stage counterexample-guided inductive
 %% synthesis (CEGIS) driven by optimization refinement.
@@ -195,13 +195,14 @@ response time).
 %% The combined synthesisers are thus capable of reasoning about complex
 %% models with high computational efficiency due to their modularity.
 
-We provide experimental results showing that our approach is able to
-efficiently synthesize safe controllers for a set of physical
-plant models taken from the digital control literature.
+We provide experimental results that show that our approach is able to
+efficiently synthesize safe controllers for a set of physical plant models
+taken from the digital control literature.
 
 In summary, this paper makes the following original contributions.
 %
 \begin{enumerate}
+%
 \item We develop a model for inductive synthesis that combines CEGIS with
   abstraction refinement and optimization in order to handle complex
   systems. 
@@ -219,6 +220,7 @@ In summary, this paper makes the following original contributions.
  %
  \item We present a model for soundly evaluating reachability in a combined 
  continuous-discrete time/space. 
+%
 % Sound tools for continuous time reachability are scarce and to the authors'
 % knowledge no tool provides a model that combines both. 
 \end{enumerate}
@@ -250,8 +252,8 @@ with polynomial dynamics.  The work extends to affine systems, but is
 limited by the capacity of the state-of-the-art SMT solvers for solving
 linear arithmetic.  Since this approach uses switching models instead of
 linear dynamics for the digital controller, it avoids problems related to
-finite precision arithmetic, but potentially suffers from state-space
-explosion.  Moreover, in \cite{DBLP:conf/emsoft/RavanbakhshS16} the same
+finite-precision arithmetic, but potentially suffers from state-space
+explosion.  Moreover, in~\cite{DBLP:conf/emsoft/RavanbakhshS16} the same
 authors use a CEGIS-based approach for synthesizing continuous-time
 switching controllers that guarantee \emph{reach-while-stay} properties of
 closed-loop systems, i.e., properties that specify a set of goal states and
@@ -262,11 +264,9 @@ However, both approaches are unsuitable for the kind of control we seek to
 synthesize.
 
 The work in~\cite{hscc-paper} synthesizes stabilizing controllers for
-continuous plants
-%given as transfer functions
-by exploiting bit-accurate verification of software-implemented
-digital controllers~\cite{Bessa16} but it is restricted to closed-loop
-systems given as transfer function models.
+continuous plants by exploiting bit-accurate verification of
+software-implemented digital controllers~\cite{Bessa16} but it is restricted
+to closed-loop systems given as transfer function models.
 
 %% While this work also uses CEGIS, the approach is restricted to digital
 %% controllers for stable closed-loop systems given as transfer function
@@ -292,14 +292,15 @@ specification, \mbox{Pessoa} can synthesize embedded controller software for
 a range of properties.  The embedded controller software can be more
 complicated than the state-feedback control we synthesize, and the
 properties available cover more detail.  However, relying on state-space
-discretization \mbox{Pessoa} is likely to incur scalability limitations. 
-Along this research line, \cite{Anta2010,liu16} studies the synthesis of
-digital controllers for continuous dynamics, and \cite{zamani2014} extends
+discretization, \mbox{Pessoa} is likely to incur scalability limitations. 
+Along this research line, \cite{Anta2010, liu16} study the synthesis of
+digital controllers for continuous dynamics, and~\cite{zamani2014} extends
 the approach to the recent setup of Network Control Systems.
 
 \smallskip
 
 \noindent\textbf{Discretization Effects --}
+%
 The classical approach to control synthesis has often disregarded
 digitalization effects, whereas more recently modern techniques have focused
 on different aspects of discretization, including delayed
@@ -313,7 +314,7 @@ state of the physical system, while the second relates to rounding and
 saturation errors during computation.  In~\cite{fialho1994stability}, a
 stability measure based on the error of the digital dynamics ensures that
 the deviation introduced by FWL does not make the digital system unstable. 
-A~more recent approach~\cite{DBLP:journals/automatica/WuLCC09} uses
+A~more recent approach~\cite{DBLP:journals/automatica/WuLCC09} uses the
 $\mu$-calculus to directly model the digital controller so that the selected
 parameters are stable by design.  The analyses
 in~\cite{DBLP:conf/hybrid/RouxJG15, DBLP:conf/hybrid/WangGRJF16} rely on an
@@ -325,13 +326,13 @@ arithmetic and soundness is checked by bounding the error.  An alternative
 is~\cite{park2016scalable}, where the verification of given control code is
 performed against a known model by extracting an LTI model of the code by
 symbolic execution: to account for rounding errors, an upper bound is
-introduced in the verification phase.  The work in
-\cite{picasso2003stabilization} introduces invariant sets as a mechanism to
-bound the quantization error effect on stabilization as an invariant set
-that always converges toward the controllable set.  Similarly,
-\cite{liberzon2003hybrid} evaluates the quantization error dynamics and
-bounds its trajectory to a known region over a finite time period.  This
-technique works for both linear and non-linear systems.
+introduced in the verification phase.  The work
+in~\cite{picasso2003stabilization} introduces invariant sets as a mechanism
+to bound the quantization error effect on stabilization as an invariant set
+that always converges toward the controllable set. 
+Similarly, \cite{liberzon2003hybrid} evaluates the quantization error
+dynamics and bounds its trajectory to a known region over a finite time
+period.  This technique works for both linear and non-linear systems.
 
 %-------------------------------
 \section{Preliminaries}
@@ -357,18 +358,28 @@ astrom1997computer}:
 %
 \begin{align}
 \label{eq:ode1}
-\dot{x}(t) = \mat{A}\vec{x}(t)+ \mat{B} \vec{u}(t), \quad \vec{x} \in \mathbb{R}^p, \vec{u} \in \mathbb{R}^q, \mat{A} \in \mathbb{R}^{p \times p}, \mat{B} \in \mathbb{R}^{p \times q},
+\dot{x}(t) = \mat{A}\vec{x}(t)+ \mat{B} \vec{u}(t), \quad 
+\vec{x} \in \mathbb{R}^p, \vec{u} \in \mathbb{R}^q,
+\mat{A} \in \mathbb{R}^{p \times p},
+\mat{B} \in \mathbb{R}^{p \times q},
 \end{align}
 %
 where $t \in \mathbb R_0^+$ denotes continuous time, $\mat{A}$ and $\mat{B}$
 are matrices that fully characterize the dynamics of the continuous plant,
 and $x(0)$ is the initial state.
 
-We are interested in control systems with an output $\vec{y}$ that is a linear combination of its states and inputs\footnote{Notice that since we can only measure $\vec{y}$, the state-space $\vec{x}$ is not fully observable.}.
+We are interested in control systems with an output $\vec{y}$ that is a
+linear combination of its states and inputs\footnote{Notice that since we
+can only measure $\vec{y}$, the state-space $\vec{x}$ is not fully
+observable.}.
+%
 %, which may restrict the observability of the state-space from the output space.
 \begin{equation}
 \label{eq:ode2}  
-\vec{y}(t)=\mat{C}\vec{x}(t)+\mat{D}\vec{u}(t), \vec{y} \in \mathbb{R}^o, \mat{C} \in \mathbb{R}^{o \times p}, \mat{D} \in \mathbb{R}^{o \times q}. 
+\vec{y}(t)=\mat{C}\vec{x}(t)+\mat{D}\vec{u}(t),
+\vec{y} \in \mathbb{R}^o,
+\mat{C} \in \mathbb{R}^{o \times p},
+\mat{D} \in \mathbb{R}^{o \times q}. 
 \end{equation}
 %
 Equations~\eqref{eq:ode1}-\eqref{eq:ode2} are soundly discretized in
@@ -394,17 +405,20 @@ equation
 \end{align} 
 %
 %where $\mat{A}_d=e^\mat{A}$, $\mat{B}_d = \int_{t = 0}^{T_s} e^{\mat{A} t} dt\ \mat{B}$,
-$k \in \mathbb N$ is a discrete counter and $\vec{x}_{0}=\vec{x}(0)$ is the initial state. 
-In this work we raise the standard assumption that $\mat{D}=\mat{0}$ \cite{Astrom08}.  
+%
+$k \in \mathbb N$ is a discrete counter and $\vec{x}_{0}=\vec{x}(0)$ is the
+initial state.  In this work we raise the standard assumption that
+$\mat{D}=\mat{0}$~\cite{Astrom08}.
+%
 %Also, since $\vec{y}$ can be directly derived from $\vec{x}$, we will omit discussing it in the following unless strictly necessary.
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{Semantics of LTI models}\label{sec:model_semantics}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 %
-The traces of model \eqref{eq:plant}, 
-starting from an initial set $X_0\subseteq \mathbb{R}^p$, 
-with inputs taken from the set $U \subseteq \mathbb{R}^q$, are sequences 
+The traces of model \eqref{eq:plant}, starting from an initial set
+$X_0\subseteq \mathbb{R}^p$, with inputs taken from the set $U \subseteq
+\mathbb{R}^q$, are sequences
 $ \vec{x}_0 \xrightarrow{\vec{u}_0} \vec{x}_1 \xrightarrow{\vec{u}_1} \vec{x}_2 \xrightarrow{\vec{u}_2} \ldots $, 
 %
 where $ \vec{x}_0 \in X_0$ and $\forall k\geq 0, \vec{u}_k \in U \text{ and } \vec{x}_{k+1} = \tau(\vec{x}_k,\vec{u}_k) $, 
@@ -419,13 +433,13 @@ where
 %
 %Here $\mat{G}$ and $\vec{h}$ define a set of inequalities that describe a safe set, within the state-space $\mathbb{R}^p$.
 %
-We generalize this notation to convex sets of initial conditions and inputs ($X_0$ and $U$, respectively), 
-and write $\tau(X_0,U)$ to denote the set of states $\{\vec{x} \mid \vec{x} = \tau(\vec{x}_0,\vec{u}),\, \vec{x}_0 \in
-X_0,\, \vec{u} \in U \}$
-reached from $X_0$ by $\tau$ in one step. 
+We generalize this notation to convex sets of initial conditions and inputs
+($X_0$ and $U$, respectively), and write $\tau(X_0,U)$ to denote the set of
+states $\{\vec{x} \mid \vec{x} = \tau(\vec{x}_0,\vec{u}),\, \vec{x}_0 \in
+X_0,\, \vec{u} \in U \}$ reached from $X_0$ by $\tau$ in one step.
 %
-We furthermore define the $n$-reach set $\tau^n(X_0,U)$ as the set of states reached from
-$X_0$ via $\tau$ in $n$ steps.
+We furthermore define the $n$-reach set $\tau^n(X_0,U)$ as the set of states
+reached from $X_0$ via $\tau$ in $n$ steps.
 %
 \begin{align}\label{equ:reachset}
 \tau^n(X_0,U) = \{\vec{x}_n \mid & 
@@ -435,17 +449,19 @@ $X_0$ via $\tau$ in $n$ steps.
 \} \;. 
 \end{align}
 %
-Since the transformations $\mat{A}$ and $\mat{B}$ are linear and linear transformations preserve convexity~\cite{boyd2004convex}, 
-the sets $X_n = \tau^n(X_0,U)$ are also convex.  
-We define the \emph{$n$-reach tube} as 
+Since the transformations $\mat{A}$ and $\mat{B}$ are linear and linear
+transformations preserve convexity~\cite{boyd2004convex}, the sets $X_n =
+\tau^n(X_0,U)$ are also convex.  We define the \emph{$n$-reach tube} as
+%
 \begin{equation}\label{equ:reachtube}
 \hat{X}_n=\hat{\tau}^n(X_0,U)=\bigcup_{k\in[0,n]} \tau^k(X_0,U)
 \end{equation}
+%
 as the union of $k$-reach sets over $n$ iterations. 
 %
-Finally, the set $\hat{X} =\bigcup_{n\geq 0} \tau^n(X_0,U)$, which we refer to as
-the reach space of the system, generalizes the previous notions over an unbounded
-time horizon (transitive closure).
+Finally, the set $\hat{X} =\bigcup_{n\geq 0} \tau^n(X_0,U)$, which we refer
+to as the reach space of the system, generalizes the previous notions over
+an unbounded time horizon (transitive closure).
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \subsection{State observers}\label{sec:observer}
@@ -458,17 +474,19 @@ observer is a new dynamical model (with variable denoted as $\hat{\vec{x}}$)
 that provides an estimate of the internal state $x$ of the given model, from
 measurements of its inputs and outputs.
 
-A closed-loop digital control interconnection with observer is shown in
-Figure~\ref{fig:observersystem}.  The linear feedback controller (bottom
-left) is characterized by a gain matrix $\mat{K}_{\langle C \rangle}$ that
-influences the closed-loop dynamics, and is driven by the observer state
-$\hat{\vec{x}}$.  Moreover, $\vec{y}_e=\hat{\vec{y}} - \vec{y}$ is the error
-on the output estimator,
+A closed-loop digital control interconnection with an observer is
+illustrated in Figure~\ref{fig:observersystem}.  The linear feedback
+controller (bottom left) is characterized by a gain matrix $\mat{K}_{\langle
+C \rangle}$ that influences the closed-loop dynamics, and is driven by the
+observer state $\hat{\vec{x}}$.  Moreover, $\vec{y}_e=\hat{\vec{y}} -
+\vec{y}$ is the error on the output estimator,
+%
 %  defined as the difference between the real output $\vec{y}_k$ and estimated one $\hat{\vec{y}_k}$, 
+%
 which is amplified by a gain matrix $\mat{L}_{\langle C \rangle}$.  Note
 that the controller and the observer are implemented in a discrete domain
 (quantities within this domain are identified by the index $\langle C
-\rangle$), whereas the plant evolves in a continuous domain.  We further
+\rangle$), whereas the plant evolves in a continuous domain.  We~further
 model the effects of using a discrete controller as the noise signals
 $\nu_1$(ADC quantization), $\nu_2$ (DAC quantization), $\nu_1'$ (rounding of
 the observer state error), $\nu_2'$ (rounding of the observer state), and
@@ -626,29 +644,39 @@ satisfied.
 
 %\note{Much like we did in the earlier work, we should emphasise we look at the closed-loop interconnection from the perspective of the digital controller? }
 
- %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- \section{Acceleration of continuous-time models}\label{sec:continuous_time_accel}
- %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
- The time discretization in Sec.~\ref{sec:model} only 
- allows us to evaluate the state of the plant at integer multiples of the sample time.
- However, in order to synthesize $\mat{K}=\mat{K}_{\langle C \rangle}$ and $\mat{L}=\mat{L}_{\langle C \rangle}$, 
- we must be able to ensure that certain properties of the plant hold at any given real time.
- In order to do so, 
- we accelerate the dynamics of the plant according to the model semantics in Sec.~\ref{sec:model_semantics} and compute the state $\vec{x}_T$  at a given time $T$, 
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+\section{Acceleration of continuous-time models}\label{sec:continuous_time_accel}
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
+
+The time discretization in Sec.~\ref{sec:model} only allows us to evaluate
+the state of the plant at integer multiples of the sample time.  However, in
+order to synthesize $\mat{K}=\mat{K}_{\langle C \rangle}$ and
+$\mat{L}=\mat{L}_{\langle C \rangle}$, we must be able to ensure that
+certain properties of the plant hold at any given real time.  In order to do
+so, we accelerate the dynamics of the plant according to the model semantics
+in Sec.~\ref{sec:model_semantics} and compute the state $\vec{x}_T$ at a
+given time $T$,
+%
 % namely we find an equation for $\tau^n(\vec{x},\vec{u})$ given $\tau(\vec{x},\vec{u})$. 
-namely the state of the system $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$ at time $t=T$.
+%
+namely the state of the system $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$ at time
+$t=T$.
 
 %\note{ [add?] In this section we work with fully observed models, namely where $y = x$. } 
- %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- \subsection{Accelerated\! dynamics\! for\! continuous-time\! models\! without\! inputs}\label{sec:cont_acc_no_inputs}
- %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- Given a specific time $T$, the state $\vec{x}(t=T)$ can be expressed as a linear function of $\vec{x}_0$ as shown below.
-We assume that the system has no inputs, so its dynamics are described by $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$.
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+\subsection{Accelerated\! dynamics\! for\! continuous-time\! models\! without\! inputs}\label{sec:cont_acc_no_inputs}
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+%
+Given a specific time $T$, the state $\vec{x}(t=T)$ can be expressed as a
+linear function of $\vec{x}_0$ as shown below.  We assume that the system
+has no inputs, so its dynamics are described by
+$\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$.
  
- \begin{lemma}
- The solution to the differential equation $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$, where $\mat{A}=\mat{S}\mat{J}\mat{S}^{-1}$, and $\mat{S}$ are the generalized eigenvectors of $\mat{A}$,
- evaluated at time $T$ is
- \begin{align}
+\begin{lemma}
+The solution to the differential equation $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$, where $\mat{A}=\mat{S}\mat{J}\mat{S}^{-1}$, and $\mat{S}$ are the generalized eigenvectors of $\mat{A}$,
+evaluated at time $T$ is
+%
+\begin{align}
  \vec{x}_T&=\vec{x}(t=T)=\mat{A}_{T}\vec{x} (0)\\
  \mat{A}_{T}&= \mat{S}
  \left [ \begin{array}{cccc}
@@ -660,36 +688,55 @@ We assume that the system has no inputs, so its dynamics are described by $\dot{
  \mat{S}^{-1}
  \label{eq:continuous_tube_dyn2}\\
  &\text{where } s_i=\left\{\begin{array}{cc}1&\quad gm(\lambda_i)>1\\0&\quad gm(\lambda_i)=1\end{array}\right.,\nonumber
- \end{align}
-$\lambda_i$ are the eigenvalues of $\mat{A}$, and $gm(\lambda_i)$ is the geometric multiplicity of $\lambda_i$.  
+\end{align}
+%
+$\lambda_i$ are the eigenvalues of $\mat{A}$, and $gm(\lambda_i)$ is the geometric multiplicity of $\lambda_i$.
+%
 %$\vec{x}_T$ is the state of the system $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$ at time t=T. 
- If $\mat{J}$ is diagonal and there exists a discrete dynamics matrix for a sampling time $T_d$ such that $A_d=e^{\mat{A} T_d}$, then $\vec{x}_T=A_d^{\frac{T}{T_d}}\vec{x}_0 \text{ with } T \in \mathbb{R}^+_0$ is the state of the system at time $t=T$. 
- \end{lemma}
- %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- \subsection{Accelerated dynamics for models with parametric inputs}\label{sec:real_discrete_param_inputs}
- %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- Next, we are interested in studying models with parametric inputs, 
- which are described by $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)$, where $\forall t\geq 0, \vec{u}(t)=\vec{u}$. 
- For such models, a state $\vec{x}_T$ is computed next.
+If $\mat{J}$ is diagonal and there exists a discrete dynamics matrix for a sampling time $T_d$ such that $A_d=e^{\mat{A} T_d}$, then $\vec{x}_T=A_d^{\frac{T}{T_d}}\vec{x}_0 \text{ with } T \in \mathbb{R}^+_0$ is the state of the system at time $t=T$. 
+\end{lemma}
+
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+\subsection{Accelerated dynamics for models with parametric inputs}\label{sec:real_discrete_param_inputs}
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Next, we are interested in studying models with parametric inputs, which are
+described by $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)$, where
+$\forall t\geq 0, \vec{u}(t)=\vec{u}$.  For such models, a state $\vec{x}_T$
+is computed next.
+%
 \begin{lemma}
-The state of the model $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)$ at time $T$ given a parametric input $\vec{u}$ is 
- \begin{align}
- \vec{x}_T&=\vec{x}(t=T)=\mat{A}_T\vec{x}_0 + \mat{B}_T\vec{u} \text{ where } \mat{B}_T=\mat{A}^{-1}(\mat{I}-\mat{A}_T)\mat{B} 
- \label{eq:continuous_tube_param}
- \end{align}
- where $\forall t \leq T,\ \vec{u}(t)=\vec{u}$, and $\mat{A}_T$ as in \eqref{eq:continuous_tube_dyn2}
- \footnote{When $\mat{A}$ is not invertible, we use $\left[\begin{array}{cc}\mat{A}_T&\mat{B}_T\\ 0&\mat{I}\end{array}\right]=e^{\left[\begin{array}{cc}\mat{A}&\mat{B}\\0&0\end{array}\right]}$}.
- If $\mat{J}$ is diagonal and given a sampling time $T_d$ such that $A_d=e^{\mat{A} T_d}$, 
- then $\vec{x}_T=A_d^{\frac{T}{T_d}}\vec{x}_0+(\mat{I}-\mat{A}_d^{\frac{T}{T_d}}\mat{B}_d\vec{u}) \text{ with } T \in \mathbb{R}_0^+$ (where $\mat{A}_d^{\frac{T}{T_d}} = e^{log(\mat{A}_d) \frac{T}{T_d}} = e^{\mat{A} T}$) is the state of the system at time $T$.
- \end{lemma}
+%
+The state of the model
+$\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)$ at time $T$ given a
+parametric input $\vec{u}$ is
+%
+\begin{align}
+\vec{x}_T&=\vec{x}(t=T)=\mat{A}_T\vec{x}_0 + \mat{B}_T\vec{u} \text{ where } \mat{B}_T=\mat{A}^{-1}(\mat{I}-\mat{A}_T)\mat{B} 
+\label{eq:continuous_tube_param}
+\end{align}
+%
+where $\forall t \leq T,\ \vec{u}(t)=\vec{u}$, and $\mat{A}_T$ as in
+\eqref{eq:continuous_tube_dyn2} \footnote{When $\mat{A}$ is not invertible,
+we use $\left[\begin{array}{cc}\mat{A}_T&\mat{B}_T\\
+0&\mat{I}\end{array}\right]=e^{\left[\begin{array}{cc}\mat{A}&\mat{B}\\0&0\end{array}\right]}$}. 
+If $\mat{J}$ is diagonal and given a sampling time $T_d$ such that
+$A_d=e^{\mat{A} T_d}$, then
+$\vec{x}_T=A_d^{\frac{T}{T_d}}\vec{x}_0+(\mat{I}-\mat{A}_d^{\frac{T}{T_d}}\mat{B}_d\vec{u})
+\text{ with } T \in \mathbb{R}_0^+$ (where $\mat{A}_d^{\frac{T}{T_d}} =
+e^{log(\mat{A}_d) \frac{T}{T_d}} = e^{\mat{A} T}$) is the state of the
+system at time $T$.
+%
+\end{lemma}
 
- %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- \subsection{Accelerated dynamics for models with a sampled-time feedback}\label{sec:real_discrete_feedback_inputs}
- %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+\subsection{Accelerated dynamics for models with a sampled-time feedback}\label{sec:real_discrete_feedback_inputs}
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-The final case we analyze is that of hybrid-time models, 
-where the plant dynamics evolve in continuous time while the feedback dynamics evolve in discrete time.  
-A new input value is produced only at every sample time but implemented over the continuous-time plant dynamics. 
+The final case we analyze is that of hybrid-time models, where the plant
+dynamics evolve in continuous time while the feedback dynamics evolve in
+discrete time.  A new input value is produced only at every sample time but
+implemented over the continuous-time plant dynamics.
 %
 \begin{theorem}
 The expression
