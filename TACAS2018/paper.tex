@@ -406,8 +406,8 @@ equation
 %
 %where $\mat{A}_d=e^\mat{A}$, $\mat{B}_d = \int_{t = 0}^{T_s} e^{\mat{A} t} dt\ \mat{B}$,
 %
-$k \in \mathbb N$ is a discrete counter and $\vec{x}_{0}=\vec{x}(0)$ is the
-initial state.  In this work we raise the standard assumption that
+where $k \in \mathbb N$ is a discrete counter and $\vec{x}_{0}=\vec{x}(0)$
+is the initial state.  In this work we apply the standard assumption that
 $\mat{D}=\mat{0}$~\cite{Astrom08}.
 %
 %Also, since $\vec{y}$ can be directly derived from $\vec{x}$, we will omit discussing it in the following unless strictly necessary.
@@ -419,14 +419,17 @@ $\mat{D}=\mat{0}$~\cite{Astrom08}.
 The traces of model \eqref{eq:plant}, starting from an initial set
 $X_0\subseteq \mathbb{R}^p$, with inputs taken from the set $U \subseteq
 \mathbb{R}^q$, are sequences
-$ \vec{x}_0 \xrightarrow{\vec{u}_0} \vec{x}_1 \xrightarrow{\vec{u}_1} \vec{x}_2 \xrightarrow{\vec{u}_2} \ldots $, 
 %
-where $ \vec{x}_0 \in X_0$ and $\forall k\geq 0, \vec{u}_k \in U \text{ and } \vec{x}_{k+1} = \tau(\vec{x}_k,\vec{u}_k) $, 
+$ \vec{x}_0 \xrightarrow{\vec{u}_0} \vec{x}_1 \xrightarrow{\vec{u}_1} \vec{x}_2 \xrightarrow{\vec{u}_2} \ldots $
+%
+where
+%
+$ \vec{x}_0 \in X_0$ and $\forall k\geq 0, \vec{u}_k \in U \text{ and } \vec{x}_{k+1} = \tau(\vec{x}_k,\vec{u}_k) $, 
 where 
 %
 \begin{equation}\label{equ:reachtraj}
 \tau(\vec{x}_k,\vec{u}_k) = %\big\{ 
-\mat{A}\vec{x}_k + \mat{B}\vec{u}_k
+\mat{A}\vec{x}_k + \mat{B}\vec{u}_k \;.
  %\mid \mat{G}\vec{x}_k \leq \vec{h}\big\}\;. 
 \end{equation}
 %\note{do we actually need to mention the safety spec here given that it is formally introduced only in Sec~\ref{sec:cof_safety}?}
@@ -467,11 +470,11 @@ an unbounded time horizon (transitive closure).
 \subsection{State observers}\label{sec:observer}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-In many models of real-world control systems, the internal state $x$ cannot
-be directly measured, but is rather inferred from its effect on the measured
-output $\vec{y}$ using an observer~\cite{Astrom08}.  Essentially, a state
+In many real-world control systems the internal state $x$ cannot be directly
+measured, but is rather inferred from its effect on the measured
+output~$\vec{y}$ using an observer~\cite{Astrom08}.  Essentially, a state
 observer is a new dynamical model (with variable denoted as $\hat{\vec{x}}$)
-that provides an estimate of the internal state $x$ of the given model, from
+that provides an estimate of the internal state $x$ of the given model using
 measurements of its inputs and outputs.
 
 A closed-loop digital control interconnection with an observer is
@@ -490,10 +493,10 @@ that the controller and the observer are implemented in a discrete domain
 model the effects of using a discrete controller as the noise signals
 $\nu_1$(ADC quantization), $\nu_2$ (DAC quantization), $\nu_1'$ (rounding of
 the observer state error), $\nu_2'$ (rounding of the observer state), and
-$\nu_t$ (output delay of the digital system) Lastly, $k_r$ is a reference
+$\nu_t$ (output delay of the digital system).  Finally, $k_r$ is a reference
 gain required by the model.  Our goal in this work is to synthesize both
-$\mat{K}_{\langle C \rangle}$ and $\mat{L}_{\langle C \rangle}$, so that
-specific closed-loop properties of the overall interconnection are
+$\mat{K}_{\langle C \rangle}$ and $\mat{L}_{\langle C \rangle}$ so that
+specific closed-loop properties of the overall system are
 satisfied.
  
 \begin{figure*}[t!]
