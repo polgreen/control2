@@ -655,10 +655,10 @@ The time discretization in Sec.~\ref{sec:model} only allows us to evaluate
 the state of the plant at integer multiples of the sample time.  However, in
 order to synthesize $\mat{K}=\mat{K}_{\langle C \rangle}$ and
 $\mat{L}=\mat{L}_{\langle C \rangle}$, we must be able to ensure that
-certain properties of the plant hold at any given real time.  In order to do
-so, we accelerate the dynamics of the plant according to the model semantics
-in Sec.~\ref{sec:model_semantics} and compute the state $\vec{x}_T$ at a
-given time $T$,
+certain properties of the plant hold at any given point in time.  In order
+to do so, we accelerate the dynamics of the plant according to the model
+semantics in Sec.~\ref{sec:model_semantics} and compute the state
+$\vec{x}_T$ at a given time $T$,
 %
 % namely we find an equation for $\tau^n(\vec{x},\vec{u})$ given $\tau(\vec{x},\vec{u})$. 
 %
@@ -705,7 +705,7 @@ If $\mat{J}$ is diagonal and there exists a discrete dynamics matrix for a sampl
 
 Next, we are interested in studying models with parametric inputs, which are
 described by $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)$, where
-$\forall t\geq 0, \vec{u}(t)=\vec{u}$.  For such models, a state $\vec{x}_T$
+$\forall t\geq 0.\,\vec{u}(t)=\vec{u}$.  For such models, a state $\vec{x}_T$
 is computed next.
 %
 \begin{lemma}
@@ -719,7 +719,7 @@ parametric input $\vec{u}$ is
 \label{eq:continuous_tube_param}
 \end{align}
 %
-where $\forall t \leq T,\ \vec{u}(t)=\vec{u}$, and $\mat{A}_T$ as in
+where $\forall t \leq T.\, \vec{u}(t)=\vec{u}$, and $\mat{A}_T$ as in
 \eqref{eq:continuous_tube_dyn2} \footnote{When $\mat{A}$ is not invertible,
 we use $\left[\begin{array}{cc}\mat{A}_T&\mat{B}_T\\
 0&\mat{I}\end{array}\right]=e^{\left[\begin{array}{cc}\mat{A}&\mat{B}\\0&0\end{array}\right]}$}. 
@@ -968,7 +968,7 @@ the true coefficients of the closed loop matrix.
 Gershgorin disks~\cite{van1996matrix} allow us to limit the error in the
 expected eigenvalues.  Let $\delta_o=\max(\norm{{\mat{A}_e}_{i,*}}_1)$
 (\emph{i.e.} the largest row norm in $\mat{A}_e$) be the largest error bound
-for any eigenvalue in $\mat{A}_e$.  Then $\forall i \in [1, ...\,,n],
+for any eigenvalue in $\mat{A}_e$.  Then $\forall i \in \{1, \ldots,n\},
 |{\lambda_o}_{i}-\hat{\lambda}_{oi}|<\delta_o$, where ${\lambda_o}_{i}$ are
 the true eigenvalues of the observer $\mat{A}_o$ and $\hat{\lambda}_{oi}$
 the corresponding eigenvalues of the closed loop.  We note that in the case
@@ -1000,7 +1000,8 @@ Consequently, the controller must ensure that the state never violates the
 requirement.  In~this work, the safety property is expressed as:
 %
 \begin{align}
-\phi_\mathit{safety}^n: = & \forall k \in [0, ... , n], \mat{G}\vec{x}_k \leq \vec{h} \text{ and } \underline{y} \leq y_k \leq \overline{y}\nonumber\\
+\phi_\mathit{safety}^n: = & \forall k \in \{0, \ldots , n\},
+  \mat{G}\vec{x}_k \leq \vec{h} \text{ and } \underline{y} \leq y_k \leq \overline{y}\nonumber\\
 \phi_\mathit{safety}: = & \phi_\mathit{safety}^\infty
 \label{eq:safetyspec}
 \end{align}
@@ -1068,7 +1069,11 @@ stable system $\{\lambda_i =e^{\omega_i} \mid i \in [1, ...\,,p],
 |\lambda_i| \leq 1 \}$, the settling time of the system is upper-bounded by
 %
 \begin{equation}
-t_s<-log_{\overline{\lambda}}({P_s}), \text{ where }  \overline{\lambda} = \max(|\lambda_i|) \text{ and } \overline{\lambda}<1,\ \forall i \in [1, ...\,,p]
+%
+t_s<-log_{\overline{\lambda}}({P_s}), \text{ where }
+  \overline{\lambda} = \max(|\lambda_i|) \text{ and }
+  \overline{\lambda}<1,\ \forall i \in \{1, \ldots,p\}
+%
 \label{eq:set_time}
 \end{equation}
 %
@@ -2346,7 +2351,7 @@ $\vec{x}_T$ is the state of the system $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$ at t
 \end{align*}
 The eigenvalues remain the same as in the diagonal case, but the upper triangular terms are of the form:
 \begin{align*}
-\forall j>i, c_{ij}&=\sum_{k=j-i}^\infty \frac{1}{k!}\binom{k}{j-i} \lambda_i^{k-(j-i)}T_1^k\\
+\forall j>i.\, c_{ij}&=\sum_{k=j-i}^\infty \frac{1}{k!}\binom{k}{j-i} \lambda_i^{k-(j-i)}T_1^k\\
 &=\frac{1}{(j-i)!}\sum_{k=j-i}^\infty \frac{1}{(k-(j-i))!} \lambda_i^{k-(j-i)}T_1^k\nonumber\\
 &=\frac{T_1^{j-i}e^{\lambda_i T_1}}{(j-i)!}\nonumber
 \end{align*}
@@ -2460,7 +2465,7 @@ We over-approximate the effects of this vector by introducing a noise signal at 
 \begin{theorem}
 Given a set of eigenvalues for a discrete time model of an $p^{th}$ order system $\lambda_i =e^{\omega_i}, i \in [1, ...\,,p]$, the settling time of the system is upper-bounded by
 \begin{equation}
-t_s<-log_{\overline{\lambda}}({P_s}), \text{ where }  \overline{\lambda} = \max(|\lambda_i|) \text{ and } \overline{\lambda}<1,\ \forall i \in [1, ...\,,p]
+t_s<-log_{\overline{\lambda}}({P_s}), \text{ where }  \overline{\lambda} = \max(|\lambda_i|) \text{ and } \overline{\lambda}<1,\ \forall i \in \{1, \ldots,p\}
 \label{eq:set_time}
 \end{equation}
 where $0\leq P_s \leq 1$ is the desired percentage of the target within which the output must remain after $t_s$.
