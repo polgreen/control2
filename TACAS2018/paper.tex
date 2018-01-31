@@ -1757,26 +1757,28 @@ precise enough as to not cause any trouble, but it is precisely this
 assumption that often results in the most difficult and dangerous errors. 
 There are generally speaking two paradigms for representing numbers in
 programs: fixed and variable precision numbers.  We~refer to both of these
-as finite word length representations (FWL).  In fact, these subdivide into
-multiple data types such as integer bit-vectors, fixed or floating point
-numbers and rationals).  In this section we will be discussing fixed and
-floating point numbers.  On one hand, we have variable word length types
-which will attempt to use as much memory as needed to precisely represent
-the original domain (usually the reals).  In this case the limitations are
-caused by memory and speed, both of which are directly affected by the
-increasingly larger word lengths.  Multiple Precision Floating Point
-Arithmetic and Software Rationals are good examples of these cases.  It is
-possible for some of these data types to have memory constraints, at which
-point they fall into the second category.  Fixed precision data types are
-most common in software programs.  Whether they be Floating Point or Fixed
-Point (of which integers are the special case for 0 decimal places) numbers,
-the problem arises in the misrepresentation of the reals (or equivalent data
-type being represented).  Let $\mathbb{R}_{\langle M,F \rangle}$ be a fixed
-point domain with $M$ bits representing the binary word length of the
-representation and $F$ bits representing the pre-scaling $2^{-F}$
-(\emph{i.e} the number of bits after the decimal place).  We note that a
-negative $F$ denotes an integer multiplication that adds $-F$ trailing zeros
-in the number represented by~$M$.
+as finite word length representations (FWL).  They subdivide into a variety
+of data types such as integer bit-vectors, fixed or floating point numbers
+and rationals).  In this section we will be discussing fixed and floating
+point numbers.
+
+On one hand, we have variable word length types, which will use as much
+memory as needed to precisely represent the original domain (usually the
+reals).  In this case, the limitations are caused by memory and speed, both
+of which are directly affected by the increasingly larger word lengths. 
+Multiple Precision Floating Point Arithmetic and Software Rationals are good
+examples of these cases.  It is possible for some of these data types to
+have memory constraints, at which point they fall into the second category. 
+Fixed precision data types are most common in software programs.  Whether
+they be Floating Point or Fixed Point (of which integers are the special
+case for 0 decimal places) numbers, the problem arises in the
+misrepresentation of the reals (or equivalent data type being represented). 
+Let $\mathbb{R}_{\langle M,F \rangle}$ be a fixed point domain with $M$ bits
+representing the binary word length of the representation and $F$ bits
+representing the pre-scaling $2^{-F}$ (i.e., the number of bits after
+the decimal place).  We note that a negative $F$ denotes an integer
+multiplication that adds $-F$ trailing zeros in the number represented
+by~$M$.
 %
 %Let also $\mathbb{R}_{\langle M,[E] \rangle}$ be a floating point
 %domain with $M$ bits mantissa and $E$ bits exponent.  This domain
@@ -1870,7 +1872,7 @@ and verification process.
 %and $\mathcal{F}_{\langle A \rangle}$, respectively. Finally, let us call $\vec{\nu}_e$ the
 %error caused by the FWL effects on the observer
 %\todo{the observer was not defined..}
-%(\emph{i.e} the numerical errors 
+%(i.e., the numerical errors 
 %in the calculations as opposed to the estimation error).
 %The inputs are computed using the following equation: 
 %%
