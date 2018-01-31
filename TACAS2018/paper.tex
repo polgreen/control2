@@ -782,13 +782,12 @@ In this paper, we are interested in asymptotic stability, where the model is fur
 We specify model stability via Jury's criterion~\cite{fadali}, 
 as classical in Control Theory,  %\footnote{More details on Jury's criterion is in Appendix~\ref{sec:closed_stability}.}, 
  which boils down to a requirement expressed as an algebraic formula 
- on the characteristic polynomial of the model - a SAT solver will manipulate its coefficients. 
- \note{unclear really how SAT relates to manipulating real coefficients.... }
+ on the characteristic polynomial of the model.% - a SAT solver will manipulate its coefficients. 
 %
 In order to facilitate the use of Jury's criterion, we transform the model into
 a representation that contains the coefficients of its characteristic
 polynomial expressed as sums of controller and plant values. 
-The benefit of this representation is that it has no multiplications, which are expensive to handle by SAT solvers. 
+The benefit of this representation is that it has no multiplications, which are expensive to handle by SAT solvers (used by the synthesiser). 
 %
 Such a representation is a model known as 
 % is called Controllable and Observable 
@@ -868,9 +867,10 @@ and~$\mat{A}_o$.
 \begin{align*}
 P(z)=P_K(z)P_L(z)=\left(z^p+\sum_{i=0}^{p-1}{(a_i-k_i)z^{i}}\right) \left(z^p+\sum_{i=0}^{p-1}{(a_i-l_i)z^{i}}\right)
 \end{align*}
-\note{we should perhaps provide a qualitative hint on what are the conditions of JC? I'm afraid leaving it to the polynomials here isn't quite complete or clear.}
+Jury's criteria uses these coefficients to ensure that no root of the polynomial has a magnitude greater than one.
+%\note{we should perhaps provide a qualitative hint on what are the conditions of JC? I'm afraid leaving it to the polynomials here isn't quite complete or clear.}
 The introduction of the FWL errors causes this to no longer
-be true.  We must therefore find a suitable solution to maintain this independence of polynomials.
+be true.  We must therefore find a suitable solution to maintain this independence of polynomials and use the given coefficients by bounding their error w.r.t. the true coefficients of the closed loop matrix.
 
 Gershgorin disks~\cite{van1996matrix} allow us to limit the error
 in the expected eigenvalues.  Let $\delta_o=\max(\norm{{\mat{A}_e}_{i,*}}_1)$
@@ -885,16 +885,16 @@ desired upper value $\overline{\lambda}$ (see Section \ref{sec:transientspecific
 polynomial
 %
 \begin{equation}
-P_L'=\sum_{j=0}^p c_j\overline{\lambda'}^{p-j}s^j, \text{ where }  \overline{\lambda'}=(1+\delta_o)\overline{\lambda} \text{ and } c_j=l_j-a_j.
+P_L'(z)=\sum_{j=0}^p c_j\overline{\lambda'}^{p-j}z^j, \text{ where }  \overline{\lambda'}=(1+\delta_o)\overline{\lambda} \text{ and } c_j=l_j-a_j.
 \end{equation}
 %
-In the case of $\mat{A}_c$, the procedure is the same except
-that we obtain our bound $\delta_c=\max(\norm{{\mat{A}_e}_{*,i}+{\mat{B}_e}_{*,i}}_1)$ \note{why? explain in close connection with formulae used.}
+In the case of $\mat{A}_c$, the procedure is the same except that we need to look at the colums shared with $\mat{A}_c$.
+Thus we obtain our bound $\delta_c=\max(\norm{{\mat{A}_e}_{*,i}+{\mat{B}_e}_{*,i}}_1)$
 (\emph{i.e.} the largest column norm in $ \left[\begin{array}{c}\mat{A}_e\\ \mat{B}_e\end{array}\right]$) and
 apply Jury's Criterion over
 %
 \begin{equation}
-P_K'=\sum_{j=0}^p c_j\overline{\lambda'}^{p-j}s^j, \text{ where }  \overline{\lambda'}=(1+\delta_c)\overline{\lambda} \text{ and } c_j=k_j-a_j.
+P_K'(z)=\sum_{j=0}^p c_j\overline{\lambda'}^{p-j}z^j, \text{ where }  \overline{\lambda'}=(1+\delta_c)\overline{\lambda} \text{ and } c_j=k_j-a_j.
 \end{equation}
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -980,8 +980,7 @@ See Appendix~\ref{sec:proofs}
 \end{proof}
 %
 We now use this limit to express a constraint in terms of the
-coefficients of the characteristic polynomial.  
-\note{relate to polynomials sued above.}
+coefficients of the characteristic polynomial $P_K'(z)P_L'(z)$.
 Let this polynomial be:
 %
 \begin{equation}
@@ -996,7 +995,7 @@ to $P'(z)=\prod_{i=0}^p (z-\lambda_i')=\sum_{j=0}^p c_j'z^j$ where $c_j'$ are
 unknown.  By replacing $\lambda_i$, we obtain
 %
 \begin{equation}
-P'=\prod_{i=0}^p (z-\lambda_i')=\prod_{i=0}^p \left(z-\frac{\lambda_i}{\overline{\lambda}}\right)=\sum_{j=0}^p \frac{c_j}{\overline{\lambda}^{p-j}}z^j, 
+P'(z)=\prod_{i=0}^p (z-\lambda_i')=\prod_{i=0}^p \left(z-\frac{\lambda_i}{\overline{\lambda}}\right)=\sum_{j=0}^p \frac{c_j}{\overline{\lambda}^{p-j}}z^j, 
 \end{equation}
 %
 where all values are known. Thus, we can ensure that the settling time is smaller than
@@ -1372,38 +1371,39 @@ candidate.  Otherwise the optimized candidate solution is given back to
  \centering
  \scriptsize
  \begin{tikzpicture}[scale=0.3,->,>=stealth',shorten >=.2pt,auto, semithick, initial text=, ampersand replacement=\&,]
-  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center}, row sep=.8cm, column sep=1.5cm] {
+  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center}, row sep=.8cm, column sep=.8cm] {
   \coordinate (aux1);\&\&
   \coordinate (aux2);
   \coordinate (aux3) at ([xshift=3cm]aux2); \\
-  \node[minimum width=2.2cm, minimum height=0.8cm, fill=orange!20] (model1) {{\sc 1. Abstract}};
+  \node[minimum width=2cm, minimum height=0.8cm, fill=orange!20] (model1) {{\sc 1. Abstract}};
   \& complexnode/.pic={
     \coordinate (model);
-    \node[minimum width=2.2cm, minimum height=0.8cm, fill=orange!20] (model2) at ([xshift=-3cm]model.center) {{\sc 4. Refine Abstraction}\\{\sc and Optimize}};
+    \node[minimum width=2cm, minimum height=0.8cm, fill=orange!20] (model2) at ([xshift=-3cm]model.center) {{\sc 4. Refine Abstraction}\\{\sc and Optimize}};
      \coordinate (model3) at ([xshift=0cm]model.center);
      \coordinate (model4) at ([xshift=3cm]model.center);
    } ;\\
-   \node[minimum width=2.2cm, minimum height=0.8cm, fill=purple!20] (synth) {{\sc 2. Synthesize}};
+   \node[minimum width=2cm, minimum height=0.8cm, fill=purple!20] (synth) {{\sc 2. Synthesize}};
    \&
    complexnode/.pic={ 
      \node[rectangle,draw,dotted,
-	minimum width=9cm,
+	minimum width=8cm,
 	minimum height=1cm,
         pattern=north west lines, pattern color=gray!20,
-	label={\sc Verify~~~~~~~~~~~},] (verif) {};
-     \node[minimum width=2.2cm, minimum height=0.8cm, fill=blue!20] (verif1) at ([xshift=-3cm]verif.center) {{\sc 3. Verify}\\{\sc Synthesis}};
-     \node[minimum width=2.2cm, minimum height=0.8cm, fill=blue!20] (verif2) at ([xshift=0cm]verif.center) {{\sc 5. Discrete}\\{\sc Time}};
-     \node[minimum width=2.2cm, minimum height=0.8cm, fill=blue!20] (verif3) at ([xshift=3cm]verif.center) {{\sc 7. Continuous}\\{\sc Time}};
+	label={\sc Verify~~~~~~~~~~~},
+        column sep=.7cm] (verif) {};
+     \node[minimum width=1.8cm, minimum height=0.8cm, fill=blue!20] (verif1) at ([xshift=-3cm]verif.center) {{\sc 3. Verify}\\{\sc Synthesis}};
+     \node[minimum width=1.8cm, minimum height=0.8cm, fill=blue!20] (verif2) at ([xshift=0cm]verif.center) {{\sc 5. Discrete}\\{\sc Time}};
+     \node[minimum width=1.8cm, minimum height=0.8cm, fill=blue!20] (verif3) at ([xshift=3cm]verif.center) {{\sc 7. Continuous}\\{\sc Time}};
    } 
    \& \coordinate (done);\\
    \& \\
-   \node[minimum width=2.2cm, minimum height=0.8cm] (gp) {{\sf Program}\\{\sf Search}};
+   \node[minimum width=2cm, minimum height=0.8cm] (gp) {{\sf Program}\\{\sf Search}};
    \&
    complexnode/.pic={ 
      \coordinate (aux);
-   \node[minimum width=2.2cm, minimum height=0.8cm] (bmc) at ([xshift=-3cm]aux.center) {\sf Eigensolver};
-   \node[minimum width=2.2cm, minimum height=0.8cm] (fp)  at ([xshift=0cm]aux.center) {\sf Reachability \\ \sf Analysis};
-   \node[minimum width=2.2cm, minimum height=0.8cm] (sv)  at ([xshift=3cm]aux.center) {\sf Reachability \\ \sf Analysis};
+   \node[minimum width=1.8cm, minimum height=0.8cm] (bmc) at ([xshift=-3cm]aux.center) {\sf Eigensolver};
+   \node[minimum width=1.8cm, minimum height=0.8cm] (fp)  at ([xshift=0cm]aux.center) {\sf Reachability \\ \sf Analysis};
+   \node[minimum width=1.8cm, minimum height=0.8cm] (sv)  at ([xshift=3cm]aux.center) {\sf Reachability \\ \sf Analysis};
    }   
     \\
   };
