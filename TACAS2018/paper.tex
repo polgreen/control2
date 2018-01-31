@@ -945,7 +945,7 @@ where $\mat{G}$ and $\vec{h}$ define a set of inequalities that describe
 a safe set, within the state-space $\mathbb{R}^p$.
 %
 Note that FWL effects are not explicitly captured here
-as they are implicit from Equation \ref{eq:observer_LTI_FWL_cf}.
+as they are implicit from Equation \eqref{eq:observer_LTI_FWL_cf}.
 
 Furthermore, it is practically relevant to consider the 
 constraints $\phi_\mathit{input}$ on the input
@@ -1010,8 +1010,9 @@ See Appendix~\ref{sec:proofs}
 \end{proof}
 %
 We now use this limit to express a constraint in terms of the
-coefficients of the characteristic polynomial.  Let this
-polynomial be:
+coefficients of the characteristic polynomial.  
+\note{relate to polynomials sued above. justify use of different variable.}
+Let this polynomial be:
 %
 \begin{equation}
 P(s)=\prod_{i=0}^p (s-\lambda_i)=\sum_{j=0}^p c_js^j.
@@ -1025,10 +1026,10 @@ to $P'(s)=\prod_{i=0}^p (s-\lambda_i')=\sum_{j=0}^p c_j's^j$ where $c_j'$ are
 unknown.  By replacing $\lambda_i$, we obtain
 %
 \begin{equation}
-P'=\prod_{i=0}^p (s-\lambda_i')=\prod_{i=0}^p \left(s-\frac{\lambda_i}{\overline{\lambda}}\right)=\sum_{j=0}^p \frac{c_j}{\overline{\lambda}^{p-j}}s^j
+P'=\prod_{i=0}^p (s-\lambda_i')=\prod_{i=0}^p \left(s-\frac{\lambda_i}{\overline{\lambda}}\right)=\sum_{j=0}^p \frac{c_j}{\overline{\lambda}^{p-j}}s^j, 
 \end{equation}
 %
-where all members are known. Thus, we can ensure that the settling time is smaller than
+where all members \note{members?} are known. Thus, we can ensure that the settling time is smaller than
 a certain magnitude by ensuring that 
 the eigenvalues are smaller too (which we can do with Jury's criterion).
 
@@ -1041,6 +1042,8 @@ We will use $\phi_{stability}$ to refer to the combined stability and transient 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 %\subsection{Using optimization refinement for CEGIS of control systems}\label{sec:cof_synth}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+\note{At times the gain matrices K, L, do not appear with C/P indices  -  clarify why. }
 
 In this section, we describe our technique for synthesizing safe
 digital feedback controllers using CEGIS. Broadly speaking, CEGIS
@@ -1388,7 +1391,7 @@ The resulting closed loop form converges faster than the original and has a
 smaller rotation, which facilitates meeting the safety specification $\phi_\mathit{safety}$.
 
 We must point out that the optimizer tool uses infinite precision for the plant, and
-may therefore find solutions that the synthesiser can't due to the use of limited precision.
+may therefore find solutions that the synthesiser cannot, due to the use of limited precision.
 If we cannot optimize the candidate  we signal the {\sc Abstract} phase to 
 use the updated $\phi$ and request {\sc Synthesise} to produce a new
 candidate.  Otherwise the optimized candidate solution is given back to
@@ -1515,7 +1518,7 @@ thus creating seven hundred benchmarks from this base.
 \vspace{0.05in}
 \caption{\label{tab:cegis_results}
 Experimental results. Minimum, and Median times for standard CEGIS vs CEGIS-OR on multiple benchmarks. No. indicates Number of benchmarks,
- t.o.~indicates timeouts (in the median case, it indicates more than half of the benchmarks timed out). Order is the number of states of the system.}
+ t.o.~indicates timeouts (in the median case, it indicates more than half of the benchmarks timed out). The order denotes the number of variables of a model.}
 \end{table}
 
 Using the described technique we managed to synthesize controllers for $509$ benchmarks (compared to $290$ found by our baseline), with a median synthesis time of $16.8$ seconds.
