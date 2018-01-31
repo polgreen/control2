@@ -93,14 +93,14 @@ Modern implementations of embedded control systems have proliferated with
 the availability of low-cost devices that can perform highly non-trivial
 control tasks, with significant impact in numerous application areas such as
 life sciences, environmental control and robotics~\cite{astrom1997computer,
-Franklin15}.  Correct synthesis is non-trivial, even in cases with
-restricted dynamics.  We examine the case of Linear Time Invariant (LTI)
-models, for which the synthesis of controllers is well understood.  However,
-the use of digital control architectures adds new challenges caused by
-artifacts specific to digital control, such as the effects of
-finite-precision arithmetic (referred to here as Finite Word Length or FWL
-effects), time discretization and quantization errors introduced by A/D and
-D/A conversion.
+Franklin15}.  Correct synthesis of control software for such platforms is
+non-trivial, even in cases with restricted dynamics.  We consider the case
+of Linear Time Invariant (LTI) models, for which the synthesis of
+controllers is well understood.  However, the use of digital control
+architectures adds new challenges caused by artifacts specific to digital
+control, such as the effects of finite-precision arithmetic (referred to
+here as Finite Word Length or FWL effects), time discretization and
+quantization errors introduced by A/D and D/A conversion.
 
 While research on digital control is well
 developed~\cite{astrom1997computer}, automated and sound control synthesis
@@ -109,27 +109,29 @@ classical stability.  Recent work~\cite{abate2017automated} described a
 method for synthesizing safe digital stabilizing controllers for fully
 observable LTI plants.  This work differs from the vast majority of existing
 approaches in that it explores the continuous space of the system to
-synthesize correct by construction minimal digital controllers.  Contrary to
-LTL models that require thousands of states and elaborate algorithms to
-implement \cite{reissig2017feedback}, these PID-like controllers are
-represented by a few parameters and only require a few lines of code, thus
+synthesize correct-by-construction minimal digital controllers.  In contrast
+to LTL models, which require thousands of states and elaborate algorithms to
+implement~\cite{reissig2017feedback}, these PID-like controllers are
+represented by a few parameters and only require few lines of code, thus
 reducing the implementation cost and execution time while remaining
 resilient to the effects of digitalization. 
 However,~\cite{abate2017automated}~is restricted to fully observed systems
 (i.e., where all the states are known) modeled in discrete time, and
-furthermore explores only a limited set of properties that engineers are
-interested in.  Conversely, in most real implementations, the internal state
-of a plant cannot be directly measured but rather inferred from its effect
-on the output.  A plant model that minimizes the difference between its
-output and the real plant output is called an observer and it is a well
-known paradigm in the control literature~\cite{astrom1997computer}.
-
+furthermore explores only a subset of the properties that engineers are
+interested in.  By contrast, in most real implementations, the internal
+state of a plant cannot be directly measured but has to be inferred from its
+effect on the output.  A plant model that minimizes the difference between
+its output and the real output of the plant is called an \emph{observer} and
+it is a well known paradigm in the control
+literature~\cite{astrom1997computer}.
 
 In this paper we build on the ideas presented in~\cite{abate2017automated}
 and develop a new technique that addresses most of these limitations. 
 By~combining state-of-the-art synthesis and verification engines we
-automatically generate digital observer controllers for a given continuous
-plant model that are correct by construction.  %% This approach delivers a high
+automatically generate digital \emph{observer controllers} for a given
+continuous plant model that are correct by construction.
+%
+%% This approach delivers a high
 %% degree of automation, promises to reduce the cost and time of development of
 %% digital control dramatically, and requires considerably less expertise than
 %% a-posteriori verification.
