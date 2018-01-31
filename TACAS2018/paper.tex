@@ -1756,7 +1756,7 @@ almost invariably approximations to the original which are assumed to be
 precise enough as to not cause any trouble, but it is precisely this
 assumption that often results in the most difficult and dangerous errors. 
 There are generally speaking two paradigms for representing numbers in
-programs: fixed and variable precision numbers.  We refer to both of these
+programs: fixed and variable precision numbers.  We~refer to both of these
 as finite word length representations (FWL).  In fact, these subdivide into
 multiple data types such as integer bit-vectors, fixed or floating point
 numbers and rationals).  In this section we will be discussing fixed and
@@ -1824,11 +1824,11 @@ The following errors appear in simple operations:
 We note here that not all systems truncate equally.  In the definition above
 $\delta$ may be positive or negative, and even this decision can be made
 dependent on the sign of $x$.  Common cases in computer systems are: round
-downwards (\emph{ie} to $-\infty$), round upwards (\emph{ie} to $+\infty$),
-and round to zero.  Rounding errors are cumulative which means the overall
-error will statistically increase with every operation, thus single
-transition algorithms can be more precise in this respect than iterative
-ones because they perform fewer operations needing rounding.
+downwards (i.e., to $-\infty$), round upwards (i.e., to $+\infty$), and
+round to zero.  Rounding errors are cumulative which means the overall error
+will statistically increase with every operation, thus single transition
+algorithms can be more precise in this respect than iterative ones because
+they perform fewer operations needing rounding.
 
 \item Overflow\\
 %
@@ -1966,7 +1966,7 @@ The proof derives from $\norm{\mat{K}\vec{x}}_1 \leq \norm{\mat{K}}_1\norm{\vec{
 \section{Control theory}\label{sec:control_theory}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-The semantics discussed in sections \ref{sec:model} do not describe all
+The semantics discussed in Sec.~\ref{sec:model} do not describe all
 properties of interest in our systems.  In some cases, specific values or
 substructures define hidden properties which can only be inferred given an
 appropriate transformation.  Since our models are being applied to linear
@@ -1975,7 +1975,7 @@ provide a summary of the important elements using control theory for their
 transformations.
 
 A feedback system is one where the output is fed back into the input, thus
-making part or all of the system a closed system (i.e.  no inputs).  Such a
+making part or all of the system a closed system (i.e., no inputs).  Such a
 system is exemplified in Figure~\ref{fig:observersystem}.  Since the
 feedback line creates a loop in the diagram this is known as a closed loop,
 and the overall behavior of the resulting system is said to have closed loop
@@ -2295,7 +2295,7 @@ only if the following conditions hold~\cite{astrom1997computer}:
 %Notice that in both our polynomials $c_0=1$ and we only use reals.
 
 %-------------------------------
-\section{Proofs of theorems \label{sec:proofs}}
+\section{Proofs of Theorems\label{sec:proofs}}
 %-------------------------------
 \setcounter{lemma}{0}
 \setcounter{theorem}{0}
@@ -2486,8 +2486,14 @@ In a SISO system, there are two values that typically define the
 response-time of the system (using a step response).
 %
 \begin{enumerate}
-\item The \emph{rise time} is defined as the time it takes the output to reach a percentage (eg $90\%$) of the target value given a step change in the input.
-\item The \emph{settling time} is defined as the time it takes the output to stabilize within a margin of the target value (eg $10\%$).
+%
+\item The \emph{rise time} is defined as the time it takes the output to
+reach a percentage (e.g., $90\%$) of the target value given a step change in
+the input.
+%
+\item The \emph{settling time} is defined as the time it takes the output to
+stabilize within a margin of the target value (e.g., $10\%$).
+%
 \end{enumerate} 
 %
 %In the case of first and second order systems, the decay is governed by the equations 
@@ -2537,14 +2543,14 @@ terms of the Jordan blocks.  We also have $|\lambda_i^k|\leq
 eigenvalue in the system. Hence
 %
 \begin{align*}
-|y_k|&\leq |\overline{\omega}^k|\sum_{i=0}^p \left|c_i + \sum\limits_{j=1}^{gm(i)}c_{i+j}\binom{k}{j} \lambda_i^{-j}\right|
+|y_k|&\leq |\overline{\omega}^k|\sum_{i=0}^p \left|c_i + \sum\limits_{j=1}^{gm(i)}c_{i+j}\binom{k}{j} \lambda_i^{-j}\right|\;.
 \end{align*}
 %
-In the case of closed loop forms without geometric multiplicity (which is by
-far the most common case), the right hand terms disappear and we obtain
+In the case of closed loop forms without geometric multiplicity (which is
+the most common case), the right-hand terms disappear and we obtain
 %
 \begin{align*}
-|y_k|&\leq |\overline{\omega}^k|\sum_{i=0}^p |c_i|
+|y_k|&\leq |\overline{\omega}^k|\sum_{i=0}^p |c_i|\;.
 \end{align*}
 
 Hence, the overall decay of the system is always smaller than
@@ -2556,20 +2562,24 @@ equation~\eqref{eq:set_time}.
 %
 
 In the case where we allow for geometric multiplicities, we need to
-compensate for the effects of $\binom{k}{j}$ \footnote{tighter bounds can be
-achieved by evaluating $\frac{\sum\limits_{j=1}^{gm(i)}c_{i+j}\binom{k}{j}
-\lambda_i^{-j}{\vec{x}_0}_j}{\sum\limits_{j=1}^{gm(i)}c_{i+j}{\vec{x}_0}_j}$}. 
+compensate for the effects of $\binom{k}{j}$ \footnote{Tighter bounds can be
+obtained by evaluating $\frac{\sum\limits_{j=1}^{gm(i)}c_{i+j}\binom{k}{j}
+\lambda_i^{-j}{\vec{x}_0}_j}{\sum\limits_{j=1}^{gm(i)}c_{i+j}{\vec{x}_0}_j}$.}. 
 We recall here that our interest is to reach within $10\%$ of the final
 value, and that for a given $k>\underline{k}$ the term $\lambda^k$ will
 converge faster than $\binom{k}{j}$ diverges.  The requirements for
 $|\overline{\omega}|$ are calculated as follows:
 %
 \begin{itemize}
+%
 \item Find $\underline{k}=\frac{t_s}{T_s}$ where $t_s$ is the settling time and $T_s$ the sampling time.
+%
 \item Calculate $|\overline{\omega}|=log_{t_s}\left(P_s\binom{\underline{k}}{gm-1}^{-1}\right)$,
 where $gm$ is the maximum desired geometric multiplicity.
+%
 \item Ensure that $|\overline{\omega}| \leq \frac{\underline{k}}{\underline{k}+1}$ and that the
-synthesized closed loop does not have a larger gm than specified.
+synthesized closed loop does not have a larger $gm$ than specified.
+%
 \end{itemize}
 %\qed
 \end{proof}
