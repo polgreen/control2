@@ -1326,7 +1326,7 @@ Throughout the CEGIS-OR loop we make use of a specification $\phi$ that
 deals with the abstraction of the model dynamics.  Note that since the model
 abstraction gets refined at each iteration, $\phi$ will also be adjusted
 accordingly.  Initially, $\phi$ is simply given as the defined $\phi :=
-\phi_{stability} \wedge \phi_{input} \wedge \phi_{init}$.
+\phi_\mathit{stability} \wedge \phi_\mathit{input} \wedge \phi_\mathit{init}$.
 
 %% We make use of two abstractions corresponding to two
 %% specifications: $\phi_{synth}$ used by the synthesiser and
@@ -1550,7 +1550,7 @@ solution is given back to {\sc Verify Synthesis}.
     ([xshift=-5em]gp.north) edge node[align=center] {FAIL/\\$\mat{K}_{\langle P \rangle}$,$\mat{L}_{\langle P \rangle}$} ([xshift=-5em]synth.south)
    ([xshift=5em]model1.south) edge node[align=center,xshift=-.7cm] {$\mathbb{R}_{\langle P \rangle}$} 
 ([xshift=5em]synth.north)
-   node[align=left,yshift=-0.7cm,xshift=.5cm] {{$\phi$}\\{$\phi_{init}^K$}} %{$\phi_\mathit{safety}$}\\ 
+   node[align=left,yshift=-0.7cm,xshift=.5cm] {{$\phi$}\\{$\phi_\mathit{init}^K$}} %{$\phi_\mathit{safety}$}\\ 
    ([xshift=-5em]synth.north) edge node[align=center] {FAIL} ([xshift=-5em]model1.south);
    \path[->]
     ([xshift=-5em]verif1.north) edge node[align=center]  {C-ex} ([xshift=-5em]model2.south)
