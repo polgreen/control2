@@ -41,9 +41,9 @@ void get_bounds()
   {
     _dbl_max*=2;
   }
-  exp=1 << _FRAC_BITS;
+   _fxp_one = (1 << FRAC_BITS-1);
   _dbl_lsb=_one/_dbl_max;
-  _dbl_max*=_one-_one/exp;
+  _dbl_max*=_one-_one/_fxp_one;
 #endif
   _dbl_min = -_dbl_max;
 }
@@ -79,6 +79,44 @@ control_typet fxp_check(control_typet value)
   #ifdef FIXEDBV
     value=fxp_control_floatt_to_fxp(value);
     value/=_fxp_one;
+  #else
+    // Would be easier if we knew the endianness
+    int exp=1;
+    char exp_sign=0;
+    char is_negative=(value<0);
+    if (is_negative)
+      value=-value;
+
+    // Normalize to 1.x
+    if (value<1)
+    {
+      exp_sign=-1;
+      while (value<1)
+      {
+        value*=2;
+        exp*=2;
+      }
+    }
+    else
+    {
+      exp_sign=1;
+      while (value>1)
+      {
+        value*=.5;
+        exp*=2;
+      }
+    }
+
+    // Remove extra digits
+    int result=value*_fxp_one;
+    value=result;
+    value/=_fxp_one;
+
+    // Restore exponent
+    if (exp_sign>0)
+      value*=exp;
+    else
+      value/=exp;
   #endif
   return value;
 #endif
