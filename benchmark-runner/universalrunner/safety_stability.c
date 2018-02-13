@@ -1,15 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "benchmark.h" //benchmark header file
-//#include "control_types.h" //included via benchmark.h
-//#define CPROVER
-//#ifdef INTERVAL
-  //  #include "intervals.h" //included via control_types.h
-//#endif
 #include "operators.h"
 
 #ifdef CPROVER
-  //#define __DSVERIFIER_assert(x) __CPROVER_assume(x)
 #define __DSVERIFIER_assert(x) __CPROVER_assert(x, "")
 #else
   #include <assert.h>
@@ -300,17 +294,6 @@ void __CPROVER_EIGEN_charpoly(void){
 
 void A_minus_B_K()
 {
-
-/*#ifdef CPROVER //NOT NEEDED
-  __CPROVER_array_copy(_AminusBK, _controller_A);
-#else
-  for(int i=0; i<NSTATES; i++)
-     {
-      for(int j=0; j<NSTATES; j++)
-        {_AminusBK[i][j] = _controller_A[i][j];}
-     }
-#endif*/
-
   for (int i=0;i<NSTATES; i++) { //rows of B
       for (int j=0; j<NSTATES; j++) { //columns of K
         _AminusBK[i][j] = sub( _controller_A[i][j], mult(_controller_B[i] , plant_cast(K_fxp[j])  ));
@@ -331,9 +314,8 @@ void inputs_equal_ref_minus_k_times_states(void)
     __controller_typet result_fxp=zero_type;
 
      for(int k=0; k<NSTATES; k++)
-     {  result_fxp = add (result_fxp, mult(K_fxp[k] , controller_cast(_controller_states[k])));
-       //{ result_fxp += (K_fxp[k] * (__controller_typet)_controller_states[k]);}
-
+     {
+    	   result_fxp = add (result_fxp, mult(K_fxp[k] , controller_cast(_controller_states[k])));
         _controller_inputs = sub(zero_type, plant_cast(result_fxp));
         #ifdef INTERVAL
         __DSVERIFIER_assert(_controller_inputs.high<=INPUT_UPPERBOUND && _controller_inputs.low >=INPUT_LOWERBOUND);
@@ -414,23 +396,6 @@ void states_equals_A_states_plus_B_inputs(void)
 int check_safety(void)
 {
 
-  /*for(int j=0; j<NSTATES; j++)//set initial states and reference
-  {
-    #ifdef CPROVER
-     __plant_typet __state0 = _controller_states[0];
-     __plant_typet __state1 = _controller_states[1];
-     __plant_typet __state2 = _controller_states[2];
-    // XXX: Unnecessary if we only check poles
-    //#ifdef INTERVAL
-    //__CPROVER_assume(_controller_states[j].high<=INITIALSTATE_UPPERBOUND && _controller_states[j].low>=INITIALSTATE_LOWERBOUND);
-    //__CPROVER_assume(_controller_states[j]!=zero_type);
-    //#else
-    //__CPROVER_assume(_controller_states[j]<=INITIALSTATE_UPPERBOUND && _controller_states[j]>=INITIALSTATE_LOWERBOUND);
-    //__CPROVER_assume(_controller_states[j]!=zero_type);
-    //#endif
-    #endif
-  }*/
-
 #ifdef INTERVAL
   int_vectort error_coeffs;
   bound_error(_AminusBK,K_fxp,error_coeffs);
@@ -442,8 +407,6 @@ int check_safety(void)
 
     #ifdef INTERVAL
       matrix_vector_mult(_AminusBK,_controller_states);
-    
-      //closed_fxp_mult(_controller_A, _controller_B, K_fxp, _controller_states);
     #endif
     #ifndef INTERVAL
         states_equals_A_states_plus_B_inputs(); //update states one time step
@@ -595,22 +558,12 @@ void safety_stability(void) {
 #ifdef CPROVER
   __controller_typet K_fxp_trace[NSTATES] = { controller_cast(0.0) };
   __CPROVER_array_copy(K_fxp_trace, K_fxp);
-  //__CPROVER_assert(0 == 1, "");
 #endif
 }
 
 int main(int argc, const char *argv[]) {
 #ifdef CPROVER
-  #ifdef EP_TESTING
-  assume_corner_cases_for_states_with_loops();
-  __plant_typet _trace_initstates[NSTATES];
-  for(int i=0; i<NSTATES; i++)
-  {
-    _trace_initstates[i]=_controller_states[i];
-  }
-  #else
   assume_corner_cases_for_states();
-  #endif
 #else
   NUMBERLOOPS=atoi(argv[1]);
   for (int i = 0; i < NSTATES; ++i) {
@@ -621,7 +574,6 @@ int main(int argc, const char *argv[]) {
       _controller_states[stateIndex] = _state_poles[poleIndex][stateIndex];
     }
 #endif
- // assert_nonzero_controller();
   safety_stability();
 #ifndef CPROVER
   }
