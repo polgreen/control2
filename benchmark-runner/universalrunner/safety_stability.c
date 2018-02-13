@@ -74,7 +74,7 @@ int check_stability(__plant_typet speed_factor){
    __plant_typet current_stability[__n];
    for (i=0; i < __n; i++){
      current_stability[i] = __a[i];
-     for (j=0;j<=i;j++) current_stability[i]*=speed_factor;
+     for (j=0;j<=i;j++) current_stability[i]=mult(speed_factor, current_stability[i]);
    }
 
    /* check the first constraint condition F(1) > 0 */
