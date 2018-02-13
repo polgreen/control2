@@ -209,6 +209,7 @@ struct intervalt interval_fxp_add(struct intervalt x,struct intervalt y)
   z.low=fexp_round(z.low,0);
   z.high=fexp_round(z.high,1);
 #endif  
+  return z;
 }
 
 struct intervalt interval_fxp_sub(struct intervalt x,struct intervalt y)
@@ -218,6 +219,7 @@ struct intervalt interval_fxp_sub(struct intervalt x,struct intervalt y)
   z.low=fexp_round(z.low,0);
   z.high=fexp_round(z.high,1);
 #endif  
+  return z;
 }
 
 /*inline */struct intervalt interval_fxp_mult(struct intervalt x,struct intervalt y)
