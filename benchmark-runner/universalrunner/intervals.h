@@ -9,7 +9,7 @@
 
 typedef  __plant_precisiont control_typet;
 
-control_typet _zero = 0.0; //added in by EP
+control_typet _zero = 0.0;
 control_typet _one = 1.0;
 
 struct intervalt
@@ -20,8 +20,6 @@ struct intervalt
 
 control_typet _dbl_max;
 control_typet _dbl_min;
-signed long int _fxp_max;
-signed long int _fxp_min;
 signed long int _fxp_one;
 control_typet _dbl_lsb;
 
@@ -33,8 +31,6 @@ void get_bounds()
   else
    _fxp_one = (1 << FRAC_BITS);
   _dbl_lsb=_one/(1 << FRAC_BITS);
-  _fxp_min = -(1 << (FRAC_BITS + INT_BITS -1));
-  _fxp_max = (1 << (FRAC_BITS + INT_BITS-1))-1;
   _dbl_max = (1 << (INT_BITS-1))-1;//Integer part
   _dbl_max += (_one-_dbl_lsb);//Fractional part
 #else
