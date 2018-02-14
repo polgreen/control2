@@ -68,11 +68,11 @@ control_typet fxp_check(control_typet value)
   #ifdef FIXEDBV
     control_typet tmp_value=value;
     if (tmp_value < _zero) tmp_value=-tmp_value;
-    verify_assume((~_dbl_max&tmp_value)==0);
+    __CPROVER_assume((~_dbl_max&tmp_value)==0);
     return value;
   #else
     const controller_floatt fwl_value=value;
-    verify_assume(fwl_value!=0);
+    __CPROVER_assume(fwl_value!=0);
     return fwl_value;
   #endif
 #else
