@@ -41,7 +41,7 @@ void get_bounds()
   {
     _dbl_max*=2;
   }
-   _fxp_one = (1 <<  FRAC_BITS);
+   _fxp_one = (1 << FRAC_BITS);
   _dbl_lsb=_one/_dbl_max;
   _dbl_max*=_one-_one/_fxp_one;
 #endif
@@ -117,6 +117,8 @@ control_typet fxp_check(control_typet value)
       value*=exp;
     else
       value/=exp;
+    if (is_negative)
+      value=-value;
   #endif
   return value;
 #endif
