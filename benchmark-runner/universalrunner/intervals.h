@@ -71,7 +71,7 @@ control_typet fxp_check(control_typet value)
     __CPROVER_assume((~_dbl_max&tmp_value)==0);
     return value;
   #else
-    const controller_floatt fwl_value=value;
+    const control_typet fwl_value=value;
     __CPROVER_assume(fwl_value!=0);
     return fwl_value;
   #endif
