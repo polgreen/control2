@@ -2,8 +2,8 @@
 #ifndef INTERVALS_H_
 #define INTERVALS_H_
 
-#define _EXP_BITS (INT_BITS + FRAC_BITS)
-#define _FRAC_BITS (FRAC_BITS + 1)
+#define FLOAT_EXP_BITS (INT_BITS + FRAC_BITS)
+
 
 #include "control_types.h"
 
@@ -35,13 +35,13 @@ void get_bounds()
   _dbl_max += (_one-_dbl_lsb);//Fractional part
 #else
   int i;
-  signed long int exp=(1 << (_EXP_BITS -_FRAC_BITS - 1));
+  signed long int exp=(1 << (FLOAT_EXP_BITS - FRAC_BITS));
   _dbl_max=_one;
   for (i=0;i<exp;i++)
   {
     _dbl_max*=2;
   }
-   _fxp_one = (1 << (FRAC_BITS-1));
+   _fxp_one = (1 <<  FRAC_BITS);
   _dbl_lsb=_one/_dbl_max;
   _dbl_max*=_one-_one/_fxp_one;
 #endif
