@@ -77,7 +77,7 @@ control_typet fxp_check(control_typet value)
   #endif
 #else
   #ifdef FIXEDBV
-    value=fxp_control_floatt_to_fxp(value);
+    value=fxp_control_typet_to_fxp(value);
     value/=_fxp_one;
   #else
     // Would be easier if we knew the endianness
