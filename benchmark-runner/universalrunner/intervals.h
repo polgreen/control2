@@ -2,9 +2,6 @@
 #ifndef INTERVALS_H_
 #define INTERVALS_H_
 
-#define EXPONENT_BITS INT_BITS
-#define MANTISSA_BITS FRAC_BITS
-
 #include "control_types.h"
 
 typedef  __plant_precisiont control_typet;

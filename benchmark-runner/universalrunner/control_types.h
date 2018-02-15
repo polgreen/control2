@@ -8,6 +8,15 @@
 #ifndef CONTROL_TYPES_H_
 #define CONTROL_TYPES_H_
 
+#ifdef SINGLE_PRECISION
+#define  EXPONENT_BITS 32
+#define  MANTISSA_BITS 23
+#else
+#define  EXPONENT_BITS INT_BITS
+#define  MANTISSA_BITS FRAC_BITS
+#endif
+
+
 #ifdef CPROVER
     #ifndef FLOAT
       #ifdef INTERVAL
@@ -29,7 +38,7 @@
     #else
        typedef __CPROVER_floatbv[_CONTROL_FLOAT_WIDTH][_CONTORL_RADIX_WIDTH] __plant_precisiont;
        typedef __plant_precisiont __plant_typet;
-       typedef __CPROVER_floatbv[INT_BITS+FRAC_BITS][FRAC_BITS] __controller_precisiont;
+       typedef __CPROVER_floatbv[EXPONENT_BITS + MANTISSA_BITS][MANTISSA_BITS] __controller_precisiont;
        typedef  __controller_precisiont __controller_typet;
        #define plant_cast(x) ((__plant_typet)x)
        #define controller_cast(x) ((__controller_typet)x)
