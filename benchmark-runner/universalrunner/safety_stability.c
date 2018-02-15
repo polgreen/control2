@@ -309,7 +309,6 @@ void closed_loop(void)
 
 void inputs_equal_ref_minus_k_times_states(void)
   {
-    __controller_typet states_fxp[NSTATES] = { 0.0 };
     //single input
     __controller_typet result_fxp=zero_type;
 
