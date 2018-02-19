@@ -57,6 +57,7 @@
 \usepackage{url}
 
 %\newcommand{\tool}{{\sf DSSynth}\xspace}
+\newcommand{\addtodo}[1]{\textcolor{red}{[#1]}}
 \newcommand{\mat}[1]{\boldsymbol{#1}}
 \renewcommand{\vec}[1]{\boldsymbol{#1}}
 \newtheorem{lemma}{Lemma}
@@ -87,12 +88,13 @@
 \author[manaus]{Iury Bessa}\ead{iurybessa@ufam.edu.br},
 \author[oxford]{Dario Cattaruzza}\ead{dario.cattaruzza@cs.ox.ac.uk},
 \author[oxford,manaus]{Lucas Cordeiro}\ead{lucas.cordeiro@cs.ox.ac.uk},
-\author[oxford]{Cristina David}\ead{cristina.david@cs.ox.ac.uk},
+\author[cambridge]{Cristina David}\ead{cd652@cam.ac.uk},
 \author[oxford]{Pascal Kessel}\ead{pascal.kesseli@stx.ox.ac.uk},
 \author[oxford]{Daniel Kroening}\ead{kroening@cs.ox.ac.uk},
 \author[oxford]{Elizabeth Polgreen}\ead{elizabeth.polgreen@linacre.ox.ac.uk}
 
 \address[oxford]{University of Oxford, UK}
+\address[cambridge]{University of Cambridge, UK}
 \address[manaus]{Federal University of Amazonas, Brazil}
 
 %\author[Paestum]{Marcus Tullius Cicero}\ead{cicero@senate.ir},    % Add the 
@@ -134,38 +136,49 @@ Modern implementations of embedded control systems have proliferated with
 the availability of low-cost devices that can perform highly non-trivial
 control tasks, with significant impact in numerous application areas such as
 life sciences, environmental control and robotics~\cite{astrom1997computer,
-Franklin15}.  Correct synthesis is non-trivial, even in cases with
+Franklin15}.  Correct synthesis of control software
+for such platforms is non-trivial, even in cases with
 restriceted dynamics.  We examine the case of Linear Time Invariant (LTI)
-Models, for which the synthesis of controllers is well understood.  However,
+models, for which the synthesis of controllers is well understood.  However,
 the use of digital control architectures adds new challenges caused by
 artifacts specific to digital control, such as the effects of
 finite-precision arithmetic, time discretization and quantization noise
 introduced by A/D and D/A conversion.
 
-While research on digital control is well developed~\cite{astrom1997computer},
-automated and sound control synthesis is challenging, particularly when the
-synthesis objective goes beyond classical stability.  There are recent methods
-for verifying reachability properties of a given controller~\cite{FLD+11}.
-However, these methods have not been generalized to control synthesis.  
-Note that a synthesis algorithm that guarantees stability does not
-ensure safety: the system might transitively visit an unsafe state resulting
-in unrecoverable failure. Programming expertise is a key
-barrier to broad adoption of correct digital controllers, and requires
-considerable knowledge outside of the expertise of many control engineers.
+In this paper we develop an automatic technique for generating digital
+controllers for a given continuous plant model that are correct by
+construction.  Specifically, we synthesize stable and safe,
+software-implemented embedded controllers.  Due to the complexity of
+such closed-loop systems, we focus on linear models with known
+configurations, and perform parametric synthesis of controllers
+meeting a number of properties that define their desired behavior.
 
-Beyond classical a-posteriori validation in digital control, there has been
-plenty of previous work aiming at \emph{verifying} a given designed
-controller, which however broadly lack automation.  Recent work has studied
-the stability of digital controllers considering implementation aspects,
-i.e., fixed-point arithmetic and the word length~\cite{Bessa16}.  They
-exploit advances in bit-accurate verification of C programs to obtain a
-verifier for software-implemented digital control.
+%% While research on digital control is well developed~\cite{astrom1997computer},
+%% automated and sound control synthesis is challenging, particularly when the
+%% synthesis objective goes beyond classical stability.  There are recent methods
+%% for verifying reachability properties of a given controller~\cite{FLD+11}.
+%% However, these methods have not been generalized to control synthesis.  
+%% Note that a synthesis algorithm that guarantees stability does not
+%% ensure safety: the system might transitively visit an unsafe state resulting
+%% in unrecoverable failure. %% Programming expertise is a key
+%% barrier to broad adoption of correct digital controllers, and requires
+%% considerable knowledge outside of the expertise of many control engineers.
 
-By contrast, we leverage a very recent step-change in the automation and
-scalability of \emph{program synthesis}.  Program synthesis engines use a
-specification as the starting point, and subsequently generate a sequence of
-candidate programs from a given template.  The candidate programs are
-iteratively refined to eventually satisfy the specification.  Program
+%% Beyond classical a-posteriori validation in digital control, there has been
+%% plenty of previous work aiming at \emph{verifying} a given designed
+%% controller, which however broadly lack automation.  Recent work has studied
+%% the stability of digital controllers considering implementation aspects,
+%% i.e., fixed-point arithmetic and the word length~\cite{Bessa16}.  They
+%% exploit advances in bit-accurate verification of C programs to obtain a
+%% verifier for software-implemented digital control.
+
+\addtodo{change this}
+For this purpose, we leverage a very recent step-change in the automation and
+scalability of \emph{program synthesis}.  %% Program synthesis engines use a
+%% specification as the starting point, and subsequently generate a sequence of
+%% candidate programs from a given template.  The candidate programs are
+%% iteratively refined to eventually satisfy the specification.
+Program
 synthesizers implementing Counter-Example Guided Inductive Synthesis
 (CEGIS)~\cite{DBLP:conf/asplos/Solar-LezamaTBSS06} are now able to generate
 programs for highly non-trivial specifications with a very high degree of
@@ -173,17 +186,17 @@ automation.  Modern synthesis engines combine automated testing, genetic
 algorithms, and SMT-based automated
 reasoning~\cite{DBLP:journals/corr/AlurFSS16a, DBLP:conf/lpar/DavidKL15}.
 
-By combining state-of-the-art synthesis engines we present a tool that
-automatically generates digital controllers for a given continuous plant
-model that are correct by construction.  This approach delivers a high
-degree of automation, promises to reduce the cost and time of development of
-digital control dramatically, and requires considerably less expertise than
-a-posteriori verification.  Specifically, we synthesize stable,
-software-implemented embedded controllers along with a model of a physical
-plant.  Due to the complexity of such closed-loop systems, in this work we
-focus on linear models with known configurations, and perform parametric
-synthesis of stabilizing digital controllers with a number of properties that
-define their desired behaviour.
+%% By combining state-of-the-art synthesis engines we present a tool that
+%% automatically generates digital controllers for a given continuous plant
+%% model that are correct by construction.  This approach delivers a high
+%% degree of automation, promises to reduce the cost and time of development of
+%% digital control dramatically, and requires considerably less expertise than
+%% a-posteriori verification.  Specifically, we synthesize stable,
+%% software-implemented embedded controllers along with a model of a physical
+%% plant.  Due to the complexity of such closed-loop systems, in this work we
+%% focus on linear models with known configurations, and perform parametric
+%% synthesis of stabilizing digital controllers with a number of properties that
+%% define their desired behaviour.
 
 Our work addresses challenging aspects of the control synthesis problem.  We
 perform digital control synthesis over a hybrid model, where the plant
@@ -198,10 +211,12 @@ of the system.  In particular, safety requirements are frequently overlooked
 in conventional feedback control synthesis, but play an important role in
 systems engineering.
 
-Using state of the art verifiers, we evaluate these models against
-automatically synthesised controllers using CEGIS-based synsthesis that
-incorporate the above mentioned artifacts in different models of
-Single-Input/Single-Output (SISO) systems.  We offer three modes of
+%% Using state of the art verifiers, we evaluate these models against
+%% automatically synthesised controllers using CEGIS-based synsthesis that
+%% incorporate the above mentioned artifacts in different models of
+%% Single-Input/Single-Output (SISO) systems.
+\addtodo{I guess this should be two}
+We offer three modes of
 operation that address different aspects of the problem.
 
 {\em The first  approach} uses a transfer-function based analysis that
