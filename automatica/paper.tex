@@ -125,25 +125,40 @@ Digital Control; A/D converters; Control System Synthesis; Transient Analysis; S
 
 
 \begin{abstract}                          % Abstract of not more than 200 words.
-\textcolor{red}{Cristina: Can you please write an initial version of the abstract.}
+%\textcolor{red}{Cristina: Can you please write an initial version of the abstract.}
+We present a sound and automated approach to synthesizing safe,
+digital controllers for physical plants represented as linear,
+time-invariant models. Models are defined as differential equations
+with inputs, evolving over a continuous state space. The synthesis
+accounts for errors caused by the digitization effects introduced by
+the controller. Our approach uses counterexample-guided inductive
+synthesis (CEGIS): an inductive generalisation phase produces a
+possible solution that is known to stabilize the system but that may
+not be safe for all initial conditions. Safety is then verified either
+via BMC or abstract acceleration; if the verification step fails, a
+counterexample is provided to the inductive generalisation and the
+process iterates until a safe controller is obtained.  We demonstrate
+the practical value of this approach by automatically synthesizing
+safe controllers for physical plant models from the digital control
+literature.
 \end{abstract}
 
 \end{frontmatter}
 
 \section{Introduction}
 
-Modern implementations of embedded control systems have proliferated with
-the availability of low-cost devices that can perform highly non-trivial
-control tasks, with significant impact in numerous application areas such as
-life sciences, environmental control and robotics~\cite{astrom1997computer,
-Franklin15}.  Correct synthesis of control software
-for such platforms is non-trivial, even in cases with
-restriceted dynamics.  We examine the case of Linear Time Invariant (LTI)
-models, for which the synthesis of controllers is well understood.  However,
-the use of digital control architectures adds new challenges caused by
-artifacts specific to digital control, such as the effects of
-finite-precision arithmetic, time discretization and quantization noise
-introduced by A/D and D/A conversion.
+Modern implementations of embedded control systems have proliferated
+with the availability of low-cost devices that can perform highly
+non-trivial control tasks, with significant impact in numerous
+application areas such as life sciences, environmental control and
+robotics~\cite{astrom1997computer, Franklin15}.  Correct synthesis of
+control software for such platforms is non-trivial, even in cases with
+restriceted dynamics.  We examine the case of Linear Time Invariant
+(LTI) models, for which the synthesis of controllers is well
+understood.  However, the use of digital control architectures adds
+new challenges caused by artifacts specific to digital control, such
+as the effects of finite-precision arithmetic, time discretization and
+quantization noise introduced by A/D and D/A conversion.
 
 In this paper we develop an automatic technique for generating digital
 controllers for a given continuous plant model that are correct by
@@ -172,7 +187,7 @@ meeting a number of properties that define their desired behavior.
 %% exploit advances in bit-accurate verification of C programs to obtain a
 %% verifier for software-implemented digital control.
 
-\addtodo{change this}
+\addtodo{CD: change this}
 For this purpose, we leverage a very recent step-change in the automation and
 scalability of \emph{program synthesis}.  %% Program synthesis engines use a
 %% specification as the starting point, and subsequently generate a sequence of
@@ -215,7 +230,7 @@ systems engineering.
 %% automatically synthesised controllers using CEGIS-based synsthesis that
 %% incorporate the above mentioned artifacts in different models of
 %% Single-Input/Single-Output (SISO) systems.
-\addtodo{I guess this should be two}
+\addtodo{CD: I guess this should be two}
 We offer three modes of
 operation that address different aspects of the problem.
 
@@ -247,6 +262,7 @@ We provide experimental results showing that all our approaches are able to
 efficiently synthesize safe controllers for a set of intricate physical
 plant models taken from the digital control literature.
 
+\addtodo{CD: the novelty compared to CAV'17 needs to be clarified}
 In summary, this paper makes the following original contributions.
 %
 \begin{enumerate}
