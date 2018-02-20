@@ -230,16 +230,15 @@ systems engineering.
 %% automatically synthesised controllers using CEGIS-based synsthesis that
 %% incorporate the above mentioned artifacts in different models of
 %% Single-Input/Single-Output (SISO) systems.
-\addtodo{CD: I guess this should be two}
-We offer three modes of
-operation that address different aspects of the problem.
-
-{\em The first  approach} uses a transfer-function based analysis that
-solves the problem of robust stability for closed loop systems for a
-collection of unstable plants.  Inthis case, there is no safety
-specification since we are working in the frequency domain.
-
-{\em The second approach} uses a na\"ive technique that starts by devising a
+In this paper we present two novel approaches for the synthesis of digital controllers,
+which we briefly describe next.
+%% offer three modes of
+%% operation that address different aspects of the problem.
+%% {\em The first  approach} uses a transfer-function based analysis that
+%% solves the problem of robust stability for closed loop systems for a
+%% collection of unstable plants.  Inthis case, there is no safety
+%% specification since we are working in the frequency domain.
+{\em The first approach} uses a na\"ive technique that starts by devising a
 digital controller that stabilizes the system while remaining safe for a
 pre-selected time horizon and a single initial state; then, it verifies
 unbounded safety by unfolding the dynamics of the system, considering the
@@ -250,7 +249,7 @@ system such that the boundaries are not violated for any larger number of
 iterations.  As~it requires unfolding up to the completeness threshold, this
 approach is computationally expensive.
 
-Instead of unfolding the dynamics, {\em the third approach}
+Instead of unfolding the dynamics, {\em the second approach}
 employs {\em abstract acceleration}~\cite{cattaruzza2015unbounded} to
 evaluate all possible progressions of the system simultaneously. 
 Additionally, this approach uses {\em abstraction refinement},
@@ -267,26 +266,32 @@ In summary, this paper makes the following original contributions.
 %
 \begin{enumerate}
 
+  % Additions from CAV:
+  % continuous time
+  % response time
+  % floating point ?
 \item We automatically generate {\em correct-by-construction} digital
   controllers using an inductive synthesis approach.  Our application of program
   synthesis is non-trivial and addresses challenges specific to control
-  systems, such as quantizers and FWL.  In particular, we
-  have found that a two-stage verification engine that continuously refines
-  the precision of the fixed-point representation of the plant yields a
-  speed-up of two orders of magnitude over a conventional one-stage
-  verification engine.
+  systems, such as quantizers and FWL.  %% In particular, we
+  %% have found that a two-stage verification engine that continuously refines
+  %% the precision of the fixed-point representation of the plant yields a
+  %% speed-up of two orders of magnitude over a conventional one-stage
+  %% verification engine.
 %
-\item  We compute state-feedback controllers that 
+  %\item  We compute
+  The computed state-feedback controllers 
   guarantee a given safety property alongside stability and response time
   specifications.  Existing methods for controller synthesis rely on transfer
   function representations, which are inadequate to prove safety requirements.
 %
-\item We provide three novel algorithms: the first, na\"ive one, relies on
+\item We provide two novel algorithms: the first, na\"ive one, relies on
   an unfolding of the dynamics up to a completeness threshold, while the
   second one is abstraction-based and leverages abstraction refinement and
-  acceleration to improve scalability while retaining soundness.  A third
-  algorithm evaluates systems using transfer functions where no state-space
-  description is given.  All three approaches provide sound synthesis of
+  acceleration to improve scalability while retaining soundness.  %% A third
+  %% algorithm evaluates systems using transfer functions where no state-space
+  %% description is given.
+  Both approaches provide sound synthesis of
   feedback controllers and consider the various sources of imprecision in
   the implementation of the control algorithm and in the modeling of the
   plant.
