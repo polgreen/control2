@@ -66,6 +66,8 @@
 \newtheorem{corollary}{Corollary}
 \newtheorem{proof}{Proof}
 
+\renewcommand{\note}[1]{\textcolor{red}{[#1]}}
+
 \begin{document}
 \newcommand\tool{{\sf DSSynth}}
 \begin{frontmatter}
@@ -397,6 +399,8 @@ that always converges toward the controllable set.  Similarly,
 bounds its trajectory to a known region over a finite time period.  This
 technique works for both linear and non-linear systems.
 
+\note{Add note explaining relationship of this work with previously published papers. }
+
 %-------------------------------
 \section{Preliminaries}
 \label{sec:preliminaries}
@@ -417,7 +421,7 @@ technique works for both linear and non-linear systems.
 
 We consider models of physical plants expressed as ordinary differential
 equations (ODEs), which we assume to be controllable~\cite{Astrom08,
-astrom1997computer}:
+astrom1997computer}: \note{Pls eliminate vector quantities, unless strictly needed.}
 %
 \begin{align}
 \label{eq:ode1}
@@ -432,7 +436,9 @@ are matrices that fully characterize the dynamics of the continuous plant,
 and $x(0)$ is the initial state.
 
 We are interested in control systems with an output $\vec{y}$ that is a
-linear combination of its states and inputs\footnote{Notice that since we
+linear combination of its states and inputs
+\note{Do we need the output map? Where is it used?}
+\footnote{Notice that since we
 can only measure $\vec{y}$, the state-space $\vec{x}$ is not fully
 observable.}.
 %
@@ -470,7 +476,9 @@ equation
 %where $\mat{A}_d=e^\mat{A}$, $\mat{B}_d = \int_{t = 0}^{T_s} e^{\mat{A} t} dt\ \mat{B}$,
 %
 where $k \in \mathbb N$ is a discrete counter and $\vec{x}_{0}=\vec{x}(0)$
-is the initial state.  In this work we apply the standard assumption that
+is the initial state.  
+\note{Next needed?}
+In this work we apply the standard assumption that
 $\mat{D}=\mat{0}$~\cite{Astrom08}.
 %
 %Also, since $\vec{y}$ can be directly derived from $\vec{x}$, we will omit discussing it in the following unless strictly necessary.
@@ -522,7 +530,7 @@ $\mat{A}$ in its main diagonal.  We correspondingly define
 $\mathcal{J}=\mat{S}^{-1}\mathcal{A}\mat{S}$, which is such that
 $\mathcal{J} \supseteq \bigcup_{k \in [0\ \infty)} \mat{J}^k$.
 
-Introduce set $X=\{ \vec{x} : \mat{C}\vec{x} \leq \vec{d}\}$. 
+Introduce set $X=\{ \vec{x} : \mat{C}\vec{x} \leq \vec{d}\}$. \note{This notation clashes with that of the output map for the LTI model. }
 The linear transformation $\vec{x}'=\mat{S}^{-1}\vec{x}$ leads to set 
 %
 \begin{equation}
@@ -533,7 +541,8 @@ X'= \mat{S}^{-1}X = \{\vec{x}' : \mat{C}\mat{S}\vec{x}'\leq \vec{d}\}.
 Analogously, let $X_0'=\mat{S}^{-1}X_0$ and
 ${\hat{X}'^\sharp}=\mat{S}^{-1}{\hat{X}^\sharp}$ be the initial set and the
 abstract reach tube mapped onto the eigenspace of matrix $\mat{A}$.  We may
-transform equation \eqref{eq:aa_reachtube} into:
+transform equation \eqref{eq:aa_reachtube} into: 
+\note{The second condition has already been defined above.}
 %
 \begin{equation}
 \hat{X}' \subseteq {\hat{X}'^\sharp} = \mathcal{J}X_0', \text{ such that } \bigcup_{k \in [0\ \ \infty)}\mat{J}^k \subseteq \mathcal{J}, 
@@ -557,21 +566,23 @@ follows (its steps are denoted in parentheses):
 %
 \item We perform unsound eigen-decomposition using an existing algebra package (lines \ref{alg:calcEigenvalues}-\ref{alg:calcEigenvectors}).
 %
-\item Then we restore soundness to the results using the methods described in Section \ref{sec:eigensolver} (lines \ref{alg:soundEigenvalues}-\ref{alg:soundEigenvectors}). 
+\item Then we restore soundness to the results using the methods described in Section \ref{sec:eigensolver} (lines \ref{alg:soundEigenvalues}-\ref{alg:soundEigenvectors}). \note{wrong ref.}
 %
 \item The inverse of the matrix of eigenvectors is calculated after soundness is restored, using interval arithmetic in order to ensure its soundness (line \ref{alg:inverse}).
 %
-\item The abstract dynamics are obtained by evaluating the convex hull of all powers of eigenvalues up to the desired number of iterations as described in \cite{cattaruzza2015unbounded} (line \ref{alg:aa}).
+\item The abstract dynamics are obtained by evaluating the convex hull of all powers of eigenvalues up to the desired number of iterations as described in \cite{cattaruzza2015unbounded} (line \ref{alg:aa}). 
 %
 \item Using Equation \eqref{eq:eigenInit}, transform the initial state into the eigenspace (line \ref{alg:eigeninit}).
 %
-\item Extract the vertices of the eigen-polyhedron $X_0'$ using the sound over-approximation of the double description algorithm \cite{fukuda1996double} from Section \ref{sec:dd} (line \ref{alg:getVertices}). It is worth noting that this algorithm uses a simplex to seed it: we will first discuss the simplex algorithm, which is also needed at the next step, and then the vertex enumeration algorithm used at this stage. 
+\item Extract the vertices of the eigen-polyhedron $X_0'$ using the sound over-approximation of the double description algorithm \cite{fukuda1996double} from Section \ref{sec:dd} (line \ref{alg:getVertices}). 
+\note{wrong refs.} 
+It is worth noting that this algorithm uses a simplex to seed it: we will first discuss the simplex algorithm, which is also needed at the next step, and then the vertex enumeration algorithm used at this stage. 
 %
 \item Calculate the mapped \emph{abstract reach tube} ${\hat{X}'^\sharp}$
 that over-approximates the image of the reach tube in the eigenspace (line
 \ref{alg:getReachTube}).  This is achieved by evaluating a set of objective
 functions using the abstract dynamics as a simplex Tableau, and via a sound
-simplex described in Section \ref{sec:simplex}.  The objective functions are
+simplex described in Section \ref{sec:simplex}.  \note{fix ref.} The objective functions are
 defined by the vertices of $X'_0$, denote as $V_0$, and by the desired
 template directions, such that
 %
@@ -671,9 +682,11 @@ $\hat{X}^\sharp=\mat{S}{\hat{X}'^\sharp}$ (line \ref{alg:getNormReachTube}).
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
 
 The time discretization in Sec.~\ref{sec:model} only allows us to evaluate
-the state of the plant at integer multiples of the sample time.  However, in
+the state of the plant at integer multiples of the sample time.  
+\note{Unlike the CAV18 paper, these gain matrices have not been discussed yet. }
+However, in
 order to synthesize $\mat{K}=\mat{K}_{\langle C \rangle}$ and
-$\mat{L}=\mat{L}_{\langle C \rangle}$, we must be able to ensure that
+$\mat{L}=\mat{L}_{\langle C \rangle}$ \note{Do we need this second matrix?}, we must be able to ensure that
 certain properties of the plant hold at any given point in time.  In order
 to do so, we accelerate the dynamics of the plant according to the model
 semantics in Sec.~\ref{sec:model} and compute the state
@@ -760,6 +773,7 @@ dynamics evolve in continuous time while the feedback dynamics evolve in
 discrete time.  A~new input value is produced only at every sample time but
 implemented over the continuous-time plant dynamics.
 %
+\note{Matrix K has not been introduced yet. }
 \begin{theorem}
 The expression
 %
