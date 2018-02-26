@@ -107,7 +107,7 @@
 
           
 \begin{keyword}                           % Five to ten keywords,  
-Digital Control; A/D converters; Control System Synthesis; Transient Analysis; Safety Analysis; Quantization Errors; Sampling.               % chosen from the IFAC 
+Digital Control; A/D converters; Control System Synthesis; Safety Analysis; Quantization Errors; Sampling.               % chosen from the IFAC 
 \end{keyword}                             % keyword list or with the 
                                           % help of the Automatica 
                                           % keyword wizard
@@ -221,7 +221,7 @@ effects of the quantizers (A/D and D/A converters) and of time
 discretization, as well as representation errors introduced by in modelling
 artifacts such as an observer~\cite{astrom1997computer} in a finite
 precision domain, while reasoning about high level properties such as
-stability, robustness, safety, and response time, which define the behaviour
+stability, robustness, and safety, which define the behaviour
 of the system.  In particular, safety requirements are frequently overlooked
 in conventional feedback control synthesis, but play an important role in
 systems engineering.
@@ -268,7 +268,6 @@ In summary, this paper makes the following original contributions.
 
   % Additions from CAV:
   % continuous time
-  % response time ?
   % floating point 
 \item We automatically generate {\em correct-by-construction} digital
   controllers using an inductive synthesis approach.  Our application of program
@@ -281,9 +280,8 @@ In summary, this paper makes the following original contributions.
 %
   %\item  We compute
   The computed state-feedback controllers 
-  guarantee a given safety property alongside stability and response time
-  specifications \addtodo{CD: Do we actually consider response time in this paper?}.
-  Existing methods for controller synthesis rely on transfer
+  guarantee a given safety property alongside stability and safety
+  specifications. Existing methods for controller synthesis rely on transfer
   function representations, which are inadequate to prove safety requirements.
 %
 \item We provide two novel algorithms: the first, na\"ive one, relies on
@@ -1745,90 +1743,89 @@ For the former, this means that the control input might saturates in view of
 physical constraints.
 
 %-------------------------------
-\subsection{Formal specification of transient response} 
-\label{ssec:transientspecification}
+%\subsection{Formal specification of transient response} 
+%\label{ssec:transientspecification}
 %-------------------------------
 
-In a SISO system, there are 2 values that typically define the response-time of the system (using a step response).
-\begin{enumerate}
-\item The \emph{rise time} is defined as the time it takes the output to reach a percentage (eg $90\%$) of the target value given a step chnage in the input.
-\item The \emph{settling time} is defined as the time it takes the output to stabilize within a margin of the target value (eg $10\%$).
-\end{enumerate} 
-In the case of first and second order systems (with ), the decay is governed by the equations 
-\begin{align*}
-&y_{decay}=
-&\left\{
-\begin{array}{cc}
-e^{-|\omega| t}& 1^{st} order\\
-e^{\zeta |\omega| t}\left(\frac{\sin\left(|\omega| t\sqrt{1-\zeta^2}+\sin^{-1}\sqrt{1-\zeta^2}\right)}{\sqrt{1-\zeta^2}} \right)&\zeta<1\\
-e^{-|\omega| t}-|\omega| t e^{-|\omega| t}&\zeta=1\\
-\frac{|\omega| e^{-|\omega_2| t}-|\omega_2| e^{-|\omega| t}}{|\omega|-|\omega_2|}&\zeta>1\end{array}\right.
-\end{align*}
-where $|\omega|$ and $|\omega_2|$ are the magnitudes of the eigenvalues (roots) of the system and  $\zeta=-\cos(\theta)$ where $\theta$ is the polar angle of the conjugate pair if it exists ($\zeta \geq 1$ if it doesn't).
-These equations become increasingly complicated for higher order systems. However, we note their strong dependency on the magnitude of the eigenvalues, and use this property to define an upperbound on the decay function.
-All of the above equations will decay faster than $e^{-|\omega| t}$ given $|\omega| < |\omega_2|$, hence we may use this function as our upper bound.
-\begin{theorem}
-Given a set of eigenvalues for a discrete time model of an $n^{th}$ order system $\lambda_i =e^{\omega_i}: i \in [1\ n]$, the settling time of the system is upperbounded by
-\begin{equation}
-t_s<-log_{|\overline{\lambda}|}({p_s}) : |\overline{\lambda}| =\max(|\lambda_i|) \wedge |\overline{\lambda}|<1,\ \forall i \in [1\ n]
-\label{eq:set_time}
-\end{equation}
-where $0\leq p_s \leq 1$ is the desired percentage of the target within to remain after $t_s$.
-\end{theorem} 
-\begin{proof}
-Given a closed loop single output LTI system of order $n$ with dynamics
-\begin{equation}
-\left\{\begin{array}{c}\vec{x}_k=\mat{A}\vec{x}_{k-1}\\ \vec{y}_k=\mat{C}\vec{x}_k\end{array}\right. \Rightarrow \left\{ \begin{array}{c}\vec{x}_k'=\mat{J}\vec{x}_{k-1}'\\ \vec{y}_k=\mat{C}\mat{S}\vec{x}_k'\end{array}\right. : \left\{ \begin{array}{c}\mat{A}=\mat{S}\mat{J}\mat{S}^{-1} \\ \vec{x}_k'=\mat{S}^{-1}\vec{x}_k\end{array}\right.
-\label{eq:eigendynamics}
-\end{equation}
+%In a SISO system, there are 2 values that typically define the response-time of the system (using a step response).
+%\begin{enumerate}
+%\item The \emph{rise time} is defined as the time it takes the output to reach a percentage (eg $90\%$) of the target value given a step chnage in the input.
+%\item The \emph{settling time} is defined as the time it takes the output to stabilize within a margin of the target value (eg $10\%$).
+%\end{enumerate} 
+%In the case of first and second order systems (with ), the decay is governed by the equations 
+%\begin{align*}
+%&y_{decay}=
+%&\left\{
+%\begin{array}{cc}
+%e^{-|\omega| t}& 1^{st} order\\
+%e^{\zeta |\omega| t}\left(\frac{\sin\left(|\omega| t\sqrt{1-\zeta^2}+\sin^{-1}\sqrt{1-\zeta^2}\right)}{\sqrt{1-\zeta^2}} \right)&\zeta<1\\
+%e^{-|\omega| t}-|\omega| t e^{-|\omega| t}&\zeta=1\\
+%\frac{|\omega| e^{-|\omega_2| t}-|\omega_2| e^{-|\omega| t}}{|\omega|-|\omega_2|}&\zeta>1\end{array}\right.
+%\end{align*}
+%where $|\omega|$ and $|\omega_2|$ are the magnitudes of the eigenvalues (roots) of the system and  $\zeta=-\cos(\theta)$ where $\theta$ is the polar angle of the conjugate pair if it exists ($\zeta \geq 1$ if it doesn't).
+%These equations become increasingly complicated for higher order systems. However, we note their strong dependency on the magnitude of the eigenvalues, and use this property to define an upperbound on the decay function.
+%All of the above equations will decay faster than $e^{-|\omega| t}$ given $|\omega| < |\omega_2|$, hence we may use this function as our upper bound.
+%\begin{theorem}
+%Given a set of eigenvalues for a discrete time model of an $n^{th}$ order system $\lambda_i =e^{\omega_i}: i \in [1\ n]$, the settling time of the system is upperbounded by
+%\begin{equation}
+%t_s<-log_{|\overline{\lambda}|}({p_s}) : |\overline{\lambda}| =\max(|\lambda_i|) \wedge |\overline{\lambda}|<1,\ \forall i \in [1\ n]
+%\label{eq:set_time}
+%\end{equation}
+%where $0\leq p_s \leq 1$ is the desired percentage of the target within to remain after $t_s$.
+%\end{theorem} 
+%\begin{proof}
+%Given a closed loop single output LTI system of order $n$ with dynamics
+%\begin{equation}
+%\left\{\begin{array}{c}\vec{x}_k=\mat{A}\vec{x}_{k-1}\\ \vec{y}_k=\mat{C}\vec{x}_k\end{array}\right. \Rightarrow \left\{ \begin{array}{c}\vec{x}_k'=\mat{J}\vec{x}_{k-1}'\\ \vec{y}_k=\mat{C}\mat{S}\vec{x}_k'\end{array}\right. : \left\{ \begin{array}{c}\mat{A}=\mat{S}\mat{J}\mat{S}^{-1} \\ \vec{x}_k'=\mat{S}^{-1}\vec{x}_k\end{array}\right.
+%\label{eq:eigendynamics}
+%\end{equation}
 %
-the output decay is a linear combination of the decay of eigenvalues or
-eigenvalue pairs.  
-Let $\mat{C}'\in \mathbb{R}^{1 \times n}=\mat{C}\mat{S}$. Since $\mat{C}'$ is constant, the output $y_k$ is a linear combination of the states $\vec{x}'_k$. We accelerate equation \eqref{eq:eigendynamics} to obtain
-\begin{align}
-%\vec{x}_k'&=\mat{J}^k\vec{x}_0' \\
-y_k&=\mat{C}'\mat{J}^k\vec{x}_0 = \sum_{i=0}^n \left( c_i \lambda_i^k + c_{il}\binom{k}{l} \lambda_i^{k-l}\right)\\
-|y_k|&\leq \sum_{i=0}^n \left|c_i + c_{il}\binom{k}{l} \lambda_i^{-l}\right||\lambda_i^k|
-\end{align}
-where the second  part of the equation corresponds to the upper diagonal terms of the Jordan blocks. We also have $|\lambda_i^k|\leq |\overline{\omega}^k|$,hence
-\begin{align}
-|y_k|&\leq |\overline{\omega}^k|\sum_{i=0}^n \left|c_i + c_{il}\binom{k}{l} \lambda_i^{-l}\right|
-\end{align}
-Since we are synthesising the eigenvalues, rather than solve this formula for complex Jordan Shapes, we will restrict our synthesiser to provide solutions with distinct eigenvalues (which is by far the most common case). Therefore the right hand terms dissappear and we end up with
-\begin{align}
-|y_k|&\leq |\overline{\omega}^k|\sum_{i=0}^n |c_i|
-\end{align}
+%the output decay is a linear combination of the decay of eigenvalues or
+%eigenvalue pairs.  
+%Let $\mat{C}'\in \mathbb{R}^{1 \times n}=\mat{C}\mat{S}$. Since $\mat{C}'$ is constant, the output $y_k$ is a linear combination of the states $\vec{x}'_k$. We accelerate equation \eqref{eq:eigendynamics} to obtain
+%\begin{align}
+%y_k&=\mat{C}'\mat{J}^k\vec{x}_0 = \sum_{i=0}^n \left( c_i \lambda_i^k + c_{il}\binom{k}{l} \lambda_i^{k-l}\right)\\
+%|y_k|&\leq \sum_{i=0}^n \left|c_i + c_{il}\binom{k}{l} \lambda_i^{-l}\right||\lambda_i^k|
+%\end{align}
+%where the second  part of the equation corresponds to the upper diagonal terms of the Jordan blocks. We also have $|\lambda_i^k|\leq |\overline{\omega}^k|$,hence
+%\begin{align}
+%|y_k|&\leq |\overline{\omega}^k|\sum_{i=0}^n \left|c_i + c_{il}\binom{k}{l} \lambda_i^{-l}\right|
+%\end{align}
+%Since we are synthesising the eigenvalues, rather than solve this formula for complex Jordan Shapes, we will restrict our synthesiser to provide solutions with distinct eigenvalues (which is by far the most common case). Therefore the right hand terms dissappear and we end up with
+%\begin{align}
+%|y_k|&\leq |\overline{\omega}^k|\sum_{i=0}^n |c_i|
+%\end{align}
 
-Hence the overall decay of the system is always smaller
-than $p=e^{-|\overline{\omega}| t}$ where $0\leq p\leq 1$ is the remaining
-percentage of the decay expressed.  reversing we have
-$t=-\frac{ln(p)}{|\overline{\omega}|}=-\frac{ln(p)}{ln(|\overline{\lambda}|)}$. 
-replacing for $p_s$ , $t_s$, and $\overline{\lambda}$ we get equation
-\eqref{eq:set_time}
+%Hence the overall decay of the system is always smaller
+%than $p=e^{-|\overline{\omega}| t}$ where $0\leq p\leq 1$ is the remaining
+%percentage of the decay expressed.  reversing we have
+%$t=-\frac{ln(p)}{|\overline{\omega}|}=-\frac{ln(p)}{ln(|\overline{\lambda}|)}$. 
+%replacing for $p_s$ , $t_s$, and $\overline{\lambda}$ we get equation
+%\eqref{eq:set_time}
 %
-\qed
-\end{proof}
+%\qed
+%\end{proof}
 %
-We may now use this limit to express a constraint in terms of the
-coefficients for our synthesis process.  Let
+%We may now use this limit to express a constraint in terms of the
+%coefficients for our synthesis process.  Let
 %
-\begin{equation}
-P=\prod_{i=0}^n (s-\lambda_i)=\sum_{j=0}^n c_js^j.
-\end{equation}
+%\begin{equation}
+%P=\prod_{i=0}^n (s-\lambda_i)=\sum_{j=0}^n c_js^j.
+%\end{equation}
 %
-We use Jury's criterion to limit $|\lambda_i| \leq 1$.  Let us now define a
-transformation $\lambda_i'=\frac{\lambda_i}{\overline{\lambda}}$.  We want
-to ensure $\lambda_i' \leq 1$ which can be done by applying Jury's criterion
-to $P'=\prod_{i=0}^n (s-\lambda_i')=\sum_{j=0}^n c_j's^j$ where $c_j'$ are
-unknown.  However, if we replace for $\lambda_i$, we obtain
+%We use Jury's criterion to limit $|\lambda_i| \leq 1$.  Let us now define a
+%transformation $\lambda_i'=\frac{\lambda_i}{\overline{\lambda}}$.  We want
+%to ensure $\lambda_i' \leq 1$ which can be done by applying Jury's criterion
+%to $P'=\prod_{i=0}^n (s-\lambda_i')=\sum_{j=0}^n c_j's^j$ where $c_j'$ are
+%unknown.  However, if we replace for $\lambda_i$, we obtain
 %
-\begin{equation}
-P'=\prod_{i=0}^n (s-\lambda_i')=\prod_{i=0}^n \left(s-\frac{\lambda_i}{\overline{\lambda}}\right)=\sum_{j=0}^n \frac{c_j}{\overline{\lambda}^{n-j}}s^j
-\end{equation}
+%\begin{equation}
+%P'=\prod_{i=0}^n (s-\lambda_i')=\prod_{i=0}^n \left(s-\frac{\lambda_i}{\overline{\lambda}}\right)=\sum_{j=0}^n \frac{c_j}{\overline{\lambda}^{n-j}}s^j
+%\end{equation}
 %
-where all members are known, we may now synthesise coefficients that ensure
-the eigenvalues are smaller than a desired magnitue, thus ensuring that the
-settling time is too.
+%where all members are known, we may now synthesise coefficients that ensure
+%the eigenvalues are smaller than a desired magnitue, thus ensuring that the
+%settling time is too.
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \section{Verification of a Controllable Observed System}\label{sec:cof_verification}
