@@ -60,6 +60,7 @@
 \newcommand{\addtodo}[1]{\textcolor{red}{[#1]}}
 \newcommand{\mat}[1]{\boldsymbol{#1}}
 \renewcommand{\vec}[1]{\boldsymbol{#1}}
+\newcommand{\comment}[1]{}
 \newtheorem{lemma}{Lemma}
 \newtheorem{theorem}{Theorem}
 \newtheorem{corollary}{Corollary}
@@ -1828,152 +1829,151 @@ physical constraints.
 %settling time is too.
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\section{Verification of a Controllable Observed System}\label{sec:cof_verification}
+%\section{Verification of a Controllable Observed System}\label{sec:cof_verification}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-\textcolor{red}{Dario: Do we still need this section? Where would the continuous time proof fit?}
+%\begin{figure*}[htb]
+%\centering
 
-\begin{figure*}[htb]
-\centering
+%\tikzset{add/.style n args={4}{
+%    minimum width=6mm,
+%    path picture={
+%        \draw[circle] 
+%            (path picture bounding box.south east) -- (path picture bounding box.north west)
+%            (path picture bounding box.south west) -- (path picture bounding box.north east);
+%        \node[draw=none] at ($(path picture bounding box.south)+(0,0.13)$)     {\small #1};
+%        \node[draw=none] at ($(path picture bounding box.west)+(0.13,0)$)      {\small #2};
+%        \node[draw=none] at ($(path picture bounding box.north)+(0,-0.13)$)    {\small #3};
+%        \node[draw=none] at ($(path picture bounding box.east)+(-0.13,0)$)     {\small #4};
+%        }
+%    }
+% }
 
-\tikzset{add/.style n args={4}{
-    minimum width=6mm,
-    path picture={
-        \draw[circle] 
-            (path picture bounding box.south east) -- (path picture bounding box.north west)
-            (path picture bounding box.south west) -- (path picture bounding box.north east);
-        \node[draw=none] at ($(path picture bounding box.south)+(0,0.13)$)     {\small #1};
-        \node[draw=none] at ($(path picture bounding box.west)+(0.13,0)$)      {\small #2};
-        \node[draw=none] at ($(path picture bounding box.north)+(0,-0.13)$)    {\small #3};
-        \node[draw=none] at ($(path picture bounding box.east)+(-0.13,0)$)     {\small #4};
-        }
-    }
- }
+%\resizebox{1.0\textwidth}{!}{
+% \begin{tikzpicture}[scale=0.6,-,>=stealth',shorten >=.2pt,auto,
+%     semithick, initial text=, ampersand replacement=\&,]
 
-\resizebox{1.0\textwidth}{!}{
- \begin{tikzpicture}[scale=0.6,-,>=stealth',shorten >=.2pt,auto,
-     semithick, initial text=, ampersand replacement=\&,]
-
-  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center}, row sep=.6cm, column sep=.6cm] {
-    \node[draw=none] (r) {$r_k$};
-    \node[rectangle,draw,
-	minimum width=1cm,
-	minimum height=1cm,] (gain)at ([xshift=1.2cm]r) {\sc $k_r$};
+%  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center}, row sep=.6cm, column sep=.6cm] {
+%    \node[draw=none] (r) {$r_k$};
+%    \node[rectangle,draw,
+%	minimum width=1cm,
+%	minimum height=1cm,] (gain)at ([xshift=1.2cm]r) {\sc $k_r$};
     
-   \& \node[circle,add={-}{+}{}{}] (circle) {};
-   \node[draw=none] (ez) at ([xshift=1cm,yshift=.15cm]circle)  {$u_k$};
-   \node[rectangle,draw,minimum width=1cm,minimum height=1cm] (Kd) at ([xshift=0,yshift=-5.5cm]circle)  {\sc $\mat{K}_d$};
-   \coordinate (kdsouth) at ([yshift=-3cm]Kd);
+%   \& \node[circle,add={-}{+}{}{}] (circle) {};
+%   \node[draw=none] (ez) at ([xshift=1cm,yshift=.15cm]circle)  {$u_k$};
+%   \node[rectangle,draw,minimum width=1cm,minimum height=1cm] (Kd) at ([xshift=0,yshift=-5.5cm]circle)  {\sc $\mat{K}_d$};
+%   \coordinate (kdsouth) at ([yshift=-3cm]Kd);
       
    
-   \& complexnode/.pic={ 
-      \node[rectangle,dashed,draw,minimum width=3cm,minimum height=1.6cm,label=\textbf{DAC}] (dac) {};
-     \node[circle,add={+}{+}{}{},fill=gray!20] (q2) at ([xshift=-.65cm]dac.center) {};
-     \node[draw=none] (q2t)  at ([yshift=.55cm]q2) {{\sc Q2}};
-     \node[draw=none] (v2)  at ([yshift=-1.5cm]q2) {$\nu_2$};
-     \node[fill=gray!20] (zoh) at ([xshift=.65cm]dac.center) {\sc ZOH};
-   }   
+%   \& complexnode/.pic={ 
+%     \node[rectangle,dashed,draw,minimum width=3cm,minimum height=1.6cm,label=\textbf{DAC}] (dac) {};
+%     \node[circle,add={+}{+}{}{},fill=gray!20] (q2) at ([xshift=-.65cm]dac.center) {};
+%     \node[draw=none] (q2t)  at ([yshift=.55cm]q2) {{\sc Q2}};
+%     \node[draw=none] (v2)  at ([yshift=-1.5cm]q2) {$\nu_2$};
+%     \node[fill=gray!20] (zoh) at ([xshift=.65cm]dac.center) {\sc ZOH};
+%   }   
 
-   \& complexnode/.pic={ 
-      \node[rectangle,dashed,draw,minimum width=8cm,minimum height=3.5cm,label=\textbf{Plant}] (plant)  at ([yshift=-.5cm]dac.center) {};
-      \node[rectangle,draw,minimum width=1cm,minimum height=1cm] (B) at ([xshift=-2.5cm,yshift=.5cm]plant.center)  {\sc $\mat{B}$};
-      \node[draw=none] (u) at ([xshift=-1cm,yshift=.15cm]B)  {$u(t)$};
-      \node[circle,add={+}{+}{}{}] (p1) at ([xshift=-1.3cm,yshift=.5cm]plant.center) {};
-      \node[draw=none] (xdot) at ([xshift=.85cm,yshift=.15cm]p1)  {$\dot{\vec{x}}(t)$};   
-      \node[rectangle,draw,minimum width=1cm] (int) at ([xshift=.5cm,yshift=.5cm]plant.center) {\sc $\int$};
-      \coordinate (xsouth) at ([xshift=1cm]int);
-      \node[draw=none] (x) at ([xshift=1cm,yshift=.15cm]int)  {$\vec{x}(t)$};   
-      \node[rectangle,draw,minimum width=1cm,minimum height=1cm] (C) at ([xshift=2.7cm,yshift=.5cm]plant.center)  {\sc $\mat{C}$};
-      \node[draw=none] (y) at ([xshift=1cm,yshift=.15cm]C)  {$\vec{y}(t)$};   
-      \node[rectangle,draw,minimum width=1cm,minimum height=1cm] (A) at ([xshift=.5cm,yshift=-1cm]plant.center)  {\sc $\mat{A}$};
-      \coordinate (aeast) at ([xshift=1cm]A);
-      \coordinate (awest) at ([xshift=-1.8cm]A);
-    }   
+%   \& complexnode/.pic={ 
+%      \node[rectangle,dashed,draw,minimum width=8cm,minimum height=3.5cm,label=\textbf{Plant}] (plant)  at ([yshift=-.5cm]dac.center) {};
+%      \node[rectangle,draw,minimum width=1cm,minimum height=1cm] (B) at ([xshift=-2.5cm,yshift=.5cm]plant.center)  {\sc $\mat{B}$};
+%      \node[draw=none] (u) at ([xshift=-1cm,yshift=.15cm]B)  {$u(t)$};
+%      \node[circle,add={+}{+}{}{}] (p1) at ([xshift=-1.3cm,yshift=.5cm]plant.center) {};
+%      \node[draw=none] (xdot) at ([xshift=.85cm,yshift=.15cm]p1)  {$\dot{\vec{x}}(t)$};   
+%      \node[rectangle,draw,minimum width=1cm] (int) at ([xshift=.5cm,yshift=.5cm]plant.center) {\sc $\int$};
+%      \coordinate (xsouth) at ([xshift=1cm]int);
+%      \node[draw=none] (x) at ([xshift=1cm,yshift=.15cm]int)  {$\vec{x}(t)$};   
+%      \node[rectangle,draw,minimum width=1cm,minimum height=1cm] (C) at ([xshift=2.7cm,yshift=.5cm]plant.center)  {\sc $\mat{C}$};
+%      \node[draw=none] (y) at ([xshift=1cm,yshift=.15cm]C)  {$\vec{y}(t)$};   
+%      \node[rectangle,draw,minimum width=1cm,minimum height=1cm] (A) at ([xshift=.5cm,yshift=-1cm]plant.center)  {\sc $\mat{A}$};
+%      \coordinate (aeast) at ([xshift=1cm]A);
+%      \coordinate (awest) at ([xshift=-1.8cm]A);
+%    }   
     
-   complexnode/.pic={ 
-      \node[rectangle,dashed,draw,minimum width=8cm,minimum height=5cm,label=\textbf{Observer}] (observer)  at ([yshift=-5cm]plant.center) {};
-      \node[rectangle,draw,minimum width=1cm,minimum height=1cm] (Bd) at ([xshift=-2.5cm]observer.center)  {\sc $\mat{B}_o$};
-      \node[draw=none] (ud) at ([xshift=-1cm,yshift=.15cm]Bd)  {$u_k$};
-      \node[circle,add={+}{+}{+}{}] (o1) at ([xshift=-1.3cm]observer.center) {};
-      \node[draw=none] (xd) at ([xshift=.85cm,yshift=.15cm]o1)  {$\hat{\vec{x}}_{k+1}$};   
-      \node[rectangle,draw,minimum width=1cm] (delay) at ([xshift=.5cm]observer.center) {\sc $z^{-1}$};
-      \coordinate (xdsouth) at ([xshift=1.3cm]delay);
-      \coordinate (fbsouth) at ([xshift=1.3cm,yshift=-3cm]delay);
-      \node[draw=none] (xdp) at ([xshift=1cm,yshift=.15cm]delay)  {$\hat{\vec{x}}_k$};   
-      \node[rectangle,draw,minimum width=1cm,minimum height=1cm] (Cd) at ([xshift=2.7cm]observer.center)  {\sc $\mat{C}_o$};
-      \node[draw=none] (y) at ([xshift=.4cm,yshift=.8cm]Cd)  {$\hat{\vec{y}}_k$};   
-      \node[rectangle,draw,minimum width=1cm,minimum height=1cm] (Ad) at ([xshift=.5cm,yshift=-1.5cm]observer.center)  {\sc $\mat{A}_o$};
-      \coordinate (adeast) at ([xshift=1.3cm]Ad);
-      \coordinate (adwest) at ([xshift=-1.8cm]Ad);
-      \node[circle,add={-}{}{}{+}] (o2) at ([xshift=2.7cm,yshift=1.5cm]observer.center) {};
-      \node[rectangle,draw,minimum width=1cm,minimum height=1cm] (Ld) at ([xshift=.5cm,yshift=1.5cm]observer.center)  {\sc $\mat{L}_d$};
-      \coordinate (ldwest) at ([xshift=-1.8cm]Ld);
-      \coordinate (bdwest) at ([xshift=-5.5cm]Bd);
-      \coordinate (uksouth) at ([xshift=-5.5cm,yshift=5.5cm]Bd);
-      \coordinate (o2east) at ([xshift=6.3cm]o2);
-    }   
+%   complexnode/.pic={ 
+%      \node[rectangle,dashed,draw,minimum width=8cm,minimum height=5cm,label=\textbf{Observer}] (observer)  at ([yshift=-5cm]plant.center) {};
+%      \node[rectangle,draw,minimum width=1cm,minimum height=1cm] (Bd) at ([xshift=-2.5cm]observer.center)  {\sc $\mat{B}_o$};
+%      \node[draw=none] (ud) at ([xshift=-1cm,yshift=.15cm]Bd)  {$u_k$};
+%      \node[circle,add={+}{+}{+}{}] (o1) at ([xshift=-1.3cm]observer.center) {};
+%      \node[draw=none] (xd) at ([xshift=.85cm,yshift=.15cm]o1)  {$\hat{\vec{x}}_{k+1}$};   
+%      \node[rectangle,draw,minimum width=1cm] (delay) at ([xshift=.5cm]observer.center) {\sc $z^{-1}$};
+%      \coordinate (xdsouth) at ([xshift=1.3cm]delay);
+%      \coordinate (fbsouth) at ([xshift=1.3cm,yshift=-3cm]delay);
+%      \node[draw=none] (xdp) at ([xshift=1cm,yshift=.15cm]delay)  {$\hat{\vec{x}}_k$};   
+%      \node[rectangle,draw,minimum width=1cm,minimum height=1cm] (Cd) at ([xshift=2.7cm]observer.center)  {\sc $\mat{C}_o$};
+%      \node[draw=none] (y) at ([xshift=.4cm,yshift=.8cm]Cd)  {$\hat{\vec{y}}_k$};   
+%      \node[rectangle,draw,minimum width=1cm,minimum height=1cm] (Ad) at ([xshift=.5cm,yshift=-1.5cm]observer.center)  {\sc $\mat{A}_o$};
+%      \coordinate (adeast) at ([xshift=1.3cm]Ad);
+%      \coordinate (adwest) at ([xshift=-1.8cm]Ad);
+%      \node[circle,add={-}{}{}{+}] (o2) at ([xshift=2.7cm,yshift=1.5cm]observer.center) {};
+%      \node[rectangle,draw,minimum width=1cm,minimum height=1cm] (Ld) at ([xshift=.5cm,yshift=1.5cm]observer.center)  {\sc $\mat{L}_d$};
+%      \coordinate (ldwest) at ([xshift=-1.8cm]Ld);
+%      \coordinate (bdwest) at ([xshift=-5.5cm]Bd);
+%      \coordinate (uksouth) at ([xshift=-5.5cm,yshift=5.5cm]Bd);
+%      \coordinate (o2east) at ([xshift=6.3cm]o2);
+%    }   
     
-   \& complexnode/.pic={ 
-     \node[rectangle,dashed,draw,minimum width=3.5cm,minimum height=1.6cm,label=\textbf{ADC},] (adc) {};
-     \draw[] ([xshift=-1cm]adc.center) -- ++(0.5,0.2cm);
-     \coordinate (switch1) at ([xshift=-1cm]adc.center);
-     \coordinate (switch2) at ([xshift=-0.4cm]adc.center);
-     \node[circle,add={+}{+}{}{},fill=gray!20] (q1) at ([xshift=.6cm]adc.center) {};
-     \node[draw=none] (q2t)  at ([yshift=.55cm]q1) {\sc Q1};
-     \node[draw=none] (v1)  at ([yshift=-1.5cm]q1) {$\nu_1$};
-     \node[draw=none] (y) at ([xshift=.85cm,yshift=.15cm]q1)  {$\vec{y}_k$};       
-     \coordinate (ykeast) at ([xshift=1.9cm]q1);
-   } 
-   \& \coordinate (aux1);
-   \& \\
-  };
+%   \& complexnode/.pic={ 
+%     \node[rectangle,dashed,draw,minimum width=3.5cm,minimum height=1.6cm,label=\textbf{ADC},] (adc) {};
+%     \draw[] ([xshift=-1cm]adc.center) -- ++(0.5,0.2cm);
+%     \coordinate (switch1) at ([xshift=-1cm]adc.center);
+%     \coordinate (switch2) at ([xshift=-0.4cm]adc.center);
+%     \node[circle,add={+}{+}{}{},fill=gray!20] (q1) at ([xshift=.6cm]adc.center) {};
+%     \node[draw=none] (q2t)  at ([yshift=.55cm]q1) {\sc Q1};
+%     \node[draw=none] (v1)  at ([yshift=-1.5cm]q1) {$\nu_1$};
+%     \node[draw=none] (y) at ([xshift=.85cm,yshift=.15cm]q1)  {$\vec{y}_k$};       
+%     \coordinate (ykeast) at ([xshift=1.9cm]q1);
+%   } 
+%   \& \coordinate (aux1);
+%   \& \\
+%  };
 
-  \path[->] (v1) edge (q1.south);
-  \path[->] (v2) edge (q2.south);
-  \path[->] (r) edge (gain.west);
-  \path[->] (gain.east) edge (circle.west);
-  \path[->] (circle.east) edge (q2.west);
-  \path       (q2.east) edge (zoh.west);
-  \path[->] (zoh.east) edge (B.west);
-  \path
-   (B.east) edge (p1.west)
-   (p1.east) edge (int.west)
-   (xsouth) edge (aeast)
-   (aeast) edge (A.east)
-   (A.west) edge (awest)
-   (awest) edge (p1.south)
-   (int.east) edge (C.west)
-   (C.east) edge (switch1.west)
-   (switch2) edge (q1.west);
-  \path
-   (q1.east) edge (ykeast)
-   (ykeast) edge (o2east);
-  \path       (uksouth) edge (bdwest);
-  \path[->] (bdwest) edge (Bd.west);
-  \path
-   (Bd.east) edge (o1.west)
-   (o1.east) edge (delay.west)
-   (xdsouth) edge (adeast)
-   (adeast) edge (Ad.east)
-   (Ad.west) edge (adwest)
-   (adwest) edge (o1.south)
-   (o2.west) edge (Ld.east)
-   (Ld.west) edge (ldwest)
-   (ldwest) edge (o1.north)
-   (delay.east) edge (Cd.west)
-   (Cd.north) edge (o2.south)
-   (o2east) edge (o2.east)
-   (xdsouth) edge (fbsouth)
-   (fbsouth) edge (kdsouth);
-  \path[->]  (kdsouth) edge (Kd.south);
-  \path (Kd.north) edge (circle.south);
- \end{tikzpicture}
-}
- \caption{Closed-loop digital control system with observer\label{fig:observersystem}}
-\end{figure*}
+  %\path[->] (v1) edge (q1.south);
+  %\path[->] (v2) edge (q2.south);
+  %\path[->] (r) edge (gain.west);
+  %\path[->] (gain.east) edge (circle.west);
+  %\path[->] (circle.east) edge (q2.west);
+  %\path       (q2.east) edge (zoh.west);
+  %\path[->] (zoh.east) edge (B.west);
+  %\path
+  %(B.east) edge (p1.west)
+  %(p1.east) edge (int.west)
+%  (xsouth) edge (aeast)
+%   (aeast) edge (A.east)
+%   (A.west) edge (awest)
+%   (awest) edge (p1.south)
+%   (int.east) edge (C.west)
+%   (C.east) edge (switch1.west)
+%   (switch2) edge (q1.west);
+%  \path
+%   (q1.east) edge (ykeast)
+%   (ykeast) edge (o2east);
+%  \path       (uksouth) edge (bdwest);
+%  \path[->] (bdwest) edge (Bd.west);
+%  \path
+%   (Bd.east) edge (o1.west)
+%   (o1.east) edge (delay.west)
+%   (xdsouth) edge (adeast)
+%   (adeast) edge (Ad.east)
+%   (Ad.west) edge (adwest)
+%   (adwest) edge (o1.south)
+%   (o2.west) edge (Ld.east)
+%   (Ld.west) edge (ldwest)
+%   (ldwest) edge (o1.north)
+%   (delay.east) edge (Cd.west)
+%   (Cd.north) edge (o2.south)
+%   (o2east) edge (o2.east)
+%   (xdsouth) edge (fbsouth)
+ %  (fbsouth) edge (kdsouth);
+%\path[->]  (kdsouth) edge (Kd.south);
+%\path (Kd.north) edge (circle.south);
+% \end{tikzpicture}
+%}
+ %\caption{Closed-loop digital control system with observer\label{fig:observersystem}}
+%\end{figure*}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{Stability of an Observed System}\label{sec:cof_stability}
+%\subsection{Stability of an Observed System}\label{sec:cof_stability}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+\comment{
 Let us look at observer for a SISO systems as shown in figure \ref{fig:observersystem} where ideally $\mat{A}_o=\mat{A}_d$, $\mat{B}_o=\mat{B}_d$ and $\mat{C}_o=\mat{C}_d$ for a given time discretization.
 A controllable and observable system will have the following dynamics:
 \begin{align}
@@ -2167,6 +2167,7 @@ P_r'=\sum_{j=0}^n c_j\overline{\lambda'}^{n-j}s^j : \overline{\lambda'}=(1+\delt
 As a final annotation, we remark that the safety specification must be
 applied to the model described in this section, accounting for the
 representation errors of the FWL domain.
+}
 
 %-------------------------------
 \section{Experimental Evaluation}
