@@ -102,6 +102,8 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
 
   spec_content=`cat ${benchmark}`
   num_states=$(extract_scalar_definition "${spec_content}" 'NSTATES')
+  impl_int_bits=$(extract_scalar_definition "${spec_content}" 'INT_BITS')
+  impl_frac_bits=$(extract_scalar_definition "${spec_content}" 'FRAC_BITS')
   A=$(extract_spec_matrix "${spec_content}" '_controller_A')
   B=$(extract_spec_matrix "${spec_content}" '_controller_B')
   input_upper_bound=$(extract_input "${spec_content}" 'INPUT_UPPERBOUND')
