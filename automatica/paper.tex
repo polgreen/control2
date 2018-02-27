@@ -266,8 +266,10 @@ We provide experimental results showing that all our approaches are able to
 efficiently synthesize safe controllers for a set of intricate physical
 plant models taken from the digital control literature.
 
-\addtodo{CD: the novelty compared to CAV'17 needs to be clarified}
-In summary, this paper makes the following original contributions.
+%% \addtodo{CD: the novelty compared to CAV'17 needs to be clarified}
+This paper represents an extension of \cite{DBLP:conf/cav/AbateBCCDKKP17}
+and makes the following contributions, where the fourth and he fifth denote
+extensions over \cite{DBLP:conf/cav/AbateBCCDKKP17}.
 %
 \begin{enumerate}
 
@@ -303,11 +305,7 @@ In summary, this paper makes the following original contributions.
 \item We develop a model for different sources of quantization error and
   their effect on reachability properties.  We give bounds that ensure the
   safety of our controllers in a hybrid continuous-digital domain.
-\end{enumerate}
 
-This paper represents an extension of \cite{DBLP:conf/cav/AbateBCCDKKP17} 
-in the following directions:
-\begin{itemize}
 \item While \cite{DBLP:conf/cav/AbateBCCDKKP17} is restricted to systems
   modeled in discrete time, in the current paper we present a model for
   soundly evaluating reachability in a combined continuous-discrete time/space.
@@ -317,7 +315,7 @@ in the following directions:
   the operations performed by each of them.
   Conversely, in the current paper we also make use of floating-point arithmetic
   and compare the two approaches. Additionally, we enhance the implementation with an SMT backend, allowing us to also use reals in order to represent the states of the plant.
-\end{itemize}
+\end{enumerate}
   
 %-------------------------------
 \section{Related Work}
