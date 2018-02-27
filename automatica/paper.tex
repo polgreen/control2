@@ -305,6 +305,20 @@ In summary, this paper makes the following original contributions.
   safety of our controllers in a hybrid continuous-digital domain.
 \end{enumerate}
 
+This paper represents an extension of \cite{DBLP:conf/cav/AbateBCCDKKP17} 
+in the following directions:
+\begin{itemize}
+\item While \cite{DBLP:conf/cav/AbateBCCDKKP17} is restricted to systems
+  modeled in discrete time, in the current paper we present a model for
+  soundly evaluating reachability in a combined continuous-discrete time/space.
+\item A further limitation of the work in \cite{DBLP:conf/cav/AbateBCCDKKP17}
+  is its restriction to fixed-point arithmetic, meaning that fixed-point numbers
+  were employed for the representation of both the plant and the controller, as well as for
+  the operations performed by each of them.
+  Conversely, in the current paper we also make use of floating-point arithmetic
+  and compare the two approaches. Additionally, we enhance the implementation with an SMT backend, allowing us to also use reals in order to represent the states of the plant.
+\end{itemize}
+  
 %-------------------------------
 \section{Related Work}
 \label{sec:relw}
@@ -400,7 +414,7 @@ that always converges toward the controllable set.  Similarly,
 bounds its trajectory to a known region over a finite time period.  This
 technique works for both linear and non-linear systems.
 
-\note{Add note explaining relationship of this work with previously published papers. }
+%\note{Add note explaining relationship of this work with previously published papers. }
 
 %-------------------------------
 \section{Preliminaries}
