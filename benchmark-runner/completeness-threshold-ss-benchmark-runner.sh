@@ -2,6 +2,11 @@
 export PATH=${PATH//cbmc-5190/cbmc-pkesseli-5.7}
 export PATH=${PATH}:/users/pkesseli/software/cpp/cbmc/cbmc-pkesseli-5.7/src/cegis:/users/pkesseli/software/cpp/cbmc/cbmc-pkesseli-5.7/src/goto-analyzer:/users/pkesseli/software/cpp/z3/trunk/target/i686-linux/bin
 
+NUMVARS=$#
+if [ $NUMVARS -neq 1]; then
+echo "USEAGE ERROR: provide DKR number"
+fi
+
 synthesis_file='safety_stability.c'
 script_base_directory=`pwd`
 spec_header_file='benchmark.h'
