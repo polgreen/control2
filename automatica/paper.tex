@@ -421,7 +421,7 @@ technique works for both linear and non-linear systems.
 
 We consider models of physical plants expressed as ordinary differential
 equations (ODEs), which we assume to be controllable~\cite{Astrom08,
-astrom1997computer}: \note{Pls eliminate vector quantities, unless strictly needed.}
+astrom1997computer}: \note{Pls eliminate vector quantities, unless strictly needed. What do you mean by vector quantities?}
 %
 \begin{align}
 \label{eq:ode1}
@@ -435,35 +435,14 @@ where $t \in \mathbb R_0^+$ denotes continuous time, $\mat{A}$ and $\mat{B}$
 are matrices that fully characterize the dynamics of the continuous plant,
 and $x(0)$ is the initial state.
 
-We are interested in control systems with an output $\vec{y}$ that is a
-linear combination of its states and inputs
-\note{Do we need the output map? Where is it used?}
-\footnote{Notice that since we
-can only measure $\vec{y}$, the state-space $\vec{x}$ is not fully
-observable.}.
-%
-%, which may restrict the observability of the state-space from the output space.
-\begin{equation}
-\label{eq:ode2}  
-\vec{y}(t)=\mat{C}\vec{x}(t)+\mat{D}\vec{u}(t),
-\vec{y} \in \mathbb{R}^o,
-\mat{C} \in \mathbb{R}^{o \times p},
-\mat{D} \in \mathbb{R}^{o \times q}. 
-\end{equation}
-%
-Equations~\eqref{eq:ode1} and \eqref{eq:ode2} are soundly discretized in
+Equation~\eqref{eq:ode1} is soundly discretized in
 time~\cite{middleton1990digital,van1978computing} at constant intervals,
 whose duration we refer to as the sample time $T_s$, into the difference
 equation
 %
 \begin{align}
 \label{eq:plant}
-\left\{
-\begin{array}{rl}
-\vec{x}_{k+1} =& \mat{A}_d \vec{x}_k+ \mat{B}_d \vec{u}_k\\
-\vec{y}_{k} =& \mat{C} \vec{x}_k + \mat{D} \vec{u}_k, 
-\end{array}
-\right.
+\vec{x}_{k+1} =& \mat{A}_d \vec{x}_k+ \mat{B}_d \vec{u}_k
 \text{ where }
 \left\{
 \begin{array}{l}
@@ -472,16 +451,8 @@ equation
 \end{array}
 \right.,
 \end{align} 
-%
-%where $\mat{A}_d=e^\mat{A}$, $\mat{B}_d = \int_{t = 0}^{T_s} e^{\mat{A} t} dt\ \mat{B}$,
-%
 where $k \in \mathbb N$ is a discrete counter and $\vec{x}_{0}=\vec{x}(0)$
 is the initial state.  
-\note{Next needed?}
-In this work we apply the standard assumption that
-$\mat{D}=\mat{0}$~\cite{Astrom08}.
-%
-%Also, since $\vec{y}$ can be directly derived from $\vec{x}$, we will omit discussing it in the following unless strictly necessary.
 
 %-------------------------------
 \subsection{Abstract Acceleration} 
@@ -530,7 +501,7 @@ $\mat{A}$ in its main diagonal.  We correspondingly define
 $\mathcal{J}=\mat{S}^{-1}\mathcal{A}\mat{S}$, which is such that
 $\mathcal{J} \supseteq \bigcup_{k \in [0\ \infty)} \mat{J}^k$.
 
-Introduce set $X=\{ \vec{x} : \mat{C}\vec{x} \leq \vec{d}\}$. \note{This notation clashes with that of the output map for the LTI model. }
+Introduce set $X=\{ \vec{x} \mid \mat{C}\vec{x} \leq \vec{d}\}$. %\note{This notation clashes with that of the output map for the LTI model. }
 The linear transformation $\vec{x}'=\mat{S}^{-1}\vec{x}$ leads to set 
 %
 \begin{equation}
@@ -542,10 +513,9 @@ Analogously, let $X_0'=\mat{S}^{-1}X_0$ and
 ${\hat{X}'^\sharp}=\mat{S}^{-1}{\hat{X}^\sharp}$ be the initial set and the
 abstract reach tube mapped onto the eigenspace of matrix $\mat{A}$.  We may
 transform equation \eqref{eq:aa_reachtube} into: 
-\note{The second condition has already been defined above.}
 %
 \begin{equation}
-\hat{X}' \subseteq {\hat{X}'^\sharp} = \mathcal{J}X_0', \text{ such that } \bigcup_{k \in [0\ \ \infty)}\mat{J}^k \subseteq \mathcal{J}, 
+\hat{X}' \subseteq {\hat{X}'^\sharp} = \mathcal{J}X_0', 
 \end{equation}
 %
 where $\hat{X}'=\mat{S}^{-1}\hat{X}$ and $\mathcal{J}$ is a convex
@@ -566,7 +536,7 @@ follows (its steps are denoted in parentheses):
 %
 \item We perform unsound eigen-decomposition using an existing algebra package (lines \ref{alg:calcEigenvalues}-\ref{alg:calcEigenvectors}).
 %
-\item Then we restore soundness to the results using the methods described in Section \ref{sec:eigensolver} (lines \ref{alg:soundEigenvalues}-\ref{alg:soundEigenvectors}). \note{wrong ref.}
+\item Then we restore soundness to the results using the methods described in \cite{cattaruzza2017sound} (lines \ref{alg:soundEigenvalues}-\ref{alg:soundEigenvectors}).
 %
 \item The inverse of the matrix of eigenvectors is calculated after soundness is restored, using interval arithmetic in order to ensure its soundness (line \ref{alg:inverse}).
 %
@@ -574,15 +544,13 @@ follows (its steps are denoted in parentheses):
 %
 \item Using Equation \eqref{eq:eigenInit}, transform the initial state into the eigenspace (line \ref{alg:eigeninit}).
 %
-\item Extract the vertices of the eigen-polyhedron $X_0'$ using the sound over-approximation of the double description algorithm \cite{fukuda1996double} from Section \ref{sec:dd} (line \ref{alg:getVertices}). 
-\note{wrong refs.} 
-It is worth noting that this algorithm uses a simplex to seed it: we will first discuss the simplex algorithm, which is also needed at the next step, and then the vertex enumeration algorithm used at this stage. 
+\item Extract the vertices of the eigen-polyhedron $X_0'$ using the algorithms described in \cite{cattaruzza2015unbounded,cattaruzza2017sound} (line \ref{alg:getVertices}). 
 %
 \item Calculate the mapped \emph{abstract reach tube} ${\hat{X}'^\sharp}$
 that over-approximates the image of the reach tube in the eigenspace (line
 \ref{alg:getReachTube}).  This is achieved by evaluating a set of objective
 functions using the abstract dynamics as a simplex Tableau, and via a sound
-simplex described in Section \ref{sec:simplex}.  \note{fix ref.} The objective functions are
+simplex described in \cite{cattaruzza2017sound}.  The objective functions are
 defined by the vertices of $X'_0$, denote as $V_0$, and by the desired
 template directions, such that
 %
@@ -685,8 +653,7 @@ The time discretization in Sec.~\ref{sec:model} only allows us to evaluate
 the state of the plant at integer multiples of the sample time.  
 \note{Unlike the CAV18 paper, these gain matrices have not been discussed yet. }
 However, in
-order to synthesize $\mat{K}=\mat{K}_{\langle C \rangle}$ and
-$\mat{L}=\mat{L}_{\langle C \rangle}$ \note{Do we need this second matrix?}, we must be able to ensure that
+order to synthesize $\mat{K}=\mat{K}_{\langle C \rangle}$, we must be able to ensure that
 certain properties of the plant hold at any given point in time.  In order
 to do so, we accelerate the dynamics of the plant according to the model
 semantics in Sec.~\ref{sec:model} and compute the state
@@ -747,11 +714,11 @@ $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)$ at time $T$ given a
 parametric input $\vec{u}$ is
 %
 \begin{align}
-\vec{x}_T&=\vec{x}(t=T)=\mat{A}_T\vec{x}_0 + \mat{B}_T\vec{u} \text{ where } \mat{B}_T=\mat{A}^{-1}(\mat{I}-\mat{A}_T)\mat{B} 
+\vec{x}_T&=\vec{x}(t=T)=\mat{A}_T\vec{x}_0 + \mat{B}_T\vec{u}
 \label{eq:continuous_tube_param}
 \end{align}
 %
-where $\forall t \leq T.\, \vec{u}(t)=\vec{u}$, and $\mat{A}_T$ as in
+where $\mat{B}_T=\mat{A}^{-1}(\mat{I}-\mat{A}_T)\mat{B}$, $\forall t \leq T.\, \vec{u}(t)=\vec{u}$, and $\mat{A}_T$ as in
 \eqref{eq:continuous_tube_dyn2} \footnote{When $\mat{A}$ is not invertible,
 we use $\left[\begin{array}{cc}\mat{A}_T&\mat{B}_T\\
 0&\mat{I}\end{array}\right]=e^{\left[\begin{array}{cc}\mat{A}&\mat{B}\\0&0\end{array}\right]}$.}. 
