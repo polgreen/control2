@@ -664,7 +664,7 @@ $\hat{X}^\sharp=\mat{S}{\hat{X}'^\sharp}$ (line \ref{alg:getNormReachTube}).
 %\end{align*}
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{Acceleration of continuous-time models}\label{sec:continuous_time_accel}
+\section{Acceleration of continuous-time models}\label{sec:continuous_time_accel}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
 
 The time discretization in Sec.~\ref{sec:model} only allows us to evaluate
@@ -684,7 +684,7 @@ $t=T$.
 
 %\note{ [add?] In this section we work with fully observed models, namely where $y = x$. } 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsubsection{Accelerated\! dynamics\! for\! continuous-time\! models\! without\! inputs}\label{sec:cont_acc_no_inputs}
+\subsection{Accelerated\! dynamics\! for\! continuous-time\! models\! without\! inputs}\label{sec:cont_acc_no_inputs}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 %
 Given a specific time $T$, the state $\vec{x}(t=T)$ can be expressed as a
@@ -717,7 +717,7 @@ If $\mat{J}$ is diagonal and there exists a discrete dynamics matrix for a sampl
 \end{lemma}
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsubsection{Accelerated dynamics for models with parametric inputs}\label{sec:real_discrete_param_inputs}
+\subsection{Accelerated dynamics for models with parametric inputs}\label{sec:real_discrete_param_inputs}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 Next, we are interested in studying models with parametric inputs, which are
@@ -750,7 +750,7 @@ system at time $T$.
 \end{lemma}
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsubsection{Accelerated dynamics for models with a sampled-time feedback}\label{sec:real_discrete_feedback_inputs}
+\subsection{Accelerated dynamics for models with a sampled-time feedback}\label{sec:real_discrete_feedback_inputs}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 The final case we analyze is that of hybrid-time models, where the plant
@@ -806,7 +806,7 @@ which accelerating results and setting $T=kT_s+t'$ becomes
 \end{proof}
 
 %-------------------------------
- \subsubsection{Finding Abstract Supports for Continuous Dynamics}
+ \subsection{Finding Abstract Supports for Continuous Dynamics}
  \label{sec:cont_aasup}
 %-------------------------------
 
@@ -848,7 +848,7 @@ using the envelope of their magnitude (ie $|\lambda|$).
 \end{enumerate}
 
 %-------------------------------
-\subsection{Counterexample Guided Inductive Synthesis} 
+\section{Counterexample Guided Inductive Synthesis} 
 \label{ssec:cegis}
 %-------------------------------
 
@@ -920,7 +920,7 @@ Criteria, as well as the restrictions on the representation of these
 coefficients.% as discussed in detail in Section~\ref{synthesis-elements}.
 
 %-------------------------------
-\subsubsection{CEGIS of digital controllers} 
+\subsection{CEGIS of digital controllers} 
 \label{sssec:cegisdig}
 %-------------------------------
 
@@ -1530,7 +1530,7 @@ $z^n+\sum_{i=1}^n(a_i-k_i)z^{n-i}=\prod_{i=1}^n (z-\lambda_i) : |\lambda_i|<1 \w
 
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{Numerical representation and soundness} 
+\section{Numerical representation and soundness} 
 \label{sec:numeric_rep}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -1569,7 +1569,7 @@ quantization errors caused by representing the physical plant at the finite
 precision $\mathcal{F}_{\langle I_p,F_p \rangle}$.
 
 
-\subsubsection{Effect on safety specification and stability}
+\subsection{Effect on safety specification and stability}
 
 Let us first consider the effect of the quantization errors on safety. 
 Within the controller, state values are manipulated at low precision,
