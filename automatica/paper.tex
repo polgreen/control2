@@ -370,8 +370,7 @@ The classical approach to control synthesis has often disregarded
 digitalization effects, whereas more recently modern techniques have focused
 on different aspects of discretization, including delayed
 response~\cite{Duggirala2015} and finite word length (FWL) semantics, with
-the goal either to verify (e.g.,~\cite{daes20161}) or to optimize
-(e.g.,~\cite{oudjida2014design}) given implementations.
+the goal either to verify~\cite{daes20161} or to optimize~\cite{oudjida2014design} given implementations.
 
 There are two different problems that arise from FWL semantics.  The first
 is the error in the dynamics caused by the inability to represent the exact
@@ -420,8 +419,8 @@ technique works for both linear and non-linear systems.
 %% \end{equation}
 
 We consider models of physical plants expressed as ordinary differential
-equations (ODEs), which we assume to be controllable~\cite{Astrom08,
-astrom1997computer}: \note{Pls eliminate vector quantities, unless strictly needed. What do you mean by vector quantities?}
+equations, which we assume to be controllable~\cite{Astrom08,
+astrom1997computer}: \note{Pls eliminate bold quantities, unless strictly needed. }
 %
 \begin{align}
 \label{eq:ode1}
@@ -455,28 +454,32 @@ where $k \in \mathbb N$ is a discrete counter and $\vec{x}_{0}=\vec{x}(0)$
 is the initial state.  
 
 %-------------------------------
-\subsection{Abstract Acceleration} 
+\subsection{Abstract Acceleration of Linear Dynamics} 
 \label{ssec:aa}
 %-------------------------------
-
-For abstraction based synthesis, we will use Abstract
-Acceleration~\cite{JSS14,cattaruzza2015unbounded}.  Given an iterative
-program with dynamics
+ 
+We recall a technique called \emph{Abstract Acceleration}~\cite{JSS14,cattaruzza2015unbounded}, 
+which will be key for abstraction-based synthesis.  
+\note{This clashes with the model introduced above, with inputs - motivate why?}
+Given a model of an iterative program with dynamics
+\note{Pls eliminate unnecessary ``logical'' notation - we have discussed this already for the CAV18 submission, do we need to go through this again????}
 %
 \begin{equation}
-\vec{x}_{k+1}=\mat{A}\vec{x}_k : \vec{x}_k \in \mathbb{R}^n \wedge \mat{A} \in \mathbb{R}^{n \times n} \wedge k \in [0\ \ \infty),
+\vec{x}_{k+1}=\mat{A}\vec{x}_k : \vec{x}_k \in \mathbb{R}^n \wedge \mat{A} \in \mathbb{R}^{n \times n} \wedge k \in \mathbb N_0,
 \end{equation}
 %
+\note{material has been blindly pasted here - dimensions are all screwed up.}
 we want to find all possible states visited over an infinite time horizon
-starting at an initial set $X_0$.  We call this set the \emph{reach tube} of
+starting at an initial set $X_0$.  
+This set is known as the \emph{reach tube} of
 the model:
 %
 \begin{equation}
-\hat{X} = \{ \vec{x}_k : k \in [0\ \infty) \wedge \vec{x}_0 \in X_0 \wedge \vec{x}_{k+1}=\mat{A}\vec{x}_k\}.
+\hat{X} = \{ \vec{x}_k : k \in \mathbb N_0 \wedge \vec{x}_0 \in X_0 \wedge \vec{x}_{k+1}=\mat{A}\vec{x}_k\}.
 \end{equation}
 %
 It is easy to see that the infinite number of iterations would result in an
-unbounded cumulative rounding error, but using Abstract Acceleration we
+unbounded cumulative rounding error \note{why do we bring in the discussion on the rounding error here? why do we claim AA solves it? Is this the best manner to motivate the AA technique?}, but using Abstract Acceleration we
 transform this problem into a one-step solution.  We first change the
 problem statement by means of acceleration into
 %
@@ -501,7 +504,8 @@ $\mat{A}$ in its main diagonal.  We correspondingly define
 $\mathcal{J}=\mat{S}^{-1}\mathcal{A}\mat{S}$, which is such that
 $\mathcal{J} \supseteq \bigcup_{k \in [0\ \infty)} \mat{J}^k$.
 
-Introduce set $X=\{ \vec{x} \mid \mat{C}\vec{x} \leq \vec{d}\}$. %\note{This notation clashes with that of the output map for the LTI model. }
+Introduce set $X=\{ \vec{x} \mid \mat{C}\vec{x} \leq \vec{d}\}$. 
+\note{Why are we interested in this set? What does this set represent?}
 The linear transformation $\vec{x}'=\mat{S}^{-1}\vec{x}$ leads to set 
 %
 \begin{equation}
