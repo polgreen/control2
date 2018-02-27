@@ -467,6 +467,107 @@ equation
 where $k \in \mathbb N$ is a discrete counter and $\vec{x}_{0}=\vec{x}(0)$
 is the initial state.  
 
+The linear feedback controller is characterized by a gain matrix
+$\mat{K}$ that influences the closed-loop dynamics
+(Fig.~\ref{fig:digitalsystem}).  Later, we will address the issue of
+variable quantization, as introduced by the ADC/DAC conversion blocks.
+
+\begin{figure*}[htb]
+\centering
+
+\tikzset{add/.style n args={4}{
+    minimum width=6mm,
+    path picture={
+        \draw[circle] 
+            (path picture bounding box.south east) -- (path picture bounding box.north west)
+            (path picture bounding box.south west) -- (path picture bounding box.north east);
+        \node[draw=none] at ($(path picture bounding box.south)+(0,0.13)$)     {\small #1};
+        \node[draw=none] at ($(path picture bounding box.west)+(0.13,0)$)      {\small #2};
+        \node[draw=none] at ($(path picture bounding box.north)+(0,-0.13)$)    {\small #3};
+        \node[draw=none] at ($(path picture bounding box.east)+(-0.13,0)$)     {\small #4};
+        }
+    }
+ }
+
+\resizebox{1.0\textwidth}{!}{
+ \begin{tikzpicture}[scale=0.6,-,>=stealth',shorten >=.2pt,auto,
+     semithick, initial text=, ampersand replacement=\&,]
+
+  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center}, row sep=.6cm, column sep=.6cm] {
+    \node[draw=none] (r) {$r_k$};
+    
+   \& \node[circle,add={-}{+}{}{}] (circle) {};
+   \node[draw=none] (ez) at ([xshift=1cm,yshift=.15cm]circle)  {$u_k$};
+   \node[rectangle,draw,minimum width=1cm,minimum height=1cm] (Kd) at ([xshift=0,yshift=-1.5cm]circle)  {\sc $\mat{K}$};
+   \coordinate (kdsouth) at ([yshift=-2cm]Kd);
+      
+   
+   \& complexnode/.pic={ 
+      \node[rectangle,dashed,draw,minimum width=3cm,minimum height=1.6cm,label=\textbf{DAC}] (dac) {};
+     \node[circle,add={+}{+}{}{},fill=gray!20] (q2) at ([xshift=-.65cm]dac.center) {};
+     \node[draw=none] (q2t)  at ([yshift=.55cm]q2) {{\sc Q2}};
+     \node[draw=none] (v2)  at ([yshift=-1.5cm]q2) {$\nu_2$};
+     \node[fill=gray!20] (zoh) at ([xshift=.65cm]dac.center) {\sc ZOH};
+   }   
+
+   \& complexnode/.pic={ 
+      \node[rectangle,dashed,draw,minimum width=8cm,minimum height=3.5cm,label=\textbf{Plant}] (plant)  at ([yshift=-.5cm]dac.center) {};
+      \node[rectangle,draw,minimum width=1cm,minimum height=1cm] (B) at ([xshift=-2.5cm,yshift=.5cm]plant.center)  {\sc $\mat{B}$};
+      \node[draw=none] (u) at ([xshift=-1cm,yshift=.15cm]B)  {$u(t)$};
+      \node[circle,add={+}{+}{}{}] (p1) at ([xshift=-1.3cm,yshift=.5cm]plant.center) {};
+      \node[draw=none] (xdot) at ([xshift=.85cm,yshift=.15cm]p1)  {$\dot{\vec{x}}(t)$};   
+      \node[rectangle,draw,minimum width=1cm] (int) at ([xshift=.5cm,yshift=.5cm]plant.center) {\sc $\int$};
+      \coordinate (xsouth) at ([xshift=1cm]int);
+      \node[draw=none] (x) at ([xshift=1cm,yshift=.15cm]int)  {$\vec{x}(t)$};
+      \node[rectangle,draw,minimum width=1cm,minimum height=1cm] (A) at ([xshift=.5cm,yshift=-1cm]plant.center)  {\sc $\mat{A}$};
+      \coordinate (aeast) at ([xshift=1cm]A);
+      \coordinate (awest) at ([xshift=-1.8cm]A);
+    }   
+        
+   \& complexnode/.pic={ 
+     \node[rectangle,dashed,draw,minimum width=3.5cm,minimum height=1.6cm,label=\textbf{ADC},] (adc) {};
+     \draw[] ([xshift=-1cm]adc.center) -- ++(0.5,0.2cm);
+     \coordinate (switch1) at ([xshift=-1cm]adc.center);
+     \coordinate (switch2) at ([xshift=-0.4cm]adc.center);
+     \node[circle,add={+}{+}{}{},fill=gray!20] (q1) at ([xshift=.6cm]adc.center) {};
+     \node[draw=none] (q2t)  at ([yshift=.55cm]q1) {\sc Q1};
+     \node[draw=none] (v1)  at ([yshift=-1.5cm]q1) {$\nu_1$};
+     \node[draw=none] (y) at ([xshift=.85cm,yshift=.15cm]q1)  {$\vec{x}_k$};       
+     \coordinate (ykeast) at ([xshift=1.9cm]q1);
+     \coordinate (yksouth) at ([xshift=1.9cm,yshift=-3.5cm]q1);
+   } 
+   \& \coordinate (aux1);
+   \& \\
+  };
+
+  \path[->] (v1) edge (q1.south);
+  \path[->] (v2) edge (q2.south);
+  \path[->] (r) edge (circle.west);
+  \path[->] (circle.east) edge (q2.west);
+  \path       (q2.east) edge (zoh.west);
+  \path[->] (zoh.east) edge (B.west);
+  \path
+   (B.east) edge (p1.west)
+   (p1.east) edge (int.west)
+   (xsouth) edge (aeast)
+   (aeast) edge (A.east)
+   (A.west) edge (awest)
+   (awest) edge (p1.south)
+   (int.east) edge (switch1.west)
+   (switch2) edge (q1.west);
+  \path
+   (q1.east) edge (ykeast)
+   (ykeast) edge (yksouth)
+   (yksouth) edge (kdsouth);
+  \path[->]  (kdsouth) edge (Kd.south);
+  \path (Kd.north) edge (circle.south);
+ \end{tikzpicture}
+}
+ \caption{Closed-loop digital control system 
+ \label{fig:digitalsystem}}
+\end{figure*}
+
+
 %-------------------------------
 \subsection{Abstract Acceleration of Linear Dynamics} 
 \label{ssec:aa}
@@ -669,9 +770,9 @@ $\hat{X}^\sharp=\mat{S}{\hat{X}'^\sharp}$ (line \ref{alg:getNormReachTube}).
 
 The time discretization in Sec.~\ref{sec:model} only allows us to evaluate
 the state of the plant at integer multiples of the sample time.  
-\note{Unlike the CAV18 paper, these gain matrices have not been discussed yet. }
+%\note{Unlike the CAV18 paper, these gain matrices have not been discussed yet. }
 However, in
-order to synthesize $\mat{K}=\mat{K}_{\langle C \rangle}$, we must be able to ensure that
+order to synthesize $\mat{K}$, we must be able to ensure that
 certain properties of the plant hold at any given point in time.  In order
 to do so, we accelerate the dynamics of the plant according to the model
 semantics in Sec.~\ref{sec:model} and compute the state
@@ -758,7 +859,7 @@ dynamics evolve in continuous time while the feedback dynamics evolve in
 discrete time.  A~new input value is produced only at every sample time but
 implemented over the continuous-time plant dynamics.
 %
-\note{Matrix K has not been introduced yet. }
+%\note{Matrix K has not been introduced yet. }
 \begin{theorem}
 The expression
 %
