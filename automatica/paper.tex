@@ -190,19 +190,19 @@ meeting a number of properties that define their desired behavior.
 %% exploit advances in bit-accurate verification of C programs to obtain a
 %% verifier for software-implemented digital control.
 
-\addtodo{CD: change this}
-For this purpose, we leverage a very recent step-change in the automation and
-scalability of \emph{program synthesis}.  %% Program synthesis engines use a
-%% specification as the starting point, and subsequently generate a sequence of
-%% candidate programs from a given template.  The candidate programs are
-%% iteratively refined to eventually satisfy the specification.
-Program
-synthesizers implementing Counter-Example Guided Inductive Synthesis
-(CEGIS)~\cite{DBLP:conf/asplos/Solar-LezamaTBSS06} are now able to generate
-programs for highly non-trivial specifications with a very high degree of
-automation.  Modern synthesis engines combine automated testing, genetic
-algorithms, and SMT-based automated
-reasoning~\cite{DBLP:journals/corr/AlurFSS16a, DBLP:conf/lpar/DavidKL15}.
+
+%% we leverage a very recent step-change in the automation and
+%% scalability of \emph{program synthesis}.  %% Program synthesis engines use a
+%% %% specification as the starting point, and subsequently generate a sequence of
+%% %% candidate programs from a given template.  The candidate programs are
+%% %% iteratively refined to eventually satisfy the specification.
+%% Program
+%% synthesizers implementing Counter-Example Guided Inductive Synthesis
+%% (CEGIS)~\cite{DBLP:conf/asplos/Solar-LezamaTBSS06} are now able to generate
+%% programs for highly non-trivial specifications with a very high degree of
+%% automation.  Modern synthesis engines combine automated testing, genetic
+%% algorithms, and SMT-based automated
+%% reasoning~\cite{DBLP:journals/corr/AlurFSS16a, DBLP:conf/lpar/DavidKL15}.
 
 %% By combining state-of-the-art synthesis engines we present a tool that
 %% automatically generates digital controllers for a given continuous plant
@@ -233,8 +233,10 @@ systems engineering.
 %% automatically synthesised controllers using CEGIS-based synsthesis that
 %% incorporate the above mentioned artifacts in different models of
 %% Single-Input/Single-Output (SISO) systems.
-In this paper we present two novel approaches for the synthesis of digital controllers,
-which we briefly describe next.
+In this paper we present two novel approaches for the synthesis of digital controllers, 
+both of which use a CounterExample-Guided Inductive Synthesis (CEGIS)~\cite{jha-icse10,
+DBLP:conf/pldi/Solar-LezamaRBE05} as described next.
+
 %% offer three modes of
 %% operation that address different aspects of the problem.
 %% {\em The first  approach} uses a transfer-function based analysis that
