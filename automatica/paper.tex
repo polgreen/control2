@@ -57,11 +57,16 @@
 \usepackage{url}
 
 %\newcommand{\tool}{{\sf DSSynth}\xspace}
-\newcommand{\mat}[1]{\boldsymbol{#1}}
-\renewcommand{\vec}[1]{\boldsymbol{#1}}
+\newcommand{\addtodo}[1]{\textcolor{red}{[#1]}}
+\newcommand{\mat}[1]{{#1}}
+\renewcommand{\vec}[1]{{#1}}
+\newcommand{\comment}[1]{}
+\newtheorem{lemma}{Lemma}
 \newtheorem{theorem}{Theorem}
 \newtheorem{corollary}{Corollary}
 \newtheorem{proof}{Proof}
+
+\renewcommand{\note}[1]{\textcolor{red}{[#1]}}
 
 \begin{document}
 \newcommand\tool{{\sf DSSynth}}
@@ -86,12 +91,13 @@
 \author[manaus]{Iury Bessa}\ead{iurybessa@ufam.edu.br},
 \author[oxford]{Dario Cattaruzza}\ead{dario.cattaruzza@cs.ox.ac.uk},
 \author[oxford,manaus]{Lucas Cordeiro}\ead{lucas.cordeiro@cs.ox.ac.uk},
-\author[oxford]{Cristina David}\ead{cristina.david@cs.ox.ac.uk},
+\author[cambridge]{Cristina David}\ead{cd652@cam.ac.uk},
 \author[oxford]{Pascal Kessel}\ead{pascal.kesseli@stx.ox.ac.uk},
 \author[oxford]{Daniel Kroening}\ead{kroening@cs.ox.ac.uk},
 \author[oxford]{Elizabeth Polgreen}\ead{elizabeth.polgreen@linacre.ox.ac.uk}
 
 \address[oxford]{University of Oxford, UK}
+\address[cambridge]{University of Cambridge, UK}
 \address[manaus]{Federal University of Amazonas, Brazil}
 
 %\author[Paestum]{Marcus Tullius Cicero}\ead{cicero@senate.ir},    % Add the 
@@ -104,7 +110,7 @@
 
           
 \begin{keyword}                           % Five to ten keywords,  
-Digital Control; A/D converters; Control System Synthesis; Transient Analysis; Safety Analysis; Quantization Errors; Sampling.               % chosen from the IFAC 
+Digital Control; A/D converters; Control System Synthesis; Safety Analysis; Quantization Errors; Sampling.               % chosen from the IFAC 
 \end{keyword}                             % keyword list or with the 
                                           % help of the Automatica 
                                           % keyword wizard
@@ -122,67 +128,93 @@ Digital Control; A/D converters; Control System Synthesis; Transient Analysis; S
 
 
 \begin{abstract}                          % Abstract of not more than 200 words.
-\textcolor{red}{Lucas: We have to write a new abstract.}
+%\textcolor{red}{Cristina: Can you please write an initial version of the abstract.}
+We present a sound and automated approach to synthesizing safe,
+digital controllers for physical plants represented as linear,
+time-invariant models. Models are defined as differential equations
+with inputs, evolving over a continuous state space. The synthesis
+accounts for errors caused by the digitization effects introduced by
+the controller. Our approach uses counterexample-guided inductive
+synthesis (CEGIS): an inductive generalisation phase produces a
+possible solution that is known to stabilize the system but that may
+not be safe for all initial conditions. Safety is then verified either
+via BMC or abstract acceleration; if the verification step fails, a
+counterexample is provided to the inductive generalisation and the
+process iterates until a safe controller is obtained.  We demonstrate
+the practical value of this approach by automatically synthesizing
+safe controllers for physical plant models from the digital control
+literature.
 \end{abstract}
 
 \end{frontmatter}
 
 \section{Introduction}
 
-Modern implementations of embedded control systems have proliferated with
-the availability of low-cost devices that can perform highly non-trivial
-control tasks, with significant impact in numerous application areas such as
-life sciences, environmental control and robotics~\cite{astrom1997computer,
-Franklin15}.  Correct synthesis is non-trivial, even in cases with
-restriceted dynamics.  We examine the case of Linear Time Invariant (LTI)
-Models, for which the synthesis of controllers is well understood.  However,
-the use of digital control architectures adds new challenges caused by
-artifacts specific to digital control, such as the effects of
-finite-precision arithmetic, time discretization and quantization noise
-introduced by A/D and D/A conversion.
+Modern implementations of embedded control systems have proliferated
+with the availability of low-cost devices that can perform highly
+non-trivial control tasks, with significant impact in numerous
+application areas such as life sciences, environmental control and
+robotics~\cite{astrom1997computer, Franklin15}.  Correct synthesis of
+control software for such platforms is non-trivial, even in cases with
+restriceted dynamics.  We examine the case of Linear Time Invariant
+(LTI) models, for which the synthesis of controllers is well
+understood.  However, the use of digital control architectures adds
+new challenges caused by artifacts specific to digital control, such
+as the effects of finite-precision arithmetic, time discretization and
+quantization noise introduced by A/D and D/A conversion.
 
-While research on digital control is well developed~\cite{astrom1997computer},
-automated and sound control synthesis is challenging, particularly when the
-synthesis objective goes beyond classical stability.  There are recent methods
-for verifying reachability properties of a given controller~\cite{FLD+11}.
-However, these methods have not been generalized to control synthesis.  
-Note that a synthesis algorithm that guarantees stability does not
-ensure safety: the system might transitively visit an unsafe state resulting
-in unrecoverable failure. Programming expertise is a key
-barrier to broad adoption of correct digital controllers, and requires
-considerable knowledge outside of the expertise of many control engineers.
+In this paper we develop an automatic technique for generating digital
+controllers for a given continuous plant model that are correct by
+construction.  Specifically, we synthesize stable and safe,
+software-implemented embedded controllers.  Due to the complexity of
+such closed-loop systems, we focus on linear models with known
+configurations, and perform parametric synthesis of controllers
+meeting a number of properties that define their desired behavior.
 
-Beyond classical a-posteriori validation in digital control, there has been
-plenty of previous work aiming at \emph{verifying} a given designed
-controller, which however broadly lack automation.  Recent work has studied
-the stability of digital controllers considering implementation aspects,
-i.e., fixed-point arithmetic and the word length~\cite{Bessa16}.  They
-exploit advances in bit-accurate verification of C programs to obtain a
-verifier for software-implemented digital control.
+%% While research on digital control is well developed~\cite{astrom1997computer},
+%% automated and sound control synthesis is challenging, particularly when the
+%% synthesis objective goes beyond classical stability.  There are recent methods
+%% for verifying reachability properties of a given controller~\cite{FLD+11}.
+%% However, these methods have not been generalized to control synthesis.  
+%% Note that a synthesis algorithm that guarantees stability does not
+%% ensure safety: the system might transitively visit an unsafe state resulting
+%% in unrecoverable failure. %% Programming expertise is a key
+%% barrier to broad adoption of correct digital controllers, and requires
+%% considerable knowledge outside of the expertise of many control engineers.
 
-By contrast, we leverage a very recent step-change in the automation and
-scalability of \emph{program synthesis}.  Program synthesis engines use a
-specification as the starting point, and subsequently generate a sequence of
-candidate programs from a given template.  The candidate programs are
-iteratively refined to eventually satisfy the specification.  Program
-synthesizers implementing Counter-Example Guided Inductive Synthesis
-(CEGIS)~\cite{DBLP:conf/asplos/Solar-LezamaTBSS06} are now able to generate
-programs for highly non-trivial specifications with a very high degree of
-automation.  Modern synthesis engines combine automated testing, genetic
-algorithms, and SMT-based automated
-reasoning~\cite{DBLP:journals/corr/AlurFSS16a, DBLP:conf/lpar/DavidKL15}.
+%% Beyond classical a-posteriori validation in digital control, there has been
+%% plenty of previous work aiming at \emph{verifying} a given designed
+%% controller, which however broadly lack automation.  Recent work has studied
+%% the stability of digital controllers considering implementation aspects,
+%% i.e., fixed-point arithmetic and the word length~\cite{Bessa16}.  They
+%% exploit advances in bit-accurate verification of C programs to obtain a
+%% verifier for software-implemented digital control.
 
-By combining state-of-the-art synthesis engines we present a tool that
-automatically generates digital controllers for a given continuous plant
-model that are correct by construction.  This approach delivers a high
-degree of automation, promises to reduce the cost and time of development of
-digital control dramatically, and requires considerably less expertise than
-a-posteriori verification.  Specifically, we synthesize stable,
-software-implemented embedded controllers along with a model of a physical
-plant.  Due to the complexity of such closed-loop systems, in this work we
-focus on linear models with known configurations, and perform parametric
-synthesis of stabilizing digital controllers with a number of properties that
-define their desired behaviour.
+
+%% we leverage a very recent step-change in the automation and
+%% scalability of \emph{program synthesis}.  %% Program synthesis engines use a
+%% %% specification as the starting point, and subsequently generate a sequence of
+%% %% candidate programs from a given template.  The candidate programs are
+%% %% iteratively refined to eventually satisfy the specification.
+%% Program
+%% synthesizers implementing Counter-Example Guided Inductive Synthesis
+%% (CEGIS)~\cite{DBLP:conf/asplos/Solar-LezamaTBSS06} are now able to generate
+%% programs for highly non-trivial specifications with a very high degree of
+%% automation.  Modern synthesis engines combine automated testing, genetic
+%% algorithms, and SMT-based automated
+%% reasoning~\cite{DBLP:journals/corr/AlurFSS16a, DBLP:conf/lpar/DavidKL15}.
+
+%% By combining state-of-the-art synthesis engines we present a tool that
+%% automatically generates digital controllers for a given continuous plant
+%% model that are correct by construction.  This approach delivers a high
+%% degree of automation, promises to reduce the cost and time of development of
+%% digital control dramatically, and requires considerably less expertise than
+%% a-posteriori verification.  Specifically, we synthesize stable,
+%% software-implemented embedded controllers along with a model of a physical
+%% plant.  Due to the complexity of such closed-loop systems, in this work we
+%% focus on linear models with known configurations, and perform parametric
+%% synthesis of stabilizing digital controllers with a number of properties that
+%% define their desired behaviour.
 
 Our work addresses challenging aspects of the control synthesis problem.  We
 perform digital control synthesis over a hybrid model, where the plant
@@ -192,23 +224,26 @@ effects of the quantizers (A/D and D/A converters) and of time
 discretization, as well as representation errors introduced by in modelling
 artifacts such as an observer~\cite{astrom1997computer} in a finite
 precision domain, while reasoning about high level properties such as
-stability, robustness, safety, and response time, which define the behaviour
+stability, robustness, and safety, which define the behaviour
 of the system.  In particular, safety requirements are frequently overlooked
 in conventional feedback control synthesis, but play an important role in
 systems engineering.
 
-Using state of the art verifiers, we evaluate these models against
-automatically synthesised controllers using CEGIS-based synsthesis that
-incorporate the above mentioned artifacts in different models of
-Single-Input/Single-Output (SISO) systems.  We offer three modes of
-operation that address different aspects of the problem.
+%% Using state of the art verifiers, we evaluate these models against
+%% automatically synthesised controllers using CEGIS-based synsthesis that
+%% incorporate the above mentioned artifacts in different models of
+%% Single-Input/Single-Output (SISO) systems.
+In this paper we present two novel approaches for the synthesis of digital controllers, 
+both of which use a CounterExample-Guided Inductive Synthesis (CEGIS)~\cite{jha-icse10,
+DBLP:conf/pldi/Solar-LezamaRBE05} as described next.
 
-{\em The first  approach} uses a transfer-function based analysis that
-solves the problem of robust stability for closed loop systems for a
-collection of unstable plants.  Inthis case, there is no safety
-specification since we are working in the frequency domain.
-
-{\em The second approach} uses a na\"ive technique that starts by devising a
+%% offer three modes of
+%% operation that address different aspects of the problem.
+%% {\em The first  approach} uses a transfer-function based analysis that
+%% solves the problem of robust stability for closed loop systems for a
+%% collection of unstable plants.  Inthis case, there is no safety
+%% specification since we are working in the frequency domain.
+{\em The first approach} uses a na\"ive technique that starts by devising a
 digital controller that stabilizes the system while remaining safe for a
 pre-selected time horizon and a single initial state; then, it verifies
 unbounded safety by unfolding the dynamics of the system, considering the
@@ -219,7 +254,7 @@ system such that the boundaries are not violated for any larger number of
 iterations.  As~it requires unfolding up to the completeness threshold, this
 approach is computationally expensive.
 
-Instead of unfolding the dynamics, {\em the third approach}
+Instead of unfolding the dynamics, {\em the second approach}
 employs {\em abstract acceleration}~\cite{cattaruzza2015unbounded} to
 evaluate all possible progressions of the system simultaneously. 
 Additionally, this approach uses {\em abstraction refinement},
@@ -231,30 +266,38 @@ We provide experimental results showing that all our approaches are able to
 efficiently synthesize safe controllers for a set of intricate physical
 plant models taken from the digital control literature.
 
-In summary, this paper makes the following original contributions.
+%% \addtodo{CD: the novelty compared to CAV'17 needs to be clarified}
+This paper represents an extension of \cite{DBLP:conf/cav/AbateBCCDKKP17}
+and makes the following contributions, where the fourth and he fifth denote
+extensions over \cite{DBLP:conf/cav/AbateBCCDKKP17}.
 %
 \begin{enumerate}
 
+  % Additions from CAV:
+  % continuous time
+  % floating point 
 \item We automatically generate {\em correct-by-construction} digital
   controllers using an inductive synthesis approach.  Our application of program
   synthesis is non-trivial and addresses challenges specific to control
-  systems, such as quantizers and FWL.  In particular, we
-  have found that a two-stage verification engine that continuously refines
-  the precision of the fixed-point representation of the plant yields a
-  speed-up of two orders of magnitude over a conventional one-stage
-  verification engine.
+  systems, such as quantizers and FWL.  %% In particular, we
+  %% have found that a two-stage verification engine that continuously refines
+  %% the precision of the fixed-point representation of the plant yields a
+  %% speed-up of two orders of magnitude over a conventional one-stage
+  %% verification engine.
 %
-\item  We compute state-feedback controllers that 
-  guarantee a given safety property alongside stability and response time
-  specifications.  Existing methods for controller synthesis rely on transfer
+  %\item  We compute
+  The computed state-feedback controllers 
+  guarantee a given safety property alongside stability and safety
+  specifications. Existing methods for controller synthesis rely on transfer
   function representations, which are inadequate to prove safety requirements.
 %
-\item We provide three novel algorithms: the first, na\"ive one, relies on
+\item We provide two novel algorithms: the first, na\"ive one, relies on
   an unfolding of the dynamics up to a completeness threshold, while the
   second one is abstraction-based and leverages abstraction refinement and
-  acceleration to improve scalability while retaining soundness.  A third
-  algorithm evaluates systems using transfer functions where no state-space
-  description is given.  All three approaches provide sound synthesis of
+  acceleration to improve scalability while retaining soundness.  %% A third
+  %% algorithm evaluates systems using transfer functions where no state-space
+  %% description is given.
+  Both approaches provide sound synthesis of
   feedback controllers and consider the various sources of imprecision in
   the implementation of the control algorithm and in the modeling of the
   plant.
@@ -262,8 +305,18 @@ In summary, this paper makes the following original contributions.
 \item We develop a model for different sources of quantization error and
   their effect on reachability properties.  We give bounds that ensure the
   safety of our controllers in a hybrid continuous-digital domain.
-\end{enumerate}
 
+\item While \cite{DBLP:conf/cav/AbateBCCDKKP17} is restricted to systems
+  modeled in discrete time, in the current paper we present a model for
+  soundly evaluating reachability in a combined continuous-discrete time/space.
+\item A further limitation of the work in \cite{DBLP:conf/cav/AbateBCCDKKP17}
+  is its restriction to fixed-point arithmetic, meaning that fixed-point numbers
+  were employed for the representation of both the plant and the controller, as well as for
+  the operations performed by each of them.
+  Conversely, in the current paper we also make use of floating-point arithmetic
+  and compare the two approaches. Additionally, we enhance the implementation with an SMT backend, allowing us to also use reals in order to represent the states of the plant.
+\end{enumerate}
+  
 %-------------------------------
 \section{Related Work}
 \label{sec:relw}
@@ -331,8 +384,7 @@ The classical approach to control synthesis has often disregarded
 digitalization effects, whereas more recently modern techniques have focused
 on different aspects of discretization, including delayed
 response~\cite{Duggirala2015} and finite word length (FWL) semantics, with
-the goal either to verify (e.g.,~\cite{daes20161}) or to optimize
-(e.g.,~\cite{oudjida2014design}) given implementations.
+the goal either to verify~\cite{daes20161} or to optimize~\cite{oudjida2014design} given implementations.
 
 There are two different problems that arise from FWL semantics.  The first
 is the error in the dynamics caused by the inability to represent the exact
@@ -360,34 +412,189 @@ that always converges toward the controllable set.  Similarly,
 bounds its trajectory to a known region over a finite time period.  This
 technique works for both linear and non-linear systems.
 
+%\note{Add note explaining relationship of this work with previously published papers. }
+
 %-------------------------------
 \section{Preliminaries}
 \label{sec:preliminaries}
 %-------------------------------
 
 %-------------------------------
-\subsection{Abstract Acceleration} 
-\label{ssec:aa}
+\subsection{State-space representations of LTI models}
+\label{sec:model}
 %-------------------------------
 
-For abstraction based synthesis, we will use Abstract
-Acceleration~\cite{JSS14,cattaruzza2015unbounded}.  Given an iterative
-program with dynamics
+%% A dynamical system is a system in which a function describes the progression
+%% of a state over time.  In a continuous domain with linear dynamics, it is
+%% described by a first order Ordinary Differential Equation (ODE).
+%% \begin{equation}
+%% \dot{x}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)% +\vec{w}(t)
+%% \label{eq:dynamical}
+%% \end{equation}
+
+We consider models of physical plants expressed as ordinary differential
+equations, which we assume to be controllable~\cite{Astrom08,
+astrom1997computer}: %\note{Pls eliminate bold quantities, unless strictly needed. }
+%
+\begin{align}
+\label{eq:ode1}
+\dot{x}(t) = \mat{A}\vec{x}(t)+ \mat{B} \vec{u}(t), \quad 
+\vec{x} \in \mathbb{R}^p, \vec{u} \in \mathbb{R}^q,\,
+\mat{A} \in \mathbb{R}^{p \times p},\,
+\mat{B} \in \mathbb{R}^{p \times q},
+\end{align}
+%
+where $t \in \mathbb R_0^+$ denotes continuous time, $\mat{A}$ and $\mat{B}$
+are matrices that fully characterize the dynamics of the continuous plant,
+and $x(0)$ is the initial state.
+
+Equation~\eqref{eq:ode1} is soundly discretized in
+time~\cite{middleton1990digital,van1978computing} at constant intervals,
+whose duration we refer to as the sample time $T_s$, into the difference
+equation
+%
+\begin{align}
+\label{eq:plant}
+\vec{x}_{k+1} =& \mat{A}_d \vec{x}_k+ \mat{B}_d \vec{u}_k
+\text{ where }
+\left\{
+\begin{array}{l}
+\mat{A}_d=e^{\mat{A}T_s}\\
+\mat{B}_d = \int_{t = 0}^{T_s} e^{\mat{A} t} dt\ \mat{B}
+\end{array}
+\right.,
+\end{align} 
+where $k \in \mathbb N$ is a discrete counter and $\vec{x}_{0}=\vec{x}(0)$
+is the initial state.  
+
+The linear feedback controller is characterized by a gain matrix
+$\mat{K}$ that influences the closed-loop dynamics
+(Fig.~\ref{fig:digitalsystem}).  Later, we will address the issue of
+variable quantization, as introduced by the ADC/DAC conversion blocks.
+
+\begin{figure*}[htb]
+\centering
+
+\tikzset{add/.style n args={4}{
+    minimum width=6mm,
+    path picture={
+        \draw[circle] 
+            (path picture bounding box.south east) -- (path picture bounding box.north west)
+            (path picture bounding box.south west) -- (path picture bounding box.north east);
+        \node[draw=none] at ($(path picture bounding box.south)+(0,0.13)$)     {\small #1};
+        \node[draw=none] at ($(path picture bounding box.west)+(0.13,0)$)      {\small #2};
+        \node[draw=none] at ($(path picture bounding box.north)+(0,-0.13)$)    {\small #3};
+        \node[draw=none] at ($(path picture bounding box.east)+(-0.13,0)$)     {\small #4};
+        }
+    }
+ }
+
+\resizebox{1.0\textwidth}{!}{
+ \begin{tikzpicture}[scale=0.6,-,>=stealth',shorten >=.2pt,auto,
+     semithick, initial text=, ampersand replacement=\&,]
+
+  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center}, row sep=.6cm, column sep=.6cm] {
+    \node[draw=none] (r) {$r_k$};
+    
+   \& \node[circle,add={-}{+}{}{}] (circle) {};
+   \node[draw=none] (ez) at ([xshift=1cm,yshift=.15cm]circle)  {$u_k$};
+   \node[rectangle,draw,minimum width=1cm,minimum height=1cm] (Kd) at ([xshift=0,yshift=-1.5cm]circle)  {\sc $\mat{K}$};
+   \coordinate (kdsouth) at ([yshift=-2cm]Kd);
+      
+   
+   \& complexnode/.pic={ 
+      \node[rectangle,dashed,draw,minimum width=3cm,minimum height=1.6cm,label=\textbf{DAC}] (dac) {};
+     \node[circle,add={+}{+}{}{},fill=gray!20] (q2) at ([xshift=-.65cm]dac.center) {};
+     \node[draw=none] (q2t)  at ([yshift=.55cm]q2) {{\sc Q2}};
+     \node[draw=none] (v2)  at ([yshift=-1.5cm]q2) {$\nu_2$};
+     \node[fill=gray!20] (zoh) at ([xshift=.65cm]dac.center) {\sc ZOH};
+   }   
+
+   \& complexnode/.pic={ 
+      \node[rectangle,dashed,draw,minimum width=8cm,minimum height=3.5cm,label=\textbf{Plant}] (plant)  at ([yshift=-.5cm]dac.center) {};
+      \node[rectangle,draw,minimum width=1cm,minimum height=1cm] (B) at ([xshift=-2.5cm,yshift=.5cm]plant.center)  {\sc $\mat{B}$};
+      \node[draw=none] (u) at ([xshift=-1cm,yshift=.15cm]B)  {$u(t)$};
+      \node[circle,add={+}{+}{}{}] (p1) at ([xshift=-1.3cm,yshift=.5cm]plant.center) {};
+      \node[draw=none] (xdot) at ([xshift=.85cm,yshift=.15cm]p1)  {$\dot{\vec{x}}(t)$};   
+      \node[rectangle,draw,minimum width=1cm] (int) at ([xshift=.5cm,yshift=.5cm]plant.center) {\sc $\int$};
+      \coordinate (xsouth) at ([xshift=1cm]int);
+      \node[draw=none] (x) at ([xshift=1cm,yshift=.15cm]int)  {$\vec{x}(t)$};
+      \node[rectangle,draw,minimum width=1cm,minimum height=1cm] (A) at ([xshift=.5cm,yshift=-1cm]plant.center)  {\sc $\mat{A}$};
+      \coordinate (aeast) at ([xshift=1cm]A);
+      \coordinate (awest) at ([xshift=-1.8cm]A);
+    }   
+        
+   \& complexnode/.pic={ 
+     \node[rectangle,dashed,draw,minimum width=3.5cm,minimum height=1.6cm,label=\textbf{ADC},] (adc) {};
+     \draw[] ([xshift=-1cm]adc.center) -- ++(0.5,0.2cm);
+     \coordinate (switch1) at ([xshift=-1cm]adc.center);
+     \coordinate (switch2) at ([xshift=-0.4cm]adc.center);
+     \node[circle,add={+}{+}{}{},fill=gray!20] (q1) at ([xshift=.6cm]adc.center) {};
+     \node[draw=none] (q2t)  at ([yshift=.55cm]q1) {\sc Q1};
+     \node[draw=none] (v1)  at ([yshift=-1.5cm]q1) {$\nu_1$};
+     \node[draw=none] (y) at ([xshift=.85cm,yshift=.15cm]q1)  {$\vec{x}_k$};       
+     \coordinate (ykeast) at ([xshift=1.9cm]q1);
+     \coordinate (yksouth) at ([xshift=1.9cm,yshift=-3.5cm]q1);
+   } 
+   \& \coordinate (aux1);
+   \& \\
+  };
+
+  \path[->] (v1) edge (q1.south);
+  \path[->] (v2) edge (q2.south);
+  \path[->] (r) edge (circle.west);
+  \path[->] (circle.east) edge (q2.west);
+  \path       (q2.east) edge (zoh.west);
+  \path[->] (zoh.east) edge (B.west);
+  \path
+   (B.east) edge (p1.west)
+   (p1.east) edge (int.west)
+   (xsouth) edge (aeast)
+   (aeast) edge (A.east)
+   (A.west) edge (awest)
+   (awest) edge (p1.south)
+   (int.east) edge (switch1.west)
+   (switch2) edge (q1.west);
+  \path
+   (q1.east) edge (ykeast)
+   (ykeast) edge (yksouth)
+   (yksouth) edge (kdsouth);
+  \path[->]  (kdsouth) edge (Kd.south);
+  \path (Kd.north) edge (circle.south);
+ \end{tikzpicture}
+}
+ \caption{Closed-loop digital control system 
+ \label{fig:digitalsystem}}
+\end{figure*}
+
+
+%-------------------------------
+\subsection{Abstract Acceleration of Linear Dynamics} 
+\label{ssec:aa}
+%-------------------------------
+ 
+We recall a technique called \emph{Abstract Acceleration}~\cite{JSS14,cattaruzza2015unbounded}, 
+which will be key for abstraction-based synthesis.  
+\note{This clashes with the model introduced above, with inputs - motivate why?}
+Given a model of an iterative program with dynamics
+\note{Pls eliminate unnecessary ``logical'' notation - we have discussed this already for the CAV18 submission, do we need to go through this again????}
 %
 \begin{equation}
-\vec{x}_{k+1}=\mat{A}\vec{x}_k : \vec{x}_k \in \mathbb{R}^n \wedge \mat{A} \in \mathbb{R}^{n \times n} \wedge k \in [0\ \ \infty),
+\vec{x}_{k+1}=\mat{A}\vec{x}_k : \vec{x}_k \in \mathbb{R}^n \wedge \mat{A} \in \mathbb{R}^{n \times n} \wedge k \in \mathbb N_0,
 \end{equation}
 %
+\note{material has been blindly pasted here - dimensions are all screwed up.}
 we want to find all possible states visited over an infinite time horizon
-starting at an initial set $X_0$.  We call this set the \emph{reach tube} of
+starting at an initial set $X_0$.  
+This set is known as the \emph{reach tube} of
 the model:
 %
 \begin{equation}
-\hat{X} = \{ \vec{x}_k : k \in [0\ \infty) \wedge \vec{x}_0 \in X_0 \wedge \vec{x}_{k+1}=\mat{A}\vec{x}_k\}.
+\hat{X} = \{ \vec{x}_k : k \in \mathbb N_0 \wedge \vec{x}_0 \in X_0 \wedge \vec{x}_{k+1}=\mat{A}\vec{x}_k\}.
 \end{equation}
 %
 It is easy to see that the infinite number of iterations would result in an
-unbounded cumulative rounding error, but using Abstract Acceleration we
+unbounded cumulative rounding error \note{why do we bring in the discussion on the rounding error here? why do we claim AA solves it? Is this the best manner to motivate the AA technique?}, but using Abstract Acceleration we
 transform this problem into a one-step solution.  We first change the
 problem statement by means of acceleration into
 %
@@ -412,7 +619,8 @@ $\mat{A}$ in its main diagonal.  We correspondingly define
 $\mathcal{J}=\mat{S}^{-1}\mathcal{A}\mat{S}$, which is such that
 $\mathcal{J} \supseteq \bigcup_{k \in [0\ \infty)} \mat{J}^k$.
 
-Introduce set $X=\{ \vec{x} : \mat{C}\vec{x} \leq \vec{d}\}$. 
+Introduce set $X=\{ \vec{x} \mid \mat{C}\vec{x} \leq \vec{d}\}$. 
+\note{Why are we interested in this set? What does this set represent?}
 The linear transformation $\vec{x}'=\mat{S}^{-1}\vec{x}$ leads to set 
 %
 \begin{equation}
@@ -423,10 +631,10 @@ X'= \mat{S}^{-1}X = \{\vec{x}' : \mat{C}\mat{S}\vec{x}'\leq \vec{d}\}.
 Analogously, let $X_0'=\mat{S}^{-1}X_0$ and
 ${\hat{X}'^\sharp}=\mat{S}^{-1}{\hat{X}^\sharp}$ be the initial set and the
 abstract reach tube mapped onto the eigenspace of matrix $\mat{A}$.  We may
-transform equation \eqref{eq:aa_reachtube} into:
+transform equation \eqref{eq:aa_reachtube} into: 
 %
 \begin{equation}
-\hat{X}' \subseteq {\hat{X}'^\sharp} = \mathcal{J}X_0', \text{ such that } \bigcup_{k \in [0\ \ \infty)}\mat{J}^k \subseteq \mathcal{J}, 
+\hat{X}' \subseteq {\hat{X}'^\sharp} = \mathcal{J}X_0', 
 \end{equation}
 %
 where $\hat{X}'=\mat{S}^{-1}\hat{X}$ and $\mathcal{J}$ is a convex
@@ -447,21 +655,21 @@ follows (its steps are denoted in parentheses):
 %
 \item We perform unsound eigen-decomposition using an existing algebra package (lines \ref{alg:calcEigenvalues}-\ref{alg:calcEigenvectors}).
 %
-\item Then we restore soundness to the results using the methods described in Section \ref{sec:eigensolver} (lines \ref{alg:soundEigenvalues}-\ref{alg:soundEigenvectors}). 
+\item Then we restore soundness to the results using the methods described in \cite{cattaruzza2017sound} (lines \ref{alg:soundEigenvalues}-\ref{alg:soundEigenvectors}).
 %
 \item The inverse of the matrix of eigenvectors is calculated after soundness is restored, using interval arithmetic in order to ensure its soundness (line \ref{alg:inverse}).
 %
-\item The abstract dynamics are obtained by evaluating the convex hull of all powers of eigenvalues up to the desired number of iterations as described in \cite{cattaruzza2015unbounded} (line \ref{alg:aa}).
+\item The abstract dynamics are obtained by evaluating the convex hull of all powers of eigenvalues up to the desired number of iterations as described in \cite{cattaruzza2015unbounded} (line \ref{alg:aa}). 
 %
 \item Using Equation \eqref{eq:eigenInit}, transform the initial state into the eigenspace (line \ref{alg:eigeninit}).
 %
-\item Extract the vertices of the eigen-polyhedron $X_0'$ using the sound over-approximation of the double description algorithm \cite{fukuda1996double} from Section \ref{sec:dd} (line \ref{alg:getVertices}). It is worth noting that this algorithm uses a simplex to seed it: we will first discuss the simplex algorithm, which is also needed at the next step, and then the vertex enumeration algorithm used at this stage. 
+\item Extract the vertices of the eigen-polyhedron $X_0'$ using the algorithms described in \cite{cattaruzza2015unbounded,cattaruzza2017sound} (line \ref{alg:getVertices}). 
 %
 \item Calculate the mapped \emph{abstract reach tube} ${\hat{X}'^\sharp}$
 that over-approximates the image of the reach tube in the eigenspace (line
 \ref{alg:getReachTube}).  This is achieved by evaluating a set of objective
 functions using the abstract dynamics as a simplex Tableau, and via a sound
-simplex described in Section \ref{sec:simplex}.  The objective functions are
+simplex described in \cite{cattaruzza2017sound}.  The objective functions are
 defined by the vertices of $X'_0$, denote as $V_0$, and by the desired
 template directions, such that
 %
@@ -507,249 +715,199 @@ $\hat{X}^\sharp=\mat{S}{\hat{X}'^\sharp}$ (line \ref{alg:getNormReachTube}).
 \label{alg:findReachTube}
 \end{algorithm}
 
-%-------------------------------
-\subsection{Overapproximating continuous time dynamics using discrete models}
-\label{sec:cont_aa}
-%-------------------------------
+%%-------------------------------
+%\subsection{Overapproximating continuous time dynamics using discrete models}
+%\label{sec:cont_aa}
+%%-------------------------------
+%
+%Thus far we wave discussed the Abstract Accelertion of Discrete Time
+%systems.  However, our plant models derive from the discretization of
+%continuous time systems.  We therefore seek to establish a sound
+%overapproximation which does not only encompass the selected discretization,
+%but any chosen discretization in the time domain.
+%
+%A dynamical system is a system in which a function describes the progression
+%of a state over time.  In a continuous domain with linear dynamics, it is
+%described by a first order Ordinary Differential Equation (ODE).
+%%
+%\begin{equation}
+%\dot{x}(t)=\mat{A}_o\vec{x}(t)+\mat{B}_o\vec{u}(t)
+%\label{eq:dynamical}
+%\end{equation}
+%%
+%Furthermore, a control system may have a derived
+%output that is a linear combination of its states and inputs, which may
+%restricts the observability of the statespace from the output space.
+%%
+%\begin{equation}
+%\vec{y}(t)=\mat{C}_o\vec{x}(t)+\mat{D}_o\vec{u}(t)
+%\end{equation}
+%%
+%Discretization of a continuous dynamical system turns the ODE into a
+%difference equation, assuming zero-order hold for the input $\vec{u}$, to
+%%
+%\begin{align}
+%\label{eq:discretization}
+%\vec{x}_{k+1} &= \mat{A}_d\vec{x}_k+\mat{B}_d\vec{u}_k\\
+%y_k &= \mat{C}_d \vec{x}_ k + \mat{D}_d \vec{u}_ k 
+%\end{align}
+%where
+%\begin{align}
+%\label{eq:discretize}
+%\mat{A}_d &= e^{\mat{A}_o T_s} = \mathcal{L}^{-1} { ( s \mat{I} - \mat{A}_o )^{-1} }_{t = T_s}\\
+%\mat{B}_d &= \int_{t = 0}^{T_s} e^{\mat{A}_o t} dt\ \mat{B}_o = \mat{A}_o^{-1} ( \mat{A}_d - \mat{I} ) \mat{B}_o\\
+%\mat{C}_d &= \mat{C}_o\\
+%\mat{D}_d &= \mat{D}_o \\
+%\end{align}
+%and $T_s$ is the sample time. Then
+%\begin{align*}
+%x(kT)=x_k \wedge y(kT) = y_k, \forall k
+%\end{align*}
 
-Thus far we wave discussed the Abstract Accelertion of Discrete Time
-systems.  However, our plant models derive from the discretization of
-continuous time systems.  We therefore seek to establish a sound
-overapproximation which does not only encompass the selected discretization,
-but any chosen discretization in the time domain.
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+\section{Acceleration of continuous-time models}\label{sec:continuous_time_accel}
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
 
-A dynamical system is a system in which a function describes the progression
-of a state over time.  In a continuous domain with linear dynamics, it is
-described by a first order Ordinary Differential Equation (ODE).
+The time discretization in Sec.~\ref{sec:model} only allows us to evaluate
+the state of the plant at integer multiples of the sample time.  
+%\note{Unlike the CAV18 paper, these gain matrices have not been discussed yet. }
+However, in
+order to synthesize $\mat{K}$, we must be able to ensure that
+certain properties of the plant hold at any given point in time.  In order
+to do so, we accelerate the dynamics of the plant according to the model
+semantics in Sec.~\ref{sec:model} and compute the state
+$\vec{x}_T$ at a given time $T$,
 %
-\begin{equation}
-\dot{x}(t)=\mat{A}_o\vec{x}(t)+\mat{B}_o\vec{u}(t) +\vec{w}(t)
-\label{eq:dynamical}
-\end{equation}
+% namely we find an equation for $\tau^n(\vec{x},\vec{u})$ given $\tau(\vec{x},\vec{u})$. 
 %
-where $\vec{w}$  is a continuous zero-mean white noise source with
-covariance $N ( 0 , Q )$ Furthermore, a control system may have a derived
-output that is a linear combination of its states and inputs, which may
-restricts the observability of the statespace from the output space.
+namely the state of the system $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$ at time
+$t=T$.
+
+%\note{ [add?] In this section we work with fully observed models, namely where $y = x$. } 
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+\subsection{Accelerated\! dynamics\! for\! continuous-time\! models\! without\! inputs}\label{sec:cont_acc_no_inputs}
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 %
-\begin{equation}
-\vec{y}(t)=\mat{C}_o\vec{x}(t)+\mat{D}_o\vec{u}(t)
-\end{equation}
-%
-Discretization of a continuous dynamical system turns the ODE into a
-difference equation, assuming zero-order hold for the input $\vec{u}$ and
-continuous integration for the noise $\vec{w}$, to
+Given a specific time $T$, the state $\vec{x}(t=T)$ can be expressed as a
+linear function of $\vec{x}_0$ as shown below.  We assume that the system
+has no inputs, so its dynamics are described by
+$\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$.
+ 
+\begin{lemma}
+The solution to the differential equation $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$, where $\mat{A}=\mat{S}\mat{J}\mat{S}^{-1}$, and $\mat{S}$ are the generalized eigenvectors of $\mat{A}$,
+evaluated at time $T$ is
 %
 \begin{align}
-\label{eq:discretization}
-\vec{x}_{k+1} &= \mat{A}_d\vec{x}_k+\mat{B}_d\vec{u}_k + \vec{w}_k\\
-y_k &= \mat{C}_d \vec{x}_ k + \mat{D}_d \vec{u}_ k 
-\end{align}
-with covariance for $\vec{w}_k$, $N ( 0 , Q_d )$
-where
-\begin{align}
-\label{eq:discretize}
-\mat{A}_d &= e^{\mat{A}_o T_s} = \mathcal{L}^{-1} { ( s \mat{I} - \mat{A}_o )^{-1} }_{t = T_s}\\
-\mat{B}_d &= \int_{t = 0}^{T_s} e^{\mat{A}_o t} dt\ \mat{B}_o = \mat{A}_o^{-1} ( \mat{A}_d - \mat{I} ) \mat{B}_o\\
-\mat{C}_d &= \mat{C}_o\\
-\mat{D}_d &= \mat{D}_o \\
-Q_d &= \int_{t = 0}^{T_s} e^{\mat{A}_o t} Q e^{\mat{A}_o^T t} dt
-\end{align}
-and $T_s$ is the sample time. Then
-\begin{align*}
-x(kT)=x_k \wedge y(kT) = y_k, \forall k
-\end{align*}
-
-%-------------------------------
- \subsubsection{A discrete time model using reals}
- \label{sec:real_aa}
-%-------------------------------
-
- \begin{theorem}
- The expression
- \begin{align}
- \vec{x}_T&=\vec{x}(t=T)=\mat{A}_{T}\vec{x}_0 : \dot{\vec{x}}=\mat{A}\vec{x} \wedge \mat{A}=\mat{S}\mat{J}\mat{S}^{-1}\nonumber\\
+ \vec{x}_T&=\vec{x}(t=T)=\mat{A}_{T}\vec{x} (0)\\
  \mat{A}_{T}&= \mat{S}
  \left [ \begin{array}{cccc}
- e^{T\lambda_i}  & s_i\frac{T^{j-i}e^{T\lambda_i}}{(j-i)!} & \hdots  & s_i\frac{T^{p-i}e^{T\lambda_i}}{(p-i)!} \\
+ e^{T\lambda_1}  & s_1\frac{T^{1}e^{T\lambda_i}}{(2)!} & \hdots  & s_i\frac{T^{p-1}e^{T\lambda_i}}{(p-i)!} \\
 0 & e^{T\lambda_i}  & s_i\frac{T^{j-i}e^{T\lambda_i}}{(j-i)!} & \vdots \\
 \vdots & & \ddots & \vdots \\
 0 & \cdots & 0  &e^{T\lambda_i} \\
 \end{array} \right ]
- \mat{S}^{-1}\nonumber\\
- s_i&=\left\{\begin{array}{cc}1&gm(\lambda_i)>1\\0&gm(\lambda_i)=1\end{array}\right.
- \label{eq:continuous_tube_dyn}
- \end{align}
- where $\lambda_i \in \mat{J}$ are the eigenvalues of $\mat{A}$, and $gm(\lambda_i)$ is the geometric multiplicity of $\lambda_i$ is a witness of the system $\dot{\vec{x}}(t)=\mat{A}\vec{x}$ at time t=T.
- \end{theorem}
- \begin{corollary}
- If $\mat{J}$ is diagonal and there exists a discrete dynamics matrix for a sampling time $T_d :  A_d=e^{\mat{A} T_d}$, then $\vec{x}_k=A_d^k\vec{x} : k \in (0,\infty)$ is a witness of the system at time $t=kT_d$.
- \end{corollary}
- \begin{proof}
- Let us recall equation \ref{eq:discretize}. The discrete representation of the system dynamics discretized with sample time $T_1$ is ruled by the formula
- $\mat{A}_1 = e^{\mat{A} T_1}$. From matrix theory, we have 
-\begin{align}
- e^{\mat{A}}&=\sum_{k=0}^\infty \frac{1}{k!}\mat{A}^k
-\end{align} 
-\begin{align} 
- e^{\mat{S}\mat{J}\mat{S}^{-1}}&=\sum_{k=0}^\infty \frac{1}{k!}(\mat{S}\mat{J}\mat{S}^{-1})^k
- =\mat{S} \left (\sum_{k=0}^\infty \frac{1}{k!}\mat{J}^k\right) \mat{S}^{-1}
- =\mat{S}e^{\mat{J}}\mat{S}^{-1}
-\end{align} 
-\begin{equation}
-\mat{A}=\mat{S}\mat{J}\mat{S}^{-1} \Rightarrow \vec{A}_1 = \mat{S}\mat{J}_1\mat{S}^{-1}= \mat{S}e^{\mat{J} T_1}\mat{S}^{-1}.
- \end{equation}
- 
- Let $\mat{J}$ be a diagonal matrix, such that 
- $${\lambda_1}_i=e^{\lambda_i T_1}, \forall \lambda_i \in \mat{J}.$$
- Let us now take a different sample rate $T_2$, such that 
- $${\lambda_2}_i=e^{\lambda_i T_2}, \forall \lambda_i \in \mat{J}.$$
- We can then say that 
- \begin{equation}
- {\lambda_2}_i=e^{\lambda_i T_1 \frac{T_2}{T_1}}={\lambda_1}_i^{\frac{T_2}{T_1}} \Rightarrow A_2=A_1^{\frac{T_2}{T_1}}.
- \end{equation}
- This proves the theorem for $gm(\lambda_i)=1$.
- We now note that given an exponentiated Jordan form with geometric multiplicity, the upper diagonal terms can be
- referenced to the original eigenvalues modified by the sampling rate.
-  Let $\mat{J}\in \mathbb{R}^{p \times p}$ be a Jordan Canonical matrix. Then
-\begin{align}
- \mat{J}_1=&\sum_{k=0}^\infty \frac{1}{k!}\left(\mat{J}T_1\right)^k\nonumber\\
- =&\sum_{k=0}^\infty \frac{1}{k!} \left [ \begin{array}{cccc}
- \lambda_i^k  & \binom{k}{1}  \lambda^{k-1} & \hdots  & \binom{k}{p-1} \lambda_i^{k-p+1} \\
-& \lambda_i^k  & \binom{k}{1}  \lambda_i^{k-1} & \vdots \\
-\vdots & \ddots & \ddots & \vdots \\
-& &  &\lambda_i^k \\
-\end{array} \right ] T_1^k
+ \mat{S}^{-1}
+ \label{eq:continuous_tube_dyn2}\\
+ &\text{where } s_i=\left\{\begin{array}{cc}1&\quad gm(\lambda_i)>1\\0&\quad gm(\lambda_i)=1\end{array}\right.,\nonumber
 \end{align}
 %
-The eigenvalues remain the same as in the diagonal case, but the upper triangular terms are of the form:
+$\lambda_i$ are the eigenvalues of $\mat{A}$, and $gm(\lambda_i)$ is the geometric multiplicity of $\lambda_i$.
+%
+%$\vec{x}_T$ is the state of the system $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$ at time t=T. 
+If $\mat{J}$ is diagonal and there exists a discrete dynamics matrix for a sampling time $T_d$ such that $A_d=e^{\mat{A} T_d}$, then $\vec{x}_T=A_d^{\frac{T}{T_d}}\vec{x}_0 \text{ with } T \in \mathbb{R}^+_0$ is the state of the system at time $t=T$. 
+\end{lemma}
+
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+\subsection{Accelerated dynamics for models with parametric inputs}\label{sec:real_discrete_param_inputs}
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Next, we are interested in studying models with parametric inputs, which are
+described by $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)$, where
+$\forall t\geq 0.\,\vec{u}(t)=\vec{u}$.  For such models, a state $\vec{x}_T$
+is computed next.
+%
+\begin{lemma}
+%
+The state of the model
+$\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)$ at time $T$ given a
+parametric input $\vec{u}$ is
 %
 \begin{align}
-\forall j>i, c_{ij}&=\sum_{k=j-i}^\infty \frac{1}{k!}\binom{k}{j-i} \lambda_i^{k-(j-i)}T_1^k\\
-&=\frac{1}{(j-i)!}\sum_{k=j-i}^\infty \frac{1}{(k-(j-i))!} \lambda_i^{k-(j-i)}T_1^k\nonumber\\
-&=\frac{T_1^{j-i}e^{\lambda_i T_1}}{(j-i)!}\nonumber
+\vec{x}_T&=\vec{x}(t=T)=\mat{A}_T\vec{x}_0 + \mat{B}_T\vec{u}
+\label{eq:continuous_tube_param}
 \end{align}
-which completes the proof for $gm(\lambda_i)>1$.
-\end{proof}
+%
+where $\mat{B}_T=\mat{A}^{-1}(\mat{I}-\mat{A}_T)\mat{B}$, $\forall t \leq T.\, \vec{u}(t)=\vec{u}$, and $\mat{A}_T$ as in
+\eqref{eq:continuous_tube_dyn2} \footnote{When $\mat{A}$ is not invertible,
+we use $\left[\begin{array}{cc}\mat{A}_T&\mat{B}_T\\
+0&\mat{I}\end{array}\right]=e^{\left[\begin{array}{cc}\mat{A}&\mat{B}\\0&0\end{array}\right]}$.}. 
+If $\mat{J}$ is diagonal and given a sampling time $T_d$ such that
+$A_d=e^{\mat{A} T_d}$, then
+$\vec{x}_T=A_d^{\frac{T}{T_d}}\vec{x}_0+(\mat{I}-\mat{A}_d^{\frac{T}{T_d}}\mat{B}_d\vec{u})
+\text{ with } T \in \mathbb{R}_0^+$ (where $\mat{A}_d^{\frac{T}{T_d}} =
+e^{log(\mat{A}_d) \frac{T}{T_d}} = e^{\mat{A} T}$) is the state of the
+system at time $T$.
+%
+\end{lemma}
 
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+\subsection{Accelerated dynamics for models with a sampled-time feedback}\label{sec:real_discrete_feedback_inputs}
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+The final case we analyze is that of hybrid-time models, where the plant
+dynamics evolve in continuous time while the feedback dynamics evolve in
+discrete time.  A~new input value is produced only at every sample time but
+implemented over the continuous-time plant dynamics.
+%
+%\note{Matrix K has not been introduced yet. }
 \begin{theorem}
 The expression
+%
  \begin{align}
- \vec{x}_T&=\vec{x}(t=T)=\mat{A}^{-1}\vec{x}_T'\nonumber\\
-\vec{x}_T'&=\mat{A}\mat{A}_T\vec{x}_0 + (\mat{I}-\mat{A}_T)\mat{B}\vec{u} : \forall t \leq T,\ \vec{u}(t)=\vec{u} 
+ \vec{x}_{T} &= (\mat{A}_{T-kT_s}-\mat{B}_{T-kT_s}\mat{K}) (\mat{A}_d-\mat{B}_d\mat{K})^k\vec{x}_0, 
+ \label{eq:cyber_feedback}
  \end{align}
- with $\mat{A}_T$ as per \eqref{eq:continuous_tube_dyn} is a witness of the system $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)$ at time $T$ given a parametric input $\vec{u}$.
- \end{theorem}
- \begin{corollary}
- If $\mat{J}$ is diagonal and there exists a discrete dynamics matrix for a sampling time $T_d :  A_d=e^{\mat{A} T_d}$, then $\vec{x}_k=A_d^k\vec{x}+(\mat{I}-\mat{A}_d^k\mat{B}\vec{u}) : k \in (0,\infty)$ is a witness of the system at time $kT_d$.
- \end{corollary}
- \begin{proof}
- We begin by expanding the equation
- \begin{align}
- \vec{x}_T&=\mat{A}^{-1}\vec{x}_T'\\
- \vec{x}_T'&=\mat{A}_T\vec{x}_0 + \mat{A}^{-1}(\mat{I}-\mat{A}_T)\mat{B}\vec{u} = \mat{A}_T\vec{x}_0 + \mat{B}_T\vec{u}\nonumber
- \end{align}
- where $\mat{A}_T=e^{\mat{A}T}$ and $\mat{B}_T=\mat{A}^{-1}(\mat{I}-\mat{A}_T)\mat{B}$ correspond to $\mat{A}_d$ and $\mat{B}_d$ in equation \eqref{eq:discretize}
- \end{proof}
- \begin{theorem}
-Let $\mat{A}_b$ be a spherical overapproximation of $\mat{A}$ and $U_b$ a spherical overapproximation of $U$ centered at $\vec{u}_c$
-\begin{align}
-\mat{A}_b&=\mat{S} \mat{J}_b \mat{S}^{-1}\\
-\mat{J}_{bs}&=\lambda_{bs}\mat{I} \wedge \lambda_{bs}=|| \mat{J}_s ||=
-\max_{\vec{u} \subseteq U_b'} \frac{|| \mat{J}_s\vec{u}_s ||}{||
-  \vec{u}_s ||}\nonumber
-\label{eq:induced}
-\end{align}
-where $|| \mat{J}_s ||$ is the induced matrix norm, $s$ indicates the index of each Jordan block, and $\vec{u}_s$ is the corresponding subvector of $\vec{u}$ (\emph{ie} the subspace of $\vec{u}$ on which $\mat{J}_s$ operates).
-Directly from the definition of the matrix norm, we have 
-\begin{equation}
-||\mat{J}_s\vec{u}_s|| \leq ||\mat{J}_s||\,||\vec{u}_s||, 
-\label{eq:overinduced}
-\end{equation}
-and $\mat{J}_{b} U_b$ is the smallest ball that over-approximates $\mat{J}  U_d$.
-
-The expression
- \begin{align}
- \label{eq:contu_reachset}
-X_T^\sharp &=\mat{A}^{-1}X_T'\supseteq X_T\\
-X_T'&=\mat{A}\mat{A}_TX_0 \oplus (\mat{I}-\mat{A}_{bT})\mat{B}U_b \oplus (\mat{I}-\mat{A}_T)\mat{B}\vec{u}_c\nonumber
- \end{align}
- is an overapproximation of the reach set  at time $t=T$ of the system $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t) + \mat{B}\vec{u}(t)$ given $\vec{x}(0) \in X_0$ and $\vec{u}(t) \in U$.
- \end{theorem}
-\begin{corollary}
- If $\mat{J}$ is diagonal and there exists a discrete dynamics matrix for a sampling time $T_d :  A_d=e^{\mat{A} T_d}$, then 
- \begin{equation}
- \tiny
- X_k=A_d^kX_0 \oplus (\mat{I}-\mat{A}_{bd}^k)(\mat{I}-\mat{A}_{bd})^{-1}\mat{B}U_b \oplus (\mat{I}-\mat{A}_d^k)(\mat{I}-\mat{A}_d)^{-1}\mat{B}\vec{u}_c\nonumber\\
- k \in (0,\infty)
- \end{equation}
-  is a witness of the system at time $kT_d$, where $\mat{A}_{bd}$ is a spherical overapproximation of $\mat{A}_d$
-\end{corollary}
- \begin{proof}
-Let $U'=\mat{B}U$, with $\vec{u}'$ its geometrical centre and $U_b'$ the smallest sphere centered at $\vec{u}'$ containing all points in $U'$.
-Then $U'\subseteq U_b' \oplus \vec{u}_c' \Rightarrow (\mat{I}-\mat{A}_T)U' \subseteq (\mat{I}-\mat{A}_T)U_b' \oplus (\mat{I}-\mat{A}_T)\vec{u}_c'$. Since $ (\mat{I}-\mat{A}_{bT})U_b'\supseteq  (\mat{I}-\mat{A}_T)U_b'$, then $(\mat{I}-\mat{A}_T)U' \subseteq (\mat{I}-\mat{A}_{bT})U_b' \oplus (\mat{I}-\mat{A}_T)\vec{u}_c'$ thus proving the theorem for $\vec{u}(t)=\vec{u}_0 : t \in [0\ T]$.
-  
-For the continuous time interval, let us look at the solution for the differential equation at time $T$ with a non-deterministic input $\vec{u}$.
-\begin{equation*}
-\vec{x}_T=e^AT\vec{x}_0+\int_{t = 0}^{T_s} e^{\mat{A} t} \mat{B} \vec{u}(t) dt
-\end{equation*}
-We will first divide this equation into 
+%
+with $\mat{A}_T$ as in \eqref{eq:continuous_tube_dyn2}, $\mat{B}_T$ as in
+\eqref{eq:continuous_tube_param}, and where $\mat{A}_d=\mat{A}_{T_s}$,
+$\mat{B}_d=\mat{B}_{T_s}$ describe the discretized plant dynamics with
+sample time $T_s$, is the state of the model
+%
 \begin{align*}
-\vec{x}_T&=e^AT\vec{x}_0+\int_{t = 0}^{T} e^{\mat{A} t} \mat{B} \vec{u}_c dt +\int_{t = 0}^{T_s} e^{\mat{A} t} \mat{B} (\vec{u}(t)-\vec{u}_c) dt\\
-&=A_T\vec{x}_0+B_T\vec{u}_c+\int_{t = 0}^{T} \mat{S}e^{\mat{J} t} \mat{S}^{-1}\mat{B} (\vec{u}(t)-\vec{u}_c) dt\\
-&=A_T\vec{x}_0+B_T\vec{u}_c+\mat{S}\int_{t = 0}^{T} e^{\mat{J} t} \vec{u}_{j}'(t) dt\\
-&=A_T\vec{x}_0+B_T\vec{u}_c+\mat{S}\int_{t = 0}^{T} \sum_{k=0}^\infty \frac{1}{k!} \mat{J}^k t^k \vec{u}_{j}'(t) dt\\
-&=A_T\vec{x}_0+B_T\vec{u}_c+\mat{S}\sum_{k=0}^\infty \frac{1}{k!} \int_{t = 0}^{T} t^k \mat{J}^k \vec{u}_{j}'(t) dt
+ \dot{\vec{x}}(t) = \mat{A}\vec{x}(t)+\mat{B}\vec{u}(t), \quad 
+ \vec{u}(t)=\mat{K}\vec{x}_k,  \,
+ kT_s \leq t < (k+1)T_s \,. 
 \end{align*}
-It follows from equation \eqref{eq:overinduced} that $\mat{J}^k \vec{u}_{j}'(t) \subseteq \mat{J}_b^k U_{bj}'$ (where $U_{bj}'=\mat{S}^{-1}U_b'$), hence
-\begin{align*}
-&X_T \subseteq A_TX_0+B_T\vec{u}_c+\mat{S}\sum_{k=0}^\infty \frac{1}{k!} \int_{t = 0}^{T} t^k \mat{J}_b^k U_{bj}' dt\\
-\Rightarrow &X_T \subseteq A_TX_0+B_T\vec{u}_c+\mat{S} \int_{t = 0}^{T} \sum_{k=0}^\infty \frac{1}{k!}\mat{J}_b^k t^k U_{bj}' dt\\
-\Rightarrow &X_T \subseteq A_TX_0+B_T\vec{u}_c+\int_{t = 0}^{T_s} e^{\mat{A}_b t} U_b' dt\\
-\Rightarrow &X_T \subseteq A_TX_0+B_T\vec{u}_c+ \mat{A}^{-1}(\mat{I}-\mat{A}_{bT}) \mat{B} U_b
-\end{align*}
-Multiplying by $\mat{A}$ we get $X_T'$ as in \eqref{eq:contu_reachset}, thus proving the theorem.
-\end{proof}
-
- %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- \subsubsection{Discrete dynamics using reals for systems with discrete time feedback inputs}\label{sec:real_discrete_feedback_inputs}
- %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-The final case we analyse here is that of hybrid time systems, where the plant dynamics evolve in continuous time
-while the feedback dynamics evolve in discrete time.
-
-\begin{theorem}
-The expression
- \begin{align}
- \vec{x}_{t} &= (\mat{A}_{t-kT_s}-\mat{B}_{t-kT_s}\mat{K}) (\mat{A}_d-\mat{B}_d\mat{K})^k\vec{x}_0
- \end{align}
- with $\mat{A}_t, \mat{B}_t$ as per \eqref{eq:continuous_tube_dyn} and $\mat{A}_d, \mat{B}_d$ as per equation \eqref{eq:discretize} is a witness of the system
- \begin{align}
- \dot{\vec{x}}_{t} &= \mat{A}\vec{x}+\mat{B}\vec{u}_t\nonumber\\
- \vec{u}_t=\mat{K}\vec{x}_k  : kT_s \leq t < (k+1)T_s
- \end{align}
- \end{theorem}
-
+%
+\end{theorem}
 \begin{proof}
-Let $\mat{K}$ be a feedback controller such that $\vec{u}_k=-\mat{K}\vec{x}_k$ at time $t=kT_s$. Let the output of
-the feedback system be a zero order holder such that $\vec{u}(t+kT_s)=\vec{u}(kT_s) : 0 \leq t < T_s$.
-The closed loop dynamics of the system between times $kT_s$ and $kT_s+T_s$ are
-\begin{equation}
-\vec{x}_{k,t}=\mat{A}_t\vec{x}_k-\mat{B}_t\mat{K}\vec{x}_k = (\mat{A}_t-\mat{B}_t\mat{K})\vec{x}_k : 0 \leq t < T_s
-\end{equation}
+%
+Let $\mat{K}$ be a feedback controller such that
+$\vec{u}_k=-\mat{K}\vec{x}_k$ at time $t=kT_s$.  Let the output of the
+feedback system be a zero order holder such that
+$\vec{u}(t'+kT_s)=\vec{u}(kT_s), \text{ for } 0 \leq t' < T_s$.  The closed
+loop dynamics of the system between times $kT_s$ and $kT_s+T_s$ are
+%
+\begin{align*}
+\vec{x}_{k,t'}=\mat{A}_{t'}\vec{x}_k-\mat{B}_{t'}\mat{K}\vec{x}_k = (\mat{A}_{t'}-\mat{B}_{t'}\mat{K})\vec{x}_k,
+\end{align*}
+where $0 \leq t' < T_s$
 We further explore the dynamics across discrete time boundaries. Let $\mat{A}_d=\mat{A}_{T_s}$ and $\mat{B}_d=\mat{B}_{T_s}$
-\begin{align}
+\begin{align*}
 \vec{x}_{k}&=\vec{x}_{k-1,T_s}= (\mat{A}_d-\mat{B}_d\mat{K})\vec{x}_{k-1}\\
 \vec{x}_{k,T_s} &= (\mat{A}_d-\mat{B}_d\mat{K}) (\mat{A}_d-\mat{B}_d\mat{K})\vec{x}_{k-1}
-\end{align}
-which accelerating results becomes
+\end{align*}
+which accelerating results and setting $T=kT_s+t'$ becomes
 \begin{align}
+\label{eq:feedback_sampled_cont}
 \vec{x}_{k} &= (\mat{A}_d-\mat{B}_d\mat{K}) ^k\vec{x}_0\\
-\vec{x}_{t} &= (\mat{A}_{t-kT_s}-\mat{B}_{t-kT_s}\mat{K}) (\mat{A}_d-\mat{B}_d\mat{K})^k\vec{x}_0
+\vec{x}_{T} &= (\mat{A}_{T-kT_s}-\mat{B}_{T-kT_s}\mat{K}) (\mat{A}_d-\mat{B}_d\mat{K})^k\vec{x}_0
+\label{eq:feedback_cont}
 \end{align}
 \end{proof}
 
 %-------------------------------
- \subsubsection{Finding Abstract Supports for Continuous Dynamics}
+ \subsection{Finding Abstract Supports for Continuous Dynamics}
  \label{sec:cont_aasup}
 %-------------------------------
 
@@ -790,9 +948,8 @@ using the envelope of their magnitude (ie $|\lambda|$).
 %
 \end{enumerate}
 
-
 %-------------------------------
-\subsection{Counterexample Guided Inductive Synthesis} 
+\section{Counterexample Guided Inductive Synthesis} 
 \label{ssec:cegis}
 %-------------------------------
 
@@ -864,7 +1021,7 @@ Criteria, as well as the restrictions on the representation of these
 coefficients.% as discussed in detail in Section~\ref{synthesis-elements}.
 
 %-------------------------------
-\subsubsection{CEGIS of digital controllers} 
+\subsection{CEGIS of digital controllers} 
 \label{sssec:cegisdig}
 %-------------------------------
 
@@ -1474,7 +1631,7 @@ $z^n+\sum_{i=1}^n(a_i-k_i)z^{n-i}=\prod_{i=1}^n (z-\lambda_i) : |\lambda_i|<1 \w
 
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{Numerical representation and soundness} 
+\section{Numerical representation and soundness} 
 \label{sec:numeric_rep}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -1513,7 +1670,7 @@ quantization errors caused by representing the physical plant at the finite
 precision $\mathcal{F}_{\langle I_p,F_p \rangle}$.
 
 
-\subsubsection{Effect on safety specification and stability}
+\subsection{Effect on safety specification and stability}
 
 Let us first consider the effect of the quantization errors on safety. 
 Within the controller, state values are manipulated at low precision,
@@ -1687,238 +1844,236 @@ For the former, this means that the control input might saturates in view of
 physical constraints.
 
 %-------------------------------
-\subsection{Formal specification of transient response} 
-\label{ssec:transientspecification}
+%\subsection{Formal specification of transient response} 
+%\label{ssec:transientspecification}
 %-------------------------------
 
-In a SISO system, there are 2 values that typically define the response-time of the system (using a step response).
-\begin{enumerate}
-\item The \emph{rise time} is defined as the time it takes the output to reach a percentage (eg $90\%$) of the target value given a step chnage in the input.
-\item The \emph{settling time} is defined as the time it takes the output to stabilize within a margin of the target value (eg $10\%$).
-\end{enumerate} 
-In the case of first and second order systems (with ), the decay is governed by the equations 
-\begin{align*}
-&y_{decay}=
-&\left\{
-\begin{array}{cc}
-e^{-|\omega| t}& 1^{st} order\\
-e^{\zeta |\omega| t}\left(\frac{\sin\left(|\omega| t\sqrt{1-\zeta^2}+\sin^{-1}\sqrt{1-\zeta^2}\right)}{\sqrt{1-\zeta^2}} \right)&\zeta<1\\
-e^{-|\omega| t}-|\omega| t e^{-|\omega| t}&\zeta=1\\
-\frac{|\omega| e^{-|\omega_2| t}-|\omega_2| e^{-|\omega| t}}{|\omega|-|\omega_2|}&\zeta>1\end{array}\right.
-\end{align*}
-where $|\omega|$ and $|\omega_2|$ are the magnitudes of the eigenvalues (roots) of the system and  $\zeta=-\cos(\theta)$ where $\theta$ is the polar angle of the conjugate pair if it exists ($\zeta \geq 1$ if it doesn't).
-These equations become increasingly complicated for higher order systems. However, we note their strong dependency on the magnitude of the eigenvalues, and use this property to define an upperbound on the decay function.
-All of the above equations will decay faster than $e^{-|\omega| t}$ given $|\omega| < |\omega_2|$, hence we may use this function as our upper bound.
-\begin{theorem}
-Given a set of eigenvalues for a discrete time model of an $n^{th}$ order system $\lambda_i =e^{\omega_i}: i \in [1\ n]$, the settling time of the system is upperbounded by
-\begin{equation}
-t_s<-log_{|\overline{\lambda}|}({p_s}) : |\overline{\lambda}| =\max(|\lambda_i|) \wedge |\overline{\lambda}|<1,\ \forall i \in [1\ n]
-\label{eq:set_time}
-\end{equation}
-where $0\leq p_s \leq 1$ is the desired percentage of the target within to remain after $t_s$.
-\end{theorem} 
-\begin{proof}
-Given a closed loop single output LTI system of order $n$ with dynamics
-\begin{equation}
-\left\{\begin{array}{c}\vec{x}_k=\mat{A}\vec{x}_{k-1}\\ \vec{y}_k=\mat{C}\vec{x}_k\end{array}\right. \Rightarrow \left\{ \begin{array}{c}\vec{x}_k'=\mat{J}\vec{x}_{k-1}'\\ \vec{y}_k=\mat{C}\mat{S}\vec{x}_k'\end{array}\right. : \left\{ \begin{array}{c}\mat{A}=\mat{S}\mat{J}\mat{S}^{-1} \\ \vec{x}_k'=\mat{S}^{-1}\vec{x}_k\end{array}\right.
-\label{eq:eigendynamics}
-\end{equation}
+%In a SISO system, there are 2 values that typically define the response-time of the system (using a step response).
+%\begin{enumerate}
+%\item The \emph{rise time} is defined as the time it takes the output to reach a percentage (eg $90\%$) of the target value given a step chnage in the input.
+%\item The \emph{settling time} is defined as the time it takes the output to stabilize within a margin of the target value (eg $10\%$).
+%\end{enumerate} 
+%In the case of first and second order systems (with ), the decay is governed by the equations 
+%\begin{align*}
+%&y_{decay}=
+%&\left\{
+%\begin{array}{cc}
+%e^{-|\omega| t}& 1^{st} order\\
+%e^{\zeta |\omega| t}\left(\frac{\sin\left(|\omega| t\sqrt{1-\zeta^2}+\sin^{-1}\sqrt{1-\zeta^2}\right)}{\sqrt{1-\zeta^2}} \right)&\zeta<1\\
+%e^{-|\omega| t}-|\omega| t e^{-|\omega| t}&\zeta=1\\
+%\frac{|\omega| e^{-|\omega_2| t}-|\omega_2| e^{-|\omega| t}}{|\omega|-|\omega_2|}&\zeta>1\end{array}\right.
+%\end{align*}
+%where $|\omega|$ and $|\omega_2|$ are the magnitudes of the eigenvalues (roots) of the system and  $\zeta=-\cos(\theta)$ where $\theta$ is the polar angle of the conjugate pair if it exists ($\zeta \geq 1$ if it doesn't).
+%These equations become increasingly complicated for higher order systems. However, we note their strong dependency on the magnitude of the eigenvalues, and use this property to define an upperbound on the decay function.
+%All of the above equations will decay faster than $e^{-|\omega| t}$ given $|\omega| < |\omega_2|$, hence we may use this function as our upper bound.
+%\begin{theorem}
+%Given a set of eigenvalues for a discrete time model of an $n^{th}$ order system $\lambda_i =e^{\omega_i}: i \in [1\ n]$, the settling time of the system is upperbounded by
+%\begin{equation}
+%t_s<-log_{|\overline{\lambda}|}({p_s}) : |\overline{\lambda}| =\max(|\lambda_i|) \wedge |\overline{\lambda}|<1,\ \forall i \in [1\ n]
+%\label{eq:set_time}
+%\end{equation}
+%where $0\leq p_s \leq 1$ is the desired percentage of the target within to remain after $t_s$.
+%\end{theorem} 
+%\begin{proof}
+%Given a closed loop single output LTI system of order $n$ with dynamics
+%\begin{equation}
+%\left\{\begin{array}{c}\vec{x}_k=\mat{A}\vec{x}_{k-1}\\ \vec{y}_k=\mat{C}\vec{x}_k\end{array}\right. \Rightarrow \left\{ \begin{array}{c}\vec{x}_k'=\mat{J}\vec{x}_{k-1}'\\ \vec{y}_k=\mat{C}\mat{S}\vec{x}_k'\end{array}\right. : \left\{ \begin{array}{c}\mat{A}=\mat{S}\mat{J}\mat{S}^{-1} \\ \vec{x}_k'=\mat{S}^{-1}\vec{x}_k\end{array}\right.
+%\label{eq:eigendynamics}
+%\end{equation}
 %
-the output decay is a linear combination of the decay of eigenvalues or
-eigenvalue pairs.  
-Let $\mat{C}'\in \mathbb{R}^{1 \times n}=\mat{C}\mat{S}$. Since $\mat{C}'$ is constant, the output $y_k$ is a linear combination of the states $\vec{x}'_k$. We accelerate equation \eqref{eq:eigendynamics} to obtain
-\begin{align}
-%\vec{x}_k'&=\mat{J}^k\vec{x}_0' \\
-y_k&=\mat{C}'\mat{J}^k\vec{x}_0 = \sum_{i=0}^n \left( c_i \lambda_i^k + c_{il}\binom{k}{l} \lambda_i^{k-l}\right)\\
-|y_k|&\leq \sum_{i=0}^n \left|c_i + c_{il}\binom{k}{l} \lambda_i^{-l}\right||\lambda_i^k|
-\end{align}
-where the second  part of the equation corresponds to the upper diagonal terms of the Jordan blocks. We also have $|\lambda_i^k|\leq |\overline{\omega}^k|$,hence
-\begin{align}
-|y_k|&\leq |\overline{\omega}^k|\sum_{i=0}^n \left|c_i + c_{il}\binom{k}{l} \lambda_i^{-l}\right|
-\end{align}
-Since we are synthesising the eigenvalues, rather than solve this formula for complex Jordan Shapes, we will restrict our synthesiser to provide solutions with distinct eigenvalues (which is by far the most common case). Therefore the right hand terms dissappear and we end up with
-\begin{align}
-|y_k|&\leq |\overline{\omega}^k|\sum_{i=0}^n |c_i|
-\end{align}
+%the output decay is a linear combination of the decay of eigenvalues or
+%eigenvalue pairs.  
+%Let $\mat{C}'\in \mathbb{R}^{1 \times n}=\mat{C}\mat{S}$. Since $\mat{C}'$ is constant, the output $y_k$ is a linear combination of the states $\vec{x}'_k$. We accelerate equation \eqref{eq:eigendynamics} to obtain
+%\begin{align}
+%y_k&=\mat{C}'\mat{J}^k\vec{x}_0 = \sum_{i=0}^n \left( c_i \lambda_i^k + c_{il}\binom{k}{l} \lambda_i^{k-l}\right)\\
+%|y_k|&\leq \sum_{i=0}^n \left|c_i + c_{il}\binom{k}{l} \lambda_i^{-l}\right||\lambda_i^k|
+%\end{align}
+%where the second  part of the equation corresponds to the upper diagonal terms of the Jordan blocks. We also have $|\lambda_i^k|\leq |\overline{\omega}^k|$,hence
+%\begin{align}
+%|y_k|&\leq |\overline{\omega}^k|\sum_{i=0}^n \left|c_i + c_{il}\binom{k}{l} \lambda_i^{-l}\right|
+%\end{align}
+%Since we are synthesising the eigenvalues, rather than solve this formula for complex Jordan Shapes, we will restrict our synthesiser to provide solutions with distinct eigenvalues (which is by far the most common case). Therefore the right hand terms dissappear and we end up with
+%\begin{align}
+%|y_k|&\leq |\overline{\omega}^k|\sum_{i=0}^n |c_i|
+%\end{align}
 
-Hence the overall decay of the system is always smaller
-than $p=e^{-|\overline{\omega}| t}$ where $0\leq p\leq 1$ is the remaining
-percentage of the decay expressed.  reversing we have
-$t=-\frac{ln(p)}{|\overline{\omega}|}=-\frac{ln(p)}{ln(|\overline{\lambda}|)}$. 
-replacing for $p_s$ , $t_s$, and $\overline{\lambda}$ we get equation
-\eqref{eq:set_time}
+%Hence the overall decay of the system is always smaller
+%than $p=e^{-|\overline{\omega}| t}$ where $0\leq p\leq 1$ is the remaining
+%percentage of the decay expressed.  reversing we have
+%$t=-\frac{ln(p)}{|\overline{\omega}|}=-\frac{ln(p)}{ln(|\overline{\lambda}|)}$. 
+%replacing for $p_s$ , $t_s$, and $\overline{\lambda}$ we get equation
+%\eqref{eq:set_time}
 %
-\qed
-\end{proof}
+%\qed
+%\end{proof}
 %
-We may now use this limit to express a constraint in terms of the
-coefficients for our synthesis process.  Let
+%We may now use this limit to express a constraint in terms of the
+%coefficients for our synthesis process.  Let
 %
-\begin{equation}
-P=\prod_{i=0}^n (s-\lambda_i)=\sum_{j=0}^n c_js^j.
-\end{equation}
+%\begin{equation}
+%P=\prod_{i=0}^n (s-\lambda_i)=\sum_{j=0}^n c_js^j.
+%\end{equation}
 %
-We use Jury's criterion to limit $|\lambda_i| \leq 1$.  Let us now define a
-transformation $\lambda_i'=\frac{\lambda_i}{\overline{\lambda}}$.  We want
-to ensure $\lambda_i' \leq 1$ which can be done by applying Jury's criterion
-to $P'=\prod_{i=0}^n (s-\lambda_i')=\sum_{j=0}^n c_j's^j$ where $c_j'$ are
-unknown.  However, if we replace for $\lambda_i$, we obtain
+%We use Jury's criterion to limit $|\lambda_i| \leq 1$.  Let us now define a
+%transformation $\lambda_i'=\frac{\lambda_i}{\overline{\lambda}}$.  We want
+%to ensure $\lambda_i' \leq 1$ which can be done by applying Jury's criterion
+%to $P'=\prod_{i=0}^n (s-\lambda_i')=\sum_{j=0}^n c_j's^j$ where $c_j'$ are
+%unknown.  However, if we replace for $\lambda_i$, we obtain
 %
-\begin{equation}
-P'=\prod_{i=0}^n (s-\lambda_i')=\prod_{i=0}^n \left(s-\frac{\lambda_i}{\overline{\lambda}}\right)=\sum_{j=0}^n \frac{c_j}{\overline{\lambda}^{n-j}}s^j
-\end{equation}
+%\begin{equation}
+%P'=\prod_{i=0}^n (s-\lambda_i')=\prod_{i=0}^n \left(s-\frac{\lambda_i}{\overline{\lambda}}\right)=\sum_{j=0}^n \frac{c_j}{\overline{\lambda}^{n-j}}s^j
+%\end{equation}
 %
-where all members are known, we may now synthesise coefficients that ensure
-the eigenvalues are smaller than a desired magnitue, thus ensuring that the
-settling time is too.
+%where all members are known, we may now synthesise coefficients that ensure
+%the eigenvalues are smaller than a desired magnitue, thus ensuring that the
+%settling time is too.
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\section{Verification of a Controllable Observed System}\label{sec:cof_verification}
+%\section{Verification of a Controllable Observed System}\label{sec:cof_verification}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-\textcolor{red}{Dario: Do we still need this section? Where would the continuous time proof fit?}
+%\begin{figure*}[htb]
+%\centering
 
-\begin{figure*}[htb]
-\centering
+%\tikzset{add/.style n args={4}{
+%    minimum width=6mm,
+%    path picture={
+%        \draw[circle] 
+%            (path picture bounding box.south east) -- (path picture bounding box.north west)
+%            (path picture bounding box.south west) -- (path picture bounding box.north east);
+%        \node[draw=none] at ($(path picture bounding box.south)+(0,0.13)$)     {\small #1};
+%        \node[draw=none] at ($(path picture bounding box.west)+(0.13,0)$)      {\small #2};
+%        \node[draw=none] at ($(path picture bounding box.north)+(0,-0.13)$)    {\small #3};
+%        \node[draw=none] at ($(path picture bounding box.east)+(-0.13,0)$)     {\small #4};
+%        }
+%    }
+% }
 
-\tikzset{add/.style n args={4}{
-    minimum width=6mm,
-    path picture={
-        \draw[circle] 
-            (path picture bounding box.south east) -- (path picture bounding box.north west)
-            (path picture bounding box.south west) -- (path picture bounding box.north east);
-        \node[draw=none] at ($(path picture bounding box.south)+(0,0.13)$)     {\small #1};
-        \node[draw=none] at ($(path picture bounding box.west)+(0.13,0)$)      {\small #2};
-        \node[draw=none] at ($(path picture bounding box.north)+(0,-0.13)$)    {\small #3};
-        \node[draw=none] at ($(path picture bounding box.east)+(-0.13,0)$)     {\small #4};
-        }
-    }
- }
+%\resizebox{1.0\textwidth}{!}{
+% \begin{tikzpicture}[scale=0.6,-,>=stealth',shorten >=.2pt,auto,
+%     semithick, initial text=, ampersand replacement=\&,]
 
-\resizebox{1.0\textwidth}{!}{
- \begin{tikzpicture}[scale=0.6,-,>=stealth',shorten >=.2pt,auto,
-     semithick, initial text=, ampersand replacement=\&,]
-
-  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center}, row sep=.6cm, column sep=.6cm] {
-    \node[draw=none] (r) {$r_k$};
-    \node[rectangle,draw,
-	minimum width=1cm,
-	minimum height=1cm,] (gain)at ([xshift=1.2cm]r) {\sc $k_r$};
+%  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center}, row sep=.6cm, column sep=.6cm] {
+%    \node[draw=none] (r) {$r_k$};
+%    \node[rectangle,draw,
+%	minimum width=1cm,
+%	minimum height=1cm,] (gain)at ([xshift=1.2cm]r) {\sc $k_r$};
     
-   \& \node[circle,add={-}{+}{}{}] (circle) {};
-   \node[draw=none] (ez) at ([xshift=1cm,yshift=.15cm]circle)  {$u_k$};
-   \node[rectangle,draw,minimum width=1cm,minimum height=1cm] (Kd) at ([xshift=0,yshift=-5.5cm]circle)  {\sc $\mat{K}_d$};
-   \coordinate (kdsouth) at ([yshift=-3cm]Kd);
+%   \& \node[circle,add={-}{+}{}{}] (circle) {};
+%   \node[draw=none] (ez) at ([xshift=1cm,yshift=.15cm]circle)  {$u_k$};
+%   \node[rectangle,draw,minimum width=1cm,minimum height=1cm] (Kd) at ([xshift=0,yshift=-5.5cm]circle)  {\sc $\mat{K}_d$};
+%   \coordinate (kdsouth) at ([yshift=-3cm]Kd);
       
    
-   \& complexnode/.pic={ 
-      \node[rectangle,dashed,draw,minimum width=3cm,minimum height=1.6cm,label=\textbf{DAC}] (dac) {};
-     \node[circle,add={+}{+}{}{},fill=gray!20] (q2) at ([xshift=-.65cm]dac.center) {};
-     \node[draw=none] (q2t)  at ([yshift=.55cm]q2) {{\sc Q2}};
-     \node[draw=none] (v2)  at ([yshift=-1.5cm]q2) {$\nu_2$};
-     \node[fill=gray!20] (zoh) at ([xshift=.65cm]dac.center) {\sc ZOH};
-   }   
+%   \& complexnode/.pic={ 
+%     \node[rectangle,dashed,draw,minimum width=3cm,minimum height=1.6cm,label=\textbf{DAC}] (dac) {};
+%     \node[circle,add={+}{+}{}{},fill=gray!20] (q2) at ([xshift=-.65cm]dac.center) {};
+%     \node[draw=none] (q2t)  at ([yshift=.55cm]q2) {{\sc Q2}};
+%     \node[draw=none] (v2)  at ([yshift=-1.5cm]q2) {$\nu_2$};
+%     \node[fill=gray!20] (zoh) at ([xshift=.65cm]dac.center) {\sc ZOH};
+%   }   
 
-   \& complexnode/.pic={ 
-      \node[rectangle,dashed,draw,minimum width=8cm,minimum height=3.5cm,label=\textbf{Plant}] (plant)  at ([yshift=-.5cm]dac.center) {};
-      \node[rectangle,draw,minimum width=1cm,minimum height=1cm] (B) at ([xshift=-2.5cm,yshift=.5cm]plant.center)  {\sc $\mat{B}$};
-      \node[draw=none] (u) at ([xshift=-1cm,yshift=.15cm]B)  {$u(t)$};
-      \node[circle,add={+}{+}{}{}] (p1) at ([xshift=-1.3cm,yshift=.5cm]plant.center) {};
-      \node[draw=none] (xdot) at ([xshift=.85cm,yshift=.15cm]p1)  {$\dot{\vec{x}}(t)$};   
-      \node[rectangle,draw,minimum width=1cm] (int) at ([xshift=.5cm,yshift=.5cm]plant.center) {\sc $\int$};
-      \coordinate (xsouth) at ([xshift=1cm]int);
-      \node[draw=none] (x) at ([xshift=1cm,yshift=.15cm]int)  {$\vec{x}(t)$};   
-      \node[rectangle,draw,minimum width=1cm,minimum height=1cm] (C) at ([xshift=2.7cm,yshift=.5cm]plant.center)  {\sc $\mat{C}$};
-      \node[draw=none] (y) at ([xshift=1cm,yshift=.15cm]C)  {$\vec{y}(t)$};   
-      \node[rectangle,draw,minimum width=1cm,minimum height=1cm] (A) at ([xshift=.5cm,yshift=-1cm]plant.center)  {\sc $\mat{A}$};
-      \coordinate (aeast) at ([xshift=1cm]A);
-      \coordinate (awest) at ([xshift=-1.8cm]A);
-    }   
+%   \& complexnode/.pic={ 
+%      \node[rectangle,dashed,draw,minimum width=8cm,minimum height=3.5cm,label=\textbf{Plant}] (plant)  at ([yshift=-.5cm]dac.center) {};
+%      \node[rectangle,draw,minimum width=1cm,minimum height=1cm] (B) at ([xshift=-2.5cm,yshift=.5cm]plant.center)  {\sc $\mat{B}$};
+%      \node[draw=none] (u) at ([xshift=-1cm,yshift=.15cm]B)  {$u(t)$};
+%      \node[circle,add={+}{+}{}{}] (p1) at ([xshift=-1.3cm,yshift=.5cm]plant.center) {};
+%      \node[draw=none] (xdot) at ([xshift=.85cm,yshift=.15cm]p1)  {$\dot{\vec{x}}(t)$};   
+%      \node[rectangle,draw,minimum width=1cm] (int) at ([xshift=.5cm,yshift=.5cm]plant.center) {\sc $\int$};
+%      \coordinate (xsouth) at ([xshift=1cm]int);
+%      \node[draw=none] (x) at ([xshift=1cm,yshift=.15cm]int)  {$\vec{x}(t)$};   
+%      \node[rectangle,draw,minimum width=1cm,minimum height=1cm] (C) at ([xshift=2.7cm,yshift=.5cm]plant.center)  {\sc $\mat{C}$};
+%      \node[draw=none] (y) at ([xshift=1cm,yshift=.15cm]C)  {$\vec{y}(t)$};   
+%      \node[rectangle,draw,minimum width=1cm,minimum height=1cm] (A) at ([xshift=.5cm,yshift=-1cm]plant.center)  {\sc $\mat{A}$};
+%      \coordinate (aeast) at ([xshift=1cm]A);
+%      \coordinate (awest) at ([xshift=-1.8cm]A);
+%    }   
     
-   complexnode/.pic={ 
-      \node[rectangle,dashed,draw,minimum width=8cm,minimum height=5cm,label=\textbf{Observer}] (observer)  at ([yshift=-5cm]plant.center) {};
-      \node[rectangle,draw,minimum width=1cm,minimum height=1cm] (Bd) at ([xshift=-2.5cm]observer.center)  {\sc $\mat{B}_o$};
-      \node[draw=none] (ud) at ([xshift=-1cm,yshift=.15cm]Bd)  {$u_k$};
-      \node[circle,add={+}{+}{+}{}] (o1) at ([xshift=-1.3cm]observer.center) {};
-      \node[draw=none] (xd) at ([xshift=.85cm,yshift=.15cm]o1)  {$\hat{\vec{x}}_{k+1}$};   
-      \node[rectangle,draw,minimum width=1cm] (delay) at ([xshift=.5cm]observer.center) {\sc $z^{-1}$};
-      \coordinate (xdsouth) at ([xshift=1.3cm]delay);
-      \coordinate (fbsouth) at ([xshift=1.3cm,yshift=-3cm]delay);
-      \node[draw=none] (xdp) at ([xshift=1cm,yshift=.15cm]delay)  {$\hat{\vec{x}}_k$};   
-      \node[rectangle,draw,minimum width=1cm,minimum height=1cm] (Cd) at ([xshift=2.7cm]observer.center)  {\sc $\mat{C}_o$};
-      \node[draw=none] (y) at ([xshift=.4cm,yshift=.8cm]Cd)  {$\hat{\vec{y}}_k$};   
-      \node[rectangle,draw,minimum width=1cm,minimum height=1cm] (Ad) at ([xshift=.5cm,yshift=-1.5cm]observer.center)  {\sc $\mat{A}_o$};
-      \coordinate (adeast) at ([xshift=1.3cm]Ad);
-      \coordinate (adwest) at ([xshift=-1.8cm]Ad);
-      \node[circle,add={-}{}{}{+}] (o2) at ([xshift=2.7cm,yshift=1.5cm]observer.center) {};
-      \node[rectangle,draw,minimum width=1cm,minimum height=1cm] (Ld) at ([xshift=.5cm,yshift=1.5cm]observer.center)  {\sc $\mat{L}_d$};
-      \coordinate (ldwest) at ([xshift=-1.8cm]Ld);
-      \coordinate (bdwest) at ([xshift=-5.5cm]Bd);
-      \coordinate (uksouth) at ([xshift=-5.5cm,yshift=5.5cm]Bd);
-      \coordinate (o2east) at ([xshift=6.3cm]o2);
-    }   
+%   complexnode/.pic={ 
+%      \node[rectangle,dashed,draw,minimum width=8cm,minimum height=5cm,label=\textbf{Observer}] (observer)  at ([yshift=-5cm]plant.center) {};
+%      \node[rectangle,draw,minimum width=1cm,minimum height=1cm] (Bd) at ([xshift=-2.5cm]observer.center)  {\sc $\mat{B}_o$};
+%      \node[draw=none] (ud) at ([xshift=-1cm,yshift=.15cm]Bd)  {$u_k$};
+%      \node[circle,add={+}{+}{+}{}] (o1) at ([xshift=-1.3cm]observer.center) {};
+%      \node[draw=none] (xd) at ([xshift=.85cm,yshift=.15cm]o1)  {$\hat{\vec{x}}_{k+1}$};   
+%      \node[rectangle,draw,minimum width=1cm] (delay) at ([xshift=.5cm]observer.center) {\sc $z^{-1}$};
+%      \coordinate (xdsouth) at ([xshift=1.3cm]delay);
+%      \coordinate (fbsouth) at ([xshift=1.3cm,yshift=-3cm]delay);
+%      \node[draw=none] (xdp) at ([xshift=1cm,yshift=.15cm]delay)  {$\hat{\vec{x}}_k$};   
+%      \node[rectangle,draw,minimum width=1cm,minimum height=1cm] (Cd) at ([xshift=2.7cm]observer.center)  {\sc $\mat{C}_o$};
+%      \node[draw=none] (y) at ([xshift=.4cm,yshift=.8cm]Cd)  {$\hat{\vec{y}}_k$};   
+%      \node[rectangle,draw,minimum width=1cm,minimum height=1cm] (Ad) at ([xshift=.5cm,yshift=-1.5cm]observer.center)  {\sc $\mat{A}_o$};
+%      \coordinate (adeast) at ([xshift=1.3cm]Ad);
+%      \coordinate (adwest) at ([xshift=-1.8cm]Ad);
+%      \node[circle,add={-}{}{}{+}] (o2) at ([xshift=2.7cm,yshift=1.5cm]observer.center) {};
+%      \node[rectangle,draw,minimum width=1cm,minimum height=1cm] (Ld) at ([xshift=.5cm,yshift=1.5cm]observer.center)  {\sc $\mat{L}_d$};
+%      \coordinate (ldwest) at ([xshift=-1.8cm]Ld);
+%      \coordinate (bdwest) at ([xshift=-5.5cm]Bd);
+%      \coordinate (uksouth) at ([xshift=-5.5cm,yshift=5.5cm]Bd);
+%      \coordinate (o2east) at ([xshift=6.3cm]o2);
+%    }   
     
-   \& complexnode/.pic={ 
-     \node[rectangle,dashed,draw,minimum width=3.5cm,minimum height=1.6cm,label=\textbf{ADC},] (adc) {};
-     \draw[] ([xshift=-1cm]adc.center) -- ++(0.5,0.2cm);
-     \coordinate (switch1) at ([xshift=-1cm]adc.center);
-     \coordinate (switch2) at ([xshift=-0.4cm]adc.center);
-     \node[circle,add={+}{+}{}{},fill=gray!20] (q1) at ([xshift=.6cm]adc.center) {};
-     \node[draw=none] (q2t)  at ([yshift=.55cm]q1) {\sc Q1};
-     \node[draw=none] (v1)  at ([yshift=-1.5cm]q1) {$\nu_1$};
-     \node[draw=none] (y) at ([xshift=.85cm,yshift=.15cm]q1)  {$\vec{y}_k$};       
-     \coordinate (ykeast) at ([xshift=1.9cm]q1);
-   } 
-   \& \coordinate (aux1);
-   \& \\
-  };
+%   \& complexnode/.pic={ 
+%     \node[rectangle,dashed,draw,minimum width=3.5cm,minimum height=1.6cm,label=\textbf{ADC},] (adc) {};
+%     \draw[] ([xshift=-1cm]adc.center) -- ++(0.5,0.2cm);
+%     \coordinate (switch1) at ([xshift=-1cm]adc.center);
+%     \coordinate (switch2) at ([xshift=-0.4cm]adc.center);
+%     \node[circle,add={+}{+}{}{},fill=gray!20] (q1) at ([xshift=.6cm]adc.center) {};
+%     \node[draw=none] (q2t)  at ([yshift=.55cm]q1) {\sc Q1};
+%     \node[draw=none] (v1)  at ([yshift=-1.5cm]q1) {$\nu_1$};
+%     \node[draw=none] (y) at ([xshift=.85cm,yshift=.15cm]q1)  {$\vec{y}_k$};       
+%     \coordinate (ykeast) at ([xshift=1.9cm]q1);
+%   } 
+%   \& \coordinate (aux1);
+%   \& \\
+%  };
 
-  \path[->] (v1) edge (q1.south);
-  \path[->] (v2) edge (q2.south);
-  \path[->] (r) edge (gain.west);
-  \path[->] (gain.east) edge (circle.west);
-  \path[->] (circle.east) edge (q2.west);
-  \path       (q2.east) edge (zoh.west);
-  \path[->] (zoh.east) edge (B.west);
-  \path
-   (B.east) edge (p1.west)
-   (p1.east) edge (int.west)
-   (xsouth) edge (aeast)
-   (aeast) edge (A.east)
-   (A.west) edge (awest)
-   (awest) edge (p1.south)
-   (int.east) edge (C.west)
-   (C.east) edge (switch1.west)
-   (switch2) edge (q1.west);
-  \path
-   (q1.east) edge (ykeast)
-   (ykeast) edge (o2east);
-  \path       (uksouth) edge (bdwest);
-  \path[->] (bdwest) edge (Bd.west);
-  \path
-   (Bd.east) edge (o1.west)
-   (o1.east) edge (delay.west)
-   (xdsouth) edge (adeast)
-   (adeast) edge (Ad.east)
-   (Ad.west) edge (adwest)
-   (adwest) edge (o1.south)
-   (o2.west) edge (Ld.east)
-   (Ld.west) edge (ldwest)
-   (ldwest) edge (o1.north)
-   (delay.east) edge (Cd.west)
-   (Cd.north) edge (o2.south)
-   (o2east) edge (o2.east)
-   (xdsouth) edge (fbsouth)
-   (fbsouth) edge (kdsouth);
-  \path[->]  (kdsouth) edge (Kd.south);
-  \path (Kd.north) edge (circle.south);
- \end{tikzpicture}
-}
- \caption{Closed-loop digital control system with observer\label{fig:observersystem}}
-\end{figure*}
+  %\path[->] (v1) edge (q1.south);
+  %\path[->] (v2) edge (q2.south);
+  %\path[->] (r) edge (gain.west);
+  %\path[->] (gain.east) edge (circle.west);
+  %\path[->] (circle.east) edge (q2.west);
+  %\path       (q2.east) edge (zoh.west);
+  %\path[->] (zoh.east) edge (B.west);
+  %\path
+  %(B.east) edge (p1.west)
+  %(p1.east) edge (int.west)
+%  (xsouth) edge (aeast)
+%   (aeast) edge (A.east)
+%   (A.west) edge (awest)
+%   (awest) edge (p1.south)
+%   (int.east) edge (C.west)
+%   (C.east) edge (switch1.west)
+%   (switch2) edge (q1.west);
+%  \path
+%   (q1.east) edge (ykeast)
+%   (ykeast) edge (o2east);
+%  \path       (uksouth) edge (bdwest);
+%  \path[->] (bdwest) edge (Bd.west);
+%  \path
+%   (Bd.east) edge (o1.west)
+%   (o1.east) edge (delay.west)
+%   (xdsouth) edge (adeast)
+%   (adeast) edge (Ad.east)
+%   (Ad.west) edge (adwest)
+%   (adwest) edge (o1.south)
+%   (o2.west) edge (Ld.east)
+%   (Ld.west) edge (ldwest)
+%   (ldwest) edge (o1.north)
+%   (delay.east) edge (Cd.west)
+%   (Cd.north) edge (o2.south)
+%   (o2east) edge (o2.east)
+%   (xdsouth) edge (fbsouth)
+ %  (fbsouth) edge (kdsouth);
+%\path[->]  (kdsouth) edge (Kd.south);
+%\path (Kd.north) edge (circle.south);
+% \end{tikzpicture}
+%}
+ %\caption{Closed-loop digital control system with observer\label{fig:observersystem}}
+%\end{figure*}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{Stability of an Observed System}\label{sec:cof_stability}
+%\subsection{Stability of an Observed System}\label{sec:cof_stability}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+\comment{
 Let us look at observer for a SISO systems as shown in figure \ref{fig:observersystem} where ideally $\mat{A}_o=\mat{A}_d$, $\mat{B}_o=\mat{B}_d$ and $\mat{C}_o=\mat{C}_d$ for a given time discretization.
 A controllable and observable system will have the following dynamics:
 \begin{align}
@@ -2112,6 +2267,7 @@ P_r'=\sum_{j=0}^n c_j\overline{\lambda'}^{n-j}s^j : \overline{\lambda'}=(1+\delt
 As a final annotation, we remark that the safety specification must be
 applied to the model described in this section, accounting for the
 representation errors of the FWL domain.
+}
 
 %-------------------------------
 \section{Experimental Evaluation}
@@ -2125,90 +2281,106 @@ representation errors of the FWL domain.
 
 %\textcolor{red}{Iury: can you please describe the benchmarks?}
 
-Our benchmark suite consists of 18 MIMO models extracted from the 
+Our benchmark suite consists of 18 SISO models extracted from the 
 control literature~\cite{acrobot,cstr,CHEN1979389,KOKOTOVIC198023,gajic2008optimal,Franklin15, maglev, converters, CTMS};
-these models are discretized with different sample times, which thus leads to $167$ different benchmarks
+these models are discretized with different sample times, leading to $167$ different benchmarks
 to evaluate our proposal approach. 
 
-The DC motor benchmark describes the velocity dynamics of a basic 
-brushed direct current electrical machine. The automotive cruise control system 
-benchmark is used to keep constant the speed of an automobile, 
-tracking a desired speed reference, compensating disturbances and 
-uncertainties related to relief and terrain.The pendulum benchmark consists of a swinging point mass suspended from 
-a frictionless pivot by means of a negligible mass rod, while the inverted pendulum 
-benchmark is a system similar to the pendulum, but the point 
+
+The \textit{DC motor} plant describes the velocity dynamics of a basic 
+brushed direct current electrical machine. 
+The \textit{automotive cruise control system} plant is used to keep constant 
+the speed of an automobile, tracking a desired speed reference, 
+compensating disturbances and uncertainties related to relief and terrain.
+The \textit{pendulum} plant consists of a swinging point mass suspended from 
+a frictionless pivot by means of a negligible mass rod, while the 
+\textit{inverted pendulum} plant describes a system similar to the pendulum, but the point 
 mass must be equilibrated above the pivot point, which is mounted on an 
 one degree of freedom cart that moves over a track through a DC motor.
 
-The magnetic suspension benchmark corresponds to the discrete model of a 
+The \textit{magnetic suspension} plant corresponds to the discrete model of a 
 simple eletromagnet-ball system, where a steel ball is levitated in air 
 by the action of an electromagnetic force generated by an electromagnet.
-The magnetic pointer benchmark is a pointer employed in analogue 
+The \textit{magnetic pointer} plant describes a pointer employed in analogue 
 gauges and indicators, whose angular position dynamics is controlled 
-by a magnetic field. The 1/4 car suspension benchmark corresponds to the model of a single 
+by a magnetic field. 
+The \textit{1/4 car suspension} plant corresponds to the model of a single 
 wheel suspension system of a car, {\it i.e.}, the relative motion dynamics 
 of a mass springer damp model, which connects the car to one of its wheels.
 
-The computer tape driver benchmark is a computer storage device used to read and write 
-data on magnetic tapes. The acrobot benchmark corresponds to the model of a two-link 
+The \textit{computer tape driver} plant describes a computer storage device used to read and write 
+data on magnetic tapes. The \textit{acrobot} plant corresponds to the model of a two-link 
 underactuated robot manipulator, named acrobot, linearized by partial 
-feedback linearization~\cite{acrobot}. The high-order system benchmarks correspond to a series of high-order control system model 
+feedback linearization~\cite{acrobot}. 
+The \textit{high-order system} plants correspond to a series of high-order control system model 
 generally used as example for order reduction techniques~\cite{CHEN1979389}.
-Here, these benchmarks are used to evaluate the proposed control 
-synthesis technique under critical conditions, {\it i.e.}, with a large number of parameters 
-to be considered.
+%Here, these benchmarks are used to evaluate the proposed control 
+%synthesis technique under critical conditions, {\it i.e.}, with a large number of parameters 
+%to be considered.
 
-The continuous stirred tank reactor benchmark describes a linear model for PH dynamics of a PH 
+The \textit{continuous stirred tank reactor} plant describes a linear model for PH dynamics of a PH 
 neutralization process of an aqueous solution of sodium acetate with 
-hydrochloric acid in a continuous flow stirred-tank reactor. The flexible beam benchmark is a plant 
-usually employed in vibration studies; it consists of a flexible metallic structure with piezoceramic actuators and sensors.
-The helicopter longitudinal motion benchmark describes the dynamics of 
+hydrochloric acid in a continuous flow stirred-tank reactor. 
+The \textit{flexible beam} is a plant employed in vibration studies; the physical system consists of a flexible 
+metallic structure with piezoceramic actuators and sensors.
+The \textit{helicopter longitudinal motion} plant describes the dynamics of 
 transitional motion with respect to a longitudinal plane and the 
 rotational motion around the longitudinal axis.
-The USCG cutter tampa heading angle benchmark describes the heading angle 
-dynamics of a Coast Guard cutter. The voltage regulator benchmark~\cite{KOKOTOVIC198023} consists 
-of a linear model of a synchronous machine connected to an  infinite bus.
+The \textit{USCG cutter tampa heading angle} plant describes the heading angle 
+dynamics of a Coast Guard cutter. 
+The \textit{voltage regulator} plant consists of a linear model of a synchronous 
+machine connected to an  infinite bus~\cite{KOKOTOVIC198023}.
 
-The guidance control system benchmark is another high-order system 
+The \textit{guidance control system} plant is another high-order system 
 model used by Chen et al.~\cite{CHEN1979389}  to evaluate reduction 
-techniques. Guidance systems are used to determine the path of an 
-autonomous vehicle movement.
-
-The satellite attitude control system benchmark describes the dynamics of a satellite attitude, 
+techniques, which is used to determine the path of an autonomous vehicle movement.
+The \textit{satellite attitude control system} plant describes the dynamics of a satellite attitude, 
 {\it i.e.}, the orientation angles. An attitude control system must 
 maintain the desired orientation of a satellite with respect to an 
-inertial frame during all the excursion. The springer-mass damper system benchmark 
-is classic model for several mechanical systems dynamics. This benchmark describes a mass,
-which is fixed to a node by means of a springer and moves under the action of a 
-input force, damping, and elastic force.
+inertial frame during all the excursion. 
+The \textit{springer-mass damper system} plant is classic model for several mechanical 
+systems dynamics. This benchmark describes a mass, which is fixed to a node by means 
+of a springer and moves under the action of a input force, damping, and elastic force.
 
 %-------------------------------
 \subsection{Objectives}
 \label{exp:objectives}
 %-------------------------------
 
-\textcolor{red}{Lucas: describe here the experimental objectives.}
+Using the state-space models given in Section~\ref{exp:benchmarks}, 
+our evaluation has the following two experimental goals:
+
+\begin{enumerate}
+
+\item[EG1] \textbf{(Performance)} Show that both the multi-staged and the abstraction-based
+CEGIS approaches are able to generate FWL digital controllers using floating-point arithmetic 
+in a reasonable amount of time.
+
+\item[EG2] \textbf{(sanity check)} Confirm the
+stability and safety of the synthesized controllers outside of our model.
+
+\end{enumerate}
 
 %-------------------------------
 \subsection{Results}
 \label{exp:results}
 %-------------------------------
 
-\textcolor{red}{Pascal: can you please describe here the experimental results?}
+\textcolor{red}{Lucas describe here the experimental results}
 
 %-------------------------------
 \subsection{Threats to validity}
 \label{exp:threats-to-validity}
 %-------------------------------
 
-\textcolor{red}{Pascal: can you please describe here the threats to validity?}
+\textcolor{red}{Lucas: describe here the threats to validity}
 
 %-------------------------------
 \section{Conclusions}
 \label{sec:conclusions}
 %-------------------------------
 
-\textcolor{red}{Lucas: We need to write a new conclusions about this work.}
+\textcolor{red}{Cristina: Can you please write an initial version of the conclusions?}
 
 %\addtodo{[Move material from \ref{sec:rw} here]}
 

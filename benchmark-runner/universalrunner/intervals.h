@@ -2,14 +2,11 @@
 #ifndef INTERVALS_H_
 #define INTERVALS_H_
 
-#define _EXP_BITS 32
-#define _FRAC_BITS 24
-
 #include "control_types.h"
 
 typedef  __plant_precisiont control_typet;
 
-control_typet _zero = 0.0; //added in by EP
+control_typet _zero = 0.0;
 control_typet _one = 1.0;
 
 struct intervalt
@@ -20,8 +17,6 @@ struct intervalt
 
 control_typet _dbl_max;
 control_typet _dbl_min;
-signed long int _fxp_max;
-signed long int _fxp_min;
 signed long int _fxp_one;
 control_typet _dbl_lsb;
 
@@ -33,21 +28,18 @@ void get_bounds()
   else
    _fxp_one = (1 << FRAC_BITS);
   _dbl_lsb=_one/(1 << FRAC_BITS);
-  _fxp_min = -(1 << (FRAC_BITS + INT_BITS -1));
-  _fxp_max = (1 << (FRAC_BITS + INT_BITS-1))-1;
   _dbl_max = (1 << (INT_BITS-1))-1;//Integer part
   _dbl_max += (_one-_dbl_lsb);//Fractional part
 #else
-  int i;
-  signed long int exp=(1 << (_EXP_BITS -_FRAC_BITS -1));
+  signed long int exp=(1 << (EXPONENT_BITS - 1));
   _dbl_max=_one;
-  for (i=0;i<exp;i++)
+  for (int i=0;i<exp;i++)
   {
     _dbl_max*=2;
   }
-  exp=1 << _FRAC_BITS;
+   _fxp_one = (1 << MANTISSA_BITS);
   _dbl_lsb=_one/_dbl_max;
-  _dbl_max*=_one-_one/exp;
+  _dbl_max*=_one-_one/_fxp_one;
 #endif
   _dbl_min = -_dbl_max;
 }
@@ -68,21 +60,61 @@ signed long int fxp_control_typet_to_fxp(control_typet value)
 
 control_typet fxp_check(control_typet value)
 {
-#ifdef __CPROVER
-  #ifdef _FIXEDBV
+#ifdef CPROVER
+  #ifdef FIXEDBV
     control_typet tmp_value=value;
     if (tmp_value < _zero) tmp_value=-tmp_value;
-    verify_assume((~_dbl_max&tmp_value)==0);
+    __CPROVER_assume((~_dbl_max&tmp_value)==0);
     return value;
   #else
-    const controller_floatt fwl_value=value;
-    verify_assume(fwl_value!=0);
+    const control_typet fwl_value=value;
+    __CPROVER_assume(fwl_value!=0);
     return fwl_value;
   #endif
 #else
-  #ifdef _FIXEDBV
-    value=fxp_control_floatt_to_fxp(value);
+  #ifdef FIXEDBV
+    value=fxp_control_typet_to_fxp(value);
     value/=_fxp_one;
+  #else
+    // Would be easier if we knew the endianness
+    int exp=1;
+    char exp_sign=0;
+    char is_negative=(value<0);
+    if (is_negative)
+      value=-value;
+
+    // Normalize to 1.x
+    if (value<1)
+    {
+      exp_sign=-1;
+      while (value<1)
+      {
+        value*=2;
+        exp*=2;
+      }
+    }
+    else
+    {
+      exp_sign=1;
+      while (value>1)
+      {
+        value*=.5;
+        exp*=2;
+      }
+    }
+
+    // Remove extra digits
+    int result=value*_fxp_one;
+    value=result;
+    value/=_fxp_one;
+
+    // Restore exponent
+    if (exp_sign>0)
+      value*=exp;
+    else
+      value/=exp;
+    if (is_negative)
+      value=-value;
   #endif
   return value;
 #endif
@@ -209,25 +241,27 @@ control_typet fexp_round(control_typet src, char up)
 struct intervalt interval_fxp_add(struct intervalt x,struct intervalt y)
 {
   struct intervalt z=interval_add(x,y);
-#ifndef _FIXEDBV
+#ifndef FIXEDBV
   z.low=fexp_round(z.low,0);
   z.high=fexp_round(z.high,1);
 #endif  
+  return z;
 }
 
 struct intervalt interval_fxp_sub(struct intervalt x,struct intervalt y)
 {
   struct intervalt z=interval_sub(x,y);
-#ifndef _FIXEDBV
+#ifndef FIXEDBV
   z.low=fexp_round(z.low,0);
   z.high=fexp_round(z.high,1);
 #endif  
+  return z;
 }
 
 /*inline */struct intervalt interval_fxp_mult(struct intervalt x,struct intervalt y)
 {
   struct intervalt z;
-#ifdef _FIXEDBV
+#ifdef FIXEDBV
   long long int xlow=x.low*_fxp_one;
   long long int xhigh=x.high*_fxp_one;
   long long int ylow=y.low*_fxp_one;

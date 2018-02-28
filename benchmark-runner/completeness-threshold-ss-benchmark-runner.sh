@@ -2,6 +2,11 @@
 export PATH=${PATH//cbmc-5190/cbmc-pkesseli-5.7}
 export PATH=${PATH}:/users/pkesseli/software/cpp/cbmc/cbmc-pkesseli-5.7/src/cegis:/users/pkesseli/software/cpp/cbmc/cbmc-pkesseli-5.7/src/goto-analyzer:/users/pkesseli/software/cpp/z3/trunk/target/i686-linux/bin
 
+NUMVARS=$#
+if [ $NUMVARS -neq 1]; then
+echo "USEAGE ERROR: provide DKR number"
+fi
+
 synthesis_file='safety_stability.c'
 script_base_directory=`pwd`
 spec_header_file='benchmark.h'
@@ -102,6 +107,8 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
 
   spec_content=`cat ${benchmark}`
   num_states=$(extract_scalar_definition "${spec_content}" 'NSTATES')
+  impl_int_bits=$(extract_scalar_definition "${spec_content}" 'INT_BITS')
+  impl_frac_bits=$(extract_scalar_definition "${spec_content}" 'FRAC_BITS')
   A=$(extract_spec_matrix "${spec_content}" '_controller_A')
   B=$(extract_spec_matrix "${spec_content}" '_controller_B')
   input_upper_bound=$(extract_input "${spec_content}" 'INPUT_UPPERBOUND')
@@ -120,8 +127,8 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
    k_size=${k_sizes[${k_size_index}]}
    echo_log "int: ${integer_width}, radix: ${radix_width}"
    solution_found=false
-   echo_log "cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTORL_RADIX_WIDTH=${radix_width} -D NUMBERLOOPS=${k_size} ${synthesis_file}"
-   timeout --preserve-status --kill-after=${kill_time} ${timeout_time} cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTORL_RADIX_WIDTH=${radix_width} -D NUMBERLOOPS=${k_size} ${synthesis_file} 2>>${log_file} 1>${cbmc_log_file}
+   echo_log "cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D FIXEDBV -D CPROVER -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTORL_RADIX_WIDTH=${radix_width} -D NUMBERLOOPS=${k_size} ${synthesis_file}"
+   timeout --preserve-status --kill-after=${kill_time} ${timeout_time} cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D FIXEDBV  -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTORL_RADIX_WIDTH=${radix_width} -D NUMBERLOOPS=${k_size} ${synthesis_file} 2>>${log_file} 1>${cbmc_log_file}
    cbmc_result=$?
    cat ${cbmc_log_file} >>${log_file}
    controller_items=$(grep '<item>' ${cbmc_log_file} | tail -n ${num_states})

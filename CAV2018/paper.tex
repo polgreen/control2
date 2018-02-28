@@ -94,7 +94,7 @@ the availability of low-cost devices that can perform highly non-trivial
 control tasks, with significant impact in numerous application areas such as
 life sciences, environmental control and robotics~\cite{astrom1997computer,
 Franklin15}.  Correct synthesis of control software for such platforms is
-non-trivial, even in cases with restricted dynamics.  We consider the case
+non-trivial, even in cases with restricted dynamics.  We~consider the case
 of Linear Time Invariant (LTI) models, for which the synthesis of
 controllers is well understood.  However, the use of digital control
 architectures adds new challenges caused by artifacts specific to digital
@@ -1081,7 +1081,7 @@ stable system $\{\lambda_i =e^{\omega_i} \mid i \in \{1, \ldots,p\},
 %
 \begin{equation}
 %
-t_s<-log_{\overline{\lambda}}({P_s}), \text{ where }
+t_s<-\log_{\overline{\lambda}}({P_s}), \text{ where }
   \overline{\lambda} = \max(|\lambda_i|) \text{ and }
   \overline{\lambda}<1,\ \forall i \in \{1, \ldots,p\}
 %
@@ -1326,7 +1326,7 @@ Throughout the CEGIS-OR loop we make use of a specification $\phi$ that
 deals with the abstraction of the model dynamics.  Note that since the model
 abstraction gets refined at each iteration, $\phi$ will also be adjusted
 accordingly.  Initially, $\phi$ is simply given as the defined $\phi :=
-\phi_{stability} \wedge \phi_{input} \wedge \phi_{init}$.
+\phi_\mathit{stability} \wedge \phi_\mathit{input} \wedge \phi_\mathit{init}$.
 
 %% We make use of two abstractions corresponding to two
 %% specifications: $\phi_{synth}$ used by the synthesiser and
@@ -1442,7 +1442,7 @@ we increase the time horizon $n$ for the
 safety specification so that it captures the violating iteration
 (for the given initial state) and adjust $\phi$ as 
 $\phi := \phi \wedge \phi_\mathit{safety}^n$.
-If the counterexample is provided by the {\sc continuous time} stage,
+If~the counterexample is provided by the {\sc continuous time} stage,
 then we must select a smaller suitable sample time to be used
 for the model discretization.
 %% and modify the abstractions to meet the discretization 
@@ -1550,7 +1550,7 @@ solution is given back to {\sc Verify Synthesis}.
     ([xshift=-5em]gp.north) edge node[align=center] {FAIL/\\$\mat{K}_{\langle P \rangle}$,$\mat{L}_{\langle P \rangle}$} ([xshift=-5em]synth.south)
    ([xshift=5em]model1.south) edge node[align=center,xshift=-.7cm] {$\mathbb{R}_{\langle P \rangle}$} 
 ([xshift=5em]synth.north)
-   node[align=left,yshift=-0.7cm,xshift=.5cm] {{$\phi$}\\{$\phi_{init}^K$}} %{$\phi_\mathit{safety}$}\\ 
+   node[align=left,yshift=-0.7cm,xshift=.5cm] {{$\phi$}\\{$\phi_\mathit{init}^K$}} %{$\phi_\mathit{safety}$}\\ 
    ([xshift=-5em]synth.north) edge node[align=center] {FAIL} ([xshift=-5em]model1.south);
    \path[->]
     ([xshift=-5em]verif1.north) edge node[align=center]  {C-ex} ([xshift=-5em]model2.south)
@@ -1893,7 +1893,8 @@ This sampling uses a threshold which is defined by the less significant bit
 ($q_{a}=2^{-F_a}$) of the ADC and some non-linearities of the circuitry. 
 The overall conversion is
 %
-$$\vec{y}_k=\mathcal{F}_{\langle A \rangle}\left(y(kT_s)\right), \text{ with }  \vec{y}_k \in \left[y(kT_s)-\frac{q_{a}}{2}, y(kT_s)+\frac{q_{a}}{2}\right] \,.$$
+$$\vec{y}_k=\mathcal{F}_{\langle A \rangle}\left(y(kT_s)\right)
+  \text{ with }  \vec{y}_k \in \left[y(kT_s)-\frac{q_{a}}{2}, y(kT_s)+\frac{q_{a}}{2}\right] \,.$$
 %
 where $t = kT_s$, and $T_s$ is the sampling time and $k$ the current
 iteration of the loop.  If we denote the error in the conversion by
@@ -1901,7 +1902,7 @@ $\nu_k=y_k-y(t)$, then we may define some bounds for it $\nu_k \in
 [-\frac{q_{a}}{2}, \frac{q_{a}}{2}]$.
 
 We will assume, for the purposes of this analysis, that the domain of the
-ADC is that of the digital controller (i.e, the quantizer includes a digital
+ADC is that of the digital controller (i.e., the quantizer includes a digital
 gain added in the code resulting in $\mathbb{R}_{\langle A
 \rangle}=\mathbb{R}_{\langle C \rangle}$).  The process of quantization in
 the DAC is similar except that it is calculating $\mathcal{F}_{\langle
@@ -2478,7 +2479,7 @@ We over-approximate the effects of this vector by introducing a noise signal at 
 \begin{theorem}
 Given a set of eigenvalues for a discrete time model of an $p^{th}$ order system $\lambda_i =e^{\omega_i}, i \in [1, ...\,,p]$, the settling time of the system is upper-bounded by
 \begin{equation}
-t_s<-log_{\overline{\lambda}}({P_s}), \text{ where }  \overline{\lambda} = \max(|\lambda_i|) \text{ and } \overline{\lambda}<1,\ \forall i \in \{1, \ldots,p\}
+t_s<-\log_{\overline{\lambda}}({P_s}), \text{ where }  \overline{\lambda} = \max(|\lambda_i|) \text{ and } \overline{\lambda}<1,\ \forall i \in \{1, \ldots,p\}
 \label{eq:set_time}
 \end{equation}
 where $0\leq P_s \leq 1$ is the desired percentage of the target within which the output must remain after $t_s$.
@@ -2576,7 +2577,7 @@ $|\overline{\omega}|$ are calculated as follows:
 %
 \item Find $\underline{k}=\frac{t_s}{T_s}$ where $t_s$ is the settling time and $T_s$ the sampling time.
 %
-\item Calculate $|\overline{\omega}|=log_{t_s}\left(P_s\binom{\underline{k}}{gm-1}^{-1}\right)$,
+\item Calculate $|\overline{\omega}|=\log_{t_s}\left(P_s\binom{\underline{k}}{gm-1}^{-1}\right)$,
 where $gm$ is the maximum desired geometric multiplicity.
 %
 \item Ensure that $|\overline{\omega}| \leq \frac{\underline{k}}{\underline{k}+1}$ and that the
