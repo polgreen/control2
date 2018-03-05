@@ -1,6 +1,7 @@
 #!/bin/bash
-export PATH=${PATH//cbmc-5190/cbmc-pkesseli-5.7}
-export PATH=${PATH}:/users/pkesseli/software/cpp/cbmc/cbmc-pkesseli-5.7/src/cegis:/users/pkesseli/software/cpp/cbmc/cbmc-pkesseli-5.7/src/goto-analyzer:/users/pkesseli/software/cpp/z3/trunk/target/i686-linux/bin
+export PATH=/users/pkesseli/software/cpp/cbmc/cbmc-pkesseli-5.7/src/cegis:${PATH}: #cegis path
+export PATH=/users/pkesseli/software/cpp/z3/trunk/target/i686-linux/bin:${PATH} #z3 path
+BENCHMARK_BASE_PATH="/users/pkesseli/documents/control-synthesis/benchmarks"
 
 CEGIS_ARGS="--round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER "
 
@@ -74,22 +75,22 @@ function get_current_cpu_millis {
 working_directory_base_suffix="$1"
 #dkr10
 if [ "$1" == "dkr10" ]; then
- benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/cruise_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/dcmotor_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/helicopter_ss/')
+ benchmark_dirs=('$BENCHMARK_BASE_DIR/state-space/cruise_ss/' '$BENCHMARK_BASE_DIR/state-space/dcmotor_ss/' '$BENCHMARK_BASE_DIR/state-space/helicopter_ss/')
 fi
 
 #dkr11
 if [ "$1" == "dkr11" ]; then
- benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/ballmaglev_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/magsuspension_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/invpendulum_pendang_ss/')
+ benchmark_dirs=('$BENCHMARK_BASE_DIR/state-space/ballmaglev_ss/' '$BENCHMARK_BASE_DIR/state-space/magsuspension_ss/' '$BENCHMARK_BASE_DIR/state-space/invpendulum_pendang_ss/')
 fi
 
 #dkr12
 if [ "$1" == "dkr12" ]; then
- benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/magneticpointer_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/invpendulum_cartpos_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/suspension_ss/')
+ benchmark_dirs=('$BENCHMARK_BASE_DIR/state-space/magneticpointer_ss/' '$BENCHMARK_BASE_DIR/state-space/invpendulum_cartpos_ss/' '$BENCHMARK_BASE_DIR/state-space/suspension_ss/')
 fi
 
 #dkr13
 if [ "$1" == "dkr13" ]; then
- benchmark_dirs=('/users/pkesseli/documents/control-synthesis/benchmarks/state-space/satellite_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/tapedriver_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/pendulum_ss/' '/users/pkesseli/documents/control-synthesis/benchmarks/state-space/uscgtampa_ss/')
+ benchmark_dirs=('$BENCHMARK_BASE_DIR/state-space/satellite_ss/' '$BENCHMARK_BASE_DIR/state-space/tapedriver_ss/' '$BENCHMARK_BASE_DIR/state-space/pendulum_ss/' '$BENCHMARK_BASE_DIR/state-space/uscgtampa_ss/')
 fi
 
 working_directory_base="/tmp/control_synthesis-ss-${working_directory_base_suffix}"
