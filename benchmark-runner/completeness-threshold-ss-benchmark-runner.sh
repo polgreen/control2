@@ -2,9 +2,16 @@
 export PATH=${PATH//cbmc-5190/cbmc-pkesseli-5.7}
 export PATH=${PATH}:/users/pkesseli/software/cpp/cbmc/cbmc-pkesseli-5.7/src/cegis:/users/pkesseli/software/cpp/cbmc/cbmc-pkesseli-5.7/src/goto-analyzer:/users/pkesseli/software/cpp/z3/trunk/target/i686-linux/bin
 
+CEGIS_ARGS="--round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER "
+
 NUMVARS=$#
-if [ $NUMVARS -neq 1]; then
-echo "USEAGE ERROR: provide DKR number"
+if [ $NUMVARS -geq 1]; then
+echo "USEAGE ERROR: provide DKR number. Optional: append arguments to CEGIS, e.g., -D FLOAT"
+fi
+
+if [ $NUMVARS -eq 3]; then
+CEGIS_ARGS=$CEGIS_ARGS$2
+echo "using CEGIS args $CEGIS_ARGS"
 fi
 
 synthesis_file='safety_stability.c'
@@ -63,7 +70,6 @@ function get_current_cpu_millis {
  formula=$(sed -r 's/([0-9]+(\.[0-9]+)?)m([0-9]+)\.0*([0-9]+)?s/60000*\1+1000*\3+\4/g' ${time_tmp_file} | tr '\n' ' ' | sed -r 's/ /+/g' | sed -r 's/(.*)[+]$/\1/' | sed -r 's/(.*)[+]$/\1/' | sed -r 's/[+]+/+/')
  echo $((${formula}))
 }
-
 
 working_directory_base_suffix="$1"
 #dkr10
@@ -127,8 +133,8 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
    k_size=${k_sizes[${k_size_index}]}
    echo_log "int: ${integer_width}, radix: ${radix_width}"
    solution_found=false
-   echo_log "cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D FIXEDBV -D CPROVER -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTORL_RADIX_WIDTH=${radix_width} -D NUMBERLOOPS=${k_size} ${synthesis_file}"
-   timeout --preserve-status --kill-after=${kill_time} ${timeout_time} cegis --round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D FIXEDBV  -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTORL_RADIX_WIDTH=${radix_width} -D NUMBERLOOPS=${k_size} ${synthesis_file} 2>>${log_file} 1>${cbmc_log_file}
+   echo_log "$CEGIS_ARGS _CONTORL_RADIX_WIDTH=${radix_width} -D NUMBERLOOPS=${k_size} ${synthesis_file}"
+   timeout --preserve-status --kill-after=${kill_time} ${timeout_time} cegis $CEGIS_ARGS -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTORL_RADIX_WIDTH=${radix_width} -D NUMBERLOOPS=${k_size} ${synthesis_file} 2>>${log_file} 1>${cbmc_log_file}
    cbmc_result=$?
    cat ${cbmc_log_file} >>${log_file}
    controller_items=$(grep '<item>' ${cbmc_log_file} | tail -n ${num_states})
