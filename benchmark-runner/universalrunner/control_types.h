@@ -8,15 +8,11 @@
 #ifndef CONTROL_TYPES_H_
 #define CONTROL_TYPES_H_
 
-#ifndef FIXEDBV
- #ifdef SINGLE_PRECISION_CONTROLLER
+#ifndef FIXEDBV // using single precision floating point
    #define  EXPONENT_BITS 32
    #define  MANTISSA_BITS 23
- #else //default is half precision
-   #define  EXPONENT_BITS 16
-   #define  MANTISSA_BITS 10
 #endif
-#endif
+
 
 
 #ifdef CPROVER
