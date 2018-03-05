@@ -1,16 +1,17 @@
 #!/bin/bash
-export PATH=/users/pkesseli/software/cpp/cbmc/cbmc-pkesseli-5.7/src/cegis:${PATH}: #cegis path
-export PATH=/users/pkesseli/software/cpp/z3/trunk/target/i686-linux/bin:${PATH} #z3 path
-BENCHMARK_BASE_PATH="/users/pkesseli/documents/control-synthesis/benchmarks"
+export PATH=/users/elipol/cbmc-5.7/src/cegis:${PATH}: #cegis path
+#export PATH=/users/pkesseli/software/cpp/z3/trunk/target/i686-linux/bin:${PATH} #z3 path
+BENCHMARK_BASE_DIR="/users/elipol/control-synthesis/benchmarks/headerfiles"
 
 CEGIS_ARGS="--round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER "
 
 NUMVARS=$#
-if [ $NUMVARS -geq 1]; then
+if [ $NUMVARS -eq 0 ]; then
 echo "USEAGE ERROR: provide DKR number. Optional: append arguments to CEGIS, e.g., -D FLOAT"
+exit
 fi
 
-if [ $NUMVARS -eq 3]; then
+if [ $NUMVARS -eq 2 ]; then
 CEGIS_ARGS=$CEGIS_ARGS$2
 echo "using CEGIS args $CEGIS_ARGS"
 fi
@@ -75,28 +76,29 @@ function get_current_cpu_millis {
 working_directory_base_suffix="$1"
 #dkr10
 if [ "$1" == "dkr10" ]; then
- benchmark_dirs=('$BENCHMARK_BASE_DIR/state-space/cruise_ss/' '$BENCHMARK_BASE_DIR/state-space/dcmotor_ss/' '$BENCHMARK_BASE_DIR/state-space/helicopter_ss/')
+ benchmark_dirs=(${BENCHMARK_BASE_DIR}/dcmotor/ ${BENCHMARK_BASE_DIR}/satellite/ ) 
 fi
 
 #dkr11
 if [ "$1" == "dkr11" ]; then
- benchmark_dirs=('$BENCHMARK_BASE_DIR/state-space/ballmaglev_ss/' '$BENCHMARK_BASE_DIR/state-space/magsuspension_ss/' '$BENCHMARK_BASE_DIR/state-space/invpendulum_pendang_ss/')
+# benchmark_dirs=('$BENCHMARK_BASE_DIR/state-space/ballmaglev_ss/' '$BENCHMARK_BASE_DIR/state-space/magsuspension_ss/' '$BENCHMARK_BASE_DIR/state-space/invpendulum_pendang_ss/')
 fi
 
 #dkr12
 if [ "$1" == "dkr12" ]; then
- benchmark_dirs=('$BENCHMARK_BASE_DIR/state-space/magneticpointer_ss/' '$BENCHMARK_BASE_DIR/state-space/invpendulum_cartpos_ss/' '$BENCHMARK_BASE_DIR/state-space/suspension_ss/')
+# benchmark_dirs=('$BENCHMARK_BASE_DIR/state-space/magneticpointer_ss/' '$BENCHMARK_BASE_DIR/state-space/invpendulum_cartpos_ss/' '$BENCHMARK_BASE_DIR/state-space/suspension_ss/')
 fi
 
 #dkr13
 if [ "$1" == "dkr13" ]; then
- benchmark_dirs=('$BENCHMARK_BASE_DIR/state-space/satellite_ss/' '$BENCHMARK_BASE_DIR/state-space/tapedriver_ss/' '$BENCHMARK_BASE_DIR/state-space/pendulum_ss/' '$BENCHMARK_BASE_DIR/state-space/uscgtampa_ss/')
+# benchmark_dirs=('$BENCHMARK_BASE_DIR/state-space/satellite_ss/' '$BENCHMARK_BASE_DIR/state-space/tapedriver_ss/' '$BENCHMARK_BASE_DIR/state-space/pendulum_ss/' '$BENCHMARK_BASE_DIR/state-space/uscgtampa_ss/')
 fi
 
 working_directory_base="/tmp/control_synthesis-ss-${working_directory_base_suffix}"
 mkdir -p ${working_directory_base} 2>/dev/null
 
 for benchmark_dir in ${benchmark_dirs[@]}; do
+  echo "benchmark dir $benchmark_dir"	
  time_tmp_file=/tmp/times${working_directory_base_suffix}.log
  times >${time_tmp_file}; start_time=$(get_current_cpu_millis)
 
