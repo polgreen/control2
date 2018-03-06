@@ -5,12 +5,18 @@
  *      Author: elipol
  */
 
+#define SINGLE_PREC
+
 #ifndef CONTROL_TYPES_H_
 #define CONTROL_TYPES_H_
 
 #ifndef FIXEDBV // using single precision floating point
+#ifdef SINGLE_PREC
    #define  EXPONENT_BITS 32
    #define  MANTISSA_BITS 23
+#elif DOUBLE_PREC
+   #define  EXPONENT_BITS 64
+   #define  MANTISSA_BITS 52
 #endif
 
 
@@ -67,19 +73,17 @@
        typedef double __plant_precisiont;
         #include "float_interval.h"
        typedef struct intervalt __plant_typet;
-#ifdef SINGLE_PREC
+	#ifdef SINGLE_PREC
        typedef float __controller_precisiont;
-#elif DOUBLE_PREC
+	#elif DOUBLE_PREC
        typedef double __controller_precisiont;
-#else
-#error unsupported precisions
-#endif
+	#else
+	  #error unsupported precisions
+	#endif
        typedef struct intervalt __controller_typet;
-       #define interval(x) interval_cast(x)
-     #endif
-       __CPROVER_assert(0,"error: intervals for floating point not yet implemented");
-   //we need to implement intervals for floating point
-  #endif
-#endif
+      	  #define interval(x) interval_cast(x)
+     #endif // end of interval def
+  #endif //end of float def
+#endif // end of not cprover def
 
 #endif /* CONTROL_TYPES_H_ */
