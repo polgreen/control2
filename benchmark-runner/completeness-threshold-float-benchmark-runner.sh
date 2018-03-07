@@ -1,9 +1,10 @@
 #!/bin/bash
+#FLOATING POINT FILE RUNNER
 export PATH=/users/elipol/cbmc-5.7/src/cegis:${PATH}: #cegis path
 #export PATH=/users/pkesseli/software/cpp/z3/trunk/target/i686-linux/bin:${PATH} #z3 path
 BENCHMARK_BASE_DIR="/users/elipol/control-synthesis/benchmarks/headerfiles"
 
-CEGIS_ARGS="--round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D FIXEDBV"
+CEGIS_ARGS="--round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D FLOAT"
 
 NUMVARS=$#
 if [ $NUMVARS -eq 0 ]; then
@@ -116,28 +117,29 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
 
   spec_content=`cat ${benchmark}`
   num_states=$(extract_scalar_definition "${spec_content}" 'NSTATES')
-  impl_int_bits=$(extract_scalar_definition "${spec_content}" 'INT_BITS')
-  impl_frac_bits=$(extract_scalar_definition "${spec_content}" 'FRAC_BITS')
+ # ignore precision in header file, we use single precision
+ # impl_int_bits=$(extract_scalar_definition "${spec_content}" 'INT_BITS') 
+ # impl_frac_bits=$(extract_scalar_definition "${spec_content}" 'FRAC_BITS')
   A=$(extract_spec_matrix "${spec_content}" '_controller_A')
   B=$(extract_spec_matrix "${spec_content}" '_controller_B')
   input_upper_bound=$(extract_input "${spec_content}" 'INPUT_UPPERBOUND')
   input_lower_bound=$(extract_input "${spec_content}" 'INPUT_LOWERBOUND')
 
   max_length=64
-  integer_width=${impl_int_bits}
-  radix_width=$((impl_int_bits+impl_frac_bits))
-  min_size_offset=$(((integer_width+radix_width)%8))
-  [ ${min_size_offset} -ne 0 ] && integer_width=$((integer_width+8-min_size_offset))
+  mantissa=23
+  total_width=32
+#  min_size_offset=$(((integer_width+radix_width)%8))
+#  [ ${min_size_offset} -ne 0 ] && integer_width=$((integer_width+8-min_size_offset))
   k_sizes=(10 20 30 50 75 100 200)
   k_size_index=0
   timeout_time=3600
   kill_time=3780
-  while [ $((integer_width+radix_width)) -le ${max_length} ] && [ ${k_size_index} -lt ${#k_sizes[@]} ]; do
+  while [ ${total_width} -le ${max_length} ] && [ ${k_size_index} -lt ${#k_sizes[@]} ]; do
    k_size=${k_sizes[${k_size_index}]}
    echo_log "int: ${integer_width}, radix: ${radix_width}"
    solution_found=false
    echo_log "$CEGIS_ARGS _CONTORL_RADIX_WIDTH=${radix_width} -D NUMBERLOOPS=${k_size} ${synthesis_file}"
-   timeout --preserve-status --kill-after=${kill_time} ${timeout_time} cegis $CEGIS_ARGS -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTORL_RADIX_WIDTH=${radix_width} -D NUMBERLOOPS=${k_size} ${synthesis_file} 2>>${log_file} 1>${cbmc_log_file}
+   timeout --preserve-status --kill-after=${kill_time} ${timeout_time} cegis $CEGIS_ARGS -D _CONTROL_FLOAT_WIDTH=${total_width}) -D _CONTORL_RADIX_WIDTH=${mantissa_width} -D NUMBERLOOPS=${k_size} ${synthesis_file} 2>>${log_file} 1>${cbmc_log_file}
    cbmc_result=$?
    cat ${cbmc_log_file} >>${log_file}
    controller_items=$(grep '<item>' ${cbmc_log_file} | tail -n ${num_states})
@@ -176,13 +178,13 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
       solution_found=true
       break
      else
-      integer_width=$((integer_width+4))
-      radix_width=$((radix_width+4))
+      total_width=$((total_width+4))
+      mantissa_width=$((mantissa_width+4))
      fi
     fi
    else
-    integer_width=$((integer_width+4))
-    radix_width=$((radix_width+4))
+    total_width=$((total_width+4))
+    mantissa_width=$((mantissa_width+4))
    fi
   done
   # All files are the same benchmark with increased sample frequency. Exit after first success.

@@ -46,7 +46,7 @@ __plant_typet internal_pow(__plant_typet a, unsigned int b){
 }
 
 
-int check_stability(__plant_typet speed_factor){
+int check_stability(){
 
 
   #if NSTATES==1
@@ -68,7 +68,6 @@ int check_stability(__plant_typet speed_factor){
    __plant_typet current_stability[__n];
    for (i=0; i < __n; i++){
      current_stability[i] = __a[i];
-     for (j=0;j<=i;j++) current_stability[i]=mult(speed_factor, current_stability[i]);
    }
 
    /* check the first constraint condition F(1) > 0 */
@@ -548,7 +547,7 @@ void safety_stability(void) {
   closed_loop(); //calculate A - BK
   __CPROVER_EIGEN_charpoly();
 #ifndef INTERVAL
-  __DSVERIFIER_assert(check_stability(1.0));
+  __DSVERIFIER_assert(check_stability());
 #endif
 #if NSTATES != 1
   __DSVERIFIER_assert(check_safety());
