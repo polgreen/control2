@@ -46,7 +46,16 @@ display('CSTR - 7 benchmarks')
 voltageregulator
 display('Voltage Regulator - 8 benchmarks')
 display('Done')
-display('Total of benchmarks: 167')
+cstr2
+display('Reaction temperature of a continuous stirred tank reactor - 7 benchmarks')
+display('Done')
+bioreactor
+display('Bioreactor - 9 benchmarks')
+display('Done')
+steamdrum
+display('Level control of boiler steam drum - 8 benchmarks')
+display('Done')
+display('Total of benchmarks: 191')
 display('The .mat file benchmark_tf.mat contains the transfer function models.')
 display('The .mat file benchmark_ss.mat contains the state space models.')
 display(' ')
