@@ -13,7 +13,7 @@ Sound and Automated Synthesis of Digital Stabilizing
 Controllers for Continuous Plants. HSCC 2017: 197-206.
 
 In order to obtain all control system benchmarks, the following command 
-must be typed in MATLAB command-line.
+must be typed in the MATLAB command-line.
 
 $makebenchmarks
 
@@ -39,10 +39,23 @@ Antenna - 7 benchmarks
 CSTR - 7 benchmarks
 Voltage Regulator - 8 benchmarks
 Done
-Total of benchmarks: 167
+Reaction temperature of a continuous stirred tank reactor - 7 benchmarks
+Done
+Bioreactor - 9 benchmarks
+Done
+Level control of boiler steam drum - 8 benchmarks
+Done
+Total of benchmarks: 191
 The .mat file benchmark_tf.mat contains the transfer function models.
 The .mat file benchmark_ss.mat contains the state space models.
 
+To obtain the respective benchmarks in .tf and .ss format, the following 
+command must be typed:
+
+$automatic_gen
+
+This will generate two folders benchmarks-tf and benchmarks-ss with all
+the benchmarks in tansfer-function and state-space representations.
 
 Here is a short description for each control system benchmark.
 
