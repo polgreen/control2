@@ -234,8 +234,8 @@ systems engineering.
 %% incorporate the above mentioned artifacts in different models of
 %% Single-Input/Single-Output (SISO) systems.
 In this paper we present two novel approaches for the synthesis of digital controllers, 
-both of which use a CounterExample-Guided Inductive Synthesis (CEGIS)~\cite{jha-icse10,
-DBLP:conf/pldi/Solar-LezamaRBE05} as described next.
+both of which use a CounterExample-Guided Inductive Synthesis (CEGIS)~\cite{%jha-icse10,
+DBLP:conf/asplos/Solar-LezamaTBSS06} as described next.
 
 %% offer three modes of
 %% operation that address different aspects of the problem.
@@ -467,10 +467,25 @@ equation
 where $k \in \mathbb N$ is a discrete counter and $\vec{x}_{0}=\vec{x}(0)$
 is the initial state.  
 
-The linear feedback controller is characterized by a gain matrix
-$\mat{K}$ that influences the closed-loop dynamics
-(Fig.~\ref{fig:digitalsystem}).  Later, we will address the issue of
-variable quantization, as introduced by the ADC/DAC conversion blocks.
+Later, we will address the issue of variable quantization, as introduced by the ADC/DAC conversion blocks.
+Models \eqref{eq:ode1} and \eqref{eq:plant} depend on external non-determinism in the form of input signals $u (t)$ and  $u_k$, respectively. 
+Feedback architectures can be employed to manipulate the properties and behaviors of the continuous process (the plant).   
+We are interested in the synthesis of digital feedback control algorithms, 
+as implemented on Field-Programmable Gate Arrays or Digital Signal Processors. 
+The most basic feedback architecture is the state feedback one, 
+where the control action $u_k$ (notice we work with the discretized signal) is computed by: 
+%
+\begin{equation*}
+%\label{eq:controlaction}
+u_k = r_{k} - K x_k. 
+\end{equation*}
+
+where $K \in \mathbb{R}^{m \times n}$ is a state-feedback gain matrix, 
+and $r_{k}$ is a reference signal (again digital). We will assume $r_k=0$, thus 
+\begin{equation}
+\vec{x}_{k+1}=(\mat{A}_d-\mat{B}_d\mat{K})\vec{x}_k
+\end{equation}
+Which corresponds to a closed loop system without inputs.
 
 \begin{figure*}[htb]
 \centering
@@ -566,387 +581,6 @@ variable quantization, as introduced by the ADC/DAC conversion blocks.
  \caption{Closed-loop digital control system 
  \label{fig:digitalsystem}}
 \end{figure*}
-
-
-%-------------------------------
-\subsection{Abstract Acceleration of Linear Dynamics} 
-\label{ssec:aa}
-%-------------------------------
- 
-We recall a technique called \emph{Abstract Acceleration}~\cite{JSS14,cattaruzza2015unbounded}, 
-which will be key for abstraction-based synthesis.  
-\note{This clashes with the model introduced above, with inputs - motivate why?}
-Given a model of an iterative program with dynamics
-\note{Pls eliminate unnecessary ``logical'' notation - we have discussed this already for the CAV18 submission, do we need to go through this again????}
-%
-\begin{equation}
-\vec{x}_{k+1}=\mat{A}\vec{x}_k : \vec{x}_k \in \mathbb{R}^n \wedge \mat{A} \in \mathbb{R}^{n \times n} \wedge k \in \mathbb N_0,
-\end{equation}
-%
-\note{material has been blindly pasted here - dimensions are all screwed up.}
-we want to find all possible states visited over an infinite time horizon
-starting at an initial set $X_0$.  
-This set is known as the \emph{reach tube} of
-the model:
-%
-\begin{equation}
-\hat{X} = \{ \vec{x}_k : k \in \mathbb N_0 \wedge \vec{x}_0 \in X_0 \wedge \vec{x}_{k+1}=\mat{A}\vec{x}_k\}.
-\end{equation}
-%
-It is easy to see that the infinite number of iterations would result in an
-unbounded cumulative rounding error \note{why do we bring in the discussion on the rounding error here? why do we claim AA solves it? Is this the best manner to motivate the AA technique?}, but using Abstract Acceleration we
-transform this problem into a one-step solution.  We first change the
-problem statement by means of acceleration into
-%
-\begin{equation}
-\hat{X} = \{ \vec{x}_k=\mat{A}^k\vec{x}_0 : k \in [0\ \infty) \wedge \vec{x}_0 \in X_0 \}, 
-\end{equation}
-%
-and further define new model semantics and corresponding set: 
-%
-\begin{equation}\label{eq:aa_reachtube}
-\hat{X} \subseteq \hat{X}^\sharp = \mathcal{A}X_0, \text{ such that } \bigcup_{k \in [0\ \infty)} \mat{A}^k \subseteq \mathcal{A}, 
-\end{equation}
-%
-where the newly introduced \emph{abstract reach tube} $\hat{X}^\sharp$ is an
-over-approximation of the reach tube of the model \cite{JSS14}.  All we need
-to do is define the nature of $\mathcal{A}X_0$.
-
-Let $\mat{S}\mat{J}\mat{S}^{-1}=\mat{A}$ be the eigen-decomposition of
-$\mat{A}$, where $\mat{S}$ is the set of generalised eigenvectors of
-$\mat{A}$ and $\mat{J}$ is the Jordan Form containing the eigenvalues of
-$\mat{A}$ in its main diagonal.  We correspondingly define
-$\mathcal{J}=\mat{S}^{-1}\mathcal{A}\mat{S}$, which is such that
-$\mathcal{J} \supseteq \bigcup_{k \in [0\ \infty)} \mat{J}^k$.
-
-Introduce set $X=\{ \vec{x} \mid \mat{C}\vec{x} \leq \vec{d}\}$. 
-\note{Why are we interested in this set? What does this set represent?}
-The linear transformation $\vec{x}'=\mat{S}^{-1}\vec{x}$ leads to set 
-%
-\begin{equation}
-X'= \mat{S}^{-1}X = \{\vec{x}' : \mat{C}\mat{S}\vec{x}'\leq \vec{d}\}.  
-\label{eq:eigenInit}
-\end{equation}
-%
-Analogously, let $X_0'=\mat{S}^{-1}X_0$ and
-${\hat{X}'^\sharp}=\mat{S}^{-1}{\hat{X}^\sharp}$ be the initial set and the
-abstract reach tube mapped onto the eigenspace of matrix $\mat{A}$.  We may
-transform equation \eqref{eq:aa_reachtube} into: 
-%
-\begin{equation}
-\hat{X}' \subseteq {\hat{X}'^\sharp} = \mathcal{J}X_0', 
-\end{equation}
-%
-where $\hat{X}'=\mat{S}^{-1}\hat{X}$ and $\mathcal{J}$ is a convex
-polyhedron representing restrictions on the eigenvalues of $\mat{A}$. 
-$\hat{X}'^\sharp$ is calculated by applying a simplex algorithm with a
-tableau defined by $\mathcal{J}$ and objective functions derived from each
-vertex of $X_0'$ (step \eqref{alg:getReachTube} in Algorithm
-\ref{alg:findReachTube} below).  We note, however, that if we wish to use
-numerical analysis in the decomposition of $\mat{A}$, the Tableau in
-$\mathcal{J}$ contains small intervals given by the errors, which cannot be
-processed efficiently by a regular simplex and require a new procedure.
-
-The calculation of the abstract reach tube via abstract acceleration is
-encompassed in Algorithm~\ref{alg:findReachTube}, which can be summarised as
-follows (its steps are denoted in parentheses):
-%
-\begin{enumerate}
-%
-\item We perform unsound eigen-decomposition using an existing algebra package (lines \ref{alg:calcEigenvalues}-\ref{alg:calcEigenvectors}).
-%
-\item Then we restore soundness to the results using the methods described in \cite{cattaruzza2017sound} (lines \ref{alg:soundEigenvalues}-\ref{alg:soundEigenvectors}).
-%
-\item The inverse of the matrix of eigenvectors is calculated after soundness is restored, using interval arithmetic in order to ensure its soundness (line \ref{alg:inverse}).
-%
-\item The abstract dynamics are obtained by evaluating the convex hull of all powers of eigenvalues up to the desired number of iterations as described in \cite{cattaruzza2015unbounded} (line \ref{alg:aa}). 
-%
-\item Using Equation \eqref{eq:eigenInit}, transform the initial state into the eigenspace (line \ref{alg:eigeninit}).
-%
-\item Extract the vertices of the eigen-polyhedron $X_0'$ using the algorithms described in \cite{cattaruzza2015unbounded,cattaruzza2017sound} (line \ref{alg:getVertices}). 
-%
-\item Calculate the mapped \emph{abstract reach tube} ${\hat{X}'^\sharp}$
-that over-approximates the image of the reach tube in the eigenspace (line
-\ref{alg:getReachTube}).  This is achieved by evaluating a set of objective
-functions using the abstract dynamics as a simplex Tableau, and via a sound
-simplex described in \cite{cattaruzza2017sound}.  The objective functions are
-defined by the vertices of $X'_0$, denote as $V_0$, and by the desired
-template directions, such that
-%
-\begin{equation*}
-\vec{w}_{ij}= \vec{v}_i \circ \vec{t}_j : \vec{v}_i \in V_0 \wedge \vec{t}_j \in T,
-\end{equation*}
-%
-where $T$ is the set of template directions, and $\circ$ denotes a
-component-wise multiplication yielding a vector.
-%
-\item Using Equation~\eqref{eq:eigenInit}, find the reach tube
-$\hat{X}^\sharp=\mat{S}{\hat{X}'^\sharp}$ (line \ref{alg:getNormReachTube}).
-%
-\end{enumerate}
-
-\begin{algorithm}[]
-\small
-\begin{algorithmic}[1]
-\Function{$\mathit{findAbstractReachTube}()$}{}
-\State $\hat{\mat{J}}=$ calculateEigenvalues($ \mat{A}$)
-\label{alg:calcEigenvalues}
-\State $\hat{\mat{S}}=$ calculateEigenvectors($ \mat{A}$)
-\label{alg:calcEigenvectors}
-\State $[\mat{J}]=$ soundifyEigenvalues($\mat{A},\mat{J},\mat{S}$)
-\label{alg:soundEigenvalues}
-\State $[\mat{S}]=$ soundifyEigenvectors($\mat{A},[\mat{J}],\mat{S}$)
-\label{alg:soundEigenvectors}
-\State $[\mat{S}]^{-1}=$ calculateInverse($[\mat{S}]$)
-\label{alg:inverse}
-\State $\mathcal{J}=getAbstractDynamics([\mat{J}])$
-\label{alg:aa}
-\State $[X_0']=$ transformInitialSpace($X_0,\mat{S}$)
-\label{alg:eigeninit}
-\State $[V_0]=$ getVertices($[X_0']$)
-\label{alg:getVertices}
-\State ${\hat{X}'^\sharp}=$ getReachTube($\mathcal{J},[V_0]$)
-\label{alg:getReachTube}
-\State ${\hat{X}^\sharp}=$ transformReachTube(${\hat{X}'^\sharp},[\mat{S}]^{-1}$)
-\label{alg:getNormReachTube}
-\EndFunction
-\end{algorithmic}
-\caption{Calculation of Abstract Reach Tube Using Abstract Acceleration}
-\label{alg:findReachTube}
-\end{algorithm}
-
-%%-------------------------------
-%\subsection{Overapproximating continuous time dynamics using discrete models}
-%\label{sec:cont_aa}
-%%-------------------------------
-%
-%Thus far we wave discussed the Abstract Accelertion of Discrete Time
-%systems.  However, our plant models derive from the discretization of
-%continuous time systems.  We therefore seek to establish a sound
-%overapproximation which does not only encompass the selected discretization,
-%but any chosen discretization in the time domain.
-%
-%A dynamical system is a system in which a function describes the progression
-%of a state over time.  In a continuous domain with linear dynamics, it is
-%described by a first order Ordinary Differential Equation (ODE).
-%%
-%\begin{equation}
-%\dot{x}(t)=\mat{A}_o\vec{x}(t)+\mat{B}_o\vec{u}(t)
-%\label{eq:dynamical}
-%\end{equation}
-%%
-%Furthermore, a control system may have a derived
-%output that is a linear combination of its states and inputs, which may
-%restricts the observability of the statespace from the output space.
-%%
-%\begin{equation}
-%\vec{y}(t)=\mat{C}_o\vec{x}(t)+\mat{D}_o\vec{u}(t)
-%\end{equation}
-%%
-%Discretization of a continuous dynamical system turns the ODE into a
-%difference equation, assuming zero-order hold for the input $\vec{u}$, to
-%%
-%\begin{align}
-%\label{eq:discretization}
-%\vec{x}_{k+1} &= \mat{A}_d\vec{x}_k+\mat{B}_d\vec{u}_k\\
-%y_k &= \mat{C}_d \vec{x}_ k + \mat{D}_d \vec{u}_ k 
-%\end{align}
-%where
-%\begin{align}
-%\label{eq:discretize}
-%\mat{A}_d &= e^{\mat{A}_o T_s} = \mathcal{L}^{-1} { ( s \mat{I} - \mat{A}_o )^{-1} }_{t = T_s}\\
-%\mat{B}_d &= \int_{t = 0}^{T_s} e^{\mat{A}_o t} dt\ \mat{B}_o = \mat{A}_o^{-1} ( \mat{A}_d - \mat{I} ) \mat{B}_o\\
-%\mat{C}_d &= \mat{C}_o\\
-%\mat{D}_d &= \mat{D}_o \\
-%\end{align}
-%and $T_s$ is the sample time. Then
-%\begin{align*}
-%x(kT)=x_k \wedge y(kT) = y_k, \forall k
-%\end{align*}
-
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\section{Acceleration of continuous-time models}\label{sec:continuous_time_accel}
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
-
-The time discretization in Sec.~\ref{sec:model} only allows us to evaluate
-the state of the plant at integer multiples of the sample time.  
-%\note{Unlike the CAV18 paper, these gain matrices have not been discussed yet. }
-However, in
-order to synthesize $\mat{K}$, we must be able to ensure that
-certain properties of the plant hold at any given point in time.  In order
-to do so, we accelerate the dynamics of the plant according to the model
-semantics in Sec.~\ref{sec:model} and compute the state
-$\vec{x}_T$ at a given time $T$,
-%
-% namely we find an equation for $\tau^n(\vec{x},\vec{u})$ given $\tau(\vec{x},\vec{u})$. 
-%
-namely the state of the system $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$ at time
-$t=T$.
-
-%\note{ [add?] In this section we work with fully observed models, namely where $y = x$. } 
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{Accelerated\! dynamics\! for\! continuous-time\! models\! without\! inputs}\label{sec:cont_acc_no_inputs}
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-%
-Given a specific time $T$, the state $\vec{x}(t=T)$ can be expressed as a
-linear function of $\vec{x}_0$ as shown below.  We assume that the system
-has no inputs, so its dynamics are described by
-$\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$.
- 
-\begin{lemma}
-The solution to the differential equation $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$, where $\mat{A}=\mat{S}\mat{J}\mat{S}^{-1}$, and $\mat{S}$ are the generalized eigenvectors of $\mat{A}$,
-evaluated at time $T$ is
-%
-\begin{align}
- \vec{x}_T&=\vec{x}(t=T)=\mat{A}_{T}\vec{x} (0)\\
- \mat{A}_{T}&= \mat{S}
- \left [ \begin{array}{cccc}
- e^{T\lambda_1}  & s_1\frac{T^{1}e^{T\lambda_i}}{(2)!} & \hdots  & s_i\frac{T^{p-1}e^{T\lambda_i}}{(p-i)!} \\
-0 & e^{T\lambda_i}  & s_i\frac{T^{j-i}e^{T\lambda_i}}{(j-i)!} & \vdots \\
-\vdots & & \ddots & \vdots \\
-0 & \cdots & 0  &e^{T\lambda_i} \\
-\end{array} \right ]
- \mat{S}^{-1}
- \label{eq:continuous_tube_dyn2}\\
- &\text{where } s_i=\left\{\begin{array}{cc}1&\quad gm(\lambda_i)>1\\0&\quad gm(\lambda_i)=1\end{array}\right.,\nonumber
-\end{align}
-%
-$\lambda_i$ are the eigenvalues of $\mat{A}$, and $gm(\lambda_i)$ is the geometric multiplicity of $\lambda_i$.
-%
-%$\vec{x}_T$ is the state of the system $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$ at time t=T. 
-If $\mat{J}$ is diagonal and there exists a discrete dynamics matrix for a sampling time $T_d$ such that $A_d=e^{\mat{A} T_d}$, then $\vec{x}_T=A_d^{\frac{T}{T_d}}\vec{x}_0 \text{ with } T \in \mathbb{R}^+_0$ is the state of the system at time $t=T$. 
-\end{lemma}
-
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{Accelerated dynamics for models with parametric inputs}\label{sec:real_discrete_param_inputs}
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-Next, we are interested in studying models with parametric inputs, which are
-described by $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)$, where
-$\forall t\geq 0.\,\vec{u}(t)=\vec{u}$.  For such models, a state $\vec{x}_T$
-is computed next.
-%
-\begin{lemma}
-%
-The state of the model
-$\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)$ at time $T$ given a
-parametric input $\vec{u}$ is
-%
-\begin{align}
-\vec{x}_T&=\vec{x}(t=T)=\mat{A}_T\vec{x}_0 + \mat{B}_T\vec{u}
-\label{eq:continuous_tube_param}
-\end{align}
-%
-where $\mat{B}_T=\mat{A}^{-1}(\mat{I}-\mat{A}_T)\mat{B}$, $\forall t \leq T.\, \vec{u}(t)=\vec{u}$, and $\mat{A}_T$ as in
-\eqref{eq:continuous_tube_dyn2} \footnote{When $\mat{A}$ is not invertible,
-we use $\left[\begin{array}{cc}\mat{A}_T&\mat{B}_T\\
-0&\mat{I}\end{array}\right]=e^{\left[\begin{array}{cc}\mat{A}&\mat{B}\\0&0\end{array}\right]}$.}. 
-If $\mat{J}$ is diagonal and given a sampling time $T_d$ such that
-$A_d=e^{\mat{A} T_d}$, then
-$\vec{x}_T=A_d^{\frac{T}{T_d}}\vec{x}_0+(\mat{I}-\mat{A}_d^{\frac{T}{T_d}}\mat{B}_d\vec{u})
-\text{ with } T \in \mathbb{R}_0^+$ (where $\mat{A}_d^{\frac{T}{T_d}} =
-e^{log(\mat{A}_d) \frac{T}{T_d}} = e^{\mat{A} T}$) is the state of the
-system at time $T$.
-%
-\end{lemma}
-
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsection{Accelerated dynamics for models with a sampled-time feedback}\label{sec:real_discrete_feedback_inputs}
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-The final case we analyze is that of hybrid-time models, where the plant
-dynamics evolve in continuous time while the feedback dynamics evolve in
-discrete time.  A~new input value is produced only at every sample time but
-implemented over the continuous-time plant dynamics.
-%
-%\note{Matrix K has not been introduced yet. }
-\begin{theorem}
-The expression
-%
- \begin{align}
- \vec{x}_{T} &= (\mat{A}_{T-kT_s}-\mat{B}_{T-kT_s}\mat{K}) (\mat{A}_d-\mat{B}_d\mat{K})^k\vec{x}_0, 
- \label{eq:cyber_feedback}
- \end{align}
-%
-with $\mat{A}_T$ as in \eqref{eq:continuous_tube_dyn2}, $\mat{B}_T$ as in
-\eqref{eq:continuous_tube_param}, and where $\mat{A}_d=\mat{A}_{T_s}$,
-$\mat{B}_d=\mat{B}_{T_s}$ describe the discretized plant dynamics with
-sample time $T_s$, is the state of the model
-%
-\begin{align*}
- \dot{\vec{x}}(t) = \mat{A}\vec{x}(t)+\mat{B}\vec{u}(t), \quad 
- \vec{u}(t)=\mat{K}\vec{x}_k,  \,
- kT_s \leq t < (k+1)T_s \,. 
-\end{align*}
-%
-\end{theorem}
-\begin{proof}
-%
-Let $\mat{K}$ be a feedback controller such that
-$\vec{u}_k=-\mat{K}\vec{x}_k$ at time $t=kT_s$.  Let the output of the
-feedback system be a zero order holder such that
-$\vec{u}(t'+kT_s)=\vec{u}(kT_s), \text{ for } 0 \leq t' < T_s$.  The closed
-loop dynamics of the system between times $kT_s$ and $kT_s+T_s$ are
-%
-\begin{align*}
-\vec{x}_{k,t'}=\mat{A}_{t'}\vec{x}_k-\mat{B}_{t'}\mat{K}\vec{x}_k = (\mat{A}_{t'}-\mat{B}_{t'}\mat{K})\vec{x}_k,
-\end{align*}
-where $0 \leq t' < T_s$
-We further explore the dynamics across discrete time boundaries. Let $\mat{A}_d=\mat{A}_{T_s}$ and $\mat{B}_d=\mat{B}_{T_s}$
-\begin{align*}
-\vec{x}_{k}&=\vec{x}_{k-1,T_s}= (\mat{A}_d-\mat{B}_d\mat{K})\vec{x}_{k-1}\\
-\vec{x}_{k,T_s} &= (\mat{A}_d-\mat{B}_d\mat{K}) (\mat{A}_d-\mat{B}_d\mat{K})\vec{x}_{k-1}
-\end{align*}
-which accelerating results and setting $T=kT_s+t'$ becomes
-\begin{align}
-\label{eq:feedback_sampled_cont}
-\vec{x}_{k} &= (\mat{A}_d-\mat{B}_d\mat{K}) ^k\vec{x}_0\\
-\vec{x}_{T} &= (\mat{A}_{T-kT_s}-\mat{B}_{T-kT_s}\mat{K}) (\mat{A}_d-\mat{B}_d\mat{K})^k\vec{x}_0
-\label{eq:feedback_cont}
-\end{align}
-\end{proof}
-
-%-------------------------------
- \subsection{Finding Abstract Supports for Continuous Dynamics}
- \label{sec:cont_aasup}
-%-------------------------------
-
-In the case of Discrete dynamics, support functions can be found by
-evaluating hyperplanes of consecutive exponents of the eigenvalues using
-differences.  In the case of continuous time, this translates to calculating
-derivatives.  Once again, when the sets are known to be convex, we may
-calculate the normal vector to this derivative and evaluate its support
-function on the selected iteration.  The direction of the vector is
-determined by evaluating the support function of another point in the curve,
-which is known to be smaller than that of the selected point.  The
-corresponding derivatives are:
-%
-\begin{enumerate}
-%
-\item for real eigenvalues: we first calculate the slope of the tangent
-between the two progressions: $\frac{d f(k)}{d g(k)}=\frac{f'(k)}{g'(k)}$. 
-Hence $\frac{d \lambda_1^k}{d \lambda_2^k}=\frac{log(\lambda_1)
-\lambda_1^k}{log(\lambda_2) \lambda_2^k}$.  From this we know that the polar
-angle of the support vector is $\psi = \tan^{-1}(\frac{log(\lambda_1)
-\lambda_1^k}{log(\lambda_2) \lambda_2^k})+\frac{\pi}{2}$
-%
-\item for conjugate eigenvalue pairs: the pair forms a logarithmic spiral. 
-The tangent of a spiral with polar equation $r=a e^{b\theta}$ will have a
-derivative $\frac{d r}{d \theta}=b a e^{b\theta}=b r$, hence the angle of
-the vector normal to the curve is $\tan^{-1}(\frac{r}{\frac{d r}{d
-\theta}})+\frac{\pi}{2}=\tan^{-1}(\frac{1}{b})+\frac{\pi}{2}$
-%
-\item for Jordan blocks with $gm>1$: in the case of real eigenvalues, we
-follow the same procedure as in the real case, but considering that the
-equation for each eigenvalue is $\frac{k^j}{j!}e^{\lambda k}$ where $j$ is
-the index of the term within the Jordan block (note that when $j=0$ the term
-is the same as for real eigenvalues above).  The derivatives f'(k),g'(k) are
-in the form $(j+k*log(\lambda))\frac{k^{j-1}}{j!}e^{\lambda k}$.
-%
-\item for any combination of complex eigenvalues we use the above equations
-using the envelope of their magnitude (ie $|\lambda|$).
-%
-\end{enumerate}
 
 %-------------------------------
 \section{Counterexample Guided Inductive Synthesis} 
@@ -1494,6 +1128,388 @@ $z^n+\sum_{i=1}^n(a_i-k_i)z^{n-i}=\prod_{i=1}^n (z-\lambda_i) : |\lambda_i|<1 \w
 \label{fig:CEGARIS} 
 \end{figure*}
 
+
+%-------------------------------
+\subsection{Abstract Acceleration of Linear Dynamics} 
+\label{ssec:aa}
+%-------------------------------
+ 
+We recall a technique called \emph{Abstract Acceleration}~\cite{JSS14,cattaruzza2015unbounded}, 
+which will be key for abstraction-based synthesis.  
+%\note{This clashes with the model introduced above, with inputs - motivate why? I've added the motivation above by introducing the closed  loop}
+Given a model of an iterative program with dynamics
+%
+\begin{equation}
+\vec{x}_{k+1}=\mat{A}\vec{x}_k \text{ where } \vec{x}_k \in \mathbb{R}^p, \mat{A} \in \mathbb{R}^{p \times p} \text{ and } k \in \mathbb N_0,
+\end{equation}
+%
+we want to find all possible states visited over an infinite time horizon
+starting at an initial set $X_0$.  
+This set is known as the \emph{reach tube} of
+the model:
+%
+\begin{equation}
+\hat{X} = \{ \vec{x}_k \mid k \in \mathbb N_0, \vec{x}_0 \in X_0 \text{ and } \vec{x}_{k+1}=\mat{A}\vec{x}_k\}.
+\end{equation}
+%
+Using Abstract Acceleration we
+transform this problem into a one-step solution.  We first change the
+problem statement by means of acceleration into
+%
+\begin{equation}
+\hat{X} = \{ \vec{x}_k=\mat{A}^k\vec{x}_0 \mid k \in N_0 \text{ and } \vec{x}_0 \in X_0 \}, 
+\end{equation}
+%
+and further define new model semantics and corresponding set: 
+%
+\begin{equation}\label{eq:aa_reachtube}
+\hat{X} \subseteq \hat{X}^\sharp = \mathcal{A}X_0, \text{ such that } \bigcup_{k \in [0\ \infty)} \mat{A}^k \subseteq \mathcal{A}, 
+\end{equation}
+%
+where the newly introduced \emph{abstract reach tube} $\hat{X}^\sharp$ is an
+over-approximation of the reach tube of the model \cite{JSS14}.  
+In this work we use an extension of the abstract acceleration model for
+continuous time. For this reason we must first look at the accelerationm of continuous time dynamics.
+
+%All we need to do is define the nature of $\mathcal{A}X_0$.
+%Let $\mat{S}\mat{J}\mat{S}^{-1}=\mat{A}$ be the eigen-decomposition of
+%$\mat{A}$, where $\mat{S}$ is the set of generalised eigenvectors of
+%$\mat{A}$ and $\mat{J}$ is the Jordan Form containing the eigenvalues of
+%$\mat{A}$ in its main diagonal.  We correspondingly define
+%$\mathcal{J}=\mat{S}^{-1}\mathcal{A}\mat{S}$, which is such that
+%$\mathcal{J} \supseteq \bigcup_{k \in [0\ \infty)} \mat{J}^k$.
+%
+%Since abstract acceleration operates in the eigenspace, wemust deal with some preliminary transformations.
+%Given a set $X=\{ \vec{x} \mid \mat{C}\vec{x} \leq \vec{d}\}$,
+%the linear transformation $\vec{x}'=\mat{S}^{-1}\vec{x}$ leads to the set 
+%%
+%\begin{equation}
+%X'= \mat{S}^{-1}X = \{\vec{x}' \mid \mat{C}\mat{S}\vec{x}'\leq \vec{d}\}.  
+%\label{eq:eigenInit}
+%\end{equation}
+%%
+%Analogously, let $X_0'=\mat{S}^{-1}X_0$ and
+%${\hat{X}'^\sharp}=\mat{S}^{-1}{\hat{X}^\sharp}$ be the initial set and the
+%abstract reach tube mapped onto the eigenspace of matrix $\mat{A}$.  We may
+%transform equation \eqref{eq:aa_reachtube} into: 
+%%
+%\begin{equation}
+%\hat{X}' \subseteq {\hat{X}'^\sharp} = \mathcal{J}X_0', 
+%\end{equation}
+%%
+%where $\hat{X}'=\mat{S}^{-1}\hat{X}$ and $\mathcal{J}$ is a convex
+%polyhedron representing restrictions on the eigenvalues of $\mat{A}$. 
+%$\hat{X}'^\sharp$ is calculated by applying a simplex algorithm with a
+%tableau defined by $\mathcal{J}$ and objective functions derived from each
+%vertex of $X_0'$ (step \eqref{alg:getReachTube} in Algorithm
+%\ref{alg:findReachTube} below).  We note, however, that if we wish to use
+%numerical analysis in the decomposition of $\mat{A}$, the Tableau in
+%$\mathcal{J}$ contains small intervals given by the errors, which cannot be
+%processed efficiently by a regular simplex and require a new procedure.
+%
+%The calculation of the abstract reach tube via abstract acceleration is
+%encompassed in Algorithm~\ref{alg:findReachTube}, which can be summarised as
+%follows (its steps are denoted in parentheses):
+%%
+%\begin{enumerate}
+%%
+%\item We perform unsound eigen-decomposition using an existing algebra package (lines \ref{alg:calcEigenvalues}-\ref{alg:calcEigenvectors}).
+%%
+%\item Then we restore soundness to the results using the methods described in \cite{cattaruzza2017sound} (lines \ref{alg:soundEigenvalues}-\ref{alg:soundEigenvectors}).
+%%
+%\item The inverse of the matrix of eigenvectors is calculated after soundness is restored, using interval arithmetic in order to ensure its soundness (line \ref{alg:inverse}).
+%%
+%\item The abstract dynamics are obtained by evaluating the convex hull of all powers of eigenvalues up to the desired number of iterations as described in \cite{cattaruzza2015unbounded} (line \ref{alg:aa}). 
+%%
+%\item Using Equation \eqref{eq:eigenInit}, transform the initial state into the eigenspace (line \ref{alg:eigeninit}).
+%%
+%\item Extract the vertices of the eigen-polyhedron $X_0'$ using the algorithms described in \cite{cattaruzza2015unbounded,cattaruzza2017sound} (line \ref{alg:getVertices}). 
+%%
+%\item Calculate the mapped \emph{abstract reach tube} ${\hat{X}'^\sharp}$
+%that over-approximates the image of the reach tube in the eigenspace (line
+%\ref{alg:getReachTube}).  This is achieved by evaluating a set of objective
+%functions using the abstract dynamics as a simplex Tableau, and via a sound
+%simplex described in \cite{cattaruzza2017sound}.  The objective functions are
+%defined by the vertices of $X'_0$, denote as $V_0$, and by the desired
+%template directions, such that
+%%
+%\begin{equation*}
+%\vec{w}_{ij}= \vec{v}_i \circ \vec{t}_j \text{ with } \vec{v}_i \in V_0 \text{ and } \vec{t}_j \in T,
+%\end{equation*}
+%%
+%where $T$ is the set of template directions, and $\circ$ denotes a
+%component-wise multiplication yielding a vector.
+%%
+%\item Using Equation~\eqref{eq:eigenInit}, find the reach tube
+%$\hat{X}^\sharp=\mat{S}{\hat{X}'^\sharp}$ (line \ref{alg:getNormReachTube}).
+%%
+%\end{enumerate}
+%
+%\begin{algorithm}[]
+%\small
+%\begin{algorithmic}[1]
+%\Function{$\mathit{findAbstractReachTube}()$}{}
+%\State $\hat{\mat{J}}=$ calculateEigenvalues($ \mat{A}$)
+%\label{alg:calcEigenvalues}
+%\State $\hat{\mat{S}}=$ calculateEigenvectors($ \mat{A}$)
+%\label{alg:calcEigenvectors}
+%\State $[\mat{J}]=$ soundifyEigenvalues($\mat{A},\mat{J},\mat{S}$)
+%\label{alg:soundEigenvalues}
+%\State $[\mat{S}]=$ soundifyEigenvectors($\mat{A},[\mat{J}],\mat{S}$)
+%\label{alg:soundEigenvectors}
+%\State $[\mat{S}]^{-1}=$ calculateInverse($[\mat{S}]$)
+%\label{alg:inverse}
+%\State $\mathcal{J}=getAbstractDynamics([\mat{J}])$
+%\label{alg:aa}
+%\State $[X_0']=$ transformInitialSpace($X_0,\mat{S}$)
+%\label{alg:eigeninit}
+%\State $[V_0]=$ getVertices($[X_0']$)
+%\label{alg:getVertices}
+%\State ${\hat{X}'^\sharp}=$ getReachTube($\mathcal{J},[V_0]$)
+%\label{alg:getReachTube}
+%\State ${\hat{X}^\sharp}=$ transformReachTube(${\hat{X}'^\sharp},[\mat{S}]^{-1}$)
+%\label{alg:getNormReachTube}
+%\EndFunction
+%\end{algorithmic}
+%\caption{Calculation of Abstract Reach Tube Using Abstract Acceleration}
+%\label{alg:findReachTube}
+%\end{algorithm}
+
+%%-------------------------------
+%\subsection{Overapproximating continuous time dynamics using discrete models}
+%\label{sec:cont_aa}
+%%-------------------------------
+%
+%Thus far we wave discussed the Abstract Accelertion of Discrete Time
+%systems.  However, our plant models derive from the discretization of
+%continuous time systems.  We therefore seek to establish a sound
+%overapproximation which does not only encompass the selected discretization,
+%but any chosen discretization in the time domain.
+%
+%A dynamical system is a system in which a function describes the progression
+%of a state over time.  In a continuous domain with linear dynamics, it is
+%described by a first order Ordinary Differential Equation (ODE).
+%%
+%\begin{equation}
+%\dot{x}(t)=\mat{A}_o\vec{x}(t)+\mat{B}_o\vec{u}(t)
+%\label{eq:dynamical}
+%\end{equation}
+%%
+%Furthermore, a control system may have a derived
+%output that is a linear combination of its states and inputs, which may
+%restricts the observability of the statespace from the output space.
+%%
+%\begin{equation}
+%\vec{y}(t)=\mat{C}_o\vec{x}(t)+\mat{D}_o\vec{u}(t)
+%\end{equation}
+%%
+%Discretization of a continuous dynamical system turns the ODE into a
+%difference equation, assuming zero-order hold for the input $\vec{u}$, to
+%%
+%\begin{align}
+%\label{eq:discretization}
+%\vec{x}_{k+1} &= \mat{A}_d\vec{x}_k+\mat{B}_d\vec{u}_k\\
+%y_k &= \mat{C}_d \vec{x}_ k + \mat{D}_d \vec{u}_ k 
+%\end{align}
+%where
+%\begin{align}
+%\label{eq:discretize}
+%\mat{A}_d &= e^{\mat{A}_o T_s} = \mathcal{L}^{-1} { ( s \mat{I} - \mat{A}_o )^{-1} }_{t = T_s}\\
+%\mat{B}_d &= \int_{t = 0}^{T_s} e^{\mat{A}_o t} dt\ \mat{B}_o = \mat{A}_o^{-1} ( \mat{A}_d - \mat{I} ) \mat{B}_o\\
+%\mat{C}_d &= \mat{C}_o\\
+%\mat{D}_d &= \mat{D}_o \\
+%\end{align}
+%and $T_s$ is the sample time. Then
+%\begin{align*}
+%x(kT)=x_k \wedge y(kT) = y_k, \forall k
+%\end{align*}
+
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+\section{Acceleration of continuous-time models}\label{sec:continuous_time_accel}
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
+
+The time discretization in Sec.~\ref{sec:model} only allows us to evaluate
+the state of the plant at integer multiples of the sample time.  
+%\note{Unlike the CAV18 paper, these gain matrices have not been discussed yet. }
+However, in
+order to synthesize $\mat{K}$, we must be able to ensure that
+certain properties of the plant hold at any given point in time.  In order
+to do so, we accelerate the dynamics of the plant according to the model
+semantics in Sec.~\ref{sec:model} and compute the state
+$\vec{x}_T$ at a given time $T$,
+%
+% namely we find an equation for $\tau^n(\vec{x},\vec{u})$ given $\tau(\vec{x},\vec{u})$. 
+%
+namely the state of the system $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$ at time
+$t=T$.
+
+%\note{ [add?] In this section we work with fully observed models, namely where $y = x$. } 
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+\subsection{Accelerated\! dynamics\! for\! continuous-time\! models\! without\! inputs}\label{sec:cont_acc_no_inputs}
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+%
+Given a specific time $T$, the state $\vec{x}(t=T)$ can be expressed as a
+linear function of $\vec{x}_0$ as shown below.  We assume that the system
+has no inputs, so its dynamics are described by
+$\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$.
+ 
+\begin{lemma}
+The solution to the differential equation $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$, where $\mat{A}=\mat{S}\mat{J}\mat{S}^{-1}$, and $\mat{S}$ are the generalized eigenvectors of $\mat{A}$,
+evaluated at time $T$ is
+%
+\begin{align}
+ \vec{x}_T&=\vec{x}(t=T)=\mat{A}_{T}\vec{x} (0)\\
+ \mat{A}_{T}&= \mat{S}
+ \left [ \begin{array}{cccc}
+ e^{T\lambda_1}  & s_1\frac{T^{1}e^{T\lambda_i}}{(2)!} & \hdots  & s_i\frac{T^{p-1}e^{T\lambda_i}}{(p-i)!} \\
+0 & e^{T\lambda_i}  & s_i\frac{T^{j-i}e^{T\lambda_i}}{(j-i)!} & \vdots \\
+\vdots & & \ddots & \vdots \\
+0 & \cdots & 0  &e^{T\lambda_i} \\
+\end{array} \right ]
+ \mat{S}^{-1}
+ \label{eq:continuous_tube_dyn2}\\
+ &\text{where } s_i=\left\{\begin{array}{cc}1&\quad gm(\lambda_i)>1\\0&\quad gm(\lambda_i)=1\end{array}\right.,\nonumber
+\end{align}
+%
+$\lambda_i$ are the eigenvalues of $\mat{A}$, and $gm(\lambda_i)$ is the geometric multiplicity of $\lambda_i$.
+%
+%$\vec{x}_T$ is the state of the system $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$ at time t=T. 
+If $\mat{J}$ is diagonal and there exists a discrete dynamics matrix for a sampling time $T_d$ such that $A_d=e^{\mat{A} T_d}$, then $\vec{x}_T=A_d^{\frac{T}{T_d}}\vec{x}_0 \text{ with } T \in \mathbb{R}^+_0$ is the state of the system at time $t=T$. 
+\end{lemma}
+
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+\subsection{Accelerated dynamics for models with parametric inputs}\label{sec:real_discrete_param_inputs}
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Next, we are interested in studying models with parametric inputs, which are
+described by $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)$, where
+$\forall t\geq 0.\,\vec{u}(t)=\vec{u}$.  For such models, a state $\vec{x}_T$
+is computed next.
+%
+\begin{lemma}
+%
+The state of the model
+$\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)$ at time $T$ given a
+parametric input $\vec{u}$ is
+%
+\begin{align}
+\vec{x}_T&=\vec{x}(t=T)=\mat{A}_T\vec{x}_0 + \mat{B}_T\vec{u}
+\label{eq:continuous_tube_param}
+\end{align}
+%
+where $\mat{B}_T=\mat{A}^{-1}(\mat{I}-\mat{A}_T)\mat{B}$, $\forall t \leq T.\, \vec{u}(t)=\vec{u}$, and $\mat{A}_T$ as in
+\eqref{eq:continuous_tube_dyn2} \footnote{When $\mat{A}$ is not invertible,
+we use $\left[\begin{array}{cc}\mat{A}_T&\mat{B}_T\\
+0&\mat{I}\end{array}\right]=e^{\left[\begin{array}{cc}\mat{A}&\mat{B}\\0&0\end{array}\right]}$.}. 
+If $\mat{J}$ is diagonal and given a sampling time $T_d$ such that
+$A_d=e^{\mat{A} T_d}$, then
+$\vec{x}_T=A_d^{\frac{T}{T_d}}\vec{x}_0+(\mat{I}-\mat{A}_d^{\frac{T}{T_d}}\mat{B}_d\vec{u})
+\text{ with } T \in \mathbb{R}_0^+$ (where $\mat{A}_d^{\frac{T}{T_d}} =
+e^{log(\mat{A}_d) \frac{T}{T_d}} = e^{\mat{A} T}$) is the state of the
+system at time $T$.
+%
+\end{lemma}
+
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+\subsection{Accelerated dynamics for models with a sampled-time feedback}\label{sec:real_discrete_feedback_inputs}
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+The final case we analyze is that of hybrid-time models, where the plant
+dynamics evolve in continuous time while the feedback dynamics evolve in
+discrete time.  A~new input value is produced only at every sample time but
+implemented over the continuous-time plant dynamics.
+%
+%\note{Matrix K has not been introduced yet. }
+\begin{theorem}
+The expression
+%
+ \begin{align}
+ \vec{x}_{T} &= (\mat{A}_{T-kT_s}-\mat{B}_{T-kT_s}\mat{K}) (\mat{A}_d-\mat{B}_d\mat{K})^k\vec{x}_0, 
+ \label{eq:cyber_feedback}
+ \end{align}
+%
+with $\mat{A}_T$ as in \eqref{eq:continuous_tube_dyn2}, $\mat{B}_T$ as in
+\eqref{eq:continuous_tube_param}, and where $\mat{A}_d=\mat{A}_{T_s}$,
+$\mat{B}_d=\mat{B}_{T_s}$ describe the discretized plant dynamics with
+sample time $T_s$, is the state of the model
+%
+\begin{align*}
+ \dot{\vec{x}}(t) = \mat{A}\vec{x}(t)+\mat{B}\vec{u}(t), \quad 
+ \vec{u}(t)=\mat{K}\vec{x}_k,  \,
+ kT_s \leq t < (k+1)T_s \,. 
+\end{align*}
+%
+\end{theorem}
+\begin{proof}
+%
+Let $\mat{K}$ be a feedback controller such that
+$\vec{u}_k=-\mat{K}\vec{x}_k$ at time $t=kT_s$.  Let the output of the
+feedback system be a zero order holder such that
+$\vec{u}(t'+kT_s)=\vec{u}(kT_s), \text{ for } 0 \leq t' < T_s$.  The closed
+loop dynamics of the system between times $kT_s$ and $kT_s+T_s$ are
+%
+\begin{align*}
+\vec{x}_{k,t'}=\mat{A}_{t'}\vec{x}_k-\mat{B}_{t'}\mat{K}\vec{x}_k = (\mat{A}_{t'}-\mat{B}_{t'}\mat{K})\vec{x}_k,
+\end{align*}
+where $0 \leq t' < T_s$
+We further explore the dynamics across discrete time boundaries. Let $\mat{A}_d=\mat{A}_{T_s}$ and $\mat{B}_d=\mat{B}_{T_s}$
+\begin{align*}
+\vec{x}_{k}&=\vec{x}_{k-1,T_s}= (\mat{A}_d-\mat{B}_d\mat{K})\vec{x}_{k-1}\\
+\vec{x}_{k,T_s} &= (\mat{A}_d-\mat{B}_d\mat{K}) (\mat{A}_d-\mat{B}_d\mat{K})\vec{x}_{k-1}
+\end{align*}
+which accelerating results and setting $T=kT_s+t'$ becomes
+\begin{align}
+\label{eq:feedback_sampled_cont}
+\vec{x}_{k} &= (\mat{A}_d-\mat{B}_d\mat{K}) ^k\vec{x}_0\\
+\vec{x}_{T} &= (\mat{A}_{T-kT_s}-\mat{B}_{T-kT_s}\mat{K}) (\mat{A}_d-\mat{B}_d\mat{K})^k\vec{x}_0
+\label{eq:feedback_cont}
+\end{align}
+\end{proof}
+
+%-------------------------------
+ \subsection{Finding Abstract Supports for Continuous Dynamics}
+ \label{sec:cont_aasup}
+%-------------------------------
+
+Now that we have defined the dynamics of continuous time, we can use abstract acceleration techniques to evaluate
+the above model such that
+\begin{equation}\label{eq:aa_cont_amatrix}
+\bigcup_{T \in [0, T_s], k \in N_0} (\mat{A}_{T-kT_s}-\mat{B}_{T-kT_s}\mat{K}) (\mat{A}_d-\mat{B}_d\mat{K})^k \subseteq \mathcal{A}.
+\end{equation}
+
+Abstract acceleration works by finding support functions of the set that encompasses the matrices $\mat{A}^k$.
+Support functions are scalars that measure the distance of a hyperplane tangent to the set boundary to the origin.
+In the case of continuous spaces, this translates to calculating the derivatives of the envelope in order to find the direction of the support vector (normal to the hyperplane), and calculating the distance to the corresponding point where the hyperplane touches the set (at which the derivative was calculated).
+The direction of the vector is determined by evaluating the support function of another point in the curve,
+which is known to be smaller than that of the selected point, and the chosen hyperplanes are aligned with the eigenvectors, hence we only look at eigenvalue pairs to calculate the derivatives~\cite{cattaruzza2015unbounded}.
+The corresponding derivatives are:
+%
+\begin{enumerate}
+%
+\item for real eigenvalues: we first calculate the slope of the tangent
+between the two progressions: $\frac{d f(k)}{d g(k)}=\frac{f'(k)}{g'(k)}$. 
+Hence $\frac{d \lambda_1^k}{d \lambda_2^k}=\frac{log(\lambda_1)
+\lambda_1^k}{log(\lambda_2) \lambda_2^k}$.  From this we know that the polar
+angle of the support vector is $\psi = \tan^{-1}(\frac{log(\lambda_1)
+\lambda_1^k}{log(\lambda_2) \lambda_2^k})+\frac{\pi}{2}$
+%
+\item for conjugate eigenvalue pairs: the pair forms a logarithmic spiral. 
+The tangent of a spiral with polar equation $r=a e^{b\theta}$ will have a
+derivative $\frac{d r}{d \theta}=b a e^{b\theta}=b r$, hence the angle of
+the vector normal to the curve is $\tan^{-1}(\frac{r}{\frac{d r}{d
+\theta}})+\frac{\pi}{2}=\tan^{-1}(\frac{1}{b})+\frac{\pi}{2}$
+%
+\item for Jordan blocks with $gm>1$: in the case of real eigenvalues, we
+follow the same procedure as in the real case, but considering that the
+equation for each eigenvalue is $\frac{k^j}{j!}e^{\lambda k}$ where $j$ is
+the index of the term within the Jordan block (note that when $j=0$ the term
+is the same as for real eigenvalues above).  The derivatives f'(k),g'(k) are
+in the form $(j+k*log(\lambda))\frac{k^{j-1}}{j!}e^{\lambda k}$.
+%
+\item for any combination of complex eigenvalues we use the above equations
+using the envelope of their magnitude (ie $|\lambda|$).
+%
+\end{enumerate}
 
 %%-------------------------------
 %\subsection{State-space representation of physical systems} 

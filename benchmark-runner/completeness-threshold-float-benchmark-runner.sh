@@ -83,16 +83,19 @@ fi
 #dkr11
 if [ "$1" == "dkr11" ]; then
 # benchmark_dirs=('$BENCHMARK_BASE_DIR/state-space/ballmaglev_ss/' '$BENCHMARK_BASE_DIR/state-space/magsuspension_ss/' '$BENCHMARK_BASE_DIR/state-space/invpendulum_pendang_ss/')
+benchmark_dirs=(${BENCHMARK_BASE_DIR}/dcmotor/ ${BENCHMARK_BASE_DIR}/satellite/ ) 
 fi
 
 #dkr12
 if [ "$1" == "dkr12" ]; then
 # benchmark_dirs=('$BENCHMARK_BASE_DIR/state-space/magneticpointer_ss/' '$BENCHMARK_BASE_DIR/state-space/invpendulum_cartpos_ss/' '$BENCHMARK_BASE_DIR/state-space/suspension_ss/')
+benchmark_dirs=(${BENCHMARK_BASE_DIR}/dcmotor/ ${BENCHMARK_BASE_DIR}/satellite/ ) 
 fi
 
 #dkr13
 if [ "$1" == "dkr13" ]; then
 # benchmark_dirs=('$BENCHMARK_BASE_DIR/state-space/satellite_ss/' '$BENCHMARK_BASE_DIR/state-space/tapedriver_ss/' '$BENCHMARK_BASE_DIR/state-space/pendulum_ss/' '$BENCHMARK_BASE_DIR/state-space/uscgtampa_ss/')
+benchmark_dirs=(${BENCHMARK_BASE_DIR}/dcmotor/ ${BENCHMARK_BASE_DIR}/satellite/ ) 
 fi
 
 working_directory_base="/tmp/control_synthesis-ss-${working_directory_base_suffix}"
@@ -126,20 +129,19 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
   input_lower_bound=$(extract_input "${spec_content}" 'INPUT_LOWERBOUND')
 
   max_length=64
-  mantissa=23
+  mantissa=23  #initialise at single precision
   total_width=32
-#  min_size_offset=$(((integer_width+radix_width)%8))
-#  [ ${min_size_offset} -ne 0 ] && integer_width=$((integer_width+8-min_size_offset))
+
   k_sizes=(10 20 30 50 75 100 200)
   k_size_index=0
   timeout_time=3600
   kill_time=3780
   while [ ${total_width} -le ${max_length} ] && [ ${k_size_index} -lt ${#k_sizes[@]} ]; do
    k_size=${k_sizes[${k_size_index}]}
-   echo_log "int: ${integer_width}, radix: ${radix_width}"
+   echo_log "mantissa width: ${mantissa}, total width: ${total_width}"
    solution_found=false
-   echo_log "$CEGIS_ARGS _CONTORL_RADIX_WIDTH=${radix_width} -D NUMBERLOOPS=${k_size} ${synthesis_file}"
-   timeout --preserve-status --kill-after=${kill_time} ${timeout_time} cegis $CEGIS_ARGS -D _CONTROL_FLOAT_WIDTH=${total_width}) -D _CONTORL_RADIX_WIDTH=${mantissa_width} -D NUMBERLOOPS=${k_size} ${synthesis_file} 2>>${log_file} 1>${cbmc_log_file}
+   echo_log "$CEGIS_ARGS _PLANT_TOTAL_BITS=${total_width} -D _PLANT_MANTISSA_BITS=${mantissa} -D NUMBERLOOPS=${k_size} ${synthesis_file}"
+   timeout --preserve-status --kill-after=${kill_time} ${timeout_time} cegis $CEGIS_ARGS -D _PLANT_TOTAL_BITS=${total_width} -D _PLANT_MANTISSA_BITS=${mantissa} -D NUMBERLOOPS=${k_size} ${synthesis_file} 2>>${log_file} 1>${cbmc_log_file}
    cbmc_result=$?
    cat ${cbmc_log_file} >>${log_file}
    controller_items=$(grep '<item>' ${cbmc_log_file} | tail -n ${num_states})
@@ -183,8 +185,9 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
      fi
     fi
    else
-    total_width=$((total_width+4))
-    mantissa_width=$((mantissa_width+4))
+   #go straight to double precision
+    total_width=64
+    mantissa_width=52
    fi
   done
   # All files are the same benchmark with increased sample frequency. Exit after first success.

@@ -31,13 +31,13 @@ void get_bounds()
   _dbl_max = (1 << (INT_BITS-1))-1;//Integer part
   _dbl_max += (_one-_dbl_lsb);//Fractional part
 #else
-  signed long int exp=(1 << (EXPONENT_BITS - 1));
+  signed long int exp=(1 << (_CONTROLLER_FLOAT_BITS - 1));
   _dbl_max=_one;
   for (int i=0;i<exp;i++)
   {
     _dbl_max*=2;
   }
-   _fxp_one = (1 << MANTISSA_BITS);
+   _fxp_one = (1 << _CONTROLLER_MANTISSA_BITS);
   _dbl_lsb=_one/_dbl_max;
   _dbl_max*=_one-_one/_fxp_one;
 #endif
