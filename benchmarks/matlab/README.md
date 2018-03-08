@@ -1,21 +1,26 @@
-This suite contains 167 control system benchmarks that are used 
+This suite contains 191 control system benchmarks that are used 
 to evaluate the Counterexample-Guided Inductive Synthesis (CEGIS)
-approach described in the following two publications:
+approach described in the following publications:
 
-- Alessandro Abate, Iury Bessa, Dario Cattaruzza, Lucas C. Cordeiro, 
+- Alessandro Abate, Iury Bessa, Dario Cattaruzza, Lucas Cordeiro, 
 Cristina David, Pascal Kesseli, Daniel Kroening, Elizabeth Polgreen:
 Automated Formal Synthesis of Digital Controllers for State-Space 
 Physical Plants. CAV (1) 2017: 462-482.
 
-- Alessandro Abate, Iury Bessa, Dario Cattaruzza, Lucas C. Cordeiro, 
+- Alessandro Abate, Iury Bessa, Dario Cattaruzza, Lucas Cordeiro, 
 Cristina David, Pascal Kesseli, Daniel Kroening:
 Sound and Automated Synthesis of Digital Stabilizing 
 Controllers for Continuous Plants. HSCC 2017: 197-206.
 
+- Alessandro Abate, Iury Bessa, Dario Cattaruzza, Lennon Chaves, 
+Lucas Cordeiro, Cristina David, Pascal Kesseli, Daniel Kroening, Elizabeth Polgreen:
+DSSynth: an automated digital controller synthesis tool for physical plants. 
+ASE 2017: 919-924
+
 In order to obtain all control system benchmarks, the following command 
 must be typed in the MATLAB command-line.
 
-$makebenchmarks
+`$makebenchmarks`
 
 As a result, we get the following output in MATLAB:
 
@@ -54,7 +59,7 @@ The .mat file benchmark_ss.mat contains the state space models.
 To obtain the respective benchmarks in .tf and .ss format, the following 
 command must be typed:
 
-$automatic_gen
+`$automatic_gen`
 
 This will generate two folders benchmarks-tf and benchmarks-ss with all
 the benchmarks in tansfer-function and state-space representations.
