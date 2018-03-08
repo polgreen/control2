@@ -10,13 +10,9 @@
 #ifndef CONTROL_TYPES_H_
 #define CONTROL_TYPES_H_
 
-#ifndef FIXEDBV // using single precision floating point
-#ifdef SINGLE_PREC
+#ifndef FIXEDBV // WARNING!!! HARD-CODED TO USE SINGLE PRECISION FLOATING POINT FOR CONTROLLER
    #define  EXPONENT_BITS 32
    #define  MANTISSA_BITS 23
-#elif DOUBLE_PREC
-   #define  EXPONENT_BITS 64
-   #define  MANTISSA_BITS 52
 #endif
 
 
