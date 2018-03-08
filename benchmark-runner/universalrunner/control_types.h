@@ -11,8 +11,8 @@
 #define CONTROL_TYPES_H_
 
 #ifndef FIXEDBV // WARNING!!! HARD-CODED TO USE SINGLE PRECISION FLOATING POINT FOR CONTROLLER
-   #define  EXPONENT_BITS 32
-   #define  MANTISSA_BITS 23
+   #define  _CONTROLLER_FLOAT_BITS 32
+   #define  _CONTROLLER_MANTISSA_BITS 23
 #endif
 
 
@@ -23,7 +23,7 @@
      //we never use interval and cprover
         __CPROVER_assert(0,"error");
       #else
-        typedef __CPROVER_fixedbv[_CONTROL_FLOAT_WIDTH][_CONTORL_RADIX_WIDTH] __plant_precisiont;
+        typedef __CPROVER_fixedbv[_PLANT_TOTAL_BITS][_PLANT_RADIX_BITS] __plant_precisiont;
         typedef __plant_precisiont __plant_typet;
         typedef __CPROVER_fixedbv[INT_BITS+FRAC_BITS][FRAC_BITS] __controller_precisiont;
         typedef  __controller_precisiont __controller_typet;
@@ -36,9 +36,9 @@
         //we never use interval and cprover
         __CPROVER_assert(0,"error");
     #else
-       typedef __CPROVER_floatbv[_CONTROL_FLOAT_WIDTH][_CONTORL_RADIX_WIDTH] __plant_precisiont;
+       typedef __CPROVER_floatbv[_PLANT_TOTAL_BITS][_PLANT_MANTISSA_BITS] __plant_precisiont;
        typedef __plant_precisiont __plant_typet;
-       typedef __CPROVER_floatbv[EXPONENT_BITS + MANTISSA_BITS][MANTISSA_BITS] __controller_precisiont;
+       typedef __CPROVER_floatbv[TOTAL_FLOAT_BITS][MANTISSA_BITS] __controller_precisiont;
        typedef  __controller_precisiont __controller_typet;
        #define plant_cast(x) ((__plant_typet)x)
        #define controller_cast(x) ((__controller_typet)x)
