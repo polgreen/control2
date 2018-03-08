@@ -1,3 +1,5 @@
+# Publications related to these benchmarks
+
 This suite contains 191 control system benchmarks that are used 
 to evaluate the Counterexample-Guided Inductive Synthesis (CEGIS)
 approach described in the following publications:
@@ -16,6 +18,8 @@ Controllers for Continuous Plants. HSCC 2017: 197-206.
 Lucas Cordeiro, Cristina David, Pascal Kesseli, Daniel Kroening, Elizabeth Polgreen:
 DSSynth: an automated digital controller synthesis tool for physical plants. 
 ASE 2017: 919-924
+
+# Scripts to obtain the benchmarks
 
 In order to obtain all control system benchmarks, the following command 
 must be typed in the MATLAB command-line.
@@ -63,6 +67,8 @@ command must be typed:
 
 This will generate two folders benchmarks-tf and benchmarks-ss with all
 the benchmarks in tansfer-function and state-space representations.
+
+# Description of the benchmarks
 
 Here is a short description for each control system benchmark.
 
