@@ -76,22 +76,22 @@ function get_current_cpu_millis {
 working_directory_base_suffix="$1"
 #dkr10
 if [ "$1" == "dkr10" ]; then
- benchmark_dirs=(${BENCHMARK_BASE_DIR}/dcmotor/ ${BENCHMARK_BASE_DIR}/satellite/ ) 
+ benchmark_dirs=(${BENCHMARK_BASE_DIR}/cruise/ ${BENCHMARK_BASE_DIR}/dcmotor/ ${BENCHMARK_BASE_DIR}/helicopter/ ) 
 fi
 
 #dkr11
 if [ "$1" == "dkr11" ]; then
-# benchmark_dirs=('$BENCHMARK_BASE_DIR/state-space/ballmaglev_ss/' '$BENCHMARK_BASE_DIR/state-space/magsuspension_ss/' '$BENCHMARK_BASE_DIR/state-space/invpendulum_pendang_ss/')
+benchmark_dirs=(${BENCHMARK_BASE_DIR}/invpendulum_pendang/ ${BENCHMARK_BASE_DIR}/invpendulum_cartpos/ ) 
 fi
 
 #dkr12
 if [ "$1" == "dkr12" ]; then
-# benchmark_dirs=('$BENCHMARK_BASE_DIR/state-space/magneticpointer_ss/' '$BENCHMARK_BASE_DIR/state-space/invpendulum_cartpos_ss/' '$BENCHMARK_BASE_DIR/state-space/suspension_ss/')
+benchmark_dirs=(${BENCHMARK_BASE_DIR}/magneticpointer/ ${BENCHMARK_BASE_DIR}/magsuspension/ ${BENCHMARK_BASE_DIR}/satellite/ ) 
 fi
 
 #dkr13
 if [ "$1" == "dkr13" ]; then
-# benchmark_dirs=('$BENCHMARK_BASE_DIR/state-space/satellite_ss/' '$BENCHMARK_BASE_DIR/state-space/tapedriver_ss/' '$BENCHMARK_BASE_DIR/state-space/pendulum_ss/' '$BENCHMARK_BASE_DIR/state-space/uscgtampa_ss/')
+benchmark_dirs=(${BENCHMARK_BASE_DIR}/pendulum/ ${BENCHMARK_BASE_DIR}/tapedrive/ ${BENCHMARK_BASE_DIR}/suspension/  ) 
 fi
 
 working_directory_base="/tmp/control_synthesis-ss-${working_directory_base_suffix}"
