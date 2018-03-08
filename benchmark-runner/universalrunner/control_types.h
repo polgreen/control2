@@ -69,7 +69,7 @@
        typedef double __plant_precisiont;
 	#include "intervals.h"
        typedef struct intervalt __plant_typet;
-       typedef float __controller_precisiont; // using single precision controller
+       typedef double __controller_precisiont; //float arithmetic is implemnted using doubles
        typedef struct intervalt __controller_typet;
       	  #define interval(x) interval_cast(x)
      #endif // end of interval def
