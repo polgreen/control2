@@ -38,7 +38,6 @@
     #else
        typedef __CPROVER_floatbv[_PLANT_TOTAL_BITS][_PLANT_MANTISSA_BITS] __plant_precisiont;
        typedef __plant_precisiont __plant_typet;
-       typedef __CPROVER_floatbv[TOTAL_FLOAT_BITS][MANTISSA_BITS] __controller_precisiont;
        typedef  __controller_precisiont __controller_typet;
        #define plant_cast(x) ((__plant_typet)x)
        #define controller_cast(x) ((__controller_typet)x)
