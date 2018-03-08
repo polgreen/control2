@@ -19,6 +19,7 @@ $makebenchmarks
 
 As a result, we get the following output in MATLAB:
 
+```
 Creating test suite for DS Tools...
 DC Motor - 8 benchmarks
 HSCC 2017 - 6 benchmarks
@@ -48,6 +49,7 @@ Done
 Total of benchmarks: 191
 The .mat file benchmark_tf.mat contains the transfer function models.
 The .mat file benchmark_ss.mat contains the state space models.
+```
 
 To obtain the respective benchmarks in .tf and .ss format, the following 
 command must be typed:
