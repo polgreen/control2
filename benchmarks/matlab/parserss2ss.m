@@ -42,7 +42,7 @@ fprintf(fid,'B = %s \n', matrix2string(B));
 fprintf(fid,'C = %s \n', matrix2string(C));
 fprintf(fid,'D = %s \n', matrix2string(D));
 fprintf(fid,'inputs = %s \n', matrix2string(inputs));
-fprintf(fid,'Ts = %s \n', num2str(sampletime));
+fprintf(fid,'Ts = %s; \n', num2str(sampletime));
 if isempty(K) == 0
    fprintf(fid,'K = %s \n', matrix2string(K));
 end
