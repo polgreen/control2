@@ -83,16 +83,19 @@ fi
 #dkr11
 if [ "$1" == "dkr11" ]; then
 # benchmark_dirs=('$BENCHMARK_BASE_DIR/state-space/ballmaglev_ss/' '$BENCHMARK_BASE_DIR/state-space/magsuspension_ss/' '$BENCHMARK_BASE_DIR/state-space/invpendulum_pendang_ss/')
+benchmark_dirs=(${BENCHMARK_BASE_DIR}/dcmotor/ ${BENCHMARK_BASE_DIR}/satellite/ ) 
 fi
 
 #dkr12
 if [ "$1" == "dkr12" ]; then
 # benchmark_dirs=('$BENCHMARK_BASE_DIR/state-space/magneticpointer_ss/' '$BENCHMARK_BASE_DIR/state-space/invpendulum_cartpos_ss/' '$BENCHMARK_BASE_DIR/state-space/suspension_ss/')
+benchmark_dirs=(${BENCHMARK_BASE_DIR}/dcmotor/ ${BENCHMARK_BASE_DIR}/satellite/ ) 
 fi
 
 #dkr13
 if [ "$1" == "dkr13" ]; then
 # benchmark_dirs=('$BENCHMARK_BASE_DIR/state-space/satellite_ss/' '$BENCHMARK_BASE_DIR/state-space/tapedriver_ss/' '$BENCHMARK_BASE_DIR/state-space/pendulum_ss/' '$BENCHMARK_BASE_DIR/state-space/uscgtampa_ss/')
+benchmark_dirs=(${BENCHMARK_BASE_DIR}/dcmotor/ ${BENCHMARK_BASE_DIR}/satellite/ ) 
 fi
 
 working_directory_base="/tmp/control_synthesis-ss-${working_directory_base_suffix}"
