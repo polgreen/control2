@@ -1,4 +1,3 @@
-implementation <8,8>
 range [1,-1]
 states = 5;
 inputs = 1;
