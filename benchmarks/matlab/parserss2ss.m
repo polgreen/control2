@@ -32,7 +32,7 @@ file_name = [name '.ss'];
 
 fid = fopen(file_name, 'wt' );
 
-fprintf(fid,'implementation <%d,%d>\n', intBits, fracBits);
+%fprintf(fid,'implementation <%d,%d>\n', intBits, fracBits);
 fprintf(fid,'range [%d,%d]\n', maxrange, minrange);
 fprintf(fid,'states = %d;\n', nStates);
 fprintf(fid,'inputs = %d;\n', nInputs);
