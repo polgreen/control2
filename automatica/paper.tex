@@ -1003,6 +1003,7 @@ discussed in Section~\ref{sec:numeric_rep}. % More details on how to model
 \item Calculate a set of initial bounds on $K$, $\phi_\mathit{init}^{K}$,
 based on the input constraints %\blue{[how is this practically done?With the equation below]}.  
 %
+\textcolor{red}{[these specifications are (wrongly) introduced only in a later part of the manuscript!]}
 $$(\phi_\mathit{init} \wedge \phi_\mathit{input} \wedge u_k=-K x_k)
 \Rightarrow \phi_\mathit{init}^{K}$$
 Note that these bounds will be used by the {\sc synthesize} phase to reduce the size of the solution space. 
@@ -1151,8 +1152,8 @@ $z^n+\sum_{i=1}^n(a_i-k_i)z^{n-i}=\prod_{i=1}^n (z-\lambda_i) : |\lambda_i|<1 \w
 \label{ssec:aa}
 %-------------------------------
  
-We recall a technique called \emph{Abstract Acceleration}~\cite{JSS14,cattaruzza2015unbounded}, 
-which will be key for abstraction-based synthesis.  
+We recall a recently introduced technique called \emph{Abstract Acceleration}~\cite{JSS14,cattaruzza2015unbounded}, 
+which will be key in this work for abstraction-based synthesis.  
 %\note{This clashes with the model introduced above, with inputs - motivate why? I've added the motivation above by introducing the closed  loop}
 Given a model of an iterative program with dynamics
 %
@@ -1160,6 +1161,7 @@ Given a model of an iterative program with dynamics
 \vec{x}_{k+1}=\mat{A}\vec{x}_k \text{ where } \vec{x}_k \in \mathbb{R}^p, \mat{A} \in \mathbb{R}^{p \times p} \text{ and } k \in \mathbb N_0,
 \end{equation}
 %
+\textcolor{red}{[we should use the notations (with the `d' subscript) in the Preliminaries section.]}
 we want to find all possible states visited over an infinite time horizon
 starting at an initial set $X_0$.  
 This set is known as the \emph{reach tube} of
@@ -1186,7 +1188,8 @@ and further define new model semantics and corresponding set:
 where the newly introduced \emph{abstract reach tube} $\hat{X}^\sharp$ is an
 over-approximation of the reach tube of the model \cite{JSS14}.  
 In this work we use an extension of the abstract acceleration model for
-continuous time. For this reason we must first look at the accelerationm of continuous time dynamics.
+continuous time. 
+% and  For this reason we must first look at the acceleration of continuous-time dynamics.
 
 %All we need to do is define the nature of $\mathcal{A}X_0$.
 %Let $\mat{S}\mat{J}\mat{S}^{-1}=\mat{A}$ be the eigen-decomposition of
@@ -1350,7 +1353,7 @@ the state of the plant at integer multiples of the sample time.
 %\note{Unlike the CAV18 paper, these gain matrices have not been discussed yet. }
 However, in
 order to synthesize $\mat{K}$, we must be able to ensure that
-certain properties of the plant hold at any given point in time.  In order
+certain properties \textcolor{red}{[unknown because undefined at this point \ldots]} of the plant hold at any given point in time.  In order
 to do so, we accelerate the dynamics of the plant according to the model
 semantics in Sec.~\ref{sec:model} and compute the state
 $\vec{x}_T$ at a given time $T$,
@@ -1668,14 +1671,16 @@ using the envelope of their magnitude (ie $|\lambda|$).
 \label{sec:numeric_rep}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-\textcolor{red}{Elizabeth: this section needs to be updated to describe about floating-point arithmetic.}
+\textcolor{red}{Elizabeth: this section needs to be updated to describe floating-point arithmetics.}
 
-The models we consider have two sources of error that are due to numerical  
-representation.  The first is the numerical error introduced by the
+The models we consider have two sources of error that are due to numerical representations.  
+The first is the numerical error introduced by the
 fixed-point numbers employed to model the plant, i.e., to represent the
 plant dynamics $A_d$, $B_d$ and $x_k$.  The second is the quantization error
 introduced by the digital controller, which performs operations on
-fixed-point numbers.  In this section we outline the notation for the
+fixed-point numbers.  
+\textcolor{red}{[what about the DAC/ADC errors?]}
+In this section we outline the notation for the
 fixed-point representation of numbers, and briefly describe the errors
 introduced.  A~formal discussion is in
 %Appendix~\ref{appendix:numerical_errors}.
