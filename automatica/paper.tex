@@ -333,11 +333,22 @@ extensions over \cite{DBLP:conf/cav/AbateBCCDKKP17}.
 \label{sec:relw}
 %-------------------------------
 
-\textbf{CEGIS -}
-Program synthesis is the problem of computing correct-by-design programs
-from high-level specifications. Algorithms for this problem have made
-substantial progress in recent years, for instance~\cite{itzhaky2010simple} 
-to inductively synthesize invariants for the generation of desired programs.
+\textbf{CEGIS -} Program synthesis is the problem of computing
+correct-by-design programs from high-level specifications. Algorithms
+for this problem have made substantial progress in recent years, in
+particular CEGIS, which is a recent approach to inductive synthesis
+borrowing ideas from Counter-Example Guided Abstraction Refinement
+(CEGAR)~\cite{DBLP:conf/cav/ClarkeGJLV00} and
+superoptimisation~\cite{DBLP:conf/iclp/BrainCVF06,
+  DBLP:conf/asplos/Massalin87}.  This approach uses an iterative
+process where each iteration performs inductive generalisation based
+on counterexamples provided by a verification oracle.  In the absence
+of complete specifications, oracles are queried to distinguish between
+non-equivalent
+programs~\cite{jha-icse10,DBLP:conf/fmcad/AlurBJMRSSSTU13}.
+
+%% for instance~\cite{itzhaky2010simple} 
+%% to inductively synthesize invariants for the generation of desired programs.
 
 Program synthesizers are an ideal fit for the synthesis of digital controllers, since
 the semantics of programs capture the effects of finite-precision arithmetic
