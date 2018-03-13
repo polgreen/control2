@@ -438,12 +438,13 @@ technique works for both linear and non-linear systems.
 
 %-------------------------------
 \section{Preliminaries}
-\label{sec:preliminaries}
+%\label{sec:preliminaries}
+\label{sec:model}
 %-------------------------------
 
 %-------------------------------
-\subsection{State-space representations of LTI models}
-\label{sec:model}
+%\subsection{State-space representations of LTI models}
+%\label{sec:model}
 %-------------------------------
 
 %% A dynamical system is a system in which a function describes the progression
@@ -455,59 +456,49 @@ technique works for both linear and non-linear systems.
 %% \end{equation}
 
 We consider models of physical plants expressed as ordinary differential
-equations, which we assume to be controllable~\cite{Astrom08,
-astrom1997computer}: %\note{Pls eliminate bold quantities, unless strictly needed. }
+equations, which we assume to be controllable~\cite{Astrom08}: 
 %
 \begin{align}
 \label{eq:ode1}
-\dot{x}(t) = \mat{A}\vec{x}(t)+ \mat{B} \vec{u}(t), \quad 
-\vec{x} \in \mathbb{R}^p, \vec{u} \in \mathbb{R}^q,\,
-\mat{A} \in \mathbb{R}^{p \times p},\,
-\mat{B} \in \mathbb{R}^{p \times q},
+\dot{x}(t) = \mat{A}\vec{x}(t)+ \mat{B} \vec{u}(t), 
 \end{align}
 %
-where $t \in \mathbb R_0^+$ denotes continuous time, $\mat{A}$ and $\mat{B}$
-are matrices that fully characterize the dynamics of the continuous plant,
-and $x(0)$ is the initial state.
+where 
+$\vec{x} \in \mathbb{R}^p$,  
+$\vec{u} \in \mathbb{R}^q$, 
+$\mat{A} \in \mathbb{R}^{p \times p}$, 
+$\mat{B} \in \mathbb{R}^{p \times q}$,
+and $t \in \mathbb R_0^+$ denotes continuous time. 
+%$\mat{A}$ and $\mat{B}$ are matrices that fully characterize the dynamics of the continuous plant,
+We denote with $x(0)$ the initial state of the model.
 
-Equation~\eqref{eq:ode1} is soundly discretized in
-time~\cite{middleton1990digital,van1978computing} at constant intervals,
-whose duration we refer to as the sample time $T_s$, into the difference
-equation
+Equation~\eqref{eq:ode1} is soundly discretized in time~\cite{middleton1990digital,van1978computing} at constant time intervals,
+of duration $T_s$ (the sample time), 
+into the difference equation
 %
 \begin{align}
 \label{eq:plant}
-\vec{x}_{k+1} =& \mat{A}_d \vec{x}_k+ \mat{B}_d \vec{u}_k
-\text{ where }
-\left\{
-\begin{array}{l}
-\mat{A}_d=e^{\mat{A}T_s}\\
-\mat{B}_d = \int_{t = 0}^{T_s} e^{\mat{A} t} dt\ \mat{B}
-\end{array}
-\right.,
+\vec{x}_{k+1} =& \mat{A}_d \vec{x}_k+ \mat{B}_d \vec{u}_k, 
 \end{align} 
-where $k \in \mathbb N$ is a discrete counter and $\vec{x}_{0}=\vec{x}(0)$
-is the initial state.  
+where 
+$\mat{A}_d=e^{\mat{A}T_s}$ and 
+$\mat{B}_d = \int_{t = 0}^{T_s} e^{\mat{A} t} dt\ \mat{B}$, 
+and where $k \in \mathbb N$ is a discrete counter and $\vec{x}_{0}=\vec{x}(0)$ denotes the initial state.  
 
-Later, we will address the issue of variable quantization, as introduced by the ADC/DAC conversion blocks.
 Models \eqref{eq:ode1} and \eqref{eq:plant} depend on external non-determinism in the form of input signals $u (t)$ and  $u_k$, respectively. 
-Feedback architectures can be employed to manipulate the properties and behaviors of the continuous process (the plant).   
+Feedback architectures can be employed to manipulate the properties and behaviors of the plant.   
 We are interested in the synthesis of digital feedback control algorithms, 
-as implemented on Field-Programmable Gate Arrays or Digital Signal Processors. 
-The most basic feedback architecture is the state feedback one, 
-where the control action $u_k$ (notice we work with the discretized signal) is computed by: 
-%
-\begin{equation*}
-%\label{eq:controlaction}
-u_k = r_{k} - K x_k. 
-\end{equation*}
+as practically implemented on Field-Programmable Gate Arrays or Digital Signal Processors. 
+Later, we will address the issue of variable quantization, 
+introduced by ADC/DAC conversion blocks of Figure \ref{DSSynth_process}, 
+as classically studied in \cite{astrom1997computer}. 
 
-where $K \in \mathbb{R}^{m \times n}$ is a state-feedback gain matrix, 
-and $r_{k}$ is a reference signal (again digital). We will assume $r_k=0$, thus 
-\begin{equation}
-\vec{x}_{k+1}=(\mat{A}_d-\mat{B}_d\mat{K})\vec{x}_k
-\end{equation}
-Which corresponds to a closed loop system without inputs.
+We consider state feedback control architectures, 
+where $u_k$ (notice we work with the discretized signal) is $u_k = r_{k} - K x_k$. 
+Here $K \in \mathbb{R}^{m \times n}$ is a state-feedback gain matrix, 
+and $r_{k}$ is a reference signal (again digital). 
+We will assume $r_k=0$, thus 
+$\vec{x}_{k+1}=(\mat{A}_d-\mat{B}_d\mat{K})\vec{x}_k$. 
 
 \begin{figure*}[htb]
 \centering
