@@ -236,9 +236,17 @@ play an important role in systems engineering.
 %% automatically synthesised controllers using CEGIS-based synsthesis that
 %% incorporate the above mentioned artifacts in different models of
 %% Single-Input/Single-Output (SISO) systems.
-In this paper we present two novel approaches for the synthesis of digital controllers, 
-both of which use a CounterExample-Guided Inductive Synthesis (CEGIS)~\cite{%jha-icse10,
-DBLP:conf/asplos/Solar-LezamaTBSS06} as described next.
+In this paper we present two novel approaches for the synthesis of
+digital controllers, both of which make use of CounterExample-Guided
+Inductive Synthesis (CEGIS)~\cite{jha-icse10,
+  DBLP:conf/asplos/Solar-LezamaTBSS06}, an approach to program
+synthesis very popular in the recent years.  CEGIS denotes an
+iterative process, where each iteration performs inductive
+generalisation based on counterexamples provided by a verification
+oracle. Essentially, the inductive generalisation uses information
+about a limited number of inputs to make claims about all the possible
+inputs in the form of candidate solutions. Our two instantiations of
+CEGIS are described next.
 
 %% offer three modes of
 %% operation that address different aspects of the problem.
