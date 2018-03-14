@@ -8,10 +8,7 @@
 %clear all;
 %makebenchmarks; %Iury's script to discretize benchmarks
 
-INPUT_10 = {'ballmaglev','pendulum','satellite', 'usgtampa', 'invpendulum_pendang'};
-INPUT_100 = {'magneticpointer', 'invpendulum_cartpos'};    
-INPUT_1000 = {'magsuspension'};
-INPUT_1000000 = {'suspension'};
+
 
 SS_benchmarks = load('benchmark_ss.mat');
 SS_names = fieldnames(SS_benchmarks);
@@ -20,7 +17,7 @@ directory = '../headerfiles/';
 safecount=0;
 unsafecount=0;
 stablecount=0;
-INPUT=[-1, 1];
+
 
 for i=1:size(SS_names,1)
     Benchmark = SS_benchmarks.(SS_names{i});    
@@ -31,21 +28,8 @@ for i=1:size(SS_names,1)
     end
     
     %get INPUT values
-    if(getnameidx(INPUT_10,Name{1})~=0)
-        INPUT=[-10,10];
-    elseif (getnameidx(INPUT_100,Name{1})~=0 )
-        INPUT=[-100,100];  
-    elseif (getnameidx(INPUT_100,Name{1})~=0 )
-        INPUT=[-100,100];  
-    elseif (getnameidx(INPUT_1000,Name{1})~=0 )
-        INPUT=[-1000,1000];  
-   elseif (getnameidx(INPUT_1000000,Name{1})~=0 )
-        INPUT=[-1000000,1000000];
-    else
-        INPUT=[-1, 1];
-    end    
+    INPUT=get_inputs(Name{1});
     
-
     A = Benchmark.A;   
     B = Benchmark.B;
     states = size(B,1);
