@@ -92,26 +92,24 @@ for i=1:size(SS_names,1)
     if states==1
         fprintf(fileID,' interval(%d)};\n ',A(1,1)); %row 1, col 1
     else    
-    for k=1:states
-      if(k==1) 
+     for k=1:states
+       if(k==1) 
         fprintf(fileID,'{ interval(%d), ',A(k,1)); %row 1, col 1
-      else  
+       else  
         fprintf(fileID,',\n{ interval(%d), ',A(k,1)); %row 2->n, col 1
-      end
-        for j=2:states-1
+       end
+       for j=2:states-1
             fprintf(fileID,' interval(%d), ',A(k,j)); %col 2->n-1
-        end
-        fprintf(fileID,' interval(%d)}',A(k,states)); %col n
-    end   
+       end
+       fprintf(fileID,' interval(%d)}',A(k,states)); %col n
+     end   
     fprintf(fileID,'};\n');
-        
+    end %end if states != 1   
     fprintf(fileID,'const __plant_typet _controller_B[NSTATES] = {');
     for k=1:states-1
         fprintf(fileID,'interval(%d), ',B(k));
     end
-    fprintf(fileID,'interval(%d)};\n',B(states));
-    
-    end
+    fprintf(fileID,'interval(%d)};\n',B(states));    
     
 %build symbolic controller
 K= sym(zeros(1, states));
