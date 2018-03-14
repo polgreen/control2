@@ -605,73 +605,6 @@ $\vec{x}_{k+1}=(\mat{A}_d-\mat{B}_d\mat{K})\vec{x}_k$.
 \label{ssec:cegis}
 %-------------------------------
 
-In order to synthesize closed-loop digital control systems, we use a program
-synthesis engine.  Our program synthesizer implements Counter-Example Guided
-Inductive Synthesis (CEGIS)~\cite{DBLP:conf/asplos/Solar-LezamaTBSS06}.  We
-start by presenting its general architecture followed by describing the
-parts specific to closed-loop control systems.  A high-level view of the
-synthesis process is given in Figure~\ref{DSSynth_process}.  Steps $1$ to
-$3$ are performed by the user and Steps~A to D are automatically performed
-by our tool for Digital Systems Synthesis, named \tool.
-
-CEGIS-based control synthesis requires a formal verifier to check whether a
-candidate controller meets the requirements when combined with the plant. 
-We use the Digital-System Verifier (DSVerifier)~\cite{IsmailBCFF15} in the
-verification module for \tool.  It checks the stability of closed-loop control systems and
-considers finite-word length (FWL) effects in the digital controller and
-uncertainty parameters in the plant model (plant intervals)~\cite{Bessa16}.   
-
-%
-%, which accepts the
-%digital controller transfer functions together with the plant model.  For
-%any digital controller, implementation details should be provided ({\it
-%e.g.}, number of bits, realization, and sample time).
-
-\begin{figure*}[t]
-\centering
-\includegraphics[width=\textwidth]{figures/synthesis-flow.pdf}
-\vspace{0.1cm}
-\caption{Overview of the synthesis process\label{DSSynth_process}}
-\end{figure*}
-
-%In Step $1$, the user provides inputs $G(z)$ and $\Delta{G}(z)$
-%%$\%$ ({\it i.e.}, $\Delta{G}(z)$ as a percentage of $G(z)$)
-%, which contain the plant model and the
-%interval, respectively.  In Step $2$, a digital controller must be designed
-%with any preferred method, where $C(z)$ is obtained.  The controller
-%numerical representation and realization form are chosen in Steps $3$ and
-%$4$, respectively.  In Step $5$, the user finally configures the
-%verification parameters ({\it e.g.}, verification time, properties, and BMC
-%tool).  After that, DSVerifier verification engine performs an (automatic)
-%verification of the desired property $\phi$ ({\it i.e.}, stability).  The
-%user steps described in Steps $1$--$5$ result in an ANSI-C code that should
-%be used as an input for DSVerifier.
-
-Given a plant model in ANSI-C syntax as input (Steps 1--3), \tool constructs
-a non-deterministic model to represent the plant family, i.e., it addresses
-plant variations as interval sets (Step~A), and formulates a function
-(Step~B) using implementation details provided in Steps~$2$ and $3$ to
-calculate the controller parameters to be synthesized (Step~C).  Note that
-\tool synthesizes the controller for the desired numerical representation
-and realization form.  Finally, \tool builds an intermediate ANSI-C code for
-the digital system implementation, which is used as input for the CEGIS
-engine (Step~D).
-
-This intermediate ANSI-C code model contains a specification $\phi$ for the
-property of interest (i.e., robust stability) and is passed to the
-Counterexample-Guided Inductive Synthesis (CEGIS) module of
-CBMC~\cite{ClarkeKL04}, where the controller is marked as the input variable
-to synthesize.  CEGIS employs an iterative, counterexample-guided refinement
-process.%, which is explained in detail in Section~\ref{synthesizer-general}. 
-CEGIS reports a successful synthesis result if it generates a controller
-that is safe with respect to~$\phi$.  In particular, the ANSI-C code model
-guarantees that a synthesized solution is complete and sound with respect to
-the stability property~$\phi$, since it does not depend on system inputs and
-outputs.  In the case of stability, the specification~$\phi$ consists of a
-number of assumptions on the polynomial coefficients, following Jury's
-criterion, as well as the restrictions on the representation of these
-coefficients.% as discussed in detail in Section~\ref{synthesis-elements}.
-
 %-------------------------------
 \subsection{CEGIS of digital controllers} 
 \label{sssec:cegisdig}
@@ -2303,6 +2236,60 @@ As a final annotation, we remark that the safety specification must be
 applied to the model described in this section, accounting for the
 representation errors of the FWL domain.
 }
+
+
+%-------------------------------
+\section{DSSynth: An Automated Digital Controller Synthesis Tool for Physical Plants}
+\label{sec:dssynthtool}
+%-------------------------------
+
+In order to synthesize closed-loop digital control systems, we use a program
+synthesis engine.  Our program synthesizer implements Counter-Example Guided
+Inductive Synthesis (CEGIS)~\cite{DBLP:conf/asplos/Solar-LezamaTBSS06}.  We
+start by presenting its general architecture followed by describing the
+parts specific to closed-loop control systems.  A high-level view of the
+synthesis process is given in Figure~\ref{DSSynth_process}.  Steps $1$ to
+$3$ are performed by the user and Steps~A to D are automatically performed
+by our tool for Digital Systems Synthesis, named \tool.
+
+CEGIS-based control synthesis requires a formal verifier to check whether a
+candidate controller meets the requirements when combined with the plant. 
+We use the Digital-System Verifier (DSVerifier)~\cite{IsmailBCFF15} in the
+verification module for \tool.  It checks the stability of closed-loop control systems and
+considers finite-word length (FWL) effects in the digital controller and
+uncertainty parameters in the plant model (plant intervals)~\cite{Bessa16}.   
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/synthesis-flow.pdf}
+\vspace{0.1cm}
+\caption{Overview of the synthesis process\label{DSSynth_process}}
+\end{figure*}
+
+Given a plant model in ANSI-C syntax as input (Steps 1--3), \tool constructs
+a non-deterministic model to represent the plant family, i.e., it addresses
+plant variations as interval sets (Step~A), and formulates a function
+(Step~B) using implementation details provided in Steps~$2$ and $3$ to
+calculate the controller parameters to be synthesized (Step~C).  Note that
+\tool synthesizes the controller for the desired numerical representation
+and realization form.  Finally, \tool builds an intermediate ANSI-C code for
+the digital system implementation, which is used as input for the CEGIS
+engine (Step~D).
+
+This intermediate ANSI-C code model contains a specification $\phi$ for the
+property of interest (i.e., robust stability) and is passed to the
+Counterexample-Guided Inductive Synthesis (CEGIS) module of
+CBMC~\cite{ClarkeKL04}, where the controller is marked as the input variable
+to synthesize.  CEGIS employs an iterative, counterexample-guided refinement
+process.%, which is explained in detail in Section~\ref{synthesizer-general}. 
+CEGIS reports a successful synthesis result if it generates a controller
+that is safe with respect to~$\phi$.  In particular, the ANSI-C code model
+guarantees that a synthesized solution is complete and sound with respect to
+the stability property~$\phi$, since it does not depend on system inputs and
+outputs.  In the case of stability, the specification~$\phi$ consists of a
+number of assumptions on the polynomial coefficients, following Jury's
+criterion, as well as the restrictions on the representation of these
+coefficients.% as discussed in detail in Section~\ref{synthesis-elements}.
 
 %-------------------------------
 \section{Experimental Evaluation}
