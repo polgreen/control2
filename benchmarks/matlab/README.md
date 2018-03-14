@@ -61,7 +61,7 @@ The .mat file benchmark_tf.mat contains the transfer function models.
 The .mat file benchmark_ss.mat contains the state space models.
 ```
 
-2 - To obtain the respective benchmarks in .tf and .ss format, the following 
+2 - To obtain the respective benchmarks in `.tf` and `.ss` format, the following 
 command must be typed:
 
 `$automatic_gen`
@@ -69,7 +69,7 @@ command must be typed:
 This will generate two folders benchmarks-tf and benchmarks-ss with all
 the benchmarks in tansfer-function and state-space representations.
 
-3 - To obtain the benchmarks in .h format, the following command must be
+3 - To obtain the benchmarks in `.h` format, the following command must be
 typed in the command-line:
 
 `$preprocessing`
