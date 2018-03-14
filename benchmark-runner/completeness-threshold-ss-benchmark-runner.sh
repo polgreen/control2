@@ -1,7 +1,7 @@
 #!/bin/bash
-export PATH=/users/elipol/cbmc-5.7/src/cegis:${PATH}: #cegis path
+export PATH=/users/luciro/cbmc-cbmc-5.7/src/cegis:${PATH}: #cegis path
 #export PATH=/users/pkesseli/software/cpp/z3/trunk/target/i686-linux/bin:${PATH} #z3 path
-BENCHMARK_BASE_DIR="/users/elipol/control-synthesis/benchmarks/headerfiles"
+BENCHMARK_BASE_DIR="/users/luciro/control-synthesis/benchmarks/headerfiles"
 
 CEGIS_ARGS="--round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D FIXEDBV"
 
