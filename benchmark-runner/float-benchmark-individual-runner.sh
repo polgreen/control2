@@ -1,4 +1,5 @@
 #!/bin/bash
+#usage ./float-benchmark-individual-runner.sh benchmark_dir benchmark_file synth_type formal_form bits max_output
 export PATH=${PATH}:/media/sf_Documents/cbmc5.7/src/cbmc
 
 status_output_file='output.txt'
@@ -38,7 +39,7 @@ function extract_spec_interval {
 }
 
 function extract_spec_matrix {
- echo $1 | sed "s/.*$2 *= *\[\([^]]*\)\].*/\1/"
+ echo $1 | sed -n "s/.*$2 *= *\[\([^]]*\)\].*/\1/p"
 }
 
 function extract_int_bits {
@@ -89,26 +90,34 @@ echo_log ${benchmark}
 echo_log 'accelerator-ss'
 
 spec_content=`cat ${benchmark}`
-impl_int_bits=$(extract_int_bits "${spec_content}")
-impl_frac_bits=$(extract_frac_bits "${spec_content}")
+if [ -n "$5" ]; then
+  impl_int_bits=$(echo $5 | sed "s/\([^,]*\),.*/\1/")
+  impl_frac_bits=$(echo $5 | sed "s/[^,]*,\([^ ]*\) */\1/")
+#  impl_int_bits=$(extract_int_bits "$5")
+#  impl_frac_bits=$(extract_frac_bits "$5")
+else
+  impl_int_bits=$(extract_int_bits "${spec_content}")
+  impl_frac_bits=$(extract_frac_bits "${spec_content}")
+fi
 controller_fixedbv_type_width=$((impl_int_bits+impl_frac_bits))
 width_offset=$((controller_fixedbv_type_width%8))
 [ ${width_offset} -ne 0 ] && impl_int_bits=$((impl_int_bits+8-width_offset))
 num_states=$(extract_spec_scalar "${spec_content}" 'states')
 num_inputs=$(extract_spec_scalar "${spec_content}" 'inputs')
 num_outputs=$(extract_spec_scalar "${spec_content}" 'outputs')
-A=$(extract_spec_matrix "${spec_content}" 'A')
-B=$(extract_spec_matrix "${spec_content}" 'B')
-C=$(extract_spec_matrix "${spec_content}" 'C')
+#A=extract_spec_matrix "${spec_content}" 'A')
+A=$(echo "${spec_content}" | sed -n "s/.*A *= *\[\([^]]*\)\].*/\1/p")
+B=$(echo "${spec_content}" | sed -n "s/.*B *= *\[\([^]]*\)\].*/\1/p")
+C=$(echo "${spec_content}" | sed -n "s/.*C *= *\[\([^]]*\)\].*/\1/p")
 input_lower_bound=$(extract_input_lower_bound "${spec_content}")
 input_upper_bound=$(extract_input_upper_bound "${spec_content}")
 output_lower_bound=$(extract_output_lower_bound "${spec_content}")
 output_upper_bound=$(extract_output_upper_bound "${spec_content}")
 sampling="\"$(extract_spec_interval "${spec_content}" 'sampling')\""
 speed=1
-if [ -n "$5" ]; then
- output_lower_bound=-$5
- output_upper_bound=$5
+if [ -n "$6" ]; then
+ output_lower_bound=-$6
+ output_upper_bound=$6
 fi
 if [ ${synth_type}=="CEGIS" ]; then
   options="-u -p -ii -mpi 256 -synth ${synth_type} -params \"p=${num_states},q=${num_inputs},f=1,l=4,m=256:$((impl_int_bits+impl_frac_bits)):${impl_frac_bits},g=8\" -dynamics \"[${A}]\" -init \"[cube<.5]\" -sguard \"[cube<1]\" -isense \"[${B}]\" -inputs \"[1>${input_lower_bound};1<${input_upper_bound}]\" -speed ${speed} -factor .95 -sample "

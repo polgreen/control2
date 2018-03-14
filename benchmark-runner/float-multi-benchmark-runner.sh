@@ -48,7 +48,9 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
   echo $PWD
   if [ $current -ge $min ]; then
    if [ -n "$3" ]; then
-    if [ -n "$6" ]; then
+    if [ -n "$7" ]; then
+     (time "${PWD}/float-benchmark-individual-runner.sh" $1 $benchmark $synth_type $3 $6 $7) >>"${working_directory_base_suffix}-$3.log" 2>&1
+    elif [ -n "$6" ]; then
      (time "${PWD}/float-benchmark-individual-runner.sh" $1 $benchmark $synth_type $3 $6) >>"${working_directory_base_suffix}-$3.log" 2>&1
     else
      (time "${PWD}/float-benchmark-individual-runner.sh" $1 $benchmark $synth_type $3) >>"${working_directory_base_suffix}-$3.log" 2>&1
