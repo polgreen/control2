@@ -1,4 +1,4 @@
-#!/bin/bash
+#usage ./float-multi-benchmark-runner.sh benchmark_dir precision synth_type formal_form implementation_bits max_output
 script_base_directory=`pwd`
 synth_type='observer'
 
@@ -19,8 +19,8 @@ if [ -z "$1" ]; then
 else
  benchmark_dirs=("${benchmark_base_dir}$1/") #ok
  working_directory_base_suffix="$1"
- if [ -n "$2" ]; then
-  synth_type="$2"
+ if [ -n "$3" ]; then
+  synth_type="$3"
  fi
 fi
 
@@ -29,15 +29,15 @@ mkdir -p ${working_directory_base} 2>/dev/null
 
 max=10000
 for benchmark_dir in ${benchmark_dirs[@]}; do
- if [ -z $4 ]; then
+ if [ -z $5 ]; then
   min=1
  else
-  min=$4
+  min=$5
  fi
- if [ -z $5 ]; then
+ if [ -z $6 ]; then
   max=10000
  else
-  max=$5
+  max=$6
  fi
  current=0
  for benchmark in ${benchmark_dir}*.ss; do
@@ -47,16 +47,18 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
   fi
   echo $PWD
   if [ $current -ge $min ]; then
-   if [ -n "$3" ]; then
-    if [ -n "$7" ]; then
-     (time "${PWD}/float-benchmark-individual-runner.sh" $1 $benchmark $synth_type $3 $6 $7) >>"${working_directory_base_suffix}-$3.log" 2>&1
-    elif [ -n "$6" ]; then
-     (time "${PWD}/float-benchmark-individual-runner.sh" $1 $benchmark $synth_type $3 $6) >>"${working_directory_base_suffix}-$3.log" 2>&1
+   if [ -n "$4" ]; then
+    if [ -n "$8" ]; then
+     (time "${PWD}/float-benchmark-individual-runner.sh" $1 $benchmark $2 $synth_type $4 $7 $8) >>"${working_directory_base_suffix}-$4.log" 2>&1
+    elif [ -n "$7" ]; then
+     (time "${PWD}/float-benchmark-individual-runner.sh" $1 $benchmark $2 $synth_type $4 $7) >>"${working_directory_base_suffix}-$4.log" 2>&1
     else
-     (time "${PWD}/float-benchmark-individual-runner.sh" $1 $benchmark $synth_type $3) >>"${working_directory_base_suffix}-$3.log" 2>&1
+     (time "${PWD}/float-benchmark-individual-runner.sh" $1 $benchmark $2 $synth_type $4) >>"${working_directory_base_suffix}-$4.log" 2>&1
     fi
+   elif [ -n "$2" ]; then
+    (time "${PWD}/float-benchmark-individual-runner.sh" $1 $benchmark $2 $synth_type) >>"${working_directory_base_suffix}.log" 2>&1
    else
-    (time "${PWD}/float-benchmark-individual-runner.sh" $1 $benchmark $synth_type) >>"${working_directory_base_suffix}.log" 2>&1
+    (time "${PWD}/float-benchmark-individual-runner.sh" $1 $benchmark) >>"${working_directory_base_suffix}.log" 2>&1
    fi
   fi
  done
