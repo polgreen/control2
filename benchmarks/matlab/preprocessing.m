@@ -60,27 +60,27 @@ for i=1:size(SS_names,1)
     %write benchmark
     fprintf(fileID,'#ifndef BENCHMARK_H_ \n#define BENCHMARK_H_ \n\n');
     fprintf(fileID,'// time discretisation %4.3f  \n',Benchmark.Ts);
-    if(max(abs(eig(A)))<1)
-        stablecount=stablecount+1;
-        K = zeros(1,states);
-        completeness = round(get_completeness(A,B,K),0)+1;
-        if(completeness>100)
-            fprintf(fileID,'// stable. safety not checked, completeness k with no controller = %i\n',completeness);
-        else    
-        unsafe = fixedpointcheck(A,B,K,INPUT);
-        if(unsafe==1)
-        fprintf(fileID,'// No controller needed, safe and stable, completeness k with no controller =  %i \n', completeness);  
-        safecount=safecount+1;
-        end
-        if(unsafe==0)
-        filename   
-        unsafe
-        fprintf(fileID,'// stable but not safe with no controller \n');
-        end
-        end
-    else
-        unsafecount=unsafecount+1;
-    end
+   % if(max(abs(eig(A)))<1)
+    %    stablecount=stablecount+1;
+     %   K = zeros(1,states);
+      %  completeness = round(get_completeness(A,B,K),0)+1;
+      %  if(completeness>100)
+      %      fprintf(fileID,'// stable. safety not checked, completeness k with no controller = %i\n',completeness);
+      %  else    
+      %  unsafe = fixedpointcheck(A,B,K,INPUT);
+       % if(unsafe==1)
+      %  fprintf(fileID,'// No controller needed, safe and stable, completeness k with no controller =  %i \n', completeness);  
+      %  safecount=safecount+1;
+      %  end
+      %  if(unsafe==0)
+      %  filename   
+      %  unsafe
+      %  fprintf(fileID,'// stable but not safe with no controller \n');
+      %  end
+      %  end
+   % else
+   %     unsafecount=unsafecount+1;
+  %  end
     
     fprintf(fileID,'#ifndef INT_BITS \n#define INT_BITS 8\n#define FRAC_BITS 8\n#endif\n');
     fprintf(fileID,'#define NSTATES %d \n#include "control_types.h"\n',states);
@@ -175,5 +175,5 @@ fprintf(fileID,'\n#endif /*BENCHMARK_H_*/');
 fclose(fileID);
 end
 
-safecount
-unsafecount
+%safecount
+%unsafecount
