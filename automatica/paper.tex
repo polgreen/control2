@@ -491,7 +491,7 @@ Feedback architectures can be employed to manipulate the properties and behavior
 We are interested in the synthesis of digital feedback control algorithms, 
 as practically implemented on Field-Programmable Gate Arrays or Digital Signal Processors. 
 Later, we will address the issue of variable quantization, 
-introduced by ADC/DAC conversion blocks of Figure \ref{DSSynth_process}, 
+introduced by ADC/DAC conversion blocks of Figure \ref{fig:digitalsystem}, 
 as classically studied in \cite{astrom1997computer}. 
 
 We consider state feedback control architectures, 
@@ -2243,53 +2243,65 @@ representation errors of the FWL domain.
 \label{sec:dssynthtool}
 %-------------------------------
 
-In order to synthesize closed-loop digital control systems, we use a program
-synthesis engine.  Our program synthesizer implements Counter-Example Guided
-Inductive Synthesis (CEGIS)~\cite{DBLP:conf/asplos/Solar-LezamaTBSS06}.  We
-start by presenting its general architecture followed by describing the
-parts specific to closed-loop control systems.  A high-level view of the
-synthesis process is given in Figure~\ref{DSSynth_process}.  Steps $1$ to
-$3$ are performed by the user and Steps~A to D are automatically performed
-by our tool for Digital Systems Synthesis, named \tool.
-
-CEGIS-based control synthesis requires a formal verifier to check whether a
-candidate controller meets the requirements when combined with the plant. 
-We use the Digital-System Verifier (DSVerifier)~\cite{IsmailBCFF15} in the
-verification module for \tool.  It checks the stability of closed-loop control systems and
-considers finite-word length (FWL) effects in the digital controller and
-uncertainty parameters in the plant model (plant intervals)~\cite{Bessa16}.   
-
 \begin{figure*}[t]
 \centering
-\includegraphics[width=\textwidth]{figures/synthesis-flow.pdf}
-\vspace{0.1cm}
-\caption{Overview of the synthesis process\label{DSSynth_process}}
+\includegraphics[width=0.7\textwidth]{figures/synthesis-flow.pdf}
+\caption{Phases of the controller synthesis}
+\label{fig:synthesis-flow}
 \end{figure*}
 
-Given a plant model in ANSI-C syntax as input (Steps 1--3), \tool constructs
-a non-deterministic model to represent the plant family, i.e., it addresses
-plant variations as interval sets (Step~A), and formulates a function
-(Step~B) using implementation details provided in Steps~$2$ and $3$ to
-calculate the controller parameters to be synthesized (Step~C).  Note that
-\tool synthesizes the controller for the desired numerical representation
-and realization form.  Finally, \tool builds an intermediate ANSI-C code for
-the digital system implementation, which is used as input for the CEGIS
-engine (Step~D).
+The proposed synthesis methodology for closed-loop digital control
+systems is based on the Digital-System Synthesizer 
+(DSSynth) tool~\cite{DBLP:conf/kbse/AbateBCCCDKKP17}, 
+which can be split into two main stages as follows: manual and 
+automated steps, as illustrated in Fig.~\ref{fig:synthesis-flow}. 
 
-This intermediate ANSI-C code model contains a specification $\phi$ for the
-property of interest (i.e., robust stability) and is passed to the
-Counterexample-Guided Inductive Synthesis (CEGIS) module of
-CBMC~\cite{ClarkeKL04}, where the controller is marked as the input variable
-to synthesize.  CEGIS employs an iterative, counterexample-guided refinement
-process.%, which is explained in detail in Section~\ref{synthesizer-general}. 
-CEGIS reports a successful synthesis result if it generates a controller
-that is safe with respect to~$\phi$.  In particular, the ANSI-C code model
-guarantees that a synthesized solution is complete and sound with respect to
-the stability property~$\phi$, since it does not depend on system inputs and
-outputs.  In the case of stability, the specification~$\phi$ consists of a
-number of assumptions on the polynomial coefficients, following Jury's
-criterion, as well as the restrictions on the representation of these
-coefficients.% as discussed in detail in Section~\ref{synthesis-elements}.
+In Step~1, the user selects the digital controller representation, which
+can be a transfer function or a state-space model.  In Step~2, the
+physical plant in the form of Equation~\eqref{eq:ode1} must be
+given~\cite{astrom1997computer}.  Finally, in Step~3, the numerical
+representation for the digital controller implementation must be set by the
+user, i.e., the FWL format that defines the number of bits of the integer
+and fractional parts as well as the dynamic range inputs.  The input 
+provided by the user is a specification of the physical plant.
+
+After that, the automated synthesis process starts with Step~A, where the
+\tool translates the digital system specification from the MATLAB format
+into an ANSI-C program.  In Step~B, our CEGIS engine is invoked to
+synthesize the digital controller w.r.t.~the digital system specification. 
+Finally, in Step~C, the synthesized digital controller is produced.  The
+output generated by the \tool is the synthesized digital controller
+represented either in transfer function or state-space equation.  The
+synthesis is considered to be \emph{successful} if a digital controller is
+correctly synthesized w.r.t.~FWL effects; otherwise, if any parameter is
+incorrectly defined in previous steps, or if there is no solution (no
+controller) for the respective physical plant (given the implementation
+requirements), then the synthesis is considered to have \emph{failed}.
+
+Our CEGIS engine is implemented as an integrated module within the C bounded
+model checker (CBMC)~\cite{ClarkeKL04}.  CBMC transforms the ANSI-C representation
+of our closed-loop control system model into its internal representation (IR).  We
+instrument this IR for each synthesis or verification scenario accordingly,
+and use CBMC as an oracle to answer our queries.  CBMC itself relies on an
+underlying SAT or SMT solver to solve verification conditions.  We~model FWL
+effects, time discretization and the presence of quantization noise
+explicitly using CBMC's nondeterminism API (e.g., \texttt{nondet},
+\texttt{CPROVER\_assume} intrinsic functions).  Our module is included in
+CBMC~5.7 and is available for
+download.\footnote{\url{https://github.com/diffblue/cbmc/archive/cbmc-5.7.zip}}
+\textcolor{red}{Lucas: I'll need support from Pascal to create this VirtualBoxOVA}
+We further created a VirtualBox OVA image with our tool pre-installed,
+including our MATLAB-generated benchmarks and benchmark shell script with
+instructions to run all benchmarks and reproduce our
+experiments.\footnote{\url{XXXXXXXXXX}}
+
+\textcolor{red}{This paragraph needs to be updated by Elizabeth and Dario.}
+
+The entire implementation consists of $XXX$ and $XXX$ lines of C code in the naive and abstract
+accelerator back-ends, respectively, $XXXX$ lines of C code for utility functions such as interval, 
+fixed- and floating-point arithmetic, as well as $1000$ lines of C++ code in the control synthesis
+module in CEGIS CBMC.  We evaluate \tool using $XXX$ SISO control system
+benchmarks.
 
 %-------------------------------
 \section{Experimental Evaluation}
