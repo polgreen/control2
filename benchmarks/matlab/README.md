@@ -19,10 +19,11 @@ Lucas Cordeiro, Cristina David, Pascal Kesseli, Daniel Kroening, Elizabeth Polgr
 DSSynth: an automated digital controller synthesis tool for physical plants. 
 ASE 2017: 919-924
 
-# Scripts to obtain the benchmarks
+# Scripts to obtain the benchmarks in .tf, .ss and .h format
 
-In order to obtain all control system benchmarks, the following command 
-must be typed in the MATLAB command-line.
+1 - In order to obtain all control system benchmarks, the following command 
+must be typed in the MATLAB command-line, which produces the benchmark_tf.mat 
+and benchmark_ss.mat files.
 
 `$makebenchmarks`
 
@@ -60,13 +61,21 @@ The .mat file benchmark_tf.mat contains the transfer function models.
 The .mat file benchmark_ss.mat contains the state space models.
 ```
 
-To obtain the respective benchmarks in .tf and .ss format, the following 
+2 - To obtain the respective benchmarks in .tf and .ss format, the following 
 command must be typed:
 
 `$automatic_gen`
 
 This will generate two folders benchmarks-tf and benchmarks-ss with all
 the benchmarks in tansfer-function and state-space representations.
+
+3 - To obtain the benchmarks in .h format, the following command must be
+typed in the command-line:
+
+`$preprocessing`
+
+This will produce all our control system benchmarks in .h format, which can
+be parsed by the naive and abstract accelerator backe-end.
 
 # Description of the benchmarks
 
