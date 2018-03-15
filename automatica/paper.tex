@@ -136,19 +136,10 @@
 
 \address[oxford]{University of Oxford, UK}
 \address[cambridge]{University of Cambridge, UK}
-\address[manaus]{Federal University of Amazonas, Brazil}
-
-%\author[Paestum]{Marcus Tullius Cicero}\ead{cicero@senate.ir},    % Add the 
-%\author[Rome]{Julius Caesar}\ead{julius@caesar.ir},               % e-mail address 
-%\author[Baiae]{Publius Maro Vergilius}\ead{vergilius@culture.ir}  % (ead) as shown
-
-%\address[Paestum]{Buckingham Palace, Paestum}  % Please supply                                              
-%\address[Rome]{Senate House, Rome}             % full addresses
-%\address[Baiae]{The White House, Baiae}        % here.
-
+\address[manaus]{Federal University of Amazonas, Brazil} 
           
 \begin{keyword}                           % Five to ten keywords,  
-Digital Control; A/D converters; Control System Synthesis; Safety Analysis; Quantization Errors; Sampling.               % chosen from the IFAC 
+Digital control synthesis; Safety requirements; A/D converters; Quantization errors; Sampling.               % chosen from the IFAC 
 \end{keyword}                             % keyword list or with the 
                                           % help of the Automatica 
                                           % keyword wizard
@@ -544,9 +535,13 @@ and $r_{k}$ is a reference signal (again digital).
 We will assume $r_k=0$, thus 
 $\vec{x}_{k+1}=(\mat{A}_d-\mat{B}_d\mat{K})\vec{x}_k$. 
 
-\textcolor{red}{[Where are we defining the specifications/properties of interest?]} 
+%-------------------------------
+\subsection{\textcolor{red}{[Elizabeth: please add the specifics of the errors due to discretisation/quantisation, with reference to Fig. \ref{fig:digitalsystem}]}}
+%\label{sec:}
+%-------------------------------
 
-\textcolor{red}{[Where are the specifics of the errors due to discretisation/quantisation discussed?]}
+
+
 
 \begin{figure*}[htb]
 \centering
@@ -645,7 +640,7 @@ $\vec{x}_{k+1}=(\mat{A}_d-\mat{B}_d\mat{K})\vec{x}_k$.
 
 
 %-------------------------------
-\subsection{Counterexample Guided Inductive Synthesis} 
+\subsection{Counterexample Guided Inductive Synthesis - CEGIS} 
 \label{ssec:cegis}
 %-------------------------------
 
@@ -678,19 +673,18 @@ $\vec{x}_{k+1}=(\mat{A}_d-\mat{B}_d\mat{K})\vec{x}_k$.
 
 In this section, we give a brief description of the CEGIS framework, as illustrated in Figure~\ref{fig:CEGIS}. 
 
-The input specification provided to CEGIS is of the form
-$\exists P .\, \forall a.\, \phi(a, P)$, where $P$ ranges over functions
-(where a function is represented by the program computing it),
-$a$ ranges over ground terms, and $\phi$ is a quantifier-free formula. 
-We~interpret the ground terms over some finite domain~$\mathcal{D}$.
-%
+We consider an input specification of the form $\exists P .\, \forall a.\, \phi(a, P)$, 
+where $P$ ranges over functions (where a function is represented by the program computing it),
+$a$ ranges over ground terms, 
+and $\phi$ is a quantifier-free formula. 
+We~interpret the ground terms over some finite [CHECK: finite? are we doing only SAT or also SMT?] domain~$\mathcal{D}$. 
+This is a synthesis problem, where the objective is indeed to select a valid $P$ satisfying $\phi$ over all the $a$ terms. 
+CEGIS breaks down this generally hard synthesis problem into two easier parts. 
 
-The design of our synthesizer consists of two phases, an inductive
-synthesis phase (denoted by {\sc Synthesize} in
+The design consists of two phases, an inductive synthesis phase (denoted by {\sc Synthesize} in
 Figure~\ref{fig:CEGIS}) and a validation phase (denoted by {\sc
-  Verify}), which interact via a finite set of test vectors {\sc
-  inputs} that is updated incrementally.  Given the aforementioned
-specification $\phi$, the inductive synthesis procedure tries to
+  Verify}), which interact via a finite set of tests {\sc
+  inputs} that is updated incrementally.  Given the specification $\phi$, the inductive synthesis procedure tries to
 find an existential witness $P$ satisfying the specification
 $\phi(a, P)$ for all $a$ in {\sc inputs} (as opposed to all $a \in
 \mathcal{D}$).
@@ -705,6 +699,7 @@ phase in the form of a new counterexample that is added to the {\sc inputs}
 set and the loop iterates again.  %% More details about the general
 %% architecture of the synthesizer can be found
 %% in~\cite{DBLP:conf/lpar/DavidKL15}.
+[COMMENT ON TERMINATION?]
 
 %-------------------------------
 \section{Formal specification of control systems properties} 
