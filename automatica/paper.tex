@@ -706,6 +706,142 @@ set and the loop iterates again.  %% More details about the general
 %% architecture of the synthesizer can be found
 %% in~\cite{DBLP:conf/lpar/DavidKL15}.
 
+%-------------------------------
+\section{Formal specification of control systems properties} 
+\label{sec:specification}
+%-------------------------------
+
+While in the previous section we discussed the generic CEGIS
+framework, in the rest of the paper we will explain how we adapt it to
+the synthesis of digital controllers. For this purpose, we start by
+describing the specific property that we pass to the synthesizer as
+the specification $\sigma$. Namely, we are interested in capturing
+stability and safety, which we discuss in Sections~\ref{ssec:stabspecification}
+and~\ref{ssec:safespecification}, respectively.
+
+%-------------------------------
+\subsection{Formal specification of stability} 
+\label{ssec:stabspecification}
+%-------------------------------
+
+
+  There are a number of algorithms in our verification engine that can
+  be used for stability analysis~\cite{daes20161, Bessa16}.
+%one based on Schur's decomposition
+%and another one based on Jury's criterion~\cite{astrom1997computer}.  
+Here we choose Jury stability criterion~\cite{astrom1997computer} in view of its efficiency 
+and ease of integration within our implementation: 
+this method checks the stability working in the $z$-domain of the characteristic polynomial $S(z)$,  
+%
+% of the matrix $\left( \begin{array}{c} Y \\ U \end{array}\right)$, where $Y(z)$ is the closed-loop system output and U(z) is the controller output. 
+%% \red{[unclear: what matrix? We need to clarify the relationship
+%% between the char. poly. $S(z)$ and the later quantities $\Delta
+%% N_{G}(z), \Delta D_{G}(z)$ and corresponding controller's
+%% structure.]}.
+%
+considered in its general form as 
+% for $S(z)$:
+%
+\begin{equation*}
+S(z) = a_0z^N+a_1z^{N-1}+\cdots+a_{N-1}z+a_N=0, a_0\neq0. 
+\end{equation*}
+%\cdsay{is this for the matrix $\left( \begin{array}{c} Y \\ U \end{array}\right)$?} 
+% Assuming that $\hat{G}(z) = \frac{\hat{N_G}(z)}{\hat{D_G}(z)}$
+% and $\hat{C}(z) = \frac{\hat{N_C}(z)}{\hat{D_C}(z)}$, then:
+% $$S(z) = FWL[N_C(z)] \times \hat{N_G}(z) + FWL[D_C(z)] \times \hat{D_G}(z)$$
+The following matrix
+$M = [m_{ij}]_{(2N-2)\times N}$ is built from $S(z)$ coefficients:
+%
+$$
+M=\left( 
+\begin{array}{c}
+V^{(0)}\\
+V^{(1)}\\
+\vdots\\
+V^{(N-2)}
+\end{array}
+\right), 
+$$
+%
+where $V^{(k)} = [v^{(k)}_{ij} ]_{2\times N}$ such that:
+%
+$$
+v_{ij}^{(0)}=\left\{
+\begin{array}{ll}
+a_{j-1}, & \mbox{if}~i=1\\
+v_{(1)(N-j+1)}^{0},&\mbox{if}~i=2
+\end{array}
+\right.
+$$
+%
+$$
+v_{ij}^{(k)}=\left\{
+\begin{array}{ll}
+0,&\mbox{if}~j>n-k\\
+v_{1j}^{(k-1)}-v_{2j}^{(k-1)} . \frac{v_{11}^{(k-1)}}{v_{21}^{(k-1)}}, & \mbox{if}~j\leq n-k ~\mbox{and}~i=1\\
+v_{(1)(N-j+1)}^{k},& \mbox{if}~j\leq n-k ~\mbox{and}~i=2\\
+\end{array}
+\right.
+$$
+%
+and where $k \in \mathbb{Z}$ is such that $0 < k < N - 2$. 
+We have that $S(z)$ is the characteristic polynomial of a stable system if and only if the following four conditions hold~\cite{astrom1997computer}:
+%\begin{itemize}
+%\item 
+$R_1: S(1) > 0$;
+%\item 
+$R_2: (−1)^N S(−1) > 0$;
+%\item 
+$R_3: |a_0| < a_N$;
+%\item 
+$R_4: m_{11} > 0 \wedge\allowbreak
+      m_{31}>0 \wedge\allowbreak
+      m_{51}>0 \wedge \ldots \wedge\allowbreak
+      m_{(2N{-}3)(1)}>0$.
+%\end{itemize}
+%
+The stability property is then encoded by a constraint of the form:
+$
+\phi_\mathit{stability} := (R_1 \wedge R_2 \wedge R_3 \wedge R_4).
+$
+
+
+%-------------------------------
+\subsection{Formal specification of safety} 
+\label{ssec:safespecification}
+%-------------------------------
+
+We are not limited to the synthesis of digital stabilizing controllers -- a
+well known task in the literature on digital control systems -- but target
+safety requirements with an overall approach that is sound and automated. 
+%More specifically, we require that the closed-loop system meets given safety specifications.  
+A safety specification translates to a requirement on the states of the closed-loop model, 
+and the feedback controller (namely the choice of the gains matrix~$K$) 
+must ensure that the state never violates the requirement.  
+Note that a stable, closed-loop model is not necessarily a safe system: 
+indeed, the state values may leave the safe part of the state space while they converge
+to the equilibrium, which is typical in the case of oscillatory convergent dynamics. 
+%However, a safe system will always be stable.  
+In~this work, the safety property is expressed as:
+%
+\begin{equation}
+\label{eq:safetyliteral}
+\phi_\mathit{safety} := \forall k\ge 0.\, \bigwedge_{i=1}^{n}{\underline{x_{i}} \leq x_{i,k} \leq \overline{x_{i}}},
+\end{equation}
+%
+%\addtodo{We consider $x_{i}^{-}$ and $x_{i}^{+}$ to be -1 and 1, respectively.}
+%
+where $\underline{x_{i}}$ and $\overline{x_{i}}$ are lower and upper bounds
+for the $i$-th coordinate $x_{i}$ of state $x\in \mathbb R^n$ at the $k$-th
+instant, respectively.  This means that the states will always be within an $n$-dimensional hyper-box.
+
+Furthermore, it is practically relevant to consider constraints $\phi_\mathit{input}$ on the input
+signal $u_{k}$ and requirements $\phi_\mathit{init}$ on the initial states $x_0$, 
+both of which we be expressed via given bounds as: 
+$\phi_\mathit{input} := {\forall k.\underline{u} \leq u_{k} \leq \overline{u}} $, 
+and $\phi_\mathit{init} := \bigwedge_{i=1}^{n} \underline{x_{i,0}} \leq x_{i,0} \leq \overline{x_{i,0}}$. 
+For the input signal, these requirements practically mean that the control input saturates in view of physical constraints. 
+
 
 %-------------------------------
 \section{CEGIS of digital controllers} 
@@ -1782,136 +1918,6 @@ In the following, we shall disregard these steady-state errors (caused by
 FWL effects) when stability is ensured by synthesis, and then verify its
 safety accounting for the finite-precision errors.
 
-%-------------------------------
-\section{Formal specification of control systems properties} 
-\label{sec:specification}
-%-------------------------------
-
-\textcolor{red}{[Why are these specs discussed only here? Isn't this way too late? ]}
-
-%-------------------------------
-\subsection{Formal specification of stability} 
-\label{ssec:stabspecification}
-%-------------------------------
-
-
-Next, we describe the specific property that we pass to the program
-synthesizer as the specification $\sigma$.  There are a number of 
-algorithms in our verification engine that can be used for stability analysis~\cite{daes20161, Bessa16}.  
-%one based on Schur's decomposition
-%and another one based on Jury's criterion~\cite{astrom1997computer}.  
-Here we choose Jury stability criterion~\cite{astrom1997computer} in view of its efficiency 
-and ease of integration within \tool: 
-this method checks the stability working in the $z$-domain of the characteristic polynomial $S(z)$,  
-%
-% of the matrix $\left( \begin{array}{c} Y \\ U \end{array}\right)$, where $Y(z)$ is the closed-loop system output and U(z) is the controller output. 
-%% \red{[unclear: what matrix? We need to clarify the relationship
-%% between the char. poly. $S(z)$ and the later quantities $\Delta
-%% N_{G}(z), \Delta D_{G}(z)$ and corresponding controller's
-%% structure.]}.
-%
-considered in its general form as 
-% for $S(z)$:
-%
-\begin{equation*}
-S(z) = a_0z^N+a_1z^{N-1}+\cdots+a_{N-1}z+a_N=0, a_0\neq0. 
-\end{equation*}
-%\cdsay{is this for the matrix $\left( \begin{array}{c} Y \\ U \end{array}\right)$?} 
-% Assuming that $\hat{G}(z) = \frac{\hat{N_G}(z)}{\hat{D_G}(z)}$
-% and $\hat{C}(z) = \frac{\hat{N_C}(z)}{\hat{D_C}(z)}$, then:
-% $$S(z) = FWL[N_C(z)] \times \hat{N_G}(z) + FWL[D_C(z)] \times \hat{D_G}(z)$$
-The following matrix
-$M = [m_{ij}]_{(2N-2)\times N}$ is built from $S(z)$ coefficients:
-%
-$$
-M=\left( 
-\begin{array}{c}
-V^{(0)}\\
-V^{(1)}\\
-\vdots\\
-V^{(N-2)}
-\end{array}
-\right), 
-$$
-%
-where $V^{(k)} = [v^{(k)}_{ij} ]_{2\times N}$ such that:
-%
-$$
-v_{ij}^{(0)}=\left\{
-\begin{array}{ll}
-a_{j-1}, & \mbox{if}~i=1\\
-v_{(1)(N-j+1)}^{0},&\mbox{if}~i=2
-\end{array}
-\right.
-$$
-%
-$$
-v_{ij}^{(k)}=\left\{
-\begin{array}{ll}
-0,&\mbox{if}~j>n-k\\
-v_{1j}^{(k-1)}-v_{2j}^{(k-1)} . \frac{v_{11}^{(k-1)}}{v_{21}^{(k-1)}}, & \mbox{if}~j\leq n-k ~\mbox{and}~i=1\\
-v_{(1)(N-j+1)}^{k},& \mbox{if}~j\leq n-k ~\mbox{and}~i=2\\
-\end{array}
-\right.
-$$
-%
-and where $k \in \mathbb{Z}$ is such that $0 < k < N - 2$. 
-We have that $S(z)$ is the characteristic polynomial of a stable system if and only if the following four conditions hold~\cite{astrom1997computer}:
-%\begin{itemize}
-%\item 
-$R_1: S(1) > 0$;
-%\item 
-$R_2: (−1)^N S(−1) > 0$;
-%\item 
-$R_3: |a_0| < a_N$;
-%\item 
-$R_4: m_{11} > 0 \wedge\allowbreak
-      m_{31}>0 \wedge\allowbreak
-      m_{51}>0 \wedge \ldots \wedge\allowbreak
-      m_{(2N{-}3)(1)}>0$.
-%\end{itemize}
-%
-The stability property is then encoded by a constraint of the form:
-$
-\phi_\mathit{stability} := (R_1 \wedge R_2 \wedge R_3 \wedge R_4).
-$
-
-
-%-------------------------------
-\subsection{Formal specification of safety} 
-\label{ssec:safespecification}
-%-------------------------------
-
-We are not limited to the synthesis of digital stabilizing controllers -- a
-well known task in the literature on digital control systems -- but target
-safety requirements with an overall approach that is sound and automated. 
-%More specifically, we require that the closed-loop system meets given safety specifications.  
-A safety specification translates to a requirement on the states of the closed-loop model, 
-and the feedback controller (namely the choice of the gains matrix~$K$) 
-must ensure that the state never violates the requirement.  
-Note that a stable, closed-loop model is not necessarily a safe system: 
-indeed, the state values may leave the safe part of the state space while they converge
-to the equilibrium, which is typical in the case of oscillatory convergent dynamics. 
-%However, a safe system will always be stable.  
-In~this work, the safety property is expressed as:
-%
-\begin{equation}
-\label{eq:safetyliteral}
-\phi_\mathit{safety} := \forall k\ge 0.\, \bigwedge_{i=1}^{n}{\underline{x_{i}} \leq x_{i,k} \leq \overline{x_{i}}},
-\end{equation}
-%
-%\addtodo{We consider $x_{i}^{-}$ and $x_{i}^{+}$ to be -1 and 1, respectively.}
-%
-where $\underline{x_{i}}$ and $\overline{x_{i}}$ are lower and upper bounds
-for the $i$-th coordinate $x_{i}$ of state $x\in \mathbb R^n$ at the $k$-th
-instant, respectively.  This means that the states will always be within an $n$-dimensional hyper-box.
-
-Furthermore, it is practically relevant to consider constraints $\phi_\mathit{input}$ on the input
-signal $u_{k}$ and requirements $\phi_\mathit{init}$ on the initial states $x_0$, 
-both of which we be expressed via given bounds as: 
-$\phi_\mathit{input} := {\forall k.\underline{u} \leq u_{k} \leq \overline{u}} $, 
-and $\phi_\mathit{init} := \bigwedge_{i=1}^{n} \underline{x_{i,0}} \leq x_{i,0} \leq \overline{x_{i,0}}$. 
-For the input signal, these requirements practically mean that the control input saturates in view of physical constraints. 
 
 %-------------------------------
 %\subsection{Formal specification of transient response} 
