@@ -679,9 +679,9 @@ $\vec{x}_{k+1}=(\mat{A}_d-\mat{B}_d\mat{K})\vec{x}_k$.
 In this section, we give a brief description of the CEGIS framework, as illustrated in Figure~\ref{fig:CEGIS}. 
 
 The input specification provided to CEGIS is of the form
-$\exists P .\, \forall a.\, \sigma(a, P)$, where $P$ ranges over functions
+$\exists P .\, \forall a.\, \phi(a, P)$, where $P$ ranges over functions
 (where a function is represented by the program computing it),
-$a$ ranges over ground terms, and $\sigma$ is a quantifier-free formula. 
+$a$ ranges over ground terms, and $\phi$ is a quantifier-free formula. 
 We~interpret the ground terms over some finite domain~$\mathcal{D}$.
 %
 
@@ -690,15 +690,15 @@ synthesis phase (denoted by {\sc Synthesize} in
 Figure~\ref{fig:CEGIS}) and a validation phase (denoted by {\sc
   Verify}), which interact via a finite set of test vectors {\sc
   inputs} that is updated incrementally.  Given the aforementioned
-specification $\sigma$, the inductive synthesis procedure tries to
+specification $\phi$, the inductive synthesis procedure tries to
 find an existential witness $P$ satisfying the specification
-$\sigma(a, P)$ for all $a$ in {\sc inputs} (as opposed to all $a \in
+$\phi(a, P)$ for all $a$ in {\sc inputs} (as opposed to all $a \in
 \mathcal{D}$).
 %
 If the synthesis phase succeeds in finding a witness~$P$, this witness is a
 candidate solution to the full synthesis formula.  We pass this candidate
 solution to the validation phase, which checks whether it is a full solution
-(i.e., $P$ satisfies the specification $\sigma(a, P)$ for all
+(i.e., $P$ satisfies the specification $\phi(a, P)$ for all
 $a\in\mathcal{D}$).  If this is the case, then the algorithm terminates. 
 Otherwise, additional information is provided to the inductive synthesis
 phase in the form of a new counterexample that is added to the {\sc inputs}
@@ -715,7 +715,7 @@ While in the previous section we discussed the generic CEGIS
 framework, in the rest of the paper we will explain how we adapt it to
 the synthesis of digital controllers. For this purpose, we start by
 describing the specific property that we pass to the synthesizer as
-the specification $\sigma$. Namely, we are interested in capturing
+the specification $\phi$. Namely, we are interested in capturing
 stability and safety, which we discuss in Sections~\ref{ssec:stabspecification}
 and~\ref{ssec:safespecification}, respectively.
 
