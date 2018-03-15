@@ -1,25 +1,33 @@
+#usage ./float-all-benchmarks precision implementation_bits
+#precision in bits (16=half, 32=single, 64=double, 0=from_spec_file)
+#implementation bits are added as exp,mantissa (eg 5,11 is half precision)
 if [ -n $1 ];then
-  ./float-multi-benchmark-runner.sh 'dcmotor2_ss' CEGIS '-NNF' 1 10 "$1"
-#  ./float-multi-benchmark-runner.sh 'helicopter2_ss' CEGIS '-NNF' 1 10 "$1"
-#  ./float-multi-benchmark-runner.sh 'magneticpointer2_ss' CEGIS '-NNF' 1 10 "$1"
-#  ./float-multi-benchmark-runner.sh 'satellite2_ss' CEGIS '-NNF' 1 10 "$1"
-#  ./float-multi-benchmark-runner.sh 'invpendulum_cartpos2_ss' CEGIS '-NNF' 1 10 "$1"
-#  ./float-multi-benchmark-runner.sh 'suspension2_ss' CEGIS '-NNF' 1 10 "$1"
-#  ./float-multi-benchmark-runner.sh 'tapedriver_ss2_ss' CEGIS '-NNF' 1 10 "$1"
-#  ./float-multi-benchmark-runner.sh 'pendulum2_ss' CEGIS '-NNF' 1 10 "$1"
-#  ./float-multi-benchmark-runner.sh 'cruise2_ss' CEGIS '-NNF' 1 10 "$1"
-#  ./float-multi-benchmark-runner.sh 'magsuspension2_ss' CEGIS '-NNF' 1 10 "$1"
-#  ./float-multi-benchmark-runner.sh 'invpendulum_pendang2_ss' CEGIS '-NNF' 1 10 "$1"
+  precision=$1
 else
-  ./float-multi-benchmark-runner.sh 'dcmotor2_ss' CEGIS '-NNF'
-#  ./float-multi-benchmark-runner.sh 'helicopter2_ss' CEGIS '-NNF'
-#  ./float-multi-benchmark-runner.sh 'magneticpointer2_ss' CEGIS '-NNF'
-#  ./float-multi-benchmark-runner.sh 'satellite2_ss' CEGIS '-NNF'
-#  ./float-multi-benchmark-runner.sh 'invpendulum_cartpos2_ss' CEGIS '-NNF'
-#  ./float-multi-benchmark-runner.sh 'suspension2_ss' CEGIS '-NNF'
-#  ./float-multi-benchmark-runner.sh 'tapedriver_ss2_ss' CEGIS '-NNF'
-#  ./float-multi-benchmark-runner.sh 'pendulum2_ss' CEGIS '-NNF'
-#  ./float-multi-benchmark-runner.sh 'cruise2_ss' CEGIS '-NNF'
-#  ./float-multi-benchmark-runner.sh 'magsuspension2_ss' CEGIS '-NNF'
-#  ./float-multi-benchmark-runner.sh 'invpendulum_pendang2_ss' CEGIS '-NNF'
+  precision=0
+fi
+if [ -n $2 ];then
+  ./float-multi-benchmark-runner.sh 'dcmotor2_ss' ${precision} CEGIS '-NNF' 1 10 "$2"
+#  ./float-multi-benchmark-runner.sh 'helicopter2_ss' ${precision} CEGIS '-NNF' 1 10 "$2"
+#  ./float-multi-benchmark-runner.sh 'magneticpointer2_ss' ${precision} CEGIS '-NNF' 1 10 "$2"
+#  ./float-multi-benchmark-runner.sh 'satellite2_ss' ${precision} CEGIS '-NNF' 1 10 "$2"
+#  ./float-multi-benchmark-runner.sh 'invpendulum_cartpos2_ss' ${precision} CEGIS '-NNF' 1 10 "$2"
+#  ./float-multi-benchmark-runner.sh 'suspension2_ss' CEGIS ${precision} '-NNF' 1 10 "$2"
+#  ./float-multi-benchmark-runner.sh 'tapedriver_ss2_ss' ${precision} CEGIS '-NNF' 1 10 "$2"
+#  ./float-multi-benchmark-runner.sh 'pendulum2_ss' ${precision} CEGIS '-NNF' 1 10 "$2"
+#  ./float-multi-benchmark-runner.sh 'cruise2_ss' ${precision} CEGIS '-NNF' 1 10 "$2"
+#  ./float-multi-benchmark-runner.sh 'magsuspension2_ss' ${precision} CEGIS '-NNF' 1 10 "$2"
+#  ./float-multi-benchmark-runner.sh 'invpendulum_pendang2_ss' ${precision} CEGIS '-NNF' 1 10 "$2"
+else
+  ./float-multi-benchmark-runner.sh 'dcmotor2_ss' ${precision} CEGIS '-NNF'
+#  ./float-multi-benchmark-runner.sh 'helicopter2_ss' ${precision} CEGIS '-NNF'
+#  ./float-multi-benchmark-runner.sh 'magneticpointer2_ss' ${precision} CEGIS '-NNF'
+#  ./float-multi-benchmark-runner.sh 'satellite2_ss' ${precision} CEGIS '-NNF'
+#  ./float-multi-benchmark-runner.sh 'invpendulum_cartpos2_ss' ${precision} CEGIS '-NNF'
+#  ./float-multi-benchmark-runner.sh 'suspension2_ss' ${precision} CEGIS '-NNF'
+#  ./float-multi-benchmark-runner.sh 'tapedriver_ss2_ss' ${precision} CEGIS '-NNF'
+#  ./float-multi-benchmark-runner.sh 'pendulum2_ss' ${precision} CEGIS '-NNF'
+#  ./float-multi-benchmark-runner.sh 'cruise2_ss' ${precision} CEGIS '-NNF'
+#  ./float-multi-benchmark-runner.sh 'magsuspension2_ss' ${precision} CEGIS '-NNF'
+#  ./float-multi-benchmark-runner.sh 'invpendulum_pendang2_ss' ${precision} CEGIS '-NNF'
 fi

@@ -1,5 +1,5 @@
 #!/bin/bash
-#usage ./float-benchmark-individual-runner.sh benchmark_dir benchmark_file synth_type formal_form bits max_output
+#usage ./float-benchmark-individual-runner.sh benchmark_dir benchmark_file precision synth_type formal_form bits max_output
 export PATH=${PATH}:/media/sf_Documents/cbmc5.7/src/cbmc
 
 status_output_file='output.txt'
@@ -30,12 +30,16 @@ function echo_success_message {
  echo_log "<control_synthesis_time>${runtime}</control_synthesis_time>"
 }
 
+function extract_spec_integer {
+ echo $1 | sed -n "s/.*$2 *= *\([0-9]*\) *;.*/\1/p"
+}
+
 function extract_spec_scalar {
  echo $1 | sed "s/.*$2 *= *\([^;]*\);.*/\1/"
 }
 
 function extract_spec_interval {
- echo $1 | sed "s/.*$2 *= *\([^;]*\);.*/\1/"
+ echo $1 | sed -n "s/.*$2 *= *\([^;]*\);.*/\1/p"
 }
 
 function extract_spec_matrix {
@@ -75,7 +79,7 @@ function get_current_cpu_millis {
 benchmark_base_dir=('/media/sf_Documents/GitHub/control-synthesis/benchmarks/observer/')
 benchmark_dirs=("${benchmark_base_dir}$1/") #ok
 working_directory_base_suffix="$1"
-synth_type="$3"
+synth_type="$4"
 
 working_directory_base="/tmp/control_synthesis-float-ss-${working_directory_base_suffix}"
 mkdir -p ${working_directory_base} 2>/dev/null
@@ -90,11 +94,9 @@ echo_log ${benchmark}
 echo_log 'accelerator-ss'
 
 spec_content=`cat ${benchmark}`
-if [ -n "$5" ]; then
-  impl_int_bits=$(echo $5 | sed "s/\([^,]*\),.*/\1/")
-  impl_frac_bits=$(echo $5 | sed "s/[^,]*,\([^ ]*\) */\1/")
-#  impl_int_bits=$(extract_int_bits "$5")
-#  impl_frac_bits=$(extract_frac_bits "$5")
+if [ -n "$6" ]; then
+  impl_int_bits=$(echo $6 | sed "s/\([^,]*\),.*/\1/")
+  impl_frac_bits=$(echo $6 | sed "s/[^,]*,\([^ ]*\) */\1/")
 else
   impl_int_bits=$(extract_int_bits "${spec_content}")
   impl_frac_bits=$(extract_frac_bits "${spec_content}")
@@ -102,9 +104,9 @@ fi
 controller_fixedbv_type_width=$((impl_int_bits+impl_frac_bits))
 width_offset=$((controller_fixedbv_type_width%8))
 [ ${width_offset} -ne 0 ] && impl_int_bits=$((impl_int_bits+8-width_offset))
-num_states=$(extract_spec_scalar "${spec_content}" 'states')
-num_inputs=$(extract_spec_scalar "${spec_content}" 'inputs')
-num_outputs=$(extract_spec_scalar "${spec_content}" 'outputs')
+num_states=$(extract_spec_integer "${spec_content}" 'states')
+num_inputs=$(extract_spec_integer "${spec_content}" 'inputs')
+num_outputs=$(extract_spec_integer "${spec_content}" 'outputs')
 #A=extract_spec_matrix "${spec_content}" 'A')
 A=$(echo "${spec_content}" | sed -n "s/.*A *= *\[\([^]]*\)\].*/\1/p")
 B=$(echo "${spec_content}" | sed -n "s/.*B *= *\[\([^]]*\)\].*/\1/p")
@@ -113,16 +115,19 @@ input_lower_bound=$(extract_input_lower_bound "${spec_content}")
 input_upper_bound=$(extract_input_upper_bound "${spec_content}")
 output_lower_bound=$(extract_output_lower_bound "${spec_content}")
 output_upper_bound=$(extract_output_upper_bound "${spec_content}")
-sampling="\"$(extract_spec_interval "${spec_content}" 'sampling')\""
+sampling="$(extract_spec_interval "${spec_content}" 'sampling')"
+if [ ${sampling} ]; then
+  sampling="-sample \"${sampling}\""
+fi
 speed=1
-if [ -n "$6" ]; then
- output_lower_bound=-$6
- output_upper_bound=$6
+if [ -n "$7" ]; then
+ output_lower_bound=-$7
+ output_upper_bound=$7
 fi
 if [ ${synth_type}=="CEGIS" ]; then
-  options="-u -p -ii -mpi 256 -synth ${synth_type} -params \"p=${num_states},q=${num_inputs},f=1,l=4,m=256:$((impl_int_bits+impl_frac_bits)):${impl_frac_bits},g=8\" -dynamics \"[${A}]\" -init \"[cube<.5]\" -sguard \"[cube<1]\" -isense \"[${B}]\" -inputs \"[1>${input_lower_bound};1<${input_upper_bound}]\" -speed ${speed} -factor .95 -sample "
+  options="-u -p -ii -mpi 256 -synth ${synth_type} -params \"p=${num_states},q=${num_inputs},f=1,l=4,m=256:$((impl_int_bits+impl_frac_bits)):${impl_frac_bits},g=8\" -dynamics \"[${A}]\" -init \"[cube<.5]\" -sguard \"[cube<1]\" -isense \"[${B}]\" -inputs \"[1>${input_lower_bound};1<${input_upper_bound}]\" -speed ${speed} -factor .95"
 else
-  options="-d 'output' -u -p -ii -cont -mpi 256 -synth ${synth_type} -params \"p=${num_states},q=${num_inputs},f=1,o=1,l=4,m=256:$((impl_int_bits+impl_frac_bits)):${impl_frac_bits},g=8\" -dynamics \"[${A}]\" -init \"[cube<1]\" -oinit \"[cube<.5]\" -isense \"[${B}]\" -osense \"[${C}]\" -inputs \"[1>${input_lower_bound};1<${input_upper_bound}]\" -oguard \"[1>${output_lower_bound};1<${output_upper_bound}]\" -speed ${speed} -factor .95 -sample "
+  options="-d 'output' -u -p -ii -cont -mpi 256 -synth ${synth_type} -params \"p=${num_states},q=${num_inputs},f=1,o=1,l=4,m=256:$((impl_int_bits+impl_frac_bits)):${impl_frac_bits},g=8\" -dynamics \"[${A}]\" -init \"[cube<1]\" -oinit \"[cube<.5]\" -isense \"[${B}]\" -osense \"[${C}]\" -inputs \"[1>${input_lower_bound};1<${input_upper_bound}]\" -oguard \"[1>${output_lower_bound};1<${output_upper_bound}]\" -speed ${speed} -factor .95"
 fi
 #\"${sampling}:${delay}\""
 working_directory="${working_directory_base}/accelerator-ss"
@@ -131,8 +136,28 @@ cd ${working_directory}
 
 max_length=64
 #integer_width=8
-integer_width=$((2*impl_int_bits+4))
-radix_width=$((impl_frac_bits+4))
+precision=0
+if [ -n "$3" ]; then
+  if [ "$3" == "16" ];then
+    precision=16
+    integer_width=5
+    radix_width=10
+  elif [ "$3" == 32 ]; then
+    precision=32
+    integer_width=8
+    radix_width=23
+  elif [ "$3" == 64 ]; then
+    precision=64
+    integer_width=11
+    radix_width=52
+  else
+    integer_width=$((2*impl_int_bits+4))
+    radix_width=$((impl_frac_bits+4))
+  fi
+else
+  integer_width=$((2*impl_int_bits+4))
+  radix_width=$((impl_frac_bits+4))
+fi
 #radix_width=$((impl_int_bits+impl_frac_bits))
 min_size_offset=$(((integer_width+radix_width)%16))
 [ ${min_size_offset} -ne 0 ] && integer_width=$((integer_width+16-min_size_offset))
@@ -140,15 +165,23 @@ timeout_time=300
 kill_time=310
 rm "output.txt"
 nudge="-CNFP"
-if [ -n "$4" ]; then
-  nudge="$4"
+if [ -n "$5" ]; then
+  nudge="$5"
 fi
 echo_log "./axelerator $options $sampling -control \"[0]\" $nudge"
 eval "./axelerator $options $sampling -control \"[0]\" $nudge"
 out_content=`cat "output.txt"`
-sampling="\"$(extract_spec_interval "${out_content}" 'sampling')\""
-integer_width=$(extract_int_bits "${out_content}")
-radix_width=$(extract_frac_bits "${out_content}")
+if [ ${sampling} ]; then
+  sampling="$(extract_spec_interval "${out_content}" 'sampling')"
+  if [ ${sampling} ]; then
+    sampling="-sample \"${sampling}\""
+  fi
+fi
+
+if [ ${precision} == 0 ]; then
+  integer_width=$(extract_int_bits "${out_content}")
+  radix_width=$(extract_frac_bits "${out_content}")
+fi
 echo_log "./axelerator $options $sampling -control \"[0]\" $nudge"
 eval "./axelerator $options $sampling -control \"[0]\" $nudge"
   
@@ -217,7 +250,9 @@ while [ $((integer_width+radix_width)) -le ${max_length} ]; do
         echo_log "OUTPUT = [${output_lower_bound},${output_upper_bound}];"
         echo "OUTPUT = [${output_lower_bound},${output_upper_bound}];" >>${solution_file}
       fi
-      echo_log "sampling = ${sampling};"
+      if [ ${sampling} ]; then
+        echo_log "sampling = ${sampling};"
+      fi
       echo "OUTPUT = ${sampling}" >>${solution_file}
       echo "" >>${solution_file}
       solution_found=true
@@ -254,6 +289,9 @@ while [ $((integer_width+radix_width)) -le ${max_length} ]; do
     fi
    done
    if [ "${solution_found}" = true ]; then
+    break
+   fi
+   if [ -n "$5" ]; then
     break
    fi
    radix_width=$((radix_width+8))
