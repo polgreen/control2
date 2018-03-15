@@ -54,6 +54,44 @@
 \usepackage{todonotes}
 \usetikzlibrary{positioning, automata, shapes.arrows, calc, shapes, arrows}
 \usetikzlibrary{patterns}
+
+\tikzset{
+    %Define style for boxes
+    box/.style={
+           rectangle,
+           rounded corners,
+           draw=black, very thick,
+           fill=yellow!20,
+           text width=10em,
+           minimum height=2em,
+           text centered},
+ % 
+  futurebox/.style={
+           rectangle,
+           rounded corners,
+           draw=black, very thick,
+           fill=blue!10,
+           text width=10em,
+           minimum height=2em,
+           text centered},
+ % 
+  longfuturebox/.style={
+           rectangle,
+           rounded corners,
+           draw=black, very thick,
+           fill=purple!20,
+           text width=10em,
+           minimum height=2em,
+           text centered},
+%
+    % Define arrow style
+    arrow/.style={
+           ->,
+           thick,
+           shorten <=2pt,
+           shorten >=2pt,}
+}
+
 \usepackage{url}
 
 %\newcommand{\tool}{{\sf DSSynth}\xspace}
@@ -456,6 +494,11 @@ technique works for both linear and non-linear systems.
 %% \label{eq:dynamical}
 %% \end{equation}
 
+%-------------------------------
+\subsection{State-space representation of physical systems}
+\label{sec:model}
+%-------------------------------
+
 We consider models of physical plants expressed as ordinary differential
 equations, which we assume to be controllable~\cite{Astrom08}: 
 %
@@ -600,18 +643,77 @@ $\vec{x}_{k+1}=(\mat{A}_d-\mat{B}_d\mat{K})\vec{x}_k$.
  \label{fig:digitalsystem}}
 \end{figure*}
 
+
 %-------------------------------
-\section{Counterexample Guided Inductive Synthesis} 
+\subsection{Counterexample Guided Inductive Synthesis} 
 \label{ssec:cegis}
 %-------------------------------
 
+\begin{figure*}
+%\hspace{-2cm}
+\centering
+\resizebox{.57\textwidth}{!}{
+ \begin{tikzpicture}[scale=0.3,->,>=stealth',shorten >=.2pt,auto,
+ semithick, initial text=, ampersand replacement=\&,]
+
+  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center
+},
+          row sep=1cm, column sep=3cm] {
+   \node[fill=gray!20] (synth) {{\sc Synthesize}};
+   \&
+   \node[fill=gray!20] (verif) {{\sc Verify}};
+   \&
+   \node[ellipse,fill=gray!20] (done) {{\sc Done}}; 
+    \\
+  };
+
+   \path
+   ([yshift=2em]synth.east) edge node[align=center] {Candidate solution} ([yshift=2em]verif.west)
+    ([yshift=-2em]verif.west) edge node[align=center] {Counter-example} ([yshift=-2em]synth.east)
+    (verif) edge node {} (done);
+ \end{tikzpicture}
+}
+ \caption{The CEGIS framework. \label{fig:CEGIS}}
+\end{figure*}
+
+In this section, we give a brief description of the CEGIS framework, as illustrated in Figure~\ref{fig:CEGIS}. 
+
+The input specification provided to CEGIS is of the form
+$\exists P .\, \forall a.\, \sigma(a, P)$, where $P$ ranges over functions
+(where a function is represented by the program computing it),
+$a$ ranges over ground terms, and $\sigma$ is a quantifier-free formula. 
+We~interpret the ground terms over some finite domain~$\mathcal{D}$.
+%
+
+The design of our synthesizer consists of two phases, an inductive
+synthesis phase (denoted by {\sc Synthesize} in
+Figure~\ref{fig:CEGIS}) and a validation phase (denoted by {\sc
+  Verify}), which interact via a finite set of test vectors {\sc
+  inputs} that is updated incrementally.  Given the aforementioned
+specification $\sigma$, the inductive synthesis procedure tries to
+find an existential witness $P$ satisfying the specification
+$\sigma(a, P)$ for all $a$ in {\sc inputs} (as opposed to all $a \in
+\mathcal{D}$).
+%
+If the synthesis phase succeeds in finding a witness~$P$, this witness is a
+candidate solution to the full synthesis formula.  We pass this candidate
+solution to the validation phase, which checks whether it is a full solution
+(i.e., $P$ satisfies the specification $\sigma(a, P)$ for all
+$a\in\mathcal{D}$).  If this is the case, then the algorithm terminates. 
+Otherwise, additional information is provided to the inductive synthesis
+phase in the form of a new counterexample that is added to the {\sc inputs}
+set and the loop iterates again.  %% More details about the general
+%% architecture of the synthesizer can be found
+%% in~\cite{DBLP:conf/lpar/DavidKL15}.
+
+
 %-------------------------------
-\subsection{CEGIS of digital controllers} 
+\section{CEGIS of digital controllers} 
 \label{sssec:cegisdig}
 %-------------------------------
 
 %-------------------------------
-\subsubsection{Naive approach} 
+\subsection{Naive approach} 
 \label{sssec:naive}
 %-------------------------------
 
@@ -812,7 +914,7 @@ computationally expensive if the bounds on the allowed initial states are
 large.
 
 %-------------------------------
-\subsubsection{Abstraction-based CEGIS} 
+\subsection{Abstraction-based CEGIS} 
 \label{sssec:abstraction}
 %-------------------------------
 
