@@ -1,4 +1,10 @@
-#usage ./float-multi-benchmark-runner.sh benchmark_dir precision synth_type formal_form implementation_bits max_output
+#usage ./float-multi-benchmark-runner.sh benchmark_dir precision synth_type formal_form from to implementation_bits max_output
+#precision in bits (16=half, 32=single, 64=double, 0=from_spec_file)
+#synth_type =CEGIS for controller, observer for controller with observer
+#formal form '-NNF' for regular processing (see axelerator for other options)
+#from to indicates the index of the files to be processed in the folder, if unknown from=1 to=number_of_files
+#implementation bits are added as exp,mantissa
+#max output overrides the output safety specification with +/- this value as a limit
 script_base_directory=`pwd`
 synth_type='observer'
 

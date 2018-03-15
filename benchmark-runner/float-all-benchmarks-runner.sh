@@ -1,4 +1,6 @@
 #usage ./float-all-benchmarks precision implementation_bits
+#precision in bits (16=half, 32=single, 64=double, 0=from_spec_file)
+#implementation bits are added as exp,mantissa (eg 5,11 is half precision)
 if [ -n $1 ];then
   precision=$1
 else
