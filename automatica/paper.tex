@@ -865,7 +865,7 @@ Using Abstract Acceleration we transform this sequential reachability problem in
 We first modify the problem statement by means of acceleration into
 %
 \begin{equation}
-\hat{X} = \{ \vec{x}_k=\mat{A_d}^k\vec{x}_0 : k \in N_0 \text{ and } \vec{x}_0 \in X_0 \}, 
+\hat{X} = \{ \vec{x}_k=\mat{A_d}^k\vec{x}_0 \mid k \in N_0 \text{ and } \vec{x}_0 \in X_0 \}, 
 \end{equation}
 %
 and further define new model semantics and corresponding set: 
@@ -1053,23 +1053,24 @@ namely the state $\vec{x}(t)$ of the model
 at time $t=T$. 
 
 \textcolor{red}{[The following three subsections take too much space, plus the results are mostly known or easily derivable with simple algebra: we need to shorten and simplify it. Dario: can you give it a crack?]}
+\textcolor{blue}{[I merged the first two]}
 
 %\note{ [add?] In this section we work with fully observed models, namely where $y = x$. } 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsubsection{Accelerated\! dynamics\! for\! continuous-time\! models\! without\! inputs}\label{sec:cont_acc_no_inputs}
+\subsubsection{Accelerated\! dynamics\! for\! continuous-time\! models\! with\! parametric\! inputs}\label{sec:real_discrete_param_inputs}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 % 
 Given a specific time $T$, the state $\vec{x}(t=T)$ can be expressed as a
-linear function of $\vec{x}_0$ as shown below.  We assume that the system
-has no inputs, so its dynamics are described by
-$\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$.
+linear function of $\vec{x}_0$ and $\vec{u}$ as shown below.  
  
 \begin{lemma}
-The solution to the differential equation $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$, where $\mat{A}=\mat{S}\mat{J}\mat{S}^{-1}$, and $\mat{S}$ are the generalized eigenvectors of $\mat{A}$,
+The solution to the differential equation $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)$, where
+$\forall t\geq 0.\,\vec{u}(t)=\vec{u}$, $\mat{A}=\mat{S}\mat{J}\mat{S}^{-1}$, and $\mat{S}$ are the generalized eigenvectors of $\mat{A}$,
 evaluated at time $T$ is
 %
 \begin{align}
- \vec{x}_T&=\vec{x}(t=T)=\mat{A}_{T}\vec{x} (0)\\
+\label{eq:continuous_tube_param}
+\vec{x}_T&=\vec{x}(t=T)=\mat{A}_T\vec{x}_0 + \mat{B}_T\vec{u}\\
  \mat{A}_{T}&= \mat{S}
  \left [ \begin{array}{cccc}
  e^{T\lambda_1}  & s_1\frac{T^{1}e^{T\lambda_i}}{(2)!} & \hdots  & s_i\frac{T^{p-1}e^{T\lambda_i}}{(p-i)!} \\
@@ -1079,46 +1080,21 @@ evaluated at time $T$ is
 \end{array} \right ]
  \mat{S}^{-1}
  \label{eq:continuous_tube_dyn2}\\
+ \mat{B}_T&=\mat{A}^{-1}(\mat{I}-\mat{A}_T)\mat{B}
+ \footnote{When $\mat{A}$ is not invertible,
+we use $\left[\begin{array}{cc}\mat{A}_T&\mat{B}_T\\
+0&\mat{I}\end{array}\right]=e^{\left[\begin{array}{cc}\mat{A}&\mat{B}\\0&0\end{array}\right]}$.}\\
  &\text{where } s_i=\left\{\begin{array}{cc}1&\quad gm(\lambda_i)>1\\0&\quad gm(\lambda_i)=1\end{array}\right.,\nonumber
 \end{align}
 %
 $\lambda_i$ are the eigenvalues of $\mat{A}$, and $gm(\lambda_i)$ is the geometric multiplicity of $\lambda_i$.
 %
-%$\vec{x}_T$ is the state of the system $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$ at time t=T. 
-If $\mat{J}$ is diagonal and there exists a discrete dynamics matrix for a sampling time $T_d$ such that $A_d=e^{\mat{A} T_d}$, then $\vec{x}_T=A_d^{\frac{T}{T_d}}\vec{x}_0 \text{ with } T \in \mathbb{R}^+_0$ is the state of the system at time $t=T$. 
-\end{lemma}
 
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsubsection{Accelerated dynamics for models with parametric inputs}\label{sec:real_discrete_param_inputs}
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-Next, we are interested in studying models with parametric inputs, which are
-described by $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)$, where
-$\forall t\geq 0.\,\vec{u}(t)=\vec{u}$.  For such models, a state $\vec{x}_T$
-is computed next.
-%
-\begin{lemma}
-%
-The state of the model
-$\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)$ at time $T$ given a
-parametric input $\vec{u}$ is
-%
-\begin{align}
-\vec{x}_T&=\vec{x}(t=T)=\mat{A}_T\vec{x}_0 + \mat{B}_T\vec{u}
-\label{eq:continuous_tube_param}
-\end{align}
-%
-where $\mat{B}_T=\mat{A}^{-1}(\mat{I}-\mat{A}_T)\mat{B}$, $\forall t \leq T.\, \vec{u}(t)=\vec{u}$, and $\mat{A}_T$ as in
-\eqref{eq:continuous_tube_dyn2} \footnote{When $\mat{A}$ is not invertible,
-we use $\left[\begin{array}{cc}\mat{A}_T&\mat{B}_T\\
-0&\mat{I}\end{array}\right]=e^{\left[\begin{array}{cc}\mat{A}&\mat{B}\\0&0\end{array}\right]}$.}. 
-If $\mat{J}$ is diagonal and given a sampling time $T_d$ such that
-$A_d=e^{\mat{A} T_d}$, then
-$\vec{x}_T=A_d^{\frac{T}{T_d}}\vec{x}_0+(\mat{I}-\mat{A}_d^{\frac{T}{T_d}}\mat{B}_d\vec{u})
-\text{ with } T \in \mathbb{R}_0^+$ (where $\mat{A}_d^{\frac{T}{T_d}} =
-e^{log(\mat{A}_d) \frac{T}{T_d}} = e^{\mat{A} T}$) is the state of the
-system at time $T$.
-%
+If $\mat{J}$ is diagonal and there exists a discrete dynamics matrix for a sampling time $T_d$ such that $A_d=e^{\mat{A} T_d}$, then 
+$$\vec{x}_T=A_d^{\frac{T}{T_d}}\vec{x}_0+(\mat{I}-\mat{A}_d^{\frac{T}{T_d}})\mat{B}_d\vec{u}
+\text{ with } T \in \mathbb{R}_0^+$$
+where $\mat{A}_d^{\frac{T}{T_d}} =e^{log(\mat{A}_d) \frac{T}{T_d}} = e^{\mat{A} T}$,
+is the state of the system at time $t=T$. 
 \end{lemma}
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1183,14 +1159,15 @@ which accelerating results and setting $T=kT_s+t'$ becomes
 %-------------------------------
 
 \textcolor{red}{[This paragraph is highly unclear - Dario: can you please update it?]}
+\textcolor{blue}{[is  this better?]}
 
-Now that we have defined the dynamics of continuous time, we can use abstract acceleration techniques to evaluate
-the above model such that
+Just as the accelerated dynamics in equation \eqref{eq:feedback_sampled_cont} can be abstacted using \eqref{eq:aa_reachtube} (where $\bigcup_{k \in N_0} (\mat{A}_d-\mat{B}_d\mat{K}) ^k \subseteq \mathcal{A}$),
+we use the same principle on equation \eqref{eq:feedback_cont} to obtain 
 \begin{equation}\label{eq:aa_cont_amatrix}
 \bigcup_{T \in [0, T_s], k \in N_0} (\mat{A}_{T-kT_s}-\mat{B}_{T-kT_s}\mat{K}) (\mat{A}_d-\mat{B}_d\mat{K})^k \subseteq \mathcal{A}.
 \end{equation}
 
-Abstract acceleration works by finding support functions of the set that encompasses the matrices $\mat{A}^k$.
+We describe now how to obtain such a set. Abstract acceleration works by finding support functions of the set that encompasses the matrices $\mat{A}^k$.
 Support functions are scalars that measure the distance of a hyperplane tangent to the set boundary to the origin.
 In the case of continuous spaces, this translates to calculating the derivatives of the envelope in order to find the direction of the support vector (normal to the hyperplane), and calculating the distance to the corresponding point where the hyperplane touches the set (at which the derivative was calculated).
 The direction of the vector is determined by evaluating the support function of another point in the curve,
@@ -1791,7 +1768,7 @@ them to the {\sc abstract} phase.
  as a set of counterexamples for the eigenvalues, which we define as $\phi_\Lambda$. This is a constraint in the spectrum i.e., transfer function) of the closed loop dynamics. 
 \item We use $\phi_\Lambda$ to
   further constrain the characteristic polynomial %\blue{[again, check the coefficients of the characteristic polynomial.]I don't find any error} 
-$z^n+\sum_{i=1}^n(a_i-k_i)z^{n-i}=\prod_{i=1}^n (z-\lambda_i) : |\lambda_i|<1 \wedge \lambda_i \models \phi_{\Lambda}$. These constraints correspond to specific iterations for which the system may be unsafe.
+$z^n+\sum_{i=1}^n(a_i-k_i)z^{n-i}=\prod_{i=1}^n (z-\lambda_i) \text{ where } |\lambda_i|<1 \wedge \lambda_i \models \phi_{\Lambda}$. These constraints correspond to specific iterations for which the system may be unsafe.
 \item Pass the refined abstraction $\phi(K)$ with the new constraints and the list of iterations $k$ to the {\sc synthesize} phase.
   %, as well as a counterexample plant coefficients ($P_a$) and repeat the loop again. 
 \end{enumerate} 
