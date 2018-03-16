@@ -1169,14 +1169,29 @@ we use the same principle on equation \eqref{eq:feedback_cont} to obtain
 \end{equation}
 
 \textcolor{red}{[The next discussion is highly unclear - Dario: can you please update it?]}
+\textcolor{blue}{[how about this?]}
 
-We describe now how to obtain such a set. Abstract acceleration works by finding support functions of the set that encompasses the matrices $\mat{A}^k$.
-Support functions are scalars that measure the distance of a hyperplane tangent to the set boundary to the origin.
-In the case of continuous spaces, this translates to calculating the derivatives of the envelope in order to find the direction of the support vector (normal to the hyperplane), and calculating the distance to the corresponding point where the hyperplane touches the set (at which the derivative was calculated).
-The direction of the vector is determined by evaluating the support function of another point in the curve,
-which is known to be smaller than that of the selected point, and the chosen hyperplanes are aligned with the eigenvectors, hence we only look at eigenvalue pairs to calculate the derivatives~\cite{cattaruzza2015unbounded}.
+We next describe how to obtain such a set. 
+Our overapproximation of the set is a polyhedron, which is defined by an
+intersection of hypeplanes. The smallest polyhedra that can be obtained are
+those whose faces touch the set, which they must do at a point tangential to
+the hyperplane. Rather than pick a set of directions and find such points, we
+will start from the points and find their tangents. Furthermore, to simplify the
+procedure, we will only look at two dimensional cuts of the space 
+(see~\cite{cattaruzza2015unbounded}). This means that for every point we
+choose is a vertex of the polyhedron.
+Finding out which side of the hyperplane corresponds to the inside of the
+polyhedron is achieved by looking at any other point in the original set and
+checking on which side of the hyperplane it lays.
+
+%Abstract acceleration works by finding support functions of the set that encompasses the matrices $\mat{A}^k$.
+%Support functions are scalars that measure the distance of a hyperplane tangent to the set boundary to the origin.
+%In the case of continuous spaces, this translates to calculating the derivatives of the envelope in order to find the direction of the support vector (normal to the hyperplane), and calculating the distance to the corresponding point where the hyperplane touches the set (at which the derivative was calculated).
+%The direction of the vector is determined by evaluating the support function of another point in the curve,
+%which is known to be smaller than that of the selected point, and the chosen hyperplanes are aligned with the eigenvectors, hence we only look at eigenvalue pairs to calculate the derivatives~\cite{cattaruzza2015unbounded}.
 
 \textcolor{red}{[Next part highly nebulous]} 
+\textcolor{blue}{[This is just the math that calculates the tangents of x-y pairs given the progression of x and y. Given the above description,is it necessary to include it?]}
 
 The corresponding derivatives are:
 %
