@@ -703,7 +703,7 @@ set and the loop iterates again.  %% More details about the general
 [COMMENT ON TERMINATION?]
 
 %-------------------------------
-\section{Formal specification of control systems properties} 
+\section{Formal specification of model properties} 
 \label{sec:specification}
 %-------------------------------
 
@@ -839,7 +839,7 @@ and $\phi_\mathit{init} := \bigwedge_{i=1}^{n} \underline{x_{i,0}} \leq x_{i,0} 
 For the input signal, these requirements practically mean that the control input saturates in view of physical constraints. 
 
 %-------------------------------
-\subsection{Abstract Acceleration of Linear Dynamics} 
+\subsection{Abstract acceleration of linear dynamics} 
 \label{ssec:aa}
 %-------------------------------
  
@@ -852,24 +852,24 @@ Given a model of an iterative program with dynamics
 \vec{x}_{k+1}=\mat{A_d}\vec{x}_k \text{ where } \vec{x}_k \in \mathbb{R}^p, \mat{A_d} \in \mathbb{R}^{p \times p} \text{ and } k \in \mathbb N_0,
 \end{equation}
 %
-\textcolor{red}{[I have modified the notations with the `d' subscript as above.]}
 we want to find all possible states visited over an infinite time horizon
 starting at an initial set $X_0$.  
-This set is known as the \emph{reach tube} of
-the model:
+This set is known as the \emph{reach tube} of the model:
 %
 \begin{equation}
 \hat{X} = \{ \vec{x}_k: k \in \mathbb N_0, \vec{x}_0 \in X_0 \text{ and } \vec{x}_{k+1}=\mat{A_d}\vec{x}_k\}.
 \end{equation}
 %
-Using Abstract Acceleration we transform this sequential reachability problem into a one-step problem.  
-We first modify the problem statement by means of acceleration into
+Using Abstract Acceleration we transform this sequential reachability problem into a one-step problem. 
+This has a lot of benefits ~\cite{JSS14}, not least in terms of numerical error propagation.   
+In order to attain this, 
+the problem statement is modified, by means of acceleration, into 
 %
 \begin{equation}
 \hat{X} = \{ \vec{x}_k=\mat{A_d}^k\vec{x}_0 \mid k \in N_0 \text{ and } \vec{x}_0 \in X_0 \}, 
 \end{equation}
 %
-and further define new model semantics and corresponding set: 
+and new model semantics and corresponding set are further defined as 
 %
 \begin{equation}\label{eq:aa_reachtube}
 \hat{X} \subseteq \hat{X}^\sharp = \mathcal{A}X_0, \text{ such that } \bigcup_{k \in [0\ \infty)} \mat{A_d}^k \subseteq \mathcal{A}, 
@@ -877,7 +877,8 @@ and further define new model semantics and corresponding set:
 %
 where the newly introduced \emph{abstract reach tube} $\hat{X}^\sharp$ is an
 over-approximation of the reach tube of the model \cite{JSS14}.  
-In this work we extend the abstract acceleration algorithm to continuous-time models. 
+\cite{cattaruzza2015unbounded} extends this to LTI models with inputs, 
+whereas we next extend the algorithm to continuous-time models, in view of the overall goal of this work. 
 % and  For this reason we must first look at the acceleration of continuous-time dynamics.
 
 %All we need to do is define the nature of $\mathcal{A}X_0$.
@@ -1043,18 +1044,18 @@ the state of the plant at integer multiples of the sample time.
 %\note{Unlike the CAV18 paper, these gain matrices have not been discussed yet. }
 However, in order to synthesize $\mat{K}$, 
 we must be able to ensure that given properties of the plant hold at any given point in time.  
-In order to do so, we accelerate the dynamics of the plant according to the model
-semantics in Sec.~\ref{sec:model} and compute the state
-$\vec{x}_T$ at a given time $T$,
-%
-% namely we find an equation for $\tau^n(\vec{x},\vec{u})$ given $\tau(\vec{x},\vec{u})$. 
-%
-namely the state $\vec{x}(t)$ of the model 
-%$\dot{\vec{x}}(t)=\mat{A}
-at time $t=T$. 
+In order to do so, we accelerate the dynamics of the plant according to the continuous-time model
+semantics in Sec.~\ref{sec:model}. 
+% and compute the state $\vec{x}_T$ at a given time $T$,
+%%
+%% namely we find an equation for $\tau^n(\vec{x},\vec{u})$ given $\tau(\vec{x},\vec{u})$. 
+%%
+%namely the state $\vec{x}(t)$ of the model 
+%%$\dot{\vec{x}}(t)=\mat{A}
+%at time $t=T$. 
 
-\textcolor{red}{[The following three subsections take too much space, plus the results are mostly known or easily derivable with simple algebra: we need to shorten and simplify it. Dario: can you give it a crack?]}
-\textcolor{blue}{[I merged the first two]}
+%\textcolor{red}{[The following three subsections take too much space, plus the results are mostly known or easily derivable with simple algebra: we need to shorten and simplify it. Dario: can you give it a crack?]}
+%\textcolor{blue}{[I merged the first two]}
 
 %\note{ [add?] In this section we work with fully observed models, namely where $y = x$. } 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1159,14 +1160,15 @@ which accelerating results and setting $T=kT_s+t'$ becomes
  \label{sec:cont_aasup}
 %-------------------------------
 
-\textcolor{red}{[This paragraph is highly unclear - Dario: can you please update it?]}
-\textcolor{blue}{[is  this better?]}
+
 
 Just as the accelerated dynamics in equation \eqref{eq:feedback_sampled_cont} can be abstacted using \eqref{eq:aa_reachtube} (where $\bigcup_{k \in N_0} (\mat{A}_d-\mat{B}_d\mat{K}) ^k \subseteq \mathcal{A}$),
 we use the same principle on equation \eqref{eq:feedback_cont} to obtain 
 \begin{equation}\label{eq:aa_cont_amatrix}
 \bigcup_{T \in [0, T_s], k \in N_0} (\mat{A}_{T-kT_s}-\mat{B}_{T-kT_s}\mat{K}) (\mat{A}_d-\mat{B}_d\mat{K})^k \subseteq \mathcal{A}.
 \end{equation}
+
+\textcolor{red}{[The next discussion is highly unclear - Dario: can you please update it?]}
 
 We describe now how to obtain such a set. Abstract acceleration works by finding support functions of the set that encompasses the matrices $\mat{A}^k$.
 Support functions are scalars that measure the distance of a hyperplane tangent to the set boundary to the origin.
