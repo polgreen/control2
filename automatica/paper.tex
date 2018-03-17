@@ -196,7 +196,7 @@ of finite-precision arithmetic, time discretization and quantization
 noise introduced by A/D and D/A conversion.
 %
 Given an LTI model, we develop an automatic technique for generating
-correct by construction digital controllers that addresses all these
+correct-by-construction digital controllers that addresses all these
 challenges. Specifically, we synthesize stable and safe,
 software-implemented embedded controllers.  Due to the complexity of
 such closed-loop systems, we focus on linear models with known
@@ -270,13 +270,13 @@ In this paper we present two novel approaches for the synthesis of
 digital controllers, both of which make use of CounterExample-Guided
 Inductive Synthesis (CEGIS)~\cite{jha-icse10,
   DBLP:conf/asplos/Solar-LezamaTBSS06}, a technique
-that became very popular in the recent years.  CEGIS denotes an
+that became very popular in the recent years.  CEGIS is an
 iterative process, where each iteration performs inductive
 generalisation based on counterexamples provided by a verification
 oracle. Essentially, the inductive generalisation uses information
-about a limited number of inputs to make claims about all the possible
-inputs in the form of candidate solutions. Our two instantiations of
-CEGIS are described next.
+about a limited number of inputs to compute a candidate solution
+for all the possible. Our two instantiations of CEGIS are
+described next.
 
 %% offer three modes of
 %% operation that address different aspects of the problem.
@@ -284,21 +284,22 @@ CEGIS are described next.
 %% solves the problem of robust stability for closed loop systems for a
 %% collection of unstable plants.  Inthis case, there is no safety
 %% specification since we are working in the frequency domain.
-{\em The first approach} uses a na\"ive technique that starts by devising a
+
+\emph{The first approach} uses a na\"ive technique that starts by devising a
 digital controller that stabilizes the system while remaining safe for a
 pre-selected time horizon and a single initial state; then, it verifies
 unbounded safety by unfolding the dynamics of the system, considering the
-full hyper-cube of initial states, and checking a {\em completeness
+full hyper-cube of initial states, and checking a \emph{completeness
 threshold}~\cite{DBLP:conf/vmcai/KroeningS03}, i.e., the number of
 iterations required to sufficiently unwind the closed-loop state-space
 system such that the boundaries are not violated for any larger number of
 iterations.  As~it requires unfolding up to the completeness threshold, this
 approach is computationally expensive.
 
-Instead of unfolding the dynamics, {\em the second approach}
-employs {\em abstract acceleration}~\cite{cattaruzza2015unbounded} to
+Instead of unfolding the dynamics, \emph{the second approach}
+employs \emph{abstract acceleration}~\cite{cattaruzza2015unbounded} to
 evaluate all possible progressions of the system simultaneously. 
-Additionally, this approach uses {\em abstraction refinement},
+Additionally, this approach uses \emph{abstraction refinement},
 enabling us to always start with a very simple description regardless of the
 dynamics complexity, and only expand to more complex models
 when a solution cannot be found.
@@ -309,16 +310,16 @@ plant models taken from the digital control literature.
 \addtodo{add more here once we have the experimental results ready}
 
 %% \addtodo{CD: the novelty compared to CAV'17 needs to be clarified}
-This paper represents an extension of \cite{DBLP:conf/cav/AbateBCCDKKP17}
-and makes the following contributions, where the fourth and the fifth denote
-extensions over \cite{DBLP:conf/cav/AbateBCCDKKP17}.
+This paper is an extension of~\cite{DBLP:conf/cav/AbateBCCDKKP17}
+and makes the following contributions, where the fourth and the fifth are
+extensions over~\cite{DBLP:conf/cav/AbateBCCDKKP17}.
 %
 \begin{enumerate}
 
   % Additions from CAV:
   % continuous time
   % floating point 
-\item We automatically generate {\em correct-by-construction} digital
+\item We automatically generate \emph{correct-by-construction} digital
   controllers using an inductive synthesis approach.  Our application of program
   synthesis is non-trivial and addresses challenges specific to control
   systems, such as quantizers and FWL.  %% In particular, we
@@ -348,15 +349,19 @@ extensions over \cite{DBLP:conf/cav/AbateBCCDKKP17}.
   their effect on reachability properties.  We give bounds that ensure the
   safety of our controllers in a hybrid continuous-digital domain.
 
-\item While \cite{DBLP:conf/cav/AbateBCCDKKP17} is restricted to systems
+\item While~\cite{DBLP:conf/cav/AbateBCCDKKP17} is restricted to systems
   modeled in discrete time, in the current paper we present a model for
   soundly evaluating reachability in a combined continuous-discrete time/space.
-\item A further limitation of the work in \cite{DBLP:conf/cav/AbateBCCDKKP17}
-  is its restriction to fixed-point arithmetic, meaning that fixed-point numbers
-  were employed for the representation of both the plant and the controller, as well as for
-  the operations performed by each of them.
-  Conversely, in the current paper we also make use of floating-point arithmetic
-  and compare the two approaches. Additionally, we enhance the implementation with an SMT backend, allowing us to also use reals in order to represent the states of the plant.
+
+\item A further limitation of the work in~\cite{DBLP:conf/cav/AbateBCCDKKP17}
+  is its restriction to fixed-point arithmetic, meaning that fixed-point
+  numbers were employed for the representation of both the plant and the
+  controller, as well as for the operations performed by each of them. 
+  Conversely, in the current paper we also make use of floating-point
+  arithmetic and compare the two approaches.  Additionally, we enhance the
+  implementation with an SMT backend, allowing us to also use reals in order
+  to represent the states of the plant.
+
 \end{enumerate}
   
 %-------------------------------
@@ -364,7 +369,7 @@ extensions over \cite{DBLP:conf/cav/AbateBCCDKKP17}.
 \label{sec:relw}
 %-------------------------------
 
-\textbf{CEGIS -} Program synthesis is the problem of computing
+\textbf{CEGIS --} Program synthesis is the problem of computing
 correct-by-design programs from high-level specifications. Algorithms
 for this problem have made substantial progress in recent years, in
 particular CEGIS, which is a recent approach to inductive synthesis
