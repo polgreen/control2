@@ -9,14 +9,11 @@ these are unaltered (i.e. Reachable and Observable Canonical Form).
 
 By looking at the radius of the eigenvalues we consider the envelope
 of the signal, thus including overshoots.
-
-[I don't really understand the rest]
-We must also point out that the 'Hence...' being referenced here
-refers to matrices with no geometric multiplicities, whereas the
-example here [what example?] does not correspond to that case.  In the
-case of geometric multiplicities described afterwards, we compensate
-for the effect of the overshoot (by finding \underline{k}) while still
-evaluating the envelope of the oscillation.
+Having shown this for diagonalizable matrices, we explain how the effect
+of the overshoot caused by geometric multiplicities (the case you expose) is
+compensated by finding the point at which the envelope becomes strictly
+convergent(\underline{k}), and the iteration after this where the envelope
+is within the target specification (settling time).
 
 (R2) Why is the CEGIS approach different from the one in Aabate's
 CAV'17 paper?
@@ -25,9 +22,8 @@ As you have correctly pointed out, one of the main contributions of
 this paper is the optimization function, which, while being indeed
 performed after the conterexample has been found, it does however
 participate in an iterative process which contains two distinct
-refinement loops [which ones? refer to figure 2 in the paper. I only
-see one there happening in stage 4], so it is not simply
-post-processing.
+refinement loops (leading back from stage 4 to stages 1 or 3 in figure 2),
+so it is not simply post-processing but at the core of our CEGIS loop.
 
 The second main contribution compared to CAV'17 is the fact that the
 current submission deals with continuous time models, which CAV'17
