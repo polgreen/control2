@@ -20,8 +20,8 @@ CAV'17 paper?
 
 As you have correctly pointed out, one of the main contributions of
 this paper is the optimization function, which, while being indeed
-performed after the counterexample has been found, it does however
-participate in an iterative process which contains two distinct
+performed after the counterexample has been found, does however
+participate in an iterative process that contains two distinct
 refinement loops (leading back from stage 4 to stages 1 and 3,
 respectively, in Figure 2), so it is not simply post-processing but at
 the core of our CEGIS loop.
@@ -53,13 +53,14 @@ to include these results in the paper for the full set of benchmarks.
 synthesis from signal temporal logic specifications", HSCC'15?
 
 The main difference with Raman et al. is that we are working on
-different domains, namely they work with LTL models (LTL is not a
-typo), while we consider PID-like controllers -- we have explained the
-disadvantages of LTL models vs direct linear control in Section 1,
-paragraph 2. However, given that the objective of their optimization
-function is similar to ours, it might be indeed useful to extrapolate
-their objective functions into an equivalent in our domain -- thank
-you for the suggestion.
+different domains, namely they work with transition systems (the LTL
+you referred to in the review is not a typo but refers to Linear Temporal
+Logic), while we consider PID-like controllers -- we have explained the
+disadvantages of LTL models (representing transition systems in general)
+vs direct linear control in Section 1, paragraph 2. However, given that
+the objective of their optimization function is similar to ours, it might
+be indeed useful to extrapolate their objective functions into an equivalent
+in our domain -- thank you for the suggestion.
 
 (R3) Why use a SAT solver and not a numerical solver given that you
 are discovering matrices and that you have an optimization criterion?
