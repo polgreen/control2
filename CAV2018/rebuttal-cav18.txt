@@ -8,46 +8,49 @@ these are unaltered (i.e. Reachable and Observable Canonical Form).
 (R1) Concerns about Theorem 3.
 
 By looking at the radius of the eigenvalues we consider the envelope
-of the signal, thus including overshoots.
-Having shown this for diagonalizable matrices, we explain how the effect
-of the overshoot caused by geometric multiplicities (the case you expose) is
-compensated by finding the point at which the envelope becomes strictly
-convergent(\underline{k}), and the iteration after this where the envelope
-is within the target specification (settling time).
+of the signal, thus including overshoots.  Having shown this for
+diagonalizable matrices, we explain how the effect of the overshoot
+caused by geometric multiplicities (the case you expose) is
+compensated by finding the point at which the envelope becomes
+strictly convergent(\underline{k}), and the iteration after this where
+the envelope is within the target specification (settling time).
 
 (R2) Why is the CEGIS approach different from the one in Aabate's
 CAV'17 paper?
 
 As you have correctly pointed out, one of the main contributions of
 this paper is the optimization function, which, while being indeed
-performed after the conterexample has been found, it does however
+performed after the counterexample has been found, it does however
 participate in an iterative process which contains two distinct
-refinement loops (leading back from stage 4 to stages 1 or 3 in figure 2),
-so it is not simply post-processing but at the core of our CEGIS loop.
+refinement loops (leading back from stage 4 to stages 1 or 3 in figure
+2), so it is not simply post-processing but at the core of our CEGIS
+loop.
 
 The second main contribution compared to CAV'17 is the fact that the
 current submission deals with continuous time models, which CAV'17
 does not. This introduces the refinement of the sampling time that
 corresponds to stage 7 in Fig 2.
 
-(R2) How much harder is to synthesise a controller+observer, compared to just a controller? What are the timings when trying to solve the current problem with the techniques in Aabate's CAV'17?
+(R2) What are the timings when trying to solve the current problem
+with the techniques in Aabate's CAV'17?
 
-[I don't understand this -- I think you are saying that the standard
-CEGIS in the paper is the one from CAV'17 but this does not follow
-from the paper, CAV'17 is not standard CEGIS]
+The standard CEGIS in our experimental results actually denotes the
+abstraction-based CEGIS implementation from CAV'17 -- sorry for being
+unclear about this.
 
-The benchmarks here are performed against the fast method used CAV17,
-so the question about how it compares is answered: optimization is
-much faster.  Although our results are statistical, we use the same
-base benchmarks, so it is easy to infer how the introduction of the
-observer(which doubles the order of the model) increases the
-computation time, our fastest times using CAV17 with and observer vs
-the controller case in that paper (helicopter= 57.2 vs 1.37,
-inv_pendulum 277 vs .56, pendulum .8 vs .6, some are faster but median
-times are much worse). We are happy to evaluate and include such
-results for the full set to provide a formal comparison.
+(R2) How much harder is to synthesize a controller+observer, compared
+to just a controller?
 
-(R2) How does the optimization step compare to Raman et al. "Reactive synthesis from signal temporal logic specifications", HSCC'15?
+The introduction of the observer doubles the order of the model.  With
+respect to experimental results, some of the minimum times obtained
+when using the CAV'17 implementation (referred to as standard CEGIS in
+Section 8) for the controller+observer vs the controller case are:
+helicopter -- 57.2s vs 1.37s, inv_pendulum -- 277s vs 0.56s, pendulum
+-- 0.8s vs 0.6s. In general, median times are much worse. We are happy
+to include these results for the full set of benchmarks.
+
+(R2) How does the optimization step compare to Raman et al. "Reactive
+synthesis from signal temporal logic specifications", HSCC'15?
 
 The main difference with Raman et al. is that we are working on
 different domains, namely they work with LTL models (LTL is not a
@@ -65,6 +68,7 @@ which are better processed using SAT.  The optimization is done using
 our own algorithm described in Section 7, under "Refine abstraction
 and optimize".
 
-(R3) How are constraints generated in Abstract step used by the SYNTHESIZE phase to reduce the size of the solution space?
+(R3) How are constraints generated in Abstract step used by the
+SYNTHESIZE phase to reduce the size of the solution space?
 
 We incorporate the constraints in the solver by adding them to the formula.
