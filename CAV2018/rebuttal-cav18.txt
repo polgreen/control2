@@ -22,9 +22,9 @@ As you have correctly pointed out, one of the main contributions of
 this paper is the optimization function, which, while being indeed
 performed after the counterexample has been found, it does however
 participate in an iterative process which contains two distinct
-refinement loops (leading back from stage 4 to stages 1 or 3 in figure
-2), so it is not simply post-processing but at the core of our CEGIS
-loop.
+refinement loops (leading back from stage 4 to stages 1 and 3,
+respectively, in Figure 2), so it is not simply post-processing but at
+the core of our CEGIS loop.
 
 The second main contribution compared to CAV'17 is the fact that the
 current submission deals with continuous time models, which CAV'17
@@ -47,7 +47,7 @@ when using the CAV'17 implementation (referred to as standard CEGIS in
 Section 8) for the controller+observer vs the controller case are:
 helicopter -- 57.2s vs 1.37s, inv_pendulum -- 277s vs 0.56s, pendulum
 -- 0.8s vs 0.6s. In general, median times are much worse. We are happy
-to include these results for the full set of benchmarks.
+to include these results in the paper for the full set of benchmarks.
 
 (R2) How does the optimization step compare to Raman et al. "Reactive
 synthesis from signal temporal logic specifications", HSCC'15?
@@ -58,10 +58,12 @@ typo), while we consider PID-like controllers -- we have explained the
 disadvantages of LTL models vs direct linear control in Section 1,
 paragraph 2. However, given that the objective of their optimization
 function is similar to ours, it might be indeed useful to extrapolate
-their objective functions into their equivalent in our domain -- thank
+their objective functions into an equivalent in our domain -- thank
 you for the suggestion.
 
-(R3) Why use a SAT solver and not a numerical solver given that you are discovering matrices and that you have an optimization criterion? What solver was used for the optimization step?
+(R3) Why use a SAT solver and not a numerical solver given that you
+are discovering matrices and that you have an optimization criterion?
+What solver was used for the optimization step?
 
 We use a SAT solver because we need to fit matrices to FWL effects
 which are better processed using SAT.  The optimization is done using
@@ -71,4 +73,5 @@ and optimize".
 (R3) How are constraints generated in Abstract step used by the
 SYNTHESIZE phase to reduce the size of the solution space?
 
-We incorporate the constraints in the solver by adding them to the formula.
+We incorporate the constraints in the solver by adding them to the
+formula.
