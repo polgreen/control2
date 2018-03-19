@@ -197,7 +197,7 @@ of finite-precision arithmetic, time discretization and quantization
 noise introduced by A/D and D/A conversion.
 %
 Given an LTI model, we develop an automatic technique for generating
-correct by construction digital controllers that addresses all these
+correct-by-construction digital controllers that addresses all these
 challenges. Specifically, we synthesize stable and safe,
 software-implemented embedded controllers.  Due to the complexity of
 such closed-loop systems, we focus on linear models with known
@@ -271,13 +271,13 @@ In this paper we present two novel approaches for the synthesis of
 digital controllers, both of which make use of CounterExample-Guided
 Inductive Synthesis (CEGIS)~\cite{jha-icse10,
   DBLP:conf/asplos/Solar-LezamaTBSS06}, a technique
-that became very popular in the recent years.  CEGIS denotes an
+that became very popular in the recent years.  CEGIS is an
 iterative process, where each iteration performs inductive
 generalisation based on counterexamples provided by a verification
 oracle. Essentially, the inductive generalisation uses information
-about a limited number of inputs to make claims about all the possible
-inputs in the form of candidate solutions. Our two instantiations of
-CEGIS are described next.
+about a limited number of inputs to compute a candidate solution
+for all the possible. Our two instantiations of CEGIS are
+described next.
 
 %% offer three modes of
 %% operation that address different aspects of the problem.
@@ -285,21 +285,22 @@ CEGIS are described next.
 %% solves the problem of robust stability for closed loop systems for a
 %% collection of unstable plants.  Inthis case, there is no safety
 %% specification since we are working in the frequency domain.
-{\em The first approach} uses a na\"ive technique that starts by devising a
+
+\emph{The first approach} uses a na\"ive technique that starts by devising a
 digital controller that stabilizes the system while remaining safe for a
 pre-selected time horizon and a single initial state; then, it verifies
 unbounded safety by unfolding the dynamics of the system, considering the
-full hyper-cube of initial states, and checking a {\em completeness
+full hyper-cube of initial states, and checking a \emph{completeness
 threshold}~\cite{DBLP:conf/vmcai/KroeningS03}, i.e., the number of
 iterations required to sufficiently unwind the closed-loop state-space
 system such that the boundaries are not violated for any larger number of
 iterations.  As~it requires unfolding up to the completeness threshold, this
 approach is computationally expensive.
 
-Instead of unfolding the dynamics, {\em the second approach}
-employs {\em abstract acceleration}~\cite{cattaruzza2015unbounded} to
+Instead of unfolding the dynamics, \emph{the second approach}
+employs \emph{abstract acceleration}~\cite{cattaruzza2015unbounded} to
 evaluate all possible progressions of the system simultaneously. 
-Additionally, this approach uses {\em abstraction refinement},
+Additionally, this approach uses \emph{abstraction refinement},
 enabling us to always start with a very simple description regardless of the
 dynamics complexity, and only expand to more complex models
 when a solution cannot be found.
@@ -310,16 +311,16 @@ plant models taken from the digital control literature.
 \addtodo{add more here once we have the experimental results ready}
 
 %% \addtodo{CD: the novelty compared to CAV'17 needs to be clarified}
-This paper represents an extension of \cite{DBLP:conf/cav/AbateBCCDKKP17}
-and makes the following contributions, where the fourth and the fifth denote
-extensions over \cite{DBLP:conf/cav/AbateBCCDKKP17}.
+This paper is an extension of~\cite{DBLP:conf/cav/AbateBCCDKKP17}
+and makes the following contributions, where the fourth and the fifth are
+extensions over~\cite{DBLP:conf/cav/AbateBCCDKKP17}.
 %
 \begin{enumerate}
 
   % Additions from CAV:
   % continuous time
   % floating point 
-\item We automatically generate {\em correct-by-construction} digital
+\item We automatically generate \emph{correct-by-construction} digital
   controllers using an inductive synthesis approach.  Our application of program
   synthesis is non-trivial and addresses challenges specific to control
   systems, such as quantizers and FWL.  %% In particular, we
@@ -349,15 +350,19 @@ extensions over \cite{DBLP:conf/cav/AbateBCCDKKP17}.
   their effect on reachability properties.  We give bounds that ensure the
   safety of our controllers in a hybrid continuous-digital domain.
 
-\item While \cite{DBLP:conf/cav/AbateBCCDKKP17} is restricted to systems
+\item While~\cite{DBLP:conf/cav/AbateBCCDKKP17} is restricted to systems
   modeled in discrete time, in the current paper we present a model for
   soundly evaluating reachability in a combined continuous-discrete time/space.
-\item A further limitation of the work in \cite{DBLP:conf/cav/AbateBCCDKKP17}
-  is its restriction to fixed-point arithmetic, meaning that fixed-point numbers
-  were employed for the representation of both the plant and the controller, as well as for
-  the operations performed by each of them.
-  Conversely, in the current paper we also make use of floating-point arithmetic
-  and compare the two approaches. Additionally, we enhance the implementation with an SMT backend, allowing us to also use reals in order to represent the states of the plant.
+
+\item A further limitation of the work in~\cite{DBLP:conf/cav/AbateBCCDKKP17}
+  is its restriction to fixed-point arithmetic, meaning that fixed-point
+  numbers were employed for the representation of both the plant and the
+  controller, as well as for the operations performed by each of them. 
+  Conversely, in the current paper we also make use of floating-point
+  arithmetic and compare the two approaches.  Additionally, we enhance the
+  implementation with an SMT backend, allowing us to also use reals in order
+  to represent the states of the plant.
+
 \end{enumerate}
   
 %-------------------------------
@@ -365,7 +370,7 @@ extensions over \cite{DBLP:conf/cav/AbateBCCDKKP17}.
 \label{sec:relw}
 %-------------------------------
 
-\textbf{CEGIS -} Program synthesis is the problem of computing
+\textbf{CEGIS --} Program synthesis is the problem of computing
 correct-by-design programs from high-level specifications. Algorithms
 for this problem have made substantial progress in recent years, in
 particular CEGIS, which is a recent approach to inductive synthesis
@@ -410,7 +415,7 @@ models: this results in a static check on their coefficients.  By contrast,
 in the current paper we consider a state-space representation of the
 physical system, which requires ensuring the specification over actual
 traces of the model, alongside the numerical soundness required by the
-effects of discretisation and finite-precision errors.  A state-space model
+effects of discretisation and finite-precision errors.  A~state-space model
 has known advantages over the transfer function
 representation~\cite{Franklin15}: it naturally generalizes to multivariate
 systems (i.e., with multiple inputs and outputs); and it allows synthesis of
@@ -433,12 +438,13 @@ is likely to incur in scalability limitations.  Along this research line,
 continuous dynamics, and \cite{zamani2014} extends the approach to the
 recent setup of Network Control Systems.
 
-\textbf{Discretization Effects -}
+\textbf{Discretization Effects --}
 The classical approach to control synthesis has often disregarded
 digitalization effects, whereas more recently modern techniques have focused
 on different aspects of discretization, including delayed
 response~\cite{Duggirala2015} and finite word length (FWL) semantics, with
-the goal either to verify~\cite{daes20161} or to optimize~\cite{oudjida2014design} given implementations.
+the goal either to verify~\cite{daes20161} or to
+optimize~\cite{oudjida2014design} given implementations.
 
 There are two different problems that arise from FWL semantics.  The first
 is the error in the dynamics caused by the inability to represent the exact
@@ -458,8 +464,8 @@ arithmetic and soundness is checked by bounding the error.  An alternative
 is~\cite{park2016scalable}, where the verification of given control code is
 performed against a known model by extracting an LTI model of the code by
 symbolic execution: to account for rounding errors, an upper bound is
-introduced in the verification phase.  The work in
-\cite{picasso2003stabilization} introduces invariant sets as a mechanism to
+introduced in the verification phase.  The work
+in~\cite{picasso2003stabilization} introduces invariant sets as a mechanism to
 bound the quantization error effect on stabilization as an invariant set
 that always converges toward the controllable set.  Similarly,
 \cite{liberzon2003hybrid} evaluates the quantization error dynamics and
@@ -704,7 +710,7 @@ set and the loop iterates again.  %% More details about the general
 [COMMENT ON TERMINATION?]
 
 %-------------------------------
-\section{Formal specification of control systems properties} 
+\section{Formal specification of model properties} 
 \label{sec:specification}
 %-------------------------------
 
@@ -840,7 +846,7 @@ and $\phi_\mathit{init} := \bigwedge_{i=1}^{n} \underline{x_{i,0}} \leq x_{i,0} 
 For the input signal, these requirements practically mean that the control input saturates in view of physical constraints. 
 
 %-------------------------------
-\subsection{Abstract Acceleration of Linear Dynamics} 
+\subsection{Abstract acceleration of linear dynamics} 
 \label{ssec:aa}
 %-------------------------------
  
@@ -853,24 +859,24 @@ Given a model of an iterative program with dynamics
 \vec{x}_{k+1}=\mat{A_d}\vec{x}_k \text{ where } \vec{x}_k \in \mathbb{R}^p, \mat{A_d} \in \mathbb{R}^{p \times p} \text{ and } k \in \mathbb N_0,
 \end{equation}
 %
-\textcolor{red}{[I have modified the notations with the `d' subscript as above.]}
 we want to find all possible states visited over an infinite time horizon
 starting at an initial set $X_0$.  
-This set is known as the \emph{reach tube} of
-the model:
+This set is known as the \emph{reach tube} of the model:
 %
 \begin{equation}
 \hat{X} = \{ \vec{x}_k: k \in \mathbb N_0, \vec{x}_0 \in X_0 \text{ and } \vec{x}_{k+1}=\mat{A_d}\vec{x}_k\}.
 \end{equation}
 %
-Using Abstract Acceleration we transform this sequential reachability problem into a one-step problem.  
-We first modify the problem statement by means of acceleration into
+Using Abstract Acceleration we transform this sequential reachability problem into a one-step problem. 
+This has a lot of benefits ~\cite{JSS14}, not least in terms of numerical error propagation.   
+In order to attain this, 
+the problem statement is modified, by means of acceleration, into 
 %
 \begin{equation}
 \hat{X} = \{ \vec{x}_k=\mat{A_d}^k\vec{x}_0 \mid k \in N_0 \text{ and } \vec{x}_0 \in X_0 \}, 
 \end{equation}
 %
-and further define new model semantics and corresponding set: 
+and new model semantics and corresponding set are further defined as 
 %
 \begin{equation}\label{eq:aa_reachtube}
 \hat{X} \subseteq \hat{X}^\sharp = \mathcal{A}X_0, \text{ such that } \bigcup_{k \in [0\ \infty)} \mat{A_d}^k \subseteq \mathcal{A}, 
@@ -878,7 +884,8 @@ and further define new model semantics and corresponding set:
 %
 where the newly introduced \emph{abstract reach tube} $\hat{X}^\sharp$ is an
 over-approximation of the reach tube of the model \cite{JSS14}.  
-In this work we extend the abstract acceleration algorithm to continuous-time models. 
+\cite{cattaruzza2015unbounded} extends this to LTI models with inputs, 
+whereas we next extend the algorithm to continuous-time models, in view of the overall goal of this work. 
 % and  For this reason we must first look at the acceleration of continuous-time dynamics.
 
 %All we need to do is define the nature of $\mathcal{A}X_0$.
@@ -1044,18 +1051,18 @@ the state of the plant at integer multiples of the sample time.
 %\note{Unlike the CAV18 paper, these gain matrices have not been discussed yet. }
 However, in order to synthesize $\mat{K}$, 
 we must be able to ensure that given properties of the plant hold at any given point in time.  
-In order to do so, we accelerate the dynamics of the plant according to the model
-semantics in Sec.~\ref{sec:model} and compute the state
-$\vec{x}_T$ at a given time $T$,
-%
-% namely we find an equation for $\tau^n(\vec{x},\vec{u})$ given $\tau(\vec{x},\vec{u})$. 
-%
-namely the state $\vec{x}(t)$ of the model 
-%$\dot{\vec{x}}(t)=\mat{A}
-at time $t=T$. 
+In order to do so, we accelerate the dynamics of the plant according to the continuous-time model
+semantics in Sec.~\ref{sec:model}. 
+% and compute the state $\vec{x}_T$ at a given time $T$,
+%%
+%% namely we find an equation for $\tau^n(\vec{x},\vec{u})$ given $\tau(\vec{x},\vec{u})$. 
+%%
+%namely the state $\vec{x}(t)$ of the model 
+%%$\dot{\vec{x}}(t)=\mat{A}
+%at time $t=T$. 
 
-\textcolor{red}{[The following three subsections take too much space, plus the results are mostly known or easily derivable with simple algebra: we need to shorten and simplify it. Dario: can you give it a crack?]}
-\textcolor{blue}{[I merged the first two]}
+%\textcolor{red}{[The following three subsections take too much space, plus the results are mostly known or easily derivable with simple algebra: we need to shorten and simplify it. Dario: can you give it a crack?]}
+%\textcolor{blue}{[I merged the first two]}
 
 %\note{ [add?] In this section we work with fully observed models, namely where $y = x$. } 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1160,8 +1167,7 @@ which accelerating results and setting $T=kT_s+t'$ becomes
  \label{sec:cont_aasup}
 %-------------------------------
 
-\textcolor{red}{[This paragraph is highly unclear - Dario: can you please update it?]}
-\textcolor{blue}{[is  this better?]}
+
 
 Just as the accelerated dynamics in equation \eqref{eq:feedback_sampled_cont} can be abstacted using \eqref{eq:aa_reachtube} (where $\bigcup_{k \in N_0} (\mat{A}_d-\mat{B}_d\mat{K}) ^k \subseteq \mathcal{A}$),
 we use the same principle on equation \eqref{eq:feedback_cont} to obtain 
@@ -1169,11 +1175,31 @@ we use the same principle on equation \eqref{eq:feedback_cont} to obtain
 \bigcup_{T \in [0, T_s], k \in N_0} (\mat{A}_{T-kT_s}-\mat{B}_{T-kT_s}\mat{K}) (\mat{A}_d-\mat{B}_d\mat{K})^k \subseteq \mathcal{A}.
 \end{equation}
 
-We describe now how to obtain such a set. Abstract acceleration works by finding support functions of the set that encompasses the matrices $\mat{A}^k$.
-Support functions are scalars that measure the distance of a hyperplane tangent to the set boundary to the origin.
-In the case of continuous spaces, this translates to calculating the derivatives of the envelope in order to find the direction of the support vector (normal to the hyperplane), and calculating the distance to the corresponding point where the hyperplane touches the set (at which the derivative was calculated).
-The direction of the vector is determined by evaluating the support function of another point in the curve,
-which is known to be smaller than that of the selected point, and the chosen hyperplanes are aligned with the eigenvectors, hence we only look at eigenvalue pairs to calculate the derivatives~\cite{cattaruzza2015unbounded}.
+\textcolor{red}{[The next discussion is highly unclear - Dario: can you please update it?]}
+\textcolor{blue}{[how about this?]}
+
+We next describe how to obtain such a set. 
+Our overapproximation of the set is a polyhedron, which is defined by an
+intersection of hypeplanes. The smallest polyhedra that can be obtained are
+those whose faces touch the set, which they must do at a point tangential to
+the hyperplane. Rather than pick a set of directions and find such points, we
+will start from the points and find their tangents. Furthermore, to simplify the
+procedure, we will only look at two dimensional cuts of the space 
+(see~\cite{cattaruzza2015unbounded}). This means that for every point we
+choose is a vertex of the polyhedron.
+Finding out which side of the hyperplane corresponds to the inside of the
+polyhedron is achieved by looking at any other point in the original set and
+checking on which side of the hyperplane it lays.
+
+%Abstract acceleration works by finding support functions of the set that encompasses the matrices $\mat{A}^k$.
+%Support functions are scalars that measure the distance of a hyperplane tangent to the set boundary to the origin.
+%In the case of continuous spaces, this translates to calculating the derivatives of the envelope in order to find the direction of the support vector (normal to the hyperplane), and calculating the distance to the corresponding point where the hyperplane touches the set (at which the derivative was calculated).
+%The direction of the vector is determined by evaluating the support function of another point in the curve,
+%which is known to be smaller than that of the selected point, and the chosen hyperplanes are aligned with the eigenvectors, hence we only look at eigenvalue pairs to calculate the derivatives~\cite{cattaruzza2015unbounded}.
+
+\textcolor{red}{[Next part highly nebulous]} 
+\textcolor{blue}{[This is just the math that calculates the tangents of x-y pairs given the progression of x and y. Given the above description,is it necessary to include it?]}
+
 The corresponding derivatives are:
 %
 \begin{enumerate}
