@@ -544,9 +544,24 @@ We will assume $r_k=0$, thus
 $\vec{x}_{k+1}=(\mat{A}_d-\mat{B}_d\mat{K})\vec{x}_k$. 
 
 %-------------------------------
-\subsection{\textcolor{red}{[Elizabeth: please add the specifics of the errors due to discretisation/quantisation, with reference to Fig. \ref{fig:digitalsystem}] and to what has been discussed in the Introductory section.}}
-%\label{sec:}
-%-------------------------------
+\subsection{Errors}
+
+We account for the presence of errors originating from a number of sources, shown in Figure~\ref{}:
+\begin{itemize}
+\item We represent the plant variables $x(t)$ and $u(t)$, which are real numbers, at a finite precision in our model, and so it is necessary to account for the errors introduced by this representation. We account for these errors in both back ends by using interval arithmetic, detailed in section~\ref{}. 
+\item The quantisation errors by the ADC, which converts the analogue signal $x(t)$ into
+the digital signal $x_k$ which is fed into the controller. We account for this error in 
+the acceleration based back-end by introducing a noise signal $\nu_1$ that over-approximates this error, 
+shown in the figure. Further details are found in section~\ref{}. 
+In the naive back end we use bit-precise modelling in CBMC~\cite{} to accurately model this deterministic
+conversion. 
+\item The representation errors due to performing finite-precision arithmetic in the controller. 
+In the acceleration based back-end, this is again treated by the introduction of noise that bounds the error.
+The naive back end uses the bit-precise modelling of finite-precision arithmetic in CBMC. We assume that the controller
+represents numbers to the same precision as the ADC.
+\item We assume that the DAC converts numbers from the same precision as the controller to an analogue signal. 
+As a result we can ignore any errors introduced by the DAC
+\end{itemize}
 
 
 
@@ -1854,17 +1869,10 @@ $z^n+\sum_{i=1}^n(a_i-k_i)z^{n-i}=\prod_{i=1}^n (z-\lambda_i) \text{ where } |\l
 
 \textcolor{red}{Elizabeth: this section needs to be updated to describe floating-point arithmetics.}
 
-The models we consider have two sources of error that are due to numerical representations.  
-The first is the numerical error introduced by the
-fixed-point numbers employed to model the plant, i.e., to represent the
-plant dynamics $A_d$, $B_d$ and $x_k$.  The second is the quantization error
-introduced by the digital controller, which performs operations on
-fixed-point numbers.  
-\textcolor{red}{[what about the DAC/ADC errors?]}
-In this section we outline the notation for the
-fixed-point representation of numbers, and briefly describe the errors
-introduced.  A~formal discussion is in
-%Appendix~\ref{appendix:numerical_errors}.
+As discussed in section~\ref{sec:}, the models we consider have errors due to several sources; the numerical error introduced by the precision used to represent the plant, the error introduced by the ADC conversion, and the error introduced by the precision used to represent the controller. First we consider the numerical errors introduced by the finite precision numbers (either fixed or floating point) used to model the plant and used by the digital controller. Then we account for the quantization errors introduced by the ADC.
+
+\subsection{Errors due to numerical representation}
+First consider the case where we use fixed-point representations, and synthesise fixed-point controllers. 
 
 Let $\mathcal{F}_{\langle I,F \rangle}(x)$ denote a real number $x$
 represented in a fixed point domain, with $I$ bits representing the integer
@@ -1872,9 +1880,57 @@ part and $F$ bits representing the decimal part.  The smallest number that
 can be represented in this domain is $c_m=2^{-F}$.  Any mathematical
 operations performed at the precision $\mathcal{F}_{\langle I,F \rangle}(x)$
 will introduce errors, for which an upper bound can be
-given~\cite{DBLP:conf/arith/BrainTRW15}.
+given~\cite{DBLP:conf/arith/BrainTRW15}:
 
-We will use $\mathcal{F}_{\langle I_c,F_c \rangle}(x)$ to denote a real
+\begin{enumerate}
+
+\item {\bf Truncation:} Let $x$ be a real number, and $\mathcal{F}_{\langle
+I,F \rangle}(x)$ be the same number represented in a fixed-point domain as
+above.  Then $\mathcal{F}_{\langle I,F \rangle}(x) = x-\delta_T$ where the
+error $ \delta_T=x\ \%_{c_m}\ \tilde x$, and $\%_{c_m}$ is the modulus
+operation performed on the last bit. 
+Thus, $\delta_T$ is the truncation error and it will propagate across
+operations.
+%
+\item {\bf Rounding:} The following errors appear in basic operations.  Let
+$c_1, c_2$ and $c_3$ be real numbers, and $\delta_{T1}$ and $\delta_{T2}$ be
+the truncation errors caused by representing $c_1$ and $c_2$ in the
+fixed-point domain as above.
+%
+\begin{enumerate}
+%
+\item Addition/Subtraction: these operations only propagate errors coming
+from truncation of the operands, namely $\mathcal{F}_{\langle I,F
+\rangle}(c_1) \pm \mathcal{F}_{\langle I,F \rangle}(c_2) = c_3 + \delta_3$
+with $|\delta_3| \leq |\delta_{T1}| + |\delta_{T2}|$.
+%
+\item Multiplication: $\mathcal{F}_{\langle I,F \rangle}(c_1) \cdot
+\mathcal{F}_{\langle I,F \rangle}(c_2) =  c_3 + \delta_3$ with $|\delta_3|
+\leq |\delta_{T1}\cdot\mathcal{F}_{\langle I,F \rangle}(c_2)|\allowbreak +
+|\delta_{T2}\cdot\mathcal{F}_{\langle I,F \rangle}(c_1)| + c_m$, where
+$c_m=2^{-F}$ as above.
+%
+\item Division: the operations performed by our controllers in the FWL
+domain do not include division.  However, we do use division in computations
+at the precision of the plant.  Here the error depends on whether the
+divisor is greater or smaller than the dividend:  $\mathcal{F}_{\langle I,F
+\rangle}(c_1) / \mathcal{F}_{\langle I,F \rangle}(c_2) = c_3 + \delta_{T3}$
+where $\delta_{T3}$ is $(\delta_{T2}\cdot c_1 - \delta_{T1}\cdot
+c_2)/(\delta_{T2}^2 - \delta_{T2} c_2)$,
+%
+%$\mathcal{F}_{\langle I,F \rangle}(c_1) / \mathcal{F}_{\langle I,F \rangle}(c_2) =  (c_1 - \delta_{T1})/ (c_2 + \delta_{T2}) + c_m $, where $c_m=2^{-F}$ as above.
+\end{enumerate}
+
+\item {\bf Overflow:}
+The maximum size of a real number $x$ that can be represented in a fixed
+point domain as $\mathcal{F}_{\langle I,F \rangle}(x)$ is $\pm
+(2^{I-1}+1-2^{-F})$.  Numbers outside this range cannot be represented by
+the domain.  We check that overflow does not occur.
+
+\end{enumerate}
+
+\subsection{Notation}
+In this paper we will use $\mathcal{F}_{\langle I_c,F_c \rangle}(x)$ to denote a real
 number $x$ represented at the fixed-point precision of the controller, and
 $\mathcal{F}_{\langle I_p,F_p \rangle}(x)$ to denote a real number $x$
 represented at the fixed-point precision of the plant model ($I_c$ and $F_c$
@@ -1887,6 +1943,64 @@ I_p,F_p \rangle}$.  The physical plant operates in the reals, which means
 our verification phase must also account for the numerical error and
 quantization errors caused by representing the physical plant at the finite
 precision $\mathcal{F}_{\langle I_p,F_p \rangle}$.
+
+\subsection{Floating point representation}
+
+Let $\mathcal{F}_{\langle E,M \rangle}(x)$ denote a real number $x$
+represented in a floating point domain, with $E$ bits representing the exponent
+part and $M$ bits representing the mantissa part. Bounds for errors introduced by performing basic mathematical operators at this precision can be derived~\cite{DBLP:conf/arith/BrainTRW15}.
+
+We use $\mathcal{F}_{\langle E_c,M_c \rangle}(x)$ to denote a real number represented at the floating-point precision of the controller, and $\mathcal{F}_{\langle E_p,M_p \rangle}(x)$ to denote a real number represented at the fixed-point precision of the plant model. We apply the same principles as in the preceding section when selection the plant precision.
+
+\subsection{ADC/DAC quantization errors} 
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+In this section we describe how quantization errors can be modelled as noise. Note that this is only applicable to the acceleration back end, as the naive back end makes use of CBMC's bit-precise model checking capabilities to account for these deterministic errors.
+
+During any given ADC conversion, the continuous signal will be sampled in
+the real domain and transformed by $\mathcal{F}\langle I_{c},F_{c} \rangle
+(x)$ (assuming the ADC discretization is the same as the digital
+implementation).  This sampling uses a threshold which is defined by the
+less significant bit ($q_{c}=c_{m_c}=2^{-F_c}$) 
+%\blue{[this quantity was named $c_m$ above and in other parts of the paper - please uniformise notations]}
+of the ADC and some non-linearities of the circuitry.  The overall conversion is
+%
+$$\mathcal{F}\langle I_{c},F_{c} \rangle(y(t)) = y_k :
+y_k \in \left[y(t)-\frac{q_{c}}{2}\ \ \ \ y(t)+\frac{q_{c}}{2}\right] \,.$$
+%
+If we denote the error in the conversion by $\nu_k=y_k-y(t)$ where $t = nk$,
+and $n$ is the sampling time and $k$ the number of steps, then we may define
+some bounds for it $\nu_k \in [-\frac{q_{c}}{2}\ \ \frac{q_{c}}{2}]$.
+
+We will assume, for the purposes of this analysis, that the domain of the
+ADC is that of the digital controller (i.e, the quantizer includes any
+digital gain added in the code).  The process of quantization in the DAC is
+similar except that it is calculating $\mathcal{F}\langle I_{dac},F_{dac}
+\rangle (\mathcal{F}\langle I_{c},F_{c} \rangle (x)) $.  If these domains
+are the same ($I_{c}=I_{dac},\allowbreak F_{c}=F_{dac}$), or if the DAC
+resolution in higher than the ADCs, then the DAC quantization error is equal
+to zero.  From the above equations we can now define the ADC and DAC
+quantization noises ${\nu_1}_k \in [-\frac{q_1}{2}\ \ \frac{q_1}{2}]$ and
+${\nu_2}_k \in [-\frac{q_2}{2}\ \ \frac{q_2}{2}]$, where $q_1=q_{c}$ and 
+$q_2=q_\mathit{dac}$.  This is illustrated in
+Fig.~\ref{fig:digitalsystem} where $Q_1$ is the quantizer of the ADC
+and $Q_2$ the quantizer for the DAC.  These bounds hold irrespective of
+whether the noise is correlated, hence we may use them to over-approximate
+the noise effect on the state space progression over time.  The
+resulting dynamics are
+%
+\begin{align*}
+%\label{eq:pre_quantization}
+{x}_{k+1} = {A}_d{x}_k+{B}_d({u}_k+{{\nu}_2}_k), \quad u_k = -K{x}_{k}+{{\nu}_1}_k, 
+\end{align*}
+%
+which result in the following closed-loop dynamics:
+%
+\begin{align*}
+%\label{eq:quantization}
+{x}_{k+1} &= ({A}_d-{B}_d{K}_d) {x}_k+{B}_d{{\nu}_2}_k +{{\nu}_1}_k \,. 
+\end{align*}
+
+
 
 
 \subsection{Effect on safety specification and stability}
