@@ -178,17 +178,18 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
       break
      else
      #do half, then single, then double precision
-      exponent=$total_width-$mantissa
-      $exponent=$((exponent+3))
-      total_width=$((total_width*2))
-      mantissa=$(total_width)-$(exponent)
+      exponent=$(($total_width - $mantissa))
+      exponent=$(($exponent+3))
+      total_width=$(($total_width*2))
+      mantissa=$(($total_width-$exponent))
      fi
     fi
    else
-      exponent=$total_width-$mantissa
-      exponent=$exponent+3
-      total_width=$((total_width*2))
-      mantissa=$total_width-$exponent
+      exponent=$(($total_width-$mantissa))
+   #   echo exponent: $exponent
+      exponent=$(($exponent+3))
+      total_width=$(($total_width*2))
+      mantissa=$(($total_width-$exponent))
    fi
   done
   # All files are the same benchmark with increased sample frequency. Exit after first success.
