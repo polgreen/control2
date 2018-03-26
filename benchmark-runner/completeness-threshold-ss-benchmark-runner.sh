@@ -1,7 +1,8 @@
 #!/bin/bash
-export PATH=/users/luciro/cbmc-cbmc-5.7/src/cegis:${PATH}: #cegis path
+#FIXED POINT FILE RUNNER
+export PATH=/users/elipol/cbmc-5.7/src/cegis:${PATH}: #cegis path
 #export PATH=/users/pkesseli/software/cpp/z3/trunk/target/i686-linux/bin:${PATH} #z3 path
-BENCHMARK_BASE_DIR="/users/luciro/control-synthesis/benchmarks/headerfiles"
+BENCHMARK_BASE_DIR="/users/elipol/control-synthesis/benchmarks/headerfiles"
 
 CEGIS_ARGS="--round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D FIXEDBV"
 
@@ -63,7 +64,7 @@ function compile_precision_check {
  cd ${working_directory}
  g++ -I . -I /usr/include/eigen3/ discrete_step_k_completeness_check.cpp -o discrete_step_k_completeness_check -lmpfr
  chmod +x discrete_step_k_completeness_check
- gcc -D INTERVAL safety_stability.c -o precision_check
+ gcc -D INTERVAL -D FIXEDBV safety_stability.c -o precision_check
  chmod +x precision_check
 }
 
