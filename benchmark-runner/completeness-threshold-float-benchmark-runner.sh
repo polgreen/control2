@@ -2,7 +2,8 @@
 #FLOATING POINT FILE RUNNER
 export PATH=/users/elipol/cbmc-5.7/src/cegis:${PATH}: #cegis path
 #export PATH=/users/pkesseli/software/cpp/z3/trunk/target/i686-linux/bin:${PATH} #z3 path
-BENCHMARK_BASE_DIR="/users/elipol/control-synthesis/benchmarks/headerfiles"
+#BENCHMARK_BASE_DIR="/users/elipol/control-synthesis/benchmarks/headerfiles"
+BENCHMARK_BASE_DIR="/users/elipol/control-synthesis/benchmarks/automatica/headerfiles/"
 
 CEGIS_ARGS="--round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D FLOAT"
 
@@ -77,22 +78,22 @@ function get_current_cpu_millis {
 working_directory_base_suffix="$1"
 #dkr10
 if [ "$1" == "dkr10" ]; then
- benchmark_dirs=(${BENCHMARK_BASE_DIR}/cruise/ ${BENCHMARK_BASE_DIR}/dcmotor/ ${BENCHMARK_BASE_DIR}/helicopter/ ) 
+ benchmark_dirs=(${BENCHMARK_BASE_DIR}/acrobot/ ${BENCHMARK_BASE_DIR}/antenna/ ${BENCHMARK_BASE_DIR}/ballmaglev/ ${BENCHMARK_BASE_DIR}/bioreact/ ${BENCHMARK_BASE_DIR}/chen_ex1/ ${BENCHMARK_BASE_DIR}/chen_ex2/) 
 fi
 
 #dkr11
 if [ "$1" == "dkr11" ]; then
-benchmark_dirs=(${BENCHMARK_BASE_DIR}/invpendulum_pendang/ ${BENCHMARK_BASE_DIR}/invpendulum_cartpos/ ) 
+benchmark_dirs=(${BENCHMARK_BASE_DIR}/chen_ex3/ ${BENCHMARK_BASE_DIR}/chen_ex4/ ${BENCHMARK_BASE_DIR}/cruise/ ${BENCHMARK_BASE_DIR}/cruiseHSCC/ ${BENCHMARK_BASE_DIR}/cstr/ ${BENCHMARK_BASE_DIR}/cstrtemp/  ) 
 fi
 
 #dkr12
 if [ "$1" == "dkr12" ]; then
-benchmark_dirs=(${BENCHMARK_BASE_DIR}/magneticpointer/ ${BENCHMARK_BASE_DIR}/magsuspension/ ${BENCHMARK_BASE_DIR}/satellite/ ) 
+benchmark_dirs=(${BENCHMARK_BASE_DIR}/dcmotor/ ${BENCHMARK_BASE_DIR}/flexbeam/ ${BENCHMARK_BASE_DIR}/guidance_chen/ ${BENCHMARK_BASE_DIR}/helicopter/ ${BENCHMARK_BASE_DIR}/invpendulum_cartpos/ ${BENCHMARK_BASE_DIR}/invpendulum_pendang/) 
 fi
 
 #dkr13
 if [ "$1" == "dkr13" ]; then
-benchmark_dirs=(${BENCHMARK_BASE_DIR}/pendulum/ ${BENCHMARK_BASE_DIR}/tapedrive/ ${BENCHMARK_BASE_DIR}/suspension/  ) 
+benchmark_dirs=(${BENCHMARK_BASE_DIR}/magneticpointer/ ${BENCHMARK_BASE_DIR}/magsuspension/ ${BENCHMARK_BASE_DIR}/pendulum/ ${BENCHMARK_BASE_DIR}/regulator/ ${BENCHMARK_BASE_DIR}/springmassdamperHSCC/ ${BENCHMARK_BASE_DIR}/steamdrum/ ${BENCHMARK_BASE_DIR}/suspension/ ${BENCHMARK_BASE_DIR}/tapedriver/ ${BENCHMARK_BASE_DIR}/usgtampa/) 
 fi
 
 working_directory_base="/tmp/control_synthesis-float-${working_directory_base_suffix}"
