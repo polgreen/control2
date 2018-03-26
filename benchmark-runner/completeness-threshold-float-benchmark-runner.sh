@@ -95,7 +95,7 @@ if [ "$1" == "dkr13" ]; then
 benchmark_dirs=(${BENCHMARK_BASE_DIR}/pendulum/ ${BENCHMARK_BASE_DIR}/tapedrive/ ${BENCHMARK_BASE_DIR}/suspension/  ) 
 fi
 
-working_directory_base="/tmp/control_synthesis-ss-${working_directory_base_suffix}"
+working_directory_base="/tmp/control_synthesis-float-${working_directory_base_suffix}"
 mkdir -p ${working_directory_base} 2>/dev/null
 
 for benchmark_dir in ${benchmark_dirs[@]}; do
@@ -104,12 +104,12 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
  times >${time_tmp_file}; start_time=$(get_current_cpu_millis)
 
  for benchmark in ${benchmark_dir}*.h; do
-  log_file="${benchmark%.h}_completeness-threshold-ss.log"
+  log_file="${benchmark%.h}_float-completeness-threshold-ss.log"
   truncate -s 0 ${log_file}
   echo_log ${benchmark}
-  echo_log 'completeness-threshold-ss'
+  echo_log 'float-completeness-threshold-ss'
 
-  working_directory="${working_directory_base}/completeness-threshold-ss"
+  working_directory="${working_directory_base}/completeness-threshold-float-ss"
   setup_benchmark_directory ${working_directory}
   cd ${working_directory}
   compile_precision_check
