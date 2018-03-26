@@ -64,7 +64,7 @@ function compile_precision_check {
  cd ${working_directory}
  g++ -I . -I /usr/include/eigen3/ discrete_step_k_completeness_check.cpp -o discrete_step_k_completeness_check -lmpfr
  chmod +x discrete_step_k_completeness_check
- gcc -D INTERVAL safety_stability.c -o precision_check
+ gcc -D INTERVAL -D FLOAT safety_stability.c -o precision_check
  chmod +x precision_check
 }
 
