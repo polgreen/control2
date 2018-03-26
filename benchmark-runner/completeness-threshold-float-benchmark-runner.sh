@@ -110,7 +110,6 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
   echo_log 'completeness-threshold-ss'
 
   working_directory="${working_directory_base}/completeness-threshold-ss"
-  echo "working directory $working_directory"
   setup_benchmark_directory ${working_directory}
   cd ${working_directory}
   compile_precision_check
@@ -127,8 +126,8 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
   input_lower_bound=$(extract_input "${spec_content}" 'INPUT_LOWERBOUND')
 
   max_length=64
-  mantissa=23  #initialise at single precision
-  total_width=32
+  mantissa=10  #initialise at half precision
+  total_width=16
 
   k_sizes=(10 20 30 50 75 100 200)
   k_size_index=0
@@ -178,14 +177,18 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
       solution_found=true
       break
      else
-      total_width=$((total_width+4))
-      mantissa=$((mantissa+4))
+     #do half, then single, then double precision
+      exponent=$total_width-$mantissa
+      $exponent=$((exponent+3))
+      total_width=$((total_width*2))
+      mantissa=$(total_width)-$(exponent)
      fi
     fi
    else
-   #go straight to double precision
-    total_width=64
-    mantissa=52
+      exponent=$total_width-$mantissa
+      exponent=$exponent+3
+      total_width=$((total_width*2))
+      mantissa=$total_width-$exponent
    fi
   done
   # All files are the same benchmark with increased sample frequency. Exit after first success.
