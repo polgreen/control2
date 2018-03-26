@@ -110,6 +110,7 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
   echo_log 'completeness-threshold-ss'
 
   working_directory="${working_directory_base}/completeness-threshold-ss"
+echo  working dir: $working_directory
   setup_benchmark_directory ${working_directory}
   cd ${working_directory}
   compile_precision_check
@@ -126,7 +127,7 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
 
   max_length=64
   integer_width=${impl_int_bits}
-  radix_width=$((impl_int_bits+impl_frac_bits))
+  radix_width=${impl_frac_bits}
   min_size_offset=$(((integer_width+radix_width)%8))
   [ ${min_size_offset} -ne 0 ] && integer_width=$((integer_width+8-min_size_offset))
   k_sizes=(10 20 30 50 75 100 200)
@@ -138,7 +139,7 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
    echo_log "int: ${integer_width}, radix: ${radix_width}"
    solution_found=false
    echo_log "$CEGIS_ARGS -D _PLANT_TOTAL_BITS=$((integer_width+radix_width)) -D _PLANT_RADIX_BITS=${radix_width} -D NUMBERLOOPS=${k_size} ${synthesis_file}"
-   timeout --preserve-status --kill-after=${kill_time} ${timeout_time} cegis $CEGIS_ARGS -D _PLANT_TOTAL_BITS=$((integer_width+radix_width)) -D _PLANT_RADIX_BITS=${radix_width}} -D NUMBERLOOPS=${k_size} ${synthesis_file} 2>>${log_file} 1>${cbmc_log_file}
+   timeout --preserve-status --kill-after=${kill_time} ${timeout_time} cegis $CEGIS_ARGS -D _PLANT_TOTAL_BITS=$((integer_width+radix_width)) -D _PLANT_RADIX_BITS=${radix_width} -D NUMBERLOOPS=${k_size} ${synthesis_file} 2>>${log_file} 1>${cbmc_log_file}
    cbmc_result=$?
    cat ${cbmc_log_file} >>${log_file}
    controller_items=$(grep '<item>' ${cbmc_log_file} | tail -n ${num_states})
