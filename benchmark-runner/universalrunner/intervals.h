@@ -22,7 +22,7 @@ control_typet _dbl_lsb;
 
 void get_bounds()
 {
-#ifdef FIXEDBV
+#ifndef FLOAT
   if(FRAC_BITS >= 31)
     _fxp_one = 2147483647l;
   else
@@ -61,7 +61,7 @@ signed long int fxp_control_typet_to_fxp(control_typet value)
 control_typet fxp_check(control_typet value)
 {
 #ifdef CPROVER
-  #ifdef FIXEDBV
+  #ifndef FLOAT
     control_typet tmp_value=value;
     if (tmp_value < _zero) tmp_value=-tmp_value;
     __CPROVER_assume((~_dbl_max&tmp_value)==0);
@@ -72,7 +72,7 @@ control_typet fxp_check(control_typet value)
     return fwl_value;
   #endif
 #else
-  #ifdef FIXEDBV
+  #ifndef FLOAT
     value=fxp_control_typet_to_fxp(value);
     value/=_fxp_one;
   #else
@@ -241,7 +241,7 @@ control_typet fexp_round(control_typet src, char up)
 struct intervalt interval_fxp_add(struct intervalt x,struct intervalt y)
 {
   struct intervalt z=interval_add(x,y);
-#ifndef FIXEDBV
+#ifdef FLOAT
   z.low=fexp_round(z.low,0);
   z.high=fexp_round(z.high,1);
 #endif  
@@ -251,7 +251,7 @@ struct intervalt interval_fxp_add(struct intervalt x,struct intervalt y)
 struct intervalt interval_fxp_sub(struct intervalt x,struct intervalt y)
 {
   struct intervalt z=interval_sub(x,y);
-#ifndef FIXEDBV
+#ifdef FLOAT
   z.low=fexp_round(z.low,0);
   z.high=fexp_round(z.high,1);
 #endif  
@@ -261,7 +261,7 @@ struct intervalt interval_fxp_sub(struct intervalt x,struct intervalt y)
 /*inline */struct intervalt interval_fxp_mult(struct intervalt x,struct intervalt y)
 {
   struct intervalt z;
-#ifdef FIXEDBV
+#ifndef FLOAT
   long long int xlow=x.low*_fxp_one;
   long long int xhigh=x.high*_fxp_one;
   long long int ylow=y.low*_fxp_one;
@@ -333,7 +333,7 @@ void closed_fxp_mult(const int_matrixt A,const int_vectort B,const int_vectort K
   control_typet kx[NSTATES][4];
   for (i=0;i<NSTATES;i++)
   {
-#ifdef FIXEDBV
+#ifndef FLOAT
     long long int xtemp=x[i].low*_fxp_one;
     long long int ktemp=K[i].low*_fxp_one;
     kx[i][0]=(xtemp*ktemp/_fxp_one);

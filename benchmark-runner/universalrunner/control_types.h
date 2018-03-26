@@ -5,20 +5,18 @@
  *      Author: elipol
  */
 
-#define SINGLE_PREC
-
 #ifndef CONTROL_TYPES_H_
 #define CONTROL_TYPES_H_
 
-#ifndef FIXEDBV // WARNING!!! HARD-CODED TO USE SINGLE PRECISION FLOATING POINT FOR CONTROLLER
-   #define  _CONTROLLER_FLOAT_BITS 32
-   #define  _CONTROLLER_MANTISSA_BITS 23
+#ifdef FLOAT // WARNING!!! HARD-CODED TO USE HALF PRECISION FLOATING POINT FOR CONTROLLER
+   #define  _CONTROLLER_FLOAT_BITS 16
+   #define  _CONTROLLER_MANTISSA_BITS 10
 #endif
 
 
 
 #ifdef CPROVER
-    #ifndef FLOAT
+    #ifndef FLOAT //is FIXEDBV
       #ifdef INTERVAL
      //we never use interval and cprover
         __CPROVER_assert(0,"error");
@@ -31,7 +29,7 @@
         #define controller_cast(x) ((__controller_typet)x)
         #define interval(x) x
       #endif
-  #else
+  #else //is FLOATBV
     #ifdef INTERVAL
         //we never use interval and cprover
         __CPROVER_assert(0,"error");
