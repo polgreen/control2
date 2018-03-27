@@ -694,20 +694,23 @@ As a result we can ignore any errors introduced by the DAC
  \caption{The CEGIS framework. \label{fig:CEGIS}}
 \end{figure*}
 
-In this section, we give a brief description of the CEGIS framework, as illustrated in Figure~\ref{fig:CEGIS}. [ADD REFERENCE(S).]
+In this section, we give a brief description of the CEGIS framework~\cite{jha-icse10,
+  DBLP:conf/asplos/Solar-LezamaTBSS06}, as illustrated in Figure~\ref{fig:CEGIS}. 
 
 We consider an input specification of the form $\exists P .\, \forall a.\, \phi(a, P)$, 
 where $P$ ranges over functions (where a function is represented by the program computing it),
 $a$ ranges over ground terms, 
 and $\phi$ is a quantifier-free formula. 
-We~interpret the ground terms over some finite [CHECK: finite? are we doing only SAT or also SMT?] domain~$\mathcal{D}$. 
+We~interpret the ground terms over some domain~$\mathcal{D}$. 
 This is a synthesis problem, where the objective is indeed to select a valid $P$ satisfying $\phi$ over all the $a$ terms. 
-CEGIS breaks down this generally hard synthesis problem into two easier parts. 
 
-The design consists of two phases, an inductive synthesis phase (denoted by {\sc Synthesize} in
+CEGIS breaks down this generally hard synthesis problem into two easier parts:
+%The design consists of two phases,
+an inductive synthesis phase (denoted by {\sc Synthesize} in
 Figure~\ref{fig:CEGIS}) and a validation phase (denoted by {\sc
   Verify}), which interact via a finite set of tests {\sc
-  inputs} that is updated incrementally.  Given the specification $\phi$, the inductive synthesis procedure tries to
+  inputs} that is updated incrementally.
+Given the specification $\phi$, the inductive synthesis procedure tries to
 find an existential witness $P$ satisfying the specification
 $\phi(a, P)$ for all $a$ in {\sc inputs} (as opposed to all $a \in
 \mathcal{D}$).
@@ -722,8 +725,9 @@ phase in the form of a new counterexample that is added to the {\sc inputs}
 set and the loop iterates again.  %% More details about the general
 %% architecture of the synthesizer can be found
 %% in~\cite{DBLP:conf/lpar/DavidKL15}.
-[COMMENT ON TERMINATION?]
-CEGIS in general is not guaranteed to terminate if the search space is infinite. 
+If the solution space is finite then the CEGIS loop is guaranteed to
+terminate by either finding a solution or showing that no solution
+exists.
 %-------------------------------
 \section{Formal specification of model properties} 
 \label{sec:specification}
