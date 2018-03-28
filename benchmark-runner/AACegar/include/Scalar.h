@@ -102,6 +102,7 @@ public:
     class iteration_pair {
     public:
       iteration_pair() : col1(0),col2(0),iteration(0) {}
+      iteration_pair(const iteration_pair &pair) : col1(pair.col1),col2(pair.col2),iteration(pair.iteration) {}
       iteration_pair(int _col1,int _col2,power_type iter) : col1(_col1),col2(_col2),iteration(iter) {}
       int           col1;
       int           col2;
@@ -158,13 +159,13 @@ typedef enum {eComplexDynamics,ePseudoDynamics,eCombinedDynamics } dynamics_t;
 typedef enum {eNoInputs,eParametricInputs,eVariableInputs,eVariableOnlyInputs } inputType_t;
 typedef enum {eReachTubeSynth,eClosedReachTubeSynth,eIterReachTubeSynth,eReachSetSynth,eInitSynth,eInputSynth,eSensitivitySynth,eEigenSynth,eDynamicSynth,eCEGISSynth,eObserverSynth,eMaxSynth} synthesisType_t;
 typedef enum {eInequalities, eNormalised, eTemplated, eVertices } displayType_t;
-typedef enum {eTraceNoTableau,eTraceObjectives,eTraceTableau,eTraceTransforms} traceTableau_t;
-typedef enum {eTraceNoPivots,eTracePivots,eTraceCosts,eTraceSimplex,eTraceBasis,eTraceEntries} tracePivots_t;
-typedef enum {eTraceNoVertex,eTraceVertexCount,eTraceVertices,eTraceRays,eTraceEdges,eTraceSets} traceVertices_t;
-typedef enum {eTraceNoDynamics,eTraceTime,eTraceDynamics,eTraceErrors,eTraceAbstraction,eTraceAll,eTraceREF} traceDynamics_t;
-//typedef enum {eTraceNone,eTraceResults,eTraceIntermediate,eTraceTransforms,eTraceAll} traceType_t;
+typedef enum {eNNF, eJNF, eCNF, eCNFR, eCNFP, eCNFM, eMaxNF} canonicalType_t;
+typedef enum {eFloatBV, eFixedBV, eMixedBV, eMaxBV} bvType_t;
+typedef enum {eTracePivotTimes,eTraceTableauErrors,eTraceObjectives,eTraceTableau,eTraceTransforms,eTracePivots,eTraceCosts,eTraceFeasibility,eTraceBasis,eTraceEntries,eTraceSimplex,eMaxTracePivots} tracePivots_t;
+typedef enum {eTraceVertexTimes,eTraceVertexCount,eTraceVertices,eTraceRays,eTraceEdges,eTraceSets,eMaxTraceVertices} traceVertices_t;
+typedef enum {eTraceTime,eTraceDynamics,eTraceEigen,eTracePseudo,eTraceOutput,eTraceBounds,eTraceErrors,eTraceSampling,eTraceController,eTraceAbstraction,eTraceAbstractDynamics,eTraceAbstractVertices,eTraceTemplates,eTraceRefinements,eTraceAll,eTraceREF,eMaxTraceDynamics} traceDynamics_t;
 typedef enum {eNoCmd,ePlusCmd,eMinusCmd,eArrowCmd,eEqualsCmd,eGivenCmd} commands_t;
-typedef enum {eNumStates,eNumInputs,eNumVarInputs,eNumFeedbacks,eNumOutputs,eNumSteps,eLogDirections,eLogFaces,eNumBits,eTightness,eTraceLevel,eNumParameters} parameters_t;
+typedef enum {eNumStates,eNumInputs,eNumVarInputs,eNumFeedbacks,eNumOutputs,eNumSteps,eLogDirections,eLogFaces,eNumBits,eScaleBits,eTightness,eTraceLevel,eNumParameters} parameters_t;
 typedef enum {eFinalIterations,eFinalPrecision,eFinalLoadTime,eFinalReachTime,eNumFinalParameters} finalParameters_t;
 typedef enum {eLD,eMP,eLDI,eMPI,eAllTypes} numericType_t;
 
@@ -283,6 +284,7 @@ public:
   }
 
   static inline bool isNan(const scinterval &x);
+  static inline bool isInf(const scinterval &x);
 
   static inline bool isZero(scinterval x,scalar zero=ms_weakZero)
   {
@@ -346,6 +348,7 @@ public:
   }
 
   static inline bool isNan(const scalar &x);
+  static inline bool isInf(const scalar &x);
 
   static inline bool isZero(scalar x,scalar zero=ms_weakZero)
   { return (abs(x)<=zero); }

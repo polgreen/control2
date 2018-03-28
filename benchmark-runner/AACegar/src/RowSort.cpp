@@ -173,6 +173,30 @@ char SortedMatrix<scalar>::compareZeroOrderRows(int row1,int row2)
 }
 
 template <class scalar>
+scalar SortedMatrix<scalar>::diffZeroOrderRows(int row1,int row2)
+{
+  scalar result=func::ms_0;
+  int trueRow1=zeroOrder(row1);
+  int trueRow2=zeroOrder(row2);
+  for (int col=0;col<cols();col++) {
+    result+=abs(coeff(trueRow1,col)-coeff(trueRow2,col));
+  }
+  return result;
+}
+
+template <class scalar>
+scalar SortedMatrix<scalar>::diffZeroOrderRows(int row1,int row2,MatrixS &ranges)
+{
+  scalar result=func::ms_0;
+  int trueRow1=zeroOrder(row1);
+  int trueRow2=zeroOrder(row2);
+  for (int col=0;col<cols();col++) {
+    result+=(coeff(trueRow1,col)-coeff(trueRow2,col))*ranges.coeff(0,col);
+  }
+  return result;
+}
+
+template <class scalar>
 bool SortedMatrix<scalar>::SmallerCos(std::vector<scalar> &cosines, const int row1,const int row2)
 {
   scalar result=cosines[row1]-cosines[row2];

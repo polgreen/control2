@@ -120,7 +120,7 @@ public:
     Set          Face1;
     std::vector<AdjacentRays<scalar>*> Edges;  // adjacency relation storage for iteration k
     static bool  ms_normalised_rays;
-    static traceVertices_t      ms_trace_vertices;
+    static bool  ms_trace_vertices[eMaxTraceVertices];
 };
 }
 #endif//VERTEX_ENUMERATORH

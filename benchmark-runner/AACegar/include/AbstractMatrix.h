@@ -29,6 +29,8 @@ public:
     typedef std::map<powerS,std::pair<int,powerS> > powerList;
     typedef std::map<powerS,MatrixS> counterexampleList;
     typedef typename type::iteration_pair iteration_pair;
+    typedef std::vector<iteration_pair> iteration_vector;
+
 
     using JordanMatrix<scalar>::m_dimension;
     using JordanMatrix<scalar>::m_error;
@@ -49,7 +51,6 @@ public:
     using JordanMatrix<scalar>::ms_logger;
     using JordanMatrix<scalar>::ms_decoder;
     using JordanMatrix<scalar>::ms_trace_dynamics;
-    using JordanMatrix<scalar>::ms_trace_time;
 
     using JordanMatrix<scalar>::jordanToPseudoJordan;
     using JordanMatrix<scalar>::rotates;
@@ -143,14 +144,20 @@ protected:
     ///@return true if the envelope is incomplete (ie it needs a cut from start to end)
     bool findConjugateBounds(const int row, powerS iter, powerS &start, powerS &end);
 
-    //Given a conjugate pair, fills a support tangent to the point at iteration.
+    /// Given a conjugate pair, fills a support tangent to the point at iteration.
     void fillConjugateSupportFromIter(const int row1,const int row2,powerS iter);
 
-    //Given a conjugate pair, fills a support set tangent to enveloping ellipse up to iteration.
+    /// Given a conjugate pair, fills a support set tangent to enveloping ellipse up to iteration.
     void fillConjugateSupportsFromIter(const int row1,const int row2,powerS iter,int precision);
 
-    ///Fills a support for the chord of a halfmoon created by two eigenvalue norms.
-    void fillChordSupportFromIter(const int row1,const int row2,const scalar &mag1,const scalar &mag2,powerS iter);
+    /// Fills a support for the chord of a halfmoon created by two eigenvalue norms.
+    scalar fillChordSupportFromIter(const int row1,const int row2,const scalar &mag1,const scalar &mag2,powerS iter);
+
+    /// Finds the expected support iteration for a given eigenvalue pair and angle
+    powerS findAngleIter(const int row1,const int row2,const scalar &mag1,const scalar &mag2,scalar angle);
+
+    /// Given a row pair and an angle, creates a support function in the direction of the angle for the given pair of eigenvalues
+    bool fillSupportFromAngle(const int row1,const int row2,const scalar &mag1,const scalar &mag2,scalar angle);
 
     ///Given a row pair and an iteration number, creates a support function perpendicular to the plane that joins the nth and nth+1 iterations and that has the original point on the 'inside'
     void fillSupportFromIter(const int row1,const int row2,const scalar &mag1,const scalar &mag2,powerS iter);
@@ -194,6 +201,12 @@ protected:
 
     /// Calculates the number of iterations necessary to reacha fixpoint
     powerS calculateMaxIterations(powerS max=func::ms_infPower);
+
+    /// Finds the corresponding iterations that may generate dynamics violating the given bounds and creates faces for these iterations
+    bool refineAbstractDynamics(AbstractPolyhedra<scalar> &bounds,bool useEigenCloud);
+
+    /// Finds the corresponding iteration that generates dynamics in the direction of the given vector
+    bool findIterations(AbstractPolyhedra<scalar> &bounds,std::map<int,iteration_vector>& iterations,MatrixS &supports,bool minOnly,int outerMerge=-1,int innerMerge=1);
 
     /// Finds the corresponding iteration that generates dynamics close to the given point
     void findIterations(const MatrixS &point,powerList &iterations,bool isVector=false);
@@ -241,6 +254,11 @@ protected:
     /// @param col2 column number of second direction
     /// @param iter iteration at which the support should be found (determines the vector angle)
     void fillCrossConjugateSupportFromIter(int col1,int col2,powerS iter);
+
+    ///Retrieves a hyperbox ensured to contain all powers of eigenvalues
+    /// if intervals are not used, it contains the maximum norm of each powered eigenvalue
+    /// @param iter maximum iteration to evaluate
+    MatrixS boundingHyperBox(powerS iter);
 protected:
     inputType_t                 m_inputType;
     int                         m_precision;
@@ -252,7 +270,7 @@ protected:
     std::vector<int>            m_unfolded;
     scalar                      m_sampleTime;
     scalar                      m_delayTime;
-    std::vector<iteration_pair> m_iterations;
+    iteration_vector            m_iterations;
 public:
     MatrixS                     m_supports;
     SMatrixS                    m_directions;
@@ -262,6 +280,7 @@ public:
     AbstractPolyhedra<scalar>   m_abstractInputDynamics;
     AbstractPolyhedra<scalar>   m_abstractRoundDynamics;
     static bool                 ms_continuous;
+    static bool                 ms_incremental;
     static bool                 ms_sparse;
 };
 

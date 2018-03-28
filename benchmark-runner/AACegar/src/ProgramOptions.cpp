@@ -154,9 +154,11 @@ void ProgramOptions::process()
   #ifdef USE_SINGLES
       //DynamicalSystem<long double> ldsystem;
       MatToStr<long double>::ms_useConsole=useConsole;
+      if (!traceIntervals) MatToStr<long double>::ms_zero=1e-6;
       AbstractMatrix<long double>::ms_sparse=useSparse;
       Tableau<long double>::ms_useBasis=useBasis;
-      CegarSystem<long double>::ms_fixedBVs=useFixedBV;
+      CegarSystem<long double>::ms_bvType=bvType;
+      CegarSystem<long double>::ms_aggressive=aggressive;
       CegarSystem<long double>::ms_canonical=useCanonicalForm;
       Synthesiser<long double> ldsystem;
       ldsystem.m_synthType=synthType;
@@ -172,11 +174,13 @@ void ProgramOptions::process()
   #ifdef USE_INTERVALS
       //DynamicalSystem<ldinterval> ldisystem;
       MatToStr<ldinterval>::ms_useConsole=useConsole;
+      if (!traceIntervals) MatToStr<ldinterval>::ms_zero=1e-6;
       MatToStr<long double>::ms_useConsole=useConsole;
       MatToStr<ldinterval>::ms_traceIntervals=traceIntervals;
       AbstractMatrix<ldinterval>::ms_sparse=useSparse;
       Tableau<ldinterval>::ms_useBasis=useBasis;
-      CegarSystem<ldinterval>::ms_fixedBVs=useFixedBV;
+      CegarSystem<ldinterval>::ms_bvType=bvType;
+      CegarSystem<ldinterval>::ms_aggressive=aggressive;
       CegarSystem<ldinterval>::ms_canonical=useCanonicalForm;
       Synthesiser<ldinterval> ldisystem;
       ldisystem.m_synthType=synthType;
@@ -194,9 +198,11 @@ void ProgramOptions::process()
   #ifdef USE_SINGLES
       //DynamicalSystem<mpfr::mpreal> mpsystem;
       MatToStr<mpfr::mpreal>::ms_useConsole=useConsole;
+      if (!traceIntervals) MatToStr<mpfr::mpreal>::ms_zero=1e-15;
       Tableau<mpfr::mpreal>::ms_useBasis=useBasis;
       AbstractMatrix<mpfr::mpreal>::ms_sparse=useSparse;
-      CegarSystem<mpfr::mpreal>::ms_fixedBVs=useFixedBV;
+      CegarSystem<mpfr::mpreal>::ms_bvType=bvType;
+      CegarSystem<mpfr::mpreal>::ms_aggressive=aggressive;
       CegarSystem<mpfr::mpreal>::ms_canonical=useCanonicalForm;
       Synthesiser<mpfr::mpreal> mpsystem;
       mpsystem.m_synthType=synthType;
@@ -212,11 +218,13 @@ void ProgramOptions::process()
   #ifdef USE_INTERVALS
       //DynamicalSystem<mpinterval> mpisystem;
       MatToStr<mpinterval>::ms_traceIntervals=traceIntervals;
+      if (!traceIntervals) MatToStr<mpinterval>::ms_zero=1e-15;
       MatToStr<mpinterval>::ms_useConsole=useConsole;
       MatToStr<mpfr::mpreal>::ms_useConsole=useConsole;
       Tableau<mpinterval>::ms_useBasis=useBasis;
       AbstractMatrix<mpinterval>::ms_sparse=useSparse;
-      CegarSystem<mpinterval>::ms_fixedBVs=useFixedBV;
+      CegarSystem<mpinterval>::ms_bvType=bvType;
+      CegarSystem<mpinterval>::ms_aggressive=aggressive;
       CegarSystem<mpinterval>::ms_canonical=useCanonicalForm;
       Synthesiser<mpinterval> mpisystem;
       mpisystem.m_synthType=synthType;
@@ -238,27 +246,31 @@ ProgramOptions::ProgramOptions(int argc, char *argv[]) :
   synthType(eReachTubeSynth),
   displayType(eInequalities),
   space(eNormalSpace),
+  useCanonicalForm(eNNF),
+  bvType(eFloatBV),
   incremental(false),
   continuous(false),
   answerOnly(true),
   useConsole(true),
   useBasis(true),
   useSparse(false),
-  useFixedBV(false),
-  useCanonicalForm(false),
+  aggressive(false),
   parseError(false)
 {
   traceIntervals=true;
   formal=true;
 
   //Important!: these have to be in the same order as the enums
-  std::string commandOptions[eMaxStr]={"params","dynamics","isense","osense","iosense","guard","iguard","sguard","oguard","init","inputs","templates","arma","spaceex","control","observe","ref","inc","sample","speed","oinit","rand"};
+  std::string commandOptions[eMaxStr]={"params","dynamics","isense","osense","iosense","guard","iguard","sguard","oguard","init","inputs",
+                                       "templates","arma","spaceex","control","observe","ref","inc","sample","speed","factor","oinit","rand",
+                                       "p","q","o","f","s","l","t","m","k","g","d"};
   std::string typeOptions[eAllTypes+1]={"ld","mp","ldi","mpi","all"};
   std::string synthOptions[eMaxSynth]={"aa-tube","sq-tube","tube","sets","init","input","sense","eigen","dynamics","CEGIS","observer"};
-
+  std::string canonicalOptions[eMaxNF]={"NNF","JNF","CNF", "CNFR", "CNFP", "CNFM"};
   typedef std::map<std::string,optionStr_t> optionNames_t;
   typedef std::map<std::string,numericType_t> typeNames_t;
   typedef std::map<std::string,synthesisType_t> synthNames_t;
+  typedef std::map<std::string,canonicalType_t> canonicalNames_t;
   optionNames_t optionNames;
   for (int i=0;i<eMaxStr;i++) {
     optionNames.insert(std::pair<std::string,optionStr_t>(commandOptions[i],(optionStr_t)i));
@@ -270,6 +282,10 @@ ProgramOptions::ProgramOptions(int argc, char *argv[]) :
   synthNames_t synthNames;
   for (int i=0;i<eMaxSynth;i++) {
     synthNames.insert(std::pair<std::string,synthesisType_t>(synthOptions[i],(synthesisType_t)i));
+  }
+  canonicalNames_t canonicalNames;
+  for (int i=0;i<eMaxNF;i++) {
+    canonicalNames.insert(std::pair<std::string,canonicalType_t>(canonicalOptions[i],(canonicalType_t)i));
   }
 
   int precision=256;
@@ -288,6 +304,11 @@ ProgramOptions::ProgramOptions(int argc, char *argv[]) :
           else options[it->second]=argv[i];
         }
         else options[it->second]=" ";
+        continue;
+      }
+      canonicalNames_t::iterator it2=canonicalNames.find(argv[i]+offset);
+      if (it2!=canonicalNames.end()) {
+        useCanonicalForm=it2->second;
         continue;
       }
       typeNames_t::iterator typ=typeNames.find(argv[i]+offset);
@@ -314,7 +335,7 @@ ProgramOptions::ProgramOptions(int argc, char *argv[]) :
       if (strcmp(argv[i]+offset,"version")==0) {
         std::cout << "Axelerator v." << getVersion() << std::endl;
       }
-      else if (strcmp(argv[i]+offset,"synth")==0) {
+      else if ((strcmp(argv[i]+offset,"synth")==0) || (strcmp(argv[i]+offset,"mode")==0)) {
         if (++i<argc) {
           synthNames_t::iterator it=synthNames.find(argv[i]);
           if (it!=synthNames.end()) synthType=it->second;
@@ -328,19 +349,20 @@ ProgramOptions::ProgramOptions(int argc, char *argv[]) :
         functions<mpfr::mpreal>::ms_formal=formal;
         functions<long double>::ms_formal=formal;
       }
-      else if (strcmp(argv[i]+offset,"full")==0)    answerOnly=false;
-      else if (strcmp(argv[i]+offset,"ii")==0)      traceIntervals=false;
-      else if (strcmp(argv[i]+offset,"cont")==0)    continuous=true;
-      else if (strcmp(argv[i]+offset,"mono")==0)    incremental=false;
-      else if (strcmp(argv[i]+offset,"basis")==0)   useBasis=true;
-      else if (strcmp(argv[i]+offset,"nobasis")==0) useBasis=false;
-      else if (strcmp(argv[i]+offset,"sparse")==0)  useSparse=true;
-      else if (strcmp(argv[i]+offset,"fixedbv")==0) useFixedBV=true;
-      else if (strcmp(argv[i]+offset,"CNF")==0)     useCanonicalForm=true;
-      else if (strcmp(argv[i]+offset,"norm")==0)    displayType=eNormalised;
-      else if (strcmp(argv[i]+offset,"vert")==0)    displayType=eVertices;
-      else if (strcmp(argv[i]+offset,"ine")==0)     displayType=eInequalities;
-      else if (argv[i][offset]=='h')                help(std::cout);
+      else if (strcmp(argv[i]+offset,"full")==0)        answerOnly=false;
+      else if (strcmp(argv[i]+offset,"ii")==0)          traceIntervals=false;
+      else if (strcmp(argv[i]+offset,"cont")==0)        continuous=true;
+      else if (strcmp(argv[i]+offset,"mono")==0)        incremental=false;
+      else if (strcmp(argv[i]+offset,"basis")==0)       useBasis=true;
+      else if (strcmp(argv[i]+offset,"nobasis")==0)     useBasis=false;
+      else if (strcmp(argv[i]+offset,"sparse")==0)      useSparse=true;
+      else if (strcmp(argv[i]+offset,"fixedbv")==0)     bvType=eFixedBV;
+      else if (strcmp(argv[i]+offset,"mixedbv")==0)     bvType=eMixedBV;
+      else if (strcmp(argv[i]+offset,"norm")==0)        displayType=eNormalised;
+      else if (strcmp(argv[i]+offset,"vert")==0)        displayType=eVertices;
+      else if (strcmp(argv[i]+offset,"ine")==0)         displayType=eInequalities;
+      else if (strcmp(argv[i]+offset,"aggressive")==0)  aggressive=true;
+      else if (argv[i][offset]=='h')                    help(std::cout);
       else {
         std::cout << "unknown parameter " << argv[i] << std::endl;
         std::cout << "use -h for help" << std::endl;
@@ -362,6 +384,22 @@ ProgramOptions::ProgramOptions(int argc, char *argv[]) :
       pos=data.find("\"");
     }
   }
+  if (options[eParamStr].empty()) {
+    std::string params;
+    if (!options[eStateDimStr].empty()) params+="p="+options[eStateDimStr];
+    if (!options[eInputDimStr].empty()) params+="q="+options[eInputDimStr];
+    if (!options[eOutputDimStr].empty()) params+="o="+options[eOutputDimStr];
+    if (!options[eFeedbackDimStr].empty()) params+="f="+options[eFeedbackDimStr];
+    if (!options[eStepsStr].empty()) params+="s="+options[eStepsStr];
+    if (!options[eDirsStr].empty()) params+="t="+options[eDirsStr];
+    if (!options[eFacesStr].empty()) params+="l="+options[eFacesStr];
+    if (!options[eBitsStr].empty()) params+="m="+options[ePrescaleStr];
+    if (!options[ePrescaleStr].empty()) params+="k="+options[ePrescaleStr];
+    if (!options[eTightnessStr].empty()) params+="g="+options[eTightnessStr];
+    options[eParamStr]=params;
+  }
+
+
   if (options[eIncOrderStr].size()>0) incremental=true;
   if ((types.size()==0) && (files.size()>0)) {
     types.push_back(eLD);

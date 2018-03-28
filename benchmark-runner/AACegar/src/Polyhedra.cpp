@@ -26,10 +26,7 @@ template <class scalar>
 JordanMatrix<scalar>* Polyhedra<scalar>::ms_pJordan(NULL);
 
 template <class scalar>
-traceVertices_t Polyhedra<scalar>::ms_trace_vertices=eTraceNoVertex;
-
-template <class scalar>
-traceDynamics_t Polyhedra<scalar>::ms_trace_dynamics=eTraceNoDynamics;
+bool Polyhedra<scalar>::ms_trace_dynamics[eMaxTraceDynamics]={0};
 
 template <class scalar>
 bool Polyhedra<scalar>::ms_auto_make_vertices=false;
@@ -44,7 +41,8 @@ Polyhedra<scalar>::Polyhedra(int dimension) :
   m_loadTime(0),
   m_transformTime(0),
   m_enumerationTime(0),
-  m_calculationTime(0)
+  m_calculationTime(0),
+  m_spaceSize(0,0)
 {}
 
 /// Constructs transformed polyhedra
@@ -57,7 +55,8 @@ Polyhedra<scalar>::Polyhedra(const Polyhedra &source,const MatrixS &transform,co
   m_loadTime(0),
   m_transformTime(0),
   m_enumerationTime(0),
-  m_calculationTime(0)
+  m_calculationTime(0),
+  m_spaceSize(0,0)
 {
   copy(source);
   if (transform.rows()>0) this->transform(transform,inverse);
@@ -68,8 +67,19 @@ template <class scalar>
 bool Polyhedra<scalar>::convexHull(const MatrixS &points,const MatrixS &vectors)
 {
   MatrixS supports=points*vectors;
+  ms_logger.logData("hull");
   m_faces=vectors.transpose();
-  m_supports=supports.transpose().rowwise().maxCoeff();
+  m_supports=supports.row(0).transpose();
+  for (int col=0;col<supports.cols();col++)
+  {
+    for (int row=1;row<supports.rows();row++)
+    {
+      if (func::isPositive(supports.coeff(row,col)-m_supports.coeff(col,0)))
+        m_supports.coeffRef(col,0)=supports.coeff(row,col);
+    }
+  }
+//  m_supports=supports.transpose().rowwise().maxCoeff();
+  ms_logger.logData("hulled");
   return load(m_faces,m_supports);
 }
 
@@ -119,7 +129,7 @@ int Polyhedra<scalar>::loadData(const std::string &data,const bool vertices,size
   if (result>0) {
     load(m_faces,m_supports);
     m_loadTime=timer.elapsed()*1000;
-    if (ms_trace_tableau>=eTraceTableau) logTableau("loaded ");
+    if (ms_trace_pivots[eTraceTableau]) logTableau("loaded ");
     if (m_useVertices || ms_auto_make_vertices) {
       if ((m_dimension==2) || (m_faces.rows()>m_dimension)) makeVertices();
     }
@@ -135,7 +145,7 @@ bool Polyhedra<scalar>::loadVertices(const MatrixS &vertices)
   m_vertices.conservativeResize(vertices.rows(),vertices.cols());
   m_vertices.block(0,0,vertices.rows(),vertices.cols())=vertices;
   if (makeFaces()) return true;
-  if (ms_trace_errors) ms_logger.logData("Failed to load vertices");
+  if (ms_trace_pivots[eTraceTableauErrors]) ms_logger.logData("Failed to load vertices");
   return false;
 }
 
@@ -312,7 +322,7 @@ typename Tableau<scalar>::MatrixS Polyhedra<scalar>::pseudoInverseEigen(const Ma
       result.coeffRef(row,col)=eigenvalues.coeff(row,col).real();
     }
   }
-  if (ms_trace_dynamics>=eTraceDynamics) {
+  if (ms_trace_dynamics[eTraceDynamics]) {
     ms_logger.logData(matrix,"Matrix:");
     ms_logger.logData(result,"Inverse:");
   }
@@ -342,30 +352,63 @@ typename Tableau<scalar>::MatrixS Polyhedra<scalar>::pseudoInverseJordan(const M
 
 /// Intersects the polyhedra with another polyhedra
 template <class scalar>
-bool Polyhedra<scalar>::intersect(const Polyhedra &polyhedra,const bool over)
+bool Polyhedra<scalar>::intersect(Polyhedra &polyhedra,bool canonical, bool over)
 {
   if (polyhedra.isEmpty()) return true;
   if (isEmpty()) return copy(polyhedra);
-  if (pseudoIntersect(polyhedra)) {
-    removeRedundancies();
-/*    MatrixS supports(m_faces.rows(),1);
-    bool redundant[supports.rows()];
-    MatrixS matrix=m_faces.transpose();
-    maximiseAll(matrix,supports);
-    for (int i=0;i<supports.rows();i++) {
-      scalar dif=m_supports.coeff(i,0)-supports.coeff(i,0);
-      char sign=func::hardSign(dif);
-      redundant[i]=(sign>0) || (over && (sign==0));
+  if (canonical) {
+    if (polyhedra.m_dimension!=this->m_dimension) return false;
+    MatrixS mySupports(m_faces.rows(),1);
+    MatrixS myVectors=m_faces.transpose();
+    polyhedra.maximiseAll(myVectors,mySupports);
+    MatrixS remoteSupports(polyhedra.m_faces.rows(),1);
+    MatrixS remoteVectors=polyhedra.m_faces.transpose();
+    maximiseAll(remoteVectors,remoteSupports);
+    this->m_isNormalised=false;
+    int count=m_supports.rows();
+    int remoteCount=polyhedra.m_supports.rows();
+    for (int row=0;row<count;row++) {
+      if (func::isNegative(mySupports.coeff(row,0)-m_supports.coeff(row,0))) m_supports.coeffRef(row,0)=mySupports.coeff(row,0);
     }
-    int pos=0;
-    for (int i=0;i<supports.rows();i++) {
-      if (!redundant[i]) {
-        m_faces.row(pos)=m_faces.row(i);
-        m_supports.coeffRef(pos++,0)=m_supports.coeff(i,0);
+    m_faces.conservativeResize(count+remoteCount,m_faces.cols());
+    m_faces.block(count,0,remoteCount,m_faces.cols())=polyhedra.m_faces;
+    m_supports.conservativeResize(count+remoteCount,1);
+    m_supports.block(count,0,remoteCount,1)=polyhedra.m_supports;
+    int pos=count;
+    for (int row=0;row<remoteCount;row++) {
+      if (func::isPositive(remoteSupports.coeff(row,0)-polyhedra.m_supports.coeff(row,0))) {
+        m_faces.row(pos)=m_faces.row(row+count);
+        m_supports.coeffRef(pos++,0)=polyhedra.m_supports.coeff(row,0);
       }
     }
+    if (pos==count) return true;
     m_faces.conservativeResize(pos,m_faces.cols());
-    m_supports.conservativeResize(pos,1);*/
+    m_supports.conservativeResize(pos,1);
+    load(m_faces,m_supports);
+    return true;
+  }
+  if (pseudoIntersect(polyhedra)) {
+    removeRedundancies();
+    if (canonical) {
+      MatrixS supports(m_faces.rows(),1);
+      bool redundant[supports.rows()];
+      MatrixS matrix=m_faces.transpose();
+      maximiseAll(matrix,supports);
+      for (int i=0;i<supports.rows();i++) {
+        scalar dif=m_supports.coeff(i,0)-supports.coeff(i,0);
+        char sign=func::hardSign(dif);
+        redundant[i]=(sign>0) || (over && (sign==0));
+      }
+      int pos=0;
+      for (int i=0;i<supports.rows();i++) {
+        if (!redundant[i]) {
+          m_faces.row(pos)=m_faces.row(i);
+          m_supports.coeffRef(pos++,0)=m_supports.coeff(i,0);
+        }
+      }
+      m_faces.conservativeResize(pos,m_faces.cols());
+      m_supports.conservativeResize(pos,1);
+    }
     load(m_faces,m_supports);
     return true;
   }
@@ -382,7 +425,7 @@ bool Polyhedra<scalar>::merge(Polyhedra &polyhedra,const bool extend)
   MatrixS supports2(m_faces.rows(),1);
   MatrixS faceVectors2=m_faces.transpose();
   polyhedra.maximiseAll(faceVectors2,supports2);
-  if (this->ms_trace_tableau>=eTraceTransforms) {
+  if (ms_trace_pivots[eTraceTransforms]) {
     ms_logger.logData(m_faces,m_supports,"Orig Set");
     ms_logger.logData(m_faces,supports2,"Merge Set");
   }
@@ -398,10 +441,8 @@ bool Polyhedra<scalar>::merge(Polyhedra &polyhedra,const bool extend)
   else {
     for (int i=0;i<supports2.rows();i++) m_supports.coeffRef(i,0)=max(m_supports.coeff(i,0),supports2.coeff(i,0));
   }
-  if (this->ms_trace_tableau>=eTraceTransforms) {
-    ms_logger.logData(m_faces,m_supports,"Merged Set");
-  }
-  if (ms_trace_time) {
+  if (ms_trace_pivots[eTraceTransforms]) ms_logger.logData(m_faces,m_supports,"Merged Set");
+  if (ms_trace_pivots[eTracePivotTimes]) {
     int elapsed=timer.elapsed()*1000;
     ms_logger.logData(elapsed," Merge time",true);
   }
@@ -494,7 +535,8 @@ bool Polyhedra<scalar>::addDirection(const MatrixS &directions,MatrixS &supports
   m_supports.conservativeResize(count+directions.cols(),1);
   m_supports.block(count,0,directions.cols(),1)=supports;  
   if (keepBasis) Tableau<scalar>::load(m_faces,m_supports);
-  else removeRedundancies();
+  else if (m_spaceSize.rows()*m_spaceSize.cols()<=0) removeRedundancies();
+  else removeRedundancies(1e-4,m_spaceSize);
   m_centre.resize(0,m_centre.cols());
   m_vertices.resize(0,m_vertices.cols());
   return true;
@@ -567,7 +609,7 @@ bool Polyhedra<scalar>::transform(const MatrixS &transform,const MatrixS& invers
     if (inverse.rows()>0) m_faces*=inverse;
     else {
       MatrixS matrix=pseudoInverseEigen(transform,hasInverse);
-      if (ms_trace_dynamics>=eTraceDynamics) {
+      if (ms_trace_dynamics[eTraceDynamics]) {
         ms_logger.logData(transform,"Transform:");
         ms_logger.logData(matrix,"Pseudo Inverse:");
       }
@@ -578,7 +620,7 @@ bool Polyhedra<scalar>::transform(const MatrixS &transform,const MatrixS& invers
         faces.block(m_faces.rows(),0,m_faces.rows(),getDimension())=m_faces*matrix;
         MatrixS supports;
         MatrixS vectors=transform.transpose()*faces.transpose();
-        if (this->ms_trace_tableau>=eTraceTableau) this->logTableau();
+        if (ms_trace_pivots[eTraceTableau]) this->logTableau();
         maximiseAll(vectors,supports);
         m_faces=faces;
         m_supports=supports;
@@ -588,7 +630,7 @@ bool Polyhedra<scalar>::transform(const MatrixS &transform,const MatrixS& invers
   }
   bool result=DualSimplex<scalar>::load(m_faces,m_supports);
   m_transformTime=timer.elapsed()*1000;
-  if (ms_trace_time) {
+  if (ms_trace_pivots[eTracePivotTimes]) {
     if (m_transformTime>1) {
       ms_logger.logData(m_name,false);
       ms_logger.logData(m_transformTime," Transform:",true);
@@ -667,9 +709,16 @@ void Polyhedra<scalar>::transform(const scalar &coefficient)
 template <class scalar>
 bool Polyhedra<scalar>::vertexTransform(const MatrixS &transform,const MatrixS &templates)
 {
-  if (!makeVertices()) return false;
-  MatrixS vertices=m_vertices*transform.transpose();
-  return convexHull(vertices,templates);
+  try {
+    if (!makeVertices()) return false;
+    if (transform.cols()!=m_vertices.cols()) return false;
+    if (m_vertices.rows()==0) return false;
+    MatrixS vertices=m_vertices*transform.transpose();
+    if (templates.rows()!=vertices.cols()) return false;
+    return convexHull(vertices,templates);;
+  }
+  catch(...) {}
+  return false;
 }
 
 /// finds the inequalities of the polyhedra and stores them in a matrix
@@ -702,7 +751,7 @@ bool Polyhedra<scalar>::makeFaces()
 template <class scalar>
 void Polyhedra<scalar>::logVertices(bool force)
 {
-  if ((ms_trace_vertices>=eTraceVertices) || force) {
+  if (VertexEnumerator<scalar>::ms_trace_vertices[eTraceVertices] || force) {
     makeVertices(force);
     ms_logger.logData(m_name,false);
     ms_logger.logData(m_vertices," Vertices:");
@@ -719,7 +768,7 @@ void Polyhedra<scalar>::logPolyhedra(std::string parameters)
     ms_logger.logData(m_faces,m_supports,stream.str());
   }
   else ms_logger.logData(m_faces,m_supports,getName());
-  if (ms_trace_vertices>=eTraceVertices) {
+  if (VertexEnumerator<scalar>::ms_trace_vertices[eTraceVertices]) {
     makeVertices();
     ms_logger.logData(m_vertices," Vertices:");
   }
@@ -749,18 +798,18 @@ bool Polyhedra<scalar>::makeVertices(bool force)
 
   int numVertices=rayList.size();
   if (numVertices==0) {
-    if (ms_trace_time) {
+    if (ms_trace_pivots[eTracePivotTimes]) {
       ms_logger.logData(m_name,false);
-      ms_logger.logData(timer.elapsed()*1000," Make Vertices Time:",true);
+      ms_logger.logData(timer.elapsed()*1000," Make Vertices Time (failed):",true);
     }
-    if (ms_trace_errors) {
+    if (ms_trace_pivots[eTraceTableauErrors]) {
       ms_logger.logData(m_name, false);
       ms_logger.logData(": Failed to make vertices");
       logTableau();
     }
     return false;
   }
-  if (ms_trace_vertices>=eTraceVertexCount) {
+  if (VertexEnumerator<scalar>::ms_trace_vertices[eTraceVertexCount]) {
     ms_logger.logData(m_name,false);
     ms_logger.logData(numVertices," vertices",true);
   }
@@ -780,12 +829,12 @@ bool Polyhedra<scalar>::makeVertices(bool force)
   }
   m_vertices.conservativeResize(row,getDimension());
   m_enumerationTime=timer.elapsed()*1000;
-  if (ms_trace_vertices>=eTraceVertices) {
+  if (VertexEnumerator<scalar>::ms_trace_vertices[eTraceVertices]) {
     ms_logger.logData(m_name,false);
     ms_logger.logData(" Find Vertices:");
     this->logTableau();
   }
-  if (ms_trace_time) {
+  if (ms_trace_pivots[eTracePivotTimes]) {
     ms_logger.logData(m_name,false);
     ms_logger.logData(m_enumerationTime," Make Vertices Time:",true);
   }
@@ -879,19 +928,19 @@ bool Polyhedra<scalar>::isInside(const MatrixS &points)
 
 /// Indicates which support (if any) does not contain the point
 template <class scalar>
-int Polyhedra<scalar>::violatingSupport(const MatrixS &points)
+std::pair<int,int> Polyhedra<scalar>::violatingSupport(const MatrixS &points)
 {
-  if (points.cols()!=getDimension()) return -1;
+  if (points.cols()!=getDimension()) return std::pair<int,int>(-1,-1);
   MatrixS supports=m_faces*points.transpose();
   for (int col=0;col<supports.cols();col++) {
     supports.col(col)-=m_supports;
     for (int row=0;row<supports.rows();row++) {
       if (func::toUpper(supports.coeff(row,col))>0) {
-        return row;
+        return std::pair<int,int>(row,col);
       }
     }
   }
-  return -1;
+  return std::pair<int,int>(-1,-1);
 }
 
 /// Indicates the largest distance to any violating support
@@ -925,7 +974,13 @@ typename Tableau<scalar>::MatrixS Polyhedra<scalar>::vertexMaximize(const Matrix
   if (m_vertices.cols()!=vectors.cols()) return MatrixS::Zero(vectors.cols(),1);
   MatrixS result=(m_vertices*vectors).transpose();
   if (all) return result;
-  MatrixS supports=result.rowwise().maxCoeff();
+  MatrixS supports=result.col(0);
+  for (int row=0;row<result.rows();row++) {
+    for (int col=1;col<result.cols();col++) {
+      if (func::isPositive(result.coeff(row,col)-supports.coeff(row,0)))
+        supports.coeffRef(row,0)=result.coeff(row,col);
+    }
+  }
   return supports;
 }
 

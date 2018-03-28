@@ -22,6 +22,8 @@ public:
   synthesisType_t                   synthType;
   displayType_t                     displayType;
   space_t                           space;
+  canonicalType_t                   useCanonicalForm;
+  bvType_t                          bvType;
   bool                              traceIntervals;
   bool                              formal;
   bool                              incremental;
@@ -30,8 +32,7 @@ public:
   bool                              useConsole;
   bool                              useBasis;
   bool                              useSparse;
-  bool                              useFixedBV;
-  bool                              useCanonicalForm;
+  bool                              aggressive;
   bool                              parseError;
 };
 

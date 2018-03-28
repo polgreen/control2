@@ -2,11 +2,13 @@
 #define CEGARSYSTEM_H
 
 #include <map>
-#include "DynamicalSystem.h"
+#include <boost/timer.hpp>
+
+#include "CanonicalSystem.h"
 
 namespace abstract
 {
-template <class scalar> class CegarSystem : public DynamicalSystem<scalar>
+template <class scalar> class CegarSystem : public CanonicalSystem<scalar>
 {
 public:
     using typename JordanMatrix<scalar>::refScalar;
@@ -26,6 +28,7 @@ public:
     using JordanMatrix<scalar>::m_isOne;
     using JordanMatrix<scalar>::m_hasOnes;
     using JordanMatrix<scalar>::m_hasMultiplicities;
+    using JordanMatrix<scalar>::m_hasNegatives;
     using JordanMatrix<scalar>::m_jordanIndex;
     using JordanMatrix<scalar>::m_conjugatePair;
     using JordanMatrix<scalar>::m_eigenNorms;
@@ -76,7 +79,6 @@ public:
     using DynamicalSystem<scalar>::ms_one;
     using DynamicalSystem<scalar>::ms_logger;
     using DynamicalSystem<scalar>::ms_incremental;
-    using DynamicalSystem<scalar>::ms_trace_time;
     using DynamicalSystem<scalar>::ms_trace_dynamics;
     using DynamicalSystem<scalar>::ms_emptyMatrix;
     using DynamicalSystem<scalar>::ms_fullAnswers;
@@ -95,6 +97,8 @@ public:
     using AbstractMatrix<scalar>::getEigenCloud;
     using AbstractMatrix<scalar>::firstVarBlock;
     using AbstractMatrix<scalar>::binomial;
+    using AbstractMatrix<scalar>::refineAbstractDynamics;
+    using AbstractMatrix<scalar>::boundingHyperBox;
     using DynamicalSystem<scalar>::setName;
     using DynamicalSystem<scalar>::getTemplates;
     using DynamicalSystem<scalar>::getGuardPoly;
@@ -108,7 +112,9 @@ public:
     using DynamicalSystem<scalar>::getAbstractReachTube;
     using DynamicalSystem<scalar>::getAbstractDynamics;
     using DynamicalSystem<scalar>::getAbstractVertices;
+    using DynamicalSystem<scalar>::getRoundedAbstractVertices;
     using DynamicalSystem<scalar>::getAccelInSupports;
+    using DynamicalSystem<scalar>::getAbstractReachTubeSupports;
     using DynamicalSystem<scalar>::mergeAccelInSupports;
     using DynamicalSystem<scalar>::mergeAbstractSupports;
     using DynamicalSystem<scalar>::traceSupports;
@@ -117,8 +123,6 @@ public:
     using DynamicalSystem<scalar>::load;
     using DynamicalSystem<scalar>::save;
     using DynamicalSystem<scalar>::kronecker;
-    using DynamicalSystem<scalar>::traceDynamics;
-    using DynamicalSystem<scalar>::traceSimplex;
     using DynamicalSystem<scalar>::changeDimensions;
     using DynamicalSystem<scalar>::loadGuard;
     using DynamicalSystem<scalar>::loadOutputGuard;
@@ -138,10 +142,14 @@ public:
     using DynamicalSystem<scalar>::getAccelVertices;
     using DynamicalSystem<scalar>::getOutputReachTube;
     using DynamicalSystem<scalar>::process;
+    using DigitalSystem<scalar>::sample;
+    using DigitalSystem<scalar>::resample;
+    using CanonicalSystem<scalar>::resample;
+    using CanonicalSystem<scalar>::synthesiseDynamicBounds;
 
     /// Constructs an empty buffer
     /// @param dimension dimension of the space
-    CegarSystem(int dimension=0,int idimension=0);
+    CegarSystem(int dimension=0,int idimension=0,int odimension=0,bool trace=false);
 
     /// Gets the start and end position of the state, input and output description blocks
     void getXYUSections(std::string &description,
@@ -179,43 +187,6 @@ public:
     /// Copies an existing object
     virtual void copy(const CegarSystem &source);
 
-    /// Retrieves the characteristic polynomial coefficients of the dynamics
-    MatrixS getDynamicPolynomialCoefficients(const MatrixC &eigenValues);
-    MatrixS getDynamicPolynomialCoefficients();
-
-    /// Retrieves the reachability matrix [B AB A^2B ...A^{n-1}B]
-    MatrixS getReachabilityMatrix();
-
-    /// Retrieves the reachability matrix [1 a1 a2...a_{n-1};0 1 a1 ... a_{n-2}...]
-    MatrixS getCanonicalReachabilityMatrix();
-
-    /// Retrieves the transform matrix T : z=T^{-1}x turns A,B,C into controllable canonical form
-    MatrixS getReachableCanonicalTransformMatrix();
-
-    /// Retrieves the observability matrix W=[C CA CA^2 ...CA^{n-1}]^T
-    MatrixS getObservabilityMatrix();
-
-    /// Retrieves the observability matrix [1 0 ...;a1 1 0 ...;...;a_{n-1}...a1 1]^-1
-    MatrixS getInverseCanonicalObservabilityMatrix();
-
-    /// Retrieves the transform matrix T : z=T^{-1}x turns A,B,C into observable canonical form
-    MatrixS getObservableCanonicalTransformMatrix();
-
-    /// Creates matrices T, invT , [W, invW], to make a reachable [observable] system
-    void makeReachabilityMatrices(bool observer);
-
-    /// Retrieves the reference gain
-    MatrixS getReferenceGain();
-
-    /// Synthesises a bound on the dynamics given a known guard and eigenvectors.
-    void synthesiseDynamicBounds(AbstractPolyhedra<scalar> &result,inputType_t inputType,AbstractPolyhedra<scalar> &end);
-
-    /// Creates a model for the input of the closed loop
-    AbstractPolyhedra<scalar> generateFeedbackInput(int fdimension=0,bool makeNoise=false,MatrixS &sensitivity=ms_emptyMatrix,scalar sampling=0,scalar delay=0);
-
-    /// Creates a model for the quantization noise as an input specification
-    AbstractPolyhedra<scalar> generateNoiseInput(scalar sampling,scalar delay);
-
     /// Retrieves a list of iterations whose reach set fails the specification
     bool findCounterExampleIterations(powerList &iterations,AbstractPolyhedra<scalar> &bounds);
 
@@ -226,39 +197,14 @@ public:
     bool refineAbstractDynamics(AbstractPolyhedra<scalar> &bounds)
     {
       powerList iterations;
+      boost::timer timer;
       refineAbstractDynamics(bounds,iterations);
+      if (ms_trace_dynamics[eTraceTime]) ms_logger.logData(timer.elapsed()*1000,"Refinement time:",true);
       return !iterations.empty();
     }
 
     /// Retrieves the support set for the inputs
     MatrixS& getRefinedAccelInSupports();
-
-    /// retrieves the Jordan form of the system sampled at SampleTime
-    MatrixC getSampledJordanForm(scalar sampleTime);
-
-    /// retrieves the dynamics of the system sampled at SampleTime
-    MatrixS getSampledDynamics(scalar sampleTime);
-
-    /// retrieves the delay noise matrix
-    MatrixS getDelayNoise(scalar sampleTime, scalar maxDelay);
-
-    /// turns a continuous time system into a discrete
-    void sample(scalar sampleTime,scalar delayTime=0);
-    bool sample(std::string &sampleTime);
-
-    /// Rescales the eigenvalues to change the granularity
-    bool resample(scalar scale);
-
-    /// turns a discrete time system into a continuous one
-    void unsample(scalar sampleTime);
-
-    /// Sets the expected maximum eigenvalue of the closed loop
-    bool setSpeed(std::string &max);
-
-    scalar getSpeed()       { return m_eigenValueCap; }
-
-    /// Corrects the support set by the input offset
-    void demergeAccelInSupports(MatrixS &supports,MatrixS &inSupports,int numTemplates);
 
     /// Retrieves the reach tube given the refined dnamics
     AbstractPolyhedra<scalar>& getRefinedAbstractReachTube(space_t space,bool guarded=false);
@@ -276,63 +222,19 @@ public:
     bool refinedMaximise(AbstractPolyhedra<scalar>& dynamics,MatrixS &vectors,MatrixS &supports,MatrixS &inSupports,refScalar &max);
 
     /// Retrieves refined dynamics given a safety specification
-    AbstractPolyhedra<scalar>& getRefinedDynamics(int refinements,bool aggresive=false,powerS iteration=0,int directions=0,inputType_t inputType=eParametricInputs);
+    AbstractPolyhedra<scalar>& getRefinedDynamics(powerS iterations,powerS iteration=0,int directions=0);
 
     /// Sets the vector ordering scheme for incremental simplex calls
     void setIncrementalOrder(std::string &order);
 
     void makeConvergentSystem(ParamMatrix &params,bool run=true,bool save=true);
 
-    /// Creates the observer matrices (based on the FWL truncation)
-    /// and returns the maximum error caused by the truncation
-    /// for the eigenvalues of the observed system
-    scalar makeObserver(MatrixS &dynamics=ms_emptyMatrix,MatrixS &sensitivity=ms_emptyMatrix,bool hasNoise=false);
-
     /// Creates a closed dynamical system that overapproximates the system with inputs
     bool makeClosedSystem(CegarSystem<scalar> &closedSystem);
 
-    /// Retrieves constraints on the controller coefficients based on the Dynamic constraints
-    AbstractPolyhedra<scalar> getControllerDynBounds(AbstractPolyhedra<scalar>& reachTube,int &orBlockSize);
-
-    /// Retrieves constraints on the controller coefficients based on the Input constraints
-    AbstractPolyhedra<scalar> getControllerInBounds(AbstractPolyhedra<scalar>& reachTube);
-
-    /// Retrieves constraints on the controller coefficients based on stability
-    AbstractPolyhedra<scalar> getControllerStabilityBounds(const MatrixS &coefficients);
-
-    /// Retireves the largest number that need to be represented to execute the model
-    refScalar findMaxValue(bool observer=true, bool states=true, bool transforms=false);
-
-    /// Retireves the number of bits needed to represent max
-    int getBits(refScalar max);
-
-    /// Retireves the number of bits needed to represent the vertices of the polyhedra
-    int getBits(AbstractPolyhedra<scalar> polyhedra);
-
-    /// Clips the matrix to fit the FWL given by bits
-    void fitToSpec(MatrixS &matrix, int intbits,int fracbits);
-
-    /// Normalizes the statespace
-    bool scaleSystem(scalar scale=func::ms_1);
-
-    /// Limits the eigenvalues to cap and returns the corresponding polynomial
-    MatrixS capEigenValues(scalar cap, bool split, bool keep);
-
     /// Explicitly calculates the vertex progression up to step and checks if it remains inside guard
-    bool checkExplicitReachability(powerS step,const MatrixS &transform);
+    powerS checkExplicitReachability(powerS step,const MatrixS &transform);
 protected:
-    /// Retireves the largest number that need to represent the matrix
-    refScalar findMaxValue(const MatrixS &matrix,refScalar result=0,refScalar scale=1);
-
-    /// Retireves the largest difference between any two non-zero numbers in a matrix
-    scalar findRange(const MatrixS &matrix);
-
-    /// Retireves the best scale factor usable to reach target bits
-    scalar findScale(MatrixS &matrix,int targetBits, bool autoScale=false);
-
-    /// Truncates the value to the current controller precision
-    scalar truncateCoefficient(const scalar& coeff);
-
     /// Finds the statespace guard given an output guard
     AbstractPolyhedra<scalar>& calculateGuardFromOutput();
 
@@ -342,24 +244,10 @@ protected:
 
 public:
     AbstractPolyhedra<scalar>   m_initialOutputs;
-    MatrixS                     m_T;
-    MatrixS                     m_W;
-    MatrixS                     m_invT;
-    MatrixS                     m_invW;
-    MatrixS                     m_TinvW;
-    MatrixS                     m_observer;
-    MatrixS                     m_observerDynamics;
-    MatrixS                     m_observerSensitivity;
-    MatrixS                     m_observerOutputSensitivity;
-    scalar                      m_eigenValueCap;
-    scalar                      m_observerDynamicsError;
-    scalar                      m_observerSensitivityError;
-    scalar                      m_observerOutputSensitivityError;
     OrderType                   m_incOrderType;
-
 public:
-    static bool ms_fixedBVs;
-    static bool ms_canonical;
+    static bool                 ms_aggressive;
+
 };
 
 }

@@ -10,7 +10,7 @@ template <class scalar>
 bool  VertexEnumerator<scalar>::ms_normalised_rays=false;
 
 template <class scalar>
-traceVertices_t VertexEnumerator<scalar>::ms_trace_vertices=eTraceNoVertex;
+bool VertexEnumerator<scalar>::ms_trace_vertices[eMaxTraceVertices]={0};
 
 template <class scalar>
 VertexEnumerator<scalar>::VertexEnumerator(int size,int dimension) :
@@ -89,7 +89,7 @@ bool VertexEnumerator<scalar>::StoreRay(const MatrixS &vector, Ray<scalar> &ray)
       ray.FirstInfeasIndex=i;  // the first violating inequality index
     }
   }
-  if (ms_trace_vertices>=eTraceRays) {
+  if (ms_trace_vertices[eTraceRays]) {
     if (Set::ms_trace_set) {
       ray.ZeroSet.logSet("SRay ",false);
       ms_logger.logData(": ",false);
@@ -123,7 +123,7 @@ bool VertexEnumerator<scalar>::FindInitialRays(Set &initHyperplanes, MatrixS& In
   long rank=this->FindEnumerationBasis(initHyperplanes, pivotRows);
   if (Set::ms_trace_set) initHyperplanes.logSet("Enumeration Basis");
   if ((rank < this->getDimension()) && (Conversion != ExtToIne)) {
-    if (this->ms_trace_vertices>=eTraceVertices) ms_logger.logData(rank,"Low Column Rank",true);
+    if (ms_trace_vertices[eTraceVertices]) ms_logger.logData(rank,"Low Column Rank",true);
     return false;
   }
   InitRays=this->m_basisInverse;
@@ -157,9 +157,7 @@ bool VertexEnumerator<scalar>::EvaluateRay(const long row)
   m_negRays.clear();
 
   for (typename RayList::iterator it=m_rayList.begin();it!=m_rayList.end();) {
-    if (this->ms_trace_vertices>=eTraceRays) {
-      ms_logger.logData(it->data,"Evaluate ray");
-    }
+    if (ms_trace_vertices[eTraceRays]) ms_logger.logData(it->data,"Evaluate ray");
     it->ARay = m_pSortedTableau->entry(it->data,row);
     char sign=func::hardSign(it->ARay);//Zero is ensured by check in AValue
     typename RayList::iterator it2=it;
@@ -225,7 +223,7 @@ void VertexEnumerator<scalar>::validateRays(const bool over)
 template <class scalar>
 void VertexEnumerator<scalar>::logRays()
 {
-  if (ms_trace_vertices>=eTraceRays) {
+  if (ms_trace_vertices[eTraceRays]) {
     ms_logger.logData("Rays");
     for (typename RayList::iterator it=m_rayList.begin();it!=m_rayList.end();it++) {
       if (Set::ms_trace_set) {
@@ -254,7 +252,7 @@ void VertexEnumerator<scalar>::ConditionalAddEdge(const Ray<scalar> &Ray1, const
   const Set &Zmax = Rmax.ZeroSet;
 
   if ((fmin==fmax) || (Zmax.member(m_pSortedTableau->zeroOrder(fmin)))) {//TODO: zero index
-    if (ms_trace_vertices>=eTraceEdges) {
+    if (ms_trace_vertices[eTraceEdges]) {
       ms_logger.logData("Unfeasible Edge ");
       Zmin.logSet("Min ",false);
       ms_logger.logData(m_pSortedTableau->zeroOrder(fmin),"[");
@@ -275,9 +273,9 @@ void VertexEnumerator<scalar>::ConditionalAddEdge(const Ray<scalar> &Ray1, const
     TotalEdgeCount++;
     if (Edges[fmin]!=NULL) NewEdge->Next=Edges[fmin];
     Edges[fmin]=NewEdge;
-    if (ms_trace_vertices>=eTraceEdges) ms_logger.logData("Adjacent ",false);
+    if (ms_trace_vertices[eTraceEdges]) ms_logger.logData("Adjacent ",false);
   }
-  if (ms_trace_vertices>=eTraceEdges) {
+  if (ms_trace_vertices[eTraceEdges]) {
     ms_logger.logData("Edge:");
     ms_logger.logData(Rmax.data);
     ms_logger.logData(Rmin.data);
@@ -417,13 +415,13 @@ void VertexEnumerator<scalar>::enumerate()
   TotalEdgeCount=0; // active edge count
   Edges.assign(m_size+1,(AdjacentRays<scalar>*)NULL);
 
-  if (ms_trace_vertices>=eTraceRays) logTableau("Enumerate",true);
+  if (ms_trace_vertices[eTraceRays]) logTableau("Enumerate",true);
   if (this->FindInitialRays(InitialHyperplanes, InitRays, InitRayIndex)) {
     initialize(InitRays, InitRayIndex);
     createHyperplaneList();
   }
-  else if (ms_trace_vertices>=eTraceRays) ms_logger.logData("Initial rays not found");
-  if (ms_trace_vertices>=eTraceRays) this->logRays();
+  else if (ms_trace_vertices[eTraceRays]) ms_logger.logData("Initial rays not found");
+  if (ms_trace_vertices[eTraceRays]) this->logRays();
 }
 
 template <class scalar>

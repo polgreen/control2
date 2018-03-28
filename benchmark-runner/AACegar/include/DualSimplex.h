@@ -44,18 +44,17 @@ public:
 
     using Tableau<scalar>::ms_useBasis;
     using Tableau<scalar>::ms_logger;
-    using Tableau<scalar>::ms_trace_tableau;
     using Tableau<scalar>::ms_trace_pivots;
-    using Tableau<scalar>::ms_trace_time;
-    using Tableau<scalar>::ms_trace_errors;
 
     using Tableau<scalar>::getDimension;
+    using Tableau<scalar>::getName;
     using Tableau<scalar>::Rebase;
     using Tableau<scalar>::ResetTableau;
     using Tableau<scalar>::logTableau;
     using Tableau<scalar>::logBasis;
     using Tableau<scalar>::FindFeasBasis;
     using Tableau<scalar>::ColumnPivotAndUpdate;
+
 
     typedef enum { eUnderAprox, eNoAprox, eOverAprox } AproxType_t;
     typedef enum { eUndecided, eOptimal, eInconsistent, eDualInconsistent, eStrucInconsistent, eStrucDualInconsistent, eUnbounded, eDualUnbounded } LPStatusType_t;
@@ -111,14 +110,35 @@ public:
     /// @return number of iterations used to find the basis
     int FindDualFeasibleBasis();
 
+    /// Creates a list of 0/non-0 rows of the tableau
+    int findNullRedundancies(std::vector<bool> &isRedundant);
+
     /// Creates a list of redundant/non-redundant rows of the tableau
     /// @param isRedundant vector to fill with redundant flag for each row
+    /// @param tolerance how close to zero the redundancy must be
+    /// @param scale largest possible value of any variable
     /// @return number of found redundancies
-    int findRedundancies(std::vector<bool> &isRedundant, refScalar tolerance);
+    int findRedundancies(std::vector<bool> &isRedundant, refScalar tolerance, MatrixS &ranges);
+
+    /// Creates a list of redundant/non-redundant rows of the tableau
+    /// @param isRedundant vector to fill with redundant flag for each row
+    /// @param tolerance how close to zero the redundancy must be
+    /// @param scale largest possible value of any variable
+    /// @return number of found redundancies
+    int findRedundancies(std::vector<bool> &isRedundant, refScalar tolerance, refScalar scale);
+
+    /// Clears redundant faces in the polyhedra as listed in isRedundant
+    /// @param redundancies number of redundancies found
+    /// @param for each row of the tableau, indicates if it is redundant or not
+    virtual bool removeRedundancies(int redundancies,std::vector<bool> &isRedundant);
 
     /// Clears redundant faces in the polyhedra (caused by intersections and reductions)
     /// @return true if successful
-    virtual bool removeRedundancies(refScalar tolerance=0,bool recompute=false);
+    virtual bool removeRedundancies(refScalar tolerance=0,refScalar scale=0);
+
+    /// Clears redundant faces in the polyhedra (caused by intersections and reductions)
+    /// @return true if successful
+    virtual bool removeRedundancies(refScalar tolerance,MatrixS &ranges);
 
     /// Maximises a vector direction.
     /// @param vector vector data to be maximised

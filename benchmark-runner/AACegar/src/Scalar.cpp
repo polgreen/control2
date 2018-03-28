@@ -118,7 +118,7 @@ template <> void functions<mpfr::mpreal>::setDefaultPrec(int prec)
     else {
       int sqrt_prec=sqrt(prec);
 //      ms_weakEpsilon =pow(2*ms_1,-(prec>>4)-36);//128=44(13),256=52(15),512=68(20),1024=100(30),2048=164(49)
-      ms_weakEpsilon =pow(2*ms_1,-sqrt_prec-32);//128=43(13),256=48(14),512=54(16),1024=64(19),2048=77(23),4096=96(29)
+      ms_weakEpsilon =pow(2*ms_1,-sqrt_prec-24);//128=35(11),256=40(12),512=46(13),1024=56(17),2048=69(21),4096=88(27)
     }
     ms_highPi=mpfr::const_pi(prec, MPFR_RNDU);
     ms_lowPi=mpfr::const_pi(prec, MPFR_RNDN);
@@ -438,6 +438,18 @@ bool functions<mpfr::mpreal>::isNan(const mpfr::mpreal &value)           { retur
 
 template <>
 bool functions<mpfr::mpreal>::isNan(const mpinterval &value)             { return isnan(value.upper()) || isnan(value.lower()); }
+
+template <>
+bool functions<long double>::isInf(const long double &value)             { return std::isinf(value); }
+
+template <>
+bool functions<long double>::isInf(const ldinterval &value)              { return std::isinf(value.upper()) || std::isnan(value.lower()); }
+
+template <>
+bool functions<mpfr::mpreal>::isInf(const mpfr::mpreal &value)           { return isinf(value); }
+
+template <>
+bool functions<mpfr::mpreal>::isInf(const mpinterval &value)             { return isinf(value.upper()) || isnan(value.lower()); }
 
 template <>
 long double functions<long double>::madd(ldinterval &z,const ldinterval &x,const ldinterval &y)

@@ -137,8 +137,15 @@ cd ${working_directory}
 max_length=64
 #integer_width=8
 precision=0
+mode="-D __CPROVER"
 if [ -n "$3" ]; then
-  if [ "$3" == "16" ];then
+  if [ "$3" == "FX" ];then
+    precision=1
+    mode="${mode} -D _FIXEDBV"
+    options="${options} -mixedbv"
+    integer_width=6
+    radix_width=10
+  elif [ "$3" == "16" ];then
     precision=16
     integer_width=5
     radix_width=10
@@ -171,7 +178,7 @@ fi
 echo_log "./axelerator $options $sampling -control \"[0]\" $nudge"
 eval "./axelerator $options $sampling -control \"[0]\" $nudge"
 out_content=`cat "output.txt"`
-if [ ${sampling} ]; then
+if [ "${sampling}" ]; then
   sampling="$(extract_spec_interval "${out_content}" 'sampling')"
   if [ ${sampling} ]; then
     sampling="-sample \"${sampling}\""
@@ -189,23 +196,23 @@ while [ $((integer_width+radix_width)) -le ${max_length} ]; do
    echo_log "int: ${integer_width}, radix: ${radix_width}"
    solution_found=false
    nudge="-CNFM"
-   if [ -n "$4" ]; then
-     nudge="$4"
+   if [ -n "$5" ]; then
+     nudge="$5"
    fi
    synthesis_in_progress=true
    while [ "${synthesis_in_progress}" = true ]; do
     if [ "${nudge}" = "-CNFM" ]; then
-      echo_log "cbmc -D __CPROVER -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTROL_RADIX_WIDTH=${radix_width} \"${working_directory}/${nudge_file}\" --stop-on-fail >${working_directory}/${cbmc_log_file}"
-      timeout --preserve-status --kill-after=${kill_time} ${timeout_time} /media/sf_Documents/cbmc5.7/src/cbmc/cbmc -D __CPROVER -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTORL_RADIX_WIDTH=${radix_width} "${working_directory}/${nudge_file}" --stop-on-fail >${working_directory}/${cbmc_log_file} 2>&1
+      echo_log "cbmc ${mode} -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTROL_RADIX_WIDTH=${radix_width} \"${working_directory}/${nudge_file}\" --stop-on-fail >${working_directory}/${cbmc_log_file}"
+      timeout --preserve-status --kill-after=${kill_time} ${timeout_time} /media/sf_Documents/cbmc5.7/src/cbmc/cbmc ${mode} -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTORL_RADIX_WIDTH=${radix_width} "${working_directory}/${nudge_file}" --stop-on-fail >${working_directory}/${cbmc_log_file} 2>&1
     elif [ "${nudge}" = "-CNFP" ]; then
-      echo_log "cbmc -D __CPROVER -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTROL_RADIX_WIDTH=${radix_width} \"${working_directory}/${nudge_file}\" --stop-on-fail >${working_directory}/${cbmc_log_file}"
-      timeout --preserve-status --kill-after=${kill_time} ${timeout_time} /media/sf_Documents/cbmc5.7/src/cbmc/cbmc -D __CPROVER -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTORL_RADIX_WIDTH=${radix_width} "${working_directory}/${nudge_file}" --stop-on-fail >${working_directory}/${cbmc_log_file} 2>&1
+      echo_log "cbmc ${mode} -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTROL_RADIX_WIDTH=${radix_width} \"${working_directory}/${nudge_file}\" --stop-on-fail >${working_directory}/${cbmc_log_file}"
+      timeout --preserve-status --kill-after=${kill_time} ${timeout_time} /media/sf_Documents/cbmc5.7/src/cbmc/cbmc ${mode} -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTORL_RADIX_WIDTH=${radix_width} "${working_directory}/${nudge_file}" --stop-on-fail >${working_directory}/${cbmc_log_file} 2>&1
     elif [ "${nudge}" = "-CNF" ]; then
-      echo_log "cbmc -D __CPROVER -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTROL_RADIX_WIDTH=${radix_width} \"${working_directory}/${nudge_file}\" --stop-on-fail >${working_directory}/${cbmc_log_file}"
-      timeout --preserve-status --kill-after=${kill_time} ${timeout_time} /media/sf_Documents/cbmc5.7/src/cbmc/cbmc -D __CPROVER -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTORL_RADIX_WIDTH=${radix_width} "${working_directory}/${nudge_file}" --stop-on-fail >${working_directory}/${cbmc_log_file} 2>&1
+      echo_log "cbmc ${mode} -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTROL_RADIX_WIDTH=${radix_width} \"${working_directory}/${nudge_file}\" --stop-on-fail >${working_directory}/${cbmc_log_file}"
+      timeout --preserve-status --kill-after=${kill_time} ${timeout_time} /media/sf_Documents/cbmc5.7/src/cbmc/cbmc ${mode} -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTORL_RADIX_WIDTH=${radix_width} "${working_directory}/${nudge_file}" --stop-on-fail >${working_directory}/${cbmc_log_file} 2>&1
     else
-      echo_log "cbmc -D __CPROVER -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTROL_RADIX_WIDTH=${radix_width} \"${working_directory}/${synthesis_file}\" --stop-on-fail >${working_directory}/${cbmc_log_file}"
-      timeout --preserve-status --kill-after=${kill_time} ${timeout_time} /media/sf_Documents/cbmc5.7/src/cbmc/cbmc -D __CPROVER -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTORL_RADIX_WIDTH=${radix_width} "${working_directory}/${synthesis_file}" --stop-on-fail >${working_directory}/${cbmc_log_file} 2>&1
+      echo_log "cbmc ${mode} -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTROL_RADIX_WIDTH=${radix_width} \"${working_directory}/${synthesis_file}\" --stop-on-fail >${working_directory}/${cbmc_log_file}"
+      timeout --preserve-status --kill-after=${kill_time} ${timeout_time} /media/sf_Documents/cbmc5.7/src/cbmc/cbmc ${mode} -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTORL_RADIX_WIDTH=${radix_width} "${working_directory}/${synthesis_file}" --stop-on-fail >${working_directory}/${cbmc_log_file} 2>&1
     fi
     if [ $? -eq 10 ]; then
      controller=$(grep 'controller_cbmc=' ${working_directory}/${cbmc_log_file} | sed 's/.*controller_cbmc={ *\([^}]*\) *}.*/\1/')
@@ -267,14 +274,16 @@ while [ $((integer_width+radix_width)) -le ${max_length} ]; do
         solution_found=false
         synthesis_in_progress=false
        else
-        out_content=`cat "output.txt"`
-        new_integer_width=$(extract_int_bits "${out_content}")
-        new_radix_width=$(extract_frac_bits "${out_content}")
-        echo_log "int: ${integer_width}, radix: ${radix_width}"
-        echo_log "new_int: ${new_integer_width}, new_radix: ${new_radix_width}"
-        if [ {${new_integer_width}+${new_radix_width}} > {${integer_width}+${radix_width}} ]; then
-         integer_width=${new_integer_width}
-         radix_width=${new_radix_width}
+        if [ ${precision} -ne 1 ]; then
+         out_content=`cat "output.txt"`
+         new_integer_width=$(extract_int_bits "${out_content}")
+         new_radix_width=$(extract_frac_bits "${out_content}")
+         echo_log "int: ${integer_width}, radix: ${radix_width}"
+         echo_log "new_int: ${new_integer_width}, new_radix: ${new_radix_width}"
+         if [ {${new_integer_width}+${new_radix_width}} > {${integer_width}+${radix_width}} ]; then
+          integer_width=${new_integer_width}
+          radix_width=${new_radix_width}
+         fi
         fi
         echo_log "<controller>${controller}</controller>"
         if [ "${synth_type}" = "observer" ]; then
@@ -291,7 +300,8 @@ while [ $((integer_width+radix_width)) -le ${max_length} ]; do
    if [ "${solution_found}" = true ]; then
     break
    fi
-   if [ -n "$5" ]; then
+   if [ ${precision} -ge 2 ]; then
+    echo_log "precision is fixed to ${precision}."
     break
    fi
    radix_width=$((radix_width+8))

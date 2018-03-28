@@ -49,7 +49,7 @@ template <class scalar>
 bool MatToStr<scalar>::ms_zeroBased=false;
 
 template <class scalar>
-const char MatToStr<scalar>::ms_codes[eNumParameters]={'p','q','v','f','o','s','t','l','m','g','e'};
+const char MatToStr<scalar>::ms_codes[eNumParameters]={'p','q','v','f','o','s','t','l','m','k','g','e'};
 
 template <class scalar>
 MatToStr<scalar>::MatToStr(int precision,std::string leftBracket,std::string rightBracket,std::string separator,std::string rowSeparator) :
