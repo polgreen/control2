@@ -554,14 +554,15 @@ the digital signal $x_k$ which is fed into the controller. We account for this e
 the acceleration based back-end by introducing a noise signal $\nu_1$ that over-approximates this error, 
 shown in the figure. Further details are found in section~\ref{}. 
 In the naive back end we use bit-precise modelling in CBMC~\cite{} to accurately model this deterministic
-conversion. 
+conversion. In other words, CBMC constructs a boolean formula which explicitly unwinds the transition system for any symbolically represented input state, bounded by the initial conditions, and performs the ADC conversion precisely on that symbolically represented input state. When we verify safety, the boolean formula is satisfied only if there is an input state value for which the subsequent trace through the transition system eventually violates the safety property. 
 \item The representation errors due to performing finite-precision arithmetic in the controller. 
 In the acceleration based back-end, this is again treated by the introduction of noise that bounds the error.
-The naive back end uses the bit-precise modelling of finite-precision arithmetic in CBMC. We assume that the controller
+The naive back end uses the bit-precise modelling of finite-precision arithmetic in CBMC, in the same way as we handled the ADC conversion. We assume that the controller
 represents numbers to the same precision as the ADC.
 \item We assume that the DAC converts numbers from the same precision as the controller to an analogue signal. 
 As a result we can ignore any errors introduced by the DAC
 \end{itemize}
+
 
 
 
