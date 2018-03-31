@@ -1,48 +1,17 @@
 
 
-Dear Daniel,
+Dear  Daniel Kroening,
 
-Thank you for your submission to CAV2018. The CAV2018 review
-response period starts now and will end on Sunday, 18th of March 23:59 AOE.
+We regret to let you know that your submission 200 to CAV 2018 has been rejected.
 
-During this time, you will have access to the current state of
-your reviews and have the opportunity to submit a response of
-up to 800 words. Please keep in mind the following during this
-process:
+This year, CAV 2018 received a very high number of submissions - 215, and the competition has been very high. We accepted 13 tool papers and 52 regular papers, which amounts to an acceptance rate of roughly 30%.
 
-* The response must focus on any factual errors in the reviews
-and any questions posed by the reviewers. It must not provide
-new research results or reformulate the presentation. Try to be
-as concise and to the point as possible.
+The reviews of your paper are attached to this email. We hope that you find them helpful.
 
-* The review response period is an opportunity to react to the
-reviews, but not a requirement to do so. Thus, if you feel the
-reviews are accurate and the reviewers have not asked any
-questions, then you do not have to respond.
+We hope that you will consider attending FLoC 2018.
 
-* The reviews are as submitted by the PC members, without any
-coordination between them. Thus, there may be inconsistencies.
-Furthermore, these are not the final versions of the reviews.
-The reviews can later be updated to take into account the
-discussions at the program committee meeting, and we may find
-it necessary to solicit other outside reviews after the review
-response period.
+Hana and Georg
 
-* The program committee will read your responses carefully and
-take this information into account during the discussions. On
-the other hand, the program committee will not directly respond
-to your responses, either before the program committee meeting
-or in the final versions of the reviews.
-
-* Your response will be seen by all PC members who have access
-to the discussion of your paper, so please try to be polite and
-constructive.
-
-* Papers are expected to have four reviews each plus two artifact evaluation reviews for tool papers. For some papers, not all reviews are in yet. We apologise for that. For these papers, we will give the authors an opportunity to respond to reviews coming in late, but this response will have to be brief and submitted on a short notice. We will contact the authors of these papers individually.
-
-The reviews on your paper are attached to this letter. To
-submit your response you should log on the EasyChair Web page
-for CAV2018 and select your submission on the menu.
 
 ----------------------- REVIEW 1 ---------------------
 PAPER: 200
@@ -81,6 +50,7 @@ Please formulate the statement more carefully.
 - [Theorem 3]: The result is doubious because it does not seem to account for overshoots in the dynamics.
 For example, a stable system of the form $x_{t+1} = A x_t$ satisfies $|x_t| <= K \rho^t |x_0|$, where $\rho$ is the spectral radius of $A$. The overshoot $K$ can be made arbitrarilly large, e.g., for the family A = [0.1, K'; 0, 0.1] (because K >= K'). 
 Hence, for $|x_t|/|x_0| <= P$, we need $\rho^t \leq P/K$. Please carefully check the proof of the result (in particular the last paragraph starting with "Hence...", and formally define all relevant notions (e.g. what is a "desired portion of the target"?, what is the "remaining percentage of decay" in the proof?)
+
 
 ----------------------- REVIEW 2 ---------------------
 PAPER: 200
@@ -174,6 +144,7 @@ technique was introduced in the ASPLOS 2006 paper by Solar-Lezama
 et al., not in the PLDI 2005 paper (which used a different approach 
 for synthesis).
 
+
 ----------------------- REVIEW 3 ---------------------
 PAPER: 200
 TITLE: Formal Synthesis of Digital Controllers for Observable Continuous Plants with Transient Performance Specifications
@@ -188,9 +159,17 @@ The paper does a good job of explaining the high-level ideas behind the algorith
 
 The results seem promising, and I like the core ideas in the paper, but I would really like to understand more about the details of the algorithm before giving it a higher score.
 
-------------------------------------------------------
 
-Best wishes,
+----------------------- REVIEW 4 ---------------------
+PAPER: 200
+TITLE: Formal Synthesis of Digital Controllers for Observable Continuous Plants with Transient Performance Specifications
+AUTHORS: Dario Cattaruzza, Cristina David, Alessandro Abate and Daniel Kroening
 
-Hana and Georg
+Overall evaluation: -1 (weak reject)
+
+----------- Overall evaluation -----------
+The paper discusses  a CEGIS methodology to compute controllers for LTI dynamical systems in the presence of (a) partial observability, (b) finite word length effects, and (c) time delay errors.
+While this seems to be an interesting direction, I found the overall novelty of the paper to be quite low. Sections 3-6 is what I would call "standard" control theory for LTI systems. I think that instead of giving theorems and proofs, you should mention that these results are already known. Section 7 is a simple reworking of a recent paper by Abate et al. that constructs controllers using CEGIS. 
+
+While there is merit in introducing further constraints into the CEGIS-based methodology of Abate et al. the contribution is too small for CAV in my opinion.
 
