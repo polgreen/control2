@@ -105,6 +105,8 @@
 \newtheorem{corollary}{Corollary}
 \newtheorem{proof}{Proof}
 
+\newcommand{\xmark}{\ding{55}}
+
 \renewcommand{\note}[1]{\textcolor{red}{[#1]}}
 
 \begin{document}
@@ -2641,6 +2643,39 @@ stability and safety of the synthesized controllers outside of our model.
 %-------------------------------
 
 \textcolor{red}{Lucas describe here the experimental results}
+
+We provide the results in Table~\ref{tab:results}.  Here \textit{Benchmark} is
+the name of the respective benchmark, \textit{Order} is the number of
+continuous variables, $\mathcal{F}_{\langle I_p,F_p \rangle}$ is the
+fixed-point precision used to model the plant, while \textit{Time} is the
+total time required to synthesize a controller for the given
+plant with one of the two methods.  Timeouts are indicated by~\xmark.  The
+precision for the controller, $\mathcal{F}_{\langle I_c,F_c \rangle}$, is
+chosen to be $I_c = 8$, $F_c = 8$.
+
+\begin{table*}
+\centering
+\begin{tabular}{| r | l | c | c | r | c | r |}
+%
+\hline
+\# & \multicolumn{1}{|c|}{Benchmark} & \multicolumn{1}{|c|}{Order} & \multicolumn{2}{|c|}{Multi-staged}                 & \multicolumn{2}{|c|}{Abstraction} \\
+   &                                  & & \multicolumn{1}{|c|}{$\mathcal{F}_{\langle I_p,F_p \rangle}$} & \multicolumn{1}{|c|}{Time} & \multicolumn{1}{|c|}{$\mathcal{F}_{\langle I_p,F_p \rangle}$} & \multicolumn{1}{|c|}{Time} \\\hline
+1  & Cruise Control  & 1 &   &  &  &   \\
+2  & DC Motor          & 2 &   &  &  &  \\
+3  & Helicopter        & 3 &  &   &  &   \\
+4  & Inverted Pendulum & 4 &   &  &  &  \\
+5  & Magnetic Pointer  & 2 & &  &  &   \\
+6  & Magnetic Suspension & 2 &  & & &  \\
+7  & Pendulum          & 2 &   & & &    \\
+8  & Suspension        & 2 &  & & &   \\
+9  & Tape Driver       & 3 &   & & &  \\
+10 & Satellite          & 2 &   &  & &   \\\hline
+%
+\end{tabular}
+\vspace{0.05in}
+\caption{Experimental results\label{tab:results}}
+\end{table*}
+
 
 %-------------------------------
 \subsection{Threats to validity}
