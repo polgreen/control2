@@ -1,7 +1,7 @@
 function INPUT = get_inputs(Name)
 
-INPUT_10 = {'ballmaglev','pendulum','satellite', 'usgtampa', 'invpendulum_pendang'};
-INPUT_100 = {'magneticpointer', 'invpendulum_cartpos'};    
+INPUT_10 = {'ballmaglev','pendulum','satellite', 'usgtampa', 'invpendulum_pendang','bioreact'};
+INPUT_100 = {'magneticpointer', 'invpendulum_cartpos','steamdrum','cstrtemp'};    
 INPUT_1000 = {'magsuspension'};
 INPUT_1000000 = {'suspension'};
 
