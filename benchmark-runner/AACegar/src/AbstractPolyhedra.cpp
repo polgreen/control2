@@ -401,31 +401,40 @@ bool AbstractPolyhedra<scalar>::getPlane(AbstractPolyhedra<scalar>&target,int co
   return target.removeRedundancies();
 }
 
-/// Clears redundant faces in the polyhedra (caused by intersections and reductions)
+/// Clears redundant faces in the polyhedra as listed in isRedundant
 template <class scalar>
-bool AbstractPolyhedra<scalar>::removeRedundancies(refScalar tolerance,bool recompute)
+bool AbstractPolyhedra<scalar>::removeRedundancies(int redundancies,std::vector<bool> &isRedundant)
 {
-  if (m_faces.rows()<=0) return false;
-  std::vector<bool> isRedundant;
-  isRedundant.resize(m_faces.rows());
-  int redundant=findRedundancies(isRedundant,tolerance);
-  if (redundant>0) {
-    int pos=0;
-    for (int i=0;i<m_faces.rows();i++) {
+  int pos=0;
+  if ((redundancies>0) && (m_iterations.size()==isRedundant.size())) {
+    for (int i=0;i<m_iterations.size();i++) {
       if (isRedundant[i]) continue;
-      m_faces.row(pos)=m_faces.row(i);
-      m_supports.coeffRef(pos,0)=m_supports.coeff(i,0);
-      if (m_iterations.size()>0) m_iterations[pos]=m_iterations[i];
+      m_iterations[pos]=m_iterations[i];
       pos++;
     }
-    m_faces.conservativeResize(pos,m_faces.cols());
-    m_supports.conservativeResize(pos,1);
-    if (m_iterations.size()>0) m_iterations.resize(pos);
-    Tableau<scalar>::load(m_faces,m_supports);
-    return true;
+    m_iterations.resize(pos);
   }
-  Tableau<scalar>::load(m_faces,m_supports);
-  return false;
+  return DualSimplex<scalar>::removeRedundancies(redundancies,isRedundant);
+}
+
+/// Clears redundant faces in the polyhedra (caused by intersections and reductions)
+template <class scalar>
+bool AbstractPolyhedra<scalar>::removeRedundancies(refScalar tolerance,refScalar scale)
+{
+  if (m_faces.rows()<=0) return false;
+  std::vector<bool> isRedundant(m_faces.rows());
+  if (m_spaceSize.rows()*m_spaceSize.cols()>0)
+    return removeRedundancies(findRedundancies(isRedundant,tolerance,m_spaceSize),isRedundant);
+  return removeRedundancies(findRedundancies(isRedundant,tolerance,scale),isRedundant);
+}
+
+/// Clears redundant faces in the polyhedra (caused by intersections and reductions)
+template <class scalar>
+bool AbstractPolyhedra<scalar>::removeRedundancies(refScalar tolerance,MatrixS &ranges)
+{
+  if (m_faces.rows()<=0) return false;
+  std::vector<bool> isRedundant(m_faces.rows());
+  return removeRedundancies(findRedundancies(isRedundant,tolerance,ranges),isRedundant);
 }
 
 /// Loads a description into the tableau (Ax<b)
@@ -458,6 +467,16 @@ template <class scalar>
 bool AbstractPolyhedra<scalar>::addTaggedDirection(const MatrixS &directions,MatrixS &supports,std::vector<iteration_pair> &iterations,bool keepBasis)
 {
   m_iterations.insert(m_iterations.end(),iterations.begin(),iterations.end());
+  return addDirection(directions,supports,keepBasis);
+}
+
+/// Adds a hyperplane to the template of the polhedra
+template <class scalar>
+bool AbstractPolyhedra<scalar>::addTaggedDirection(const MatrixS &directions,scalar &support,iteration_pair iteration,bool keepBasis)
+{
+  m_iterations.insert(m_iterations.end(),iteration);
+  MatrixS supports(1,1);
+  supports.coeffRef(0,0)=support;
   return addDirection(directions,supports,keepBasis);
 }
 
@@ -510,7 +529,7 @@ void AbstractPolyhedra<scalar>::maxConstrain(refScalar max)
   m_faces.block(rows+dimension,0,dimension,dimension)=-MatrixS::Identity(dimension,dimension);
   m_supports.conservativeResize(m_faces.rows(),1);
   for (int row=rows;row<m_supports.rows();row++) m_supports.coeffRef(row,0)=max;
-  load(m_faces,m_supports);
+  removeRedundancies();
 }
 
 /// mirrors around the origin

@@ -1,0 +1,175 @@
+
+
+Dear  Daniel Kroening,
+
+We regret to let you know that your submission 200 to CAV 2018 has been rejected.
+
+This year, CAV 2018 received a very high number of submissions - 215, and the competition has been very high. We accepted 13 tool papers and 52 regular papers, which amounts to an acceptance rate of roughly 30%.
+
+The reviews of your paper are attached to this email. We hope that you find them helpful.
+
+We hope that you will consider attending FLoC 2018.
+
+Hana and Georg
+
+
+----------------------- REVIEW 1 ---------------------
+PAPER: 200
+TITLE: Formal Synthesis of Digital Controllers for Observable Continuous Plants with Transient Performance Specifications
+AUTHORS: Dario Cattaruzza, Cristina David, Alessandro Abate and Daniel Kroening
+
+Overall evaluation: -2 (reject)
+
+----------- Overall evaluation -----------
+Overall, the paper is well written and enjoyable. The authors address the problem of synthesizing an observer and a controller to stabilize a linear plant. While constructing observers and controllers for linear plants is well understood in control theory, the authors emphasize correctness of the controller implementation taking into account: delays, A/D quantization errors, and the effect of representing (and computing with) real numbers using finitely many bits. The proposed approach is CEGIS loop which is well described. In reading the paper, the reviewers found several control-theoretical aspects that need to be improved as described below. Moreover, it was not clear to the reviewer if the problem could not be solved using existing control techniques. For example, as described in [3], the effects of using finitely many bits to describe real numbers can be described via the L_2 gain (or any other relevant gain) from errors to the state and this gain can be minimized using!
+  optimization techniques. Similarly, safety constraints can be written as a cost to be optimized and then checked. Elaborating why such techniques are not applicable would greatly strengthen the paper.
+
+- [p2, end of paragraph 1]: This is not a valid definition for an observer. An (full state) observer is a dynamical system whose state converges to the state of the plant.
+
+- [Eq. 4]: Should use A_d and B_d
+
+- [Footnote 1]: “state-space” should be “state”. Moreover, it would be preferable not to use the expression “fully observable” since it is not compatible with the control-theoreticmeaning of observability.
+
+- [Lemma 1]: Amongst the many ways one can compute a matrix exponential, why would you use this one? Moreover, the proof of this result can be found in any book on linear control systems and can thus be omitted. 
+
+- [Lemma 1]: Also, it would be cleaner to use $x_T = e^{AT} x_0$ in the ending sentences of the Lemma.
+
+- [Lemma 2]: Should read $B_T = A^{-1}(A_T - I) B$ according to the proof in Appendix C.
+
+- [footnote 2]: Missing time in the exponential.
+
+- [Theorem 1]: Sign mismatch: (10) uses u = - Kx, while the thm talks of u = Kx. Please check consistency in all statements throughout the paper.
+
+- [Theorem 1]: The proof of this “theorem” consists of a few matrix multiplications. It is not clear why it is a theorem at all.
+
+- [Theorem 2]: Unclear whether "control output $u_k$" was supposed to be read as "control input u_k" or "control output y_k".
+Please formulate the statement more carefully.
+
+- [Section 6.1] I was not clear to the reviewers why normal forms are being used since the coefficients of the characteristic polynomial are invariant under similarity transformations. Moreover, computing such normal forms in practice is a numerically ill-conditioned problem and should be avoided.
+
+- [Theorem 3]: The result is doubious because it does not seem to account for overshoots in the dynamics.
+For example, a stable system of the form $x_{t+1} = A x_t$ satisfies $|x_t| <= K \rho^t |x_0|$, where $\rho$ is the spectral radius of $A$. The overshoot $K$ can be made arbitrarilly large, e.g., for the family A = [0.1, K'; 0, 0.1] (because K >= K'). 
+Hence, for $|x_t|/|x_0| <= P$, we need $\rho^t \leq P/K$. Please carefully check the proof of the result (in particular the last paragraph starting with "Hence...", and formally define all relevant notions (e.g. what is a "desired portion of the target"?, what is the "remaining percentage of decay" in the proof?)
+
+
+----------------------- REVIEW 2 ---------------------
+PAPER: 200
+TITLE: Formal Synthesis of Digital Controllers for Observable Continuous Plants with Transient Performance Specifications
+AUTHORS: Dario Cattaruzza, Cristina David, Alessandro Abate and Daniel Kroening
+
+Overall evaluation: -1 (weak reject)
+
+----------- Overall evaluation -----------
+This paper explores the problem of synthesizing gain matrices for a feedback 
+discrete time/value controller and discrete time/value observer such that a 
+Linear Time Invariant system satisfies a safety property. Previous work 
+(Abate, et al CAV2017) solved the same problem under full observability. The
+authors claim the following original contributions:
+
+1. A variant of CEGIS using abstraction refinement and optimization.
+2. Generation of correct-by-construction digital state-feedback
+   observer controllers for a given safety property and
+   stability/response time specs.
+3. Handling of quantization errors introduced by digital controller.
+4. Model for soundly evaluating reachability in a continuous-discrete
+time/space.
+
+* On Contribution 1
+
+Having read Abate's work which this builds on, the first contribution
+seems to be confined to the optimization step. This optimization
+happens as a post processing step after the counterexample has been
+found. The cost function (although not stated as such) is the minimum
+distance in the sup norm of the counterexample to the boundary of
+satisfaction, and is thus related to quantitative semantics used in
+Metric and Signal Temporal Logics. This leads to a natural question not
+addressed in the paper:
+
+How does this post processing step compare to works such as 
+Raman et al. "Reactive synthesis from signal temporal logic specifications",
+HSCC 2015. The optimization procedures are different, but both involve an 
+optimizing counterexample oracle.
+
+* On Contributions 2, 3, 4
+
+The majority of the paper focuses on LTI reachability and the details
+required to over-approximate the affect of quantization via bounded
+disturbances (introduced in Abate's previous work) and how introducing
+an observer affects the quantization. The introduction (and synthesis)
+of the observer, another dynamical system which takes in the LTI
+systems output and yields the state estimation, appears to be the
+primary contribution of the paper. The authors state that synthesizing
+the observer (parameterized by its gain matrix) makes the problem
+significantly harder, which I am inclined to believe, but as far as I
+could tell, no intuition is given about how much worse this is.
+
+* Synthesis Procedure
+
+The synthesis procedure is similar to the abstraction based procedure
+introduced in Abate, et al CAV2017, but as previously discussed
+includes an optimization phase and additional care is taken to
+incorporate the effects of the observer. First candidate gain
+matrices are conjectured, then a cascading series of verification
+oracles are queried to check if the specification and all learned
+conflict lemmas are satisfied (given the bounded quantization error).
+If a counterexample is found, it is optimized and then the model is
+given more time/space fidelity.
+
+* Experiments
+The experiments compare a naive CEGIS implementation (where the
+abstraction and optimization steps do not occur) with a CEGIS
+implementation where both abstraction and optimization steps occur.
+The results clearly show that CEGIS with optimization and refinement
+outperforms a naive CEGIS implementation, but I am left with a few
+questions.
+
+For example, it is unclear how this work compares to the approach
+taken in Abate's prior work where abstraction refinement is also
+used. Namely, how much does optimization aid in synthesis independent
+of the introduction of an observer? Similarly, without the
+optimization step, how much harder does the introduction of observer
+synthesis make the problem?
+
+
+* Misc comments
+Stylistically I found the paper somewhat hard to read. This was
+partially due to some typos (e.g. first page LTL -> LTI) and the
+theorems implicitly introducing notation (Thm 1 kT is not defined
+until later and the appendix), but was predominately due to a lack of
+formal problem definition and a framing of the problem as a specific
+instance of a more general synthesis task.
+
+One of the citations for CEGIS, ref [30], appears to be wrong. The 
+technique was introduced in the ASPLOS 2006 paper by Solar-Lezama 
+et al., not in the PLDI 2005 paper (which used a different approach 
+for synthesis).
+
+
+----------------------- REVIEW 3 ---------------------
+PAPER: 200
+TITLE: Formal Synthesis of Digital Controllers for Observable Continuous Plants with Transient Performance Specifications
+AUTHORS: Dario Cattaruzza, Cristina David, Alessandro Abate and Daniel Kroening
+
+Overall evaluation: -1 (weak reject)
+
+----------- Overall evaluation -----------
+The paper describes a procedure for synthesizing observable continuous plants with transient performance specifications. The algorithm is based on CEGIS, but improves it in two ways. First, it incorporates an abstraction refinement step so that the synthesizer synthesizes against an abstraction of the model dynamics instead of the true dynamics, and it uses optimization as part of synthesis in order to increase the likelihood that the solution discovered on a given CEGIS set actually generalizes. 
+
+The paper does a good job of explaining the high-level ideas behind the algorithm as well as explaining the preliminaries, but then when it comes time to describing the algorithm itself, I found the description woefully incomplete. In particular, the actual synthesis algorithm is described in five lines of text, so I was left with some important questions about it. A major question for me was why encode this as a SAT problem? Given that you are discovering matrices and that you have an optimization criteria, I would have expected a numerical solver. What solver was used for the optimization step? You also mention in the Abstract step that some of the constraints will be used by the SYNTHESIZE phase to reduce the size of the solution space. How is that done? Is it just by incorporating the constraints into the solver, or is the size reduced in a more explicit way? 
+
+The results seem promising, and I like the core ideas in the paper, but I would really like to understand more about the details of the algorithm before giving it a higher score.
+
+
+----------------------- REVIEW 4 ---------------------
+PAPER: 200
+TITLE: Formal Synthesis of Digital Controllers for Observable Continuous Plants with Transient Performance Specifications
+AUTHORS: Dario Cattaruzza, Cristina David, Alessandro Abate and Daniel Kroening
+
+Overall evaluation: -1 (weak reject)
+
+----------- Overall evaluation -----------
+The paper discusses  a CEGIS methodology to compute controllers for LTI dynamical systems in the presence of (a) partial observability, (b) finite word length effects, and (c) time delay errors.
+While this seems to be an interesting direction, I found the overall novelty of the paper to be quite low. Sections 3-6 is what I would call "standard" control theory for LTI systems. I think that instead of giving theorems and proofs, you should mention that these results are already known. Section 7 is a simple reworking of a recent paper by Abate et al. that constructs controllers using CEGIS. 
+
+While there is merit in introducing further constraints into the CEGIS-based methodology of Abate et al. the contribution is too small for CAV in my opinion.
+

@@ -205,7 +205,7 @@ template <class scalar> void AccelMatrix<scalar>::calculateInvIminJ()
     }
   }
   if (m_hasOnes || m_hasNegatives) m_pseudoInvIminJ=this->jordanToPseudoJordan(m_invIminJ,eToEigenValues);
-  else m_pseudoInvIminJ=m_pseudoIminJ.inverse();
+  else m_pseudoInvIminJ=makeInverse(m_pseudoIminJ);
   m_IminA=m_pseudoEigenVectors*m_pseudoIminJ*m_invPseudoEigenVectors;
   m_invIminA=m_pseudoEigenVectors*m_pseudoInvIminJ*m_invPseudoEigenVectors;
 }
@@ -230,17 +230,6 @@ typename JordanMatrix<scalar>::MatrixS& AccelMatrix<scalar>::getJnegJ()
 /// Calculates the folded matrix over-approximation on the rotation and dilation axes
 template <class scalar> void AccelMatrix<scalar>::calculateF()
 {
-  MatrixS binomialMultipliers=MatrixS::Ones(m_dimension,1);
-  for (int row=0;row<m_dimension;row++) {
-    if (m_jordanIndex[row]>0)
-    {
-      int mult=(m_conjugatePair[row]>=0) ? 2 : 1;
-      binomialMultipliers.coeffRef(row,0)=binomialMultipliers.coeff(row-mult,0)/(this->ms_one-norm(m_eigenValues.coeff(row,row)));
-      binomialMultipliers.coeffRef(row-mult*m_jordanIndex[row],0)+=binomialMultipliers.coeff(row,0);
-    }
-  }
-
-  MatrixS m_foldedBinomialMultipliers=binomialMultipliers;
   m_foldedEigenValues=MatrixS::Identity(m_dimension,m_dimension);
   m_svnIndex.resize(m_dimension);
   int transRow=0;
@@ -254,13 +243,11 @@ template <class scalar> void AccelMatrix<scalar>::calculateF()
         m_jordanIndex[m_dimension+transRow]=m_jordanIndex[row];
         if (m_jordanIndex[row]>0) m_foldedEigenValues.coeffRef(transRow-1,transRow)=func::ms_1;
       }
-      m_foldedBinomialMultipliers.coeffRef(transRow,0)=binomialMultipliers.coeff(row,0);
       m_isOne[m_dimension+transRow]=func::isZero(m_foldedEigenValues.coeffRef(transRow,transRow)-func::ms_1);
       transRow++;
     }
     m_svnIndex[row]=transRow-1;
   }
-  m_foldedBinomialMultipliers.conservativeResize(transRow,1);
   m_foldedEigenValues.conservativeResize(transRow,transRow);
 }
 
@@ -288,7 +275,7 @@ template <class scalar> bool AccelMatrix<scalar>::calculateJordanForm(bool inclu
   calculateInvIminJ();
   calculateF();
   calculateInvIminF();
-  if (this->ms_trace_dynamics>=eTraceDynamics) {
+  if (ms_trace_dynamics[eTraceDynamics]) {
     ms_logger.logData(m_pseudoInvIminJ,"InvIminJ:");
     ms_logger.logData(m_invIminF,"InvIminF:");
   }
@@ -313,7 +300,7 @@ template <class scalar> bool AccelMatrix<scalar>::loadJordan(const MatrixS &matr
   calculateInvIminJ();
   calculateF();
   calculateInvIminF();
-  if (this->ms_trace_dynamics>=eTraceDynamics) {
+  if (ms_trace_dynamics[eTraceDynamics]) {
     ms_logger.logData(m_pseudoInvIminJ,"InvIminJ:");
     ms_logger.logData(m_invIminF,"InvIminF:");
   }
@@ -325,7 +312,6 @@ template <class scalar>
 void AccelMatrix<scalar>::copy(const AccelMatrix &source)
 {
   JordanMatrix<scalar>::copy(source);
-  m_foldedBinomialMultipliers=source.m_foldedBinomialMultipliers;
   m_foldedEigenValues=source.m_foldedEigenValues;
   m_invIminJ=source.m_invIminJ;
   m_pseudoIminJ=source.m_pseudoIminJ;

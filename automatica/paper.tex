@@ -51,6 +51,7 @@
 \usepackage{epstopdf}
 \usepackage{cite}
 \usepackage{pifont}
+\usepackage{inconsolata}
 \usepackage{todonotes}
 \usetikzlibrary{positioning, automata, shapes.arrows, calc, shapes, arrows}
 \usetikzlibrary{patterns}
@@ -103,6 +104,8 @@
 \newtheorem{theorem}{Theorem}
 \newtheorem{corollary}{Corollary}
 \newtheorem{proof}{Proof}
+
+\newcommand{\xmark}{\ding{55}}
 
 \renewcommand{\note}[1]{\textcolor{red}{[#1]}}
 
@@ -196,7 +199,7 @@ of finite-precision arithmetic, time discretization and quantization
 noise introduced by A/D and D/A conversion.
 %
 Given an LTI model, we develop an automatic technique for generating
-correct by construction digital controllers that addresses all these
+correct-by-construction digital controllers that addresses all these
 challenges. Specifically, we synthesize stable and safe,
 software-implemented embedded controllers.  Due to the complexity of
 such closed-loop systems, we focus on linear models with known
@@ -270,13 +273,13 @@ In this paper we present two novel approaches for the synthesis of
 digital controllers, both of which make use of CounterExample-Guided
 Inductive Synthesis (CEGIS)~\cite{jha-icse10,
   DBLP:conf/asplos/Solar-LezamaTBSS06}, a technique
-that became very popular in the recent years.  CEGIS denotes an
+that became very popular in the recent years.  CEGIS is an
 iterative process, where each iteration performs inductive
 generalisation based on counterexamples provided by a verification
 oracle. Essentially, the inductive generalisation uses information
-about a limited number of inputs to make claims about all the possible
-inputs in the form of candidate solutions. Our two instantiations of
-CEGIS are described next.
+about a limited number of inputs to compute a candidate solution
+for all the possible. Our two instantiations of CEGIS are
+described next.
 
 %% offer three modes of
 %% operation that address different aspects of the problem.
@@ -284,21 +287,22 @@ CEGIS are described next.
 %% solves the problem of robust stability for closed loop systems for a
 %% collection of unstable plants.  Inthis case, there is no safety
 %% specification since we are working in the frequency domain.
-{\em The first approach} uses a na\"ive technique that starts by devising a
+
+\emph{The first approach} uses a na\"ive technique that starts by devising a
 digital controller that stabilizes the system while remaining safe for a
 pre-selected time horizon and a single initial state; then, it verifies
 unbounded safety by unfolding the dynamics of the system, considering the
-full hyper-cube of initial states, and checking a {\em completeness
+full hyper-cube of initial states, and checking a \emph{completeness
 threshold}~\cite{DBLP:conf/vmcai/KroeningS03}, i.e., the number of
 iterations required to sufficiently unwind the closed-loop state-space
 system such that the boundaries are not violated for any larger number of
 iterations.  As~it requires unfolding up to the completeness threshold, this
 approach is computationally expensive.
 
-Instead of unfolding the dynamics, {\em the second approach}
-employs {\em abstract acceleration}~\cite{cattaruzza2015unbounded} to
+Instead of unfolding the dynamics, \emph{the second approach}
+employs \emph{abstract acceleration}~\cite{cattaruzza2015unbounded} to
 evaluate all possible progressions of the system simultaneously. 
-Additionally, this approach uses {\em abstraction refinement},
+Additionally, this approach uses \emph{abstraction refinement},
 enabling us to always start with a very simple description regardless of the
 dynamics complexity, and only expand to more complex models
 when a solution cannot be found.
@@ -309,16 +313,16 @@ plant models taken from the digital control literature.
 \addtodo{add more here once we have the experimental results ready}
 
 %% \addtodo{CD: the novelty compared to CAV'17 needs to be clarified}
-This paper represents an extension of \cite{DBLP:conf/cav/AbateBCCDKKP17}
-and makes the following contributions, where the fourth and the fifth denote
-extensions over \cite{DBLP:conf/cav/AbateBCCDKKP17}.
+This paper is an extension of~\cite{DBLP:conf/cav/AbateBCCDKKP17}
+and makes the following contributions, where the fourth and the fifth are
+extensions over~\cite{DBLP:conf/cav/AbateBCCDKKP17}.
 %
 \begin{enumerate}
 
   % Additions from CAV:
   % continuous time
   % floating point 
-\item We automatically generate {\em correct-by-construction} digital
+\item We automatically generate \emph{correct-by-construction} digital
   controllers using an inductive synthesis approach.  Our application of program
   synthesis is non-trivial and addresses challenges specific to control
   systems, such as quantizers and FWL.  %% In particular, we
@@ -348,15 +352,19 @@ extensions over \cite{DBLP:conf/cav/AbateBCCDKKP17}.
   their effect on reachability properties.  We give bounds that ensure the
   safety of our controllers in a hybrid continuous-digital domain.
 
-\item While \cite{DBLP:conf/cav/AbateBCCDKKP17} is restricted to systems
+\item While~\cite{DBLP:conf/cav/AbateBCCDKKP17} is restricted to systems
   modeled in discrete time, in the current paper we present a model for
   soundly evaluating reachability in a combined continuous-discrete time/space.
-\item A further limitation of the work in \cite{DBLP:conf/cav/AbateBCCDKKP17}
-  is its restriction to fixed-point arithmetic, meaning that fixed-point numbers
-  were employed for the representation of both the plant and the controller, as well as for
-  the operations performed by each of them.
-  Conversely, in the current paper we also make use of floating-point arithmetic
-  and compare the two approaches. Additionally, we enhance the implementation with an SMT backend, allowing us to also use reals in order to represent the states of the plant.
+
+\item A further limitation of the work in~\cite{DBLP:conf/cav/AbateBCCDKKP17}
+  is its restriction to fixed-point arithmetic, meaning that fixed-point
+  numbers were employed for the representation of both the plant and the
+  controller, as well as for the operations performed by each of them. 
+  Conversely, in the current paper we also make use of floating-point
+  arithmetic and compare the two approaches.  Additionally, we enhance the
+  implementation with an SMT backend, allowing us to also use reals in order
+  to represent the states of the plant.
+
 \end{enumerate}
   
 %-------------------------------
@@ -364,7 +372,7 @@ extensions over \cite{DBLP:conf/cav/AbateBCCDKKP17}.
 \label{sec:relw}
 %-------------------------------
 
-\textbf{CEGIS -} Program synthesis is the problem of computing
+\textbf{CEGIS --} Program synthesis is the problem of computing
 correct-by-design programs from high-level specifications. Algorithms
 for this problem have made substantial progress in recent years, in
 particular CEGIS, which is a recent approach to inductive synthesis
@@ -409,7 +417,7 @@ models: this results in a static check on their coefficients.  By contrast,
 in the current paper we consider a state-space representation of the
 physical system, which requires ensuring the specification over actual
 traces of the model, alongside the numerical soundness required by the
-effects of discretisation and finite-precision errors.  A state-space model
+effects of discretisation and finite-precision errors.  A~state-space model
 has known advantages over the transfer function
 representation~\cite{Franklin15}: it naturally generalizes to multivariate
 systems (i.e., with multiple inputs and outputs); and it allows synthesis of
@@ -432,12 +440,13 @@ is likely to incur in scalability limitations.  Along this research line,
 continuous dynamics, and \cite{zamani2014} extends the approach to the
 recent setup of Network Control Systems.
 
-\textbf{Discretization Effects -}
+\textbf{Discretization Effects --}
 The classical approach to control synthesis has often disregarded
 digitalization effects, whereas more recently modern techniques have focused
 on different aspects of discretization, including delayed
 response~\cite{Duggirala2015} and finite word length (FWL) semantics, with
-the goal either to verify~\cite{daes20161} or to optimize~\cite{oudjida2014design} given implementations.
+the goal either to verify~\cite{daes20161} or to
+optimize~\cite{oudjida2014design} given implementations.
 
 There are two different problems that arise from FWL semantics.  The first
 is the error in the dynamics caused by the inability to represent the exact
@@ -457,8 +466,8 @@ arithmetic and soundness is checked by bounding the error.  An alternative
 is~\cite{park2016scalable}, where the verification of given control code is
 performed against a known model by extracting an LTI model of the code by
 symbolic execution: to account for rounding errors, an upper bound is
-introduced in the verification phase.  The work in
-\cite{picasso2003stabilization} introduces invariant sets as a mechanism to
+introduced in the verification phase.  The work
+in~\cite{picasso2003stabilization} introduces invariant sets as a mechanism to
 bound the quantization error effect on stabilization as an invariant set
 that always converges toward the controllable set.  Similarly,
 \cite{liberzon2003hybrid} evaluates the quantization error dynamics and
@@ -537,9 +546,25 @@ We will assume $r_k=0$, thus
 $\vec{x}_{k+1}=(\mat{A}_d-\mat{B}_d\mat{K})\vec{x}_k$. 
 
 %-------------------------------
-\subsection{\textcolor{red}{[Elizabeth: please add the specifics of the errors due to discretisation/quantisation, with reference to Fig. \ref{fig:digitalsystem}] and to what has been discussed in the Introductory section.}}
-%\label{sec:}
-%-------------------------------
+\subsection{Errors}
+
+We account for the presence of errors originating from a number of sources, shown in Figure~\ref{}:
+\begin{itemize}
+\item We represent the plant variables $x(t)$ and $u(t)$, which are real numbers, at a finite precision in our model, and so it is necessary to account for the errors introduced by this representation. We account for these errors in both back ends by using interval arithmetic, detailed in section~\ref{}. 
+\item The quantisation errors by the ADC, which converts the analogue signal $x(t)$ into
+the digital signal $x_k$ which is fed into the controller. We account for this error in 
+the acceleration based back-end by introducing a noise signal $\nu_1$ that over-approximates this error, 
+shown in the figure. Further details are found in section~\ref{}. 
+In the naive back end we use bit-precise modelling in CBMC~\cite{} to accurately model this deterministic
+conversion. In other words, CBMC constructs a boolean formula which explicitly unwinds the transition system for any symbolically represented input state, bounded by the initial conditions, and performs the ADC conversion precisely on that symbolically represented input state. When we verify safety, the boolean formula is satisfied only if there is an input state value for which the subsequent trace through the transition system eventually violates the safety property. 
+\item The representation errors due to performing finite-precision arithmetic in the controller. 
+In the acceleration based back-end, this is again treated by the introduction of noise that bounds the error.
+The naive back end uses the bit-precise modelling of finite-precision arithmetic in CBMC, in the same way as we handled the ADC conversion. We assume that the controller
+represents numbers to the same precision as the ADC.
+\item We assume that the DAC converts numbers from the same precision as the controller to an analogue signal. 
+As a result we can ignore any errors introduced by the DAC
+\end{itemize}
+
 
 
 
@@ -672,20 +697,23 @@ $\vec{x}_{k+1}=(\mat{A}_d-\mat{B}_d\mat{K})\vec{x}_k$.
  \caption{The CEGIS framework. \label{fig:CEGIS}}
 \end{figure*}
 
-In this section, we give a brief description of the CEGIS framework, as illustrated in Figure~\ref{fig:CEGIS}. [ADD REFERENCE(S).]
+In this section, we give a brief description of the CEGIS framework~\cite{jha-icse10,
+  DBLP:conf/asplos/Solar-LezamaTBSS06}, as illustrated in Figure~\ref{fig:CEGIS}. 
 
 We consider an input specification of the form $\exists P .\, \forall a.\, \phi(a, P)$, 
 where $P$ ranges over functions (where a function is represented by the program computing it),
 $a$ ranges over ground terms, 
 and $\phi$ is a quantifier-free formula. 
-We~interpret the ground terms over some finite [CHECK: finite? are we doing only SAT or also SMT?] domain~$\mathcal{D}$. 
+We~interpret the ground terms over some domain~$\mathcal{D}$. 
 This is a synthesis problem, where the objective is indeed to select a valid $P$ satisfying $\phi$ over all the $a$ terms. 
-CEGIS breaks down this generally hard synthesis problem into two easier parts. 
 
-The design consists of two phases, an inductive synthesis phase (denoted by {\sc Synthesize} in
+CEGIS breaks down this generally hard synthesis problem into two easier parts:
+%The design consists of two phases,
+an inductive synthesis phase (denoted by {\sc Synthesize} in
 Figure~\ref{fig:CEGIS}) and a validation phase (denoted by {\sc
   Verify}), which interact via a finite set of tests {\sc
-  inputs} that is updated incrementally.  Given the specification $\phi$, the inductive synthesis procedure tries to
+  inputs} that is updated incrementally.
+Given the specification $\phi$, the inductive synthesis procedure tries to
 find an existential witness $P$ satisfying the specification
 $\phi(a, P)$ for all $a$ in {\sc inputs} (as opposed to all $a \in
 \mathcal{D}$).
@@ -700,8 +728,9 @@ phase in the form of a new counterexample that is added to the {\sc inputs}
 set and the loop iterates again.  %% More details about the general
 %% architecture of the synthesizer can be found
 %% in~\cite{DBLP:conf/lpar/DavidKL15}.
-[COMMENT ON TERMINATION?]
-
+If the solution space is finite then the CEGIS loop is guaranteed to
+terminate by either finding a solution or showing that no solution
+exists.
 %-------------------------------
 \section{Formal specification of model properties} 
 \label{sec:specification}
@@ -1498,7 +1527,7 @@ and a single initial state, such that the states at each step do not violate
 the safety criteria.  That is, we ask the bounded model checker if there
 exists a $K$ that is safe for at least one $x_0$ in our set of all possible
 initial states.  This is sound if the current $k$ is greater than the completeness
-threshold.  We~also assume some precision $\langle I_p,F_p\rangle$ for the
+threshold.  We~also assume some (fixed or floating point) precision $\langle I_p,F_p\rangle$ for the
 plant and a sampling rate.  The checks that these assumptions hold are
 performed by subsequent {\sc verify} stages.
 
@@ -1847,17 +1876,10 @@ $z^n+\sum_{i=1}^n(a_i-k_i)z^{n-i}=\prod_{i=1}^n (z-\lambda_i) \text{ where } |\l
 
 \textcolor{red}{Elizabeth: this section needs to be updated to describe floating-point arithmetics.}
 
-The models we consider have two sources of error that are due to numerical representations.  
-The first is the numerical error introduced by the
-fixed-point numbers employed to model the plant, i.e., to represent the
-plant dynamics $A_d$, $B_d$ and $x_k$.  The second is the quantization error
-introduced by the digital controller, which performs operations on
-fixed-point numbers.  
-\textcolor{red}{[what about the DAC/ADC errors?]}
-In this section we outline the notation for the
-fixed-point representation of numbers, and briefly describe the errors
-introduced.  A~formal discussion is in
-%Appendix~\ref{appendix:numerical_errors}.
+As discussed in section~\ref{sec:}, the models we consider have errors due to several sources; the numerical error introduced by the precision used to represent the plant, the error introduced by the ADC conversion, and the error introduced by the precision used to represent the controller. First we consider the numerical errors introduced by the finite precision numbers (either fixed or floating point) used to model the plant and used by the digital controller. Then we account for the quantization errors introduced by the ADC.
+
+\subsection{Errors due to numerical representation}
+First consider the case where we use fixed-point representations, and synthesise fixed-point controllers. 
 
 Let $\mathcal{F}_{\langle I,F \rangle}(x)$ denote a real number $x$
 represented in a fixed point domain, with $I$ bits representing the integer
@@ -1865,9 +1887,57 @@ part and $F$ bits representing the decimal part.  The smallest number that
 can be represented in this domain is $c_m=2^{-F}$.  Any mathematical
 operations performed at the precision $\mathcal{F}_{\langle I,F \rangle}(x)$
 will introduce errors, for which an upper bound can be
-given~\cite{DBLP:conf/arith/BrainTRW15}.
+given~\cite{DBLP:conf/arith/BrainTRW15}:
 
-We will use $\mathcal{F}_{\langle I_c,F_c \rangle}(x)$ to denote a real
+\begin{enumerate}
+
+\item {\bf Truncation:} Let $x$ be a real number, and $\mathcal{F}_{\langle
+I,F \rangle}(x)$ be the same number represented in a fixed-point domain as
+above.  Then $\mathcal{F}_{\langle I,F \rangle}(x) = x-\delta_T$ where the
+error $ \delta_T=x\ \%_{c_m}\ \tilde x$, and $\%_{c_m}$ is the modulus
+operation performed on the last bit. 
+Thus, $\delta_T$ is the truncation error and it will propagate across
+operations.
+%
+\item {\bf Rounding:} The following errors appear in basic operations.  Let
+$c_1, c_2$ and $c_3$ be real numbers, and $\delta_{T1}$ and $\delta_{T2}$ be
+the truncation errors caused by representing $c_1$ and $c_2$ in the
+fixed-point domain as above.
+%
+\begin{enumerate}
+%
+\item Addition/Subtraction: these operations only propagate errors coming
+from truncation of the operands, namely $\mathcal{F}_{\langle I,F
+\rangle}(c_1) \pm \mathcal{F}_{\langle I,F \rangle}(c_2) = c_3 + \delta_3$
+with $|\delta_3| \leq |\delta_{T1}| + |\delta_{T2}|$.
+%
+\item Multiplication: $\mathcal{F}_{\langle I,F \rangle}(c_1) \cdot
+\mathcal{F}_{\langle I,F \rangle}(c_2) =  c_3 + \delta_3$ with $|\delta_3|
+\leq |\delta_{T1}\cdot\mathcal{F}_{\langle I,F \rangle}(c_2)|\allowbreak +
+|\delta_{T2}\cdot\mathcal{F}_{\langle I,F \rangle}(c_1)| + c_m$, where
+$c_m=2^{-F}$ as above.
+%
+\item Division: the operations performed by our controllers in the FWL
+domain do not include division.  However, we do use division in computations
+at the precision of the plant.  Here the error depends on whether the
+divisor is greater or smaller than the dividend:  $\mathcal{F}_{\langle I,F
+\rangle}(c_1) / \mathcal{F}_{\langle I,F \rangle}(c_2) = c_3 + \delta_{T3}$
+where $\delta_{T3}$ is $(\delta_{T2}\cdot c_1 - \delta_{T1}\cdot
+c_2)/(\delta_{T2}^2 - \delta_{T2} c_2)$,
+%
+%$\mathcal{F}_{\langle I,F \rangle}(c_1) / \mathcal{F}_{\langle I,F \rangle}(c_2) =  (c_1 - \delta_{T1})/ (c_2 + \delta_{T2}) + c_m $, where $c_m=2^{-F}$ as above.
+\end{enumerate}
+
+\item {\bf Overflow:}
+The maximum size of a real number $x$ that can be represented in a fixed
+point domain as $\mathcal{F}_{\langle I,F \rangle}(x)$ is $\pm
+(2^{I-1}+1-2^{-F})$.  Numbers outside this range cannot be represented by
+the domain.  We check that overflow does not occur.
+
+\end{enumerate}
+
+\subsection{Notation}
+In this paper we will use $\mathcal{F}_{\langle I_c,F_c \rangle}(x)$ to denote a real
 number $x$ represented at the fixed-point precision of the controller, and
 $\mathcal{F}_{\langle I_p,F_p \rangle}(x)$ to denote a real number $x$
 represented at the fixed-point precision of the plant model ($I_c$ and $F_c$
@@ -1880,6 +1950,64 @@ I_p,F_p \rangle}$.  The physical plant operates in the reals, which means
 our verification phase must also account for the numerical error and
 quantization errors caused by representing the physical plant at the finite
 precision $\mathcal{F}_{\langle I_p,F_p \rangle}$.
+
+\subsection{Floating point representation}
+
+Let $\mathcal{F}_{\langle E,M \rangle}(x)$ denote a real number $x$
+represented in a floating point domain, with $E$ bits representing the exponent
+part and $M$ bits representing the mantissa part. Bounds for errors introduced by performing basic mathematical operators at this precision can be derived~\cite{DBLP:conf/arith/BrainTRW15}.
+
+We use $\mathcal{F}_{\langle E_c,M_c \rangle}(x)$ to denote a real number represented at the floating-point precision of the controller, and $\mathcal{F}_{\langle E_p,M_p \rangle}(x)$ to denote a real number represented at the fixed-point precision of the plant model. We apply the same principles as in the preceding section when selection the plant precision.
+
+\subsection{ADC/DAC quantization errors} 
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+In this section we describe how quantization errors can be modelled as noise. Note that this is only applicable to the acceleration back end, as the naive back end makes use of CBMC's bit-precise model checking capabilities to account for these deterministic errors.
+
+During any given ADC conversion, the continuous signal will be sampled in
+the real domain and transformed by $\mathcal{F}\langle I_{c},F_{c} \rangle
+(x)$ (assuming the ADC discretization is the same as the digital
+implementation).  This sampling uses a threshold which is defined by the
+less significant bit ($q_{c}=c_{m_c}=2^{-F_c}$) 
+%\blue{[this quantity was named $c_m$ above and in other parts of the paper - please uniformise notations]}
+of the ADC and some non-linearities of the circuitry.  The overall conversion is
+%
+$$\mathcal{F}\langle I_{c},F_{c} \rangle(y(t)) = y_k :
+y_k \in \left[y(t)-\frac{q_{c}}{2}\ \ \ \ y(t)+\frac{q_{c}}{2}\right] \,.$$
+%
+If we denote the error in the conversion by $\nu_k=y_k-y(t)$ where $t = nk$,
+and $n$ is the sampling time and $k$ the number of steps, then we may define
+some bounds for it $\nu_k \in [-\frac{q_{c}}{2}\ \ \frac{q_{c}}{2}]$.
+
+We will assume, for the purposes of this analysis, that the domain of the
+ADC is that of the digital controller (i.e, the quantizer includes any
+digital gain added in the code).  The process of quantization in the DAC is
+similar except that it is calculating $\mathcal{F}\langle I_{dac},F_{dac}
+\rangle (\mathcal{F}\langle I_{c},F_{c} \rangle (x)) $.  If these domains
+are the same ($I_{c}=I_{dac},\allowbreak F_{c}=F_{dac}$), or if the DAC
+resolution in higher than the ADCs, then the DAC quantization error is equal
+to zero.  From the above equations we can now define the ADC and DAC
+quantization noises ${\nu_1}_k \in [-\frac{q_1}{2}\ \ \frac{q_1}{2}]$ and
+${\nu_2}_k \in [-\frac{q_2}{2}\ \ \frac{q_2}{2}]$, where $q_1=q_{c}$ and 
+$q_2=q_\mathit{dac}$.  This is illustrated in
+Fig.~\ref{fig:digitalsystem} where $Q_1$ is the quantizer of the ADC
+and $Q_2$ the quantizer for the DAC.  These bounds hold irrespective of
+whether the noise is correlated, hence we may use them to over-approximate
+the noise effect on the state space progression over time.  The
+resulting dynamics are
+%
+\begin{align*}
+%\label{eq:pre_quantization}
+{x}_{k+1} = {A}_d{x}_k+{B}_d({u}_k+{{\nu}_2}_k), \quad u_k = -K{x}_{k}+{{\nu}_1}_k, 
+\end{align*}
+%
+which result in the following closed-loop dynamics:
+%
+\begin{align*}
+%\label{eq:quantization}
+{x}_{k+1} &= ({A}_d-{B}_d{K}_d) {x}_k+{B}_d{{\nu}_2}_k +{{\nu}_1}_k \,. 
+\end{align*}
+
+
 
 
 \subsection{Effect on safety specification and stability}
@@ -2515,6 +2643,45 @@ stability and safety of the synthesized controllers outside of our model.
 %-------------------------------
 
 \textcolor{red}{Lucas describe here the experimental results}
+
+We provide the results in Table~\ref{tab:results}.  Here 
+\textit{Benchmark} is the name of the respective benchmark, 
+\textit{Order} is the number of continuous variables, 
+$\mathcal{F}_{\langle I_p,F_p \rangle}$ and $\mathcal{F}_{\langle p \rangle}$  
+are the fixed- and floating-point precision used to model the plant, respectively;
+while \textit{Time} is the total time required to synthesize a controller for the given
+plant with one of the two methods.  Timeouts are indicated by~\xmark.  The
+precision for the controller, $\mathcal{F}_{\langle I_c,F_c \rangle}$, is
+chosen to be $I_c = 8$, $F_c = 8$ for fixed-point and 
+$\mathcal{F}_{\langle p \rangle}$ is chosen to be half-precision for floating-point.
+
+\begin{table*}
+\centering
+\begin{tabular}{| r | l | c | c | r | c | r | c | r | c | r |}
+%
+\hline
+\# & \multicolumn{1}{|c|}{Benchmark} & \multicolumn{1}{|c|}{Order} & \multicolumn{4}{|c|}{Multi-staged}                 & \multicolumn{4}{|c|}{Abstraction} \\
+   &                                  & & \multicolumn{1}{|c|}{$\mathcal{F}_{\langle I_p,F_p \rangle}$} & \multicolumn{1}{|c|}{Time} & \multicolumn{1}{|c|}{$\mathcal{F}_{\langle p \rangle}$} & \multicolumn{1}{|c|}{Time} & \multicolumn{1}{|c|}{$\mathcal{F}_{\langle I_p,F_p \rangle}$} & \multicolumn{1}{|c|}{Time} & \multicolumn{1}{|c|}{$\mathcal{F}_{\langle p \rangle}$} & \multicolumn{1}{|c|}{Time}\\\hline
+1  & Cruise Control  & 1 &   &  &  &  & & & &\\
+2  & DC Motor          & 2 &   &  &  &  & & & &\\
+3  & Helicopter        & 3 &  &   &  &  & & & &\\
+4  & Inverted Pendulum & 4 &   &  &  & & & & &\\
+5  & Magnetic Pointer  & 2 & &  &  &  & & & &\\
+6  & Magnetic Suspension & 2 &  & & & & & & &\\
+7  & Pendulum          & 2 &   & & & & & & &\\
+8  & Suspension        & 2 &  & & & & & & &\\
+9  & Tape Driver       & 3 &   & & & & & & &\\
+10 & Satellite          & 2 &   &  & & & & & &\\
+12 & Voltage Regulator & &   &  & & & & & &\\
+13 & Guidance Control  & &   &  & & & & & &\\
+14 & Spring Mass   & &   &  & & & & & &\\
+\hline
+%
+\end{tabular}
+\vspace{0.05in}
+\caption{Experimental results\label{tab:results}}
+\end{table*}
+
 
 %-------------------------------
 \subsection{Threats to validity}

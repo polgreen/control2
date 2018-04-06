@@ -13,10 +13,7 @@ namespace abstract{
 
 template <class scalar>  MatToStr<scalar> Tableau<scalar>::ms_logger(true);
 template <class scalar>  MatToStr<scalar> Tableau<scalar>::ms_decoder(false);
-template <class scalar>  traceTableau_t Tableau<scalar>::ms_trace_tableau=eTraceNoTableau;
-template <class scalar>  tracePivots_t Tableau<scalar>::ms_trace_pivots=eTraceNoPivots;
-template <class scalar>  bool Tableau<scalar>::ms_trace_errors=false;
-template <class scalar>  bool Tableau<scalar>::ms_trace_time=false;
+template <class scalar>  bool Tableau<scalar>::ms_trace_pivots[eMaxTracePivots]={0};
 template <class scalar>  bool Tableau<scalar>::ms_useBasis=false;
 
 template <class scalar>
@@ -133,7 +130,7 @@ void Tableau<scalar>::ColumnPivot(const pivot_t &pivot)
   scalar Xtemp;
   if (m_pSortedTableau->m_dirty) {
     m_pSortedTableau->pivot(m_auxiliaryRow,pivot);
-    if (ms_trace_pivots>=eTracePivots) logBasis(pivot.row,pivot.col);
+    if (ms_trace_pivots[eTracePivots]) logBasis(pivot.row,pivot.col);
     return;
   }
   refScalar invXtemp0 = func::toCentre(func::ms_1/m_pSortedTableau->entry(m_basisInverse,pivot.row,pivot.col));
@@ -146,28 +143,28 @@ void Tableau<scalar>::ColumnPivot(const pivot_t &pivot)
     }
   }
   m_basisInverse.col(pivot.col)*=invXtemp0;
-  if (ms_trace_pivots>=eTracePivots) logBasis(pivot.row,pivot.col);
+  if (ms_trace_pivots[eTracePivots]) logBasis(pivot.row,pivot.col);
 }
 
 template <class scalar>
 void Tableau<scalar>::logBasis(int row,int col)
 {
-  if (ms_trace_pivots>=eTracePivots) {
+  if (ms_trace_pivots[eTracePivots]) {
     std::stringstream buffer;
     buffer << "[" << row << "," << col;
     if (m_nonBasicRow[col]>=0) buffer << "(" << m_nonBasicRow[col] << ")";
     buffer << "]";
-    if (ms_trace_pivots>=eTraceBasis) {
+    if (ms_trace_pivots[eTraceBasis]) {
       ms_logger.logData(m_basisInverse,buffer.str());
     }
-    else if (ms_trace_pivots>=eTraceSimplex){
+    else if (ms_trace_pivots[eTraceFeasibility]){
       MatrixS matrix=m_basisInverse.col(0).transpose();
       ms_logger.logData(matrix,buffer.str());
     }
     else {
       ms_logger.logData(buffer.str(),false);
     }
-    if (ms_trace_pivots>=eTraceEntries) {
+    if (ms_trace_pivots[eTraceEntries]) {
       int rows=m_pSortedTableau->numRows();
       MatrixS matrix(rows,m_dimension);
       for (int row=0;row<rows;row++) {
@@ -192,7 +189,7 @@ bool Tableau<scalar>::isEmpty() const
 template <class scalar>
 void Tableau<scalar>::logTableau(const std::string parameters,bool force)
 {
-  if ((ms_trace_tableau>=eTraceTableau) || force) {
+  if ((ms_trace_pivots[eTraceTableau]) || force) {
     if (parameters.length()>0) {
       std::stringstream stream;
       stream << getName();
@@ -262,7 +259,7 @@ int Tableau<scalar>::FindLPBasis()
      they are all zero) will be indicated in nbindex vector: nbindex[j] will
      be negative and set to -j.
   */
-  if (ms_trace_pivots>=eTracePivots) ms_logger.logData("Feasibility Basis");
+  if (ms_trace_pivots[eTracePivots]) ms_logger.logData("Feasibility Basis");
   ResetTableau();
   Set RowSelected(m_size);
   Set ColSelected(m_dimension);
@@ -286,13 +283,13 @@ int Tableau<scalar>::FindLPBasis()
       /* dependent columns but not dual inconsistent. */
       break;
     }
-    if (ms_trace_pivots>=eTraceEntries) {
+    if (ms_trace_pivots[eTraceEntries]) {
       RowSelected.logSet("Available Rows:",true);
       ColSelected.logSet("Available Cols:",true);
     }
     RowSelected.add(pivot.row);
     ColSelected.add(pivot.col);
-    if (!ColumnPivotAndUpdate(pivot) && ms_trace_errors) {
+    if (!ColumnPivotAndUpdate(pivot) && ms_trace_pivots[eTraceTableauErrors]) {
       ms_logger.logData("LP Basis cycling error");
     }
   }
@@ -317,7 +314,7 @@ int Tableau<scalar>::FindFeasBasis(const ResetType_t resetType)
     m_basisInverse=m_feasBasisInverse;
     m_basicVars=m_feasBasicVars;
     m_nonBasicRow=m_feasNonBasicRow;
-    if (ms_trace_pivots>=eTracePivots) this->logBasis(-1,-1);
+    if (ms_trace_pivots[eTracePivots]) this->logBasis(-1,-1);
     return 0;
   }
   ComputeRowOrderVector(MinIndex);
@@ -335,11 +332,11 @@ int Tableau<scalar>::Rebase()
   std::vector<int> pivots=m_nonBasicRow;
   //std::set<int> pending;
   if (pivots.size()<getDimension()) return 0;
-  if (ms_trace_pivots>=eTracePivots) {
-    if (ms_trace_pivots>=eTraceSimplex) {
-      MatrixS point=m_basisInverse.col(0).transpose();
-      ms_logger.logData(point,"Vertex");
-    }
+  if (ms_trace_pivots[eTraceFeasibility]) {
+    MatrixS point=m_basisInverse.col(0).transpose();
+    ms_logger.logData(point,"Vertex");
+  }
+  if (ms_trace_pivots[eTracePivots]) {
     ms_logger.logData(pivots,"Rebase ");
   }
   ResetTableau();
@@ -368,7 +365,7 @@ int Tableau<scalar>::Rebase()
               if (!noPivotCol.member(col)) {
                 Xtemp=m_pSortedTableau->entry(m_basisInverse,pivot.row,col);
                 if (func::softSign(Xtemp)!=0) {
-                  if (!ColumnPivotAndUpdate(pivot) && ms_trace_errors) {
+                  if (!ColumnPivotAndUpdate(pivot) && ms_trace_pivots[eTraceTableauErrors]) {
                     ms_logger.logData("Rebase cycling");//TODO: remove (change for approprite action)
                   }
                   rank++;
@@ -393,7 +390,7 @@ int Tableau<scalar>::Rebase()
   }
   int dimension=getDimension();
   if (rank<dimension) {
-    if (ms_trace_pivots>=eTracePivots) ms_logger.logData(rank,"rebase incomplete",true);
+    if (ms_trace_pivots[eTracePivots]) ms_logger.logData(rank,"rebase incomplete",true);
     Set RowSelected(m_size);
     RowSelected.add(m_objectiveRow);
     for (int i=0;i<pivots.size();i++) RowSelected.add(pivots[i]);
@@ -408,7 +405,7 @@ int Tableau<scalar>::Rebase()
       ColumnPivotAndUpdate(pivot);
     }
   }
-  if (ms_trace_pivots>=eTraceBasis) {
+  if (ms_trace_pivots[eTraceBasis]) {
     MatrixS point=m_basisInverse.col(0).transpose();
     ms_logger.logData(point,"Vertex");
   }
@@ -423,7 +420,7 @@ void Tableau<scalar>::ResetTableau()
   m_lastPivot.row=-1;
   m_nonBasicRow[RHSCol]=0;/* RHS is already in nonbasis and is considered to be associated with the zero-th row of input. */
   m_basisInverse=MatrixS::Identity(m_dimension,m_dimension);
-  if (ms_trace_pivots>=eTracePivots) ms_logger.logData("Reset Tableau");
+  if (ms_trace_pivots[eTracePivots]) ms_logger.logData("Reset Tableau");
   if (!ms_useBasis) m_pSortedTableau->m_dirty=!loadTableau(false)|| !ms_useBasis;
 
   /* Set the bflag according to nbindex */
@@ -443,45 +440,49 @@ void Tableau<scalar>::ComputeRowOrderVector(const OrderType &type)
 template <class scalar>
 bool Tableau<scalar>::load(const MatrixS &faces,const MatrixS &supports,const bool transpose)
 {
-  int numFaces=transpose ? faces.cols() : faces.rows();
-  if (supports.rows()!=numFaces) return false;
-  int objectiveVar=-1;
-  if (m_size<m_basicVars.size()) {
-    objectiveVar=m_basicVars[m_size];
-    m_basicVars[m_size]=-1;
-    m_basicVars[m_objectiveRow]=-1;
-  }
-  m_isNormalised=false;
-  m_pSortedTableau->m_dirty=false;
-  m_size =numFaces+ ((Conversion!=ExtToIne) ? 1 : 0);
-  m_basicVars.resize(m_size+1,-1);
-  m_basicVars[m_size]=objectiveVar;
-  m_nonBasicRow.resize(m_dimension);
-  if (m_basicVars[m_size]>=0) m_nonBasicRow[m_basicVars[m_size]]=m_size;
-  m_objectiveRow=m_size-1;
-  m_evidenceRow=-1;
-  m_evidenceCol=-1;
-  if (&faces!=&m_faces) {
-    if (transpose) m_faces=faces.transpose();
-    else           m_faces=faces;
-  }
-  if (&supports!=&m_supports) m_supports=supports;
-  m_dimension=m_faces.cols()+1;
-  if (m_faces.rows()>0) {
-    refScalar max=func::toUpper(m_faces.coeff(0,0));
-    refScalar min=func::toLower(m_faces.coeff(0,0));
-    for (int row=0;row<m_faces.rows();row++) {
-      for (int col=0;col<m_faces.cols();col++) {
-        if (func::toUpper(m_faces.coeff(row,col))>max) max=func::toUpper(m_faces.coeff(row,col));
-        if (func::toLower(m_faces.coeff(row,col))<min) min=func::toLower(m_faces.coeff(row,col));
-      }
+  try {
+    int numFaces=transpose ? faces.cols() : faces.rows();
+    if (supports.rows()!=numFaces) return false;
+    int objectiveVar=-1;
+    if (m_size<m_basicVars.size()) {
+      objectiveVar=m_basicVars[m_size];
+      m_basicVars[m_size]=-1;
+      m_basicVars[m_objectiveRow]=-1;
     }
-    if (-min>max) max=-min;
-    m_zero=max*func::ms_weakEpsilon;
+    m_isNormalised=false;
+    m_pSortedTableau->m_dirty=false;
+    m_size =numFaces+ ((Conversion!=ExtToIne) ? 1 : 0);
+    m_basicVars.resize(m_size+1,-1);
+    m_basicVars[m_size]=objectiveVar;
+    m_nonBasicRow.resize(m_dimension);
+    if (m_basicVars[m_size]>=0) m_nonBasicRow[m_basicVars[m_size]]=m_size;
+    m_objectiveRow=m_size-1;
+    m_evidenceRow=-1;
+    m_evidenceCol=-1;
+    if (&faces!=&m_faces) {
+      if (transpose) m_faces=faces.transpose();
+      else           m_faces=faces;
+    }
+    if (&supports!=&m_supports) m_supports=supports;
+    m_dimension=m_faces.cols()+1;
+    if (m_faces.rows()>0) {
+      refScalar max=func::toUpper(m_faces.coeff(0,0));
+      refScalar min=func::toLower(m_faces.coeff(0,0));
+      for (int row=0;row<m_faces.rows();row++) {
+        for (int col=0;col<m_faces.cols();col++) {
+          if (func::toUpper(m_faces.coeff(row,col))>max) max=func::toUpper(m_faces.coeff(row,col));
+          if (func::toLower(m_faces.coeff(row,col))<min) min=func::toLower(m_faces.coeff(row,col));
+        }
+      }
+      if (-min>max) max=-min;
+      m_zero=max*func::ms_weakEpsilon;
+    }
+    else m_zero=0;
+    m_pSortedTableau->setSize(m_size,m_dimension);
+    return loadTableau(true);
   }
-  else m_zero=0;
-  m_pSortedTableau->setSize(m_size,m_dimension);
-  return loadTableau(true);
+  catch(...) {ms_logger.logData("load error");}
+  return false;
 }
 
 /// Loads the tableau from the face and supprot description
@@ -524,6 +525,20 @@ void Tableau<scalar>::toInner(bool force)
   }
 }
 
+/// Removes the intervals on each vector, modifying the support by adding a calculated maximum interval given the range
+template <class scalar>
+void Tableau<scalar>::toCentralAngle(const MatrixS &ranges)
+{
+  for (int row=0;row<m_faces.rows();row++) {
+    scalar error=func::ms_0;
+    for (int col=0;col<m_faces.cols();col++) {
+      error+=func::toWidth(m_faces.coeff(row,col))*0.5*ranges.coeff(0,col);
+      m_faces.coeffRef(row,col)=func::toCentre(m_faces.coeff(row,col));
+    }
+    m_supports.coeffRef(row,0)+=error;
+  }
+  loadTableau(false);
+}
 
 #ifdef USE_LDOUBLE
   #ifdef USE_SINGLES

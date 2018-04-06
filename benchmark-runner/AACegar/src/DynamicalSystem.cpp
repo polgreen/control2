@@ -12,12 +12,9 @@ namespace abstract{
 template <class scalar>
 bool DynamicalSystem<scalar>::ms_fullAnswers=true;
 
-template <class scalar>
-bool DynamicalSystem<scalar>::ms_incremental=true;
-
 /// Constructs an empty buffer
 template <class scalar>
-DynamicalSystem<scalar>::DynamicalSystem(const int dimension,const int idimension,const int odimension) :
+DynamicalSystem<scalar>::DynamicalSystem(const int dimension,const int idimension,const int odimension,bool trace) :
   AbstractMatrix<scalar>(dimension),
   m_idimension(idimension),
   m_odimension(odimension>0 ? odimension : dimension),
@@ -34,14 +31,16 @@ DynamicalSystem<scalar>::DynamicalSystem(const int dimension,const int idimensio
   m_eigenTemplates(dimension,0),
   m_sensitivity(dimension,idimension)
 {
-  ms_logger.logData("Loading System: ",false);
-  if (func::getDefaultPrec()>=128) {
-    std::stringstream buffer;
-    buffer << func::getDefaultPrec();
-    ms_logger.logData(interval_def<scalar>::ms_name,false);
-    ms_logger.logData(buffer.str());
+  if (trace) {
+    ms_logger.logData("Loading System: ",false);
+    if (func::getDefaultPrec()>=128) {
+      std::stringstream buffer;
+      buffer << func::getDefaultPrec();
+      ms_logger.logData(interval_def<scalar>::ms_name,false);
+      ms_logger.logData(buffer.str());
+    }
+    else ms_logger.logData(interval_def<scalar>::ms_name);
   }
-  else ms_logger.logData(interval_def<scalar>::ms_name);
   m_inputs.setName("Inputs");
   m_inputs.useVertices();
   m_initialState.getPolyhedra().useVertices();
@@ -117,14 +116,12 @@ int DynamicalSystem<scalar>::load(std::string &data,size_t pos)
     functions<mpfr::mpreal>::setDefaultPrec(m_paramValues.coeff(eNumBits,0));
   }
   else func::ms_isImprecise=false;
-  traceDynamics((traceDynamics_t)m_paramValues.coeff(eTraceLevel,0));
-  traceSimplex((traceTableau_t)(m_paramValues.coeff(eTraceLevel,1)/10),(tracePivots_t)(m_paramValues.coeff(eTraceLevel,1)%10),(traceVertices_t)m_paramValues.coeff(eTraceLevel,2));
   if (m_paramValues.coeff(eNumStates,0)>0) changeDimensions(m_paramValues.coeff(eNumStates,0),m_paramValues.coeff(eNumInputs,0)+m_paramValues.coeff(eNumVarInputs,0),m_paramValues.coeff(eNumOutputs,0),m_paramValues.coeff(eNumFeedbacks,0));
   m_feedback.resize(0,m_odimension);
   m_sensitivity.resize(m_paramValues.coeff(eNumStates,0),m_paramValues.coeff(eNumInputs,0)+m_paramValues.coeff(eNumVarInputs,0));
   m_inputType=(m_paramValues.coeff(eNumVarInputs,0)>0) ? eVariableInputs : ((m_paramValues.coeff(eNumInputs,0)>0) ? eParametricInputs : eNoInputs);
   if (m_paramValues.coeff(eNumInputs,2)+m_paramValues.coeff(eNumVarInputs,1)>0) m_inputType=eVariableOnlyInputs;
-  if (ms_trace_time) {
+  if (ms_trace_dynamics[eTraceTime]) {
     ms_logger.logData(m_paramValues.coeff(eNumStates,0),"Full load",true);
     ms_logger.logData(timer.elapsed()*1000,"Header time:",true);
   }
@@ -155,14 +152,14 @@ int DynamicalSystem<scalar>::load(std::string &data,size_t pos)
   if (command==eEqualsCmd) {
     result=loadSafeReachTube(data,result);
     if (result<0) return result;
-    if (ms_trace_time) ms_logger.logData(timer.elapsed()*1000,"Safe Tube time:",true);
+    if (ms_trace_dynamics[eTraceTime]) ms_logger.logData(timer.elapsed()*1000,"Safe Tube time:",true);
   }
   else {
     m_templates.resize(m_dimension,0);
     m_safeReachTube.clear();
   }
   m_loadTime=timer.elapsed()*1000;
-  if (ms_trace_time) ms_logger.logData(timer.elapsed()*1000,"Load time:",true);
+  if (ms_trace_dynamics[eTraceTime]) ms_logger.logData(timer.elapsed()*1000,"Load time:",true);
   return result;
 }
 
@@ -172,7 +169,7 @@ int DynamicalSystem<scalar>::load(std::string &guard,std::string &dynamics,std::
 {
   m_loadTime=-1;
   boost::timer timer;
-  if (ms_trace_time) ms_logger.logData(m_dimension,"Load",true);
+  if (ms_trace_dynamics[eTraceTime]) ms_logger.logData(m_dimension,"Load",true);
   int result=loadGuard(guard,0,vertices);
   if (result<0) return result;
   result=loadDynamics(dynamics);
@@ -185,7 +182,7 @@ int DynamicalSystem<scalar>::load(std::string &guard,std::string &dynamics,std::
   if (result<0) return result;
   result=loadSafeReachTube(templates);
   if (result<0) return result;
-  if (ms_trace_time) ms_logger.logData(timer.elapsed()*1000,"Template time:",true);
+  if (ms_trace_dynamics[eTraceTime]) ms_logger.logData(timer.elapsed()*1000,"Template time:",true);
   m_loadTime=timer.elapsed()*1000;
   return result;
 }
@@ -275,6 +272,11 @@ std::string DynamicalSystem<scalar>::getDescription(displayType_t displayType,sp
     result+="Reach Time: "+ms_decoder.MatToString(row);
   }
   result+=m_pAbstractReachTube->getPolyhedra(space).getDescription(displayType,interval,useBrackets);
+  if (m_outputSensitivity.rows()*m_outputSensitivity.cols()>0) {
+    result+="|\n";
+    getOutputReachTube(m_pAbstractReachTube->getPolyhedra(eNormalSpace),0);
+    result+=m_outputs.getDescription(displayType,interval,useBrackets);
+  }
   return result;
 }
 
@@ -310,7 +312,7 @@ int DynamicalSystem<scalar>::loadGuard(const std::string &data,size_t pos,bool v
     return result;
   }
   result=m_guard.load(data,vertices,pos);
-  if (ms_trace_time) ms_logger.logData(timer.elapsed()*1000,"Guard time:",true);
+  if (ms_trace_dynamics[eTraceTime]) ms_logger.logData(timer.elapsed()*1000,"Guard time:",true);
   return result;
 }
 
@@ -332,7 +334,7 @@ int DynamicalSystem<scalar>::loadInitialState(const std::string &data,bool verti
 {
   boost::timer timer;
   int result=m_initialState.load(data,vertices,pos,end);
-  if (ms_trace_time) ms_logger.logData(timer.elapsed()*1000,"State time:",true);
+  if (ms_trace_dynamics[eTraceTime]) ms_logger.logData(timer.elapsed()*1000,"State time:",true);
   return result;
 }
 
@@ -342,7 +344,7 @@ void DynamicalSystem<scalar>::processInputs(bool useVertices)
 {
   if (useVertices) m_inputs.makeVertices();
   m_transformedInputs.load(m_inputs,this->m_sensitivity);
-  if (m_inputs.ms_trace_tableau>=eTraceTransforms) {
+  if (m_inputs.ms_trace_pivots[eTraceTransforms]) {
     m_inputs.logTableau();
     m_transformedInputs.getPolyhedra().logTableau();
     m_transformedInputs.getPolyhedra(eEigenSpace).logTableau();
@@ -356,7 +358,7 @@ int DynamicalSystem<scalar>::loadInputs(const std::string &data,bool vertices,si
   boost::timer timer;
   int result=m_inputs.loadData(data,vertices,pos,end);
   if (result>0) processInputs();
-  if (ms_trace_time) ms_logger.logData(timer.elapsed()*1000,"Inputs time:",true);
+  if (ms_trace_dynamics[eTraceTime]) ms_logger.logData(timer.elapsed()*1000,"Inputs time:",true);
   return result;
 }
 
@@ -474,12 +476,12 @@ AbstractPolyhedra<scalar>& DynamicalSystem<scalar>::getReachSet(powerS iteration
 //      if (retemplate && templates.cols()>0) m_reach.retemplate(templates);
     }
     if (keep) m_pReachSet->load(m_reach,Polyhedra<scalar>::ms_emptyMatrix,Polyhedra<scalar>::ms_emptyMatrix,space);
-    if (this->ms_trace_dynamics>=eTraceDynamics) m_reach.logTableau();
+    if (ms_trace_dynamics[eTraceDynamics]) m_reach.logTableau();
     return m_reach;
   }
   MatrixS matrix=getPseudoDynamics(iteration,false,space);
   AbstractPolyhedra<scalar>& result=init.getTransformedPolyhedra(m_reach,matrix,Polyhedra<scalar>::ms_emptyMatrix);
-  if (this->ms_trace_dynamics>=eTraceDynamics) {
+  if (ms_trace_dynamics[eTraceDynamics]) {
     buffer << " Dynamics";
     ms_logger.logData(matrix,buffer.str());
   }
@@ -489,7 +491,7 @@ AbstractPolyhedra<scalar>& DynamicalSystem<scalar>::getReachSet(powerS iteration
       matrix=getPseudoDynamics(iteration,true,space);
       AbstractPolyhedra<scalar> uPrime(input,matrix);
       result.add(uPrime);
-      if (result.ms_trace_tableau>=eTraceTransforms) {
+      if (result.ms_trace_pivots[eTraceTransforms]) {
         uPrime.setName("+Inputs");
         uPrime.logVertices(true);
         result.logVertices(true);
@@ -508,7 +510,7 @@ AbstractPolyhedra<scalar>& DynamicalSystem<scalar>::getReachSet(powerS iteration
   MatrixS& templates=getTemplates(space);
   if (retemplate && templates.cols()>0) result.retemplate(templates);
   if (keep) m_pReachSet->load(result,Polyhedra<scalar>::ms_emptyMatrix,Polyhedra<scalar>::ms_emptyMatrix,space);
-  if (result.ms_trace_tableau>=eTraceTableau) result.logTableau();
+  if (result.ms_trace_pivots[eTraceTableau]) result.logTableau();
   return result;
 }
 
@@ -663,10 +665,10 @@ typename DynamicalSystem<scalar>::MatrixS& DynamicalSystem<scalar>::makeLogahedr
       if (pos<logTemplates.cols()) logTemplates.block(row,pos,1,logTemplates.cols()-pos)=MatrixS::Zero(1,logTemplates.cols()-pos);
     }
   }
-  if (ms_trace_dynamics>=eTraceAll) ms_logger.logData(logTemplates,"Template base");
+  if (ms_trace_dynamics[eTraceTemplates]) ms_logger.logData(logTemplates,"Template base");
   if (space==eNormalSpace) {
     MatrixS transformedTemplates=m_pseudoEigenVectors.transpose()*logTemplates;
-    if (ms_trace_dynamics>=eTraceAll) {
+    if (ms_trace_dynamics[eTraceTemplates]) {
       ms_logger.logData(m_pseudoEigenVectors,"Template Transform");
       ms_logger.logData(transformedTemplates,"Transformed Templates");
     }
@@ -807,7 +809,7 @@ int DynamicalSystem<scalar>::getRoundedAbstractVertices(MatrixS &vectors,const M
   std::vector<int> jordanIndex(m_jordanIndex.begin()+m_dimension,m_jordanIndex.end());
   std::vector<int> conjugatePair(m_conjugatePair.begin()+m_dimension,m_conjugatePair.end());
   vectors=roundInputs.getAbstractVertices(varTemplates,conjugatePair,jordanIndex);
-  if (ms_trace_dynamics>=eTraceAbstraction) {
+  if (ms_trace_dynamics[eTraceAbstraction]) {
     ms_logger.logData(roundInputs.getVertices(),"var inputs");
   }
   return roundInputs.getVertices().rows();
@@ -823,7 +825,7 @@ typename JordanMatrix<scalar>::MatrixS DynamicalSystem<scalar>::getCombinedVecto
     boost::timer timer;
     MatrixS inputVectors;
     int numInputVertices=getRoundedAbstractVertices(inputVectors,templates,fromSource);
-    if (ms_trace_time) ms_logger.logData(timer.elapsed()*1000,"Input Rounding Time: ",true);
+    if (ms_trace_dynamics[eTraceTime]) ms_logger.logData(timer.elapsed()*1000,"Input Rounding Time: ",true);
     m_numVertices*=numInputVertices;
     return combineAB(vectors,inputVectors,templates.cols(),nV,numInputVertices,true);
   }
@@ -845,10 +847,10 @@ const typename JordanMatrix<scalar>::MatrixS DynamicalSystem<scalar>::getInputVe
     if (inputVertices.rows()>0) {
       inputVertices*=m_sensitivity.transpose();
       if (space>eNormalSpace) inputVertices*=m_invPseudoEigenVectors.transpose();
-      if (ms_trace_dynamics>=eTraceAbstraction) ms_logger.logData(inputVertices,"parametric verices");
+      if (ms_trace_dynamics[eTraceAbstraction]) ms_logger.logData(inputVertices,"parametric verices");
       return inputVertices;
     }
-    else if (ms_trace_dynamics>=eTraceAbstraction) ms_logger.logData("ünable to load inputs from source");
+    else if (ms_trace_dynamics[eTraceAbstraction]) ms_logger.logData("ünable to load inputs from source");
   }
   AbstractPolyhedra<scalar> &inputsSource=m_transformedInputs.getPolyhedra(space);
   const MatrixS& inputVertices=(m_inputType==eParametricInputs) ? inputsSource.getVertices() : inputsSource.getCentre();
@@ -870,7 +872,7 @@ typename JordanMatrix<scalar>::MatrixS& DynamicalSystem<scalar>::getAccelVertice
 
 /// Retrieves the support set for the inputs
 template <class scalar>
-typename JordanMatrix<scalar>::MatrixS& DynamicalSystem<scalar>::getAccelInSupports(powerS iteration, int precision,const MatrixS& templates)
+typename JordanMatrix<scalar>::MatrixS& DynamicalSystem<scalar>::getAccelInSupports(const MatrixS& templates)
 {
   //getAccelVertices() must be called first (not called here for optimization)
   AbstractPolyhedra<scalar> &inputsSource=m_transformedInputs.getPolyhedra(eEigenSpace);
@@ -885,15 +887,23 @@ typename JordanMatrix<scalar>::MatrixS& DynamicalSystem<scalar>::getAccelInSuppo
     m_abstractInputVertices.topRows(m_dimension)=MatrixS::Zero(m_dimension,templates.cols());
     m_abstractInputVertices.bottomRows(m_dimension)=inputsSource.getAbstractVertices(templates,m_conjugatePair,m_jordanIndex,m_accelVertices);
     inputType_t inputType=m_inputType;
-    AbstractPolyhedra<scalar>& inputDynamics=getAbstractDynamics(iteration,precision,eParametricInputs);
+    AbstractPolyhedra<scalar>& inputDynamics=getAbstractDynamics(eParametricInputs);
     m_inputType=inputType;
     MatrixS supports;
     inputDynamics.maximiseAll(m_abstractInputVertices,supports);
     m_accelInSupports=supports.transpose();
   }
   else m_accelInSupports=m_accelVertices*templates;
-  if (this->ms_trace_dynamics>=eTraceAbstraction) ms_logger.logData(m_accelInSupports,"Input Supports",true);
+  if (ms_trace_dynamics[eTraceAbstraction]) ms_logger.logData(m_accelInSupports,"Input Supports",true);
   return m_accelInSupports;
+}
+
+/// Retrieves the support set for the inputs
+template <class scalar>
+typename JordanMatrix<scalar>::MatrixS& DynamicalSystem<scalar>::getAccelInSupports(powerS iteration, int precision,const MatrixS& templates)
+{
+  if (m_hasOnes && (m_inputType>=eVariableInputs)) getAbstractDynamics(iteration,precision,eParametricInputs);
+  return getAccelInSupports(templates);
 }
 
 /// Retrieves the support set for the inputs
@@ -921,7 +931,7 @@ typename JordanMatrix<scalar>::MatrixS& DynamicalSystem<scalar>::getAbstractVert
     case eNoInputs:
       vectors=init.getAbstractVertices(templates,m_conjugatePair,m_jordanIndex);
       numVertices=vertices.rows();
-      if (this->ms_trace_dynamics>=eTraceAbstraction) {
+      if (this->ms_trace_dynamics[eTraceAbstractVertices]) {
         ms_logger.logData(templates,"Templates",true);
         ms_logger.logData(vertices,"Init Vertices");
         ms_logger.logData(vectors,"FullVectors",true);
@@ -930,7 +940,7 @@ typename JordanMatrix<scalar>::MatrixS& DynamicalSystem<scalar>::getAbstractVert
   default: {
     getAccelVertices(force);
     MatrixS combinedVertices=m_hasOnes ? vertices : combineAminB(vertices,m_accelVertices,false);
-    if (this->ms_trace_dynamics>=eTraceAbstraction) {
+    if (this->ms_trace_dynamics[eTraceAbstraction]) {
       ms_logger.logData(templates,"Templates",true);
       ms_logger.logData(vertices,"Init Vertices");
       ms_logger.logData(getInputVertices(eEigenSpace,true),"Input Vertices",true);
@@ -939,11 +949,11 @@ typename JordanMatrix<scalar>::MatrixS& DynamicalSystem<scalar>::getAbstractVert
     }
     MatrixS initVectors=init.getAbstractVertices(templates,m_conjugatePair,m_jordanIndex,combinedVertices);
     numVertices=combinedVertices.rows();
-    if (this->ms_trace_dynamics>=eTraceAbstraction) {
+    if (this->ms_trace_dynamics[eTraceAbstraction]) {
       ms_logger.logData(initVectors,"PreVectors",true);
     }
     vectors=getCombinedVectors(initVectors,templates,true,m_accelVertices);
-    if (this->ms_trace_dynamics>=eTraceAbstraction) {
+    if (this->ms_trace_dynamics[eTraceAbstraction]) {
       ms_logger.logData(vectors,"FullVectors",true);
     }
   }
@@ -1016,6 +1026,59 @@ void DynamicalSystem<scalar>::getGuardedReachTube(AbstractPolyhedra<scalar>& rea
   reachTube.merge(next);
 }
 
+/// Retrieves the reach tube for the precalculated dynamics
+template <class scalar>
+AbstractPolyhedra<scalar>& DynamicalSystem<scalar>::getAbstractReachTube(int directions,inputType_t inputType,space_t space,bool guarded)
+{
+  boost::timer timer;
+  AbstractPolyhedra<scalar>& dynamics=getAbstractDynamics(inputType);
+  AbstractPolyhedra<scalar>& init=m_initialState.getPolyhedra(eEigenSpace);
+
+  MatrixS templates=(m_safeReachTube.isEmpty() || (directions>0)) ? getTemplates(eEigenSpace,directions) : m_safeReachTube.getPolyhedra(eEigenSpace).getDirections();
+  MatrixS supports;
+
+  if (m_dimension+m_idimension+directions>10) {
+    init.getVertices(true);
+    if (m_idimension>0) getAccelVertices(true);
+     supports.resize(templates.cols(),1);
+     for (int i=0;i<templates.cols();i++) {
+      if (ms_trace_dynamics[eTraceTime]) {
+        std::stringstream buffer;
+        buffer << i << " of " << templates.cols();
+        ms_logger.logData(buffer.str());
+      }
+      MatrixS localSupport=getAbstractReachTubeSupports(dynamics,templates.col(i));
+      supports.coeffRef(i,0)=localSupport.coeff(0,0);
+    }
+  }
+  else {
+    MatrixS &vectors=getAbstractVertices(templates);
+    if (ms_trace_dynamics[eTraceTime]) ms_logger.logData(timer.elapsed()*1000,"Abstract Vertices: ",true);
+    if (!dynamics.maximiseAll(vectors,supports)) processError(dynamics.getName());
+    if (inputType>eNoInputs) getAccelInSupports(templates);
+    if (ms_trace_dynamics[eTraceAbstractVertices]) {
+      traceSupports(templates,supports,dynamics,vectors);
+    }
+    if (inputType>eNoInputs) {
+      mergeAccelInSupports(supports,templates.cols());
+      if (this->ms_trace_dynamics[eTraceAbstractVertices]) {
+        ms_logger.logData(vectors,supports,"Combined",true);
+      }
+    }
+    mergeAbstractSupports(templates,supports);
+  }
+  MatrixS faces=templates.transpose();
+  m_pAbstractReachTube->mergeLoad(init,faces,supports,eEigenSpace);
+  AbstractPolyhedra<scalar>& result=m_pAbstractReachTube->getPolyhedra(space);
+  if (guarded) getGuardedReachTube(result,space);
+  if (this->ms_trace_dynamics[eTraceAbstraction]) result.logTableau();
+  m_reachTime=timer.elapsed()*1000;
+  result.setCalculationTime(m_reachTime);
+  if (ms_trace_dynamics[eTraceTime]) ms_logger.logData(m_reachTime,"Abstract Reach Time: ",true);
+  getOutputReachTube(result, directions);
+  return result;
+}
+
 /// Retrieves the reach tube at the given iteration
 template <class scalar>
 AbstractPolyhedra<scalar>& DynamicalSystem<scalar>::getAbstractReachTube(powerS iteration,int precision,int directions,inputType_t inputType,space_t space,bool guarded)
@@ -1034,7 +1097,7 @@ AbstractPolyhedra<scalar>& DynamicalSystem<scalar>::getAbstractReachTube(powerS 
     if (guarded) getGuardedReachTube(result,space);
     m_reachTime=timer.elapsed()*1000;
     result.setCalculationTime(m_reachTime);
-    if (ms_trace_time) ms_logger.logData(m_reachTime,"Abstract Reach Time: ",true);
+    if (ms_trace_dynamics[eTraceTime]) ms_logger.logData(m_reachTime,"Abstract Reach Time: ",true);
     if (m_outputSensitivity.cols()==0) m_outputs.copy(result);
     else result.getTransformedPolyhedra(m_outputs,m_outputSensitivity);
     return result;
@@ -1051,7 +1114,7 @@ AbstractPolyhedra<scalar>& DynamicalSystem<scalar>::getAbstractReachTube(powerS 
     if (m_idimension>0) getAccelVertices(true);
     supports.resize(templates.cols(),1);
     for (int i=0;i<templates.cols();i++) {
-      if (ms_trace_time) {
+      if (ms_trace_dynamics[eTraceTime]) {
         std::stringstream buffer;
         buffer << i << " of " << templates.cols();
         ms_logger.logData(buffer.str());
@@ -1062,16 +1125,16 @@ AbstractPolyhedra<scalar>& DynamicalSystem<scalar>::getAbstractReachTube(powerS 
   }
   else {
     MatrixS &vectors=getAbstractVertices(templates);
-    if (ms_trace_time) ms_logger.logData(timer.elapsed()*1000,"Abstract Vertices: ",true);
+    if (ms_trace_dynamics[eTraceTime]) ms_logger.logData(timer.elapsed()*1000,"Abstract Vertices: ",true);
     if (!dynamics.maximiseAll(vectors,supports)) processError(dynamics.getName());
 
     if (inputType>eNoInputs) getAccelInSupports(iteration,precision,templates);
-    if (this->ms_trace_dynamics>=eTraceAll) {
+    if (this->ms_trace_dynamics[eTraceAbstractVertices]) {
       traceSupports(templates,supports,dynamics,vectors);
     }
     if (inputType>eNoInputs) {
       mergeAccelInSupports(supports,templates.cols());
-      if (this->ms_trace_dynamics>=eTraceAll) {
+      if (this->ms_trace_dynamics[eTraceAbstractVertices]) {
         ms_logger.logData(vectors,supports,"Combined",true);
       }
     }
@@ -1081,22 +1144,22 @@ AbstractPolyhedra<scalar>& DynamicalSystem<scalar>::getAbstractReachTube(powerS 
   m_pAbstractReachTube->mergeLoad(init,faces,supports,eEigenSpace);
   AbstractPolyhedra<scalar>& result=m_pAbstractReachTube->getPolyhedra(space);
   if (guarded) getGuardedReachTube(result,space);
-  if (this->ms_trace_dynamics>=eTraceAbstraction) result.logTableau();
+  if (this->ms_trace_dynamics[eTraceAbstraction]) result.logTableau();
   m_reachTime=timer.elapsed()*1000;
   result.setCalculationTime(m_reachTime);
-  if (ms_trace_time) ms_logger.logData(m_reachTime,"Abstract Reach Time: ",true);
+  if (ms_trace_dynamics[eTraceTime]) ms_logger.logData(m_reachTime,"Abstract Reach Time: ",true);
   getOutputReachTube(result, directions);
   return result;
 }
 
 /// Retrieves the support functions for the reach tube in the given directions
 template <class scalar>
-typename DynamicalSystem<scalar>::MatrixS DynamicalSystem<scalar>::getAbstractReachTubeSupports(powerS iteration,int precision,AbstractPolyhedra<scalar>& dynamics,const MatrixS &templates)
+typename DynamicalSystem<scalar>::MatrixS DynamicalSystem<scalar>::getAbstractReachTubeSupports(AbstractPolyhedra<scalar>& dynamics,const MatrixS &templates)
 {
   boost::timer timer;
   MatrixS supports;
+  if (m_inputType>eNoInputs) getAccelInSupports(templates);
   MatrixS &vectors=getAbstractVertices(templates,false);
-  if (m_inputType>eNoInputs) getAccelInSupports(iteration,precision,templates);
   if (m_inputType==eVariableOnlyInputs) {
     AbstractPolyhedra<scalar> state_dynamics(0);
     AbstractPolyhedra<scalar> in_dynamics(0);
@@ -1125,14 +1188,22 @@ typename DynamicalSystem<scalar>::MatrixS DynamicalSystem<scalar>::getAbstractRe
     supports+=inSupports;
   }
   else if (!dynamics.maximiseAll(vectors,supports,dynamics.eOverAprox,ms_incremental ? LexCos : LexNone)) processError(dynamics.getName());
-  if (this->ms_trace_dynamics>=eTraceAll) traceSupports(templates,supports,dynamics,vectors);
+  if (ms_trace_dynamics[eTraceAbstractVertices]) traceSupports(templates,supports,dynamics,vectors);
   if (m_inputType>eNoInputs) {
     mergeAccelInSupports(supports,templates.cols());
-    if (this->ms_trace_dynamics>=eTraceAll) ms_logger.logData(vectors,supports,"Partial Combined",true);
+    if (ms_trace_dynamics[eTraceAbstractVertices]) ms_logger.logData(vectors,supports,"Partial Combined",true);
   }
   mergeAbstractSupports(templates,supports);
-  if (ms_trace_time) ms_logger.logData(timer.elapsed()*1000,"Abstract Tube Support: ",true);
+  if (ms_trace_dynamics[eTraceTime]) ms_logger.logData(timer.elapsed()*1000,"Abstract Tube Support: ",true);
   return supports;
+}
+
+/// Retrieves the support functions for the reach tube in the given directions
+template <class scalar>
+typename DynamicalSystem<scalar>::MatrixS DynamicalSystem<scalar>::getAbstractReachTubeSupports(powerS iteration,int precision,AbstractPolyhedra<scalar>& dynamics,const MatrixS &templates)
+{
+  if (m_hasOnes && (m_inputType>=eVariableInputs)) getAbstractDynamics(iteration,precision,eParametricInputs);
+  return getAbstractReachTubeSupports(dynamics,templates);
 }
 
 /// Retrieves the output reach tube given a state-space reach tube
@@ -1154,6 +1225,13 @@ AbstractPolyhedra<scalar>& DynamicalSystem<scalar>::getOutputReachTube(AbstractP
     if (outDimension==1) {
       outTemplates=MatrixS::Ones(1,2);
       outTemplates.coeffRef(0,1)=-ms_one;
+      MatrixS directions(m_dimension,2);
+      directions.col(0)=m_outputSensitivity.transpose();
+      directions.col(1)=-directions.col(0);
+      MatrixS supports;
+      reachTube.maximiseAll(directions,supports);
+      m_outputs.load(outTemplates.transpose(),supports);
+      return m_outputs;
     }
     else {
       reachTube.getTransformedPolyhedra(m_outputs,m_outputSensitivity);
@@ -1162,7 +1240,10 @@ AbstractPolyhedra<scalar>& DynamicalSystem<scalar>::getOutputReachTube(AbstractP
 //      makeLogahedralTemplates(precision,eEigenSpace,outDimension,outTemplates);
     }
     m_outputs.copy(reachTube);
-    m_outputs.vertexTransform(m_outputSensitivity,outTemplates);
+    if (!m_outputs.vertexTransform(m_outputSensitivity,outTemplates))
+    {
+      ms_logger.logData("Error Transforming Reach Tube");
+    }
   }
   else reachTube.getTransformedPolyhedra(m_outputs,m_outputSensitivity);
   return m_outputs;
@@ -1191,7 +1272,7 @@ AbstractPolyhedra<scalar>& DynamicalSystem<scalar>::getIterativeReachTube(powerS
     for (int i=1;i<=iteration;i++) {
       vectors=dynamics*vectors;
       if (!init.maximiseAll(vectors,supports)) processError(init.getName() + " iterative maximise");
-      if (this->ms_trace_dynamics>=eTraceAll) {
+      if (ms_trace_dynamics[eTraceAll]) {
         ms_logger.logData(i,"Iteration",true);
         ms_logger.logData(supports);
       }
@@ -1263,7 +1344,7 @@ AbstractPolyhedra<scalar>& DynamicalSystem<scalar>::getIterativeReachTube(powerS
   AbstractPolyhedra<scalar>& reachTube=m_pReachTube->load(result,Polyhedra<scalar>::ms_emptyMatrix,Polyhedra<scalar>::ms_emptyMatrix,space);
   m_reachTime=timer.elapsed()*1000;
   reachTube.setCalculationTime(m_reachTime);
-  if (ms_trace_time) ms_logger.logData(m_reachTime,"LGG Reach Time: ",true);
+  if (ms_trace_dynamics[eTraceTime]) ms_logger.logData(m_reachTime,"LGG Reach Time: ",true);
   return reachTube;
 }
 
@@ -1293,7 +1374,7 @@ int DynamicalSystem<scalar>::loadSensitivities(std::string &data,size_t pos)
   pos=ms_logger.getCommand(command,data,pos);
   m_sensitivity.resize(m_dimension,m_idimension);
   int result=ms_logger.StringToMat(m_sensitivity,data,pos);
-  if (ms_trace_time) ms_logger.logData(timer.elapsed()*1000,"Sensitivity time:",true);
+  if (ms_trace_dynamics[eTraceTime]) ms_logger.logData(timer.elapsed()*1000,"Sensitivity time:",true);
   return result;
 }
 
@@ -1305,7 +1386,7 @@ int DynamicalSystem<scalar>::loadOutputSensitivities(std::string &data,size_t po
   pos=ms_logger.getCommand(command,data,pos);
   m_outputSensitivity.resize(m_odimension,m_dimension);
   int result=ms_logger.StringToMat(m_outputSensitivity,data,pos);
-  if (ms_trace_time) ms_logger.logData(timer.elapsed()*1000,"Output Sensitivity time:",true);
+  if (ms_trace_dynamics[eTraceTime]) ms_logger.logData(timer.elapsed()*1000,"Output Sensitivity time:",true);
   return result;
 }
 
@@ -1317,7 +1398,7 @@ int DynamicalSystem<scalar>::loadIOSensitivities(std::string &data,size_t pos)
   pos=ms_logger.getCommand(command,data,pos);
   m_ioSensitivity.resize(m_odimension,m_idimension);
   int result=ms_logger.StringToMat(m_ioSensitivity,data,pos);
-  if (ms_trace_time) ms_logger.logData(timer.elapsed()*1000,"IO Sensitivity time:",true);
+  if (ms_trace_dynamics[eTraceTime]) ms_logger.logData(timer.elapsed()*1000,"IO Sensitivity time:",true);
   return result;
 }
 
@@ -1340,7 +1421,7 @@ void DynamicalSystem<scalar>::processError(std::string source)
   ms_logger.logData("Error processing ",false);
   ms_logger.logData(source);
   if (func::ms_formal) throw processingError;
-  func::ms_imprecise=true;
+  func::ms_isImprecise=true;
 }
 
 template <class scalar>
@@ -1349,7 +1430,7 @@ bool DynamicalSystem<scalar>::loadDynamics(const MatrixS &dynamics)
   boost::timer timer;
   bool result=load(dynamics);
   if (result) setEigenSpace();
-  if (ms_trace_time) ms_logger.logData(timer.elapsed()*1000,"Dynamics time:",true);
+  if (ms_trace_dynamics[eTraceTime]) ms_logger.logData(timer.elapsed()*1000,"Dynamics time:",true);
   return result;
 }
 
@@ -1362,7 +1443,7 @@ int DynamicalSystem<scalar>::loadDynamics(const std::string &data,size_t pos)
   if (command==eMinusCmd) pos--;
   int result=JordanMatrix<scalar>::load(data,pos);
   if (result>0) setEigenSpace();
-  if (ms_trace_time) ms_logger.logData(timer.elapsed()*1000,"Dynamics time:",true);
+  if (ms_trace_dynamics[eTraceTime]) ms_logger.logData(timer.elapsed()*1000,"Dynamics time:",true);
   return result;
 }
 
@@ -1410,6 +1491,7 @@ void DynamicalSystem<scalar>::copy(const DynamicalSystem &source)
   m_fdimension=source.m_fdimension;
   m_odimension=source.m_odimension;
   m_numVertices=source.m_numVertices;
+  m_inputType=source.m_inputType;
   m_inputs.copy(source.m_inputs);
   m_reference.copy(source.m_reference);
   m_outputs.copy(source.m_outputs);
@@ -1473,13 +1555,15 @@ template <class scalar>
 int DynamicalSystem<scalar>::processOptions(optionList_t &options,displayType_t displayType,space_t space,bool interval,bool run)
 {
   if (options.size()<=0) return 0;
+  if (options[eDebugStr].size()>0) {
+    std::istringstream s(options[eDebugStr]);
+    traceDebug(s);
+  }
   if (options[eParamStr].size()>0) {
     if (ms_logger.StringToDim(m_paramValues,options[eParamStr])<0) return -1;
     if (m_paramValues.coeff(eNumBits,0)>0) {
       functions<mpfr::mpreal>::setDefaultPrec(m_paramValues.coeff(eNumBits,0));
     }
-    traceDynamics((traceDynamics_t)m_paramValues.coeff(eTraceLevel,0));
-    traceSimplex((traceTableau_t)(m_paramValues.coeff(eTraceLevel,1)/10),(tracePivots_t)(m_paramValues.coeff(eTraceLevel,1)%10),(traceVertices_t)m_paramValues.coeff(eTraceLevel,2));
     if (m_paramValues.coeff(eNumStates,0)>0) changeDimensions(m_paramValues.coeff(eNumStates,0),m_paramValues.coeff(eNumInputs,0)+m_paramValues.coeff(eNumVarInputs,0),m_paramValues.coeff(eNumOutputs,0),m_paramValues.coeff(eNumFeedbacks,0));
     m_sensitivity.conservativeResize(m_paramValues.coeff(eNumStates,0),m_paramValues.coeff(eNumInputs,0)+m_paramValues.coeff(eNumVarInputs,0));
     m_inputType=(m_paramValues.coeff(eNumVarInputs,0)>0) ? eVariableInputs : ((m_paramValues.coeff(eNumInputs,0)>0) ? eParametricInputs : eNoInputs);
@@ -1565,19 +1649,19 @@ typename DynamicalSystem<scalar>::powerS DynamicalSystem<scalar>::calculateItera
     findFrequencies();
     if (isDivergent(true)) {
       powerS result=calculateDivergentIterations(init,inputType);
-      if (ms_trace_time) ms_logger.logData(timer.elapsed()*1000,"Calculate Iterations, Time",true);
+      if (ms_trace_dynamics[eTraceTime]) ms_logger.logData(timer.elapsed()*1000,"Calculate Iterations, Time",true);
       return result;
     }
     MatrixS limits=m_guard.getPolyhedra(eEigenSpace).getSupports();
     if (limits.rows()<=0) {
-      if (ms_trace_time) ms_logger.logData(timer.elapsed()*1000,"Calculate Iterations, Time",true);
+      if (ms_trace_dynamics[eTraceTime]) ms_logger.logData(timer.elapsed()*1000,"Calculate Iterations, Time",true);
       return func::ms_infPower;
     }
     MatrixS templates,roundVertices;
     MatrixS faces=m_guard.getPolyhedra(eEigenSpace).getDirections();
     getRoundedDirections(templates,faces);
     if (templates.cols()==0) {
-      if (ms_trace_time) ms_logger.logData(timer.elapsed()*1000,"Calculate Iterations, Time",true);
+      if (ms_trace_dynamics[eTraceTime]) ms_logger.logData(timer.elapsed()*1000,"Calculate Iterations, Time",true);
       return func::ms_infPower;
     }
     const MatrixS& vertices=init.getVertices();
@@ -1640,7 +1724,7 @@ typename DynamicalSystem<scalar>::powerS DynamicalSystem<scalar>::calculateItera
     for (int i=0;i<m_dimension;i++) {
       if (m_freq[i]>rotations) rotations=m_freq[i];
     }
-    if (ms_trace_time) ms_logger.logData(timer.elapsed()*1000,"Calculate Iterations, Time",true);
+    if (ms_trace_dynamics[eTraceTime]) ms_logger.logData(timer.elapsed()*1000,"Calculate Iterations, Time",true);
     return high+rotations;
 }
 
@@ -1849,28 +1933,63 @@ typename DynamicalSystem<scalar>::powerS DynamicalSystem<scalar>::calculateNorme
 }
 
 template <class scalar>
-void DynamicalSystem<scalar>::traceDynamics(traceDynamics_t traceType)
+void DynamicalSystem<scalar>::traceDebug(std::istringstream& trace)
 {
-  JordanMatrix<scalar>::ms_trace_time=(traceType>=eTraceTime);
-  Tableau<scalar>::ms_trace_time=(traceType>=eTraceTime);
-  Polyhedra<scalar>::ms_trace_dynamics=traceType;
-  JordanMatrix<scalar>::ms_trace_dynamics=traceType;
-  JordanSolver<refScalar>::ms_trace_dynamics=traceType;
-  if ((Tableau<scalar>::ms_trace_tableau<eTraceTableau) && (traceType>=eTraceAbstraction)) {
-    Tableau<scalar>::ms_trace_tableau=eTraceTableau;
+  std::string tracePivotOptions[eMaxTracePivots]={"stime","serrors","objective","tableau","transforms","pivots","costs","feasibility","basis","entries","simplex"};
+  std::string traceVerticesOptions[eMaxTraceVertices]={"vtime","vcount","vertices","rays","edges","sets"};
+  std::string traceDynamicsOptions[eMaxTraceDynamics]={"dtime","dynamics","eigen","pseudo","output","bounds","derrors","sampling","control","abstraction","adynamics","avertices","templates","refinement","all","REF"};
+  typedef std::map<std::string,tracePivots_t> tracePivotNames_t;
+  tracePivotNames_t tracePivotNames;
+  for (int i=0;i<eMaxTracePivots;i++) {
+    tracePivotNames.insert(std::pair<std::string,tracePivots_t>(tracePivotOptions[i],(tracePivots_t)i));
   }
-}
-
-template <class scalar>
-void DynamicalSystem<scalar>::traceSimplex(traceTableau_t traceTableau,tracePivots_t tracePivots,traceVertices_t traceVertices)
-{
-  Tableau<scalar>::ms_trace_tableau=traceTableau;
-  Tableau<scalar>::ms_trace_pivots=tracePivots;
-  Tableau<scalar>::ms_trace_errors=(traceTableau>=eTraceObjectives);
-  Polyhedra<scalar>::ms_trace_vertices=traceVertices;
-  VertexEnumerator<scalar>::ms_trace_vertices=traceVertices;
-  VertexEnumerator<scalar>::ms_normalised_rays=(traceVertices>=eTraceEdges);
-  Set::ms_trace_set=(traceVertices==eTraceSets);
+  typedef std::map<std::string,traceVertices_t> traceVertexNames_t;
+  traceVertexNames_t traceVertexNames;
+  for (int i=0;i<eMaxTraceVertices;i++) {
+    traceVertexNames.insert(std::pair<std::string,traceVertices_t>(traceVerticesOptions[i],(traceVertices_t)i));
+  }
+  typedef std::map<std::string,traceDynamics_t> traceDynamicsNames_t;
+  traceDynamicsNames_t traceDynamicsNames;
+  for (int i=0;i<eMaxTraceDynamics;i++) {
+    traceDynamicsNames.insert(std::pair<std::string,traceDynamics_t>(traceDynamicsOptions[i],(traceDynamics_t)i));
+  }
+  std::string s;
+  while (std::getline(trace,s, ';')) {
+    traceDynamicsNames_t::iterator it=traceDynamicsNames.find(s);
+    if (it!=traceDynamicsNames.end()) {
+      ms_trace_dynamics[it->second]=true;
+      Polyhedra<scalar>::ms_trace_dynamics[it->second]=true;
+      JordanSolver<refScalar>::ms_trace_dynamics[it->second]=true;
+      if (it->second==eTraceAll) {
+        for (int i=0;i<it->second;i++) {
+          ms_trace_dynamics[i]=true;
+          Polyhedra<scalar>::ms_trace_dynamics[i]=true;
+          JordanSolver<refScalar>::ms_trace_dynamics[i]=true;
+        }
+      }
+    }
+    else {
+      tracePivotNames_t::iterator its=tracePivotNames.find(s);
+      if (its!=tracePivotNames.end()) {
+        Tableau<scalar>::ms_trace_pivots[its->second]=true;
+        if (it->second==eTraceSimplex) {
+          for (int i=0;i<it->second;i++) Tableau<scalar>::ms_trace_pivots[i]=true;
+        }
+      }
+      else {
+        traceVertexNames_t::iterator itv=traceVertexNames.find(s);
+        if (itv!=traceVertexNames.end()) VertexEnumerator<scalar>::ms_trace_vertices[itv->second]=true;
+        else if (s=="time") {
+          ms_trace_dynamics[eTraceTime]=true;
+          Polyhedra<scalar>::ms_trace_dynamics[eTraceTime]=true;
+          JordanSolver<refScalar>::ms_trace_dynamics[eTraceTime]=true;
+          Tableau<scalar>::ms_trace_pivots[eTracePivotTimes]=true;
+        }
+      }
+    }
+  }
+  VertexEnumerator<scalar>::ms_normalised_rays=VertexEnumerator<scalar>::ms_trace_vertices[eTraceEdges];
+  Set::ms_trace_set=VertexEnumerator<scalar>::ms_trace_vertices[eTraceSets];
 }
 
 #ifdef USE_LDOUBLE

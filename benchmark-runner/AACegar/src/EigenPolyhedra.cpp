@@ -190,7 +190,7 @@ void EigenPolyhedra<scalar>::setEigenSpace(MatrixS &transform,MatrixS &inverse)
   m_pEigenVectors=&transform;
   m_pInverseEigenVectors=&inverse;
   m_eigenPolyhedra.clear();
-  m_polyhedra.getTransformedPolyhedra(m_eigenPolyhedra,*m_pInverseEigenVectors,*m_pEigenVectors);
+  if (!m_polyhedra.isEmpty()) m_polyhedra.getTransformedPolyhedra(m_eigenPolyhedra,*m_pInverseEigenVectors,*m_pEigenVectors);
   m_singularPolyhedra.clear();
 }
 

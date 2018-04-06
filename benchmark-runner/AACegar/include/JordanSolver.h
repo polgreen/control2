@@ -92,27 +92,27 @@ public:
     MatrixType& getSchur()                         { return this->m_matT; }
 
 protected:
-    int                              m_dimension;
-    refScalar                        m_zero;
-    refScalar                        m_largeZero;
-    MatrixType                       m_dynamics;
-    MatrixType                       m_inverse;
-    ComplexMatrixType                m_eigenValues;
-    ComplexMatrixType                m_eigenVectors;
-    std::vector<int>                 m_jordanIndex;
-    std::vector<int>                 m_conjugatePair;
-    std::vector<bool>                m_isOne;
-    std::vector<bool>                m_isNegative;
-    int                              m_numZeros;
-    bool                             m_hasOnes;
-    bool                             m_hasNegatives;
-    bool                             m_hasMultiplicities;
-    int                              m_leadingZeroColumns;
-    static complexType               ms_complexOne;
-    static MatToStr<scalar>          ms_logger;
-    static MatToStr<scalar>          ms_decoder;
+    int                         m_dimension;
+    refScalar                   m_zero;
+    refScalar                   m_largeZero;
+    MatrixType                  m_dynamics;
+    MatrixType                  m_inverse;
+    ComplexMatrixType           m_eigenValues;
+    ComplexMatrixType           m_eigenVectors;
+    std::vector<int>            m_jordanIndex;
+    std::vector<int>            m_conjugatePair;
+    std::vector<bool>           m_isOne;
+    std::vector<bool>           m_isNegative;
+    int                         m_numZeros;
+    bool                        m_hasOnes;
+    bool                        m_hasNegatives;
+    bool                        m_hasMultiplicities;
+    int                         m_leadingZeroColumns;
+    static complexType          ms_complexOne;
+    static MatToStr<scalar>     ms_logger;
+    static MatToStr<scalar>     ms_decoder;
 public:
-    static traceDynamics_t           ms_trace_dynamics;
+    static bool                 ms_trace_dynamics[eMaxTraceDynamics];
 };
 
 }

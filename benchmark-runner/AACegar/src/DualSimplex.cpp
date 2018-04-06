@@ -100,9 +100,7 @@ bool DualSimplex<scalar>::SelectPrimalSimplexPivot(pivot_t &pivot)
   for (int i=0;i<m_dimension;i++) {
     cost.coeffRef(0,i)=m_pSortedTableau->entry(m_basisInverse,m_objectiveRow,i);
   }
-  if (ms_trace_pivots>=eTraceCosts) {
-    this->ms_logger.logData(cost,"costs:");
-  }
+  if (ms_trace_pivots[eTraceCosts]) ms_logger.logData(cost,"costs:");
   bool optimal=true;
   int selCol=-1;
   refScalar maxCoeff=-func::ms_infinity;
@@ -289,7 +287,7 @@ bool DualSimplex<scalar>::AuxiliaryPivotAndUpdate(long col)
     }
   }
   m_basisInverse.col(col)*=invXtemp0;
-  if (ms_trace_pivots>=eTracePivots) logBasis(m_size,col);
+  if (ms_trace_pivots[eTracePivots]) logBasis(m_size,col);
   long entering=m_nonBasicRow[col];
   m_basicVars[m_size]=col;              // the nonbasic variable r corresponds to column s
   m_nonBasicRow[col]=m_size;            // the nonbasic variable on s column is r
@@ -351,14 +349,14 @@ int DualSimplex<scalar>::FindDualFeasibleBasis()
   pivot_t pivot;
 
   m_status=eUndecided; this->m_evidenceCol=-1;
-  if (ms_trace_tableau>eTraceTableau) this->logBasis(m_objectiveRow,-1);
+  if (ms_trace_pivots[eTraceTableau]) this->logBasis(m_objectiveRow,-1);
   scalar maxcost=-func::ms_infinity;
   int maxReducedCostCol=0;  /* ms will be the index of column which has the largest reduced cost */
   for (int col=1; col<m_dimension; col++){//ignore RHSCol
     scalar cost=m_pSortedTableau->entry(m_basisInverse,m_objectiveRow,col);
     if (func::toLower(cost) > func::toUpper(maxcost)) {maxcost=cost; maxReducedCostCol = col;}//TODO:might want to check for imprecision
   }
-  if (ms_trace_pivots>=eTraceCosts) {
+  if (ms_trace_pivots[eTraceCosts]) {
     std::stringstream buffer;
     buffer << "Dual feasible Basis. cost=" << ms_logger.MakeNumber(maxcost) << ",c=" << maxReducedCostCol;
     ms_logger.logData(buffer.str());
@@ -373,9 +371,9 @@ int DualSimplex<scalar>::FindDualFeasibleBasis()
       m_pSortedTableau->subRow(m_auxiliaryRow,m_nonBasicRow[k]);
     }
   }
-  if (ms_trace_pivots>=eTraceSimplex) {
+  if (ms_trace_pivots[eTraceFeasibility]) {
     ms_logger.logData(m_auxiliaryRow,"Auxiliary Row:");
-    if (ms_trace_pivots>=eTraceEntries) {
+    if (ms_trace_pivots[eTraceEntries]) {
       this->logNonBasic();
       this->logBasic();
       MatrixS matrix=m_auxiliaryRow*m_basisInverse;
@@ -396,7 +394,7 @@ int DualSimplex<scalar>::FindDualFeasibleBasis()
   if (m_costs.cols()<m_dimension) m_costs.resize(1,m_dimension);
 
   while (SelectDualSimplexPivot(true, pivot))  {
-    if (!ColumnPivotAndUpdate(pivot) && ms_trace_errors) {
+    if (!ColumnPivotAndUpdate(pivot) && ms_trace_pivots[eTraceTableauErrors]) {
       ms_logger.logData("Dual Feas Cycling");//TODO: remove (change for appropriate action)
     }
     rank++;
@@ -413,7 +411,7 @@ int DualSimplex<scalar>::FindDualFeasibleBasis()
   pivot.row=findMinRow(maxReducedCostCol);
   pivot.col=maxReducedCostCol;
   if (pivot.row>=0) {
-    if (!ColumnPivotAndUpdate(pivot) && ms_trace_errors) {
+    if (!ColumnPivotAndUpdate(pivot) && ms_trace_pivots[eTraceTableauErrors]) {
       ms_logger.logData("Dual Feas Cycling 2");//TODO: remove (change for appropriate action)
     }
     rank++;
@@ -454,7 +452,7 @@ bool DualSimplex<scalar>::maximiseAll(const MatrixS &vectors, MatrixS &supports,
     FindFeasBasis(eResetBasis);
     if (order!=LexNone) {
       SortedMatrix<scalar> sortedVectors(vectors,order,true);
-      if (ms_trace_time) ms_logger.logData(timer.elapsed()*1000,"Sort Time",true);
+      if (ms_trace_pivots[eTracePivotTimes]) ms_logger.logData(timer.elapsed()*1000,"Sort Time",true);
       sortedVectors.block(0,0,sortedVectors.rows(),sortedVectors.cols())=vectors.transpose();
       int index=sortedVectors.zeroOrder(1);
       m_pSortedTableau->setRow(m_objectiveRow,1,vectors.col(index).transpose());
@@ -469,7 +467,7 @@ bool DualSimplex<scalar>::maximiseAll(const MatrixS &vectors, MatrixS &supports,
           result=processMaximize(eKeepBasis);
         }
         catch(std::string error) {
-          if (ms_trace_errors) {
+          if (ms_trace_pivots[eTraceTableauErrors]) {
             ms_logger.logData("retrying ",false);
             ms_logger.logData(error);
           }
@@ -492,10 +490,11 @@ bool DualSimplex<scalar>::maximiseAll(const MatrixS &vectors, MatrixS &supports,
     ms_logger.logData(error);
     return false;
   }
-  if (this->ms_trace_time) {
+  if (ms_trace_pivots[eTraceObjectives]) ms_logger.logData(vectors,supports,"maximised "+ getName(),true);
+  if (ms_trace_pivots[eTracePivotTimes]) {
     int elapsed=timer.elapsed()*1000;
     if (elapsed>0) {
-      ms_logger.logData(this->getName(),false);
+      ms_logger.logData(getName(),false);
       ms_logger.logData(m_iterations,", iters ");
       ms_logger.logData(elapsed," Maximise time",true);
     }
@@ -518,7 +517,7 @@ int DualSimplex<scalar>::ceMaximise(SortedMatrix<scalar> &sortedVectors, MatrixS
       result=processMaximize((start>0) ? eKeepBasis : eResetBasis);
     }
     catch(std::string error) {
-      if (ms_trace_errors) {
+      if (ms_trace_pivots[eTraceTableauErrors]) {
         ms_logger.logData("retrying ",false);
         ms_logger.logData(error);
       }
@@ -536,13 +535,13 @@ int DualSimplex<scalar>::ceMaximise(SortedMatrix<scalar> &sortedVectors, MatrixS
       index=sortedVectors.zeroOrder(i);
       if (index<0) continue;
       m_pSortedTableau->setRow(m_objectiveRow,1,sortedVectors.row(index));
-      if (ms_trace_tableau>=eTraceObjectives) {
+      if (ms_trace_pivots[eTraceObjectives]) {
         std::stringstream buffer;
         buffer << "index[" << i << "]";
-        if (ms_trace_pivots>=eTracePivots) {
+        if (ms_trace_pivots[eTracePivots]) {
           buffer << ", cos=" << ms_logger.MakeNumber(sortedVectors.m_cosines[i]);
         }
-        if (ms_trace_tableau>=eTraceTableau) {
+        if (ms_trace_pivots[eTraceTableau]) {
           MatrixS objective=sortedVectors.row(index);
           ms_logger.logData(objective,buffer.str());
         }
@@ -552,13 +551,13 @@ int DualSimplex<scalar>::ceMaximise(SortedMatrix<scalar> &sortedVectors, MatrixS
         result=processMaximize(eCheckBasis);
       }
       catch(std::string error) {
-        if (ms_trace_errors) {
+        if (ms_trace_pivots[eTraceTableauErrors]) {
           ms_logger.logData("retrying ",false);
           ms_logger.logData(error);
         }
         result=processMaximize(eRebaseBasis);
       }
-      if (ms_trace_tableau>=eTraceObjectives) {
+      if (ms_trace_pivots[eTraceObjectives]) {
         ms_logger.logData(result,"max",true);
       }
       if (func::toUpper(result)>maxResult) {
@@ -567,10 +566,10 @@ int DualSimplex<scalar>::ceMaximise(SortedMatrix<scalar> &sortedVectors, MatrixS
       supports.coeffRef(index,0)=result;
       if (func::toUpper(inSupports.coeffRef(index,0)+result)>max) {
         ce=m_basisInverse.col(RHSCol).transpose();
-        if (ms_trace_time) {
+        if (ms_trace_pivots[eTracePivotTimes]) {
           int elapsed=timer.elapsed()*1000;
           if (elapsed>0) {
-            ms_logger.logData(this->getName(),false);
+            ms_logger.logData(getName(),false);
             ms_logger.logData(i," ");
             ms_logger.logData(m_iterations,", iters ");
             ms_logger.logData(inSupports.coeffRef(index,0)+result,", max ");
@@ -585,10 +584,10 @@ int DualSimplex<scalar>::ceMaximise(SortedMatrix<scalar> &sortedVectors, MatrixS
     ms_logger.logData(error);
     return -1;
   }
-  if (this->ms_trace_time) {
+  if (ms_trace_pivots[eTracePivotTimes]) {
     int elapsed=timer.elapsed()*1000;
     if (elapsed>0) {
-      ms_logger.logData(this->getName(),false);
+      ms_logger.logData(getName(),false);
       ms_logger.logData(m_iterations,", iters ");
       ms_logger.logData(elapsed," Maximise time",true);
     }
@@ -617,9 +616,9 @@ When LP is dual-inconsistent then *se returns the evidence column.
 
   if (resetType<eKeepBasis) {
     if (resetType!=eRebaseBasis) m_iterations=0;
-    if (ms_trace_pivots>=eTracePivots) logTableau("Maximise");
+    if (ms_trace_pivots[eTracePivots]) logTableau("Maximise");
     m_iterations+=FindFeasBasis(resetType);
-    if (this->ms_trace_time && (ms_trace_pivots>=eTracePivots) && (resetType!=eUseDefaultBasis)) {
+    if (ms_trace_pivots[eTracePivotTimes] && ms_trace_pivots[eTracePivots] && (resetType!=eUseDefaultBasis)) {
       logPivotCount(timer.elapsed()*1000,"Find Feasible:");
     }
   }
@@ -632,7 +631,7 @@ When LP is dual-inconsistent then *se returns the evidence column.
         rank=FindDualFeasibleBasis();
       }
       if (SelectCrissCrossPivot(pivot)) {
-        if (!ColumnPivotAndUpdate(pivot) && ms_trace_errors) {
+        if (!ColumnPivotAndUpdate(pivot) && ms_trace_pivots[eTraceTableauErrors]) {
           ms_logger.logData("Cycling");//TODO: remove (change for appropriate action)
         }
         maxpivots+=maxpivfactor*m_dimension;
@@ -650,13 +649,13 @@ When LP is dual-inconsistent then *se returns the evidence column.
         break;
       }
     }
-    if ((this->ms_trace_time) && (ms_trace_pivots>=eTracePivots)) {
+    if (ms_trace_pivots[eTracePivotTimes] && ms_trace_pivots[eTracePivots]) {
       logPivotCount(timer.elapsed()*1000,"Find Feasible:");
     }
   }*/
   m_status=eUndecided;
   if (this->m_evidenceCol<0) rank+=FindDualFeasibleBasis();
-  if ((this->ms_trace_time) && (ms_trace_pivots>=eTracePivots)) {
+  if (ms_trace_pivots[eTracePivotTimes] && ms_trace_pivots[eTracePivots]) {
     logPivotCount(timer.elapsed()*1000,"Find DualFeasible:");
   }
 
@@ -685,7 +684,7 @@ When LP is dual-inconsistent then *se returns the evidence column.
       rank=FindDualFeasibleBasis();
     }
     if ((rank<maxpivots) && SelectDualSimplexPivot(false, pivot)) {
-      if (!ColumnPivotAndUpdate(pivot) && ms_trace_errors) {
+      if (!ColumnPivotAndUpdate(pivot) && ms_trace_pivots[eTraceTableauErrors]) {
         ms_logger.logData("Process Cycling");//TODO: remove (change for appropriate action)
       }
       rank++;
@@ -695,7 +694,7 @@ When LP is dual-inconsistent then *se returns the evidence column.
          attained and dual simplex pivot should have been chosen.  This might occur
          under floating point computation, or the case of cycling.
       */
-      if (!ColumnPivotAndUpdate(pivot) && ms_trace_errors) {
+      if (!ColumnPivotAndUpdate(pivot) && ms_trace_pivots[eTraceTableauErrors]) {
         ms_logger.logData("Cycling");//TODO: remove (change for appropriate action)
       }
       maxpivots+=maxpivfactor*m_dimension;
@@ -716,9 +715,9 @@ When LP is dual-inconsistent then *se returns the evidence column.
   }
   m_iterations+=rank;
   if (resetType>=eKeepBasis) m_rank+=rank;
-  if ((this->ms_trace_time) && (ms_trace_pivots>=eTracePivots)) logPivotCount(timer.elapsed()*1000,"Find Support");
+  if (ms_trace_pivots[eTracePivotTimes] && ms_trace_pivots[eTracePivots]) logPivotCount(timer.elapsed()*1000,"Find Support");
   scalar result=m_pSortedTableau->entry(m_basisInverse,m_objectiveRow,RHSCol);
-  if (ms_trace_pivots>=eTracePivots) ms_logger.logData(result,"max",true);
+  if (ms_trace_pivots[eTracePivots]) ms_logger.logData(result,"max",true);
   if (func::isNan(result)) {
     func::imprecise(result,func::ms_0);
     return result;
@@ -736,7 +735,7 @@ scalar DualSimplex<scalar>::processIncremental()
   pivot.row=m_objectiveRow-1;
   if (m_costs.cols()<m_dimension) m_costs.resize(1,m_dimension);
   if (SelectIncrementalSimplexPivot(pivot)) {
-    if (!ColumnPivotAndUpdate(pivot) && ms_trace_errors) {
+    if (!ColumnPivotAndUpdate(pivot) && ms_trace_pivots[eTraceTableauErrors]) {
       ms_logger.logData("Cycling Incremental");//TODO: remove (change for appropriate action)
     }
     rank++;
@@ -748,7 +747,7 @@ scalar DualSimplex<scalar>::processIncremental()
         rank=FindDualFeasibleBasis();
       }
       if (SelectDualSimplexPivot(false, pivot)) {
-        if (!ColumnPivotAndUpdate(pivot) && ms_trace_errors) {
+        if (!ColumnPivotAndUpdate(pivot) && ms_trace_pivots[eTraceTableauErrors]) {
           ms_logger.logData("Cycling post-incremental");//TODO: remove (change for appropriate action)
         }
         rank++;
@@ -766,7 +765,7 @@ scalar DualSimplex<scalar>::processIncremental()
     m_iterations+=rank;
     m_rank+=rank;
   }
-  if ((this->ms_trace_time) && (ms_trace_pivots>=eTracePivots)) logPivotCount(timer.elapsed()*1000,"Find Support:");
+  if (ms_trace_pivots[eTracePivotTimes] && ms_trace_pivots[eTracePivots]) logPivotCount(timer.elapsed()*1000,"Find Support:");
   scalar result=m_pSortedTableau->entry(m_basisInverse,m_objectiveRow,RHSCol);
   return result;
 }
@@ -781,7 +780,7 @@ int DualSimplex<scalar>::FindFeasOrBasis(int orBlockSize,const ResetType_t reset
     m_basisInverse=m_feasBasisInverse;
     m_basicVars=m_feasBasicVars;
     m_nonBasicRow=m_feasNonBasicRow;
-    if (ms_trace_pivots>=eTracePivots) this->logBasis(-1,-1);
+    if (ms_trace_pivots[eTracePivots]) this->logBasis(-1,-1);
     return 0;
   }
   else if (resetType==eRebaseBasis) return Rebase();
@@ -805,7 +804,7 @@ int DualSimplex<scalar>::FindOrLPBasis()
      they are all zero) will be indicated in nbindex vector: nbindex[j] will
      be negative and set to -j.
   */
-  if (ms_trace_pivots>=eTracePivots) ms_logger.logData("Ored Feasibility Basis");
+  if (ms_trace_pivots[eTracePivots]) ms_logger.logData("Ored Feasibility Basis");
   ResetTableau();
   Set RowSelected(m_size);
   Set ColSelected(m_dimension);
@@ -829,13 +828,13 @@ int DualSimplex<scalar>::FindOrLPBasis()
       /* dependent columns but not dual inconsistent. */
       break;
     }
-    if (ms_trace_pivots>=eTraceEntries) {
+    if (ms_trace_pivots[eTraceEntries]) {
       RowSelected.logSet("Available Rows:",true);
       ColSelected.logSet("Available Cols:",true);
     }
     RowSelected.add(pivot.row);
     ColSelected.add(pivot.col);
-    if (!ColumnPivotAndUpdate(pivot) && ms_trace_errors) {
+    if (!ColumnPivotAndUpdate(pivot) && ms_trace_pivots[eTraceTableauErrors]) {
       ms_logger.logData("Cycling LPOR");//TODO: remove (change for appropriate action)
     }
   }
@@ -971,9 +970,9 @@ scalar DualSimplex<scalar>::getMinSupport()
   return result;
 }
 
-/// Creates a list of redundant/non-redundant rows of the tableau
+/// Creates a list of 0/non-0 rows of the tableau
 template <class scalar>
-int DualSimplex<scalar>::findRedundancies(std::vector<bool> &isRedundant, refScalar tolerance)
+int DualSimplex<scalar>::findNullRedundancies(std::vector<bool> &isRedundant)
 {
   for (int i=0;i<m_faces.rows();i++) isRedundant[i] =true;
   int redundant=m_faces.rows();
@@ -988,21 +987,99 @@ int DualSimplex<scalar>::findRedundancies(std::vector<bool> &isRedundant, refSca
       }
     }
   }
+  return redundant;
+}
+
+/// Creates a list of redundant/non-redundant rows of the tableau
+template <class scalar>
+int DualSimplex<scalar>::findRedundancies(std::vector<bool> &isRedundant, refScalar tolerance, MatrixS &ranges)
+{
+  int redundant=findNullRedundancies(isRedundant);
   normalise(false);
-  bool useMin=func::isZero(tolerance);
+  SortedMatrix<scalar> faces(m_faces,LexMin);
+  int count=m_faces.rows();
+  for (int i=1;i<=count;i++) {
+    int row=faces.zeroOrder(i);
+    if (isRedundant[row]) continue;
+    for (int j=i+1;j<=count;j++) {
+      int row2=faces.zeroOrder(j);
+      if (isRedundant[row2]) continue;
+      scalar diff=faces.diffZeroOrderRows(i,j,ranges);
+      if (func::isNearZero(diff,tolerance)) {
+        isRedundant[row2]=true;//TODO: should aggregate width(error) on non-redundant vector
+        scalar supportDiff=m_supports.coeff(row2,0)-m_supports.coeff(row,0);
+        if (func::isNearZero(supportDiff,tolerance)) {
+          for (int col=0;col<faces.cols();col++) {
+            m_faces.coeffRef(row,col)=func::getHull(faces.coeff(row,col),faces.coeff(row2,col));
+            faces.coeffRef(row,col)=m_faces.coeff(row,col);
+          }
+          m_supports.coeffRef(row,0)=func::getHull(m_supports.coeff(row2,0),m_supports.coeff(row,0))+diff;
+        }
+        else if (func::isNegative(m_supports.coeff(row2,0)-m_supports.coeff(row,0))) {
+          isRedundant[row2]=false;
+          isRedundant[row]=true;
+          i=j;
+          row=row2;
+        }
+        redundant++;
+      }
+      else break;
+    }
+  }
+  return redundant;
+}
+
+/// Creates a list of redundant/non-redundant rows of the tableau
+template <class scalar>
+int DualSimplex<scalar>::findRedundancies(std::vector<bool> &isRedundant, refScalar tolerance, refScalar scale)
+{
+  int redundant=findNullRedundancies(isRedundant);
+  normalise(false);
+  bool hasScale = (scale!=0);
+  bool useMin=func::isZero(tolerance) || hasScale;
   SortedMatrix<scalar> faces(m_faces,useMin ? LexMin : LexCos);
-  if (useMin) {
-    for (int i=1;i<=m_faces.rows();i++)
+  int count=m_faces.rows();
+  if (hasScale) {
+    for (int i=1;i<=count;i++) {
+      int row=faces.zeroOrder(i);
+      if (isRedundant[row]) continue;
+      for (int j=i+1;j<=count;j++) {
+        int row2=faces.zeroOrder(j);
+        if (isRedundant[row2]) continue;
+        scalar diff=faces.diffZeroOrderRows(i,j)*scale;
+        if (func::isNearZero(diff,tolerance)) {
+          isRedundant[row2]=true;//TODO: should aggregate width(error) on non-redundant vector
+          scalar supportDiff=m_supports.coeff(row2,0)-m_supports.coeff(row,0);
+          if (func::isNearZero(supportDiff,tolerance)) {
+            for (int col=0;col<faces.cols();col++) {
+              m_faces.coeffRef(row,col)=func::getHull(faces.coeff(row,col),faces.coeff(row2,col));
+              faces.coeffRef(row,col)=m_faces.coeff(row,col);
+            }
+            m_supports.coeffRef(row,0)=func::getHull(m_supports.coeff(row2,0),m_supports.coeff(row,0))+func::setpm(abs(diff));
+          }
+          else if (func::isNegative(m_supports.coeff(row2,0)-m_supports.coeff(row,0))) {
+            isRedundant[row2]=false;
+            isRedundant[row]=true;
+            i=j;
+            row=row2;
+          }
+          redundant++;
+        }
+        else break;
+      }
+    }
+  }
+  else if (useMin) {
+    for (int i=1;i<=count;i++)
     {
       int row=faces.zeroOrder(i);
       if (isRedundant[row]) continue;
-      int count=m_faces.rows();
       for (int j=i+1;j<=count;j++) {
         int row2=faces.zeroOrder(j);
         if (isRedundant[row2]) continue;
         char sign=faces.compareZeroOrderRows(i,j);
         if (sign==0) {
-          isRedundant[row2]=true;//TODO: should aggregate width(error) on non-redundant vector
+          isRedundant[row2]=true;
           if (func::isNegative(m_supports.coeff(row2,0)-m_supports.coeff(row,0))) {
             isRedundant[row2]=false;
             isRedundant[row]=true;
@@ -1016,11 +1093,10 @@ int DualSimplex<scalar>::findRedundancies(std::vector<bool> &isRedundant, refSca
     }
   }
   else {
-    for (int i=1;i<=m_faces.rows();i++)
+    for (int i=1;i<=count;i++)
     {
       int row=faces.zeroOrder(i);
       if (isRedundant[row]) continue;
-      int count=m_faces.rows();
       for (int j=i+1;j<=count;j++) {
         int row2=faces.zeroOrder(j);
         if (isRedundant[row2]) continue;
@@ -1033,34 +1109,49 @@ int DualSimplex<scalar>::findRedundancies(std::vector<bool> &isRedundant, refSca
       }
     }
   }
+  return redundant;
+}
+
+/// Clears redundant faces in the polyhedra as listed in isRedundant
+template <class scalar>
+bool DualSimplex<scalar>::removeRedundancies(int redundancies,std::vector<bool> &isRedundant)
+{
+  if (redundancies==0) {
+    Tableau<scalar>::load(m_faces,m_supports);
+    return false;
+  }
+  int pos=0;
+  m_basicVars.resize(m_faces.rows()-redundancies);
+  for (int i=0;i<m_faces.rows();i++) {
+    if (isRedundant[i]) continue;
+    m_faces.row(pos)=m_faces.row(i);
+    m_supports.coeffRef(pos,0)=m_supports.coeff(i,0);
+    m_basicVars[pos]=m_basicVars[i];
+    if (m_basicVars[pos]>=m_nonBasicRow.size()) m_basicVars[pos]=-1;
+    else if (m_basicVars[pos]>=0) m_nonBasicRow[m_basicVars[pos]]=pos;
+    pos++;
+  }
+  m_faces.conservativeResize(pos,m_faces.cols());
+  m_supports.conservativeResize(pos,1);
+  return Tableau<scalar>::load(m_faces,m_supports);
 }
 
 /// Clears redundant faces in the polyhedra (caused by intersections and reductions)
 template <class scalar>
-bool DualSimplex<scalar>::removeRedundancies(refScalar tolerance,bool recompute)
+bool DualSimplex<scalar>::removeRedundancies(refScalar tolerance,refScalar scale)
 {
   if (m_faces.rows()<=0) return false;
-  std::vector<bool> isRedundant;
-  isRedundant.resize(m_faces.rows());
-  int redundant=findRedundancies(isRedundant,tolerance);
-  if (redundant>0) {
-    int pos=0;
-    m_basicVars.resize(m_faces.rows()-redundant);
-    for (int i=0;i<m_faces.rows();i++) {
-      if (isRedundant[i]) continue;
-      m_faces.row(pos)=m_faces.row(i);
-      m_supports.coeffRef(pos,0)=m_supports.coeff(i,0);
-      m_basicVars[pos]=m_basicVars[i];
-      if (m_basicVars[pos]>=0) m_nonBasicRow[m_basicVars[pos]]=pos;
-      pos++;
-    }
-    m_faces.conservativeResize(pos,m_faces.cols());
-    m_supports.conservativeResize(pos,1);
-    Tableau<scalar>::load(m_faces,m_supports);
-    return true;
-  }
-  Tableau<scalar>::load(m_faces,m_supports);
-  return false;
+  std::vector<bool> isRedundant(m_faces.rows());
+  return removeRedundancies(findRedundancies(isRedundant,tolerance,scale),isRedundant);
+}
+
+/// Clears redundant faces in the polyhedra (caused by intersections and reductions)
+template <class scalar>
+bool DualSimplex<scalar>::removeRedundancies(refScalar tolerance,MatrixS &ranges)
+{
+  if (m_faces.rows()<=0) return false;
+  std::vector<bool> isRedundant(m_faces.rows());
+  return removeRedundancies(findRedundancies(isRedundant,tolerance,ranges),isRedundant);
 }
 
 /// Saves the time and iteration count data for the given process

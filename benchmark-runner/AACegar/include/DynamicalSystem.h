@@ -29,7 +29,9 @@ typedef enum
     eEigenTemplates         = 0x80
 } AbstractionFlags;
 
-typedef enum{eParamStr,eDynamicsStr,iSenseStr,oSenseStr,ioSenseStr,eGuardStr,iGuardStr,sGuardStr,oGuardStr,eInitStr,eInputStr,eTemplateStr,eARMAXStr,eSpaceXStr,eControlStr,eObserveStr,eReferenceStr,eIncOrderStr,eSampleStr,eSpeedStr,eOInitStr,eRandStr,eMaxStr} optionStr_t;
+typedef enum{eParamStr,eDynamicsStr,iSenseStr,oSenseStr,ioSenseStr,eGuardStr,iGuardStr,sGuardStr,oGuardStr,eInitStr,eInputStr,
+             eTemplateStr,eARMAXStr,eSpaceXStr,eControlStr,eObserveStr,eReferenceStr,eIncOrderStr,eSampleStr,eSpeedStr,eFactorStr,eOInitStr,eRandStr,
+             eStateDimStr,eInputDimStr,eOutputDimStr,eFeedbackDimStr,eStepsStr,eFacesStr,eDirsStr,eBitsStr,ePrescaleStr,eTightnessStr,eDebugStr,eMaxStr} optionStr_t;
 typedef std::list<std::string> stringList;
 typedef std::map<optionStr_t,std::string> optionList_t;
 
@@ -63,7 +65,6 @@ public:
     using JordanMatrix<scalar>::ms_logger;
     using JordanMatrix<scalar>::ms_decoder;
     using JordanMatrix<scalar>::ms_trace_dynamics;
-    using JordanMatrix<scalar>::ms_trace_time;
     using JordanMatrix<scalar>::ms_emptyMatrix;
 
     using AccelMatrix<scalar>::m_invIminA;
@@ -74,6 +75,7 @@ public:
     using AbstractMatrix<scalar>::m_inputType;
     using AbstractMatrix<scalar>::m_zeniths;
     using AbstractMatrix<scalar>::m_freq;
+    using AbstractMatrix<scalar>::ms_incremental;
 
     using JordanMatrix<scalar>::makeInverse;
     using AccelMatrix<scalar>::binomial;
@@ -96,7 +98,7 @@ public:
     /// @param pParent owner of the system
     /// @param dimension dimension of the statespace
     /// @param idimension dimension of the input space
-    DynamicalSystem(const int dimension=0,const int idimension=0,const int odimension=0);
+    DynamicalSystem(const int dimension=0,const int idimension=0,const int odimension=0,bool trace=false);
 
     /// deletes the array of CalibrationSamples that represent the file
     /// thread safe
@@ -251,6 +253,13 @@ public:
 
     /// Retrieves the support functions for the reach tube in the given directions
     MatrixS getAbstractReachTubeSupports(powerS iteration,int precision,AbstractPolyhedra<scalar>& dynamics,const MatrixS &templates);
+    MatrixS getAbstractReachTubeSupports(AbstractPolyhedra<scalar>& dynamics,const MatrixS &templates);
+
+    /// Retrieves the reach tube for the precalculated dynamics
+    /// @param direction logahedral power of the template directions for the result
+    /// @param inputType indicates what type of input analysis to do
+    /// @param space indicates if the result should be given in eigenspace or normalspace
+    AbstractPolyhedra<scalar>& getAbstractReachTube(int directions,inputType_t inputType,space_t space,bool guarded);
 
     /// Retrieves the abstract reach tube at the given iteration
     /// @param iteration the n power of A for the iteration
@@ -416,6 +425,9 @@ protected:
     /// Calculates the parametric input supports for the given abstraction
     MatrixS& getAccelInSupports(powerS iteration, int precision,const MatrixS& templates);
 
+    /// Retrieves the support set for the inputs
+    MatrixS& getAccelInSupports(const MatrixS& templates);
+
     /// Merges the supports from the abstract vertices into the corresponding output template direction
     void mergeAbstractSupports(const MatrixS &templates,MatrixS &supports);
 
@@ -510,8 +522,7 @@ public:
     // Sets the system parameters
     void setParams(ParamMatrix& params);
 
-    static void traceDynamics(const traceDynamics_t traceType);
-    static void traceSimplex(const traceTableau_t traceTableau,const tracePivots_t tracePivots,const traceVertices_t traceVertices);
+    static void traceDebug(std::istringstream& trace);
 
 protected:
     int                         m_loadTime;
@@ -554,7 +565,6 @@ protected:
     std::vector<int>            m_normedJordanIndex;
     std::vector<bool>           m_normedOnes;
 public:
-    static bool                 ms_incremental;
     static bool                 ms_fullAnswers;
 };
 

@@ -44,7 +44,6 @@ public:
     using JordanMatrix<scalar>::ms_logger;
     using JordanMatrix<scalar>::ms_decoder;
     using JordanMatrix<scalar>::ms_trace_dynamics;
-    using JordanMatrix<scalar>::ms_trace_time;
 
     using JordanMatrix<scalar>::calculateBlockSVD;
     using JordanMatrix<scalar>::jordanToPseudoJordan;
@@ -136,7 +135,6 @@ public:
     std::string getIminAnInvIMinA(const bool full);
 
 protected:
-    MatrixS             m_foldedBinomialMultipliers;
     MatrixS             m_foldedEigenValues;
     MatrixC             m_invIminJ;
     MatrixS             m_pseudoIminJ;

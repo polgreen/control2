@@ -2,7 +2,8 @@
 #FLOATING POINT FILE RUNNER
 export PATH=/users/elipol/cbmc-5.7/src/cegis:${PATH}: #cegis path
 #export PATH=/users/pkesseli/software/cpp/z3/trunk/target/i686-linux/bin:${PATH} #z3 path
-BENCHMARK_BASE_DIR="/users/elipol/control-synthesis/benchmarks/headerfiles"
+#BENCHMARK_BASE_DIR="/users/elipol/control-synthesis/benchmarks/headerfiles"
+BENCHMARK_BASE_DIR="/users/elipol/control-synthesis/benchmarks/automatica/headerfiles/"
 
 CEGIS_ARGS="--round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D FLOAT"
 
@@ -64,7 +65,7 @@ function compile_precision_check {
  cd ${working_directory}
  g++ -I . -I /usr/include/eigen3/ discrete_step_k_completeness_check.cpp -o discrete_step_k_completeness_check -lmpfr
  chmod +x discrete_step_k_completeness_check
- gcc -D INTERVAL safety_stability.c -o precision_check
+ gcc -D INTERVAL -D FLOAT safety_stability.c -o precision_check
  chmod +x precision_check
 }
 
@@ -77,25 +78,25 @@ function get_current_cpu_millis {
 working_directory_base_suffix="$1"
 #dkr10
 if [ "$1" == "dkr10" ]; then
- benchmark_dirs=(${BENCHMARK_BASE_DIR}/cruise/ ${BENCHMARK_BASE_DIR}/dcmotor/ ${BENCHMARK_BASE_DIR}/helicopter/ ) 
+ benchmark_dirs=(${BENCHMARK_BASE_DIR}/acrobot/ ${BENCHMARK_BASE_DIR}/antenna/ ${BENCHMARK_BASE_DIR}/ballmaglev/ ${BENCHMARK_BASE_DIR}/bioreact/ ${BENCHMARK_BASE_DIR}/chen_ex1/ ${BENCHMARK_BASE_DIR}/chen_ex2/) 
 fi
 
 #dkr11
 if [ "$1" == "dkr11" ]; then
-benchmark_dirs=(${BENCHMARK_BASE_DIR}/invpendulum_pendang/ ${BENCHMARK_BASE_DIR}/invpendulum_cartpos/ ) 
+benchmark_dirs=(${BENCHMARK_BASE_DIR}/chen_ex3/ ${BENCHMARK_BASE_DIR}/chen_ex4/ ${BENCHMARK_BASE_DIR}/cruise/ ${BENCHMARK_BASE_DIR}/cruiseHSCC/ ${BENCHMARK_BASE_DIR}/cstr/ ${BENCHMARK_BASE_DIR}/cstrtemp/  ) 
 fi
 
 #dkr12
 if [ "$1" == "dkr12" ]; then
-benchmark_dirs=(${BENCHMARK_BASE_DIR}/magneticpointer/ ${BENCHMARK_BASE_DIR}/magsuspension/ ${BENCHMARK_BASE_DIR}/satellite/ ) 
+benchmark_dirs=(${BENCHMARK_BASE_DIR}/dcmotor/ ${BENCHMARK_BASE_DIR}/flexbeam/ ${BENCHMARK_BASE_DIR}/guidance_chen/ ${BENCHMARK_BASE_DIR}/helicopter/ ${BENCHMARK_BASE_DIR}/invpendulum_cartpos/ ${BENCHMARK_BASE_DIR}/invpendulum_pendang/) 
 fi
 
 #dkr13
 if [ "$1" == "dkr13" ]; then
-benchmark_dirs=(${BENCHMARK_BASE_DIR}/pendulum/ ${BENCHMARK_BASE_DIR}/tapedrive/ ${BENCHMARK_BASE_DIR}/suspension/  ) 
+benchmark_dirs=(${BENCHMARK_BASE_DIR}/magneticpointer/ ${BENCHMARK_BASE_DIR}/magsuspension/ ${BENCHMARK_BASE_DIR}/pendulum/ ${BENCHMARK_BASE_DIR}/regulator/ ${BENCHMARK_BASE_DIR}/springmassdamperHSCC/ ${BENCHMARK_BASE_DIR}/steamdrum/ ${BENCHMARK_BASE_DIR}/suspension/ ${BENCHMARK_BASE_DIR}/tapedriver/ ${BENCHMARK_BASE_DIR}/usgtampa/) 
 fi
 
-working_directory_base="/tmp/control_synthesis-ss-${working_directory_base_suffix}"
+working_directory_base="/tmp/control_synthesis-float-${working_directory_base_suffix}"
 mkdir -p ${working_directory_base} 2>/dev/null
 
 for benchmark_dir in ${benchmark_dirs[@]}; do
@@ -104,13 +105,12 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
  times >${time_tmp_file}; start_time=$(get_current_cpu_millis)
 
  for benchmark in ${benchmark_dir}*.h; do
-  log_file="${benchmark%.h}_completeness-threshold-ss.log"
+  log_file="${benchmark%.h}_float-completeness-threshold-ss.log"
   truncate -s 0 ${log_file}
   echo_log ${benchmark}
-  echo_log 'completeness-threshold-ss'
+  echo_log 'float-completeness-threshold-ss'
 
-  working_directory="${working_directory_base}/completeness-threshold-ss"
-  echo "working directory $working_directory"
+  working_directory="${working_directory_base}/completeness-threshold-float-ss"
   setup_benchmark_directory ${working_directory}
   cd ${working_directory}
   compile_precision_check
@@ -127,8 +127,8 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
   input_lower_bound=$(extract_input "${spec_content}" 'INPUT_LOWERBOUND')
 
   max_length=64
-  mantissa=23  #initialise at single precision
-  total_width=32
+  mantissa=10  #initialise at half precision
+  total_width=16
 
   k_sizes=(10 20 30 50 75 100 200)
   k_size_index=0
@@ -178,14 +178,19 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
       solution_found=true
       break
      else
-      total_width=$((total_width+4))
-      mantissa=$((mantissa+4))
+     #do half, then single, then double precision
+      exponent=$(($total_width - $mantissa))
+      exponent=$(($exponent+3))
+      total_width=$(($total_width*2))
+      mantissa=$(($total_width-$exponent))
      fi
     fi
    else
-   #go straight to double precision
-    total_width=64
-    mantissa=52
+      exponent=$(($total_width-$mantissa))
+   #   echo exponent: $exponent
+      exponent=$(($exponent+3))
+      total_width=$(($total_width*2))
+      mantissa=$(($total_width-$exponent))
    fi
   done
   # All files are the same benchmark with increased sample frequency. Exit after first success.

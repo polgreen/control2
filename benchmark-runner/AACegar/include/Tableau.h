@@ -99,6 +99,11 @@ public:
     /// Constrains the polyhedra to its inner supports (when using interval representations)
     void toInner(bool force=false);
 
+    /// Removes the intervals on each vector, modifying the support by adding a calculated maximum interval given the range
+    /// this function is only used with intervals
+    /// @param ranges intervals ensured to contain any possible valuation of each variable.
+    void toCentralAngle(const MatrixS &ranges);
+
     /// retrieves the name of the tableau used for debugging and display purposes
     virtual std::string getName()           { return "Tableau"; }
 
@@ -157,10 +162,7 @@ protected:
     static MatToStr<scalar>     ms_logger;
     static MatToStr<scalar>     ms_decoder;
 public:
-    static traceTableau_t       ms_trace_tableau;
-    static tracePivots_t        ms_trace_pivots;
-    static bool                 ms_trace_errors;
-    static bool                 ms_trace_time;
+    static bool                 ms_trace_pivots[eMaxTracePivots];
     static bool                 ms_useBasis;
 };
 }

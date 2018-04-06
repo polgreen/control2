@@ -35,10 +35,7 @@ template <class scalar>
 typename JordanMatrix<scalar>::MatrixS JordanMatrix<scalar>::ms_emptyMatrix(0,0);
 
 template <class scalar>
-traceDynamics_t JordanMatrix<scalar>::ms_trace_dynamics=eTraceNoDynamics;
-
-template <class scalar>
-bool JordanMatrix<scalar>::ms_trace_time=false;
+bool JordanMatrix<scalar>::ms_trace_dynamics[eMaxTraceDynamics]={0};
 
 /// Constructs an empty matrix
 template <class scalar>
@@ -153,7 +150,7 @@ bool JordanMatrix<scalar>::loadJordan(const MatrixS &matrix)
   m_invEigenVectors=m_eigenVectors;
   m_error=func::ms_0;
   m_jordanTime=timer.elapsed()*1000;
-  if (ms_trace_time) ms_logger.logData(m_jordanTime,"Pole Extraction time:",true);
+  if (ms_trace_dynamics[eTraceTime]) ms_logger.logData(m_jordanTime,"Pole Extraction time:",true);
   return true;
 }
 
@@ -189,6 +186,7 @@ typename JordanMatrix<scalar>::MatrixC JordanMatrix<scalar>::makeInverse(const M
     return source.inverse();
   }
   catch(...) {
+    ms_logger.logData("Unsound Inverse");
     SolverComplexMatrixType matrix;
     interToRef(matrix,source);
     SolverComplexMatrixType unsoundResult=matrix.inverse();
@@ -239,9 +237,9 @@ bool JordanMatrix<scalar>::calculateJordanForm(bool includeSvd)
   interToRef(m_refDynamics,m_dynamics);
 
   m_eigenSpace.computeJordan(m_refDynamics);
-  if (ms_trace_time) ms_logger.logData(timer.elapsed()*1000,"Jordan Form:",true);
+  if (ms_trace_dynamics[eTraceTime]) ms_logger.logData(timer.elapsed()*1000,"Jordan Form:",true);
   if (m_eigenSpace.info()!=Eigen::Success) {
-    if (ms_trace_dynamics>=eTraceDynamics) ms_logger.logData("Failed to find Jordan Form");
+    if (ms_trace_dynamics[eTraceDynamics]) ms_logger.logData("Failed to find Jordan Form");
     return false;
   }
   refToInter(m_eigenValues,m_eigenSpace.getEigenValues());
@@ -265,15 +263,9 @@ bool JordanMatrix<scalar>::calculateJordanForm(bool includeSvd)
       m_cosFactors.coeffRef(m_dimension,0)*=m_cosFactors.coeffRef(i,0);
     }
   }
-  try {
-    m_invEigenVectors=m_eigenVectors.inverse();
-  }
-  catch(...) {
-    ms_logger.logData("Unsound Inverse");
-    refToInter(m_invEigenVectors,m_eigenSpace.getEigenVectors().inverse());
-  }
-  if (ms_trace_dynamics>=eTraceDynamics) {
-    ms_logger.logData(m_dynamics,"Dynamics:");
+  m_invEigenVectors=makeInverse(m_eigenVectors);
+  if (ms_trace_dynamics[eTraceDynamics]) ms_logger.logData(m_dynamics,"Dynamics:");
+  if (ms_trace_dynamics[eTraceEigen]) {
     ms_logger.logData(m_eigenValues,"EigenValues:");
     ms_logger.logData(m_eigenVectors,"EigenVectors:");
     ms_logger.logData(m_invEigenVectors,"InvEigenVectors:");
@@ -282,12 +274,12 @@ bool JordanMatrix<scalar>::calculateJordanForm(bool includeSvd)
   m_pseudoEigenValues=jordanToPseudoJordan(m_eigenValues,eToEigenValues);
   m_pseudoEigenVectors=jordanToPseudoJordan(m_eigenVectors,eToEigenVectors);
   m_invPseudoEigenVectors=makeInverse(m_pseudoEigenVectors);
-  if (ms_trace_dynamics>=eTraceDynamics) {
+  if (ms_trace_dynamics[eTracePseudo]) {
     MatrixS pseudoCalculated=m_pseudoEigenVectors*m_pseudoEigenValues*m_invPseudoEigenVectors;
     ms_logger.logData(m_pseudoEigenValues,"PseudoEigenValues");
     ms_logger.logData(m_pseudoEigenVectors,"PseudoEigenVectors");
     ms_logger.logData(m_invPseudoEigenVectors,"InvPseudoEigenVectors");
-    ms_logger.logData(pseudoCalculated,"PseudoCalc");
+    if (ms_trace_dynamics[eTraceDynamics]) ms_logger.logData(pseudoCalculated,"PseudoCalc");
   }
   if (includeSvd) {
     calculateBlockSVD();
@@ -302,11 +294,11 @@ bool JordanMatrix<scalar>::calculateJordanForm(bool includeSvd)
       }
     }
     m_jordanTime=timer.elapsed()*1000;
-    if (ms_trace_time && (ms_trace_dynamics>=eTraceDynamics)) ms_logger.logData(m_jordanTime,"SVD time:",true);
+    if (ms_trace_dynamics[eTraceTime] && ms_trace_dynamics[eTraceDynamics]) ms_logger.logData(m_jordanTime,"SVD time:",true);
   }
   calculateEigenError();
   m_jordanTime=timer.elapsed()*1000;
-  if (ms_trace_time && (ms_trace_dynamics>=eTraceDynamics)) ms_logger.logData(m_jordanTime,"Jordan Error time:",true);
+  if (ms_trace_dynamics[eTraceTime] && ms_trace_dynamics[eTraceDynamics]) ms_logger.logData(m_jordanTime,"Jordan Error time:",true);
   for (int row=0;row<m_invPseudoEigenVectors.rows();row++) {
     for (int col=0;col<m_invPseudoEigenVectors.cols();col++) {
       if (func::isNan(m_invPseudoEigenVectors.coeff(row,col))) {
@@ -323,7 +315,7 @@ typename JordanMatrix<scalar>::MatrixS JordanMatrix<scalar>::jordanToPseudoJorda
 {
   MatrixS result=source.real();
   if (conversionType==eToEigenValues) {
-    for (int col=0;col<source.rows();col++) {
+    for (int col=0;col<source.cols();col++) {
       if (m_conjugatePair[col]>col) {
         result.coeffRef(col+1,col)=-source.coeff(col,col).imag();
         result.coeffRef(col,col+1)=source.coeff(col,col).imag();
@@ -353,6 +345,37 @@ typename JordanMatrix<scalar>::MatrixS JordanMatrix<scalar>::jordanToPseudoJorda
       }
   }
   return result;
+}
+
+/// Reorders the eigenvalues and eigenvectors
+template <class scalar>
+void JordanMatrix<scalar>::swapEigenvalues(const std::vector<int> &order)
+{
+  MatrixC eigenvalues=m_eigenValues;
+  MatrixC eigenvectors=m_eigenVectors;
+  MatrixC invEigenvectors=m_invEigenVectors;
+  std::vector<int>  jordanIndex=m_jordanIndex;
+  std::vector<int>  conjugatePair=m_conjugatePair;
+  std::vector<int>  roundings=m_roundings;
+  std::vector<bool> isOne=m_isOne;
+  std::vector<bool> isNegative=m_isNegative;
+
+  for (int i=0;i<order.size();i++) {
+    int j=order[i];
+    m_eigenValues.coeffRef(i,i)=eigenvalues.coeff(j,j);
+    m_eigenVectors.col(i)=eigenvectors.col(j);
+    m_invEigenVectors.row(i)=invEigenvectors.row(j);
+    m_jordanIndex[i]=jordanIndex[j];
+    m_conjugatePair[i]=(conjugatePair[j]>=0) ? conjugatePair[j]+i-j : -1;
+    m_roundings[i]=roundings[j];
+    m_isOne[i]=isOne[j];
+    m_isNegative[i]=isNegative[j];
+  }
+  m_pseudoEigenValues=jordanToPseudoJordan(m_eigenValues,eToEigenValues);
+  m_pseudoEigenVectors=jordanToPseudoJordan(m_eigenVectors,eToEigenVectors);
+  m_invPseudoEigenVectors=makeInverse(m_pseudoEigenVectors);
+  if (ms_trace_dynamics[eTraceEigen]) ms_logger.logData(m_eigenValues,"swaped eigenvalues");
+  if (ms_trace_dynamics[eTracePseudo]) ms_logger.logData(m_pseudoEigenValues,"swaped pseudoeigenvalues");
 }
 
 /// Retrieves an equivalent complex Jordan from a real representation
@@ -587,7 +610,7 @@ typename JordanMatrix<scalar>::MatrixS JordanMatrix<scalar>::getSVDpseudoInverse
   refToInter(diag,d);
   refToInter(matrixU,u);
   refToInter(matrixV,v);
-  if (ms_trace_dynamics>=eTraceDynamics) {
+  if (ms_trace_dynamics[eTraceDynamics]) {
     ms_logger.logData(matrix,"Inverse:");
     ms_logger.logData(matrixU);
     ms_logger.logData(diag);
@@ -673,14 +696,14 @@ scalar JordanMatrix<scalar>::calculateEigenError()
 {
   scalar kP=m_pseudoEigenVectors.norm()*m_invPseudoEigenVectors.norm();
   MatrixS calculated=m_pseudoEigenVectors*m_pseudoEigenValues*m_invPseudoEigenVectors;
-  if (ms_trace_dynamics>=eTraceErrors) ms_logger.logData(calculated,"Calculated:");
+  if (ms_trace_dynamics[eTraceErrors]) ms_logger.logData(calculated,"Calculated:");
   calculated-=m_dynamics;
   scalar errorNorm=calculated.norm();
   if(func::isNan(errorNorm)) {
     scalar kP=m_eigenVectors.norm()*m_invEigenVectors.norm();
     MatrixC calculated=m_eigenVectors*m_eigenValues*m_invEigenVectors;
     errorNorm=calculated.norm();
-    if (ms_trace_dynamics>=eTraceErrors) {
+    if (ms_trace_dynamics[eTraceErrors]) {
       ms_logger.logData(errorNorm,"ErrorNorm:",true);
       ms_logger.logData(kP,"Condition Number:",true);
     }
@@ -689,7 +712,7 @@ scalar JordanMatrix<scalar>::calculateEigenError()
   if (func::toUpper(m_error)>m_zero) func::imprecise(m_error,m_zero,"Eigenerror too large");
 
   m_boundForError=0;
-  if (ms_trace_dynamics>=eTraceErrors) ms_logger.logData(m_error,"Error:",true);
+  if (ms_trace_dynamics[eTraceErrors]) ms_logger.logData(m_error,"Error:",true);
   if (m_hasMultiplicities) return m_error;
 
   m_error=func::setpm(m_error);
@@ -737,7 +760,7 @@ scalar JordanMatrix<scalar>::calculateEigenError()
   }
   m_pseudoEigenVectors=jordanToPseudoJordan(m_eigenVectors,eToEigenVectors);
   m_invPseudoEigenVectors=makeInverse(m_pseudoEigenVectors);//jordanToPseudoJordan(m_invEigenVectors,eToInvEigenVectors);
-  if (ms_trace_dynamics>=eTraceDynamics) {
+  if (ms_trace_dynamics[eTracePseudo]) {
     ms_logger.logData(m_pseudoEigenValues,"PseudoEigenValues");
     ms_logger.logData(m_pseudoEigenVectors,"PseudoEigenVectors");
     ms_logger.logData(m_invPseudoEigenVectors,"InvPseudoEigenVectors");
@@ -754,17 +777,17 @@ scalar JordanMatrix<scalar>::calculateBoundedEigenError(scalar iteration)
   if (func::isZero(iteration-m_boundForError)) return m_error;
   m_pseudoEigenVectors=jordanToPseudoJordan(m_eigenVectors,eToEigenVectors);
   m_invPseudoEigenVectors=m_pseudoEigenVectors.inverse();//jordanToPseudoJordan(m_invEigenVectors,eToInvEigenVectors);
-  if (ms_trace_dynamics>=eTraceDynamics) {
+  if (ms_trace_dynamics[eTracePseudo]) {
       ms_logger.logData(m_pseudoEigenVectors,"S");
       ms_logger.logData(m_pseudoEigenValues,"J");
       ms_logger.logData(m_invPseudoEigenVectors,"invS");
   }
   MatrixS calculated=m_pseudoEigenVectors*m_pseudoEigenValues*m_invPseudoEigenVectors;
-  if (ms_trace_dynamics>=eTraceErrors) ms_logger.logData(calculated,"Calculated");
+  if (ms_trace_dynamics[eTraceErrors]) ms_logger.logData(calculated,"Calculated");
   MatrixS jordanError=m_invPseudoEigenVectors*m_dynamics*m_pseudoEigenVectors;
-  if (ms_trace_dynamics>=eTraceErrors) ms_logger.logData(jordanError,"Calculated Jordan");
+  if (ms_trace_dynamics[eTraceErrors]) ms_logger.logData(jordanError,"Calculated Jordan");
   jordanError-=m_pseudoEigenValues;
-  if (ms_trace_dynamics>=eTraceErrors) ms_logger.logData(jordanError,"Jordan Error");
+  if (ms_trace_dynamics[eTraceErrors]) ms_logger.logData(jordanError,"Jordan Error");
   m_error=jordanError.norm();
   scalar theta=acos((ms_one-m_error)/(ms_one+m_error));
   scalar nTheta=iteration*theta;
@@ -785,7 +808,7 @@ bool JordanMatrix<scalar>::calculateSVD()
   MatrixS dynamicsSq=m_dynamics*m_dynamics.transpose();
   interToRef(m_refDynamics,dynamicsSq);
   m_eigenSpace.computeJordan(m_refDynamics);
-  if (ms_trace_time && (ms_trace_dynamics>=eTraceDynamics)) ms_logger.logData(timer.elapsed()*1000,"Full Svd:",true);
+  if (ms_trace_dynamics[eTraceTime] && ms_trace_dynamics[eTraceDynamics]) ms_logger.logData(timer.elapsed()*1000,"Full Svd:",true);
   if (m_eigenSpace.info()!=Eigen::Success) return false;
   MatrixS singularValues,singularVectors,inverseVectors;
   refToInter(singularValues,m_eigenSpace.getEigenValues().real());

@@ -20,7 +20,7 @@ template <class scalar>
 MatToStr<scalar> JordanSolver<scalar>::ms_decoder(false);
 
 template <class scalar>
-traceDynamics_t JordanSolver<scalar>::ms_trace_dynamics=eTraceNoDynamics;
+bool JordanSolver<scalar>::ms_trace_dynamics[eMaxTraceDynamics]={0};
 
 /// Constructs an empty matrix
 template <class scalar>
@@ -81,7 +81,7 @@ int JordanSolver<scalar>::toREF(ComplexMatrixType &matrix)
       matrix.row(row2)-=multiplier*matrix.row(row);
     }
   }
-  if (ms_trace_dynamics>=eTraceREF) ms_logger.logData(matrix,"REF:");
+  if (ms_trace_dynamics[eTraceREF]) ms_logger.logData(matrix,"REF:");
   return rank;
 }
 
@@ -102,7 +102,7 @@ int JordanSolver<scalar>::toRREF(ComplexMatrixType &matrix)
       }
     }
   }
-  if (ms_trace_dynamics>=eTraceREF) ms_logger.logData(matrix,"RREF:");
+  if (ms_trace_dynamics[eTraceREF]) ms_logger.logData(matrix,"RREF:");
   return rank;
 }
 
@@ -157,9 +157,7 @@ template <class scalar> void JordanSolver<scalar>::sortEigenvectors(const int co
     newOrder.col(i)=m_eigenVectors.col(col+sorted.zeroOrder(i+1));
   }
   m_eigenVectors.block(0,col,m_dimension,size)=newOrder;
-  if (ms_trace_dynamics>=eTraceREF) {
-    ms_logger.logData(m_eigenVectors,"Sorted EigenVectors:");
-  }
+  if (ms_trace_dynamics[eTraceREF]) ms_logger.logData(m_eigenVectors,"Sorted EigenVectors:");
 }
 
 /// Indicates if the given vectors at matrix1:col1 and matrix2:col2 are orthogonal
@@ -253,7 +251,7 @@ template <class scalar> int JordanSolver<scalar>::makeJordanBlock(int row1,const
     for (int i=row2;i<=row1;i++) {
       if (m_jordanIndex[i]>0) m_eigenValues.coeffRef(i-1,i)=func::ms_c_1;
     }
-    if (ms_trace_dynamics>=eTraceREF) {
+    if (ms_trace_dynamics[eTraceREF]) {
       ms_logger.logData(m_eigenVectors,"Intermediate EigenVectors:");
       matrix=matrixBase;
       for (int i=1;i<=m_jordanIndex[row1];i++) matrix*=matrixBase;
@@ -320,7 +318,7 @@ template <class scalar> int JordanSolver<scalar>::makeJordanBlock(int row1,const
       m_eigenVectors.col(row1-i)=vector;
     }
   }
-  if (ms_trace_dynamics>=eTraceREF) {
+  if (ms_trace_dynamics[eTraceREF]) {
     ms_logger.logData(m_eigenVectors,"Intermediate EigenVectors:");
     matrix=matrixBase;
     for (int i=1;i<=m_jordanIndex[row1];i++) matrix*=matrixBase;
@@ -392,7 +390,7 @@ bool JordanSolver<scalar>::calculateJordanForm()
     m_eigenValues=this->eigenvalues().asDiagonal();
     m_eigenVectors=this->eigenvectors();
 
-    if (ms_trace_dynamics>=eTraceAll) {
+    if (ms_trace_dynamics[eTraceAll]) {
       ms_logger.logData(m_dynamics,"Ref Dynamics:");
       ms_logger.logData(m_eigenValues,"Ref EigenValues:");
       ms_logger.logData(m_eigenVectors,"Initial EigenVectors:");
@@ -448,7 +446,7 @@ bool JordanSolver<scalar>::calculateJordanForm()
       m_jordanIndex[i]=0;
       m_isOne[i]=m_isOne[i-m_dimension];
     }
-    if (ms_trace_dynamics>=eTraceDynamics) ms_logger.logData(m_eigenVectors,"Generalised EigenVectors:");
+    if (ms_trace_dynamics[eTraceEigen]) ms_logger.logData(m_eigenVectors,"Generalised EigenVectors:");
     return true;
 }
 

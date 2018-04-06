@@ -122,6 +122,9 @@ protected:
     int toRREF(MatrixC &matrix);
 
 public:
+    /// Reorders the eigenvalues and eigenvectors
+    void swapEigenvalues(const std::vector<int> &order);
+
     /// Retrieves the pseudoinverse of the dynamics
     MatrixS getPseudoInverse(const MatrixS &matrix,bool &hasInverse);
 
@@ -231,8 +234,7 @@ protected:
 public:
     int                            m_jordanTime;
 public:
-    static traceDynamics_t         ms_trace_dynamics;
-    static bool                    ms_trace_time;
+    static bool                    ms_trace_dynamics[eMaxTraceDynamics];
 };
 
 }

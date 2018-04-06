@@ -39,6 +39,8 @@ public:
     virtual void QuickAngleSort()=0;
 
     virtual char compareZeroOrderRows(int row1,int row2)=0;
+    virtual scalar diffZeroOrderRows(int row1,int row2)=0;
+    virtual scalar diffZeroOrderRows(int row1,int row2,MatrixS &ranges)=0;
 
     virtual int numRows()=0;
 
@@ -139,6 +141,8 @@ public:
     SortedMatrix(const MatrixS &source,const OrderType &type=LexNone,bool transpose=false,bool norm=false);
 
     char compareZeroOrderRows(int row1,int row2);
+    scalar diffZeroOrderRows(int row1,int row2);
+    scalar diffZeroOrderRows(int row1,int row2,MatrixS &ranges);
 
     void QuickAngleSort();
 

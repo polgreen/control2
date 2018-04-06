@@ -31,9 +31,7 @@ public:
     using Tableau<scalar>::m_dimension;
     using Tableau<scalar>::ms_logger;
     using Tableau<scalar>::ms_decoder;
-    using Tableau<scalar>::ms_trace_tableau;
-    using Tableau<scalar>::ms_trace_errors;
-    using Tableau<scalar>::ms_trace_time;
+    using Tableau<scalar>::ms_trace_pivots;
 
     using Tableau<scalar>::order;
     using Tableau<scalar>::getDimension;
@@ -138,9 +136,10 @@ public:
 
     /// Intersects the polyhedra with another polyhedra
     /// @param polyhedra polyhedra to intersect
+    /// @param canonical indicates if the minimal form should be kept (removing all redundancies)
     /// @param over indicates if small overapproximations are allowed
     /// @return true if successful
-    bool intersect(const Polyhedra &polyhedra,const bool over=true);
+    bool intersect(Polyhedra &polyhedra, bool canonical=false, bool over=true);
 
     /// Performs the union of another polyhedra with this one
     /// @param polyhedra polyhedra to merge
@@ -245,8 +244,8 @@ public:
 
     /// Indicates which support (if any) does not contain the point
     /// @param points, points in the state space to evaluate
-    /// @return first row to not contain the points (-1 if none).
-    int violatingSupport(const MatrixS &points);
+    /// @return row that does not contain the first point along with point to violate it(-1,-1 if none).
+    std::pair<int,int>  violatingSupport(const MatrixS &points);
 
     /// Indicates the largest distance to any violating support
     /// @param points, points in the state space to evaluate
@@ -335,9 +334,9 @@ protected:
     static JordanMatrix<scalar>*            ms_pJordan;
     static JordanMatrix<scalar>*            getJordanSolver();
 public:
+    MatrixS                                 m_spaceSize;
     static MatrixS                          ms_emptyMatrix;
-    static traceVertices_t                  ms_trace_vertices;
-    static traceDynamics_t                  ms_trace_dynamics;
+    static bool                             ms_trace_dynamics[eMaxTraceDynamics];
     static bool                             ms_auto_make_vertices;
 };
 

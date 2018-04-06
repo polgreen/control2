@@ -23,11 +23,13 @@ public:
     typedef typename type::sparseMatrix SMatrixS;
     typedef typename type::sparseVector sparseVector;
     typedef typename type::iteration_pair iteration_pair;
+    typedef std::vector<iteration_pair> iteration_vector;
 
     using Tableau<scalar>::m_faces;
     using Tableau<scalar>::m_supports;
     using Polyhedra<scalar>::m_vertices;
     using Polyhedra<scalar>::m_centre;
+    using Polyhedra<scalar>::m_spaceSize;
     using Tableau<scalar>::ms_logger;
     using Polyhedra<scalar>::ms_emptyMatrix;
 
@@ -121,9 +123,18 @@ public:
     /// Retrieves a 2D slice of the polyhedra for the given variable pair centered at centre
     bool getPlane(AbstractPolyhedra<scalar>&target,int col1,int col2,MatrixS &centre);
 
+    /// Clears redundant faces in the polyhedra as listed in isRedundant
+    /// @param redundancies number of redundancies found
+    /// @param for each row of the tableau, indicates if it is redundant or not
+    virtual bool removeRedundancies(int redundancies,std::vector<bool> &isRedundant);
+
     /// Clears redundant faces in the polyhedra (caused by intersections and reductions)
     /// @return true if successful
-    virtual bool removeRedundancies(refScalar tolerance=0,bool recompute=false);
+    virtual bool removeRedundancies(refScalar tolerance=0,refScalar scale=0);
+
+    /// Clears redundant faces in the polyhedra (caused by intersections and reductions)
+    /// @return true if successful
+    virtual bool removeRedundancies(refScalar tolerance,MatrixS &ranges);
 
     /// Loads a description into the tableau (Ax<b)
     /// @param faces (A-Matrix) normal to the half-spaces describing the problem
@@ -147,6 +158,9 @@ public:
     /// @param iterations list of iteration-row tags for the directions
     /// @return false if failed
     bool loadTagged(SMatrixS &faces,const MatrixS &supports,std::vector<iteration_pair> &iterations);
+
+    /// Adds a hyperplane to the template of the polhedra
+    bool addTaggedDirection(const MatrixS &directions,scalar &support,iteration_pair iteration,bool keepBasis=false);
 
     /// Adds a number of directions to the template of the polhedra
     /// @param directions column vectors to add
@@ -173,8 +187,8 @@ protected:
     /// @return true if successful
     virtual bool pseudoIntersect(const AbstractPolyhedra<scalar> &polyhedra);
 public:
-    std::vector<iteration_pair> m_iterations;
-    static bool                 ms_trace_abstraction;
+    iteration_vector    m_iterations;
+    static bool         ms_trace_abstraction;
 
 };
 

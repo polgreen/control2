@@ -715,17 +715,17 @@ $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)$ at time $T$ given a
 parametric input $\vec{u}$ is
 %
 \begin{align}
-\vec{x}_T&=\vec{x}(t=T)=\mat{A}_T\vec{x}_0 + \mat{B}_T\vec{u} \text{ where } \mat{B}_T=\mat{A}^{-1}(\mat{I}-\mat{A}_T)\mat{B} 
+\vec{x}_T&=\vec{x}(t=T)=\mat{A}_T\vec{x}_0 + \mat{B}_T\vec{u} \text{ where } \mat{B}_T=\mat{A}^{-1}(\mat{A}_T-\mat{I})\mat{B} 
 \label{eq:continuous_tube_param}
 \end{align}
 %
 where $\forall t \leq T.\, \vec{u}(t)=\vec{u}$, and $\mat{A}_T$ as in
 \eqref{eq:continuous_tube_dyn2} \footnote{When $\mat{A}$ is not invertible,
 we use $\left[\begin{array}{cc}\mat{A}_T&\mat{B}_T\\
-0&\mat{I}\end{array}\right]=e^{\left[\begin{array}{cc}\mat{A}&\mat{B}\\0&0\end{array}\right]}$.}. 
+0&\mat{I}\end{array}\right]=e^{\left[\begin{array}{cc}\mat{A}&\mat{B}\\0&0\end{array}\right]t}$.}. 
 If $\mat{J}$ is diagonal and given a sampling time $T_d$ such that
 $A_d=e^{\mat{A} T_d}$, then
-$\vec{x}_T=A_d^{\frac{T}{T_d}}\vec{x}_0+(\mat{I}-\mat{A}_d^{\frac{T}{T_d}}\mat{B}_d\vec{u})
+$\vec{x}_T=A_d^{\frac{T}{T_d}}\vec{x}_0+\mat{A}^{-1}(\mat{A}_d^{\frac{T}{T_d}}-\mat{I})\mat{B}_d\vec{u}
 \text{ with } T \in \mathbb{R}_0^+$ (where $\mat{A}_d^{\frac{T}{T_d}} =
 e^{log(\mat{A}_d) \frac{T}{T_d}} = e^{\mat{A} T}$) is the state of the
 system at time $T$.
@@ -756,7 +756,7 @@ sample time $T_s$, is the state of the model
 %
 \begin{align*}
  \dot{\vec{x}}(t) = \mat{A}\vec{x}(t)+\mat{B}\vec{u}(t), \quad 
- \vec{u}(t)=\mat{K}\vec{x}_k,  \,
+ \vec{u}(t)=-\mat{K}\vec{x}_k,  \,
  kT_s \leq t < (k+1)T_s \,. 
 \end{align*}
 %
@@ -2378,15 +2378,15 @@ which completes the proof for $gm(\lambda_i)>1$. \qed
 \begin{lemma}
 The expression
  \begin{align}
- \vec{x}_T&=\vec{x}(t=T)=\mat{A}_T\vec{x}_0 + \mat{B}_T\vec{u} \text{ where } \mat{B}_T=\mat{A}^{-1}(\mat{I}-\mat{A}_T)\mat{B} 
+ \vec{x}_T&=\vec{x}(t=T)=\mat{A}_T\vec{x}_0 + \mat{B}_T\vec{u} \text{ where } \mat{B}_T=\mat{A}^{-1}(\mat{A}_T-\mat{I})\mat{B} 
  \label{eq:param_discretize}
  \end{align}
  with $\mat{A}_T$ as per \eqref{eq:continuous_tube_dyn} is the state of the system $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)$ at time $T$ given a parametric input $\vec{u}$.
- If $\mat{J}$ is diagonal and there exists a discrete dynamics matrix for a sampling time $T_d$ such that $A_d=e^{\mat{A} T_d}$, then $\vec{x}_T=A_d^{\frac{T}{T_d}}\vec{x}+(\mat{I}-\mat{A}_d^{\frac{T}{T_d}}\mat{B}\vec{u}) \text{ with } k \in \mathbb{R}^+$ is the state of the system at time $kT_d$.
+ If $\mat{J}$ is diagonal and there exists a discrete dynamics matrix for a sampling time $T_d$ such that $A_d=e^{\mat{A} T_d}$, then $\vec{x}_T=A_d^{\frac{T}{T_d}}\vec{x}+\mat{A}^{-1}(\mat{A}_d^{\frac{T}{T_d}}-\mat{I})\mat{B}\vec{u} \text{ with } k \in \mathbb{R}^+$ is the state of the system at time $kT_d$.
  \end{lemma}
  \begin{proof}
  The first part of the equation ($\mat{A}_T\vec{x}_0$) is proven in the previous section.  As for the second part, we have from equation \eqref{eq:plant}
-that $\mat{B}_T = \int_{t = 0}^{T} e^{\mat{A} t} dt\ \mat{B}$ which expands to $\mat{B}_T= (\mat{A}^{-1} e^{\mat{A}T}-\mat{A}^{-1} e^{\mat{A} 0}) \mat{B}=\mat{A}^{-1}(\mat{I}-\mat{A}_T)\mat{B}$, thus proving the theorem.
+that $\mat{B}_T = \int_{t = 0}^{T} e^{\mat{A} t} dt\ \mat{B}$ which expands to $\mat{B}_T= (\mat{A}^{-1} e^{\mat{A}T}-\mat{A}^{-1} e^{\mat{A} 0}) \mat{B}=\mat{A}^{-1}(\mat{A}_T-\mat{I})\mat{B}$, thus proving the theorem.
  \end{proof}
   
  %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -2406,7 +2406,7 @@ The expression
  with $\mat{A}_T, \mat{B}_T$ as per \eqref{eq:continuous_tube_dyn} and \eqref{eq:param_discretize} and $\mat{A}_d, \mat{B}_d$ as per equation \eqref{eq:plant} is the state of the system
  \begin{align*}
  \dot{\vec{x}}({t}) &= \mat{A}\vec{x}+\mat{B}\vec{u}(t)\nonumber\\
- \vec{u}(t)&=\mat{K}\vec{x}_k, \text{ where }  kT_s \leq t < (k+1)T_s
+ \vec{u}(t)&=-\mat{K}\vec{x}_k, \text{ where }  kT_s \leq t < (k+1)T_s
  \end{align*}
  \end{theorem}
 

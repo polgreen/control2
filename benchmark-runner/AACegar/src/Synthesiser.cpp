@@ -1,6 +1,7 @@
 #include "Synthesiser.h"
 #include <boost/timer.hpp>
 #include <set>
+#include <map>
 #include <Eigen/QR>
 #include <Eigen/Eigenvalues>
 
@@ -8,10 +9,12 @@ namespace abstract{
 
 /// Constructs an empty buffer
 template<class scalar>
-Synthesiser<scalar>::Synthesiser(int dimension,int idimension) :
-  CegarSystem<scalar>(dimension,idimension),
+Synthesiser<scalar>::Synthesiser(int dimension,int idimension,int odimension) :
+  CegarSystem<scalar>(dimension,idimension,odimension,true),
   m_closedLoop(dimension),
-  m_synthType(eEigenSynth)
+  m_synthType(eEigenSynth),
+  m_factor(0.75),
+  m_ioFeedback(false)
 {}
 
 /// Returns the nullSpace vectors of U_1^T(A-\lambda_iI) where B=[U_0 U_1][Z,0]
@@ -376,13 +379,13 @@ bool Synthesiser<scalar>::loadSynthesisedResult(synthesisType_t type, AbstractPo
 {
     boost::timer timer;
     result.toInner(true);
-    if (ms_trace_dynamics>=eTraceDynamics) {
+    if (ms_trace_dynamics[eTraceDynamics]) {
       result.logTableau("Transformed Synth inputs");
     }
     result.retemplate(templates,-tightness);
     m_reachTime=time+timer.elapsed()*1000;;
     result.setCalculationTime(time);
-    if (ms_trace_time) ms_logger.logData(m_reachTime,"Synthesis Time: ",true);
+    if (ms_trace_dynamics[eTraceTime]) ms_logger.logData(m_reachTime,"Synthesis Time: ",true);
     switch(type)
     {
     case eInitSynth:
@@ -427,7 +430,7 @@ typename JordanMatrix<scalar>::MatrixS& Synthesiser<scalar>::getRefinedAccelInSu
     MatrixS supports;
     inputDynamics.maximiseAll(m_abstractInputVertices,supports);
     m_accelInSupports=supports.transpose();
-    if (ms_trace_dynamics>=eTraceAbstraction) ms_logger.logData(m_accelInSupports,"Input Supports",true);
+    if (ms_trace_dynamics[eTraceAbstraction]) ms_logger.logData(m_accelInSupports,"Input Supports",true);
   }
   return m_accelInSupports;
 }
@@ -441,17 +444,17 @@ AbstractPolyhedra<scalar>& Synthesiser<scalar>::getRefinedAbstractReachTube(spac
   AbstractPolyhedra<scalar>& dynamics=getAbstractDynamics(m_inputType);
 
   MatrixS& templates=getTemplates(eEigenSpace);
-  if (ms_trace_time) ms_logger.logData(timer.elapsed()*1000,"Abstract Vertices: ",true);
+  if (ms_trace_dynamics[eTraceTime]) ms_logger.logData(timer.elapsed()*1000,"Abstract Vertices: ",true);
   MatrixS supports;
   if (!dynamics.maximiseAll(m_abstractVertices,supports)) processError(dynamics.getName());
 
   if (m_inputType>eNoInputs) getRefinedAccelInSupports();
-  if (ms_trace_dynamics>=eTraceAll) {
+  if (ms_trace_dynamics[eTraceAbstractVertices]) {
     traceSupports(templates,supports,dynamics,m_abstractVertices);
   }
   if (m_inputType>eNoInputs) {
     mergeAccelInSupports(supports,templates.cols());
-    if (ms_trace_dynamics>=eTraceAll) {
+    if (ms_trace_dynamics[eTraceAbstractVertices]) {
       ms_logger.logData(m_abstractVertices,supports,"Combined",true);
     }
   }
@@ -460,10 +463,10 @@ AbstractPolyhedra<scalar>& Synthesiser<scalar>::getRefinedAbstractReachTube(spac
   m_pAbstractReachTube->mergeLoad(init,faces,supports,eEigenSpace);
   AbstractPolyhedra<scalar>& result=m_pAbstractReachTube->getPolyhedra(space);
   if (guarded) getGuardedReachTube(result,space);
-  if (ms_trace_dynamics>=eTraceAbstraction) result.logTableau();
+  if (ms_trace_dynamics[eTraceAbstraction]) result.logTableau();
   m_reachTime=timer.elapsed()*1000;
   result.setCalculationTime(m_reachTime);
-  if (ms_trace_time) ms_logger.logData(m_reachTime,"Abstract Reach Time: ",true);
+  if (ms_trace_dynamics[eTraceTime]) ms_logger.logData(m_reachTime,"Abstract Reach Time: ",true);
   return result;
 }
 
@@ -622,17 +625,18 @@ int Synthesiser<scalar>::loadPoles(const std::string &data,size_t pos)
 
 /// Calculates the closed loop dynamics given a plant and a controller
 template <class scalar>
-bool Synthesiser<scalar>::makeClosedLoop(bool useObserver,bool makeReference,bool makeNoise)
+bool Synthesiser<scalar>::makeClosedLoop(CegarSystem<scalar> &source,CegarSystem<scalar> &closedLoop,bool useObserver,bool makeReference,bool makeNoise)
 {
-  CegarSystem<scalar> &source=(m_sampled.m_dimension==m_dimension) ? m_sampled : *this;
   if (source.m_feedback.rows()!=m_feedback.rows()) source.m_feedback=m_feedback;
-  if (source.m_observer.rows()!=m_observer.rows()) source.m_feedback=m_observer;
-  MatrixS feedbackDynamics=source.m_sensitivity.block(0,0,m_dimension,m_fdimension)*m_feedback;
-  if ((m_synthType!=eObserverSynth) && (source.m_outputSensitivity.cols()>0)) feedbackDynamics*=source.m_outputSensitivity;
+  if (source.m_observer.rows()!=m_observer.rows()) source.m_observer=m_observer;
+  MatrixS feedbackDynamics=source.m_sensitivity.block(0,0,m_dimension,m_fdimension)*source.m_feedback;
+  if (m_ioFeedback && (source.m_outputSensitivity.cols()>0)) feedbackDynamics*=source.m_outputSensitivity;
+  if (ms_trace_dynamics[eTraceDynamics]) ms_logger.logData(feedbackDynamics,"BK");
   MatrixS dynamics=source.m_dynamics-feedbackDynamics;
+  if (ms_trace_dynamics[eTraceDynamics]) ms_logger.logData(dynamics,"A-BK");
   int fdimension= (makeReference || (m_reference.getDimension()>0)) ? 0 : m_fdimension;
   MatrixS sensitivity=source.m_sensitivity.block(0,fdimension,m_dimension,m_idimension-fdimension);
-  m_closedLoop.setInputType(eParametricInputs);
+  closedLoop.setInputType(eParametricInputs);
   AbstractPolyhedra<scalar> inputs=generateFeedbackInput(fdimension,makeNoise,sensitivity,source.m_sampleTime,source.m_delayTime);
   AbstractPolyhedra<scalar> init, guard,safe;
   init.copy(source.m_initialState.getPolyhedra());
@@ -645,14 +649,40 @@ bool Synthesiser<scalar>::makeClosedLoop(bool useObserver,bool makeReference,boo
     guard.duplicateSpace(false);
     safe.duplicateSpace(false);
   }
-  if (ms_trace_dynamics>=eTraceDynamics) {
-    ms_logger.logData(dynamics,"Loading Closed Loop");
+  if (ms_trace_dynamics[eTraceDynamics]) ms_logger.logData(dynamics,"Loading Closed Loop");
+  closedLoop.setParams(m_paramValues);
+  closedLoop.changeDimensions(dynamics.rows(),sensitivity.cols(),0,0);
+  bool result=closedLoop.load(dynamics,sensitivity,guard,init,inputs,safe);
+  if (result) {
+    closedLoop.m_outputSensitivity=source.m_outputSensitivity;
+    if (useObserver) {
+      closedLoop.m_outputSensitivity.conservativeResize(m_outputSensitivity.rows(),2*m_dimension);
+      closedLoop.m_outputSensitivity.block(0,m_dimension,m_outputSensitivity.rows(),m_dimension)=MatrixS::Zero(m_outputSensitivity.rows(),m_dimension);
+      if (source.m_observer.cols()>0) {
+        std::vector<int> observerRows(closedLoop.m_dimension,-1);
+        scalar coef=func::ms_0;
+        refScalar error=func::ms_1;
+        if (source.m_T.rows()==0) source.makeReachabilityMatrices(useObserver);
+        MatrixS coefficients=source.getDynamicPolynomialCoefficients();
+        MatrixS canonicalL=(source.m_W*source.m_observer).transpose();
+        canonicalL+=coefficients.block(0,1,1,m_dimension);
+        if (!closedLoop.m_hasMultiplicities && closedLoop.getObserverRows(coef,closedLoop.m_dimension,abs(canonicalL.coeff(0,0)),error,observerRows,m_dimension))
+        {
+           int j,pos=0;
+           for (int i=0;(i<closedLoop.m_dimension) && (pos<m_dimension);i++) {
+             for (j=m_dimension;j<closedLoop.m_dimension;j++) {
+               if (i==observerRows[j]) break;
+             }
+             if (j==closedLoop.m_dimension) observerRows[pos++]=i;
+           }
+           if (ms_trace_dynamics[eTraceRefinements]) ms_logger.logData(observerRows,"new eigenorder ");
+           closedLoop.swapEigenvalues(observerRows);
+        }
+      }
+    }
   }
-  m_closedLoop.setParams(m_paramValues);
-  m_closedLoop.changeDimensions(dynamics.rows(),sensitivity.cols(),0,0);
-  bool result=m_closedLoop.load(dynamics,sensitivity,guard,init,inputs,safe);
-  if (result && (ms_trace_dynamics>=eTraceDynamics)) {
-    ms_logger.logData(m_closedLoop.getDescription());
+  if (result && (ms_trace_dynamics[eTraceDynamics])) {
+    ms_logger.logData(closedLoop.getDescription());
   }
   return result;
 }
@@ -681,26 +711,28 @@ void Synthesiser<scalar>::processFiles(stringList &files,displayType_t displayTy
   }
 }
 
-// Processes a problem stated by the inut options
+// Processes a problem stated by the input options
 template <class scalar>
 int Synthesiser<scalar>::processOptions(optionList_t &options,displayType_t displayType,space_t space,bool interval,bool run)
 {
   if (options.size()<=0) return 0;
   boost::timer timer;
+  if (options[eDebugStr].size()>0) {
+    std::istringstream s(options[eDebugStr]);
+    traceDebug(s);
+  }
   if (options[eParamStr].size()>0) {
     if (ms_logger.StringToDim(m_paramValues,options[eParamStr])<0) return -1;
     if (m_paramValues.coeff(eNumBits,0)>0) {
       functions<mpfr::mpreal>::setDefaultPrec(m_paramValues.coeff(eNumBits,0));
     }
-    traceDynamics((traceDynamics_t)m_paramValues.coeff(eTraceLevel,0));
-    traceSimplex((traceTableau_t)(m_paramValues.coeff(eTraceLevel,1)/10),(tracePivots_t)(m_paramValues.coeff(eTraceLevel,1)%10),(traceVertices_t)m_paramValues.coeff(eTraceLevel,2));
     if (m_paramValues.coeff(eNumStates,0)>0) changeDimensions(m_paramValues.coeff(eNumStates,0),m_paramValues.coeff(eNumInputs,0)+m_paramValues.coeff(eNumVarInputs,0),m_paramValues.coeff(eNumOutputs,0),m_paramValues.coeff(eNumFeedbacks,0));
     m_sensitivity.conservativeResize(m_paramValues.coeff(eNumStates,0),m_paramValues.coeff(eNumInputs,0)+m_paramValues.coeff(eNumVarInputs,0));
     m_inputType=(m_paramValues.coeff(eNumVarInputs,0)>0) ? eVariableInputs : ((m_paramValues.coeff(eNumInputs,0)>0) ? eParametricInputs : eNoInputs);
     if (m_paramValues.coeff(eNumInputs,2)+m_paramValues.coeff(eNumVarInputs,1)>0) m_inputType=eVariableOnlyInputs;
   }
   else if (run && (m_dimension==0)) processError("no parameters");
-  if ((options[eRandStr].size()>0) && (options[eParamStr].size()>0)) {
+  if ((options[eRandStr].size()>0) && (options[eParamStr].size()>0) && (m_synthType<eCEGISSynth)) {
     ParamMatrix params;
     if (ms_logger.StringToDim(params,options[eParamStr])<0) return -1;
     for (int i=0;i<10;i++) {
@@ -727,18 +759,82 @@ int Synthesiser<scalar>::processOptions(optionList_t &options,displayType_t disp
   if ((options[eReferenceStr].size()>0) && (loadReference(options[eReferenceStr])<0))   return -1;
   if (options[eIncOrderStr].size()>0) setIncrementalOrder(options[eIncOrderStr]);
   if ((options[eObserveStr].size()>0) && (loadObserver(options[eObserveStr])<0))        return -1;
+  if (options[eFactorStr].size()>0) func::toScalar(options[eFactorStr].data(),m_factor);
   if (options[eSampleStr].size()>0) {
     m_sampled.copy(*this);
     m_sampled.sample(options[eSampleStr]);
   }
   else m_sampled.m_dimension=0;
-  if (options[eSpeedStr].size()>0) { setSpeed(options[eSpeedStr]); }
-  if ((options[eControlStr].size()>0) && (loadController(options[eControlStr])<0))      return -1;
+  if (options[eSpeedStr].size()>0)
+  {
+    setSpeed(options[eSpeedStr]);
+    if (options[eSampleStr].size()>0) {
+      m_sampled.m_eigenValueCap=m_eigenValueCap;//exp(log(0.1)*m_sampled.m_sampleTime/m_eigenValueCap);
+    }
+  }
+  if ((options[eControlStr].size()>0) && (loadController(options[eControlStr],0,m_synthType<eCEGISSynth)<0))      return -1;
   if (run) {
     if ((m_synthType<eCEGISSynth) && (options[eSampleStr].size()>0)) {
       m_sampled.process(displayType,space,interval);
     }
     else {
+      if (options[eRandStr].size()>0) {
+        size_t countSize=0;
+        int count=func::toInt(func::toCentre(ms_logger.getNumber(options[eRandStr],countSize)));
+        if (count==0) count=10000;
+        MatToStr<scalar> logger(12,defaultLeftBracket,defaultRightBracket,", ","; ");
+        for (int i=-1;(i<=1) && (count>0);i+=2) {
+          for (int j=-1;(j<=1) && (count>0);j+=2) {
+            for (int k=-1;(k<=1) && (count>0);k+=2) {
+              MatrixS dynamics=m_dynamics;
+              for (int row=0;(row<dynamics.rows()) && (count>0);row++) {
+                for (int col=0;(col<dynamics.cols()) && (count>0);col++) {
+                  dynamics.coeffRef(row,col)=m_dynamics.coeff(row,col)*(func::ms_1+0.1*refScalar(i));
+                  MatrixS isense=m_sensitivity;
+                  for (int inrow=0;(inrow<isense.rows()) && (count>0);inrow++) {
+                    for (int incol=0;(incol<isense.cols()) && (count>0);incol++) {
+                      isense.coeffRef(inrow,incol)=m_sensitivity.coeff(inrow,incol)*(func::ms_1+0.1*refScalar(j));
+                      MatrixS osense=m_outputSensitivity;
+                      for (int outrow=0;(outrow<osense.rows()) && (count>0);outrow++) {
+                        for (int outcol=0;(outcol<osense.cols()) && (count>0);outcol++) {
+                          osense.coeffRef(outrow,outcol)=m_outputSensitivity.coeff(outrow,outcol)*(func::ms_1+0.1*refScalar(k));
+                          std::ofstream file;
+                          std::string filename="benchmark"+ms_logger.MakeNumber(i+1)+"-"+ms_logger.MakeNumber(j+1)+"-"+ms_logger.MakeNumber(k+1)
+                          +"-"+ms_logger.MakeNumber(row)+"-"+ms_logger.MakeNumber(col)
+                          +"-"+ms_logger.MakeNumber(inrow)+"-"+ms_logger.MakeNumber(incol)
+                          +"-"+ms_logger.MakeNumber(outrow)+"-"+ms_logger.MakeNumber(outcol)
+                          +".ss";
+                          file.open(filename.data());
+                          std::string maxIn=ms_logger.MakeNumber(m_inputs.m_supports.coeff(0,0));
+                          std::string maxOut=ms_logger.MakeNumber(m_outputGuard.m_supports.coeff(0,0));
+                          if (file.is_open()) {
+                            std::stringstream buffer;
+                            buffer << "implementation <" << m_paramValues.coeff(eNumBits,1)-m_paramValues.coeff(eNumBits,2) << "," << m_paramValues.coeff(eNumBits,2) <<">\n"
+                                   << "states = " << m_dimension << ";\n"
+                                   << "inputs = " << m_idimension << ";\n"
+                                   << "outputs = " << m_odimension << ";\n"
+                                   << "sampling = " << options[eSampleStr] << ";\n"
+                                   << "A = " << logger.MatToString(dynamics)
+                                   << "B = " << logger.MatToString(isense)
+                                   << "C = " << logger.MatToString(osense)
+                                   << "D = [0]\n"
+                                   << "inputs = [-" << maxIn << "," << maxIn << "]\n"
+                                   << "outputs = [-" << maxOut << "," << maxOut << "]\n";
+                            std::string data=buffer.str();
+                            file.write(data.data(),data.size());
+                            file.close();
+                            count--;
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
       process(displayType,space,interval);
     }
     if (ms_logger.ms_useConsole) ms_logger.logData(timer.elapsed()*1000,"Total time: ",true);
@@ -797,7 +893,7 @@ bool Synthesiser<scalar>::process(const displayType_t displayType,const space_t 
       m_dynamicParams.resize(eNumFinalParameters,width);
       int col=0;
       for (iter=m_paramValues.coeff(eNumSteps,0);iter<maxIter;iter+=stepIter) {
-        for (tightness=minTightness;tightness<=maxTightness;tightness+=stepTightness) {
+        for (int tightness=minTightness;tightness<=maxTightness;tightness+=stepTightness) {
           for (int precision=(minPrecision>0) ? minPrecision : 1;precision<=maxPrecision;precision+=stepPrecision) {
             powerS iteration=iter;
             switch(m_synthType) {
@@ -889,16 +985,16 @@ bool Synthesiser<scalar>::process(const displayType_t displayType,const space_t 
 
 /// Loads a controller candidate for the system
 template <class scalar>
-int Synthesiser<scalar>::loadController(const std::string &data,size_t pos)
+int Synthesiser<scalar>::loadController(const std::string &data,size_t pos,bool close)
 {
   boost::timer timer;
   commands_t command;
   pos=ms_logger.getCommand(command,data,pos);
-  bool ioFeedback=(m_odimension>0) && (m_synthType!=eObserverSynth);
-  m_feedback.resize(m_idimension,ioFeedback ? m_odimension : m_dimension);
+  //m_ioFeedback=(ms_canonical<eCNF) && (m_odimension>0) && (m_synthType!=eObserverSynth);//TODO:need better user flag
+  m_feedback.resize(m_idimension,m_ioFeedback ? m_odimension : m_dimension);
   size_t result=ms_logger.StringToMat(m_feedback,data,pos);
-  if (result>0) makeClosedLoop();
-  if (ms_trace_time) ms_logger.logData(timer.elapsed()*1000,"Controller time:",true);
+  if ((result>0) && close) makeClosedLoop(m_observer.rows()>0,!m_reference.isEmpty());
+  if (ms_trace_dynamics[eTraceTime]) ms_logger.logData(timer.elapsed()*1000,"Controller time:",true);
   return result;
 }
 
@@ -911,7 +1007,7 @@ int Synthesiser<scalar>::loadObserver(const std::string &data,size_t pos)
   pos=ms_logger.getCommand(command,data,pos);
   m_observer.resize(m_dimension,(m_odimension>0) ? m_odimension : m_dimension);
   size_t result=ms_logger.StringToMat(m_observer,data,pos);
-  if (ms_trace_time) ms_logger.logData(timer.elapsed()*1000,"Observer time:",true);
+  if (ms_trace_dynamics[eTraceTime]) ms_logger.logData(timer.elapsed()*1000,"Observer time:",true);
   return result;
 }
 
@@ -921,7 +1017,7 @@ int Synthesiser<scalar>::loadReference(const std::string &data,size_t pos,bool v
 {
   boost::timer timer;
   int result=m_reference.loadData(data,vertices,pos);
-  if (ms_trace_time) ms_logger.logData(timer.elapsed()*1000,"Reference time:",true);
+  if (ms_trace_dynamics[eTraceTime]) ms_logger.logData(timer.elapsed()*1000,"Reference time:",true);
   return result;
 }
 
@@ -1000,7 +1096,7 @@ void Synthesiser<scalar>::makeimplt(std::stringstream &stream, std::string name,
   long double lsb=1.0;
   lsb/=fxp_one;
   long double max;
-  if (ms_fixedBVs) {
+  if (ms_bvType==eFixedBV) {
     max=1<<(int_bits-1);
     max-=lsb;
   }
@@ -1053,6 +1149,174 @@ void Synthesiser<scalar>::makeVertexSupportCombo(std::stringstream &stream, std:
   stream << ms_logger.MatToC("",inputs);
 }
 
+/// Retrieves the index of the eigenvalue with the largest angle
+template <class scalar>
+int Synthesiser<scalar>::dominantRotation(MatrixC eigenvalues,std::vector<int> &conjugatePairs)
+{
+  int result=-1;
+  scalar maxAngle=func::ms_0;
+  for (int row=0;row<m_dimension;row++) {
+    if (conjugatePairs[row]<0) continue;
+    const complexS &coef=eigenvalues.coeff(row,row);
+    scalar angle=func::invtan(coef.imag(),coef.real());
+    if (func::isNegative(func::ms_pi-angle)) continue;
+    if (func::isPositive(angle-maxAngle)) {
+      maxAngle=angle;
+      result=row;
+    }
+  }
+  return result;
+}
+
+/// Retrieves the index of the eigenvalue with the largest magnitude
+template <class scalar>
+int Synthesiser<scalar>::dominantEigenvalue(MatrixC &eigenvalues,std::vector<int> &conjugatePairs,int count)
+{
+  std::multimap<refScalar,int> sortedEigenNorms;
+  for (int row=0;row<m_dimension;row++) {
+    refScalar mag=func::toUpper(func::norm2(eigenvalues.coeff(row,row)));
+    sortedEigenNorms.insert(std::pair<refScalar,int>(mag,row));
+  }
+  typename std::multimap<refScalar,int>::reverse_iterator it=sortedEigenNorms.rbegin();
+  for (int i=0;(i<count) && (it!=sortedEigenNorms.rend());i++) {
+    it++;
+  }
+  return it->second;
+}
+
+/// Refines the synthesised control to obtain a minimal phase on all eigenvalues within the spec
+template <class scalar>
+bool Synthesiser<scalar>::refinePhase(MatrixC &eigenvalues,AbstractPolyhedra<scalar> &bounds,std::vector<int> &conjugatePairs)
+{
+  int row=dominantRotation(eigenvalues,conjugatePairs);
+  if (ms_trace_dynamics[eTraceRefinements]) ms_logger.logData(eigenvalues,"original eigenvalues");
+  if (row<0) return false;
+  int row2=conjugatePairs[row];
+  complexS &coef=eigenvalues.coeffRef(row,row);
+  complexS orig=coef;
+  if (func::isNegative(coef.real()))
+  {
+    coef=complexS(-orig.real(),orig.imag());
+    eigenvalues.coeffRef(row2,row2)=complexS(coef.real(),-coef.imag());
+    MatrixS polynomial=getDynamicPolynomialCoefficients(eigenvalues).block(0,1,1,m_dimension);
+    if (bounds.isInside(polynomial)) return true;
+    coef=orig;
+  }
+  else {
+    refScalar factor=m_factor;
+    while(factor<.999) {
+      coef=complexS(orig.real(),orig.imag()*factor);
+      eigenvalues.coeffRef(row2,row2)=complexS(coef.real(),-coef.imag());
+      MatrixS polynomial=getDynamicPolynomialCoefficients(eigenvalues).block(0,1,1,m_dimension);
+      if (bounds.isInside(polynomial)) {
+        ms_logger.logData(factor,"phase factor",true);
+        if (ms_trace_dynamics[eTraceRefinements]) ms_logger.logData(eigenvalues,"phase refined eigenvalues");
+        return true;
+      }
+      factor=(func::ms_1+factor)*refScalar(0.5);
+      coef=orig;
+    }
+  }
+  conjugatePairs[row]=-1;
+  conjugatePairs[row2]=-1;
+  return true;
+}
+
+/// Refines the synthesised control to obtain a minimal magnitude on all eigenvalues within the spec
+template <class scalar>
+bool Synthesiser<scalar>::refineMagnitude(MatrixC &eigenvalues,AbstractPolyhedra<scalar> &bounds,std::vector<int> &conjugatePairs,int pass)
+{
+  int row=dominantEigenvalue(eigenvalues,conjugatePairs,pass);
+  if (ms_trace_dynamics[eTraceRefinements]) ms_logger.logData(eigenvalues,"original eigenvalues");
+  if (row<0) return false;
+  complexS &coef=eigenvalues.coeffRef(row,row);
+  complexS &coef2=(conjugatePairs[row]>=0) ? eigenvalues.coeffRef(conjugatePairs[row],conjugatePairs[row]) : coef;
+  complexS orig=coef;
+
+  refScalar factor=m_factor;
+  while(factor<.999) {
+    coef=complexS(orig.real()*factor,orig.imag()*factor);
+    if (conjugatePairs[row]>=0) coef2=complexS(coef.real(),-coef.imag());
+    MatrixS polynomial=getDynamicPolynomialCoefficients(eigenvalues).block(0,1,1,m_dimension);
+    if (bounds.isInside(polynomial)) {
+      ms_logger.logData(factor,"mag factor",true);
+      if (ms_trace_dynamics[eTraceRefinements]) ms_logger.logData(eigenvalues,"mag refined eigenvalues");
+      return true;
+    }
+    factor=(func::ms_1+factor)*refScalar(0.5);
+    coef=orig;
+    if (conjugatePairs[row]>=0) coef2=complexS(coef.real(),-coef.imag());
+  }
+  return false;
+}
+
+/// Refines the synthesised control to obtain a minimal phase on all eigenvalues within the spec
+template <class scalar>
+bool Synthesiser<scalar>::refineSampling(CegarSystem<scalar> &source,CegarSystem<scalar> &closedLoop,bool observer)
+{
+  if (closedLoop.isSampled()) {
+    MatrixS feedbackTarget=closedLoop.getDynamicPolynomialCoefficients(closedLoop.m_eigenValues.block(0,0,m_dimension,m_dimension)).block(0,1,1,m_dimension);
+    MatrixS observerTarget=observer ? closedLoop.getDynamicPolynomialCoefficients(closedLoop.m_eigenValues.block(m_dimension,m_dimension,m_dimension,m_dimension)).block(0,1,1,m_dimension) : ms_emptyMatrix;
+    if (!source.resample(closedLoop.m_sampleTime,feedbackTarget,observerTarget)) return false;
+    closedLoop.m_sampleTime=func::ms_1;
+    makeClosedLoop(observer,false,true);
+    int fracbits;
+    if (ms_trace_dynamics[eTraceDynamics]) {
+      MatrixS controllable=source.m_T*source.m_dynamics*source.m_invT;
+      ms_logger.logData(controllable,"Controllable");
+    }
+    int totalbits=source.getTotalBits(observer,fracbits);
+    int observerbits=totalbits+m_paramValues.coeff(eTightness,0)-fracbits-getBits(m_initialOutputs);
+    source.makeControlBounds(observer,(observer && (m_paramValues.coeff(eTightness,0)>=0)) ? observerbits : 0);
+    return true;
+  }
+  return false;
+}
+
+/// Refines the synthesised control to obtain a better set of eigenvalues within the spec
+template <class scalar>
+bool Synthesiser<scalar>::refineEigenvalues(CegarSystem<scalar> &source,CegarSystem<scalar> &closedLoop,bool observer,RefineType_t type,int pass,int count)
+{
+  refineSampling(source,closedLoop,observer);
+  std::vector<int> conjugatePairs=closedLoop.m_conjugatePair;
+  if (!observer) {
+    if (ms_trace_dynamics[eTraceRefinements]) ms_logger.logData("refining controller");
+    MatrixC eigenvalues=closedLoop.m_eigenValues.block(0,0,m_dimension,m_dimension);
+    AbstractPolyhedra<scalar> bounds=source.m_controllerBounds.getPolyhedra(eEigenSpace);
+    bounds.translate(source.m_polynomialCoefficients);
+    bool refined=false;
+    for (int i=0;i<count;i++) {
+      if (type==eRefinePhase)       refined=refinePhase(eigenvalues,bounds,conjugatePairs);
+      if (type==eRefineMagnitude)   refined=refineMagnitude(eigenvalues,bounds,conjugatePairs,pass);
+      if (!refined) break;
+    }
+    MatrixS canonical=getDynamicPolynomialCoefficients(eigenvalues).block(0,1,1,m_dimension)-source.getDynamicPolynomialCoefficients().block(0,1,1,m_dimension);
+    source.m_feedback=canonical*source.m_T;
+  }
+  if (observer) {
+    if (ms_trace_dynamics[eTraceRefinements]) ms_logger.logData("refining observer");
+    conjugatePairs.erase(conjugatePairs.begin(),conjugatePairs.begin()+m_dimension);
+    for (int i=0;i<m_dimension;i++) {
+      if (conjugatePairs[i]>=m_dimension) conjugatePairs[i]-=m_dimension;
+    }
+    if (ms_trace_dynamics[eTraceEigen]) ms_logger.logData(closedLoop.m_eigenValues,"original closed eigenvalues");
+
+    MatrixC Leigenvalues=closedLoop.m_eigenValues.block(m_dimension,m_dimension,m_dimension,m_dimension);
+    AbstractPolyhedra<scalar> Lbounds=source.m_observerBounds.getPolyhedra(eEigenSpace);
+    Lbounds.translate(source.m_polynomialCoefficients);
+    bool refined=false;
+    for (int i=0;i<count;i++) {
+      if (type==eRefinePhase)       refined=refinePhase(Leigenvalues,Lbounds,conjugatePairs);
+      if (type==eRefineMagnitude)   refined=refineMagnitude(Leigenvalues,Lbounds,conjugatePairs,pass);
+      if (!refined) break;
+    }
+    MatrixS canonical=getDynamicPolynomialCoefficients(Leigenvalues).block(0,1,1,m_dimension)-source.getDynamicPolynomialCoefficients().block(0,1,1,m_dimension);
+    canonical.transposeInPlace();
+    source.m_observer=source.m_invW*canonical;
+  }
+  return true;
+}
+
 ///Creates a c header file for CEGIS
 template <class scalar>
 std::string Synthesiser<scalar>::makeCEGISDescription(bool observer,bool intervals,bool scaling)
@@ -1062,36 +1326,29 @@ std::string Synthesiser<scalar>::makeCEGISDescription(bool observer,bool interva
   source.makeReachabilityMatrices(observer);
   MatrixS TinvW=observer ? source.m_T*source.m_invW : source.m_T;
   MatrixS controllable=source.m_T*source.m_dynamics*source.m_invT;
-  if (ms_trace_dynamics>=eTraceDynamics) {
-    ms_logger.logData(controllable,"Controllable");
-  }
+  if (ms_trace_dynamics[eTraceDynamics]) ms_logger.logData(controllable,"Controllable");
   MatrixS coefficients=-controllable.row(0);
-  int totalbits=m_paramValues.coeff(eNumBits,1);
   int fracbits=m_paramValues.coeff(eNumBits,2);
+  int totalbits=source.getTotalBits(observer,fracbits);
   int multbits=0;
-  if (totalbits<=0) {
-    totalbits=m_paramValues.coeff(eNumBits,0);
-    if (totalbits<=0) totalbits=func::getDefaultPrec();
-    fracbits=totalbits;
-  }
-  else if (fracbits==0) {
-    refScalar max=m_sampled.findMaxValue(observer);
-    max=findMaxValue(coefficients,max);
-    int intbits=getBits(max);
-    fracbits=totalbits-intbits;
-  }
   if (!m_outputGuard.isEmpty()) {
     source.m_safeReachTube.bitConstrain(totalbits-fracbits);
     source.m_initialState.bitConstrain(totalbits-fracbits-1);
   }
-  bool useObserver=!func::isZero(m_observer.norm());
-  scalar speedFactor=func::ms_1;
-  if (ms_canonical) {
-    source.m_feedback=-source.m_feedback*source.m_T;
+  bool useObserver=!func::isZero(source.m_observer.norm());
+  bool haveFeedback=!func::isZero(source.m_feedback.norm());
+  int observerbits=totalbits+m_paramValues.coeff(eTightness,0)-fracbits-getBits(m_initialOutputs);
+  if (ms_canonical>=eCNF) {
+    if (source.m_T.rows()==0) source.makeReachabilityMatrices(useObserver);
+    source.m_feedback=-m_feedback*source.m_T;
     if (useObserver) source.m_observer=-source.m_invW*m_observer;
   }
-  fitToSpec(source.m_feedback,totalbits,fracbits);
-  if (useObserver) fitToSpec(source.m_observer,totalbits,fracbits);
+  source.makeControlBounds(observer,(observer && (m_paramValues.coeff(eTightness,0)>=0)) ? observerbits : 0);
+  if (haveFeedback) {
+    fitToSpec(source.m_feedback,totalbits,fracbits);
+    if (useObserver) fitToSpec(source.m_observer,totalbits,fracbits);
+  }
+  scalar speedFactor=func::ms_1;
   scalar scaleT=func::ms_0;
   scalar scaleInvT=func::ms_0;
   if (scaling) {
@@ -1113,79 +1370,61 @@ std::string Synthesiser<scalar>::makeCEGISDescription(bool observer,bool interva
     maxT=findMaxValue(source.m_invW,maxT,func::toLower(scaleInvW));
   }
   multbits=getBits(maxT);
-  AbstractPolyhedra<scalar> K=source.getControllerInBounds(source.m_safeReachTube.getPolyhedra());
-  AbstractPolyhedra<scalar> KS=source.getControllerStabilityBounds(coefficients);
-  KS.mirror();
-  AbstractPolyhedra<scalar> KSC(KS);
-  KSC.transform(source.m_T.transpose(),source.m_invT.transpose());
-  AbstractPolyhedra<scalar> KO(KS);
-  AbstractPolyhedra<scalar> KC(K);
-  KC.transform(source.m_invT.transpose(),source.m_T.transpose());
-  KC.intersect(KS);
-  K.intersect(KSC);
-  AbstractPolyhedra<scalar> KSO(KO);
-  KSO.transform(source.m_invW,source.m_W);
-  if (m_paramValues.coeff(eTightness,0)>=0) {
-    AbstractPolyhedra<scalar> L(m_dimension);
-    L.loadData("cube<"+ms_logger.MakeNumber(1<<(totalbits+m_paramValues.coeff(eTightness,0)-fracbits-getBits(m_initialOutputs))));
-    KSO.intersect(L);
-    L.transform(source.m_W,source.m_invW);
-    KO.intersect(L);
-  }
-  AbstractPolyhedra<scalar> KW(K);
+  AbstractPolyhedra<scalar> KW(source.m_controllerBounds.getPolyhedra());
   KW.transform(source.m_invW.transpose(),source.m_W.transpose());
-  AbstractPolyhedra<scalar> KTW(KC);
+  AbstractPolyhedra<scalar> KTW(source.m_controllerBounds.getPolyhedra(eEigenSpace));
   KTW.transform(TinvW.transpose(),ms_emptyMatrix);
-  KSO.normalise();
-  KO.normalise();
   KW.normalise();
-  K.toOuter(true);
-  KC.toOuter(true);
-  KSO.toOuter(true);
-  KO.toOuter(true);
-
-  if (!func::isZero(source.m_feedback.norm()) && makeClosedLoop(useObserver,false,true) && m_closedLoop.isDivergent(false,getSpeed())) {
-    refScalar max=func::toUpper(m_closedLoop.largestEigenNorm());
-    MatrixS nudge=m_closedLoop.capEigenValues(getSpeed(),useObserver,false);
-    MatrixS controller=coefficients-nudge.block(0,0,1,m_dimension);
-    bool keepNudge=KC.isInside(controller);
-    if (keepNudge) source.m_feedback=controller*source.m_T;
-    if (useObserver) {
-      MatrixS observer=coefficients-nudge.block(0,m_dimension,1,m_dimension);
-      keepNudge&=KO.isInside(observer);
-      if (keepNudge) source.m_observer=source.m_invW*observer;
+  if (!func::isZero(getSpeed())) speedFactor/=getSpeed();
+   if (haveFeedback && makeClosedLoop(useObserver,false,true)) {
+    if ((ms_canonical==eCNFR) && refineEigenvalues(source,m_closedLoop,useObserver,eRefinePhase,0,2*m_dimension)) {
+      fitToSpec(source.m_feedback,totalbits,fracbits);
+      fitToSpec(source.m_observer,totalbits,fracbits);
+      makeClosedLoop(useObserver,false,true);
     }
-    if(keepNudge) makeClosedLoop(useObserver,false,true);
-    if (func::isPositive(max-source.getSpeed())) max=func::toUpper(source.getSpeed());
-    if (max>1.05) {
-      ms_logger.logData(m_closedLoop.m_dynamics,"loop dynamics");
-      ms_logger.logData(max,"divergent loop",true);
-      ms_logger.logData(coefficients,"coefficients");
-      MatrixS newControllable=source.m_T*m_closedLoop.m_dynamics*source.m_invT;
-      ms_logger.logData(newControllable,"cl coefficients");
-      max=1.0;//TODO: this should never be needed.
+    if (m_closedLoop.isDivergent(false,getSpeed())) {
+      refScalar max=func::toUpper(m_closedLoop.largestEigenNorm());
+      MatrixS nudge=m_closedLoop.capEigenValues(getSpeed(),useObserver,false);
+      MatrixS controller=coefficients-nudge.block(0,0,1,m_dimension);
+      bool keepNudge=source.m_controllerBounds.getPolyhedra(eEigenSpace).isInside(controller);
+      if (keepNudge) source.m_feedback=controller*source.m_T;
+      if (useObserver) {
+        MatrixS observer=coefficients-nudge.block(0,m_dimension,1,m_dimension);
+        keepNudge&=source.m_observerBounds.getPolyhedra(eEigenSpace).isInside(observer);
+        if (keepNudge) source.m_observer=source.m_invW*observer.transpose();
+      }
+      if(keepNudge) makeClosedLoop(useObserver,false,true);
+      if (func::isPositive(max-source.getSpeed())) max=func::toUpper(source.getSpeed());
+      if (max>1.05) {
+        ms_logger.logData(m_closedLoop.m_dynamics,"loop dynamics");
+        ms_logger.logData(max,"divergent loop",true);
+        ms_logger.logData(coefficients,"coefficients");
+        MatrixS newControllable=source.m_T*m_closedLoop.m_dynamics*source.m_invT;
+        ms_logger.logData(newControllable,"cl coefficients");
+        max=1.0;//TODO: this should never be needed.
+      }
+      speedFactor/=max;
     }
-    speedFactor/=max;
   }
-  else if (!func::isZero(getSpeed())) speedFactor/=getSpeed();
+  AbstractPolyhedra<scalar>& K=source.m_controllerBounds.getPolyhedra();
+  AbstractPolyhedra<scalar>& KC=source.m_controllerBounds.getPolyhedra(eEigenSpace);
+  AbstractPolyhedra<scalar>& L=source.m_observerBounds.getPolyhedra();
+  AbstractPolyhedra<scalar>& LO=source.m_observerBounds.getPolyhedra(eEigenSpace);
+
   int Kbits=getBits(K);
   if (Kbits>(totalbits-fracbits)) Kbits=totalbits-fracbits;
-  int KSObits=getBits(KSO);
-  int KCbits=getBits(KC);
-  int KObits=getBits(KO);
-  int KWbits=getBits(KW);
-  int KTWbits=getBits(KTW);
+  int Lbits=getBits(L);
   refScalar max=m_sampled.findMaxValue(observer,false);
   max=findMaxValue(coefficients,max);
   int Dbits=getBits(max);
   int Sbits=getBits(m_sampled.findMaxValue(false,true));
   makeimplt(result, "impl",totalbits-fracbits,fracbits,totalbits-fracbits);
   makeimplt(result, "implK",Kbits,fracbits,totalbits-fracbits);
-  makeimplt(result, "implL",KSObits,fracbits,totalbits-fracbits);
-  makeimplt(result, "implKT",KCbits,fracbits,totalbits-fracbits);
-  makeimplt(result, "implKW",KWbits,fracbits,totalbits-fracbits);
-  makeimplt(result, "implKTW",KTWbits,fracbits,totalbits-fracbits);
-  makeimplt(result, "implLW",KObits,fracbits,totalbits-fracbits);
+  makeimplt(result, "implL",Lbits,fracbits,totalbits-fracbits);
+  makeimplt(result, "implKT",getBits(KC),fracbits,totalbits-fracbits);
+  makeimplt(result, "implKW",getBits(KW),fracbits,totalbits-fracbits);
+  makeimplt(result, "implKTW",getBits(KTW),fracbits,totalbits-fracbits);
+  makeimplt(result, "implLW",getBits(LO),fracbits,totalbits-fracbits);
   makeimplt(result, "implD",Dbits,fracbits,totalbits-fracbits);
   makeimplt(result, "implS",Sbits,fracbits,totalbits-fracbits);
   makeimplt(result, "implTW",multbits,fracbits,totalbits-fracbits);
@@ -1194,18 +1433,23 @@ std::string Synthesiser<scalar>::makeCEGISDescription(bool observer,bool interva
     if (it->second.intbits>cbmcbits) cbmcbits=it->second.intbits;
   }
   int cbmcfracbits=totalbits-cbmcbits;
-  cbmcbits*=2;
+  if (ms_bvType==eFixedBV) {
+    if (ms_canonical<eCNF) cbmcbits*=2;
+    else cbmcbits+=4;
+  }
   int align=(cbmcbits+cbmcfracbits)&7;
   if (align!=0) cbmcfracbits+=8-align;
   makeimplt(result, "implcbmc",cbmcbits,cbmcfracbits,64);
   result << "struct coefft ";
   result << ms_logger.MatToC("plant",coefficients,intervals,func::ms_0);
   maketransformt(result,"transform",source.m_invT,scaleInvT,intervals);
-  maketransformt(result,"pretransform",source.m_T,scaleT,intervals);
-  result << "control_floatt speed_factor=" << ms_logger.MakeNumber(speedFactor) << ";\n";
+  maketransformt(result,"pretransform",source.m_T,scaleT,intervals);  
   if (observer) {
-    result << "control_floatt observer_speed_factor=" << ms_logger.MakeNumber(scalar(2)*speedFactor) << ";\n";
-    if (ms_trace_dynamics>=eTraceDynamics) {
+    scalar factor=func::ms_1-source.m_observerSensitivityError*scalar(1<<Kbits)-source.m_controllerGershgorinRadius;
+    result << "control_floatt speed_factor=" << ms_logger.MakeNumber(speedFactor/factor) << ";\n";
+    factor=func::ms_1-source.m_observerOutputSensitivityError*scalar(1<<Lbits)-source.m_observerGershgorinRadius;
+    result << "control_floatt observer_speed_factor=" << ms_logger.MakeNumber(speedFactor/factor) << ";\n";
+    if (ms_trace_dynamics[eTraceDynamics]) {
       MatrixS observer=source.m_W*source.m_dynamics*source.m_invW;
       ms_logger.logData(observer,"OCF");
       MatrixS osense=source.m_outputSensitivity*source.m_invW;
@@ -1218,11 +1462,13 @@ std::string Synthesiser<scalar>::makeCEGISDescription(bool observer,bool interva
     result << "struct transformt " << ms_logger.MatToC("observer_dynamics",source.m_observerDynamics,intervals,scaling ? func::ms_1 : func::ms_0);
     result << "struct transformt " << ms_logger.MatToC("observer_sensitivity",source.m_observerSensitivity,intervals,scaling ? func::ms_1 : func::ms_0);
     result << "struct transformt " << ms_logger.MatToC("observer_output",source.m_observerOutputSensitivity,intervals,scaling ? func::ms_1 : func::ms_0);
-    result << "control_floatt observer_dynamics_error=" << ms_logger.MakeNumber(source.m_observerDynamicsError) << ";\n";
-    result << "control_floatt observer_sensitivity_error=" << ms_logger.MakeNumber(source.m_observerSensitivityError) << ";\n";
-    result << "control_floatt observer_output_sensitivity_error=" << ms_logger.MakeNumber(source.m_observerOutputSensitivityError) << ";\n";
+    //result << "control_floatt observer_control_error=" << ms_logger.MakeNumber(source.m_observerOutputSensitivityError*scalar(1<<Lbits)+source.m_observerGershgorinRadius) << ";\n";
+    //result << "control_floatt observer_input_error=" << ms_logger.MakeNumber(source.m_observerSensitivityError*scalar(1<<Kbits)+source.m_controllerGershgorinRadius) << ";\n";
+    //result << "control_floatt observer_dynamics_error=" << ms_logger.MakeNumber(source.m_observerDynamicsError) << ";\n";
+    //result << "control_floatt observer_sensitivity_error=" << ms_logger.MakeNumber(source.m_observerSensitivityError) << ";\n";
+    //result << "control_floatt observer_output_sensitivity_error=" << ms_logger.MakeNumber(source.m_observerOutputSensitivityError) << ";\n";
   }
-
+  else result << "control_floatt speed_factor=" << ms_logger.MakeNumber(speedFactor) << ";\n";
   result << "matrixt dynamics" << ms_logger.MatToC("",source.m_dynamics,intervals,scaling ? func::ms_1 : func::ms_0);
   result << "vectort sensitivity" << ms_logger.MatToC("",source.m_sensitivity.transpose(),intervals,scaling ? func::ms_1 : func::ms_0);
   result << "#ifdef __CPROVER\n";
@@ -1250,13 +1496,15 @@ std::string Synthesiser<scalar>::makeCEGISDescription(bool observer,bool interva
   result << "#endif\n";
   result << "#ifdef USE_XTRANSFORM\n";
   result << "void boundcbmcController()\n{\n";
-  result << ms_logger.IneToC("verify_assume","(control_floatt)","controller_cbmc",KS.getFaceDirections(),KS.getSupports(),false,false) << ";\n";
-  result << ms_logger.IneToC("verify_assume","(control_floatt)","observer_cbmc",KO.getFaceDirections(),KO.getSupports(),false,false) << ";\n";
+  result << ms_logger.IneToC("verify_assume","(control_floatt)","controller_cbmc",KC.getFaceDirections(),KC.getSupports(),false,false) << ";\n";
+  result << ms_logger.IneToC("verify_assume","(control_floatt)","observer_cbmc",LO.getFaceDirections(),LO.getSupports(),false,false) << ";\n";
   result << "}\n";
   result << "  #else\n";
   result << "void boundController()\n{\n";
-  result << ms_logger.IneToC("verify_assume","(control_floatt)","controller",K.getFaceDirections(),K.getSupports()) << ";\n";
-  result << ms_logger.IneToC("verify_assume","(control_floatt)","observer",KSO.getFaceDirections(),KSO.getSupports()) << ";\n";
+  MatrixS Kdirections=K.getFaceDirections()*-MatrixS::Identity(m_dimension,m_dimension);
+  result << ms_logger.IneToC("verify_assume","(control_floatt)","controller",Kdirections,K.getSupports()) << ";\n";
+  MatrixS Ldirections=-L.getFaceDirections();
+  result << ms_logger.IneToC("verify_assume","(control_floatt)","observer",Ldirections,L.getSupports()) << ";\n";
   result << "}\n";
   result << "#endif\n";
   if (m_feedback.rows()>0) {
@@ -1283,6 +1531,8 @@ std::string Synthesiser<scalar>::makeCEGISDescription(bool observer,bool interva
         invT.block(0,dimension,dimension,source.m_invW.cols())=MatrixS::Zero(dimension,source.m_invW.cols());
         invT.block(dimension,0,source.m_invW.rows(),dimension)=MatrixS::Zero(source.m_invW.rows(),dimension);
       }
+      /*MatrixS transformedDynamics=T*m_closedLoop.m_dynamics*invT;
+      ms_logger.logData(transformedDynamics,"reachable");*/
       MatrixS transformedVertices=vertices*T.transpose();
       AbstractPolyhedra<scalar> transformedSafe(m_closedLoop.m_safeReachTube.getPolyhedra());
       transformedSafe.transform(ms_emptyMatrix,invT);
@@ -1301,31 +1551,217 @@ std::string Synthesiser<scalar>::makeCEGISDescription(bool observer,bool interva
   return result.str();
 }
 
+///Creates a list of violating state-input pairs with their lowest corresponding iteration
+template <class scalar>
+void Synthesiser<scalar>::getIterationPairs(std::vector<iteration_pair>& result, powerList &iterations,AbstractPolyhedra<scalar> &safe,const MatrixS &vertices,const MatrixS &inVertices)
+{
+  powerS counterPoints[vertices.rows()+1][inVertices.rows()+1];
+  for (int i=0;i<vertices.rows();i++) {
+    for (int j=0;j<inVertices.rows();j++) {
+      counterPoints[i][j]=0;
+    }
+  }
+  int size=0;
+  for (typename powerList::iterator it=iterations.begin();it!=iterations.end();) {
+    MatrixS dynamics=m_closedLoop.getPseudoDynamics(it->first).transpose();
+    int check=size;
+    for (int i=0;i<vertices.rows();i++) {
+      for (int j=0;j<inVertices.rows();j++) {
+        MatrixS point=(vertices.row(i)-inVertices.row(j))*dynamics+inVertices.row(j);
+        if (!safe.isInside(point)) {
+          if (counterPoints[i][j]<1) size++;
+          if ((counterPoints[i][j]<1) || (counterPoints[i][j]>it->first)) counterPoints[i][j]=it->first;
+        }
+      }
+    }
+    if (check==size) {
+      typename powerList::iterator it2=it;
+      it++;
+      iterations.erase(it2);
+    }
+    else it++;
+  }
+  result.resize(size);
+  int pos=0;
+  for (int i=0;i<vertices.rows();i++) {
+    for (int j=0;j<inVertices.rows();j++) {
+      if (counterPoints[i][j]>0) result[pos++]=iteration_pair(i,j,counterPoints[i][j]);
+    }
+  }
+}
+
+///Explicitly checks the reachability for a bounded time horizon
+template <class scalar>
+typename Synthesiser<scalar>::powerS Synthesiser<scalar>::checkExplicitReachability(powerS steps,bool useObserver)
+{
+  CegarSystem<scalar> &source=(m_sampled.m_dimension==m_dimension) ? m_sampled : *this;
+  MatrixS T=source.m_T;
+  if (useObserver) {
+    T.conservativeResize(m_closedLoop.m_dimension,m_closedLoop.m_dimension);
+    T.block(0,m_dimension,m_dimension,m_dimension)=MatrixS::Zero(m_dimension,m_dimension);
+    T.block(m_dimension,0,m_dimension,m_dimension)=MatrixS::Zero(m_dimension,m_dimension);
+    T.block(m_dimension,m_dimension,m_dimension,m_dimension)=source.m_W;
+  }
+  return m_closedLoop.checkExplicitReachability(steps,T);
+}
+
 ///Creates a list of iterations to check with CEGIS
 template <class scalar>
-std::string Synthesiser<scalar>::makeCEGISIterations(std::string &existing)
+std::string Synthesiser<scalar>::makeCEGISIterations(CegarSystem<scalar> &closedLoop,int &existing,int max,RefineType_t stage,int pass,refScalar largestError)
 {
   std::stringstream result;
   CegarSystem<scalar> &source=(m_sampled.m_dimension==m_dimension) ? m_sampled : *this;
   if (func::isZero(m_feedback.norm())) return "#define NO_FEEDBACK\n";
   bool useObserver=!func::isZero(m_observer.norm());
   makeClosedLoop(useObserver,false,true);
-  if (m_closedLoop.isDivergent()) return "#define DIVERGENT\n";
-  AbstractPolyhedra<scalar>& dynamics=m_closedLoop.getRefinedDynamics(4,true);
+  if (ms_fullAnswers) {
+    ms_logger.logData("Closed  Loop");
+    ms_logger.logData(closedLoop.getDescription());
+    closedLoop.getAbstractReachTube(func::ms_infPower,2,0,m_inputType);
+    ms_logger.logData(closedLoop.getDescription());
+  }
+  if (closedLoop.isDivergent()) {
+    ms_logger.logData(closedLoop.m_eigenValues,"eigenvalues");
+    return "#define DIVERGENT\n";
+  }
+  AbstractPolyhedra<scalar>& dynamics=closedLoop.getRefinedDynamics(func::ms_infPower);
   AbstractPolyhedra<scalar> bounds;
-  m_closedLoop.synthesiseDynamicBounds(bounds,m_inputType,m_closedLoop.m_safeReachTube.getPolyhedra(eEigenSpace));
+  closedLoop.synthesiseDynamicBounds(bounds,m_inputType,closedLoop.m_safeReachTube.getPolyhedra(eEigenSpace));
+  if (ms_fullAnswers) {
+    ms_logger.logData("Refined Closed  Loop");
+    closedLoop.getAbstractReachTube(0,m_inputType,eNormalSpace,false);
+    ms_logger.logData(closedLoop.getDescription());
+  }
+  else if (ms_trace_dynamics[eTraceOutput]) {
+    closedLoop.getAbstractReachTube(0,m_inputType,eNormalSpace,false);
+    closedLoop.m_outputs.logTableau("output",true);
+  }
+#if 1
+  std::map<int,iteration_vector >pairs;
+  MatrixS inputVertices=closedLoop.getInputVertices(eEigenSpace,true);
+  MatrixS iterationSupports;
+  bool fail=closedLoop.findIterations(bounds,pairs,iterationSupports,true,m_safeReachTube.getPolyhedra().getSupports().rows());
+  if (fail) {
+    MatrixS vertices=closedLoop.m_initialState.getPolyhedra().getVertices();
+    result << "#define POINTS_PER_ITER\n";
+    result << "#define _NUM_ITERATIONS " << pairs.size() << "\n";
+    int max_iters=0;
+    result << "int iterations[_NUM_ITERATIONS]={";
+    typename std::map<int,iteration_vector>::iterator it=pairs.begin();
+    for (it=pairs.begin();it!=pairs.end();it++) {
+      if (it->second[0].iteration>max) it->second[0].iteration=max;
+      if (it->second[0].iteration>max_iters) max_iters=it->second[0].iteration;
+    }
+    if (max_iters<=existing) {
+      max_iters=existing+1;
+      for (it=pairs.begin();it!=pairs.end();it++) {
+        it->second[0].iteration=max_iters;
+      }
+    }
+    it=pairs.begin();
+    if (it!=pairs.end()) {
+      result << it->second[0].iteration;
+      it++;
+    }
+    for (;it!=pairs.end();it++) {
+      result << "," << it->second[0].iteration;
+    }
+    existing=max_iters;
+    result << "};\n";
 
+    powerS failedIter=checkExplicitReachability(max_iters,useObserver);
+    result << "#define _MAX_ITERATIONS " << max_iters << "\n";
+    ms_logger.logData(max_iters,"max iters",true);
+    result << "int iter_vertices[_NUM_ITERATIONS][2]={";
+    bool first=true;
+    for (int i=0;i<vertices.rows();i++) {
+      for (int j=0;j<inputVertices.rows();j++) {
+        int k=i*inputVertices.rows()+j;
+        if (pairs.find(k)!=pairs.end()) {
+          if (!first) result << ",";
+          result << "{" << i << "," << j << "}";
+          first=false;
+        }
+      }
+    }
+    result << "};\n";
+    if ((ms_canonical>eCNFR) && (m_refineCount-->0)) {
+      refScalar error=0;
+      if (!closedLoop.m_outputs.isEmpty()) {
+         MatrixS supports=closedLoop.m_outputs.getSupports();
+         if (supports.rows()==m_outputGuard.getSupports().rows()) {
+           supports-=m_outputGuard.getSupports();
+           for (int i=0;i<supports.rows();i++) {
+             if (func::toUpper(supports.coeff(i,0))>error) error=func::toUpper(supports.coeff(i,0));
+           }
+         }
+      }
+      if (error==0) {
+        for (int i=0;i<iterationSupports.rows();i++) {
+          if (func::toUpper(iterationSupports.coeff(i,0))>error) error=func::toUpper(iterationSupports.coeff(i,0));
+        }
+      }
+      if (useObserver && (error>=largestError) && (stage<eRefineController)) {
+        if (++pass>=2) {
+          pass=0;
+          stage=(RefineType_t)(stage+1);//stage=eRefineController;
+        }
+        source.m_feedback=m_feedback;
+        source.m_observer=m_observer;
+        largestError=func::ms_infinity;
+      }
+      if (error<largestError) {
+        int fracbits=0;
+        int totalbits=source.getTotalBits(useObserver,fracbits);
+        ms_logger.logData(error,"refining...",true);
+        m_feedback=source.m_feedback;
+        m_observer=source.m_observer;
+        if (refineEigenvalues(source,closedLoop,useObserver && (stage<eRefineController),(ms_canonical==eCNFP) ? eRefinePhase : eRefineMagnitude,pass,1)) {
+          if (ms_trace_dynamics[eTraceRefinements]) ms_logger.logData(result.str());
+          fitToSpec(source.m_feedback,totalbits,fracbits);
+          fitToSpec(source.m_observer,totalbits,fracbits);
+          makeClosedLoop(source,closedLoop,useObserver,false,true);
+          if (!closedLoop.isDivergent()) {
+            std::string newresult=makeCEGISIterations(closedLoop,existing,max_iters,stage,pass,error);
+            if (newresult.empty()) ms_logger.logData("OPTIMIZATION SUCCESS");
+            return newresult;
+          }
+          else ms_logger.logData("divergent");
+        }
+        else if (func::isPositive(source.m_samplingCap) && func::isPositive(source.m_sampleTime-source.m_samplingCap)) {
+          scalar scale=source.m_samplingCap/source.m_sampleTime;
+          if (func::isPositive(scale-scalar(0.5))) scale=0.5;
+          if (closedLoop.resample(scale)) {
+            refineSampling(source,closedLoop,useObserver);
+            m_feedback=source.m_feedback;
+            m_observer=source.m_observer;
+            if (refineEigenvalues(source,closedLoop,useObserver && (stage<eRefineController),(ms_canonical==eCNFP) ? eRefinePhase : eRefineMagnitude,pass,1)) {
+              ms_logger.logData(result.str());
+              fitToSpec(source.m_feedback,totalbits,fracbits);
+              fitToSpec(source.m_observer,totalbits,fracbits);
+              makeClosedLoop(source,closedLoop,useObserver,false,true);
+              if (!closedLoop.isDivergent()) {
+                std::string newresult=makeCEGISIterations(closedLoop,existing,max_iters,stage,pass,error);
+                return newresult;
+              }
+              else ms_logger.logData("divergent");
+            }
+          }
+        }
+      }
+    }
+  }
+#else
   powerList counterexamples;
-  bool fail=m_closedLoop.findCounterExampleIterations(counterexamples,bounds);
+  std::vector<iteration_pair> pairs;
+  bool fail=closedLoop.findCounterExampleIterations(counterexamples,bounds);
   if (fail && counterexamples.empty()) counterexamples[1]=std::pair<int,powerS>(-1,0);
   if (!counterexamples.empty()) {
-    scalar distance=bounds.violatingDistance(dynamics.getVertices());
-    ms_logger.logData(distance,"max distance: ",true);
-    AbstractPolyhedra<scalar> &safe=m_closedLoop.m_safeReachTube.getPolyhedra();
-    MatrixS vertices=m_closedLoop.m_initialState.getPolyhedra().getVertices();
-    MatrixS inputVertices=m_closedLoop.getInputVertices(eEigenSpace,true);
+    AbstractPolyhedra<scalar> &safe=closedLoop.m_safeReachTube.getPolyhedra();
+    MatrixS vertices=closedLoop.m_initialState.getPolyhedra().getVertices();
+    MatrixS inputVertices=closedLoop.getInputVertices(eEigenSpace,true);
+    getIterationPairs(pairs,counterexamples,safe,vertices,inputVertices);
     powerS counterPoints[vertices.rows()+1][inputVertices.rows()+1];
-
     result << "#define POINTS_PER_ITER\n";
     result << "#define _NUM_ITERATIONS " << counterexamples.size() << "\n";
     int max_iters=0;
@@ -1335,23 +1771,22 @@ std::string Synthesiser<scalar>::makeCEGISIterations(std::string &existing)
       result << it->first;
       if (it->first>max_iters) max_iters=it->first;
     }
+    if (max_iters<existing) {
+      counterexamples[existing]=std::pair<int,powerS>(-1,0);
+      result << "," << existing;
+      max_iters=existing;
+    }
+    existing=max_iters;
     result << "};\n";
 
-    MatrixS T=source.getReachableCanonicalTransformMatrix();
-    if (useObserver) {
-      MatrixS W=source.getObservableCanonicalTransformMatrix().inverse();
-      T.conservativeResize(m_closedLoop.m_dimension,m_closedLoop.m_dimension);
-      T.block(0,m_dimension,m_dimension,m_dimension)=MatrixS::Zero(m_dimension,m_dimension);
-      T.block(m_dimension,0,m_dimension,m_dimension)=MatrixS::Zero(m_dimension,m_dimension);
-      T.block(m_dimension,m_dimension,m_dimension,m_dimension)=W;
-    }
-    m_closedLoop.checkExplicitReachability(max_iters,T);
+    powerS failedIter=checkExplicitReachability(/*max_iters*/20,useObserver);
     result << "#define _MAX_ITERATIONS " << max_iters << "\n";
+    ms_logger.logData(max_iters,"max iters",true);
     result << "int iter_vertices[_NUM_ITERATIONS][2]={";
     for (typename powerList::iterator it=counterexamples.begin();it!=counterexamples.end();it++) {
       if (it!=counterexamples.begin()) result << ",";
-      MatrixS dynamics=m_closedLoop.getPseudoDynamics(it->first).transpose();
-      if (ms_trace_dynamics>eTraceDynamics) {
+      MatrixS dynamics=closedLoop.getPseudoDynamics(it->first).transpose();
+      if (ms_trace_dynamics[eTraceDynamics]) {
         ms_logger.logData(dynamics,"dynamics");
         ms_logger.logData(vertices,"vertices");
         ms_logger.logData(inputVertices,"inputVertices");
@@ -1377,6 +1812,7 @@ std::string Synthesiser<scalar>::makeCEGISIterations(std::string &existing)
   else if (fail) {
     return "#define FAILED\n";
   }
+#endif
   return result.str();
 }
 
@@ -1393,23 +1829,86 @@ bool Synthesiser<scalar>::makeCEGISFiles(bool observer)
   headerFile.write(data.data(),data.size());
   headerFile.close();
   data=makeCEGISDescription(observer,ms_logger.ms_traceIntervals,scaling);
-  std::string oldIters;
-  std::string iters=makeCEGISIterations(oldIters);
+  MatToStr<scalar> logger(12,defaultLeftBracket,defaultRightBracket,", ","; ");
+  CegarSystem<scalar> &source=(m_sampled.m_dimension==m_dimension) ? m_sampled : *this;
+  std::string final_observer;
+  std::string final_controller="controller="+logger.MatToString(source.m_feedback);
+  if (observer) final_observer="observer="+logger.MatToString(source.m_observer);
+  Implementation &implementation=m_implementation["implcbmc"];
+  int intbits=implementation.intbits;
+  int fracbits=implementation.fracbits;
+  if (ms_bvType==eFixedBV) {
+    while(fracbits>16) fracbits-=8;
+  }
+  else if (ms_bvType==eMixedBV) {
+    if (intbits<=6) intbits=(1<<intbits);
+    while(fracbits>16) fracbits-=8;
+  }
+  std::ifstream result_file;
+  result_file.open("output.txt");
+  std::string final_iters="synth_iterations=";
+  std::string impl_header="implementation <";
+  int iterations=0;
+  if (result_file.is_open()) {
+    std::string previous;
+    bool sameK=false;
+    bool sameL=!observer;
+    while(std::getline(result_file,previous)) {
+      if (previous.empty()) continue;
+      if ((final_controller.compare(0,previous.length(),previous)==0) && !func::isZero(source.m_feedback.norm())) sameK=true;
+      if (!final_observer.empty() && (final_observer.compare(0,previous.length(),previous)==0)) sameL=true;
+      if (previous.compare(0,final_iters.length(),final_iters)==0) {
+        size_t pos=final_iters.length();
+        iterations=func::toInt(func::toCentre(ms_logger.getNumber(previous,pos)));
+      }
+      else if (previous.compare(0,impl_header.length(),impl_header)==0) {
+        size_t pos=impl_header.length();
+        int final_intbits=func::toInt(func::toCentre(ms_logger.getNumber(previous,pos)));
+        pos++;
+        int final_fracbits=func::toInt(func::toCentre(ms_logger.getNumber(previous,pos)));
+        if (final_intbits>intbits) intbits=final_intbits;
+        if (final_fracbits>fracbits) fracbits=final_fracbits;
+      }
+    }
+    if (sameK && sameL && ((intbits+fracbits)<=56)) {
+      ms_logger.logData("No synthesis update");
+      if ((ms_bvType>=eFixedBV) || (intbits<10)) intbits+=4;
+      else fracbits+=4;
+      fracbits+=4;
+    }
+  }
+  int align=(intbits+fracbits)&7;
+  if (align!=0) {
+    ms_logger.logData(fracbits,"realigning ");
+    ms_logger.logData(intbits,", given ",true);
+    fracbits+=8-align;
+  }
+  int olditerations=iterations;
+  m_refineCount=5;
+  std::string iters=makeCEGISIterations(iterations,1000,(ms_canonical<=eCNFR) ? eRefineNone : ((ms_canonical==eCNFP) ? eRefinePhase : eRefineMagnitude));
+  ms_logger.logData(iters);
+  if ((iterations>0) && (iterations<=olditerations)&& ((intbits+fracbits)<=56)) {
+    ms_logger.logData(iterations,"iteration check failed ");
+    ms_logger.logData(olditerations," <= ",true);
+    if ((ms_bvType>=eFixedBV) || (intbits<10)) intbits+=4;
+    else fracbits+=4;
+    fracbits+=4;
+  }
+  std::string final_impl="implementation <"+logger.MakeNumber(intbits)+","+logger.MakeNumber(fracbits)+">";
+  std::string result=iters.empty() ? "SUCCESS\n" : "FAIL\n";
+  result+=final_impl;
+  result+="\nsampling = "+ms_logger.MakeNumber(source.m_sampleTime);
+  if (!func::isZero(source.m_delayTime)) {
+    result+=":"+ms_logger.MakeNumber(source.m_delayTime);
+    if (func::isPositive(source.m_sampleTime-source.m_samplingCap) && func::isPositive(source.m_samplingCap)) result+=":"+ms_logger.MakeNumber(source.m_samplingCap);
+  }
+  result+=";\n";
+  result+=final_controller;
+  result+=final_observer;
+  if (iterations>0) result+=final_iters+ms_logger.MakeNumber(iterations)+";\n";
   std::ofstream sucess_file;
   sucess_file.open("output.txt");
   if (!sucess_file.is_open()) return false;
-  std::string result=iters.empty() ? "SUCCESS" : "FAIL";
-  Implementation &implementation=m_implementation["implcbmc"];
-  MatToStr<scalar> logger(12,defaultLeftBracket,defaultRightBracket,", ","; ");
-  int fracbits=implementation.fracbits;
-  while(fracbits>16) fracbits-=8;
-  result+="\nimplementation <"+logger.MakeNumber(implementation.intbits)+","+logger.MakeNumber(fracbits)+">";
-  CegarSystem<scalar> &source=(m_sampled.m_dimension==m_dimension) ? m_sampled : *this;
-  result+="\nsampling = "+ms_logger.MakeNumber(source.m_sampleTime);
-  if (!func::isZero(source.m_delayTime)) result+=":"+ms_logger.MakeNumber(source.m_delayTime);
-  result+=";";
-  result+="\ncontroller="+logger.MatToString(source.m_feedback);
-  if (observer) result+="observer="+logger.MatToString(source.m_observer);
   sucess_file.write(result.data(),result.size());
   data+=iters;
   sucess_file.close();
