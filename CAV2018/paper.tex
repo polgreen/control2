@@ -120,10 +120,9 @@ However,~\cite{abate2017automated}~is restricted to fully observed systems
 furthermore explores only a subset of the properties that engineers are
 interested in.  By contrast, in most real implementations, the internal
 state of a plant cannot be directly measured but has to be inferred from its
-effect on the output.  A plant model that minimizes the difference between
-its output and the real output of the plant is called an \emph{observer} and
-it is a well known paradigm in the control
-literature~\cite{astrom1997computer}.
+effect on the output. A system that converges to the internal state of the plant
+from measurements of its input and output is called an \emph{observer}, and
+it is a well known paradigm in the control literature~\cite{astrom1997computer}.
 
 In this paper we build on the ideas presented in~\cite{abate2017automated}
 and develop a new technique that addresses most of these limitations. 
@@ -160,7 +159,7 @@ control synthesis, but play an important role in systems engineering.
 %% that exploits different aspects of the problem at each stage.
 
 We use a CounterExample-Guided Inductive Synthesis (CEGIS)~\cite{jha-icse10,
-DBLP:conf/pldi/Solar-LezamaRBE05} approach, which we enhance with
+DBLP:conf/asplos/Solar-LezamaTBSS06} approach, which we enhance with
 abstraction refinement and optimization resulting in the novel CEGIS-OR
 (CEGIS with Optimization and Refinement).  This design uses an iterative
 process where each iteration performs inductive generalization based on
@@ -370,8 +369,7 @@ and $x(0)$ is the initial state.
 
 We are interested in control systems with an output $\vec{y}$ that is a
 linear combination of its states and inputs\footnote{Notice that since we
-can only measure $\vec{y}$, the state-space $\vec{x}$ is not fully
-observable.}.
+can only measure $\vec{y}$, the state $\vec{x}$ cannot be measured directly.}.
 %
 %, which may restrict the observability of the state-space from the output space.
 \begin{equation}
@@ -429,7 +427,7 @@ where
 %
 \begin{equation}\label{equ:reachtraj}
 \tau(\vec{x}_k,\vec{u}_k) = %\big\{ 
-\mat{A}\vec{x}_k + \mat{B}\vec{u}_k \;.
+\mat{A}_d\vec{x}_k + \mat{B}_d\vec{u}_k \;.
  %\mid \mat{G}\vec{x}_k \leq \vec{h}\big\}\;. 
 \end{equation}
 %\note{do we actually need to mention the safety spec here given that it is formally introduced only in Sec~\ref{sec:cof_safety}?}
@@ -750,7 +748,7 @@ The expression
  \end{align}
 %
 with $\mat{A}_T$ as in \eqref{eq:continuous_tube_dyn2}, $\mat{B}_T$ as in
-\eqref{eq:continuous_tube_param}, and where $\mat{A}_d=\mat{A}_{T_s},
+\eqref{eq:continuous_tube_param}, $T \in [kT_s, (k+1)T_s]$, and where $\mat{A}_d=\mat{A}_{T_s},
 \mat{B}_d=\mat{B}_{T_s}$ describe the discretized plant dynamics with
 sample time $T_s$, is the state of the model
 %
@@ -789,9 +787,9 @@ the continuous-time domain at time ($t=kT_s+t_d$).
 
 \begin{theorem}
 %
-The error introduced by a delay $t_d$ in the control output $\vec{u}_k$ of a
-discrete feedback controller for a continuous LTI system can be modeled as a
-non-deterministic disturbance signal ($\nu_t$ in
+The error introduced by a delay $t_d$ in the control input $\vec{u}_k$ updated
+by a discrete feedback controller for a continuous LTI system can be modeled as
+a non-deterministic disturbance signal ($\nu_t$ in
 Figure~\ref{fig:observersystem}) upper bounded by
 %
 \begin{align}
