@@ -679,10 +679,10 @@ As a result we can ignore any errors introduced by the DAC
 
   \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center
 },
-          row sep=1cm, column sep=3cm] {
-   \node[fill=gray!20] (synth) {{\sc Synthesize}};
+          row sep=1cm, column sep=3.5cm] {
+   \node[fill=gray!20,minimum height=1cm] (synth) {{\sc Synthesize}};
    \&
-   \node[fill=gray!20] (verif) {{\sc Verify}};
+   \node[fill=gray!20,minimum height=1cm] (verif) {{\sc Verify}};
    \&
    \node[ellipse,fill=gray!20] (done) {{\sc Done}}; 
     \\
@@ -690,11 +690,11 @@ As a result we can ignore any errors introduced by the DAC
 
    \path
    ([yshift=2em]synth.east) edge node[align=center] {Candidate solution} ([yshift=2em]verif.west)
-    ([yshift=-2em]verif.west) edge node[align=center] {Counter-example} ([yshift=-2em]synth.east)
+    ([yshift=-2em]verif.west) edge node[align=center] {Counterexample} ([yshift=-2em]synth.east)
     (verif) edge node {} (done);
  \end{tikzpicture}
 }
- \caption{The CEGIS framework. \label{fig:CEGIS}}
+ \caption{The CEGIS framework\label{fig:CEGIS}}
 \end{figure*}
 
 In this section, we give a brief description of the CEGIS framework~\cite{jha-icse10,
