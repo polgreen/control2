@@ -1361,7 +1361,7 @@ corresponding domain at each stage).
 
 Next, we describe the CEGIS-OR loop in Figure~\ref{fig:CEGIS-OR}.
 
-\paragraph{\underline{{\sc abstract}}} computes an initial version of $\phi$
+\subsection*{\underline{{\sc abstract}}} computes an initial version of $\phi$
 and decides the sample time $T_d$,
 the plant precision $\mathbb{R}_{\langle P \rangle}$ and the controller precision
 $\mathbb{R}_{\langle C \rangle}$.
@@ -1399,7 +1399,7 @@ $(\phi_\mathit{init} \wedge \phi_\mathit{input} \wedge u_k=-\mat{K} \vec{x}_k)
 \Rightarrow \phi_\mathit{init}^{K}$.
 These bounds will be used by the {\sc synthesize} phase to reduce the size of the solution space (by direct inclusion in the SAT formula).
 \end{itemize}
-\paragraph{\underline{{\sc synthesize}}} generates a candidate controller matrix $\mat{K}_{\langle P \rangle}$
+\subsection*{\underline{{\sc synthesize}}} generates a candidate controller matrix $\mat{K}_{\langle P \rangle}$
 and observer matrix $\mat{L}_{\langle P \rangle}$ that satisfy
 $\phi$ by invoking a SAT solver.
 If there is no candidate solution it signals {\sc Abstract}, 
@@ -1407,7 +1407,7 @@ which may choose to increase the plant precision or return a synthesis failure.
 If {\sc synthesize} generates a candidate solution, it is fed to the {\sc verify} chain in order to validate it.
 %
 %\item
-\paragraph{\underline{{\sc Verify}}} checks whether the candidate
+\subsection*{\underline{{\sc Verify}}} checks whether the candidate
 solution found by {\sc synthesize} is a solution for the whole synthesis
 problem. It does this in three subsequent stages as explained below.
 If  in any of the stages the verification fails, then
@@ -1435,7 +1435,7 @@ transitions between sample times meet the specification $\phi_\mathit{safety}^{\
 
 %\item
 
-\paragraph{\underline{{\sc Refine Abstraction and optimize}}} refines the
+\subsection*{\underline{{\sc Refine Abstraction and optimize}}} refines the
 model abstraction as well as optimizes the current candidate
 solution.
 %
