@@ -112,26 +112,29 @@ here as Finite Word Length or FWL effects), time discretization and
 quantization errors introduced by A/D and D/A conversion.
 
 While research on digital control is well
-developed~\cite{astrom1997computer}, automated and sound control synthesis
-is challenging, particularly when the synthesis objective goes beyond
-classical stability.  Recent work~\cite{abate2017automated} described a
-method for synthesizing safe digital stabilizing controllers for fully
-observable LTI plants.  This work differs from the vast majority of existing
-approaches in that it explores the continuous space of the system to
-synthesize correct-by-construction minimal digital controllers.  In contrast
-to LTL models, which require thousands of states and elaborate algorithms to
-implement~\cite{reissig2017feedback}, these PID-like controllers are
-represented by a few parameters and only require few lines of code, thus
-reducing the implementation cost and execution time while remaining
-resilient to the effects of digitalization. 
-However,~\cite{abate2017automated}~is restricted to fully observed systems
-(i.e., where all the states are known) modeled in discrete time, and
-furthermore explores only a subset of the properties that engineers are
-interested in.  By contrast, in most real implementations, the internal
-state of a plant cannot be directly measured but has to be inferred from its
-effect on the output. A system that converges to the internal state of the plant
-from measurements of its input and output is called an \emph{observer}, and
-it is a well known paradigm in the control literature~\cite{astrom1997computer}.
+developed~\cite{astrom1997computer}, automated and sound control
+synthesis is challenging, particularly when the synthesis objective
+goes beyond classical stability.  Recent
+work~\cite{abate2017automated} described a method for synthesizing
+safe digital stabilizing controllers for fully observable LTI plants.
+This work differs from the vast majority of existing approaches in
+that it explores the continuous space of the system to synthesize
+correct-by-construction minimal digital controllers.  In contrast to
+LTL models, which require thousands of states and elaborate algorithms
+to implement~\cite{reissig2017feedback}, these PID-like controllers
+are represented by a few parameters and only require few lines of
+code, thus reducing the implementation cost and execution time while
+remaining resilient to the effects of digitalization.
+However,~\cite{abate2017automated}~is restricted to fully observed
+systems (i.e., where all the states are known) modeled in discrete
+time, and furthermore explores only a subset of the properties that
+engineers are interested in.  By contrast, in most real
+implementations, the internal state of a plant cannot be directly
+measured but has to be inferred from its effect on the output. A
+system that converges to the internal state of the plant from
+measurements of its input and output is called an \emph{observer}, and
+it is a well known paradigm in the control
+literature~\cite{astrom1997computer}.
 
 In this paper we build on the ideas presented in~\cite{abate2017automated}
 and develop a new technique that addresses most of these limitations. 
@@ -167,25 +170,36 @@ control synthesis, but play an important role in systems engineering.
 %% Single-Input/Single-Output (SISO) systems.  We offer a multi-tiered approach
 %% that exploits different aspects of the problem at each stage.
 
-We use a CounterExample-Guided Inductive Synthesis (CEGIS)~\cite{jha-icse10,
-DBLP:conf/asplos/Solar-LezamaTBSS06} approach, which we enhance with
-abstraction refinement and optimization resulting in the novel CEGIS-OR
-(CEGIS with Optimization and Refinement).  This design uses an iterative
-process where each iteration performs inductive generalization based on
-counterexamples provided by a verification oracle.  Essentially, the
-inductive generalization uses information about a limited number of inputs
-to make claims in the form of candidate solutions about all the possible
-inputs.  By~using abstraction refinement, CEGIS-OR allows us to handle
-complex systems, which are initially represented by coarse abstractions that
-only get refined on demand.  Consequently, solutions that do not require a
-high level of precision are obtained fast.  Since the use of coarse
-abstractions may result in low-quality candidate solutions (i.e., candidates
-that fail the specification on a very large number of inputs), we use
+We use a CounterExample-Guided Inductive Synthesis
+(CEGIS)~\cite{jha-icse10, DBLP:conf/asplos/Solar-LezamaTBSS06}
+approach, which we enhance with abstraction refinement and
+optimization resulting in the novel CEGIS-OR (CEGIS with Optimization
+and Refinement).  This design uses an iterative process where each
+iteration performs inductive generalization based on counterexamples
+provided by a verification oracle.  Essentially, the inductive
+generalization uses information about a limited number of inputs to
+make claims in the form of candidate solutions about all the possible
+inputs.  Similar to \cite{DBLP:conf/cav/AbateBCCDKKP17}, the use of
+abstraction refinement is meant to allow CEGIS-OR to handle complex
+systems, which are initially represented by coarse abstractions that
+only get refined on demand.  However, the problem we observed with
+this approach is that the use of coarse abstractions often results in
+low-quality candidate solutions (i.e., candidates that fail the
+specification on a very large number of inputs) and, consequently, there
+are very few solutions obtained at such low levels of precision.
+%% Consequently, solutions that do not require a
+%% high level of precision are obtained fast.  Since the use of coarse
+%% abstractions may result in low-quality candidate solutions (i.e., candidates
+%% that fail the specification on a very large number of inputs),
+In this paper, we address this problem by using 
 optimization techniques after each inductive generalization phase to improve
 the produced candidates.  In particular, our optimization procedure reduces
 the size of the reach space of the closed loop system, while maintaining
 other dynamical properties of interest (safety, stability, and response
 time).
+Consequently, solutions that do not require a
+high level of precision can indeed be obtained fast.
+
 
 %% We make use of a two-stage counterexample-guided inductive
 %% synthesis (CEGIS) driven by optimization refinement.
