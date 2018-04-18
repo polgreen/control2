@@ -4,6 +4,7 @@ export PATH=${PATH}:/media/sf_Documents/cbmc5.7/src/cbmc
 
 status_output_file='output.txt'
 synthesis_file='FWL_LTI.c'
+no_speed_file='FWL_LTI_NOSPD.c';
 nudge_file='FWL_LTI_NT.c'
 width_check_file='width_LTI.c'
 script_base_directory=`pwd`
@@ -210,6 +211,9 @@ while [ $((integer_width+radix_width)) -le ${max_length} ]; do
     elif [ "${nudge}" = "-CNF" ]; then
       echo_log "cbmc ${mode} -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTROL_RADIX_WIDTH=${radix_width} \"${working_directory}/${nudge_file}\" --stop-on-fail >${working_directory}/${cbmc_log_file}"
       timeout --preserve-status --kill-after=${kill_time} ${timeout_time} /media/sf_Documents/cbmc5.7/src/cbmc/cbmc ${mode} -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTORL_RADIX_WIDTH=${radix_width} "${working_directory}/${nudge_file}" --stop-on-fail >${working_directory}/${cbmc_log_file} 2>&1
+    elif [ "${speed}" = "1" ]; then
+      echo_log "cbmc ${mode} -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTROL_RADIX_WIDTH=${radix_width} \"${working_directory}/${no_speed_file}\" --stop-on-fail >${working_directory}/${cbmc_log_file}"
+      timeout --preserve-status --kill-after=${kill_time} ${timeout_time} /media/sf_Documents/cbmc5.7/src/cbmc/cbmc ${mode} -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTORL_RADIX_WIDTH=${radix_width} "${working_directory}/${no_speed_file}" --stop-on-fail >${working_directory}/${cbmc_log_file} 2>&1
     else
       echo_log "cbmc ${mode} -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTROL_RADIX_WIDTH=${radix_width} \"${working_directory}/${synthesis_file}\" --stop-on-fail >${working_directory}/${cbmc_log_file}"
       timeout --preserve-status --kill-after=${kill_time} ${timeout_time} /media/sf_Documents/cbmc5.7/src/cbmc/cbmc ${mode} -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTORL_RADIX_WIDTH=${radix_width} "${working_directory}/${synthesis_file}" --stop-on-fail >${working_directory}/${cbmc_log_file} 2>&1
