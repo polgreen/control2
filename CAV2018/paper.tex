@@ -1167,7 +1167,7 @@ terminates.
 
 We enhance the standard CEGIS architecture with an abstraction-refinement
 approach and with optimization.  We call the resulting new technique
-\emph{CEGIS-OR} (CEGIS with Optimization and Refinement).  By using
+CEGIS-OR (CEGIS with Optimization and Refinement).  By using
 abstraction refinement, CEGIS-OR addresses the scalability issues inherent
 in program synthesis and enables us to handle complex systems, which we
 coarsely abstract and only refine on demand -- refinements are triggered by
@@ -1204,9 +1204,15 @@ response time).
 
 The main advantage of the new CEGIS-OR is twofold:
 \begin{itemize}
-\item[1.] We start with coarse abstractions that get
-  refined into more complex ones as the procedure progresses. Thus, solutions
-  that do not require a high level of precision are obtained faster. 
+\item[1.] We start with coarse abstractions that get refined into more
+  complex ones as the procedure progresses. Thus, solutions that do
+  not require a high level of precision are obtained faster.  Note
+  that the optimization step plays an important role here given that,
+  in its absence, the use of coarse abstractions often results in
+  low-quality candidate solutions (i.e., candidates that fail the
+  specification on a very large number of inputs) and, consequently,
+  there are very few solutions obtained at such low levels of
+  precision.
 \item[2.] Although {\sc synthesize} makes use of a potentially coarse abstraction,
   by optimizing the candidate solution in each iteration of the CEGIS loop
   we obtain better candidates that are more likely to meet the
