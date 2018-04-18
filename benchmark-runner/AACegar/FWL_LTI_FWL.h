@@ -166,6 +166,9 @@ control_floatt fxp_check(control_floatt value,struct implt impl)
 void fxp_check_coeffs(vectort f,struct implt impl)
 {
   cnttype i;
+#ifndef __CPROVER
+  printf("checking coeffs\n");
+#endif
   for(i=0; i < _DIMENSION; i++) f[i]=fxp_check(f[i],impl);
 }
 
