@@ -819,7 +819,7 @@ Figure~\ref{fig:observersystem}) upper bounded by
 \end{align}
 where $\vec{y}_{t_d}$ is the output of the system with delay $t_d$, $t_s=T_s-t_d$,
 and $\norm{\vec{x}}_1=\sum_{i=0}^{size(\vec{x})} |\vec{x}_i|$ is the $l_1$ norm, 
-which we extend to sets as $\norm{X}_1 = \sup \{\norm{\vec{x}}_1, \vec{x} \in X\}$.  
+which we extend to sets as $\norm{X}_1 = \sup \{\norm{\vec{x}}_1, \vec{x} \in X\}$.\\ 
 For the proof see Appendix~\ref{sec:proofs}
 \end{theorem}
 %
@@ -1032,7 +1032,7 @@ requirement.  In~this work, the safety property is expressed as:
 %
 \begin{align}
 \phi_\mathit{safety}^n: = & \forall k \in \{0, \ldots , n\},
-  \mat{G}\vec{x}_k \leq \vec{h} \text{ and } \underline{y} \leq y_k \leq \overline{y}\nonumber\\
+  \mat{G}\vec{x}_k \leq \vec{h} \text{ and } \underline{y} \leq y_k \leq \overline{y} \nonumber\\ 
 \phi_\mathit{safety}: = & \phi_\mathit{safety}^\infty
 \label{eq:safetyspec}
 \end{align}
@@ -1040,7 +1040,7 @@ requirement.  In~this work, the safety property is expressed as:
 where $\mat{G}$ and $\vec{h}$ define a set of inequalities that describe 
 a safe set, within the state-space $\mathbb{R}^p$.
 %
-Note that FWL effects are not explicitly captured here
+FWL effects are not explicitly captured here
 as they are implicit from Equation \eqref{eq:observer_LTI_FWL_cf}.
 
 Furthermore, it is practically relevant to consider the constraints
@@ -1509,7 +1509,7 @@ resulting closed loop form converges faster than the original and has a
 smaller rotation, which facilitates meeting the safety specification
 $\phi_\mathit{safety}$.
 
-We must point out that the optimizer tool uses infinite precision for the
+The optimizer tool uses infinite precision for the
 plant, and may therefore find solutions that the synthesizer cannot, due to
 the use of limited precision.  If we cannot optimize the candidate we signal
 the {\sc Abstract} phase to use the updated $\phi$ and request {\sc
@@ -1605,8 +1605,7 @@ by seven models extracted from the control literature~\cite{acrobot, cstr,
 CHEN1979389, KOKOTOVIC198023, gajic2008optimal, Franklin15, maglev,
 converters}.  In~order to obtain statistically relevant results, we have
 taken these models and modified each possible combination of their
-parameters by a 10\% tolerance, thus creating seven hundred benchmarks from
-this base.
+parameters by a 10\% tolerance, thus creating seven hundred total benchmarks.
 
 %In the verification module, we have used the tool \note{Axelerator~\cite{}}.
 
@@ -1623,7 +1622,7 @@ this base.
 \begin{tabular}{| r | l | c | c | r | r | r | r | r | r | r | r | r |}
 %
 \hline
-\# & \multicolumn{1}{|c|}{Benchmark} & \multicolumn{1}{|c|}{order} & \multicolumn{1}{|c|}{No.} & \multicolumn{4}{|c|}{CEGIS} & \multicolumn{4}{|c|}{CEGIS-OR} \\
+\# & \multicolumn{1}{|c|}{Benchmark} & \multicolumn{1}{|c|}{p} & \multicolumn{1}{|c|}{No.} & \multicolumn{4}{|c|}{CEGIS-AR} & \multicolumn{4}{|c|}{CEGIS-OR} \\
    &                                 & & \multicolumn{1}{|c|}{}  & \multicolumn{1}{|c|}{Min} & \multicolumn{1}{|c|}{Median} & \multicolumn{1}{|c|}{t.o.} & \multicolumn{1}{|c|}{found} & \multicolumn{1}{|c|}{Min} & \multicolumn{1}{|c|}{Median} & \multicolumn{1}{|c|}{t.o.} & \multicolumn{1}{|c|}{found}\\\hline
 1  & DC Motor          & 2 & 100 & 1.3\,s & 26.9\,s& 22& 20& 1.1\,s &   3.8\,s & 2 & 58\\
 2  & Helicopter        & 3  & 100 & 57.2\,s & t.o. & 54 & 15 & 7.1\,s  &   18.0\,s & 9 & 90\\
@@ -1640,12 +1639,11 @@ this base.
 \end{tabular}
 \vspace{0.05in}
 \caption{\label{tab:cegis_results}
-Experimental results.  Minimum, and Median times for standard CEGIS vs
-CEGIS-OR on multiple benchmarks.  No.  indicates Number of benchmarks,
-t.o.~indicates timeouts (in the median case, it indicates more than half of
-the benchmarks timed out).  The order denotes the number of variables of a
-model.}
-%
+Experimental results.  Minimum, and Median times for standard CEGIS-AR (with
+abstraction refinement~\cite{DBLP:conf/cav/AbateBCCDKKP17}) vs CEGIS-OR on
+multiple benchmarks.  No.  indicates Number of benchmarks, t.o.~indicates
+timeouts (in the median case, it indicates more than half of the benchmarks
+timed out).  p denotes the number of variables of a model.}
 \end{table}
 
 Using the described technique we managed to synthesize controllers for $509$
@@ -1663,12 +1661,20 @@ over-approximations in the verifier that may reject a valid candidate.  It
 is impossible for us to differentiate these from case where a controller
 does not exist.
 
+We found that on average, observer synthesis is over an order of magnitude slower
+than full state controller synthesis for the given benchmarks (SAT has
+a worst case exponential time complexity, and typical polynomial time, so higher
+order systems will show larger differences).
 In order to show the improvements due to our optimization-enhanced CEGIS, we
-compared our approach against a standard CEGIS procedure.  For the majority
-of our benchmarks, we observe that our approach is significantly faster than
-standard CEGIS.  We further note that the number of times standard CEGIS
-times out is much larger than CEGIS-OR which results in more found
-solutions.
+compared our approach against a standard CEGIS with abstraction refinement
+procedure~\cite{DBLP:conf/cav/AbateBCCDKKP17} (We note that the naive approach
+in~\cite{DBLP:conf/cav/AbateBCCDKKP17} cannot handle the continuous time case.  
+Furthermore, since it is in general slower than the abstraction refinement
+version, the latter is a more representative benchmark).
+For the majority of our benchmarks, we observe that our approach is
+significantly faster than~\cite{DBLP:conf/cav/AbateBCCDKKP17}. 
+We further note that the number of times CEGIS times out is much larger than
+CEGIS-OR which results in more found solutions.
 
 %% We observe that the magnitude of the improvement is however, largely dependent on the shape of the problem. 
 
