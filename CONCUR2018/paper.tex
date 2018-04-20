@@ -1622,7 +1622,7 @@ parameters by a 10\% tolerance, thus creating seven hundred total benchmarks.
 \begin{tabular}{| r | l | c | c | r | r | r | r | r | r | r | r | r |}
 %
 \hline
-\# & \multicolumn{1}{|c|}{Benchmark} & \multicolumn{1}{|c|}{p} & \multicolumn{1}{|c|}{No.} & \multicolumn{4}{|c|}{CEGIS-AR} & \multicolumn{4}{|c|}{CEGIS-OR} \\
+\# & \multicolumn{1}{|c|}{Benchmark} & \multicolumn{1}{|c|}{p} & \multicolumn{1}{|c|}{No.} & \multicolumn{4}{|c|}{CEGIS\cite{DBLP:conf/cav/AbateBCCDKKP17}} & \multicolumn{4}{|c|}{CEGIS-OR} \\
    &                                 & & \multicolumn{1}{|c|}{}  & \multicolumn{1}{|c|}{Min} & \multicolumn{1}{|c|}{Median} & \multicolumn{1}{|c|}{t.o.} & \multicolumn{1}{|c|}{found} & \multicolumn{1}{|c|}{Min} & \multicolumn{1}{|c|}{Median} & \multicolumn{1}{|c|}{t.o.} & \multicolumn{1}{|c|}{found}\\\hline
 1  & DC Motor          & 2 & 100 & 1.3\,s & 26.9\,s& 22& 20& 1.1\,s &   3.8\,s & 2 & 58\\
 2  & Helicopter        & 3  & 100 & 57.2\,s & t.o. & 54 & 15 & 7.1\,s  &   18.0\,s & 9 & 90\\
@@ -1637,7 +1637,7 @@ parameters by a 10\% tolerance, thus creating seven hundred total benchmarks.
 \hline
 %
 \end{tabular}
-\vspace{0.05in}
+%\vspace{0.05in}
 \caption{\label{tab:cegis_results}
 Experimental results.  Minimum, and Median times for standard CEGIS-AR (with
 abstraction refinement~\cite{DBLP:conf/cav/AbateBCCDKKP17}) vs CEGIS-OR on
@@ -1658,29 +1658,30 @@ that longer timeouts would instead lead to a valid solution.  However, there
 are cases where a solution may not be found due the approximations in the
 synthesizer that would prevent a true candidate from being found or
 over-approximations in the verifier that may reject a valid candidate.  It
-is impossible for us to differentiate these from case where a controller
+is impossible for us to differentiate these from the case where a controller
 does not exist.
 
-We found that on average, observer synthesis is over an order of magnitude slower
-than full state controller synthesis for the given benchmarks (SAT has
-a worst case exponential time complexity, and typical polynomial time, so higher
-order systems will show larger differences).
-In order to show the improvements due to our optimization-enhanced CEGIS, we
-compared our approach against a standard CEGIS with abstraction refinement
-procedure~\cite{DBLP:conf/cav/AbateBCCDKKP17} (We note that the naive approach
-in~\cite{DBLP:conf/cav/AbateBCCDKKP17} cannot handle the continuous time case.  
-Furthermore, since it is in general slower than the abstraction refinement
-version, the latter is a more representative benchmark).
+In order to show the improvements due to our optimization-enhanced
+CEGIS, we compared our approach against the CEGIS approach with
+abstraction refinement described
+in~\cite{DBLP:conf/cav/AbateBCCDKKP17}.  We note that,
+while~\cite{DBLP:conf/cav/AbateBCCDKKP17} presents two approaches, one
+of them (referred to as the naive approach
+in~\cite{DBLP:conf/cav/AbateBCCDKKP17}) cannot handle the continuous
+time case and thus we can only compare against the abstraction-based
+one (referred to as CEGIS~\cite{DBLP:conf/cav/AbateBCCDKKP17} in Table~\ref{tab:cegis_results}).  %% Furthermore, since it is in general slower than the abstraction
+%% refinement version, the latter is a more representative benchmark).
 For the majority of our benchmarks, we observe that our approach is
-significantly faster than~\cite{DBLP:conf/cav/AbateBCCDKKP17}. 
-We further note that the number of times CEGIS times out is much larger than
-CEGIS-OR which results in more found solutions.
+significantly faster than CEGIS~\cite{DBLP:conf/cav/AbateBCCDKKP17}.  %% We
+%% further note that the number of times CEGIS times out is much larger
+%% than CEGIS-OR which results in more found solutions.
 
 %% We observe that the magnitude of the improvement is however, largely dependent on the shape of the problem. 
 
 Overall, we observed more improvements with CEGIS-OR for
 systems where the safety specification is tight, 
-meaning that the standard CEGIS loop would require many iterations.
+meaning that the CEGIS~\cite{DBLP:conf/cav/AbateBCCDKKP17}
+loop would require many iterations.
 %  We obtain the most improvements for the models with large orders?}
 %More interesting cases appear when we increase the order, showing
 %% For instance, benchmark X, which timed-out when using standard CEGIS,
@@ -1688,23 +1689,36 @@ meaning that the standard CEGIS loop would require many iterations.
 %% removing several multiplications which are known to be difficult for
 %% SAT solvers \note{I'm not sure readers will relate to where this is happening in the paper. is it the fact that you use that canonical form? then say that. however, i would have thought you do that in
 %% both approaches..}.
-These improvements are due to the Abstraction Refinement and Optimization in CEGIS-OR.
-While abstraction refinement enables us to start with coarse abstractions
-that are only refined on demand, 
-the optimization
-allows to locally improve candidate solutions and avoid entire iterations of the CEGIS loop
-(which would have also required more refined abstractions).
+These improvements are due to the interplay between Abstraction
+Refinement and Optimization in CEGIS-OR.  While abstraction refinement
+enables us to start with coarse abstractions that are only refined on
+demand, the optimization allows to locally improve candidate solutions
+and avoid entire iterations of the
+CEGIS~\cite{DBLP:conf/cav/AbateBCCDKKP17} loop (which would have also
+required more refined abstractions).
 %% elimination of counterexamples that
 %% would have been created without the refinement. Since further
 %% synthesis require increasingly complex models which are linear in the
 %% number of multiplications, eliminating these results in large
 %% improvements.
-While some systems might still require a very precise
-abstraction resulting in many refinements
-(this is generally the cause of time-outs in CEGIS-OR),
-others allow us to find solutions with rather coarse
-abstractions (this is reflected in the smaller minimum
-times obtained with CEGIS-OR). 
+While some systems might still require a very precise abstraction
+resulting in many refinements (this is generally the cause of
+time-outs in CEGIS-OR), others allow us to find solutions with rather
+coarse abstractions (this is reflected in the smaller minimum times
+obtained with CEGIS-OR).
+
+With respect to the additional complexity introduced by the synthesis
+of observer-based controllers compared to fully observed systems, we
+found that on average, observer synthesis is over an order of
+magnitude slower than full state controller synthesis for the given
+benchmarks. This is due to the fact that the introduction of the
+observer doubles the order of the model.
+
+%% (SAT has a worst case exponential time complexity, and
+%% typical polynomial time, so higher order systems will show larger
+%% differences).
+
+
 %Since further synthesis require increasingly
 %complex models which are linear in the number of multiplications,
 %eliminating  these results in large improvements.  In cases when the initial candidate is
