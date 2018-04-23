@@ -230,14 +230,14 @@ In summary, this paper makes the following original contributions.
   systems. 
 %
 \item We automatically generate \emph{correct-by-construction} digital
-  state-feedback observer controllers that guarantee a given safety property
+  observer-based feedback controllers that guarantee a given safety property
   alongside stability and response time specifications.  We note that
   observers are much more complex and difficult to synthesize than standard
-  full-state feedback controllers (hence the need for abstraction refinement).
+  full state feedback controllers (hence the need for the abstraction/refinement procedure). 
 %
-\item  Our synthesis addresses challenges created by digitalization errors
- such as quantization, and time discretization as well as delays in the
- sampling and processing times which introduce control errors in real
+\item  Our synthesis addresses challenges created by digitalization errors, 
+ such as quantization, and time discretization, as well as delays in the
+ sampling and processing times, all of which introduce control errors in real
  implementations.
  %
  \item We present a model for soundly evaluating reachability in a combined 
@@ -392,7 +392,7 @@ and $x(0)$ is the initial state.
 
 We are interested in control systems with an output $\vec{y}$ that is a
 linear combination of its states and inputs\footnote{Notice that since we
-can only measure $\vec{y}$, the state $\vec{x}$ cannot be measured directly.}.
+can only measure $\vec{y}$, the state $\vec{x}$ cannot be measured directly.}, namely 
 %
 %, which may restrict the observability of the state-space from the output space.
 \begin{equation}
@@ -478,10 +478,10 @@ transformations preserve convexity~\cite{boyd2004convex}, the sets $X_n =
 \tau^n(X_0,U)$ are also convex.  We define the \emph{$n$-reach tube} as
 %
 \begin{equation}\label{equ:reachtube}
-\hat{X}_n=\hat{\tau}^n(X_0,U)=\bigcup_{k\in[0,n]} \tau^k(X_0,U)
+\hat{X}_n=\hat{\tau}^n(X_0,U)=\bigcup_{k\in[0,n]} \tau^k(X_0,U), 
 \end{equation}
 %
-as the union of $k$-reach sets over $n$ iterations. 
+namely as the union of $k$-reach sets over $n$ iterations. 
 %
 Finally, the set $\hat{X} =\bigcup_{n\geq 0} \tau^n(X_0,U)$, which we refer
 to as the reach space of the system, generalizes the previous notions over
@@ -684,7 +684,7 @@ $\vec{x}_T$ at a given time $T$,
 % namely we find an equation for $\tau^n(\vec{x},\vec{u})$ given $\tau(\vec{x},\vec{u})$. 
 %
 namely the state of the system $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$ at time
-$t=T$.
+$t=T$. \textcolor{red}{[ADD REFERENCE TO PUBLISHED WORK ON ABSTRACT ACCELERATION.]}
 
 %\note{ [add?] In this section we work with fully observed models, namely where $y = x$. } 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -821,7 +821,7 @@ Figure~\ref{fig:observersystem}) upper bounded by
 where $\vec{y}_{t_d}$ is the output of the system with delay $t_d$, $t_s=T_s-t_d$,
 and $\norm{\vec{x}}_1=\sum_{i=0}^{size(\vec{x})} |\vec{x}_i|$ is the $l_1$ norm, 
 which we extend to sets as $\norm{X}_1 = \sup \{\norm{\vec{x}}_1, \vec{x} \in X\}$.\\ 
-For the proof see Appendix~\ref{sec:proofs}
+For the proof see Appendix~\ref{sec:proofs}. 
 \end{theorem}
 %
 %\begin{proof}
@@ -980,14 +980,14 @@ operations.
 
 In a real domain $\mathbb{R}$, the characteristic polynomial of the closed
 loop dynamics is defined by the characteristic polynomials of~$\mat{A}_c$
-and~$\mat{A}_o$.
+and~$\mat{A}_o$ as 
 %
 \begin{align*}
-P(z)=P_K(z)P_L(z)=\left(z^p+\sum_{i=0}^{p-1}{(a_i-k_i)z^{i}}\right) \left(z^p+\sum_{i=0}^{p-1}{(a_i-l_i)z^{i}}\right)
+P(z)=P_K(z)P_L(z)=\left(z^p+\sum_{i=0}^{p-1}{(a_i-k_i)z^{i}}\right) \left(z^p+\sum_{i=0}^{p-1}{(a_i-l_i)z^{i}}\right). 
 \end{align*}
 %
-Jury's criteria uses these coefficients to ensure that no root of the
-polynomial has a magnitude greater than one.
+Jury's criterion~\cite{fadali} uses these coefficients to ensure that no root of the
+polynomial has a magnitude greater than one. 
 %
 %\note{we should perhaps provide a qualitative hint on what are the conditions of JC? I'm afraid leaving it to the polynomials here isn't quite complete or clear.}
 %
@@ -1017,7 +1017,7 @@ In the case of $\mat{A}_c$, the procedure is the same except that we need to
 look at the columns shared with $\mat{A}_c$.  Thus we obtain our bound
 $\delta_c=\max(\norm{{\mat{A}_e}_{*,i}+{\mat{B}_e}_{*,i}}_1)$ (i.e.,
 the largest column norm in $ \left[\begin{array}{c}\mat{A}_e\\
-\mat{B}_e\end{array}\right]$) and apply Jury's Criterion over
+\mat{B}_e\end{array}\right]$) and apply Jury's criterion over
 %
 \begin{equation}
 P_K'(z)=\sum_{j=0}^p c_j\overline{\lambda'}^{p-j}z^j, \text{ where }  \overline{\lambda'}=(1+\delta_c)\overline{\lambda} \text{ and } c_j=k_j-a_j.
@@ -1033,8 +1033,8 @@ requirement.  In~this work, the safety property is expressed as:
 %
 \begin{align}
 \phi_\mathit{safety}^n: = & \forall k \in \{0, \ldots , n\},
-  \mat{G}\vec{x}_k \leq \vec{h} \text{ and } \underline{y} \leq y_k \leq \overline{y} \nonumber\\ 
-\phi_\mathit{safety}: = & \phi_\mathit{safety}^\infty
+  \mat{G}\vec{x}_k \leq \vec{h} \text{ and } \underline{y} \leq y_k \leq \overline{y}, \nonumber\\ 
+\phi_\mathit{safety}: = & \phi_\mathit{safety}^\infty, 
 \label{eq:safetyspec}
 \end{align}
 %
@@ -1104,7 +1104,7 @@ stable system $\{\lambda_i =e^{\omega_i} \mid i \in \{1, \ldots,p\},
 %
 t_s<-\log_{\overline{\lambda}}({P_s}), \text{ where }
   \overline{\lambda} = \max(|\lambda_i|) \text{ and }
-  \overline{\lambda}<1,\ \forall i \in \{1, \ldots,p\}
+  \overline{\lambda}<1,\ \forall i \in \{1, \ldots,p\}, 
 %
 \label{eq:set_time}
 \end{equation}
@@ -1383,7 +1383,7 @@ corresponding domain at each stage).
 
 \medskip
 
-Next, we describe the CEGIS-OR loop in Figure~\ref{fig:CEGIS-OR}.
+Next, we describe the salient blocks in the CEGIS-OR loop of Figure~\ref{fig:CEGIS-OR}.
 
 \subsection*{\underline{{\sc abstract}}} computes an initial version of $\phi$
 and decides the sample time $T_d$,
@@ -1501,9 +1501,9 @@ If for each iteration $k$, the objective $e_k<e_{k-1}$, we continue to
 iterate until $e_k \leq 0$ (i.e. we found a safe controller),
 otherwise we move to the second stage.
 
-In the second stage, we take the complex eigenvalue with the largest angle
-($\max\{|\tan^{-1}\left(\frac{im(\lambda)}{re(\lambda)}\right)| \mid \lambda
-\in \Lambda\}$) and reduce its imaginary component only ($re(\lambda) + f\,
+In the second stage, we take the complex eigenvalue with the largest angle, 
+which is characterised by $\max\{|\tan^{-1}\left(\frac{im(\lambda)}{re(\lambda)}\right)|, \lambda
+\in \Lambda\}$, and reduce its imaginary component only ($re(\lambda) + f\,
 im(\lambda)$ such that the new controller satisfies $\phi_\mathit{init}^K$). 
 The process ends when no imaginary part can be further reduced.  The
 resulting closed loop form converges faster than the original and has a
@@ -1617,7 +1617,8 @@ parameters by a 10\% tolerance, thus creating seven hundred total benchmarks.
 %-------------------------------
 
 \begin{table}
-\centering
+%\centering
+\hspace{-0.25in}
 \footnotesize
 %
 \begin{tabular}{| r | l | c | c | r | r | r | r | r | r | r | r | r |}
