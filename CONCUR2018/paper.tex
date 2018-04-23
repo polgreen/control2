@@ -684,7 +684,7 @@ $\vec{x}_T$ at a given time $T$,
 % namely we find an equation for $\tau^n(\vec{x},\vec{u})$ given $\tau(\vec{x},\vec{u})$. 
 %
 namely the state of the system $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)$ at time
-$t=T$. \textcolor{red}{[ADD REFERENCE TO PUBLISHED WORK ON ABSTRACT ACCELERATION.]}
+$t=T$, and then use abstraction~\cite{JSS14,cattaruzza2015unbounded} to overapproximate $\hat{X}_n$.
 
 %\note{ [add?] In this section we work with fully observed models, namely where $y = x$. } 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1507,7 +1507,7 @@ which is characterised by $\max\{|\tan^{-1}\left(\frac{im(\lambda)}{re(\lambda)}
 im(\lambda)$ such that the new controller satisfies $\phi_\mathit{init}^K$). 
 The process ends when no imaginary part can be further reduced.  The
 resulting closed loop form converges faster than the original and has a
-smaller rotation, which facilitates meeting the safety specification
+smaller rotation, which facilitates meeting the specification
 $\phi_\mathit{safety}$.
 
 The optimizer tool uses infinite precision for the
@@ -1709,11 +1709,8 @@ time-outs in CEGIS-OR), others allow us to find solutions with rather
 coarse abstractions (this is reflected in the smaller minimum times
 obtained with CEGIS-OR).
 
-With respect to the additional complexity introduced by the synthesis
-of observer-based controllers compared to fully observed systems, we
-found that on average, observer synthesis is over an order of
-magnitude slower than full state controller synthesis for the given
-benchmarks. This is due to the fact that the introduction of the
+Given the nature of the specifications, observer synthesis cannot be directly compared to full state controller synthesis. 
+On average, we found the former to be over an order of magnitude slower for the given benchmarks, largely due to the fact that the introduction of the
 observer doubles the order of the model.
 
 %% (SAT has a worst case exponential time complexity, and
