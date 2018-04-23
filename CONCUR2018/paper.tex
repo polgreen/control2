@@ -519,6 +519,10 @@ gain required by the model.  Our goal in this work is to synthesize both
 $\mat{K}_{\langle C \rangle}$ and $\mat{L}_{\langle C \rangle}$ so that
 specific closed-loop properties of the overall system are
 satisfied.
+
+We note that the introduction of an observer doubles the size of the model w.r.t.
+a full state controller, which will have an average polynomial, worst case
+exponential time increase in the sysnthesis engine.
  
 \begin{figure*}[t!]
 \centering
@@ -1708,10 +1712,6 @@ resulting in many refinements (this is generally the cause of
 time-outs in CEGIS-OR), others allow us to find solutions with rather
 coarse abstractions (this is reflected in the smaller minimum times
 obtained with CEGIS-OR).
-
-Given the nature of the specifications, observer synthesis cannot be directly compared to full state controller synthesis. 
-On average, we found the former to be over an order of magnitude slower for the given benchmarks, largely due to the fact that the introduction of the
-observer doubles the order of the model.
 
 %% (SAT has a worst case exponential time complexity, and
 %% typical polynomial time, so higher order systems will show larger
