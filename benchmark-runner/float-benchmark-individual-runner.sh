@@ -141,11 +141,11 @@ precision=0
 mode="-D __CPROVER"
 if [ -n "$3" ]; then
   if [ "$3" == "FX" ];then
-    precision=1
+    precision=0
     mode="${mode} -D _FIXEDBV"
-    options="${options} -mixedbv"
-    integer_width=6
-    radix_width=10
+    options="${options} -fixedbv"
+    integer_width=5
+    radix_width=11
   elif [ "$3" == "16" ];then
     precision=16
     integer_width=5
@@ -194,6 +194,12 @@ echo_log "./axelerator $options $sampling -control \"[0]\" $nudge"
 eval "./axelerator $options $sampling -control \"[0]\" $nudge"
   
 while [ $((integer_width+radix_width)) -le ${max_length} ]; do
+   if [ ${radix_width} -le 0 ]; then
+     radix_width = 8
+     if [ $((integer_width + radix_width)) -le 64 ]; then
+       integerwidth=64-radix_width
+     fi
+   fi
    echo_log "int: ${integer_width}, radix: ${radix_width}"
    solution_found=false
    nudge="-CNFM"
