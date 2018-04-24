@@ -1,12 +1,8 @@
 #usage ./float-all-benchmarks precision implementation_bits
 #precision in bits (16=half, 32=single, 64=double, 0=from_spec_file)
 #implementation bits are added as exp,mantissa (eg 5,11 is half precision)
-if [ -n $1 ];then
+if [ $# -geq 2 ]; then
   precision=$1
-else
-  precision=0
-fi
-if [ -n $2 ];then
   ./float-multi-benchmark-runner.sh 'benchmarks-ss' ${precision} CEGIS '-NNF' 1 100 "$2"
 #  ./float-multi-benchmark-runner.sh 'dcmotor' ${precision} CEGIS '-NNF' 1 10 "$2"
 #  ./float-multi-benchmark-runner.sh 'helicopter' ${precision} CEGIS '-NNF' 1 10 "$2"
@@ -36,8 +32,9 @@ if [ -n $2 ];then
 #  ./float-multi-benchmark-runner.sh 'regulator' ${precision} CEGIS '-NNF' 1 10 "$2"
 #  ./float-multi-benchmark-runner.sh 'steamdrum' ${precision} CEGIS '-NNF' 1 10 "$2"
 #  ./float-multi-benchmark-runner.sh 'spring_mass_damp' ${precision} CEGIS '-NNF' 1 10 "$2"
-else
-  ./float-multi-benchmark-runner.sh 'benchmarks-ss' ${precision} CEGIS '-NNF' 1 100 "5,11"
+elif [ $# -eq 1 ]; then
+  precision=$1
+  ./float-multi-benchmark-runner.sh 'benchmarks-ss' ${precision} CEGIS '-NNF'
 #  ./float-multi-benchmark-runner.sh 'dcmotor' ${precision} CEGIS '-NNF'
 #  ./float-multi-benchmark-runner.sh 'helicopter' ${precision} CEGIS '-NNF'
 #  ./float-multi-benchmark-runner.sh 'magneticpointer' ${precision} CEGIS '-NNF'
@@ -66,4 +63,9 @@ else
 #  ./float-multi-benchmark-runner.sh 'regulator' ${precision} CEGIS '-NNF'
 #  ./float-multi-benchmark-runner.sh 'steamdrum' ${precision} CEGIS '-NNF'
 #  ./float-multi-benchmark-runner.sh 'spring_mass_damp' ${precision} CEGIS '-NNF'
+else
+  echo "floating"
+  ./float-multi-benchmark-runner.sh 'benchmarks-ss' 16 CEGIS '-NNF' 1 100 "5,11"
+  echo "fixed"
+  ./float-multi-benchmark-runner.sh 'benchmarks-ss' FX CEGIS '-NNF' 1 100 "5,11"
 fi
