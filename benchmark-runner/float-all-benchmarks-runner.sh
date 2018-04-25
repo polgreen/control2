@@ -1,7 +1,7 @@
 #usage ./float-all-benchmarks precision implementation_bits
 #precision in bits (16=half, 32=single, 64=double, 0=from_spec_file)
 #implementation bits are added as exp,mantissa (eg 5,11 is half precision)
-if [ $# -geq 2 ]; then
+if [ $# -ge 2 ]; then
   precision=$1
   ./float-multi-benchmark-runner.sh 'benchmarks-ss' ${precision} CEGIS '-NNF' 1 100 "$2"
 #  ./float-multi-benchmark-runner.sh 'dcmotor' ${precision} CEGIS '-NNF' 1 10 "$2"
