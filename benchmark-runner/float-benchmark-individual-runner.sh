@@ -210,19 +210,19 @@ while [ $((integer_width+radix_width)) -le ${max_length} ]; do
    while [ "${synthesis_in_progress}" = true ]; do
     if [ "${nudge}" = "-CNFM" ]; then
       echo_log "cbmc ${mode} -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTROL_RADIX_WIDTH=${radix_width} \"${working_directory}/${nudge_file}\" --stop-on-fail >${working_directory}/${cbmc_log_file}"
-      timeout --preserve-status --kill-after=${kill_time} ${timeout_time} /media/sf_Documents/cbmc5.7/src/cbmc/cbmc ${mode} -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTORL_RADIX_WIDTH=${radix_width} "${working_directory}/${nudge_file}" --stop-on-fail >${working_directory}/${cbmc_log_file} 2>&1
+      timeout --preserve-status --kill-after=${kill_time} ${timeout_time} cbmc ${mode} -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTORL_RADIX_WIDTH=${radix_width} "${working_directory}/${nudge_file}" --stop-on-fail >${working_directory}/${cbmc_log_file} 2>&1
     elif [ "${nudge}" = "-CNFP" ]; then
       echo_log "cbmc ${mode} -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTROL_RADIX_WIDTH=${radix_width} \"${working_directory}/${nudge_file}\" --stop-on-fail >${working_directory}/${cbmc_log_file}"
-      timeout --preserve-status --kill-after=${kill_time} ${timeout_time} /media/sf_Documents/cbmc5.7/src/cbmc/cbmc ${mode} -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTORL_RADIX_WIDTH=${radix_width} "${working_directory}/${nudge_file}" --stop-on-fail >${working_directory}/${cbmc_log_file} 2>&1
+      timeout --preserve-status --kill-after=${kill_time} ${timeout_time} cbmc ${mode} -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTORL_RADIX_WIDTH=${radix_width} "${working_directory}/${nudge_file}" --stop-on-fail >${working_directory}/${cbmc_log_file} 2>&1
     elif [ "${nudge}" = "-CNF" ]; then
       echo_log "cbmc ${mode} -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTROL_RADIX_WIDTH=${radix_width} \"${working_directory}/${nudge_file}\" --stop-on-fail >${working_directory}/${cbmc_log_file}"
-      timeout --preserve-status --kill-after=${kill_time} ${timeout_time} /media/sf_Documents/cbmc5.7/src/cbmc/cbmc ${mode} -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTORL_RADIX_WIDTH=${radix_width} "${working_directory}/${nudge_file}" --stop-on-fail >${working_directory}/${cbmc_log_file} 2>&1
+      timeout --preserve-status --kill-after=${kill_time} ${timeout_time} cbmc ${mode} -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTORL_RADIX_WIDTH=${radix_width} "${working_directory}/${nudge_file}" --stop-on-fail >${working_directory}/${cbmc_log_file} 2>&1
     elif [ "${speed}" = "1" ]; then
       echo_log "cbmc ${mode} -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTROL_RADIX_WIDTH=${radix_width} \"${working_directory}/${no_speed_file}\" --stop-on-fail >${working_directory}/${cbmc_log_file}"
-      timeout --preserve-status --kill-after=${kill_time} ${timeout_time} /media/sf_Documents/cbmc5.7/src/cbmc/cbmc ${mode} -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTORL_RADIX_WIDTH=${radix_width} "${working_directory}/${no_speed_file}" --stop-on-fail >${working_directory}/${cbmc_log_file} 2>&1
+      timeout --preserve-status --kill-after=${kill_time} ${timeout_time} cbmc ${mode} -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTORL_RADIX_WIDTH=${radix_width} "${working_directory}/${no_speed_file}" --stop-on-fail >${working_directory}/${cbmc_log_file} 2>&1
     else
       echo_log "cbmc ${mode} -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTROL_RADIX_WIDTH=${radix_width} \"${working_directory}/${synthesis_file}\" --stop-on-fail >${working_directory}/${cbmc_log_file}"
-      timeout --preserve-status --kill-after=${kill_time} ${timeout_time} /media/sf_Documents/cbmc5.7/src/cbmc/cbmc ${mode} -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTORL_RADIX_WIDTH=${radix_width} "${working_directory}/${synthesis_file}" --stop-on-fail >${working_directory}/${cbmc_log_file} 2>&1
+      timeout --preserve-status --kill-after=${kill_time} ${timeout_time} cbmc ${mode} -D _CONTROL_FLOAT_WIDTH=$((integer_width+radix_width)) -D _CONTORL_RADIX_WIDTH=${radix_width} "${working_directory}/${synthesis_file}" --stop-on-fail >${working_directory}/${cbmc_log_file} 2>&1
     fi
     if [ $? -eq 10 ]; then
      controller=$(grep 'controller_cbmc=' ${working_directory}/${cbmc_log_file} | sed 's/.*controller_cbmc={ *\([^}]*\) *}.*/\1/')
