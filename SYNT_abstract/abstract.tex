@@ -1,0 +1,95 @@
+\documentclass[submission]{eptcs}
+\providecommand{\event}{SYNT 2018} % Name of the event you are submitting to
+\usepackage{breakurl}             % Not needed if you use pdflatex only.
+\usepackage{underscore}           % Only needed if you use pdflatex.
+
+\title{Safe Formal Synthesis of Digital Controllers\\
+for Continuous Plants}
+%\author{Elizabeth Polgreen
+%\institute{NICTA\\ Sydney, Australia}
+%\institute{School of Computer Science and Engineering\\
+%University of New South Wales\thanks{A fine university.}\\
+%Sydney, Australia}
+%\email{rvg@cs.stanford.edu}
+%\and
+%Co Author \qquad\qquad Yet S. Else
+%\institute{Stanford Univeristy\\
+%California, USA}
+%\email{\quad is@gmail.com \quad\qquad somebody@else.org}
+%}
+\def\titlerunning{Synthesis of Digital Controllers}
+\def\authorrunning{R.J. van Glabbeek, C. Author \& Y.S. Else}
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We present a sound and automated approach to synthesizing safe,
+digital controllers for physical plants represented as linear,
+time-invariant models. The synthesis
+accounts for errors caused by the digitization effects introduced by
+digital controllers operating in either fixed-point or floating-point arithmetic. 
+Our approach uses counterexample-guided inductive
+synthesis (CEGIS): an inductive generalisation phase produces a
+possible solution that is safe for some possible initial conditions but may
+not be safe for all initial conditions. Safety for all initial conditions
+is then verified either
+via BMC or abstract acceleration; if the verification step fails, a
+counterexample is provided to the inductive generalisation and the
+process iterates until a safe controller is obtained.  We demonstrate
+the practical value of this approach by automatically synthesizing
+safe controllers for physical plant models from the digital control
+literature.
+\end{abstract}
+
+\section{Introduction}
+
+Embedded control systems using fixed and floating-point arithmetic 
+have become widespread
+as the availability of low-cost devices that can perform highly
+non-trivial control tasks has increased. Correct synthesis of
+control software for such platforms is non-trivial due to the digital representation of continuous variables
+that is used by the controller. This digital representation introduces 
+errors due to finite-precision arithmetic, time discretization and 
+A/D and D/A conversion.
+
+
+%
+Given an LTI model, we present two automated approaches for generating
+correct-by-construction digital controllers that address all these
+challenges and satisfy a safety property given for the system. Both approaches make use of CounterExample-Guided
+Inductive Synthesis (CEGIS)~\cite{jha-icse10,
+  DBLP:conf/asplos/Solar-LezamaTBSS06}.  CEGIS is an
+iterative process, where each iteration performs inductive
+generalisation based on counterexamples provided by a verification
+oracle. The inductive generalisation uses information
+about a limited number of inputs to compute a candidate solution
+for all the possible. Our two instantiations of CEGIS are
+described next.
+
+
+\emph{The first approach} starts by devising a
+digital controller that stabilizes the system while remaining safe for a
+pre-selected time horizon and a single initial state; then, it verifies
+unbounded safety by unfolding the dynamics of the system, considering the
+full hyper-cube of initial states, and checking a \emph{completeness
+threshold}~\cite{DBLP:conf/vmcai/KroeningS03}, i.e., the number of
+iterations required to sufficiently unwind the closed-loop state-space
+system such that the boundaries are not violated for any larger number of
+iterations.  As~it requires unfolding up to the completeness threshold, this
+approach can be computationally expensive if the completeness threshold is large.
+
+\emph{The second approach}
+employs \emph{abstract acceleration}~\cite{cattaruzza2015unbounded} to
+evaluate all possible progressions of the system simultaneously. 
+This approach uses \emph{abstraction refinement},
+enabling us to always start with a very simple description regardless of the
+dynamics complexity, and only expand to more complex models
+when a solution cannot be found.
+
+We provide experimental results showing that both our approaches are able to
+efficiently synthesize safe controllers for a set of intricate physical
+plant models taken from the digital control literature.
+
+\bibliographystyle{eptcs}       
+\bibliography{../automatica/paper}  
+\end{document}
