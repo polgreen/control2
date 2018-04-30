@@ -29,10 +29,10 @@ time-invariant models. The synthesis
 accounts for errors caused by the digitization effects introduced by
 digital controllers operating in either fixed-point or floating-point arithmetic. 
 Our approach uses counterexample-guided inductive
-synthesis (CEGIS): an inductive generalisation phase produces a
+synthesis (CEGIS): in the first phase an inductive generalisation engine produces a
 possible solution that is safe for some possible initial conditions but may
 not be safe for all initial conditions. Safety for all initial conditions
-is then verified either
+is then verified in a second phase either
 via bounded model checking or abstract acceleration; if the verification step fails, a
 counterexample is provided to the inductive generalisation and the
 process iterates until a safe controller is obtained.  We demonstrate
