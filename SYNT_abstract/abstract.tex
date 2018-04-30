@@ -27,7 +27,7 @@ We present a sound and automated approach to synthesizing safe,
 digital controllers for physical plants represented as linear,
 time-invariant models. The synthesis
 accounts for errors caused by the digitization effects introduced by
-digital controllers operating in either fixed-point or floating-point arithmetic. 
+digital controllers operating in either fixed- or floating-point arithmetic. 
 Our approach uses counterexample-guided inductive
 synthesis (CEGIS): in the first phase an inductive generalisation engine produces a
 possible solution that is safe for some possible initial conditions but may
@@ -35,10 +35,10 @@ not be safe for all initial conditions. Safety for all initial conditions
 is then verified in a second phase either
 via bounded model checking or abstract acceleration; if the verification step fails, a
 counterexample is provided to the inductive generalisation and the
-process iterates until a safe controller is obtained.  We demonstrate
-the practical value of this approach by automatically synthesizing
-safe controllers for physical plant models from the digital control
-literature.
+process iterates until a safe controller is obtained.  We implemented our approach
+in a tool named DSSynth (Digital-System Synthesizer) and demonstrate
+its practical value by automatically synthesizing safe controllers for physical 
+plant models from the digital control literature.
 \end{abstract}
 
 \section{Introduction}
@@ -78,7 +78,7 @@ iterations required to sufficiently unwind the closed-loop state-space
 model such that the boundaries are not violated for any larger number of
 iterations.  As~it requires unfolding up to the completeness threshold, this
 approach can be computationally expensive if the completeness threshold is large.
-
+%
 \emph{The second approach}
 employs \emph{abstract acceleration}~\cite{cattaruzza2015unbounded} to
 evaluate all possible progressions of the LTI model simultaneously. 
@@ -91,7 +91,7 @@ We provide experimental results showing that both our approaches are able to
 efficiently synthesize safe controllers for a set of intricate physical
 plant models taken from the digital control literature.
 
-This abstract contains material published in \cite{DBLP:conf/cav/AbateBCCDKKP17}.
+This abstract contains material published in \cite{DBLP:conf/kbse/AbateBCCCDKKP17,DBLP:conf/cav/AbateBCCDKKP17}.
 
 \bibliographystyle{eptcs}       
 \bibliography{../automatica/paper}  
