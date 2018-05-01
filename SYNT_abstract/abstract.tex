@@ -5,8 +5,33 @@
 
 \title{Safe, Automated and Formal Synthesis of Digital Controllers 
 for Continuous Plants}
-%\author{Elizabeth Polgreen
-%\institute{NICTA\\ Sydney, Australia}
+
+
+\author{Alessandro Abate
+\institute{University of Oxford}
+\and
+Iury Bessa
+\institute{Federal University of \\Amazonas, Brazil}
+\and
+Dario Cattaruzza
+\institute{University of Oxford}
+\and
+Lucas Cordeiro
+\institute{University of Oxford}
+\and
+Cristina David
+\institute{University of Cambridge}
+\and
+Pascal Kesseli
+\institute{University of Oxford}
+\and
+Daniel Kroening
+\institute{University of Oxford}
+\and
+Elizabeth Polgreen
+\institute{University of Oxford}
+}
+
 %\institute{School of Computer Science and Engineering\\
 %University of New South Wales\thanks{A fine university.}\\
 %Sydney, Australia}
@@ -17,8 +42,8 @@ for Continuous Plants}
 %California, USA}
 %\email{\quad is@gmail.com \quad\qquad somebody@else.org}
 %}
-%\def\titlerunning{Synthesis of Digital Controllers}
-%\def\authorrunning{R.J. van Glabbeek, C. Author \& Y.S. Else}
+\def\titlerunning{Synthesis of Digital Controllers}
+\def\authorrunning{Abate et al.}
 \begin{document}
 \maketitle
 
@@ -48,13 +73,9 @@ have become widespread
 as the availability of low-cost devices that can perform highly
 non-trivial control tasks has increased. Correct synthesis of
 control software for such platforms is non-trivial due to the digital representation of continuous quantities 
-that is used by the controller. This digital representation introduces 
+used by the controller. This representation introduces 
 errors due to finite-precision arithmetic, time discretization and 
-A/D - D/A conversions.
-
-
-%
-Given an LTI model of a physical (continuous) plant, we present two automated approaches for generating
+A/D - D/A conversions. Given an LTI model of a physical (continuous) plant, we present two automated approaches for generating
 correct-by-construction digital controllers that address all these
 challenges and satisfy a safety property for the physical plant. 
 Both approaches make use of CounterExample-Guided
@@ -62,34 +83,35 @@ Inductive Synthesis (CEGIS)~\cite{jha-icse10,
   DBLP:conf/asplos/Solar-LezamaTBSS06}.  CEGIS is an
 iterative process, where each iteration performs inductive
 generalisation based on counterexamples provided by a verification module. 
-The inductive generalisation step uses information 
-about a limited number of inputs to compute a candidate solution
-for all the possible inputs. Our two instantiations of CEGIS are
-described next.
+%The inductive generalisation step uses information 
+%about a limited number of inputs to compute a candidate solution
+%for all the possible inputs. 
+Our two instantiations of CEGIS are
+described next. 
 
 
 \emph{The first approach} starts by devising a
 digital controller that stabilizes the system's model, while remaining safe for a
 pre-selected time horizon and a single initial state; then, it verifies
 unbounded-time safety by unfolding the dynamics of the LTI model, considering the
-full set of initial states, and checking a \emph{completeness
-threshold}~\cite{DBLP:conf/vmcai/KroeningS03}, i.e., the number of
-iterations required to sufficiently unwind the closed-loop state-space
-model such that the boundaries are not violated for any larger number of
-iterations.  As~it requires unfolding up to the completeness threshold, this
-approach can be computationally expensive if the completeness threshold is large.
+full set of initial states, and checking a completeness
+threshold~\cite{DBLP:conf/vmcai/KroeningS03}.%, i.e., the number of
+%iterations required to sufficiently unwind the closed-loop state-space
+%model such that the boundaries are not violated for any larger number of
+%iterations.  %As~it requires unfolding up to the completeness threshold, this
+%approach can be computationally expensive if the completeness threshold is large.
 %
 \emph{The second approach}
 employs \emph{abstract acceleration}~\cite{cattaruzza2015unbounded} to
 evaluate all possible progressions of the LTI model simultaneously. 
 This approach uses \emph{abstraction refinement},
-enabling us to always start with a very simple description regardless of the
+enabling us to start with a simple description regardless of the
 dynamics complexity, and only expand to more complex models
 when a solution cannot be found.
 
 We provide experimental results showing that both our approaches are able to
-efficiently synthesize safe controllers for a set of intricate physical
-plant models taken from the digital control literature.
+synthesize safe controllers for a set of physical
+plant models taken from digital control literature.
 
 This abstract contains material published in \cite{DBLP:conf/kbse/AbateBCCCDKKP17,DBLP:conf/cav/AbateBCCDKKP17}.
 
