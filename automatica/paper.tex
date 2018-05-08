@@ -884,7 +884,7 @@ and $\phi_\mathit{init} := \bigwedge_{i=1}^{n} \underline{x_{i,0}} \leq x_{i,0} 
 For the input signal, these requirements practically mean that the control input saturates in view of physical constraints. 
 
 %-------------------------------
-\subsection{Abstract acceleration of linear dynamics} 
+\subsection{Abstract acceleration of linear dynamics \note{Shall we move the material on AAccel to the Preliminaries?}} 
 \label{ssec:aa}
 %-------------------------------
  
@@ -1500,14 +1500,12 @@ scalability while retaining soundness.
 
 %\subsubsection{Controller synthesis}
 
-An overview of the algorithm for controller synthesis is given in
-Fig.~\ref{fig:CEGIS-precision-increment}.  One important observation is that
-we verify and synthesize a controller over $k$ time steps.  We~then compute
-a completeness threshold $\overline{k}$~\cite{DBLP:conf/vmcai/KroeningS03}
+An overview of the algorithm for controller synthesis is given in Fig.~\ref{fig:CEGIS-precision-increment}.  
+One important observation is that we verify and synthesize a controller over a finite number ($k$) of time steps.  
+We then compute a completeness threshold $\overline{k}$~\cite{DBLP:conf/vmcai/KroeningS03} 
 for this controller, and verify correctness for $\overline{k}$ time steps. 
-Essentially, $\overline{k}$ is the number of iterations required to
-sufficiently unwind the closed-loop state-space system, 
-which ensures that the boundaries are not violated for any other $k{>}\overline{k}$.
+As we will later argue, $\overline{k}$ is the number of iterations required to sufficiently unwind the closed-loop state-space model,  
+ensuring that the boundaries are not violated for any other $k{>}\overline{k}$. 
 
 %\begin{theorem} There exists a finite $\overline{k}$ such that it is
 %sufficient to unwind the closed-loop state-space system up to $\overline{k}$
@@ -1535,8 +1533,7 @@ which ensures that the boundaries are not violated for any other $k{>}\overline{
 %
 %\medskip
 
-Next, we describe the different phases in Fig.~\ref{fig:CEGIS-precision-increment}
-(blocks 1 to 4) in detail.
+Next, we describe in detail the different phases in Fig.~\ref{fig:CEGIS-precision-increment} (blocks 1 to 4). 
 
 %\todo{please eventually itemize next}
 \begin{enumerate}
