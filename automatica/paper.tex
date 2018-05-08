@@ -143,7 +143,7 @@ for Continuous Plants}
 \address[manaus]{Federal University of Amazonas, Brazil} 
           
 \begin{keyword}                           % Five to ten keywords,  
-Digital control synthesis; Safety requirements; A/D converters; Quantization errors; Sampling.               % chosen from the IFAC 
+Digital control synthesis; Safety requirements; Analog/Digital conversion; Quantization errors; Sampling.               % chosen from the IFAC 
 \end{keyword}                             % keyword list or with the 
                                           % help of the Automatica 
                                           % keyword wizard
@@ -186,24 +186,25 @@ literature.
 Modern implementations of embedded control systems have proliferated
 with the availability of low-cost devices that can perform highly
 non-trivial control tasks, with significant impact in numerous
-application areas such as life sciences, environmental control and
-robotics~\cite{astrom1997computer, Franklin15}.  Correct synthesis of
-control software for such platforms is non-trivial, even in cases with
-restricted dynamics.
+application areas such as the life sciences, high-precision control, 
+automotive and robotics~\cite{astrom1997computer, Franklin15}.  
+Provably correct synthesis of control software for such platforms is non-trivial, 
+even in cases with unsophisticated dynamics. 
 
 In this paper, we examine the case of Linear Time Invariant (LTI)
 models, for which the synthesis of controllers is well understood.
 However, the use of digital control architectures adds new challenges
-caused by artifacts specific to digital control, such as the effects
+caused by artefacts specific to digital control, such as the effects
 of finite-precision arithmetic, time discretization and quantization
 noise introduced by A/D and D/A conversion.
 %
 Given an LTI model, we develop an automatic technique for generating
 correct-by-construction digital controllers that addresses all these
-challenges. Specifically, we synthesize stable and safe,
-software-implemented embedded controllers.  Due to the complexity of
-such closed-loop systems, we focus on linear models with known
-configurations, and perform parametric synthesis of controllers.
+challenges. Specifically, we automatically synthesize stable and safe,
+software-implemented embedded controllers.  
+%Due to the complexity of
+%such closed-loop systems, we focus on linear models with known
+%configurations, and perform parametric synthesis of controllers.
 %meeting a number of properties that define their desired behavior.
 
 %% While research on digital control is well developed~\cite{astrom1997computer},
@@ -251,19 +252,19 @@ configurations, and perform parametric synthesis of controllers.
 %% synthesis of stabilizing digital controllers with a number of properties that
 %% define their desired behaviour.
 
-Our work addresses challenging aspects of the control synthesis
-problem.  We perform digital control synthesis over a hybrid model,
-where the plant exhibits continuous behavior whereas the controller
-operates in discrete time and over a quantized domain.  In particular,
-our model evaluates the effects of the quantizers (A/D and D/A
+Our work addresses challenging aspects of the control synthesis problem:  
+we perform digital control synthesis over a ``hybrid model'',
+namely a model encompassing a plant exhibiting continuous behavior, 
+whereas the controller operates in discrete time and over a quantized domain.  
+In particular, our model evaluates the effects of the quantizers (A/D and D/A
 converters) and of time discretization, as well as representation
-errors introduced by modeling %% artifacts such as an
+errors introduced by working  %% artifacts such as an
 %% observer~\cite{astrom1997computer}
-in a finite precision domain, while reasoning about high level
-properties such as stability, robustness, and safety, which define the
-behaviour of the system.  Notably, safety requirements are
-frequently overlooked in conventional feedback control synthesis, but
-play an important role in systems engineering.
+in a finite-precision domain. 
+We reason about high level properties such as stability, robustness, and safety, which define the
+behaviour of the whole model.  
+Notably, safety requirements are frequently overlooked in conventional feedback control synthesis, but
+play a key role in systems engineering, particularly in safety-critical applications.  
 
 %% Using state of the art verifiers, we evaluate these models against
 %% automatically synthesised controllers using CEGIS-based synsthesis that
