@@ -271,16 +271,15 @@ play a key role in systems engineering, particularly in safety-critical applicat
 %% incorporate the above mentioned artifacts in different models of
 %% Single-Input/Single-Output (SISO) systems.
 In this paper we present two novel approaches for the synthesis of
-digital controllers, both of which make use of CounterExample-Guided
+digital controllers, both of which make use of the framework known as CounterExample-Guided
 Inductive Synthesis (CEGIS)~\cite{jha-icse10,
-  DBLP:conf/asplos/Solar-LezamaTBSS06}, a technique
-that became very popular in the recent years.  CEGIS is an
-iterative process, where each iteration performs inductive
+  DBLP:conf/asplos/Solar-LezamaTBSS06}, 
+a technique from formal methods that has recently shown much promise and which we export in this work to a control-theoretical setup.  
+CEGIS is an iterative process, where each iteration performs inductive
 generalisation based on counterexamples provided by a verification
-oracle. Essentially, the inductive generalisation uses information
+oracle \note{see Figure xxx}. The inductive generalisation uses information 
 about a limited number of inputs to compute a candidate solution
-for all the possible. Our two instantiations of CEGIS are
-described next.
+for the entire range of possible inputs. Our two instantiations of CEGIS are described next.
 
 %% offer three modes of
 %% operation that address different aspects of the problem.
@@ -290,22 +289,22 @@ described next.
 %% specification since we are working in the frequency domain.
 
 \emph{The first approach} uses a na\"ive technique that starts by devising a
-digital controller that stabilizes the system while remaining safe for a
+digital controller that stabilizes the plant model while remaining safe for a
 pre-selected time horizon and a single initial state; then, it verifies
-unbounded safety by unfolding the dynamics of the system, considering the
-full hyper-cube of initial states, and checking a \emph{completeness
+unbounded-time safety by unfolding the model dynamics, considering the 
+full set of initial states, and checking a \emph{completeness
 threshold}~\cite{DBLP:conf/vmcai/KroeningS03}, i.e., the number of
 iterations required to sufficiently unwind the closed-loop state-space
-system such that the boundaries are not violated for any larger number of
-iterations.  As~it requires unfolding up to the completeness threshold, this
+model such that the safety boundaries are not violated for any larger number of
+iterations.  Requiring unfolding up to the completeness threshold, this
 approach is computationally expensive.
 
 Instead of unfolding the dynamics, \emph{the second approach}
 employs \emph{abstract acceleration}~\cite{cattaruzza2015unbounded} to
-evaluate all possible progressions of the system simultaneously. 
-Additionally, this approach uses \emph{abstraction refinement},
-enabling us to always start with a very simple description regardless of the
-dynamics complexity, and only expand to more complex models
+evaluate all possible progressions of the model simultaneously. 
+Additionally, this approach uses \emph{abstraction refinement} \note{add cit.},
+enabling one to start with a very simple (abstract) description of the model 
+regardless of the complexity of its dynamics, and to refine to more complex models only 
 when a solution cannot be found.
 
 We provide experimental results showing that both our approaches are able to
