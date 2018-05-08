@@ -1145,8 +1145,8 @@ we use $\left[\begin{array}{cc}\mat{A}_T&\mat{B}_T\\
 $\lambda_i$ are the eigenvalues of $\mat{A}$, and $gm(\lambda_i)$ is the geometric multiplicity of $\lambda_i$.
 %
 
-If $\mat{J}$ is diagonal and there exists a discrete dynamics matrix for a sampling time $T_d$ such that $A_d=e^{\mat{A} T_d}$, 
-then $\forall T \in \mathbb{R}_0^+$ 
+If $\mat{J}$ is diagonal and there exists a discrete dynamics matrix for a sampling time $T_d$ \note{when could that not exist?} such that $A_d=e^{\mat{A} T_d}$, 
+then $\forall T \in \mathbb{R}_0^+$ we obtain the known expression 
 $$
 \vec{x}_T=A_d^{\frac{T}{T_d}}\vec{x}_0+(\mat{I}-\mat{A}_d^{\frac{T}{T_d}})\mat{B}_d\vec{u}, 
 $$
@@ -1158,10 +1158,11 @@ where $\mat{A}_d^{\frac{T}{T_d}} =e^{log(\mat{A}_d) \frac{T}{T_d}} = e^{\mat{A} 
 \subsubsection{Accelerated dynamics for models with a sampled-time feedback}\label{sec:real_discrete_feedback_inputs}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-The final case we analyze is that of hybrid-time models, where the plant
-dynamics evolve in continuous time while the feedback dynamics evolve in
-discrete time.  A~new input value is produced only at every sample time but
-implemented over the continuous-time plant dynamics.
+We analyze the case of hybrid-time models, 
+namely where the plant dynamics evolve in continuous time, 
+while the feedback dynamics evolve in discrete time.  
+A new input value is accepted by the plant only at sample times $T_s$. \note{Confusing $T_s$ vs $T_d$.} 
+%but implemented over the continuous-time plant dynamics.
 %
 %\note{Matrix K has not been introduced yet. }
 \begin{theorem}
