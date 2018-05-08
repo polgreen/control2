@@ -120,7 +120,7 @@
 
 %\thanksref{footnoteinfo}
 
-\title{Safe and Robust Formal Synthesis of Digital Controllers\\
+\title{Automated Formal Synthesis of Safe Digital Controllers\\
 for Continuous Plants}
 % Title, preferably not more
 % than 10 words.
@@ -275,6 +275,7 @@ In this paper we present two novel approaches for the synthesis of
 digital controllers, both of which make use of the framework known as CounterExample-Guided
 Inductive Synthesis (CEGIS)~\cite{jha-icse10,
   DBLP:conf/asplos/Solar-LezamaTBSS06}, 
+  \note{we need to agree on how to spell out CEGIS}
 a technique from formal methods that has recently shown much promise and which we export in this work to a control-theoretical setup.  
 CEGIS is an iterative process, where each iteration performs inductive
 generalisation based on counterexamples provided by a verification
@@ -707,16 +708,18 @@ As a result we can ignore any additional errors introduced by the DAC.
     (verif) edge node {} (done);
  \end{tikzpicture}
 }
- \caption{The CEGIS framework\label{fig:CEGIS}}
+ \caption{The CEGIS framework\label{fig:CEGIS} \note{can we fit this figure within one column, and place it close to Sec 3.3?}}
 \end{figure*}
 
 In this section, we give a brief description of the CEGIS framework~\cite{jha-icse10,
-  DBLP:conf/asplos/Solar-LezamaTBSS06}, as illustrated in Figure~\ref{fig:CEGIS}. 
+  DBLP:conf/asplos/Solar-LezamaTBSS06}, which is illustrated in Figure~\ref{fig:CEGIS}. 
+  CEGIS has been recently used for the automated synthesis of software programs, 
+  and its setup is naturally that of mathematical logic. 
 
 We consider an input specification of the form $\exists P .\, \forall a.\, \phi(a, P)$, 
 where $P$ ranges over functions (where a function is represented by the program computing it),
 $a$ ranges over ground terms, 
-and $\phi$ is a quantifier-free formula. 
+and $\phi$ is a quantifier-free logical formula. 
 We~interpret the ground terms over some domain~$\mathcal{D}$. 
 This is a synthesis problem, where the objective is indeed to select a valid $P$ satisfying $\phi$ over all the $a$ terms. 
 
@@ -745,11 +748,11 @@ If the solution space is finite then the CEGIS loop is guaranteed to
 terminate by either finding a solution or showing that no solution
 exists.
 %-------------------------------
-\section{Formal specification of model properties} 
+\section{Formal specification of properties on a model} 
 \label{sec:specification}
 %-------------------------------
 
-While in the previous section we discussed the generic CEGIS
+While in the previous section we have discussed the generic CEGIS
 framework, in the rest of the paper we will explain how we adapt it to
 the synthesis of digital controllers. For this purpose, we start by
 describing the specific property that we pass to the synthesizer as
