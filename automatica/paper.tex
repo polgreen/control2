@@ -441,38 +441,36 @@ continuous dynamics, and \cite{zamani2014} extends the approach to the
 recent setup of Network Control Systems.
 
 \textbf{Discretization Effects --}
-The classical approach to control synthesis has often disregarded
-digitalization effects, whereas more recently modern techniques have focused
-on different aspects of discretization, including delayed
-response~\cite{Duggirala2015} and finite word length (FWL) semantics, with
-the goal either to verify~\cite{daes20161} or to
-optimize~\cite{oudjida2014design} given implementations.
+Classical work in control synthesis has often disregarded digitalization effects, 
+\note{[this paragraph needs more work:]
+whereas recent results in digital control have focused on separate aspects of discretization, 
+including delayed response~\cite{Duggirala2015} and finite word length (FWL) semantics, 
+with the goal either to verify~\cite{daes20161} or to optimize~\cite{oudjida2014design} given implementations. }
 
 There are two different problems that arise from FWL semantics.  The first
-is the error in the dynamics caused by the inability to represent the exact
+is the error in the model dynamics caused by the inability to represent the exact
 state of the physical system, while the second relates to rounding and
-saturation errors during computation.  In~\cite{fialho1994stability}, a
-stability measure based on the error of the digital dynamics ensures that
-the deviation introduced by FWL does not make the digital system unstable. 
-A~more recent approach~\cite{DBLP:journals/automatica/WuLCC09} uses
-$\mu$-calculus to directly model the digital controller so that the selected
-parameters are stable by design.  The analyses
-in~\cite{DBLP:conf/hybrid/RouxJG15, DBLP:conf/hybrid/WangGRJF16} rely on an
-invariant computation on the discrete system dynamics using Semi-Definite
-Programming (SDP).  While the former uses bounded-input and bounded-output
+saturation errors during model manipulation.  
+In~\cite{fialho1994stability}, a stability measure based on the error of the digital dynamics ensures that
+the deviation introduced by FWL does not lead to instability.  
+\cite{DBLP:journals/automatica/WuLCC09} uses $\mu$-calculus to directly model the digital controller so that selected
+parameters result by design in stable dynamics.  
+The analyses in~\cite{DBLP:conf/hybrid/RouxJG15, DBLP:conf/hybrid/WangGRJF16} rely on an
+invariant computation on the discrete dynamics using Semi-Definite
+Programming (SDP):  while the former contribution uses bounded-input and bounded-output
 (BIBO) properties to determine stability, the latter uses Lyapunov-based
 quadratic invariants.  In both cases, the SDP solver uses floating-point
-arithmetic and soundness is checked by bounding the error.  An alternative
-is~\cite{park2016scalable}, where the verification of given control code is
+arithmetic and soundness is checked by bounding the error.  
+An alternative is~\cite{park2016scalable}, where the verification of given control code is
 performed against a known model by extracting an LTI model of the code by
 symbolic execution: to account for rounding errors, an upper bound is
-introduced in the verification phase.  The work
-in~\cite{picasso2003stabilization} introduces invariant sets as a mechanism to
-bound the quantization error effect on stabilization as an invariant set
-that always converges toward the controllable set.  Similarly,
-\cite{liberzon2003hybrid} evaluates the quantization error dynamics and
-bounds its trajectory to a known region over a finite time period.  This
-technique works for both linear and non-linear systems.
+introduced in the verification phase.  
+The work in~\cite{picasso2003stabilization} introduces invariant sets as a mechanism to
+bound the quantization error effect on stabilization.  
+% as an invariant set that always converges toward the controllable set.  
+Similarly, 
+\cite{liberzon2003hybrid} evaluates the quantization error dynamics and \note{[unclear] bounds its trajectory to a known region over a finite time period}.   
+%This technique works for both linear and non-linear systems.
 
 %\note{Add note explaining relationship of this work with previously published papers. }
 
@@ -517,7 +515,9 @@ and $t \in \mathbb R_0^+$ denotes continuous time.
 %$\mat{A}$ and $\mat{B}$ are matrices that fully characterize the dynamics of the continuous plant,
 We denote with $x(0)$ the initial state of the model.
 
-Equation~\eqref{eq:ode1} is soundly discretized in time~\cite{middleton1990digital,van1978computing} at constant time intervals,
+Equation~\eqref{eq:ode1} is 
+%soundly 
+discretized in time~\cite{middleton1990digital,van1978computing} at constant time intervals,
 of duration $T_s$ (the sample time), 
 into the difference equation
 %
@@ -528,13 +528,13 @@ into the difference equation
 where 
 $\mat{A}_d=e^{\mat{A}T_s}$ and 
 $\mat{B}_d = \int_{t = 0}^{T_s} e^{\mat{A} t} dt\ \mat{B}$, 
-and where $k \in \mathbb N$ is a discrete counter and $\vec{x}_{0}=\vec{x}(0)$ denotes the initial state.  
+$k \in \mathbb N$ is a discrete counter and where $\vec{x}_{0}=\vec{x}(0)$ denotes the initial state.  
 
 Models \eqref{eq:ode1} and \eqref{eq:plant} depend on external non-determinism in the form of input signals $u (t)$ and  $u_k$, respectively. 
-Feedback architectures can be employed to manipulate the properties and behaviors of the plant.   
-We are interested in the synthesis of digital feedback control algorithms, 
+Feedback architectures can be employed to manipulate the properties and behaviors of the plant:    
+we are interested in the synthesis of digital feedback controllers $u_k$,  
 as practically implemented on Field-Programmable Gate Arrays or Digital Signal Processors. 
-Later, we will address the issue of variable quantization, 
+\note{next: why only this single issue, rather than all discretisation effects as presented earlier?} Later, we will address the issue of variable quantization, 
 introduced by ADC/DAC conversion blocks of Figure \ref{fig:digitalsystem}, 
 as classically studied in \cite{astrom1997computer}. 
 
@@ -548,21 +548,30 @@ $\vec{x}_{k+1}=(\mat{A}_d-\mat{B}_d\mat{K})\vec{x}_k$.
 %-------------------------------
 \subsection{Errors}
 
-We account for the presence of errors originating from a number of sources, shown in Figure~\ref{}:
+\note{back end vs back-end?} 
+
+We account for the presence of errors originating from a number of sources, shown in Figure~\ref{} \note{fix}:
 \begin{itemize}
-\item We represent the plant variables $x(t)$ and $u(t)$, which are real numbers, at a finite precision in our model, and so it is necessary to account for the errors introduced by this representation. We account for these errors in both back ends by using interval arithmetic, detailed in section~\ref{}. 
-\item The quantisation errors by the ADC, which converts the analogue signal $x(t)$ into
-the digital signal $x_k$ which is fed into the controller. We account for this error in 
-the acceleration based back-end by introducing a noise signal $\nu_1$ that over-approximates this error, 
-shown in the figure. Further details are found in section~\ref{}. 
-In the naive back end we use bit-precise modelling in CBMC~\cite{} to accurately model this deterministic
-conversion. In other words, CBMC constructs a boolean formula which explicitly unwinds the transition system for any symbolically represented input state, bounded by the initial conditions, and performs the ADC conversion precisely on that symbolically represented input state. When we verify safety, the boolean formula is satisfied only if there is an input state value for which the subsequent trace through the transition system eventually violates the safety property. 
-\item The representation errors due to performing finite-precision arithmetic in the controller. 
-In the acceleration based back-end, this is again treated by the introduction of noise that bounds the error.
-The naive back end uses the bit-precise modelling of finite-precision arithmetic in CBMC, in the same way as we handled the ADC conversion. We assume that the controller
-represents numbers to the same precision as the ADC.
-\item We assume that the DAC converts numbers from the same precision as the controller to an analogue signal. 
-As a result we can ignore any errors introduced by the DAC
+\item We represent the plant variables $x(t)$ and $u(t)$, which are continuous quantities, with finite precision in our model. 
+It is necessary to account for the errors introduced by this representation: 
+we account for these errors in both back ends \note{did we explain the two back ends already?} by using interval arithmetic, as detailed in section~\ref{} \note{fix}. 
+\item The quantisation errors by the ADC, which converts the analogue signal $x(t)$ into the digital signal $x_k$, 
+which is then fed into the controller \note{cf. Figure~\ref{} }. 
+We account for this error in the acceleration-based back-end by introducing a noise signal $\nu_1$ that over-approximates it. Further details are found in section~\ref{}.  
+In the naive back-end we use bit-precise modelling in \note{[clear? discussed before?] CBMC}~\cite{} to accurately encompass this conversion.   
+In other words, CBMC constructs a boolean formula that explicitly unwinds the transition system for any \note{[unclear] symbolically represented} input state, 
+\note{[unclear how the initial conditions bound the input state? use formulas or figure to explain.] bounded by the initial conditions}, 
+and performs the ADC conversion precisely on that symbolically represented input state. 
+When we check for a safety property, 
+the boolean formula is satisfied only if there is an input state value for which the subsequent trace through the transition system eventually violates the safety property.  
+\item The representation errors due to performing finite-precision arithmetic in the controller block. 
+In the acceleration-based back-end, 
+this is again treated by the introduction of a noise signal that bounds the error. 
+The naive back-end uses the bit-precise modelling of finite-precision arithmetic in CBMC, 
+in the same way as we handled the ADC conversion. 
+We assume that the controller represents numbers to the same precision as the ADC \note{why is this legit?}. 
+\item We assume \note{why is this reasonable?} that the DAC converts numbers to analogue signals with the same precision as the controller. 
+As a result we can ignore any additional errors introduced by the DAC.  
 \end{itemize}
 
 
