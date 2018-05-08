@@ -2673,8 +2673,6 @@ stability and safety of the synthesized controllers outside of our model.
 \label{exp:results}
 %-------------------------------
 
-\textcolor{red}{Lucas describe here the experimental results}
-
 We provide the results in Table~\ref{tab:results}.  Here 
 \textit{Benchmark} is the name of the respective benchmark, 
 \textit{Order} is the number of continuous variables, 
@@ -2695,6 +2693,15 @@ solution in approximately 53\% of the time required using the multi-staged
 back-end, and has a median run-time 0.5\,s, which is twenty times smaller
 than the multi-staged approach.  The two back-ends complement each other in
 benchmark coverage and together solve 58\% of the benchmarks.
+%
+For the majority of the floating-point benchmarks, we also observe that the abstraction-based
+back-end is much faster than the basic multi-staged verification approach, but both
+back-ends find the same amount of solutions (13).  In direct
+comparison, the abstraction-based approach is on average able to find a
+solution in approximately 50\% of the time required using the multi-staged
+back-end, and has a median run-time 0.6\,s, which is forty times smaller
+than the multi-staged approach.  The two back-ends complement each other in
+benchmark coverage and together solve 54\% of the benchmarks.
 
 \begin{table*}
 \centering
