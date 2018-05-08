@@ -132,7 +132,7 @@ for Continuous Plants}
 \author[oxford]{Alessandro Abate}\ead{alessandro.abate@cs.ox.ac.uk},
 \author[manaus]{Iury Bessa}\ead{iurybessa@ufam.edu.br},
 \author[oxford]{Dario Cattaruzza}\ead{dario.cattaruzza@cs.ox.ac.uk},
-\author[oxford,manaus]{Lucas Cordeiro}\ead{lucas.cordeiro@cs.ox.ac.uk},
+\author[manchester]{Lucas Cordeiro}\ead{lucas.cordeiro@manchester.ac.uk},
 \author[cambridge]{Cristina David}\ead{cd652@cam.ac.uk},
 \author[oxford]{Pascal Kessel}\ead{pascal.kesseli@stx.ox.ac.uk},
 \author[oxford]{Daniel Kroening}\ead{kroening@cs.ox.ac.uk},
@@ -140,6 +140,7 @@ for Continuous Plants}
 
 \address[oxford]{University of Oxford, UK}
 \address[cambridge]{University of Cambridge, UK}
+\address[manchester]{University of Manchester, UK}
 \address[manaus]{Federal University of Amazonas, Brazil} 
           
 \begin{keyword}                           % Five to ten keywords,  
@@ -2674,8 +2675,6 @@ stability and safety of the synthesized controllers outside of our model.
 \label{exp:results}
 %-------------------------------
 
-\textcolor{red}{Lucas describe here the experimental results}
-
 We provide the results in Table~\ref{tab:results}.  Here 
 \textit{Benchmark} is the name of the respective benchmark, 
 \textit{Order} is the number of continuous variables, 
@@ -2687,6 +2686,25 @@ precision for the controller, $\mathcal{F}_{\langle I_c,F_c \rangle}$, is
 chosen to be $I_c = 8$, $F_c = 8$ for fixed-point and 
 $\mathcal{F}_{\langle p \rangle}$ is chosen to be half-precision for floating-point.
 
+We split our evaluation into two sets of results: fixed- and floating-point. 
+For the majority of the fixed-point benchmarks, we observe that the abstraction-based
+back-end is faster than the basic multi-staged verification approach, and
+finds one solution more (14) than the multi-staged back-end (13).  In direct
+comparison, the abstraction-based approach is on average able to find a
+solution in approximately 53\% of the time required using the multi-staged
+back-end, and has a median run-time 0.5\,s, which is twenty times smaller
+than the multi-staged approach.  The two back-ends complement each other in
+benchmark coverage and together solve 58\% of the benchmarks.
+%
+For the majority of the floating-point benchmarks, we also observe that the abstraction-based
+back-end is much faster than the basic multi-staged verification approach, but both
+back-ends find the same amount of solutions (13).  In direct
+comparison, the abstraction-based approach is on average able to find a
+solution in approximately 50\% of the time required using the multi-staged
+back-end, and has a median run-time 0.6\,s, which is forty times smaller
+than the multi-staged approach.  The two back-ends complement each other in
+benchmark coverage and together solve 54\% of the benchmarks.
+
 \begin{table*}
 \centering
 \begin{tabular}{| r | l | c | c | r | c | r | c | r | c | r |}
@@ -2694,32 +2712,32 @@ $\mathcal{F}_{\langle p \rangle}$ is chosen to be half-precision for floating-po
 \hline
 \# & \multicolumn{1}{|c|}{Benchmark} & \multicolumn{1}{|c|}{Order} & \multicolumn{4}{|c|}{Multi-staged}                 & \multicolumn{4}{|c|}{Abstraction} \\
    &                                  & & \multicolumn{1}{|c|}{$\mathcal{F}_{\langle I_p,F_p \rangle}$} & \multicolumn{1}{|c|}{Time} & \multicolumn{1}{|c|}{$\mathcal{F}_{\langle p \rangle}$} & \multicolumn{1}{|c|}{Time} & \multicolumn{1}{|c|}{$\mathcal{F}_{\langle I_p,F_p \rangle}$} & \multicolumn{1}{|c|}{Time} & \multicolumn{1}{|c|}{$\mathcal{F}_{\langle p \rangle}$} & \multicolumn{1}{|c|}{Time}\\\hline
-1  & Acrobot  & 4 &   &  &  &  & & & &\\
-2  & Antenna  & 6 &   &  &  &  & & & &\\
-3  & Ballmaglev  & 3 &  &   &  &  & & & &\\
-4  & Bioreact & 3 & 16,8 & 11200ms & 16,10 &14600ms & 24,14 & 425ms& 16,10 & 502ms\\
-5  & Chen\_ex1& 3 & 16,8 & 7278ms  & 16,10 & 9196ms & & & 16,10 & 1398ms\\
-6  & Chen\_ex2 & 8& & & 32,23 & 4683872ms &  & & &\\
-7  & Chen\_ex3 & 7 &   & & & & & & &\\
-8  & Chen\_ex4 & 9 &  & & & & & & &\\
-9  & Cruise    & 1 & 16,8 & 6563ms & 16,10 & 6543ms & 24,14 & 295ms& 16,10 & 306ms\\
-10 & CruiseHSCC & 1 & 16,8 & 6587ms & 16,10 & 6567ms &  24,14 &293ms& 16,10 & 313ms\\
-11 & Cstr & 1 & &  & & & & & &\\
-12 & Cstrtmp  & 1 &   &  & & & 24,14 &478ms& &\\
-13 & DCmotor   & 2 & 16,8  & 6879ms & 16,10 & 7786ms & 24,14 & 435ms& 16,10 & 520ms\\
-14 & Flexbeam   & 6 &   &  & & & 24,14 &72079ms& &\\
-15 & Guidance chen  & 5 &   &  & & & & & &\\
-16 & Helicopter   & 3 & 16,8 & 13728ms & 32,23 & 148012ms & 24,14 & 727ms& 16,10 &1075ms\\
-17 & Invpendulum\_cartpos & 4 &   &  & & & & & &\\
-18 & Invpendulum\_pendang & 2 & 24,12 & 9741ms & 16,10 & 28135ms & 24,14 & 432ms& 16,10 &466ms\\
-19 & Magpointer   & 2 & 16,8 & 10093ms & 16,10 & 20407ms & 24,14  & 916ms& 16,10 &1244ms\\
-20 & Magsuspension  & 2 & 12,12  &22146ms  & 16,10 & 34808ms & 24,14 & 443ms & 16,10 &569ms\\
-21 & Pendulum   & 2 & 16,8 & 8503ms & 32,23 & 23987ms & 24,14 & 395ms& 16,10 &473ms\\
-22 & Regulator   & 5 &   &  & & & & & &\\
-23 & Springmassdamper & 2 &   &  & & & & & &\\
-24 & streamdrum   & 3 & 16,8  & 332422ms & 16,10 & 590501ms & 24,14 & 701ms& 16,10 &1225ms\\
-25 & Suspension  & 4 & 16,8  & 17206ms & 16,10 &1372945ms & 56,30 & 15268ms& 16,10 &4374ms\\
-26 & Tapedriver   & 3 & 16,8  & 8188ms & & & 64,22 & 2026ms& 16,10 &1090ms\\
+1  & Acrobot  & 4 &  & \xmark &  & ~\xmark & & ~\xmark &  & ~\xmark \\
+2  & Antenna  & 6 &  & ~\xmark &  & ~\xmark & & ~\xmark & & ~\xmark\\
+3  & Ballmaglev  & 3 &  & ~\xmark &  & ~\xmark & & ~\xmark & & ~\xmark\\
+4  & Bioreact & 3 & 16,8 & 11.2\,s & 16,10 &14.6\,s & 24,14 & 0.4\,s & 16,10 & 0.5\,s\\
+5  & Chen\_ex1& 3 & 16,8 & 7.2\,s  & 16,10 & 9.2\,s & & ~\xmark & 16,10 & 1.4\,s\\
+6  & Chen\_ex2 & 8& & ~\xmark & 32,23 & 4683.8\,s &  & ~\xmark & & ~\xmark\\
+7  & Chen\_ex3 & 7 &   & ~\xmark & & ~\xmark & & ~\xmark & & ~\xmark\\
+8  & Chen\_ex4 & 9 & & ~\xmark & & ~\xmark & & ~\xmark & & ~\xmark\\
+9  & Cruise    & 1 & 16,8 & 6.6\,s & 16,10 & 6.5\,s & 24,14 & 0.3\,s& 16,10 & 0.3\,s\\
+10 & CruiseHSCC & 1 & 16,8 & 6.6\,s & 16,10 & 6.6\,s &  24,14 & 0.3\,s & 16,10 & 0.3\,s \\
+11 & Cstr & 1 & & ~\xmark & & ~\xmark & & ~\xmark & & ~\xmark\\
+12 & Cstrtmp  & 1 &  & ~\xmark & & ~\xmark & 24,14 & 0.5\,s & & ~\xmark\\
+13 & DCmotor   & 2 & 16,8  & 6.9\,s & 16,10 & 7.8\,s & 24,14 & 0.4\,s & 16,10 & 0.5\,s \\
+14 & Flexbeam   & 6 & & ~\xmark & & ~\xmark & 24,14 & 72.1\,s & & ~\xmark\\
+15 & Guidance chen  & 5 & & ~\xmark & & ~\xmark & & ~\xmark & & ~\xmark\\
+16 & Helicopter   & 3 & 16,8 & 13.8\,s & 32,23 & 148\,s & 24,14 & 0.8\,s& 16,10 & 1.1\,s\\
+17 & Invpendulum\_cartpos & 4 & & ~\xmark & & ~\xmark & & ~\xmark & & ~\xmark\\
+18 & Invpendulum\_pendang & 2 & 24,12 & 9.8\,s & 16,10 & 28.2\,s & 24,14 & 0.4\,s & 16,10 & 0.5\,s\\
+19 & Magpointer   & 2 & 16,8 & 10.1\,s & 16,10 & 20.4\,s & 24,14  & 1\,s& 16,10 & 1.3\,s\\
+20 & Magsuspension  & 2 & 12,12  & 22.2\,s  & 16,10 & 34.8\,s & 24,14 & 0.5\,s & 16,10 & 0.6\,s\\
+21 & Pendulum   & 2 & 16,8 & 8.5\,s & 32,23 & 24\,s & 24,14 & 0.4\,s & 16,10 & 0.5\,s\\
+22 & Regulator   & 5 & & ~\xmark & & ~\xmark & & ~\xmark & & ~\xmark\\
+23 & Springmassdamper & 2 & & ~\xmark & & ~\xmark & & ~\xmark & & ~\xmark\\
+24 & streamdrum   & 3 & 16,8  & 332.5\,s & 16,10 & 590.5\,s & 24,14 & 0.7\,s & 16,10 &1.3\,s\\
+25 & Suspension  & 4 & 16,8  & 17.2\,s & 16,10 &1373\,s & 56,30 & 15.3\,s & 16,10 & 4.4\,s\\
+26 & Tapedriver   & 3 & 16,8  & 8.2\,s & & ~\xmark & 64,22 & 2.1\,s & 16,10 & 1.1\,s\\
 \hline
 %
 \end{tabular}
