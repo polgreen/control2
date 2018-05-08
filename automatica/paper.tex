@@ -888,18 +888,19 @@ For the input signal, these requirements practically mean that the control input
 \label{ssec:aa}
 %-------------------------------
  
-We recall a recently introduced technique called \emph{Abstract Acceleration}~\cite{JSS14,cattaruzza2015unbounded}, 
+We recall a technique called \emph{Abstract Acceleration}~\cite{JSS14,cattaruzza2015unbounded}, 
 which will be key in this work for abstraction-based synthesis.  
-%\note{This clashes with the model introduced above, with inputs - motivate why? I've added the motivation above by introducing the closed  loop}
-Given a model of an iterative program with dynamics
+Abstract Acceleration allows one to perform reachability analysis of dynamical models, 
+and as such can be employed for safety verification. 
+% 
+Given an autonomous model of an iterative program with dynamics 
 %
-\begin{equation}
-\vec{x}_{k+1}=\mat{A_d}\vec{x}_k \text{ where } \vec{x}_k \in \mathbb{R}^p, \mat{A_d} \in \mathbb{R}^{p \times p} \text{ and } k \in \mathbb N_0,
-\end{equation}
+$\vec{x}_{k+1}=\mat{A_d}\vec{x}_k$, 
+where $\vec{x}_k \in \mathbb{R}^p$, $\mat{A_d} \in \mathbb{R}^{p \times p}$ and $k \in \mathbb N_0$, 
+%\end{equation}
 %
-we want to find all possible states visited over an infinite time horizon
-starting at an initial set $X_0$.  
-This set is known as the \emph{reach tube} of the model:
+we want to find all possible states visited over an infinite time horizon starting at a given initial set $X_0$.  
+This set is known as the \emph{reach tube} of the model: 
 %
 \begin{equation}
 \hat{X} = \{ \vec{x}_k: k \in \mathbb N_0, \vec{x}_0 \in X_0 \text{ and } \vec{x}_{k+1}=\mat{A_d}\vec{x}_k\}.
@@ -908,22 +909,28 @@ This set is known as the \emph{reach tube} of the model:
 Using Abstract Acceleration we transform this sequential reachability problem into a one-step problem. 
 This has a lot of benefits ~\cite{JSS14}, not least in terms of numerical error propagation.   
 In order to attain this, 
-the problem statement is modified, by means of acceleration, into 
+the problem statement is modified 
+%, by means of acceleration, 
+into 
 %
 \begin{equation}
-\hat{X} = \{ \vec{x}_k=\mat{A_d}^k\vec{x}_0 \mid k \in N_0 \text{ and } \vec{x}_0 \in X_0 \}, 
+\hat{X} = \{ \vec{x}_k=\mat{A_d}^k\vec{x}_0: k \in N_0 \text{ and } \vec{x}_0 \in X_0 \}, 
 \end{equation}
 %
-and new model semantics and corresponding set are further defined as 
+and a new 
+%model semantics and corresponding 
+set $\hat{X}^\sharp$ is further defined as 
 %
 \begin{equation}\label{eq:aa_reachtube}
 \hat{X} \subseteq \hat{X}^\sharp = \mathcal{A}X_0, \text{ such that } \bigcup_{k \in [0\ \infty)} \mat{A_d}^k \subseteq \mathcal{A}, 
 \end{equation}
 %
 where the newly introduced \emph{abstract reach tube} $\hat{X}^\sharp$ is an
-over-approximation of the reach tube of the model \cite{JSS14}.  
-\cite{cattaruzza2015unbounded} extends this to LTI models with inputs, 
-whereas we next extend the algorithm to continuous-time models, in view of the overall goal of this work. 
+over-approximation of the reach tube of the model: 
+\cite{JSS14} details algorithms to compute such set, 
+whereas \cite{cattaruzza2015unbounded} extends this to LTI models with inputs as in \note{Eqn. XX}.  
+In view of the overall goal of this work, 
+we extend the algorithm to continuous-time models.  
 % and  For this reason we must first look at the acceleration of continuous-time dynamics.
 
 %All we need to do is define the nature of $\mathcal{A}X_0$.
@@ -1080,15 +1087,16 @@ whereas we next extend the algorithm to continuous-time models, in view of the o
 %\end{align*}
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\subsubsection{Acceleration of continuous-time models}
-\label{sec:continuous_time_accel}
+%\subsubsection{Acceleration of continuous-time models}
+%\label{sec:continuous_time_accel}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ 
 
 The time discretization in Sec.~\ref{sec:model} only allows us to evaluate
 the state of the plant at integer multiples of the sample time.  
 %\note{Unlike the CAV18 paper, these gain matrices have not been discussed yet. }
-However, in order to synthesize $\mat{K}$, 
-we must be able to ensure that given properties of the plant hold at any given point in time.  
+However, in order to synthesize a soundly safe controller, 
+% $\mat{K}$, 
+we must be able to ensure that the safety of the plant holds at any continuous point in time.  
 In order to do so, we accelerate the dynamics of the plant according to the continuous-time model
 semantics in Sec.~\ref{sec:model}. 
 % and compute the state $\vec{x}_T$ at a given time $T$,
@@ -1108,7 +1116,7 @@ semantics in Sec.~\ref{sec:model}.
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 % 
 Given a specific time $T$, the state $\vec{x}(t=T)$ can be expressed as a
-linear function of $\vec{x}_0$ and $\vec{u}$ as shown below.  
+linear function of initial state $\vec{x}_0$ and parametric input $\vec{u}$ as follows.   
  
 \begin{lemma}
 The solution to the differential equation $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)$, where
