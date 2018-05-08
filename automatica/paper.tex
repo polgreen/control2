@@ -1212,14 +1212,12 @@ which accelerating results and setting $T=kT_s+t'$ becomes
 \end{proof}
 
 %-------------------------------
- \subsubsection{Finding Abstract Supports for Continuous Dynamics}
+ \subsubsection{Abstract Supports for Continuous Dynamics}
  \label{sec:cont_aasup}
 %-------------------------------
 
-
-
-Just as the accelerated dynamics in equation \eqref{eq:feedback_sampled_cont} can be abstacted using \eqref{eq:aa_reachtube} (where $\bigcup_{k \in N_0} (\mat{A}_d-\mat{B}_d\mat{K}) ^k \subseteq \mathcal{A}$),
-we use the same principle on equation \eqref{eq:feedback_cont} to obtain 
+Just as the accelerated dynamics in Eqn. \eqref{eq:feedback_sampled_cont} can be abstracted using \eqref{eq:aa_reachtube} (where $\bigcup_{k \in N_0} (\mat{A}_d-\mat{B}_d\mat{K}) ^k \subseteq \mathcal{A}$), 
+we use the same principle on Eqn. \eqref{eq:feedback_cont} to obtain 
 \begin{equation}\label{eq:aa_cont_amatrix}
 \bigcup_{T \in [0, T_s], k \in N_0} (\mat{A}_{T-kT_s}-\mat{B}_{T-kT_s}\mat{K}) (\mat{A}_d-\mat{B}_d\mat{K})^k \subseteq \mathcal{A}.
 \end{equation}
@@ -1227,15 +1225,16 @@ we use the same principle on equation \eqref{eq:feedback_cont} to obtain
 \textcolor{red}{[The next discussion is highly unclear - Dario: can you please update it?]}
 \textcolor{blue}{[how about this?]}
 
-We next describe how to obtain such a set. 
-Our overapproximation of the set is a polyhedron, which is defined by an
-intersection of hypeplanes. The smallest polyhedra that can be obtained are
-those whose faces touch the set, which they must do at a point tangential to
-the hyperplane. Rather than pick a set of directions and find such points, we
-will start from the points and find their tangents. Furthermore, to simplify the
-procedure, we will only look at two dimensional cuts of the space 
-(see~\cite{cattaruzza2015unbounded}). This means that for every point we
-choose is a vertex of the polyhedron.
+We next describe how to obtain an over-approximation of such a set. 
+This is defined as a polyhedron, expressed as an intersection of hyperplanes. 
+A tight polyhedron that can be obtained with faces (hyperplanes) that touch the set. 
+%, which they must do at a point tangential to the hyperplane. 
+Rather than pick \note{[concept undefined:] a set of directions} and find such points, 
+we will start from the points and find their tangents \note{there can be just a single tangent, or possibly multiple ones?}.  
+Furthermore, to simplify the procedure, 
+we will only look at \note{[qualitative:] two dimensional cuts of the space}  
+(see~\cite{cattaruzza2015unbounded}):  
+this means that for every point we choose is a vertex of the polyhedron \note{??}. 
 Finding out which side of the hyperplane corresponds to the inside of the
 polyhedron is achieved by looking at any other point in the original set and
 checking on which side of the hyperplane it lays.
@@ -1248,6 +1247,7 @@ checking on which side of the hyperplane it lays.
 
 \textcolor{red}{[Next part highly nebulous]} 
 \textcolor{blue}{[This is just the math that calculates the tangents of x-y pairs given the progression of x and y. Given the above description,is it necessary to include it?]}
+\note{I would cut the next part, if possible. However, the explanation above is not clear. It seems like you're just finding a convex hull. You have not introduced the notion of directions. The paragraph above requires brand new thinking. }
 
 The corresponding derivatives are:
 %
@@ -1413,7 +1413,7 @@ using the envelope of their magnitude (ie $|\lambda|$).
 %\textcolor{red}{we should describe here about the performance specifications for dynamical systems.}
 
 %-------------------------------
-\section{CEGIS of digital controllers} 
+\section{Synthesis of digital controllers with CEGIS} 
 \label{sssec:cegisdig}
 %-------------------------------
 
@@ -1428,7 +1428,7 @@ scalability while retaining soundness.
 \label{sssec:naive}
 %-------------------------------
 
-\textcolor{red}{[Elizabeth: please rewrite this]} 
+\textcolor{red}{[We call this approach either naive or multi-stage. Let us pick a single attribute, which I recommend to be the latter (multi-stage). Naive is excessively debutant.]} 
 
 \begin{figure*}[htb]
 \scriptsize\centering
