@@ -314,8 +314,8 @@ plant models taken from the digital control literature.
 
 %% \addtodo{CD: the novelty compared to CAV'17 needs to be clarified}
 This paper is an extension of~\cite{DBLP:conf/cav/AbateBCCDKKP17}
-and makes the following contributions, where the fourth and the fifth are
-extensions over~\cite{DBLP:conf/cav/AbateBCCDKKP17}.
+and makes the following contributions (the fourth and the fifth are
+specific extensions over~\cite{DBLP:conf/cav/AbateBCCDKKP17}): 
 %
 \begin{enumerate}
 
@@ -323,47 +323,46 @@ extensions over~\cite{DBLP:conf/cav/AbateBCCDKKP17}.
   % continuous time
   % floating point 
 \item We automatically generate \emph{correct-by-construction} digital
-  controllers using an inductive synthesis approach.  Our application of program
-  synthesis is non-trivial and addresses challenges specific to control
-  systems, such as quantizers and FWL.  %% In particular, we
+  controllers using an inductive synthesis approach (CEGIS).  
+  This application is non-trivial and addresses challenges specific to digital control
+  systems, such as the presence of A/D quantizers and FWL operations.  %% In particular, we
   %% have found that a two-stage verification engine that continuously refines
   %% the precision of the fixed-point representation of the plant yields a
   %% speed-up of two orders of magnitude over a conventional one-stage
   %% verification engine.
 %
   %\item  We compute
-  The computed state-feedback controllers 
-  guarantee a given safety property alongside stability and safety
-  specifications. Existing methods for controller synthesis rely on transfer
-  function representations, which are inadequate to prove safety requirements.
+  The automatically computed state-feedback controllers 
+  guarantee a given safety specification alongside a stability property. 
+  \note{[this statement is way too broad] Existing methods for controller synthesis rely on transfer 
+  function representations, which are inadequate to prove safety requirements. } 
 %
-\item We provide two novel algorithms: the first, na\"ive one, relies on
+\item We provide two novel algorithms: the first, a na\"ive approach, relies on 
   an unfolding of the dynamics up to a completeness threshold, while the
-  second one is abstraction-based and leverages abstraction refinement and
+  second one is abstraction-based and leverages abstraction/refinement and
   acceleration to improve scalability while retaining soundness.  %% A third
   %% algorithm evaluates systems using transfer functions where no state-space
   %% description is given.
-  Both approaches provide sound synthesis of
+  Both approaches provide sound synthesis of 
   feedback controllers and consider the various sources of imprecision in
   the implementation of the control algorithm and in the modeling of the
-  plant.
+  plant. 
 %
-\item We develop a model for different sources of quantization error and
-  their effect on reachability properties.  We give bounds that ensure the
-  safety of our controllers in a hybrid continuous-digital domain.
+\item We develop a model for different sources of quantization error and account for 
+  their effect on safety.  We give bounds that ensure the
+  safety of our controllers in a hybrid (i.e., continuous/digital) domain.
 
-\item While~\cite{DBLP:conf/cav/AbateBCCDKKP17} is restricted to systems
-  modeled in discrete time, in the current paper we present a model for
-  soundly evaluating reachability in a combined continuous-discrete time/space.
+\item While~\cite{DBLP:conf/cav/AbateBCCDKKP17} is restricted to models in discrete time, in the current paper we present an approach for
+  soundly evaluating safety in combined continuous-discrete time and space. 
 
-\item A further limitation of the work in~\cite{DBLP:conf/cav/AbateBCCDKKP17}
+\item A further limitation of the work in~\cite{DBLP:conf/cav/AbateBCCDKKP17} 
   is its restriction to fixed-point arithmetic, meaning that fixed-point
-  numbers were employed for the representation of both the plant and the
+  numbers are employed for the representation of both the plant and the
   controller, as well as for the operations performed by each of them. 
   Conversely, in the current paper we also make use of floating-point
-  arithmetic and compare the two approaches.  Additionally, we enhance the
-  implementation with an SMT backend, allowing us to also use reals in order
-  to represent the states of the plant.
+  arithmetic, and compare the two approaches.  Additionally, we enhance the
+  implementation with an SMT back-end, allowing us to also use reals in order
+  to represent the states of the plant. 
 
 \end{enumerate}
   
@@ -379,8 +378,10 @@ particular CEGIS, which is a recent approach to inductive synthesis
 borrowing ideas from Counter-Example Guided Abstraction Refinement
 (CEGAR)~\cite{DBLP:conf/cav/ClarkeGJLV00} and
 superoptimisation~\cite{DBLP:conf/iclp/BrainCVF06,
-  DBLP:conf/asplos/Massalin87}.  This approach uses an iterative
-process where each iteration performs inductive generalisation based
+  DBLP:conf/asplosss/Massalin87}.  
+\note{might be confusing that we relate the CEGAR architecture also to Abstract Acceleration?}   
+This approach uses an iterative
+process \note{cf. Fig. XX}, where each iteration performs inductive generalisation based
 on counterexamples provided by a verification oracle.  In the absence
 of complete specifications, oracles are queried to distinguish between
 non-equivalent
@@ -390,8 +391,8 @@ programs~\cite{jha-icse10,DBLP:conf/fmcad/AlurBJMRSSSTU13}.
 %% to inductively synthesize invariants for the generation of desired programs.
 
 Program synthesizers are an ideal fit for the synthesis of digital controllers, since
-the semantics of programs capture the effects of finite-precision arithmetic
-precisely.  In~\cite{DBLP:conf/cdc/RavanbakhshS15}, the authors use CEGIS
+the semantics of programs precisely capture the effects of finite-precision arithmetic.  
+In~\cite{DBLP:conf/cdc/RavanbakhshS15}, the authors use CEGIS 
 for the synthesis of switching controllers for stabilizing continuous-time
 plants with polynomial dynamics.  The work extends to affine systems, but is
 limited by the capacity of the state-of-the-art SMT solvers for solving
@@ -405,7 +406,7 @@ closed-loop systems, i.e., properties that specify a set of goal states and
 safe states (constrained reachability).  This solution is based on
 synthesizing control Lyapunov functions for switched systems that yield
 switching controllers with a guaranteed minimum dwell time in each mode. 
-However, both approaches are unsuitable for the kind of control we seek to
+However, both approaches are unsuitable for the kind of controllers that we seek to
 synthesize.
 
 The work in~\cite{hscc-paper} synthesizes stabilizing controllers for
@@ -417,7 +418,9 @@ models: this results in a static check on their coefficients.  By contrast,
 in the current paper we consider a state-space representation of the
 physical system, which requires ensuring the specification over actual
 traces of the model, alongside the numerical soundness required by the
-effects of discretisation and finite-precision errors.  A~state-space model
+effects of discretisation and finite-precision errors.  
+\note{Next paragraph is naive for a control audience - amend} 
+A~state-space model
 has known advantages over the transfer function
 representation~\cite{Franklin15}: it naturally generalizes to multivariate
 systems (i.e., with multiple inputs and outputs); and it allows synthesis of
@@ -435,12 +438,12 @@ of reachability properties thereon.  Based on this safety specification,
 properties.  The embedded controller software can be more complicated than
 the state-feedback control we synthesize, and the properties available cover
 more detail.  However, relying on state-space discretization \mbox{Pessoa}
-is likely to incur in scalability limitations.  Along this research line,
+is likely to incur in scalability limitations.  \note{Mention SCOTS?}
+Along this research line,
 \cite{Anta2010,liu16} studies the synthesis of digital controllers for
-continuous dynamics, and \cite{zamani2014} extends the approach to the
-recent setup of Network Control Systems.
+continuous dynamics, and \cite{zamani2014} extends the approach to the Network Control Systems setup. 
 
-\textbf{Discretization Effects --}
+\textbf{Discretization Effects in Control Design --}
 Classical work in control synthesis has often disregarded digitalization effects, 
 \note{[this paragraph needs more work:]
 whereas recent results in digital control have focused on separate aspects of discretization, 
