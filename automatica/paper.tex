@@ -1120,7 +1120,7 @@ linear function of initial state $\vec{x}_0$ and parametric input $\vec{u}$ as f
  
 \begin{lemma}
 The solution to the differential equation $\dot{\vec{x}}(t)=\mat{A}\vec{x}(t)+\mat{B}\vec{u}(t)$, where
-$\forall t\geq 0.\,\vec{u}(t)=\vec{u}$, $\mat{A}=\mat{S}\mat{J}\mat{S}^{-1}$, and $\mat{S}$ are the generalized eigenvectors of $\mat{A}$,
+$\forall t\geq 0\,\vec{u}(t)=\vec{u}$, $\mat{A}=\mat{S}\mat{J}\mat{S}^{-1}$, and $\mat{S}$ are the generalized eigenvectors of $\mat{A}$,
 evaluated at time $T$ is
 %
 \begin{align}
@@ -1145,11 +1145,13 @@ we use $\left[\begin{array}{cc}\mat{A}_T&\mat{B}_T\\
 $\lambda_i$ are the eigenvalues of $\mat{A}$, and $gm(\lambda_i)$ is the geometric multiplicity of $\lambda_i$.
 %
 
-If $\mat{J}$ is diagonal and there exists a discrete dynamics matrix for a sampling time $T_d$ such that $A_d=e^{\mat{A} T_d}$, then 
-$$\vec{x}_T=A_d^{\frac{T}{T_d}}\vec{x}_0+(\mat{I}-\mat{A}_d^{\frac{T}{T_d}})\mat{B}_d\vec{u}
-\text{ with } T \in \mathbb{R}_0^+$$
-where $\mat{A}_d^{\frac{T}{T_d}} =e^{log(\mat{A}_d) \frac{T}{T_d}} = e^{\mat{A} T}$,
-is the state of the system at time $t=T$. 
+If $\mat{J}$ is diagonal and there exists a discrete dynamics matrix for a sampling time $T_d$ such that $A_d=e^{\mat{A} T_d}$, 
+then $\forall T \in \mathbb{R}_0^+$ 
+$$
+\vec{x}_T=A_d^{\frac{T}{T_d}}\vec{x}_0+(\mat{I}-\mat{A}_d^{\frac{T}{T_d}})\mat{B}_d\vec{u}, 
+$$
+where $\mat{A}_d^{\frac{T}{T_d}} =e^{log(\mat{A}_d) \frac{T}{T_d}} = e^{\mat{A} T}$. 
+%is the state of the system at time $t=T$. 
 \end{lemma}
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
