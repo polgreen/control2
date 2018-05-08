@@ -2745,13 +2745,40 @@ benchmark coverage and together solve 54\% of the benchmarks.
 \caption{Experimental results\label{tab:results}}
 \end{table*}
 
+The median run-time for our benchmark set is 6.6\,s for fixed-point and 5.45\,s for floating-point. 
+We consider these times short enough to be of practical use to control engineers, and thus affirm EG1.
+
+There are a few instances for which the system fails to find a controller. 
+For the na\"ive approach, the completeness threshold may be too large, thus
+causing a timeout.  On the other hand, the abstraction-based approach may
+require a very precise abstraction, resulting in too many refinements and,
+consequently, in a timeout.  Yet another source of incompleteness is the
+inability of the {\sc synthesize} phase to use a large enough precision for
+the plant model.
 
 %-------------------------------
 \subsection{Threats to validity}
 \label{exp:threats-to-validity}
 %-------------------------------
 
-\textcolor{red}{Lucas: describe here the threats to validity}
+\textit{Benchmark selection:} We report an assessment of both our approaches
+over a diverse set of real-world benchmarks.  Nevertheless, this set of
+benchmarks is limited within the scope of this paper and the performance may
+not generalize to other benchmarks.\\
+%
+\textit{Plant precision and discretization heuristics:} Our algorithm to
+select suitable FWL word widths to model the plant behavior 
+increases the precision by 8 bits at each step 
+in order to be compliant with the CBMC type API. 
+Similarly, for discretization, we run multiple discretizations for each
+benchmark and retain the fastest run.
+This works sufficiently well for our benchmarks, but
+performance may suffer in some cases, for example if the completeness
+threshold is high.\\
+%
+\textit{Abstraction on other properties:} The performance gain from abstract
+acceleration may not hold for more complex properties than safety, for
+instance ``eventually reach and always remain in a given safe set''.
 
 %-------------------------------
 \section{Conclusions}
