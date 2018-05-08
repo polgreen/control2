@@ -2686,15 +2686,15 @@ precision for the controller, $\mathcal{F}_{\langle I_c,F_c \rangle}$, is
 chosen to be $I_c = 8$, $F_c = 8$ for fixed-point and 
 $\mathcal{F}_{\langle p \rangle}$ is chosen to be half-precision for floating-point.
 
-For the majority of our benchmarks, we observe that the abstraction-based
+We split our evaluation into two sets of results: fixed- and floating-point. 
+For the majority of the fixed-point benchmarks, we observe that the abstraction-based
 back-end is faster than the basic multi-staged verification approach, and
-finds one solution more (9) than the multi-staged back-end (8).  In direct
+finds one solution more (14) than the multi-staged back-end (13).  In direct
 comparison, the abstraction-based approach is on average able to find a
-solution in approximately 70\% of the time required using the multi-staged
-back-end, and has a median run-time 1.4\,s, which is seven times smaller
+solution in approximately 53\% of the time required using the multi-staged
+back-end, and has a median run-time 0.5\,s, which is twenty times smaller
 than the multi-staged approach.  The two back-ends complement each other in
-benchmark coverage and together solve all benchmarks in the set.  On average
-our engine spent 52\% in the synthesis and 48\% in the verification phase.
+benchmark coverage and together solve 58\% of the benchmarks.
 
 \begin{table*}
 \centering
