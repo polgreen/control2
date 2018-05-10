@@ -2647,24 +2647,17 @@ that is a computer storage device used to read and write data on magnetic tapes.
 %orientation of a satellite with respect to an 
 %inertial frame during all the excursion. 
 
-
-
 %Here, these benchmarks are used to evaluate the proposed control 
 %synthesis technique under critical conditions, {\it i.e.}, with a large number of parameters 
 %to be considered.
-
  
-
-
-
-	
 %-------------------------------
 \subsection{Objectives}
 \label{exp:objectives}
 %-------------------------------
 
-Using the state-space models given in Section~\ref{exp:benchmarks}, 
-our evaluation has the following two experimental goals:
+Using the state-space models described in Section~\ref{exp:benchmarks}, 
+the evaluation study has the following two experimental goals: 
 
 \begin{enumerate}
 
@@ -2672,8 +2665,8 @@ our evaluation has the following two experimental goals:
 CEGIS approaches are able to generate FWL digital controllers using floating-point arithmetic 
 in a reasonable amount of time.
 
-\item[EG2] \textbf{(sanity check)} Confirm the
-stability and safety of the synthesized controllers outside of our model.
+\item[EG2] \textbf{(Sanity check)} Confirm the
+stability and safety of the synthesized controllers \note{[this is unclear, rephrase:]outside of our model.} 
 
 \end{enumerate}
 
@@ -2682,18 +2675,18 @@ stability and safety of the synthesized controllers outside of our model.
 \label{exp:results}
 %-------------------------------
 
-We provide the results in Table~\ref{tab:results}.  Here 
-\textit{Benchmark} is the name of the respective benchmark, 
-\textit{Order} is the number of continuous variables, 
+We provide the results in Table~\ref{tab:results}, 
+where \textit{Benchmark} is the name of the respective benchmark, 
+\textit{Order} is the number of continuous variables of the model, 
 $\mathcal{F}_{\langle I_p,F_p \rangle}$ and $\mathcal{F}_{\langle p \rangle}$  
-are the fixed- and floating-point precision used to model the plant, respectively;
-while \textit{Time} is the total time required to synthesize a controller for the given
-plant with one of the two methods.  Timeouts are indicated by~\xmark.  The
-precision for the controller, $\mathcal{F}_{\langle I_c,F_c \rangle}$, is
-chosen to be $I_c = 8$, $F_c = 8$ for fixed-point and 
-$\mathcal{F}_{\langle p \rangle}$ is chosen to be half-precision for floating-point.
+are the fixed- and floating-point precisions used to model the plant, respectively,  
+and \textit{Time} is the total time required to synthesize a controller for the given plant.    
+Timeouts are indicated by~\xmark.  \note{ we should distinguish between timeouts and failures to synthesise. }
+The precision for the controller, $\mathcal{F}_{\langle I_c,F_c \rangle}$, is
+chosen to be $I_c = 8$, $F_c = 8$ for fixed-point, whereas  
+$\mathcal{F}_{\langle p \rangle}$ is chosen to be half-precision for floating-point. \note{what about $\mathcal{F}_{\langle I_p,F_p \rangle}$?}
 
-We split our evaluation into two sets of results: fixed- and floating-point. 
+We separate our evaluation into two sets of results: fixed- and floating-point. 
 For the majority of the fixed-point benchmarks, we observe that the abstraction-based
 back-end is faster than the basic multi-staged verification approach, and
 finds one solution more (14) than the multi-staged back-end (13).  In direct
