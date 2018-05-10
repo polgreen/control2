@@ -1423,11 +1423,10 @@ leverages abstraction refinement and acceleration to improve
 scalability while retaining soundness.
 
 %-------------------------------
-\subsection{Na\"ive approach} 
+\subsection{Multi-stage approach} 
 \label{sssec:naive}
 %-------------------------------
 
-\textcolor{red}{[We call this approach either naive or multi-stage. Let us pick a single attribute, which I recommend to be the latter (multi-stage). Naive is excessively debutant.]} 
 
 \begin{figure*}[htb]
 \scriptsize\centering
@@ -1627,7 +1626,7 @@ large.
 \label{sssec:abstraction}
 %-------------------------------
 
-\textcolor{red}{[Dario: once Elizabeth has updated the description of the naive approach, can you update the following part, aligning it with hers?]}
+\textcolor{red}{[Dario: can you update the following part, aligning it with hers?]}
 
 %  The na\"ive approach described in Sec.~\ref{sec:CEGIS-precision-incrementation}
   %uses a multi-staged verification phase and performs solution generalization based on
@@ -1897,8 +1896,6 @@ $z^n+\sum_{i=1}^n(a_i-k_i)z^{n-i}=\prod_{i=1}^n (z-\lambda_i) \text{ where } |\l
 \label{sec:numeric_rep}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-\textcolor{red}{Elizabeth: this section needs to be updated to describe floating-point arithmetics.}
-
 As discussed in section~\ref{sec:}, the models we consider have errors due to several sources; the numerical error introduced by the precision used to represent the plant, the error introduced by the ADC conversion, and the error introduced by the precision used to represent the controller. First we consider the numerical errors introduced by the finite precision numbers (either fixed or floating point) used to model the plant and used by the digital controller. Then we account for the quantization errors introduced by the ADC.
 
 \subsection{Errors due to numerical representation}
@@ -1984,7 +1981,7 @@ We use $\mathcal{F}_{\langle E_c,M_c \rangle}(x)$ to denote a real number repres
 
 \subsection{ADC/DAC quantization errors} 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-In this section we describe how quantization errors can be modelled as noise. Note that this is only applicable to the acceleration back end, as the naive back end makes use of CBMC's bit-precise model checking capabilities to account for these deterministic errors.
+In this section we describe how quantization errors can be modelled as noise. Note that this is only applicable to the acceleration back end, as the multi-stage back end makes use of CBMC's bit-precise model checking capabilities to account for these deterministic errors.
 
 During any given ADC conversion, the continuous signal will be sampled in
 the real domain and transformed by $\mathcal{F}\langle I_{c},F_{c} \rangle
@@ -2559,7 +2556,7 @@ experiments.\footnote{\url{XXXXXXXXXX}}
 
 \textcolor{red}{This paragraph needs to be updated by Elizabeth and Dario.}
 
-The entire implementation consists of $XXX$ and $XXX$ lines of C code in the naive and abstract
+The entire implementation consists of $XXX$ and $XXX$ lines of C code in the multi-stage and abstract
 accelerator back-ends, respectively, $XXXX$ lines of C code for utility functions such as interval, 
 fixed- and floating-point arithmetic, as well as $1000$ lines of C++ code in the control synthesis
 module in CEGIS CBMC.  We evaluate \tool~using $XXX$ SISO control system
@@ -2732,8 +2729,8 @@ benchmark coverage and together solve 54\% of the benchmarks.
 8  & Chen\_ex4 & 9 & & ~\xmark & & ~\xmark & & ~\xmark & & ~\xmark\\
 9  & Cruise    & 1 & 16,8 & 6.6\,s & 16,10 & 6.5\,s & 24,14 & 0.3\,s& 16,10 & 0.3\,s\\
 10 & CruiseHSCC & 1 & 16,8 & 6.6\,s & 16,10 & 6.6\,s &  24,14 & 0.3\,s & 16,10 & 0.3\,s \\
-11 & Cstr & 1 & & ~\xmark & & ~\xmark & & ~\xmark & & ~\xmark\\
-12 & Cstrtmp  & 1 &  & ~\xmark & & ~\xmark & 24,14 & 0.5\,s & & ~\xmark\\
+11 & Cstr & 3 & & ~\xmark & & ~\xmark & & ~\xmark & & ~\xmark\\
+12 & Cstrtmp  & 3 &  & ~\xmark & & ~\xmark & 24,14 & 0.5\,s & & ~\xmark\\
 13 & DCmotor   & 2 & 16,8  & 6.9\,s & 16,10 & 7.8\,s & 24,14 & 0.4\,s & 16,10 & 0.5\,s \\
 14 & Flexbeam   & 6 & & ~\xmark & & ~\xmark & 24,14 & 72.1\,s & & ~\xmark\\
 15 & Guidance chen  & 5 & & ~\xmark & & ~\xmark & & ~\xmark & & ~\xmark\\
