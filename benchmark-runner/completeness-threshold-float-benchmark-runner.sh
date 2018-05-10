@@ -157,7 +157,7 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
     else
      echo_log "./precision_check ${k_size} ${controller_params}"
      ./precision_check ${k_size} ${controller_params}
-     if [ $? -eq 0 ]; then
+     if [ $? -eq 0 ] || [ ${k_size_index} -eq 0 ]; then
       times >${time_tmp_file}; end_time=$(get_current_cpu_millis)
       echo_success_message ${start_time} ${end_time}
       echo_log "<controller>${controller_params}</controller>"
