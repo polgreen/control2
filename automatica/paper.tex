@@ -2670,6 +2670,8 @@ stability and safety of the synthesized controllers \note{[this is unclear, reph
 
 \end{enumerate}
 
+\note{Perhaps rather than `safety check' we could speak about robustness to changes in sampling time.}
+
 %-------------------------------
 \subsection{Results}
 \label{exp:results}
@@ -2687,23 +2689,23 @@ chosen to be $I_c = 8$, $F_c = 8$ for fixed-point, whereas
 $\mathcal{F}_{\langle p \rangle}$ is chosen to be half-precision for floating-point. \note{what about $\mathcal{F}_{\langle I_p,F_p \rangle}$?}
 
 We separate our evaluation into two sets of results: fixed- and floating-point. 
-For the majority of the fixed-point benchmarks, we observe that the abstraction-based
+For the majority of the {\it fixed-point} benchmarks, we observe that the abstraction-based
 back-end is faster than the basic multi-staged verification approach, and
-finds one solution more (14) than the multi-staged back-end (13).  In direct
-comparison, the abstraction-based approach is on average able to find a
+finds a solution for more benchmarks (14) than the multi-staged back-end (13) \note{we should clarify that this is out of 26 in total, not 191?}.  
+In direct comparison, the abstraction-based approach is on average able to find a
 solution in approximately 53\% of the time required using the multi-staged
 back-end, and has a median run-time 0.5\,s, which is twenty times smaller
-than the multi-staged approach.  The two back-ends complement each other in
-benchmark coverage and together solve 58\% of the benchmarks.
+than the multi-staged approach.  The two back-ends complement each other in terms of 
+benchmark coverage, and together solve 58\% of the benchmarks \note{only? this does not sound much really}.  
 %
-For the majority of the floating-point benchmarks, we also observe that the abstraction-based
-back-end is much faster than the basic multi-staged verification approach, but both
-back-ends find the same amount of solutions (13).  In direct
-comparison, the abstraction-based approach is on average able to find a
+For the majority of the benchmarks with {\it floating-point} implementation, 
+we also observe that the abstraction-based back-end is much faster than the basic multi-staged verification approach, 
+but both back-ends find the same amount of solutions (13).  
+In direct comparison, the abstraction-based approach is on average able to find a
 solution in approximately 50\% of the time required using the multi-staged
 back-end, and has a median run-time 0.6\,s, which is forty times smaller
 than the multi-staged approach.  The two back-ends complement each other in
-benchmark coverage and together solve 54\% of the benchmarks.
+benchmark coverage and together solve 54\% of the benchmarks \note{somewhat underwhelming}.
 
 \begin{table*}
 \centering
@@ -2745,15 +2747,13 @@ benchmark coverage and together solve 54\% of the benchmarks.
 \caption{Experimental results\label{tab:results}}
 \end{table*}
 
-The median run-time for our benchmark set is 6.6\,s for fixed-point and 5.45\,s for floating-point. 
-We consider these times short enough to be of practical use to control engineers, and thus affirm EG1.
+The median run-time for \note{the successful} benchmarks is 6.6\,s for the fixed-point and 5.45\,s for floating-point implementations, respectively.  
+We consider these times short enough to be of practical use to control engineers, and thus affirm the validity of EG1.
 
-There are a few instances for which the system fails to find a controller. 
-For the na\"ive approach, the completeness threshold may be too large, thus
-causing a timeout.  On the other hand, the abstraction-based approach may
-require a very precise abstraction, resulting in too many refinements and,
-consequently, in a timeout.  Yet another source of incompleteness is the
-inability of the {\sc synthesize} phase to use a large enough precision for
+There are \note{a few [you mean half!]} instances for which both approaches fail to synthesise a controller.  
+For the multi-stage approach, the completeness threshold may be too large, thus causing a timeout.  
+On the other hand, the abstraction-based approach may require a very precise abstraction, resulting in too many refinements and, consequently, again in a timeout.  
+Yet another source of incompleteness is the inability of the {\sc synthesize} phase to use a large enough precision for
 the plant model.
 
 %-------------------------------
@@ -2780,12 +2780,33 @@ threshold is high.\\
 acceleration may not hold for more complex properties than safety, for
 instance ``eventually reach and always remain in a given safe set''.
 
+\note{So, what about EG2? Shall we assert it? }
+
 %-------------------------------
 \section{Conclusions}
 \label{sec:conclusions}
 %-------------------------------
 
-\textcolor{red}{Cristina: Can you please write an initial version of the conclusions?}
+We have presented two automated approaches to synthesize digital
+state-feedback controllers that ensure both stability and safety over state-space models.   
+The first approach relies on unfolding of the closed-loop model dynamics up to a completeness threshold, while the second
+one applies abstraction-refinement and acceleration to increase speed, whilst retaining soundness.
+%
+Both approaches are novel within the control literature: they give a fully
+automated synthesis method that is algorithmically and numerically sound,
+considering various error sources in the implementation of the digital
+control algorithm and in the computational modeling of plant dynamics.
+%
+Our experimental results show that both approaches are able to synthesize fully automatically 
+safe controllers for most benchmarks, which have been derived from the control literature, 
+within a reasonable amount of time.  
+
+\note{Let us collect here the main extensions we regard to be relevant: \\ 
+models with partial observations; \\ 
+implementation with SMT; \\ 
+continuous-time; \\ 
+more complex specs; \\ 
+\ldots }
 
 %\addtodo{[Move material from \ref{sec:rw} here]}
 
