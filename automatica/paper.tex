@@ -278,7 +278,7 @@ inductive synthesis (CEGIS)~\cite{jha-icse10,
   a technique from formal methods that has recently shown much promise and which we export in this work to a control-theoretical setup.  
 CEGIS is an iterative process, where each iteration performs inductive
 generalisation based on counterexamples provided by a verification
-oracle \note{see Figure xxx}. The inductive generalisation uses information 
+oracle (see Section~\ref{ssec:cegis}). The inductive generalisation uses information 
 about a limited number of inputs to compute a candidate solution
 for the entire range of possible inputs. Our two instantiations of CEGIS are described next.
 
@@ -378,18 +378,18 @@ specific extensions over~\cite{DBLP:conf/cav/AbateBCCDKKP17}):
 \textbf{CEGIS --} Program synthesis is the problem of computing
 correct-by-design programs from high-level specifications. Algorithms
 for this problem have made substantial progress in recent years, in
-particular CEGIS, which is a recent approach to inductive synthesis
-borrowing ideas from counterexample guided abstraction refinement
-(CEGAR)~\cite{DBLP:conf/cav/ClarkeGJLV00} and
-superoptimisation~\cite{DBLP:conf/iclp/BrainCVF06,
-  DBLP:conf/asplosss/Massalin87}.  
-\note{might be confusing that we relate the CEGAR architecture also to Abstract Acceleration?}   
-This approach uses an iterative
-process \note{cf. Fig. XX}, where each iteration performs inductive generalisation based
-on counterexamples provided by a verification oracle.  In the absence
-of complete specifications, oracles are queried to distinguish between
-non-equivalent
-programs~\cite{jha-icse10,DBLP:conf/fmcad/AlurBJMRSSSTU13}.
+particular CEGIS, which is a recent approach to inductive synthesis.
+%% borrowing ideas from counterexample guided abstraction refinement
+%% (CEGAR)~\cite{DBLP:conf/cav/ClarkeGJLV00} and
+%% superoptimisation~\cite{DBLP:conf/iclp/BrainCVF06,
+%%   DBLP:conf/asplosss/Massalin87}.  
+%% \note{might be confusing that we relate the CEGAR architecture also to Abstract Acceleration?}   
+%% This approach uses an iterative
+%% process (see Section~\ref{ssec:cegis}), where each iteration performs inductive generalisation based
+%% on counterexamples provided by a verification oracle.  In the absence
+%% of complete specifications, oracles are queried to distinguish between
+%% non-equivalent
+%% programs~\cite{jha-icse10,DBLP:conf/fmcad/AlurBJMRSSSTU13}.
 
 %% for instance~\cite{itzhaky2010simple} 
 %% to inductively synthesize invariants for the generation of desired programs.
