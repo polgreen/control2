@@ -505,86 +505,6 @@ Similarly,
 \label{sec:model}
 %-------------------------------
 
-We consider models of physical plants expressed as ordinary differential
-equations, which we assume to be controllable~\cite{Astrom08}: 
-%
-\begin{align}
-\label{eq:ode1}
-\dot{x}(t) = \mat{A}\vec{x}(t)+ \mat{B} \vec{u}(t), 
-\end{align}
-%
-where 
-$\vec{x} \in \mathbb{R}^p$,  
-$\vec{u} \in \mathbb{R}^q$, 
-$\mat{A} \in \mathbb{R}^{p \times p}$, 
-$\mat{B} \in \mathbb{R}^{p \times q}$,
-and $t \in \mathbb R_0^+$ denotes continuous time. 
-%$\mat{A}$ and $\mat{B}$ are matrices that fully characterize the dynamics of the continuous plant,
-We denote with $x(0)$ the initial state of the model.
-
-Equation~\eqref{eq:ode1} is 
-%soundly 
-discretized in time~\cite{middleton1990digital,van1978computing} at constant time intervals,
-of duration $T_s$ (the sample time), 
-into the difference equation
-%
-\begin{align}
-\label{eq:plant}
-\vec{x}_{k+1} =& \mat{A}_d \vec{x}_k+ \mat{B}_d \vec{u}_k, 
-\end{align} 
-where 
-$\mat{A}_d=e^{\mat{A}T_s}$ and 
-$\mat{B}_d = \int_{t = 0}^{T_s} e^{\mat{A} t} dt\ \mat{B}$, 
-$k \in \mathbb N$ is a discrete counter and where $\vec{x}_{0}=\vec{x}(0)$ denotes the initial state.  
-
-Models \eqref{eq:ode1} and \eqref{eq:plant} depend on external non-determinism in the form of input signals $u (t)$ and  $u_k$, respectively. 
-Feedback architectures can be employed to manipulate the properties and behaviors of the plant:    
-we are interested in the synthesis of digital feedback controllers $u_k$,  
-as practically implemented on Field-Programmable Gate Arrays or Digital Signal Processors. 
-\note{next: why only this single issue, rather than all discretisation effects as presented earlier?} Later, we will address the issue of variable quantization, 
-introduced by ADC/DAC conversion blocks of Figure \ref{fig:digitalsystem}, 
-as classically studied in \cite{astrom1997computer}. 
-
-We consider state feedback control architectures, 
-where $u_k$ (notice we work with the discretized signal) is $u_k = r_{k} - K x_k$. 
-Here $K \in \mathbb{R}^{m \times n}$ is a state-feedback gain matrix, 
-and $r_{k}$ is a reference signal (again digital). 
-We will assume $r_k=0$, thus 
-$\vec{x}_{k+1}=(\mat{A}_d-\mat{B}_d\mat{K})\vec{x}_k$. 
-
-%-------------------------------
-\subsection{Errors}
-
-\note{back end vs back-end?} 
-
-We account for the presence of errors originating from a number of sources, shown in Figure~\ref{} \note{fix}:
-\begin{itemize}
-\item We represent the plant variables $x(t)$ and $u(t)$, which are continuous quantities, with finite precision in our model. 
-It is necessary to account for the errors introduced by this representation: 
-we account for these errors in both back ends \note{did we explain the two back ends already?} by using interval arithmetic, as detailed in section~\ref{} \note{fix}. 
-\item The quantisation errors by the ADC, which converts the analogue signal $x(t)$ into the digital signal $x_k$, 
-which is then fed into the controller \note{cf. Figure~\ref{} }. 
-We account for this error in the acceleration-based back-end by introducing a noise signal $\nu_1$ that over-approximates it. Further details are found in section~\ref{}.  
-In the naive back-end we use bit-precise modelling in \note{[clear? discussed before?] CBMC}~\cite{} to accurately encompass this conversion.   
-In other words, CBMC constructs a boolean formula that explicitly unwinds the transition system for any \note{[unclear] symbolically represented} input state, 
-\note{[unclear how the initial conditions bound the input state? use formulas or figure to explain.] bounded by the initial conditions}, 
-and performs the ADC conversion precisely on that symbolically represented input state. 
-When we check for a safety property, 
-the boolean formula is satisfied only if there is an input state value for which the subsequent trace through the transition system eventually violates the safety property.  
-\item The representation errors due to performing finite-precision arithmetic in the controller block. 
-In the acceleration-based back-end, 
-this is again treated by the introduction of a noise signal that bounds the error. 
-The naive back-end uses the bit-precise modelling of finite-precision arithmetic in CBMC, 
-in the same way as we handled the ADC conversion. 
-We assume that the controller represents numbers to the same precision as the ADC \note{why is this legit?}. 
-\item We assume \note{why is this reasonable?} that the DAC converts numbers to analogue signals with the same precision as the controller. 
-As a result we can ignore any additional errors introduced by the DAC.  
-\end{itemize}
-
-
-
-
-
 \begin{figure*}[htb]
 \centering
 
@@ -681,21 +601,98 @@ As a result we can ignore any additional errors introduced by the DAC.
 \end{figure*}
 
 
+We consider models of physical plants expressed as ordinary differential
+equations, which we assume to be controllable~\cite{Astrom08}: 
+%
+\begin{align}
+\label{eq:ode1}
+\dot{x}(t) = \mat{A}\vec{x}(t)+ \mat{B} \vec{u}(t), 
+\end{align}
+%
+where 
+$\vec{x} \in \mathbb{R}^p$,  
+$\vec{u} \in \mathbb{R}^q$, 
+$\mat{A} \in \mathbb{R}^{p \times p}$, 
+$\mat{B} \in \mathbb{R}^{p \times q}$,
+and $t \in \mathbb R_0^+$ denotes continuous time. 
+%$\mat{A}$ and $\mat{B}$ are matrices that fully characterize the dynamics of the continuous plant,
+We denote with $x(0)$ the initial state of the model.
+
+Equation~\eqref{eq:ode1} is 
+%soundly 
+discretized in time~\cite{middleton1990digital,van1978computing} at constant time intervals,
+of duration $T_s$ (the sample time), 
+into the difference equation
+%
+\begin{align}
+\label{eq:plant}
+\vec{x}_{k+1} =& \mat{A}_d \vec{x}_k+ \mat{B}_d \vec{u}_k, 
+\end{align} 
+where 
+$\mat{A}_d=e^{\mat{A}T_s}$ and 
+$\mat{B}_d = \int_{t = 0}^{T_s} e^{\mat{A} t} dt\ \mat{B}$, 
+$k \in \mathbb N$ is a discrete counter and where $\vec{x}_{0}=\vec{x}(0)$ denotes the initial state.  
+
+Models \eqref{eq:ode1} and \eqref{eq:plant} depend on external non-determinism in the form of input signals $u (t)$ and  $u_k$, respectively. 
+Feedback architectures can be employed to manipulate the properties and behaviors of the plant:    
+we are interested in the synthesis of digital feedback controllers $u_k$,  
+as practically implemented on Field-Programmable Gate Arrays or Digital Signal Processors. 
+\note{next: why only this single issue, rather than all discretisation effects as presented earlier?} Later, we will address the issue of variable quantization, 
+introduced by ADC/DAC conversion blocks of Figure \ref{fig:digitalsystem}, 
+as classically studied in \cite{astrom1997computer}. 
+
+We consider state feedback control architectures, 
+where $u_k$ (notice we work with the discretized signal) is $u_k = r_{k} - K x_k$. 
+Here $K \in \mathbb{R}^{m \times n}$ is a state-feedback gain matrix, 
+and $r_{k}$ is a reference signal (again digital). 
+We will assume $r_k=0$, thus 
+$\vec{x}_{k+1}=(\mat{A}_d-\mat{B}_d\mat{K})\vec{x}_k$. 
+
+%-------------------------------
+\subsection{Errors}
+
+\note{back end vs back-end?} 
+
+We account for the presence of errors originating from a number of sources, shown in Figure~\ref{} \note{fix}:
+\begin{itemize}
+\item We represent the plant variables $x(t)$ and $u(t)$, which are continuous quantities, with finite precision in our model. 
+It is necessary to account for the errors introduced by this representation: 
+we account for these errors in both back ends \note{did we explain the two back ends already?} by using interval arithmetic, as detailed in section~\ref{} \note{fix}. 
+\item The quantisation errors by the ADC, which converts the analogue signal $x(t)$ into the digital signal $x_k$, 
+which is then fed into the controller \note{cf. Figure~\ref{} }. 
+We account for this error in the acceleration-based back-end by introducing a noise signal $\nu_1$ that over-approximates it. Further details are found in section~\ref{}.  
+In the naive back-end we use bit-precise modelling in \note{[clear? discussed before?] CBMC}~\cite{} to accurately encompass this conversion.   
+In other words, CBMC constructs a boolean formula that explicitly unwinds the transition system for any \note{[unclear] symbolically represented} input state, 
+\note{[unclear how the initial conditions bound the input state? use formulas or figure to explain.] bounded by the initial conditions}, 
+and performs the ADC conversion precisely on that symbolically represented input state. 
+When we check for a safety property, 
+the boolean formula is satisfied only if there is an input state value for which the subsequent trace through the transition system eventually violates the safety property.  
+\item The representation errors due to performing finite-precision arithmetic in the controller block. 
+In the acceleration-based back-end, 
+this is again treated by the introduction of a noise signal that bounds the error. 
+The naive back-end uses the bit-precise modelling of finite-precision arithmetic in CBMC, 
+in the same way as we handled the ADC conversion. 
+We assume that the controller represents numbers to the same precision as the ADC \note{why is this legit?}. 
+\item We assume \note{why is this reasonable?} that the DAC converts numbers to analogue signals with the same precision as the controller. 
+As a result we can ignore any additional errors introduced by the DAC.  
+\end{itemize}
+
+
 %-------------------------------
 \subsection{Counterexample Guided Inductive Synthesis - CEGIS} 
 \label{ssec:cegis}
 %-------------------------------
 
-\begin{figure*}
+\begin{figure}
 %\hspace{-2cm}
 \centering
-\resizebox{.57\textwidth}{!}{
+\resizebox{.48\textwidth}{!}{
  \begin{tikzpicture}[scale=0.3,->,>=stealth',shorten >=.2pt,auto,
  semithick, initial text=, ampersand replacement=\&,]
 
   \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center
 },
-          row sep=1cm, column sep=3.5cm] {
+          row sep=1cm, column sep=2cm] {
    \node[fill=gray!20,minimum height=1cm] (synth) {{\sc Synthesize}};
    \&
    \node[fill=gray!20,minimum height=1cm] (verif) {{\sc Verify}};
@@ -705,13 +702,13 @@ As a result we can ignore any additional errors introduced by the DAC.
   };
 
    \path
-   ([yshift=2em]synth.east) edge node[align=center] {Candidate solution} ([yshift=2em]verif.west)
-    ([yshift=-2em]verif.west) edge node[align=center] {Counterexample} ([yshift=-2em]synth.east)
+   ([yshift=2em]synth.east) edge node[align=center] {Candidate} ([yshift=2em]verif.west)
+    ([yshift=-2em]verif.west) edge node[align=center] {Counterex} ([yshift=-2em]synth.east)
     (verif) edge node {} (done);
  \end{tikzpicture}
 }
- \caption{The CEGIS framework\label{fig:CEGIS} \note{can we fit this figure within one column, and place it close to Sec 3.3?}}
-\end{figure*}
+ \caption{The CEGIS framework\label{fig:CEGIS}}
+\end{figure}
 
 In this section, we give a brief description of the CEGIS framework~\cite{jha-icse10,
   DBLP:conf/asplos/Solar-LezamaTBSS06}, which is illustrated in Figure~\ref{fig:CEGIS}. 
