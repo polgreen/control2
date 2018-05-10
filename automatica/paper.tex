@@ -2567,17 +2567,15 @@ benchmarks.
 \label{exp:evaluation}
 %-------------------------------
 
-%-------------------------------
-\subsection{Description of the control benchmarks}
-\label{exp:benchmarks}
-%-------------------------------
-
-%\textcolor{red}{Iury: can you please describe the benchmarks?}
-
 Our benchmark suite consists of 26 SISO models extracted from the 
 control literature~\cite{acrobot,cstr,CHEN1979389,KOKOTOVIC198023,gajic2008optimal,Franklin15, maglev, converters, CTMS, gajic2008optimal};
 these models are discretized with different sampling times, 
 leading to $191$ different benchmarks to evaluate the Multi-staged and Abstraction-based CEGIS algorithms. 
+
+%-------------------------------
+\subsection{Description of the control benchmarks}
+\label{exp:benchmarks}
+%-------------------------------
 
 The \textit{acrobot} (\#1) plant corresponds to the model of a two-link 
 underactuated robot manipulator, 
@@ -2600,46 +2598,48 @@ automotive cruise control models, where control is used to keep
 constant the speed of an automobile, tracking a desired speed reference, and compensating disturbances and uncertainties. % related to relief and terrain. 
 
 %There are two continuous stirred tank reactor models named 
-\textit{cstr} (\#11) and \textit{cstrtmp} (\#12) describe the PH dynamics of a neutralization reaction 
+\textit{cstr} (\#11) and \textit{cstrtmp} (\#12) describe the PH dynamics of a reaction 
 of an aqueous solution of sodium acetate with hydrochloric acid~\cite{cstr} and 
-the temperature of a exothermic reaction~\cite{astrom2006advanced} in a continuous 
-flow stirred-tank reactor. The \textit{DC motor} plant (\#13) describes the velocity 
-dynamics of a basic brushed direct current electrical machine. 
+the temperature of a reaction~\cite{astrom2006advanced} in a 
+%continuous flow stirred-
+tank reactor. The \textit{DC motor} plant (\#13) describes the velocity 
+dynamics of a 
+%basic brushed 
+direct-current electrical machine. 
 
-The \textit{Flexbeam} benchmark (\#14) is a plant employed in vibration studies; the 
-physical  system consists of a flexible metallic structure with piezoceramic 
-actuators and sensors. The \textit{guidance chen} benchmark (\#15) is another 
-high-order system model used by Chen et al.~\cite{CHEN1979389}  to evaluate 
-model order reduction techniques; it corresponds to a guidance control system model,
-which is used to determine the path of an autonomous vehicle movement. The 
-\textit{helicopter} benchmark plant (\#16) describes the dynamics of transitional motion 
-with respect to a longitudinal plane and the rotational motion around the longitudinal 
-axis for a coaxial helicopter.
+The \textit{Flexbeam} benchmark (\#14) is 
+%a plant 
+employed in vibration studies and models  
+%the physical system consists of 
+a flexible metallic structure with sensors and actuators. 
+The \textit{guidance chen} benchmark (\#15) is a high-order system model used by Chen et al.~\cite{CHEN1979389} to evaluate 
+model-order reduction techniques; it models a guidance control system, 
+which is used to determine the path of an autonomous vehicle. 
+The \textit{helicopter} benchmark plant (\#16) describes the transitional and rotational dynamics 
+%of transitional motion with respect to a longitudinal plane and the rotational motion around the longitudinal axis for 
+of a coaxial helicopter.
 
-The benchmarks \textit{Invpendulum\_cartpos} (\#17) and \textit{Invpendulum\_pendang} (\#18)
-are models for the cart position and the pendulum angle of an inverted pendulum 
-plant composed by a point mass, which must be equilibrated above the pivot point and is 
-mounted on an one degree of freedom cart that moves over a track through a DC motor.
+\textit{Invpendulum\_cartpos} (\#17) and \textit{Invpendulum\_pendang} (\#18) 
+are models for the cart position and the angle of an inverted pendulum placed on the cart,  
+%plant composed by a point mass, which must be equilibrated above the pivot point and is mounted on an one degree of freedom cart that 
+which moves over a track through a DC motor.
 
-The \textit{magpointer} (\#19) corresponds to a magnetic pointer plant composed by a pointer 
-employed in analogue gauges and indicators, whose angular position dynamics is 
-controlled by a magnetic field. The \textit{magsuspension} describes (\#20) the dynamic of
-a magnetic car suspension system. The \textit{pendulum} (\#21) plant consists of a swinging 
-point mass suspended from a frictionless pivot by means of a negligible mass rod.
+The \textit{magpointer} (\#19) describes a magnetic pointer, 
+% plant composed by a pointer employed in analogue gauges and indicators, 
+whose angular position dynamics is controlled by a magnetic field. 
+The \textit{magsuspension} describes (\#20) the dynamic of a magnetic car suspension system. 
+The \textit{pendulum} (\#21) plant consists of a swinging point mass suspended from a frictionless pivot by means of a rod with negligible mass.  
 
-The \textit{Regulator} (\#22) plant consists of a linear model of a synchronous electrical
-machine connected to an infinite bus~\cite{KOKOTOVIC198023}. The 
-\textit{springer-mass damper system} plant (\#23) is a classic model for several mechanical 
-systems dynamics. This benchmark describes a mass, which is fixed to a node by means 
-of a springer and moves under the action of an input force, damping, and elastic force.
-The \textit{steam drum} benchmark (\#24) describes the linear model for the level dynamics 
-of a  boiler steam drum~\cite{boiler}. 
+The \textit{Regulator} (\#22) consists of a linear model of a synchronous electrical machine% connected to an infinite bus
+~\cite{KOKOTOVIC198023}. 
+The \textit{springer-mass damper system} plant (\#23) is a standard model for the dynamics of several mechanical systems. 
+%This benchmark describes a mass, which is fixed to a node by means of a springer and moves under the action of an input force, damping, and elastic force.
+The \textit{steam drum} benchmark (\#24) describes a linear model for the level dynamics of a boiler steam drum~\cite{boiler}. 
 
-The \textit{suspension} (\#25) benchmark corresponds to the model of a single wheel suspension 
-system of a car, {\it i.e.}, the relative motion dynamics of a mass springer damp model, 
-which connects the car to one of its wheels.  The \textit{tapedriver} benchmark (\#26)
-corresponds to the model of a computer tape driver, \textit{i.e.}, a computer storage device 
-used to read and write data on magnetic tapes. 
+The \textit{suspension} (\#25) models a single-wheel suspension system of a car, 
+namely the relative motion dynamics of a mass springer damp model, which connects the car to one of its wheels.  
+The \textit{tapedriver} benchmark (\#26) models a computer tape driver, 
+that is a computer storage device used to read and write data on magnetic tapes. 
 
 %The \textit{USCG cutter tampa heading angle} plant describes the heading angle dynamics of a Coast 
 %Guard cutter. The \textit{satellite attitude control system} plant describes the dynamics of a satellite 
