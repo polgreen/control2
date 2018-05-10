@@ -553,30 +553,29 @@ $\vec{x}_{k+1}=(\mat{A}_d-\mat{B}_d\mat{K})\vec{x}_k$.
 %-------------------------------
 \subsection{Errors}
 
-\note{back end vs back-end?} 
-
 We account for the presence of errors originating from a number of sources, shown in Figure~\ref{} \note{fix}:
 \begin{itemize}
 \item We represent the plant variables $x(t)$ and $u(t)$, which are continuous quantities, with finite precision in our model. 
 It is necessary to account for the errors introduced by this representation: 
-we account for these errors in both back ends \note{did we explain the two back ends already?} by using interval arithmetic, as detailed in section~\ref{} \note{fix}. 
+we account for these errors in both approaches \note{did we explain the two back ends already?. Yes. In the introduction.} by using interval arithmetic, as detailed in section~\ref{} \note{fix}. 
 \item The quantisation errors by the ADC, which converts the analogue signal $x(t)$ into the digital signal $x_k$, 
 which is then fed into the controller \note{cf. Figure~\ref{} }. 
 We account for this error in the acceleration-based back-end by introducing a noise signal $\nu_1$ that over-approximates it. Further details are found in section~\ref{}.  
-In the naive back-end we use bit-precise modelling in \note{[clear? discussed before?] CBMC}~\cite{} to accurately encompass this conversion.   
-In other words, CBMC constructs a boolean formula that explicitly unwinds the transition system for any \note{[unclear] symbolically represented} input state, 
-\note{[unclear how the initial conditions bound the input state? use formulas or figure to explain.] bounded by the initial conditions}, 
-and performs the ADC conversion precisely on that symbolically represented input state. 
+In the multi-stage back-end we use bit-precise modelling in CBMC~\cite{}, a bounded model checker for C-programs, to accurately encompass this conversion.   
+In other words, CBMC constructs a boolean formula that explicitly unwinds the transition system for symbolically represented inital states. The 
+possible bounds that this symbolically represented initial state may take are restricted by upper and lower bounds as described in section~\label{ssec:safespecification}.
+The boolean formula constructed by CBMC models the ADC conversions precisely on the symbolically represented states at every time step. 
 When we check for a safety property, 
 the boolean formula is satisfied only if there is an input state value for which the subsequent trace through the transition system eventually violates the safety property.  
 \item The representation errors due to performing finite-precision arithmetic in the controller block. 
 In the acceleration-based back-end, 
 this is again treated by the introduction of a noise signal that bounds the error. 
-The naive back-end uses the bit-precise modelling of finite-precision arithmetic in CBMC, 
+The multi-stage back-end uses the bit-precise modelling of finite-precision arithmetic in CBMC, 
 in the same way as we handled the ADC conversion. 
-We assume that the controller represents numbers to the same precision as the ADC \note{why is this legit?}. 
-\item We assume \note{why is this reasonable?} that the DAC converts numbers to analogue signals with the same precision as the controller. 
-As a result we can ignore any additional errors introduced by the DAC.  
+We assume that the controller represents numbers at the same precision as the ADC. 
+\item We assume that the DAC converts numbers to analogue signals with the same precision as the controller, or to a greater precision. 
+As a result we can ignore any additional errors introduced by the DAC. This assumption and the previous assumption are reasonable
+assumptions based on the availability and cost of popular hardware. 
 \end{itemize}
 
 
@@ -1424,11 +1423,10 @@ leverages abstraction refinement and acceleration to improve
 scalability while retaining soundness.
 
 %-------------------------------
-\subsection{Na\"ive approach} 
+\subsection{Multi-stage approach} 
 \label{sssec:naive}
 %-------------------------------
 
-\textcolor{red}{[We call this approach either naive or multi-stage. Let us pick a single attribute, which I recommend to be the latter (multi-stage). Naive is excessively debutant.]} 
 
 \begin{figure*}[htb]
 \scriptsize\centering
@@ -1628,7 +1626,7 @@ large.
 \label{sssec:abstraction}
 %-------------------------------
 
-\textcolor{red}{[Dario: once Elizabeth has updated the description of the naive approach, can you update the following part, aligning it with hers?]}
+\textcolor{red}{[Dario: can you update the following part, aligning it with hers?]}
 
 %  The na\"ive approach described in Sec.~\ref{sec:CEGIS-precision-incrementation}
   %uses a multi-staged verification phase and performs solution generalization based on
@@ -1898,8 +1896,6 @@ $z^n+\sum_{i=1}^n(a_i-k_i)z^{n-i}=\prod_{i=1}^n (z-\lambda_i) \text{ where } |\l
 \label{sec:numeric_rep}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-\textcolor{red}{Elizabeth: this section needs to be updated to describe floating-point arithmetics.}
-
 As discussed in section~\ref{sec:}, the models we consider have errors due to several sources; the numerical error introduced by the precision used to represent the plant, the error introduced by the ADC conversion, and the error introduced by the precision used to represent the controller. First we consider the numerical errors introduced by the finite precision numbers (either fixed or floating point) used to model the plant and used by the digital controller. Then we account for the quantization errors introduced by the ADC.
 
 \subsection{Errors due to numerical representation}
@@ -1985,7 +1981,7 @@ We use $\mathcal{F}_{\langle E_c,M_c \rangle}(x)$ to denote a real number repres
 
 \subsection{ADC/DAC quantization errors} 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-In this section we describe how quantization errors can be modelled as noise. Note that this is only applicable to the acceleration back end, as the naive back end makes use of CBMC's bit-precise model checking capabilities to account for these deterministic errors.
+In this section we describe how quantization errors can be modelled as noise. Note that this is only applicable to the acceleration back end, as the multi-stage back end makes use of CBMC's bit-precise model checking capabilities to account for these deterministic errors.
 
 During any given ADC conversion, the continuous signal will be sampled in
 the real domain and transformed by $\mathcal{F}\langle I_{c},F_{c} \rangle
@@ -2560,7 +2556,7 @@ experiments.\footnote{\url{XXXXXXXXXX}}
 
 \textcolor{red}{This paragraph needs to be updated by Elizabeth and Dario.}
 
-The entire implementation consists of $XXX$ and $XXX$ lines of C code in the naive and abstract
+The entire implementation consists of $XXX$ and $XXX$ lines of C code in the multi-stage and abstract
 accelerator back-ends, respectively, $XXXX$ lines of C code for utility functions such as interval, 
 fixed- and floating-point arithmetic, as well as $1000$ lines of C++ code in the control synthesis
 module in CEGIS CBMC.  We evaluate \tool~using $XXX$ SISO control system
