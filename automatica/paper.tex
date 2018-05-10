@@ -325,19 +325,22 @@ specific extensions over~\cite{DBLP:conf/cav/AbateBCCDKKP17}):
   % floating point 
 \item We automatically generate \emph{correct-by-construction} digital
   controllers using an inductive synthesis approach (CEGIS).  
-  This application is non-trivial and addresses challenges specific to digital control
-  systems, such as the presence of A/D quantizers and FWL operations.  %% In particular, we
-  %% have found that a two-stage verification engine that continuously refines
-  %% the precision of the fixed-point representation of the plant yields a
-  %% speed-up of two orders of magnitude over a conventional one-stage
-  %% verification engine.
-%
-  %\item  We compute
-  The automatically computed state-feedback controllers 
-  guarantee a given safety specification alongside a stability property. 
-  \note{[this statement is way too broad] Existing methods for controller synthesis rely on transfer 
-  function representations, which are inadequate to prove safety requirements. } 
-%
+  %% This application is non-trivial and addresses challenges specific to digital control
+  %% systems, such as the presence of A/D quantizers and FWL operations.  
+  In addition a stability property, the automatically computed state-feedback
+  controllers must also guarantee a given safety specification.
+  The implication is that, as opposed to existing
+  methods for controller synthesis which rely on transfer function
+  representations, we must consider a state-space representation of
+  the physical system. Such a representation requires ensuring the
+  specification over actual traces of the model, alongside the
+  numerical soundness required by the effects of discretisation and
+  finite-precision errors.
+
+  
+%%   \note{[this statement is way too broad] Existing methods for controller synthesis rely on transfer 
+%%   function representations, which are inadequate to prove safety requirements. } 
+%% %
 \item We provide two novel algorithms: the first, a na\"ive approach, relies on 
   an unfolding of the dynamics up to a completeness threshold, while the
   second one is abstraction-based and leverages abstraction/refinement and
@@ -419,7 +422,7 @@ models: this results in a static check on their coefficients.  By contrast,
 in the current paper we consider a state-space representation of the
 physical system, which requires ensuring the specification over actual
 traces of the model, alongside the numerical soundness required by the
-effects of discretisation and finite-precision errors.  
+effects of discretisation and finite-precision errors.
 \note{Next paragraph is naive for a control audience - amend} 
 A~state-space model
 has known advantages over the transfer function
