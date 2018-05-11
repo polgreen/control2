@@ -1924,11 +1924,13 @@ the models we consider have to account for errors from several sources:
 the numerical error introduced by the finite precision used to represent the plant \note{(and its operations)},  
 the error introduced by the ADC\note{/DAC?} conversion, 
 and the error introduced by the limited precision used to represent the controller. 
-First we consider the numerical errors introduced by the finite precision numbers (either fixed or floating point) used to model the plant and used by the digital controller. 
+First we consider the numerical errors introduced by the finite precision numbers (either fixed- or floating-point) used to model the plant and used by the digital controller. 
 Then we account for the quantization errors introduced by the ADC\note{/DAC?}.
 
-\subsection{Errors due to numerical representation}
-First consider the case where we use fixed-point representations, and synthesise fixed-point controllers. 
+\subsection{Errors due to numerical representations} 
+
+Let us first consider the case of fixed-point representation of the model, 
+and of synthesis of fixed-point controllers. 
 
 Let $\mathcal{F}_{\langle I,F \rangle}(x)$ denote a real number $x$
 represented in a fixed point domain, with $I$ bits representing the integer
@@ -1985,14 +1987,17 @@ the domain.  We check that overflow does not occur.
 
 \end{enumerate}
 
-\subsection{Notation}
+\subsection{Notations}  
+
+\note{If these notations are used in earlier Sections, shall we anticipate the paragraph to the preliminaries? }
+
 In this paper we will use $\mathcal{F}_{\langle I_c,F_c \rangle}(x)$ to denote a real
 number $x$ represented at the fixed-point precision of the controller, and
 $\mathcal{F}_{\langle I_p,F_p \rangle}(x)$ to denote a real number $x$
 represented at the fixed-point precision of the plant model ($I_c$ and $F_c$
 are determined by the controller.  We pick $I_p$ and $F_p$ for our synthesis
-such that $I_p \geq I_c$ and $\allowbreak F_p \geq F_c$).  Thus any
-mathematical operations in our modelled digital controller will be in the
+such that $I_p \geq I_c$ and $\allowbreak F_p \geq F_c$ \note{why is this reasonable?}).  
+Thus any mathematical operations in our modelled digital controller will be in the
 range of $\mathcal{F}_{\langle I_c,F_c \rangle}$, and all other calculations
 in our model will be carried out in the range of $\mathcal{F}_{\langle
 I_p,F_p \rangle}$.  The physical plant operates in the reals, which means
@@ -2000,7 +2005,11 @@ our verification phase must also account for the numerical error and
 quantization errors caused by representing the physical plant at the finite
 precision $\mathcal{F}_{\langle I_p,F_p \rangle}$.
 
-\subsection{Floating point representation}
+\note{also introduce notations for floats?}
+
+\subsection{Floating-point representation}
+
+\note{Notice that this notation is different than the one used in the results section. pls fix. }
 
 Let $\mathcal{F}_{\langle E,M \rangle}(x)$ denote a real number $x$
 represented in a floating point domain, with $E$ bits representing the exponent
