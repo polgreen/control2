@@ -120,7 +120,8 @@
 
 %\thanksref{footnoteinfo}
 
-\title{Automated Formal Synthesis of Safe Digital Controllers\\
+\title{Automated Formal Synthesis\\ 
+of Safe Digital Controllers 
 for Continuous Plants}
 % Title, preferably not more
 % than 10 words.
@@ -648,6 +649,8 @@ and $r_{k}$ is a reference signal (again digital).
 We will assume $r_k=0$, thus 
 $\vec{x}_{k+1}=(\mat{A}_d-\mat{B}_d\mat{K})\vec{x}_k$. 
 
+\note{Anticipate here connection with characteristic polynomial?}
+
 %-------------------------------
 \subsection{Errors}
 
@@ -679,7 +682,7 @@ As a result we can ignore any additional errors introduced by the DAC.
 
 
 %-------------------------------
-\subsection{Counterexample Guided Inductive Synthesis - CEGIS} 
+\subsection{Counterexample-Guided Inductive Synthesis} 
 \label{ssec:cegis}
 %-------------------------------
 
@@ -715,7 +718,10 @@ In this section, we give a brief description of the CEGIS framework~\cite{jha-ic
   CEGIS has been recently used for the automated synthesis of software programs, 
   and its setup is naturally that of mathematical logic. 
 
-We consider an input specification of the form $\exists P .\, \forall a.\, \phi(a, P)$, 
+We consider an input specification of the form 
+$$
+\exists P .\, \forall a.\, \phi(a, P),
+$$  
 where $P$ ranges over functions (where a function is represented by the program computing it),
 $a$ ranges over ground terms, 
 and $\phi$ is a quantifier-free logical formula. 
@@ -746,32 +752,33 @@ set and the loop iterates again.  %% More details about the general
 If the solution space is finite then the CEGIS loop is guaranteed to
 terminate by either finding a solution or showing that no solution
 exists.
+
+\note{In the context of the formal synthesis of safe controllers, 
+the CEGIS architecture is applicable as follows: \ldots }
+
 %-------------------------------
 \section{Formal specification of properties on a model} 
 \label{sec:specification}
 %-------------------------------
 
-While in the previous section we have discussed the generic CEGIS
-framework, in the rest of the paper we will explain how we adapt it to
-the synthesis of digital controllers. For this purpose, we start by
-describing the specific property that we pass to the synthesizer as
-the specification $\phi$. Namely, we are interested in capturing
-stability and safety, which we discuss in Sections~\ref{ssec:stabspecification}
-and~\ref{ssec:safespecification}, respectively.
+%While in the previous section we have discussed the generic CEGIS framework, 
+In the rest of the paper we explain how to adapt the generic CEGIS framework to the synthesis of digital controllers. 
+We start by describing the specific property that we pass to the synthesizer as the specification $\phi$. 
+Namely, we are interested in capturing stability and safety, 
+which we discuss in Sections~\ref{ssec:stabspecification} and~\ref{ssec:safespecification}, respectively.
 
 %-------------------------------
 \subsection{Formal specification of stability} 
 \label{ssec:stabspecification}
 %-------------------------------
 
-
-  There are a number of algorithms in our verification engine that can
-  be used for stability analysis~\cite{daes20161, Bessa16}.
+There are a number of procedures that can be used for stability analysis of dynamical models~\cite{daes20161, Bessa16}, 
+which can fit our automatic verification engine.  
 %one based on Schur's decomposition
 %and another one based on Jury's criterion~\cite{astrom1997computer}.  
-Here we choose Jury stability criterion~\cite{astrom1997computer} in view of its efficiency 
-and ease of integration within our implementation: 
-this method checks the stability working in the $z$-domain of the characteristic polynomial $S(z)$,  
+Here we choose Jury stability criterion~\cite{astrom1997computer}, 
+in view of its efficiency and ease of integration within our implementation.  
+This method checks the stability working in the complex domain of the characteristic polynomial $S(z)$,  
 %
 % of the matrix $\left( \begin{array}{c} Y \\ U \end{array}\right)$, where $Y(z)$ is the closed-loop system output and U(z) is the controller output. 
 %% \red{[unclear: what matrix? We need to clarify the relationship
@@ -783,14 +790,14 @@ considered in its general form as
 % for $S(z)$:
 %
 \begin{equation*}
-S(z) = a_0z^N+a_1z^{N-1}+\cdots+a_{N-1}z+a_N=0, a_0\neq0. 
+S(z) = a_0z^N+a_1z^{N-1}+\cdots+a_{N-1}z+a_N,\,\, a_0\neq0. 
 \end{equation*}
+\note{The characteristic polynomial $S(z)$ represents the dynamical model in \ldots }
 %\cdsay{is this for the matrix $\left( \begin{array}{c} Y \\ U \end{array}\right)$?} 
 % Assuming that $\hat{G}(z) = \frac{\hat{N_G}(z)}{\hat{D_G}(z)}$
 % and $\hat{C}(z) = \frac{\hat{N_C}(z)}{\hat{D_C}(z)}$, then:
 % $$S(z) = FWL[N_C(z)] \times \hat{N_G}(z) + FWL[D_C(z)] \times \hat{D_G}(z)$$
-The following matrix
-$M = [m_{ij}]_{(2N-2)\times N}$ is built from $S(z)$ coefficients:
+The following matrix $M$ with dimension $(2N-2)\times N$ and elements $m_{(\cdot),(\cdot)}$ is built from the coefficients of $S(z)$ as:  
 %
 $$
 M=\left( 
@@ -803,7 +810,7 @@ V^{(N-2)}
 \right), 
 $$
 %
-where $V^{(k)} = [v^{(k)}_{ij} ]_{2\times N}$ such that:
+where $V^{(k)} = [v^{(k)}_{ij} ]_{2\times N}$ is such that:
 %
 $$
 v_{ij}^{(0)}=\left\{
@@ -824,8 +831,9 @@ v_{(1)(N-j+1)}^{k},& \mbox{if}~j\leq n-k ~\mbox{and}~i=2\\
 \right.
 $$
 %
-and where $k \in \mathbb{Z}$ is such that $0 < k < N - 2$. 
-We have that $S(z)$ is the characteristic polynomial of a stable system if and only if the following four conditions hold~\cite{astrom1997computer}:
+and where $k \in \mathbb{Z}$ is such that $0 < k < N - 2$.  
+
+We have that $S(z)$ is the characteristic polynomial of a stable system if and only if the following four conditions $R_i, i = 1,2,3,4,$ hold~\cite{astrom1997computer}:
 %\begin{itemize}
 %\item 
 $R_1: S(1) > 0$;
@@ -839,8 +847,8 @@ $R_4: m_{11} > 0 \wedge\allowbreak
       m_{51}>0 \wedge \ldots \wedge\allowbreak
       m_{(2N{-}3)(1)}>0$.
 %\end{itemize}
-%
-The stability property is then encoded by a constraint of the form:
+
+The stability property is finally encoded by a constraint expressed as the following formula: 
 $
 \phi_\mathit{stability} := (R_1 \wedge R_2 \wedge R_3 \wedge R_4).
 $
@@ -855,10 +863,11 @@ We are not limited to the synthesis of digital stabilizing controllers -- a
 well known task in the literature on digital control systems -- but target
 safety requirements with an overall approach that is sound and automated. 
 %More specifically, we require that the closed-loop system meets given safety specifications.  
-A safety specification translates to a requirement on the states of the closed-loop model, 
-and the feedback controller (namely the choice of the gains matrix~$K$) 
-must ensure that the state never violates the requirement.  
-Note that a stable, closed-loop model is not necessarily a safe system: 
+A safety specification translates into a requirement on the states of the closed-loop model, 
+which hinges on the choice of the feedback controller (namely the choice of the gains in the matrix~$K$):  
+we must ensure that the states of the closed-loop model never violate this requirement, expressed as a given subset of the state space.  
+
+Note that a stable closed-loop model is not necessarily a safe model: 
 indeed, the state values may leave the safe part of the state space while they converge
 to the equilibrium, which is typical in the case of oscillatory convergent dynamics. 
 %However, a safe system will always be stable.  
