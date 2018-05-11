@@ -869,9 +869,9 @@ we must ensure that the states of the closed-loop model never violate this requi
 
 Note that a stable closed-loop model is not necessarily a safe model: 
 indeed, the state values may leave the safe part of the state space while they converge
-to the equilibrium, which is typical in the case of oscillatory convergent dynamics. 
+to the equilibrium, which is typical in the case of oscillatory and convergent dynamics. 
 %However, a safe system will always be stable.  
-In~this work, the safety property is expressed as:
+In~this work, the safety property is expressed as the formula:
 %
 \begin{equation}
 \label{eq:safetyliteral}
@@ -881,8 +881,8 @@ In~this work, the safety property is expressed as:
 %\addtodo{We consider $x_{i}^{-}$ and $x_{i}^{+}$ to be -1 and 1, respectively.}
 %
 where $\underline{x_{i}}$ and $\overline{x_{i}}$ are lower and upper bounds
-for the $i$-th coordinate $x_{i}$ of state $x\in \mathbb R^n$ at the $k$-th
-instant, respectively.  This means that the states will always be within an $n$-dimensional hyper-box.
+for the $i$-th coordinate $x_{i}$ of state $x\in \mathbb R^n$, ranging over the $k$-th time step.  
+This means that the states are required to remain within an $n$-dimensional hyper-box at any point in time.  	
 
 Furthermore, it is practically relevant to consider constraints $\phi_\mathit{input}$ on the input
 signal $u_{k}$ and requirements $\phi_\mathit{init}$ on the initial states $x_0$, 
@@ -1169,7 +1169,7 @@ where $\mat{A}_d^{\frac{T}{T_d}} =e^{log(\mat{A}_d) \frac{T}{T_d}} = e^{\mat{A} 
 We analyze the case of hybrid-time models, 
 namely where the plant dynamics evolve in continuous time, 
 while the feedback dynamics evolve in discrete time.  
-A new input value is accepted by the plant only at sample times $T_s$. \note{Confusing $T_s$ vs $T_d$.} 
+A new input value is accepted by the plant only at sample times $T_s$. \note{Confusing use of $T_s$ vs $T_d$ - please clarify.} 
 %but implemented over the continuous-time plant dynamics.
 %
 %\note{Matrix K has not been introduced yet. }
@@ -1194,6 +1194,7 @@ sample time $T_s$, is the state of the model
 %
 \end{theorem}
 \begin{proof}
+\note{let us not number the proofs.}
 %
 Let $\mat{K}$ be a feedback controller such that
 $\vec{u}_k=-\mat{K}\vec{x}_k$ at time $t=kT_s$.  Let the output of the
