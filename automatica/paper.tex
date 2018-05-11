@@ -1646,7 +1646,7 @@ large. \note{we have not discussed the bounds on the input signal. }
 \label{sssec:abstraction}
 %-------------------------------
 
-\textcolor{red}{[Dario: can you update the following part, aligning it with hers?]}
+%\textcolor{red}{[Dario: can you update the following part, aligning it with hers?]}
 
 %  The na\"ive approach described in Sec.~\ref{sec:CEGIS-precision-incrementation}
   %uses a multi-staged verification phase and performs solution generalization based on
@@ -1773,6 +1773,7 @@ $$
 what does the logical implication mean? 
 on the antecedent of this logical implication, you're taking the conjunction of two logical formulae (expressing two sets) and of a linear arithmetic expression}
 Note that these bounds will be used by the {\sc synthesize} phase to reduce the size of the solution space. 
+\note{In Figure 1, you're using a different formula than $\phi_\mathit{init}^{K}$, why? }
 
 \end{enumerate}
 \item In the {\sc synthesize} phase, we synthesize a candidate controller
@@ -1784,14 +1785,17 @@ Note that these bounds will be used by the {\sc synthesize} phase to reduce the 
 % Notice that in our polynomials $c_0=1$ and we only use reals.
 % Once we have established convergence, we may examine the 
 % safety specification $\phi_\mathit{safety}$.
-  $K \in \mathbb{R}\langle I_c,F_c\rangle^n$ that satisfies
-  $\phi_\mathit{stability} \wedge \phi_\mathit{safety} \wedge \phi_\mathit{init}^{K}$ by invoking a SAT solver.
+  $K \in \mathbb{R}\langle I_c,F_c\rangle^n$ 
+  \note{we have not introduced this notation, so this is not clear.}
+  that satisfies
+  $\phi_\mathit{stability} \wedge \phi_\mathit{safety} \wedge \phi_\mathit{init}^{K}$ by invoking a SAT solver. 
+  \note{the corresponding block in the figure accepts two inputs - can you comment on them? also: is this SAT solving step obvious? Sat solvers resolve Boolean formulae, but here we have something else. }
 %%   We obtain it by solving the SAT formula 
 %% $$\mathcal{J}_K=\mathcal{J}\langle I,F \rangle (P_{a-k},\mat{T})\wedge \phi_\mathit{safety}$$ 
 %% that satisfies the input constraint and Jury's criteria for 
 %% $P_{a-k}=z^n+\sum_{i=1}^n (a_i-k_i) z^{n-i} : k_i \in \mat{K} \wedge \tilde{\mat{K}}=\mat{K}\mat{T}$,
 %% where $\mathcal{J}\langle I,F \rangle (P,\mat{T})$ is a program describing Jury's method.
-If there is no candidate solution we return UNSAT and exit the loop.
+If there is no candidate solution we return UNSAT and exit the loop. 
 \item Once we have a candidate solution, we perform a safety verification % If this step fails, we find a counterexample iteration and initial state and create a new constraint to refine our abstraction.
   %
   of the 
@@ -1808,7 +1812,7 @@ $x_{k} \models \phi_\mathit{safety}$. %\blue{why $k+1$ here?}. %% For this purpo
 %% Next, we use abstract acceleration to get a second abstraction that 
   %% encompasses the accelerated continuous reach-tube over an unbounded time.
   In order to compute the progression of point $x_0$ at iteration $k$,
-  we accelerate the dynamics of the closed-loop system and obtain:
+  we consider the solution of the closed-loop model 
   %we take the
   %the closed-loop model:
   %$x_{k+1}=\mat{A}_{t}x_k+\mat{B}_{n} (\nu_1 + \nu_2 + \nu_3)$
@@ -1816,38 +1820,35 @@ $x_{k} \models \phi_\mathit{safety}$. %\blue{why $k+1$ here?}. %% For this purpo
 %
 {
 \scriptsize
-\begin{equation}
+\begin{align*}
 %\begin{split}
-x=(A_d-B_dK)^kx_0+ \sum_{i=0}^{k-1} (A_d-B_dK)^i B_{n}(\nu_1+\nu_2+\nu_3)% 
+x=(A_d-B_dK)^kx_0+ \sum_{i=0}^{k-1} (A_d-B_dK)^i B_{n}(\nu_1+\nu_2+\nu_3), 
 %\end{split}
-\end{equation}
-\begin{equation}
-B_n= [1 \cdots 1]^T
-\end{equation}
+\end{align*}
 }
+where $B_n= [1 \cdots 1]^T$. 
 %\label{eq:acc_observer_LTI_cf}
-%+\sum_{i=0}^{k-1} \mat{A}_t^i \mat{B}_{t} r_i
-
+%+\sum_{i=0}^{k-1} \mat{A}_t^i \mat{B}_{t} r_i 
 %
-As this still requires us to verify the system for every $k$ up to infinity,
-we use abstract acceleration again to obtain the reach-tube, i.e., the set
-of all reachable states at all times given an initial set
+As we require to verify the system for every $k$ up to infinity, 
+we use Abstract Acceleration again to compute the reach-tube, 
+i.e., the set of all reachable states at all times given an initial set
 $\phi_\mathit{init}$:
 %
 \begin{align}
 \label{eq:aa_observer_LTI_cf}
 \hat{X}^\#
-=\mathcal{A} X_0 + \mathcal{B}_{n} N, \quad
-X_0 =\left \{x \mid x \models \phi_\mathit{init} \right\}, 
-\end{align}
+=\mathcal{A} X_0 + \mathcal{B}_{n} N, \,
+X_0 =\left \{x: x \models \phi_\mathit{init} \right\}, 
+\end{align} 
 %
 where $\mathcal{A}=\bigcup_{k=1}^\infty (A_d-B_dK)^k,
 \mathcal{B}_{n}=\bigcup_{k=1}^\infty \sum_{i=0}^k(A_d-B_dK)^iB_{n}$ are
 abstract matrices for the closed-loop system~\cite{cattaruzza2015unbounded},
-whereas the set $N$ is non-deterministically chosen.
+whereas the set $N$ is \note{non-deterministically chosen [obtained from above]}. 
 
-We next evaluate $\hat{X}^\# \models \phi_\mathit{safety}$.  If the
-verification holds we have a solution, and exit the loop.  Otherwise, we
+We next evaluate whether $\hat{X}^\# \models \phi_\mathit{safety}$.  
+If the verification holds we have a solution, and exit the loop.  Otherwise, we
 find a counterexample iteration $k$ and corresponding initial point $x_0$
 for which the property does not hold, which we use to locally refine the
 abstraction.  When the abstraction cannot be further refined, we provide
