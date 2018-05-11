@@ -1426,11 +1426,13 @@ using the envelope of their magnitude (ie $|\lambda|$).
 \label{sssec:cegisdig}
 %-------------------------------
 
-In this section we discuss two instantiations of CEGIS: the first,
-na\"ive one, relies on an unfolding of the dynamics up to a
-completeness threshold, while the second one is abstraction-based and
-leverages abstraction refinement and acceleration to improve
-scalability while retaining soundness.
+In this section we discuss two instantiations of CEGIS: 
+the first one,
+named {\it multi-stage} approach, 
+relies on an unfolding of the dynamics up to a completeness threshold; 
+the second one is {\it abstraction-based}, 
+and it leverages abstraction-refinement \note{ cit.} and acceleration \note{ref to relevant section} to improve scalability,  
+while retaining soundness. 
 
 %-------------------------------
 \subsection{Multi-stage approach} 
@@ -1508,12 +1510,12 @@ scalability while retaining soundness.
 
 %\subsubsection{Controller synthesis}
 
-An overview of the algorithm for controller synthesis is given in Fig.~\ref{fig:CEGIS-precision-increment}.  
-One important observation is that we verify and synthesize a controller over a finite number ($k$) of time steps.  
-We then compute a completeness threshold $\overline{k}$~\cite{DBLP:conf/vmcai/KroeningS03} 
-for this controller, and verify correctness for $\overline{k}$ time steps. 
-As we will later argue, $\overline{k}$ is the number of iterations required to sufficiently unwind the closed-loop state-space model,  
-ensuring that the boundaries are not violated for any other $k{>}\overline{k}$. 
+An overview of the algorithm for controller synthesis is given in Figure~\ref{fig:CEGIS-precision-increment}.   
+One important point is that we formally synthesize a controller over a finite number ($k$) of time steps.  
+We then compute a completeness threshold $\overline{k}$~\cite{DBLP:conf/vmcai/KroeningS03} for this controller, 
+and verify the correct behaviour for $\overline{k}$ time steps. 
+As we will later argue, $\overline{k}$ is the number of iterations required to sufficiently unwind the dynamics of the closed-loop state-space model,  
+ensuring that the safety boundaries are not violated for any other $k{>}\overline{k}$. 
 
 %\begin{theorem} There exists a finite $\overline{k}$ such that it is
 %sufficient to unwind the closed-loop state-space system up to $\overline{k}$
@@ -1541,7 +1543,9 @@ ensuring that the boundaries are not violated for any other $k{>}\overline{k}$.
 %
 %\medskip
 
-Next, we describe in detail the different phases in Fig.~\ref{fig:CEGIS-precision-increment} (blocks 1 to 4). 
+Next, 
+with reference to the CEGIS scheme in Figure~\ref{fig:CEGIS}, 
+we describe in detail the different phases in Fig.~\ref{fig:CEGIS-precision-increment} (blocks 1 to 4). 
 
 %\todo{please eventually itemize next}
 \begin{enumerate}
