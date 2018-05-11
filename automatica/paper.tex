@@ -1921,7 +1921,11 @@ $z^n+\sum_{i=1}^n(a_i-k_i)z^{n-i}=\prod_{i=1}^n (z-\lambda_i) \text{ where } |\l
 
 As discussed in \note{Section~\ref{sec:}}, 
 the models we consider have to account for errors from several sources: 
-the numerical error introduced by the precision used to represent the plant, the error introduced by the ADC conversion, and the error introduced by the precision used to represent the controller. First we consider the numerical errors introduced by the finite precision numbers (either fixed or floating point) used to model the plant and used by the digital controller. Then we account for the quantization errors introduced by the ADC.
+the numerical error introduced by the finite precision used to represent the plant \note{(and its operations)},  
+the error introduced by the ADC\note{/DAC?} conversion, 
+and the error introduced by the limited precision used to represent the controller. 
+First we consider the numerical errors introduced by the finite precision numbers (either fixed or floating point) used to model the plant and used by the digital controller. 
+Then we account for the quantization errors introduced by the ADC\note{/DAC?}.
 
 \subsection{Errors due to numerical representation}
 First consider the case where we use fixed-point representations, and synthesise fixed-point controllers. 
