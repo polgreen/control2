@@ -1435,7 +1435,7 @@ and it leverages abstraction-refinement \note{ cit.} and acceleration \note{ref 
 while retaining soundness. 
 
 %-------------------------------
-\subsection{Multi-stage approach} 
+\subsection{Multi-stage CEGIS} 
 \label{sssec:naive}
 %-------------------------------
 
@@ -1547,25 +1547,30 @@ Next,
 with reference to the CEGIS scheme in Figure~\ref{fig:CEGIS}, 
 we describe in detail the different phases in Fig.~\ref{fig:CEGIS-precision-increment} (blocks 1 to 4). 
 
+\note{we need to refer to the parts of Algorithm 1 more closely - point to specific lines in the explanation below.} 
+
 %\todo{please eventually itemize next}
 \begin{enumerate}
 
 \item The inductive synthesis phase ({\sc synthesize}) uses BMC to compute a
 candidate solution $K$ that satisfies both the stability criteria and the
-safety specification.  To synthesize a controller that satisfies the
+safety specification.  
+
+To synthesize a controller that satisfies the
 stability criteria, we require that a computed polynomial satisfies Jury's
-criterion~\cite{fadali}.  The details of this calculation can be found in
+criterion~\cite{fadali} \note{use specific formula}.  The details of this calculation can be found in
 the Appendix.
 
-Regarding the second requirement, we synthesize a safe controller by
-unfolding the transition system $k$ steps and by picking a controller $K$
-and a single initial state, such that the states at each step do not violate
-the safety criteria.  That is, we ask the bounded model checker if there
-exists a $K$ that is safe for at least one $x_0$ in our set of all possible
-initial states.  This is sound if the current $k$ is greater than the completeness
-threshold.  We~also assume some (fixed or floating point) precision $\langle I_p,F_p\rangle$ for the
-plant and a sampling rate.  The checks that these assumptions hold are
-performed by subsequent {\sc verify} stages.
+Regarding the second requirement, 
+we fix an index $k$, 
+and we synthesize a safe controller by
+unfolding the transition system $k$ steps and by selecting a controller $K$ and a single initial state, 
+such that the states at each step do not violate the safety criteria \note{use specific formula}.  
+That is, we ask the bounded model checker \note{have we discussed the BMC earlier?} if there exists a $K$ that is safe for at least one $x_0$ in our set of all possible initial states.  
+This is sound if the current $k$ is greater than the completeness threshold (see later step).  
+We~also assume some (fixed or floating point) precision $\langle I_p,F_p\rangle$ for the plant and a sampling rate.  
+The checks that these assumptions hold are performed by subsequent {\sc verify} stages. 
+\note{we have not discussed the bounds on the input signal. }
 
 %\begin{algorithm}[]
 %\scriptsize
@@ -1605,10 +1610,10 @@ performed by subsequent {\sc verify} stages.
 \item The first {\sc verify} stage, {\sc safety}, checks that the candidate
 solution $K$, which we synthesized to be safe for at least one initial
 state, is safe for \emph{all} possible initial states, i.e., does not reach
-an unsafe state within $k$ steps where we assume $k$ to be under the
-completeness threshold.  After unfolding the transition system corresponding
+an unsafe state within $k$ steps \note{where we assume $k$ to be under the
+completeness threshold}.  After unfolding the transition system corresponding
 to the previously synthesized controller $k$ steps, we check that the safety
-specification holds for any initial state. This is shown in Alg.~~\ref{alg:safetycheck}.
+specification holds for any initial state. This is shown in Alg.~~\ref{alg:safetycheck}. 
 
 \item The second {\sc verify} stage, {\sc precision}, 
  restores soundness with respect to the plant's precision
@@ -1619,7 +1624,8 @@ operations performed by the previous stage.
 $k$ is large enough to ensure safety for any $k'{>}k$.  Here, we compute the
 completeness threshold $\overline{k}$ for the current candidate controller $K$ and
 check that $k{\geq}\overline{k}$.  This is done according to the argument
-given above and illustrated in Fig.~\ref{fig:ct}.
+given above and illustrated in Fig.~\ref{fig:ct}. 
+\note{it is not clear how we find $\overline{k}$.}
 
 \end{enumerate}
 
@@ -1633,7 +1639,7 @@ given above and illustrated in Fig.~\ref{fig:ct}.
 
 Checking that the safety specification holds for any initial state can be
 computationally expensive if the bounds on the allowed initial states are
-large.
+large. \note{we have not discussed the bounds on the input signal. }
 
 %-------------------------------
 \subsection{Abstraction-based CEGIS} 
@@ -1650,7 +1656,7 @@ large.
 %and input with a bounded time horizon and, subsequently, it generalizes it to all reachable states,
 %inputs, and time horizons during the verification phase.
 
-Essentially, this approach relies on the symbolic simulation over a bounded
+This approach relies on the symbolic simulation over a bounded
 time horizon of individual initial states and inputs that form part of an
 uncountable space and tries to generalize it for an infinite space over an
 infinite time horizon.
