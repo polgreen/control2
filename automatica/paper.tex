@@ -1703,7 +1703,7 @@ It comprises the following steps:
   \begin{enumerate}
 \item Compute the characteristic polynomial of the matrix $(A_d-B_dK)$ as 
 $P_a(z) = z^n+\sum_{i=1}^n{(a_i-k_i)z^{n-i}}$. 
-\note{are we assuming to be working with a controllable form?}   
+\note{are we assuming to be working with a controllable form? should we emphasize that some elements are known, others are parameters? also, why do we use a different notation for this char poly than before?}   
 %\blue{[shouldn't there be a b term in the polynomial's coefficients here? No. the polynomial only evaluates the poles]}
 %%   A controllable system with quantization will have the following dynamics, where
 %% we use underscript ``n'' to denote a noise term,
@@ -1745,29 +1745,33 @@ $P_a(z) = z^n+\sum_{i=1}^n{(a_i-k_i)z^{n-i}}$.
 %$P_a = z^n+\sum_{i=1}^p{(a_i-k_i)z^{n-i}}$
 %\end{align*}
 
-\item Calculate the noise set $N$ from the quantizer resolutions and estimated round-off errors: %($\frac{q_1}{2},\frac{q_2}{2},q_3$)
-%
-\begin{equation}
+\item Calculate the noise set $N$ from the quantizer resolutions and estimated round-off errors as follows: 
+%($\frac{q_1}{2},\frac{q_2}{2},q_3$)
+\note{so here you're summing three intervals, not taking their intersection (weird usage of logical AND), right? please clarify. }
+\begin{align*}
 \nonumber
 \begin{split}
-N=\left \{ \nu_1+\nu_2+ \nu_3 \mid \nu_1 \in \left[-\frac{q_1}{2}\ \ \frac{q_1}{2}\right] 
-\wedge \right. \\ \left. \nu_2 \in \left[-\frac{q_2}{2}\ \ \frac{q_2}{2}\right]  \wedge  \nu_3 \in \left[-q_3\ \ q_3\right]  \right \}
+N=\left \{ \nu_1+\nu_2+ \nu_3: \nu_1 \in \left[-\frac{q_1}{2}\ \ \frac{q_1}{2}\right] 
+\wedge \right. \\ \left. \nu_2 \in \left[-\frac{q_2}{2}\ \ \frac{q_2}{2}\right]  \wedge  \nu_3 \in \left[-q_3\ \ q_3\right]  \right \}, 
 \end{split}
-\end{equation}
-
+\end{align*}
 %
-where  $q_1$ is the error introduced by the truncation in the ADC, $q_2$ is
-the error introduced by the DAC and $q_3$ is the maximum truncation and
-rounding error in $u_k=-K \cdot \mathcal{F}_{\langle I_c,F_c \rangle}(x_k)$ as
-discussed in Section~\ref{sec:numeric_rep}. % More details on how to model
+\note{pls refer to Figure 1, where however we had used capitalised Q1 and Q2 - pls fix.} 
+where  $q_1$ is the error introduced by the truncation in the ADC, 
+$q_2$ is the error introduced by the DAC, 
+and $q_3$ is the maximum truncation and rounding error in $u_k=-K \cdot \mathcal{F}_{\langle I_c,F_c \rangle}(x_k)$, 
+as further discussed in Section~\ref{sec:numeric_rep}. % More details on how to model
 %quantization as noise are given in
 %Appendix~\ref{appendix:quantization-noise}.
 
 \item Calculate a set of initial bounds on $K$, $\phi_\mathit{init}^{K}$,
 based on the input constraints %\blue{[how is this practically done?With the equation below]}.  
 %
-$$(\phi_\mathit{init} \wedge \phi_\mathit{input} \wedge u_k=-K x_k)
-\Rightarrow \phi_\mathit{init}^{K}$$
+$$(\phi_\mathit{init} \wedge \phi_\mathit{input} \wedge u_k=-K x_k)\Rightarrow \phi_\mathit{init}^{K}
+$$
+\note{please explain the equation here: 
+what does the logical implication mean? 
+on the antecedent of this logical implication, you're taking the conjunction of two logical formulae (expressing two sets) and of a linear arithmetic expression}
 Note that these bounds will be used by the {\sc synthesize} phase to reduce the size of the solution space. 
 
 \end{enumerate}
