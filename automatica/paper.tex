@@ -1656,10 +1656,9 @@ large. \note{we have not discussed the bounds on the input signal. }
 %and input with a bounded time horizon and, subsequently, it generalizes it to all reachable states,
 %inputs, and time horizons during the verification phase.
 
-This approach relies on the symbolic simulation over a bounded
-time horizon of individual initial states and inputs that form part of an
-uncountable space and tries to generalize it for an infinite space over an
-infinite time horizon.
+The multi-staged approach above relies on the symbolic simulation over a bounded time horizon of individual initial states and inputs, 
+%that form part of an uncountable space,
+and on the generalization to continuous sets and over an infinite time horizon. 
 
   %% solution over all times by refining the number of witnesses.  
   %% In order to perform the safety check, this approach uses abstract acceleration
@@ -1679,24 +1678,22 @@ infinite time horizon.
 %% and many of the states involved are inconsequential to the safety
 %% specification.
 
-Conversely, in this section, we find a controller for a continuous initial
-set of states and set of inputs, over an abstraction of the continuous
-dynamics \cite{cattaruzza2015unbounded} that conforms to witness proofs at
-specific times.  %% It further generalizes the
-Moreover, this approach uses abstraction refinement enabling us to always
-start with a very simple description regardless of the complexity of the
-overall dynamics, and only expand to more complex models when a solution
-cannot be found.
+Conversely, in this section we synthesise a controller for continuous set of initial states and of inputs, 
+over an abstraction of the continuous dynamics \cite{cattaruzza2015unbounded} \note{that conforms to witness proofs at specific times}.   
+Moreover, this approach uses abstraction-refinement, 
+enabling one to start with a very simple description of the dynamics regardless of the model complexity (abstraction step), 
+and only to elaborate this description 
+%to more complex models 
+when a solution cannot be found (refinement step). 
 
-The CEGIS loop for this approach is illustrated in Fig.~\ref{fig:CEGARIS}.
-
+The CEGIS loop for this approach is illustrated in Figure~\ref{fig:CEGARIS}. 
+%
 % Now that we have explained the verification process, we may proceed to describe the synthesis procedure, which is illustrated in figure \ref{fig:CEGARIS}.
 % Our model, rather than look at a bisimulation \todo{specific notion that has not been formally define - do not use} in discrete time, explores a much higher abstraction, 
 % evaluating the unbounded time-continuous space reach tube as a set of inequalities that represent only the safety specification.
 % We have also identified 
 % the quantization noise as a bounded non-deterministic input.
-
-
+It comprises the following steps:  
 \begin{enumerate}
 \item 
   We start by doing some preprocessing:%%  that 
@@ -1706,6 +1703,7 @@ The CEGIS loop for this approach is illustrated in Fig.~\ref{fig:CEGARIS}.
   \begin{enumerate}
 \item Compute the characteristic polynomial of the matrix $(A_d-B_dK)$ as 
 $P_a(z) = z^n+\sum_{i=1}^n{(a_i-k_i)z^{n-i}}$. 
+\note{are we assuming to be working with a controllable form?}   
 %\blue{[shouldn't there be a b term in the polynomial's coefficients here? No. the polynomial only evaluates the poles]}
 %%   A controllable system with quantization will have the following dynamics, where
 %% we use underscript ``n'' to denote a noise term,
