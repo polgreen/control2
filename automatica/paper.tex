@@ -1789,7 +1789,7 @@ Note that these bounds will be used by the {\sc synthesize} phase to reduce the 
   \note{we have not introduced this notation, so this is not clear.}
   that satisfies
   $\phi_\mathit{stability} \wedge \phi_\mathit{safety} \wedge \phi_\mathit{init}^{K}$ by invoking a SAT solver. 
-  \note{the corresponding block in the figure accepts two inputs - can you comment on them? also: is this SAT solving step obvious? Sat solvers resolve Boolean formulae, but here we have something else. }
+  \note{the corresponding block in the figure accepts two inputs - can you comment on them? also: is this SAT solving step obvious? Sat solvers resolve Boolean formulae, but here we have something else. So, explain block `Program search'. }
 %%   We obtain it by solving the SAT formula 
 %% $$\mathcal{J}_K=\mathcal{J}\langle I,F \rangle (P_{a-k},\mat{T})\wedge \phi_\mathit{safety}$$ 
 %% that satisfies the input constraint and Jury's criteria for 
@@ -1847,8 +1847,9 @@ where $\mathcal{A}=\bigcup_{k=1}^\infty (A_d-B_dK)^k,
 abstract matrices for the closed-loop system~\cite{cattaruzza2015unbounded},
 whereas the set $N$ is \note{non-deterministically chosen [obtained from above]}. 
 
-We next evaluate whether $\hat{X}^\# \models \phi_\mathit{safety}$.  
-If the verification holds we have a solution, and exit the loop.  Otherwise, we
+ \note{Ref Abstraction Verifier in Figure?}
+We next evaluate whether $\hat{X}^\# \models \phi_\mathit{safety}$ \note{how?}. 
+If the verification holds we have a solution, and exit the loop \note{ref PASS?}.  Otherwise, we
 find a counterexample iteration $k$ and corresponding initial point $x_0$
 for which the property does not hold, which we use to \note{locally refine the
 abstraction [how?]}.  When the abstraction cannot be further refined, we provide $(k, x_0)$ to the {\sc abstract} phase.
@@ -1858,12 +1859,12 @@ abstraction [how?]}.  When the abstraction cannot be further refined, we provide
 \item If we reach the {\sc abstract} phase, it means that the candidate solution is not valid,
   in which case we must refine the abstraction used by the synthesizer.
 \begin{enumerate}
-\item Find the constraints that invalidate the property
- as a set of counterexamples for the eigenvalues, which we define as $\phi_\Lambda$. This is a constraint in the spectrum i.e., transfer function) of the closed loop dynamics. 
+\item Find the constraints that invalidate the property as a set of counterexamples for the eigenvalues \note{sure, but how?}, which we define as $\phi_\Lambda$. 
+This is a constraint in the spectrum i.e., transfer function) of the closed-loop dynamics.  
 \item We use $\phi_\Lambda$ to
   further constrain the characteristic polynomial %\blue{[again, check the coefficients of the characteristic polynomial.]I don't find any error} 
 $z^n+\sum_{i=1}^n(a_i-k_i)z^{n-i}=\prod_{i=1}^n (z-\lambda_i) \text{ where } |\lambda_i|<1 \wedge \lambda_i \models \phi_{\Lambda}$. These constraints correspond to specific iterations for which the system may be unsafe.
-\item Pass the refined abstraction $\phi(K)$ with the new constraints and the list of iterations $k$ to the {\sc synthesize} phase.
+\item Pass the refined abstraction $\phi(K)$ with the new constraints and the list of iterations $k$ to the {\sc synthesize} phase \note{(step (2))}.
   %, as well as a counterexample plant coefficients ($P_a$) and repeat the loop again. 
 \end{enumerate} 
 \end{enumerate}
@@ -1918,7 +1919,9 @@ $z^n+\sum_{i=1}^n(a_i-k_i)z^{n-i}=\prod_{i=1}^n (z-\lambda_i) \text{ where } |\l
 \label{sec:numeric_rep}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-As discussed in section~\ref{sec:}, the models we consider have errors due to several sources; the numerical error introduced by the precision used to represent the plant, the error introduced by the ADC conversion, and the error introduced by the precision used to represent the controller. First we consider the numerical errors introduced by the finite precision numbers (either fixed or floating point) used to model the plant and used by the digital controller. Then we account for the quantization errors introduced by the ADC.
+As discussed in \note{Section~\ref{sec:}}, 
+the models we consider have to account for errors from several sources: 
+the numerical error introduced by the precision used to represent the plant, the error introduced by the ADC conversion, and the error introduced by the precision used to represent the controller. First we consider the numerical errors introduced by the finite precision numbers (either fixed or floating point) used to model the plant and used by the digital controller. Then we account for the quantization errors introduced by the ADC.
 
 \subsection{Errors due to numerical representation}
 First consider the case where we use fixed-point representations, and synthesise fixed-point controllers. 
