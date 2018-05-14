@@ -405,6 +405,10 @@ int check_safety(void)
 
     #ifdef INTERVAL
       matrix_vector_mult(_AminusBK,_controller_states);
+      for (int j=0; j < NSTATES; j++)
+      {
+        _controller_states[j]=interval_add(_controller_states[j], noise);
+      }
     #endif
     #ifndef INTERVAL
         states_equals_A_states_plus_B_inputs(); //update states one time step
@@ -413,7 +417,7 @@ int check_safety(void)
     for(int i=0; i<NSTATES; i++)
     {
       #ifdef INTERVAL
-      if(_controller_states[i].low-error_coeffs[i].high>SAFE_STATE_UPPERBOUND || _controller_states[i].high+error_coeffs[i].high<SAFE_STATE_LOWERBOUND)
+      if(_controller_states[i].low/*-error_coeffs[i].high*/>SAFE_STATE_UPPERBOUND || _controller_states[i].high/*+error_coeffs[i].high*/<SAFE_STATE_LOWERBOUND)
         {return 0;}
       #else
       if(_controller_states[i]>SAFE_STATE_UPPERBOUND || _controller_states[i]<SAFE_STATE_LOWERBOUND)

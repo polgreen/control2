@@ -19,6 +19,7 @@ control_typet _dbl_max;
 control_typet _dbl_min;
 signed long int _fxp_one;
 control_typet _dbl_lsb;
+struct intervalt noise;
 
 void get_bounds()
 {
@@ -445,7 +446,6 @@ void bound_error(int_matrixt closed_loop,int_vectort K,int_vectort error_coeffs)
   }
   int_matrixt invIminA;
   inverse(invIminA,IminA);
-  struct intervalt noise;
   if (K[0].low>=0)
   {
    noise.low=K[0].low;

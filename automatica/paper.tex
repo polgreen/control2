@@ -108,6 +108,7 @@
 \newcommand{\xmark}{\ding{55}}
 
 \renewcommand{\note}[1]{\textcolor{red}{[#1]}}
+\newcommand{\reply}[1]{\textcolor{blue}{[#1]}}
 
 \begin{document}
 \newcommand\tool{{\sf DSSynth}}
@@ -1153,12 +1154,12 @@ we use $\left[\begin{array}{cc}\mat{A}_T&\mat{B}_T\\
 $\lambda_i$ are the eigenvalues of $\mat{A}$, and $gm(\lambda_i)$ is the geometric multiplicity of $\lambda_i$.
 %
 
-If $\mat{J}$ is diagonal and there exists a discrete dynamics matrix for a sampling time $T_d$ \note{when could that not exist?} such that $A_d=e^{\mat{A} T_d}$, 
+If $\mat{J}$ is diagonal and there exists a sampling time $T_s$ such that $A_d=e^{\mat{A} T_s}$, 
 then $\forall T \in \mathbb{R}_0^+$ we obtain the known expression 
 $$
-\vec{x}_T=A_d^{\frac{T}{T_d}}\vec{x}_0+(\mat{I}-\mat{A}_d^{\frac{T}{T_d}})\mat{B}_d\vec{u}, 
+\vec{x}_T=A_d^{\frac{T}{T_s}}\vec{x}_0+(\mat{I}-\mat{A}_d^{\frac{T}{T_s}})\mat{B}_d\vec{u}, 
 $$
-where $\mat{A}_d^{\frac{T}{T_d}} =e^{log(\mat{A}_d) \frac{T}{T_d}} = e^{\mat{A} T}$. 
+where $\mat{A}_d^{\frac{T}{T_s}} =e^{log(\mat{A}_d) \frac{T}{T_s}} = e^{\mat{A} T}$. 
 %is the state of the system at time $t=T$. 
 \end{lemma}
 
@@ -1169,7 +1170,7 @@ where $\mat{A}_d^{\frac{T}{T_d}} =e^{log(\mat{A}_d) \frac{T}{T_d}} = e^{\mat{A} 
 We analyze the case of hybrid-time models, 
 namely where the plant dynamics evolve in continuous time, 
 while the feedback dynamics evolve in discrete time.  
-A new input value is accepted by the plant only at sample times $T_s$. \note{Confusing use of $T_s$ vs $T_d$ - please clarify.} 
+A new input value is accepted by the plant only at sample times $T_s$.
 %but implemented over the continuous-time plant dynamics.
 %
 %\note{Matrix K has not been introduced yet. }
@@ -1231,61 +1232,23 @@ we use the same principle on Eqn. \eqref{eq:feedback_cont} to obtain
 \bigcup_{T \in [0, T_s], k \in N_0} (\mat{A}_{T-kT_s}-\mat{B}_{T-kT_s}\mat{K}) (\mat{A}_d-\mat{B}_d\mat{K})^k \subseteq \mathcal{A}.
 \end{equation}
 
-\textcolor{red}{[The next discussion is highly unclear - Dario: can you please update it?]}
-\textcolor{blue}{[how about this?]}
-
 We next describe how to obtain an over-approximation of such a set. 
 This is defined as a polyhedron, expressed as an intersection of hyperplanes. 
 A tight polyhedron that can be obtained with faces (hyperplanes) that touch the set. 
-%, which they must do at a point tangential to the hyperplane. 
-Rather than pick \note{[concept undefined:] a set of directions} and find such points, 
-we will start from the points and find their tangents \note{there can be just a single tangent, or possibly multiple ones?}.  
-Furthermore, to simplify the procedure, 
-we will only look at \note{[qualitative:] two dimensional cuts of the space}  
-(see~\cite{cattaruzza2015unbounded}):  
-this means that for every point we choose is a vertex of the polyhedron \note{??}. 
-Finding out which side of the hyperplane corresponds to the inside of the
-polyhedron is achieved by looking at any other point in the original set and
-checking on which side of the hyperplane it lays.
+\reply{This is achieved by picking a number of points in the set, and finding a hyperplane
+tangent to that point w.r.t. dynamics.  Inorder to simplify this procedure, we
+look at two-dimensional cuts of the space, one at a time (i.e., for every pair
+of eigenvalues of the closed loop dynamics, we find a hyperplane tangent to
+the progression of that pair in a two dimensional space and use it as a face of
+the polyhedron).  The difference with~\cite{cattaruzza2015unbounded} is that
+in the continuous case, the tangent is found by derivation rather than
+differentialtion, thus including all intermediate points in the arc.}
 
 %Abstract acceleration works by finding support functions of the set that encompasses the matrices $\mat{A}^k$.
 %Support functions are scalars that measure the distance of a hyperplane tangent to the set boundary to the origin.
 %In the case of continuous spaces, this translates to calculating the derivatives of the envelope in order to find the direction of the support vector (normal to the hyperplane), and calculating the distance to the corresponding point where the hyperplane touches the set (at which the derivative was calculated).
 %The direction of the vector is determined by evaluating the support function of another point in the curve,
 %which is known to be smaller than that of the selected point, and the chosen hyperplanes are aligned with the eigenvectors, hence we only look at eigenvalue pairs to calculate the derivatives~\cite{cattaruzza2015unbounded}.
-
-\textcolor{red}{[Next part highly nebulous]} 
-\textcolor{blue}{[This is just the math that calculates the tangents of x-y pairs given the progression of x and y. Given the above description,is it necessary to include it?]}
-\note{I would cut the next part, if possible. However, the explanation above is not clear. It seems like you're just finding a convex hull. You have not introduced the notion of directions. The paragraph above requires brand new thinking. }
-
-The corresponding derivatives are:
-%
-\begin{enumerate}
-%
-\item for real eigenvalues: we first calculate the slope of the tangent
-between the two progressions: $\frac{d f(k)}{d g(k)}=\frac{f'(k)}{g'(k)}$. 
-Hence $\frac{d \lambda_1^k}{d \lambda_2^k}=\frac{log(\lambda_1)
-\lambda_1^k}{log(\lambda_2) \lambda_2^k}$.  From this we know that the polar
-angle of the support vector is $\psi = \tan^{-1}(\frac{log(\lambda_1)
-\lambda_1^k}{log(\lambda_2) \lambda_2^k})+\frac{\pi}{2}$
-%
-\item for conjugate eigenvalue pairs: the pair forms a logarithmic spiral. 
-The tangent of a spiral with polar equation $r=a e^{b\theta}$ will have a
-derivative $\frac{d r}{d \theta}=b a e^{b\theta}=b r$, hence the angle of
-the vector normal to the curve is $\tan^{-1}(\frac{r}{\frac{d r}{d
-\theta}})+\frac{\pi}{2}=\tan^{-1}(\frac{1}{b})+\frac{\pi}{2}$
-%
-\item for Jordan blocks with $gm>1$: in the case of real eigenvalues, we
-follow the same procedure as in the real case, but considering that the
-equation for each eigenvalue is $\frac{k^j}{j!}e^{\lambda k}$ where $j$ is
-the index of the term within the Jordan block (note that when $j=0$ the term
-is the same as for real eigenvalues above).  The derivatives f'(k),g'(k) are
-in the form $(j+k*log(\lambda))\frac{k^{j-1}}{j!}e^{\lambda k}$.
-%
-\item for any combination of complex eigenvalues we use the above equations
-using the envelope of their magnitude (ie $|\lambda|$).
-%
-\end{enumerate}
 
 %%-------------------------------
 %\subsection{State-space representation of physical systems} 
@@ -1558,8 +1521,7 @@ safety specification.
 
 To synthesize a controller that satisfies the
 stability criteria, we require that a computed polynomial satisfies Jury's
-criterion~\cite{fadali} \note{use specific formula}.  The details of this calculation can be found in
-the Appendix.
+criterion~\cite{fadali} (\reply{see Section~\ref{ssec:stabspecification}}).
 
 Regarding the second requirement, 
 we fix an index $k$, 
@@ -1679,7 +1641,7 @@ and on the generalization to continuous sets and over an infinite time horizon.
 %% specification.
 
 Conversely, in this section we synthesise a controller for continuous set of initial states and of inputs, 
-over an abstraction of the continuous dynamics \cite{cattaruzza2015unbounded} \note{that conforms to witness proofs at specific times}.   
+over an abstraction of the continuous dynamics \cite{cattaruzza2015unbounded} that conforms to witness proofs at specific times.   
 Moreover, this approach uses abstraction-refinement, 
 enabling one to start with a very simple description of the dynamics regardless of the model complexity (abstraction step), 
 and only to elaborate this description 
@@ -1747,12 +1709,10 @@ $P_a(z) = z^n+\sum_{i=1}^n{(a_i-k_i)z^{n-i}}$.
 
 \item Calculate the noise set $N$ from the quantizer resolutions and estimated round-off errors as follows: 
 %($\frac{q_1}{2},\frac{q_2}{2},q_3$)
-\note{so here you're summing three intervals, not taking their intersection (weird usage of logical AND), right? please clarify. }
 \begin{align*}
 \nonumber
 \begin{split}
-N=\left \{ \nu_1+\nu_2+ \nu_3: \nu_1 \in \left[-\frac{q_1}{2}\ \ \frac{q_1}{2}\right] 
-\wedge \right. \\ \left. \nu_2 \in \left[-\frac{q_2}{2}\ \ \frac{q_2}{2}\right]  \wedge  \nu_3 \in \left[-q_3\ \ q_3\right]  \right \}, 
+N=\left \{ \nu_1+\nu_2+ \nu_3: \nu_1 \in \left[-\frac{q_1}{2}\ \ \frac{q_1}{2}\right] , \right. \\ \left. \nu_2 \in \left[-\frac{q_2}{2}\ \ \frac{q_2}{2}\right],  \nu_3 \in \left[-q_3\ \ q_3\right]  \right \}, 
 \end{split}
 \end{align*}
 %
@@ -1785,8 +1745,7 @@ Note that these bounds will be used by the {\sc synthesize} phase to reduce the 
 % Notice that in our polynomials $c_0=1$ and we only use reals.
 % Once we have established convergence, we may examine the 
 % safety specification $\phi_\mathit{safety}$.
-  $K \in \mathbb{R}\langle I_c,F_c\rangle^n$ 
-  \note{we have not introduced this notation, so this is not clear.}
+  $K$ 
   that satisfies
   $\phi_\mathit{stability} \wedge \phi_\mathit{safety} \wedge \phi_\mathit{init}^{K}$ by invoking a SAT solver. 
   \note{the corresponding block in the figure accepts two inputs - can you comment on them? also: is this SAT solving step obvious? Sat solvers resolve Boolean formulae, but here we have something else. So, explain block `Program search'. }
@@ -1845,7 +1804,7 @@ X_0 =\left \{x: x \models \phi_\mathit{init} \right\},
 where $\mathcal{A}=\bigcup_{k=1}^\infty (A_d-B_dK)^k,
 \mathcal{B}_{n}=\bigcup_{k=1}^\infty \sum_{i=0}^k(A_d-B_dK)^iB_{n}$ are
 abstract matrices for the closed-loop system~\cite{cattaruzza2015unbounded},
-whereas the set $N$ is \note{non-deterministically chosen [obtained from above]}. 
+whereas the set $N$ is obtained from above. 
 
  \note{Ref Abstraction Verifier in Figure?}
 We next evaluate whether $\hat{X}^\# \models \phi_\mathit{safety}$ \note{how?}. 
@@ -1864,7 +1823,7 @@ This is a constraint in the spectrum i.e., transfer function) of the closed-loop
 \item We use $\phi_\Lambda$ to
   further constrain the characteristic polynomial %\blue{[again, check the coefficients of the characteristic polynomial.]I don't find any error} 
 $z^n+\sum_{i=1}^n(a_i-k_i)z^{n-i}=\prod_{i=1}^n (z-\lambda_i) \text{ where } |\lambda_i|<1 \wedge \lambda_i \models \phi_{\Lambda}$. These constraints correspond to specific iterations for which the system may be unsafe.
-\item Pass the refined abstraction $\phi(K)$ with the new constraints and the list of iterations $k$ to the {\sc synthesize} phase \note{(step (2))}.
+\item Pass the refined abstraction $\phi(K)$ with the new constraints and the list of iterations $k$ to the {\sc synthesize} phase (step (2)).
   %, as well as a counterexample plant coefficients ($P_a$) and repeat the loop again. 
 \end{enumerate} 
 \end{enumerate}
@@ -1894,7 +1853,7 @@ $z^n+\sum_{i=1}^n(a_i-k_i)z^{n-i}=\prod_{i=1}^n (z-\lambda_i) \text{ where } |\l
     }\\
   };
   \path
-    (pre.east) edge node[align=center] {$P_a$, $N$,\\ $\phi_\mathit{init}^k$} (abstract.west)
+    (pre.east) edge node[align=center] {$P_a$, $N$,\\ $\phi_\mathit{init}^K$} (abstract.west)
     (abstract.south) edge node{$(\phi(K), k)$} (synth.north)
     ([yshift=1em]synth.east) edge node {$K$} ([yshift=1em]verify.west)
     (aux) edge (abstract.east) 
@@ -1921,11 +1880,11 @@ $z^n+\sum_{i=1}^n(a_i-k_i)z^{n-i}=\prod_{i=1}^n (z-\lambda_i) \text{ where } |\l
 
 As discussed in \note{Section~\ref{sec:}}, 
 the models we consider have to account for errors from several sources: 
-the numerical error introduced by the finite precision used to represent the plant \note{(and its operations)},  
-the error introduced by the ADC\note{/DAC?} conversion, 
+the numerical error introduced by the finite precision used to represent the plant (and its operations),  
+the error introduced by the ADC/DAC conversions, 
 and the error introduced by the limited precision used to represent the controller. 
 First we consider the numerical errors introduced by the finite precision numbers (either fixed- or floating-point) used to model the plant and used by the digital controller. 
-Then we account for the quantization errors introduced by the ADC\note{/DAC?}.
+Then we account for the quantization errors introduced by the ADC/DAC.
 
 \subsection{Errors due to numerical representations} 
 
@@ -1996,7 +1955,7 @@ number $x$ represented at the fixed-point precision of the controller, and
 $\mathcal{F}_{\langle I_p,F_p \rangle}(x)$ to denote a real number $x$
 represented at the fixed-point precision of the plant model ($I_c$ and $F_c$
 are determined by the controller.  We pick $I_p$ and $F_p$ for our synthesis
-such that $I_p \geq I_c$ and $\allowbreak F_p \geq F_c$ \note{why is this reasonable?}).  
+such that $I_p \geq I_c$ and $\allowbreak F_p \geq F_c$ (\reply{so that our controller can be represented accurately in the plant domain}).  
 Thus any mathematical operations in our modelled digital controller will be in the
 range of $\mathcal{F}_{\langle I_c,F_c \rangle}$, and all other calculations
 in our model will be carried out in the range of $\mathcal{F}_{\langle
