@@ -1527,7 +1527,7 @@ Regarding the second requirement,
 we fix an index $k$, 
 and we synthesize a safe controller by
 unfolding the transition system $k$ steps and by selecting a controller $K$ and a single initial state, 
-such that the states at each step do not violate the safety criteria \note{use specific formula}.  
+such that the states at each step do not violate the safety criteria (\reply{see Section~\ref{ssec:safespecification}}).  
 That is, we ask the bounded model checker \note{have we discussed the BMC earlier?} if there exists a $K$ that is safe for at least one $x_0$ in our set of all possible initial states.  
 This is sound if the current $k$ is greater than the completeness threshold (see later step).  
 We~also assume some (fixed or floating point) precision $\langle I_p,F_p\rangle$ for the plant and a sampling rate.  
@@ -1664,8 +1664,9 @@ It comprises the following steps:
   % in sections \ref{sec:reachable} and \ref{sec:observable}.
   \begin{enumerate}
 \item Compute the characteristic polynomial of the matrix $(A_d-B_dK)$ as 
-$P_a(z) = z^n+\sum_{i=1}^n{(a_i-k_i)z^{n-i}}$. 
-\note{are we assuming to be working with a controllable form? should we emphasize that some elements are known, others are parameters? also, why do we use a different notation for this char poly than before?}   
+$P_a(z) = z^n+\sum_{i=1}^n{(a_i-k_i)z^{n-i}}$.  As with the na\"ive approach, this polynomial must satisfy Jury's criterion.
+\note{are we assuming to be working with a controllable form? should we emphasize that some elements are known, others are parameters? also, why do we use a different notation for this char poly than before?
+\reply{[we don't need to talk about controllable form a we only use the characteristic polynomial, but we describe it in more detail because we work directly with the shape indicated here (a-k).}}   
 %\blue{[shouldn't there be a b term in the polynomial's coefficients here? No. the polynomial only evaluates the poles]}
 %%   A controllable system with quantization will have the following dynamics, where
 %% we use underscript ``n'' to denote a noise term,
@@ -1716,24 +1717,20 @@ N=\left \{ \nu_1+\nu_2+ \nu_3: \nu_1 \in \left[-\frac{q_1}{2}\ \ \frac{q_1}{2}\r
 \end{split}
 \end{align*}
 %
-\note{pls refer to Figure 1, where however we had used capitalised Q1 and Q2 - pls fix.} 
-where  $q_1$ is the error introduced by the truncation in the ADC, 
-$q_2$ is the error introduced by the DAC, 
+where  $q_1$ is the error introduced by the truncation in the ADC (Q1 in Fig. \ref{fig:digitalsystem}), 
+$q_2$ is the error introduced by the DAC (Q2 in Fig. \ref{fig:digitalsystem}), 
 and $q_3$ is the maximum truncation and rounding error in $u_k=-K \cdot \mathcal{F}_{\langle I_c,F_c \rangle}(x_k)$, 
 as further discussed in Section~\ref{sec:numeric_rep}. % More details on how to model
 %quantization as noise are given in
 %Appendix~\ref{appendix:quantization-noise}.
 
-\item Calculate a set of initial bounds on $K$, $\phi_\mathit{init}^{K}$,
+\item Calculate a set of initial bounds on $K$, $\phi(K)=\phi_\mathit{init}^{K}$,
 based on the input constraints %\blue{[how is this practically done?With the equation below]}.  
 %
-$$(\phi_\mathit{init} \wedge \phi_\mathit{input} \wedge u_k=-K x_k)\Rightarrow \phi_\mathit{init}^{K}
+$$\phi_\mathit{init}^{K} := (\phi_\mathit{init} \wedge \phi_\mathit{input} \wedge u_k=-K x_k)
 $$
-\note{please explain the equation here: 
-what does the logical implication mean? 
-on the antecedent of this logical implication, you're taking the conjunction of two logical formulae (expressing two sets) and of a linear arithmetic expression}
-Note that these bounds will be used by the {\sc synthesize} phase to reduce the size of the solution space. 
-\note{In Figure 1, you're using a different formula than $\phi_\mathit{init}^{K}$, why? }
+Note that these bounds will be used by the {\sc synthesize} phase to reduce the size of the solution space.
+\reply{The specification $\phi(K)$ will later be updated by the  {\sc abstract} phase to include the abstraction refinements.}
 
 \end{enumerate}
 \item In the {\sc synthesize} phase, we synthesize a candidate controller
@@ -1747,8 +1744,9 @@ Note that these bounds will be used by the {\sc synthesize} phase to reduce the 
 % safety specification $\phi_\mathit{safety}$.
   $K$ 
   that satisfies
-  $\phi_\mathit{stability} \wedge \phi_\mathit{safety} \wedge \phi_\mathit{init}^{K}$ by invoking a SAT solver. 
-  \note{the corresponding block in the figure accepts two inputs - can you comment on them? also: is this SAT solving step obvious? Sat solvers resolve Boolean formulae, but here we have something else. So, explain block `Program search'. }
+  $\phi_\mathit{stability} \wedge \phi_\mathit{safety} \wedge \phi_\mathit{init}^{K}$ by invoking a SAT solver.  
+  The safety specification in the SAT formula is an over-approximation that has constraints for a given set of iterations ($k$) and initial values
+  \note{the corresponding block in the figure accepts two inputs - can you comment on them? also: is this SAT solving step obvious? Sat solvers resolve Boolean formulae, but here we have something else. So, explain block `Program search'. \reply{the SAT solving and program search are exactly as in the naive approach. Only the formula changes.} }
 %%   We obtain it by solving the SAT formula 
 %% $$\mathcal{J}_K=\mathcal{J}\langle I,F \rangle (P_{a-k},\mat{T})\wedge \phi_\mathit{safety}$$ 
 %% that satisfies the input constraint and Jury's criteria for 
@@ -1807,18 +1805,18 @@ abstract matrices for the closed-loop system~\cite{cattaruzza2015unbounded},
 whereas the set $N$ is obtained from above. 
 
  \note{Ref Abstraction Verifier in Figure?}
-We next evaluate whether $\hat{X}^\# \models \phi_\mathit{safety}$ \note{how?}. 
-If the verification holds we have a solution, and exit the loop \note{ref PASS?}.  Otherwise, we
+\reply{We next evaluate whether $\hat{X}^\# \models \phi_\mathit{safety}$ using set inclusion (in our case, the faces of the polyhedra described by $\hat{X}^\#$ and $\phi_\mathit{safety}$ are aligned, so we only need to check that all the supports of $\hat{X}^\#$ are smaller).}
+If the verification holds we have a solution, and exit the loop with a PASS.  Otherwise, we
 find a counterexample iteration $k$ and corresponding initial point $x_0$
-for which the property does not hold, which we use to \note{locally refine the
-abstraction [how?]}.  When the abstraction cannot be further refined, we provide $(k, x_0)$ to the {\sc abstract} phase.
+for which the property does not hold, which we use to \reply{locally refine the
+abstraction by adding the constraint $\mat{A}^k\vec{x}_0 \models \phi_\mathit{safety}$}.  When the abstraction cannot be further refined, we provide $(k, x_0)$ to the {\sc abstract} phase.
 %
 %\todo{we should have a better argument here.}
 %\end{enumerate} 
 \item If we reach the {\sc abstract} phase, it means that the candidate solution is not valid,
   in which case we must refine the abstraction used by the synthesizer.
 \begin{enumerate}
-\item Find the constraints that invalidate the property as a set of counterexamples for the eigenvalues \note{sure, but how?}, which we define as $\phi_\Lambda$. 
+\item Find the constraints that invalidate the property \reply{($\{ k, x_0 : \mat{A}^k\vec{x}_0 \not \models \phi_\mathit{safety}\}$) as a set of counterexamples for the eigenvalues, which we define as $\phi_\Lambda=\{ k, x_0 : \mat{J}^k\mat{S}^{-1}\vec{x}_0 \models \phi_\mathit{safety}\}$}. 
 This is a constraint in the spectrum i.e., transfer function) of the closed-loop dynamics.  
 \item We use $\phi_\Lambda$ to
   further constrain the characteristic polynomial %\blue{[again, check the coefficients of the characteristic polynomial.]I don't find any error} 
@@ -1859,8 +1857,8 @@ $z^n+\sum_{i=1}^n(a_i-k_i)z^{n-i}=\prod_{i=1}^n (z-\lambda_i) \text{ where } |\l
     (aux) edge (abstract.east) 
     (verify.east) edge (done.west);
   \path
-    ([xshift=+.6cm]KSAT.north) edge[left] node[xshift=-.3cm] {$K$} ([xshift=0.6cm]synth.south) 
-    ([xshift=-.6cm]synth.south) edge node[align=center,xshift=.3cm] {$(\phi(K),k)$} ([xshift=-.6cm]KSAT.north)
+    ([xshift=-.6cm]KSAT.north) edge[left] node[xshift=-.1cm] {UNSAT / $K$} ([xshift=-0.6cm]synth.south) 
+    ([xshift=.6cm]synth.south) edge node[align=center,xshift=.1cm] {$(\phi(K),k)$} ([xshift=.6cm]KSAT.north)
     ([yshift=.5cm]AAV.east) edge node{\sl $\hat{X}^\#$} ([yshift=.5cm]AAC.west)
     ([yshift=-.5cm]AAC.west) edge node{$(k,x_0)$} ([yshift=-.5cm]AAV.east)
     (AAC.north) edge node{\sl $\hat{X}^\#$} ([xshift=4.9cm]verify.south)
@@ -1955,7 +1953,7 @@ number $x$ represented at the fixed-point precision of the controller, and
 $\mathcal{F}_{\langle I_p,F_p \rangle}(x)$ to denote a real number $x$
 represented at the fixed-point precision of the plant model ($I_c$ and $F_c$
 are determined by the controller.  We pick $I_p$ and $F_p$ for our synthesis
-such that $I_p \geq I_c$ and $\allowbreak F_p \geq F_c$ (\reply{so that our controller can be represented accurately in the plant domain}).  
+such that $I_p \geq I_c$ and $\allowbreak F_p \geq F_c$, \reply{so that our controller can be represented accurately in the plant domain}).  
 Thus any mathematical operations in our modelled digital controller will be in the
 range of $\mathcal{F}_{\langle I_c,F_c \rangle}$, and all other calculations
 in our model will be carried out in the range of $\mathcal{F}_{\langle
