@@ -2673,15 +2673,17 @@ of our model representation using MATLAB}.
 %-------------------------------
 
 We provide the results in Table~\ref{tab:results}, 
-where \textit{Benchmark} is the name of the respective benchmark, 
-\textit{Order} is the number of continuous variables of the model, 
-$\mathcal{F}_{\langle I_p,F_p \rangle}$ and $\mathcal{F}_{\langle p \rangle}$  
-are the fixed- and floating-point precisions used to model the plant, respectively,  
+where \textit{Benchmark} is the name of the respective benchmark; 
+\textit{Order} is the number of continuous variables of the model; \textcolor{blue}{ 
+$\mathcal{F}_{\langle I_p,F_p \rangle}$, where $I_p$ and $F_p$ indicate the integer and fractional parts,  
+and \textcolor{blue}{ $\mathcal{F}_{\langle W_p,F_p \rangle}$}, where $W_p$ and $F_p$ indicate the total word-length and fractional part, 
+are the fixed- and floating-point precisions used to model the plant, respectively; } 
 and \textit{Time} is the total time required to synthesize a controller for the given plant.    
-Timeouts are indicated by~\xmark.  \note{ we should distinguish between timeouts and failures to synthesise. }
+Timeouts are indicated by~\xmark, \textcolor{blue}{while failures to synthesise the digital controllers are indicated by $\dagger$}.
 The precision for the controller, $\mathcal{F}_{\langle I_c,F_c \rangle}$, is
-chosen to be $I_c = 8$, $F_c = 8$ for fixed-point, whereas  
-$\mathcal{F}_{\langle p \rangle}$ is chosen to be half-precision for floating-point. \note{what about $\mathcal{F}_{\langle I_p,F_p \rangle}$?}
+chosen to be $I_c = 8$, $F_c = 8$ for fixed-point, \textcolor{blue}{whereas  
+$\mathcal{F}_{\langle W_c, F_c \rangle}$ is chosen to be $W_c = 16$ and $F_c = 10$
+for half-precision floating-point format}.
 
 We separate our evaluation into two sets of results: fixed- and floating-point. 
 For the majority of the {\it fixed-point} benchmarks, we observe that the abstraction-based
@@ -2708,7 +2710,7 @@ benchmark coverage and together solve 54\% of the benchmarks \note{somewhat unde
 %
 \hline
 \# & \multicolumn{1}{|c|}{Benchmark} & \multicolumn{1}{|c|}{Order} & \multicolumn{4}{|c|}{Multi-staged}                 & \multicolumn{4}{|c|}{Abstraction} \\
-   &                                  & & \multicolumn{1}{|c|}{$\mathcal{F}_{\langle I_p,F_p \rangle}$} & \multicolumn{1}{|c|}{Time} & \multicolumn{1}{|c|}{$\mathcal{F}_{\langle p \rangle}$} & \multicolumn{1}{|c|}{Time} & \multicolumn{1}{|c|}{$\mathcal{F}_{\langle I_p,F_p \rangle}$} & \multicolumn{1}{|c|}{Time} & \multicolumn{1}{|c|}{$\mathcal{F}_{\langle p \rangle}$} & \multicolumn{1}{|c|}{Time}\\\hline
+   &                                  & & \multicolumn{1}{|c|}{$\mathcal{F}_{\langle I_p,F_p \rangle}$} & \multicolumn{1}{|c|}{Time} & \multicolumn{1}{|c|}{$\mathcal{F}_{\langle W_p, F_p \rangle}$} & \multicolumn{1}{|c|}{Time} & \multicolumn{1}{|c|}{$\mathcal{F}_{\langle I_p,F_p \rangle}$} & \multicolumn{1}{|c|}{Time} & \multicolumn{1}{|c|}{$\mathcal{F}_{\langle W_p, F_p \rangle}$} & \multicolumn{1}{|c|}{Time}\\\hline
 1  & Acrobot  & 4 &  & \xmark &  & ~\xmark & & ~\xmark &  & ~\xmark \\
 2  & Antenna  & 6 &  & ~\xmark &  & ~\xmark & & ~\xmark & & ~\xmark\\
 3  & Ballmaglev  & 3 &  & ~\xmark &  & ~\xmark & & ~\xmark & & ~\xmark\\
