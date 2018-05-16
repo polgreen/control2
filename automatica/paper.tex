@@ -2002,6 +2002,7 @@ of the ADC and some non-linearities of the circuitry.  The overall conversion is
 $$\mathcal{F}_{\langle I_{c},F_{c} \rangle}(y(t)) = y_k :
 y_k \in \left[y(t)-\frac{q_{c}}{2}\ \ \ \ y(t)+\frac{q_{c}}{2}\right] \,.$$
 %
+\note{what is signal y here? how are these formulae related to those in the section on the AA-based back-end?}
 If we denote the error in the conversion by $\nu_k=y_k-y(t)$ where $t = nk$,
 and $n$ is the sampling time and $k$ the number of steps, then we may define
 some bounds for it $\nu_k \in [-\frac{q_{c}}{2}\ \ \frac{q_{c}}{2}]$.
@@ -2012,7 +2013,7 @@ digital gain added in the code).  The process of quantization in the DAC is
 similar except that it is calculating $\mathcal{F}_{\langle I_{dac},F_{dac}
 \rangle} (\mathcal{F}_{\langle I_{c},F_{c} \rangle }(x)) $.  If these domains
 are the same ($I_{c}=I_{dac},\allowbreak F_{c}=F_{dac}$), or if the DAC
-resolution in higher than the ADCs, then the DAC quantization error is equal
+resolution in higher than the ADC, then the DAC quantization error is equal
 to zero.  From the above equations we can now define the ADC and DAC
 quantization noises ${\nu_1}_k \in [-\frac{q_1}{2}\ \ \frac{q_1}{2}]$ and
 ${\nu_2}_k \in [-\frac{q_2}{2}\ \ \frac{q_2}{2}]$, where $q_1=q_{c}$ and 
@@ -2052,8 +2053,9 @@ u_{k}&=-(\mathcal{F}_{\langle I_c,F_c \rangle}(K)\cdot\mathcal{F}_{\langle I_c,F
 This induces two types of the errors detailed above: first, the truncation
 error due to representing $x_k$ as $\mathcal{F}_{\langle I_c,F_c
 \rangle}(x_{k})$; and second, the rounding error introduced by the
-multiplication operation.  We represent these errors as non-deterministic
-additive noise.
+multiplication operation.  
+\note{ We represent these errors as non-deterministic
+additive noise. }
 
 An additional error is due to the representation of the plant dynamics, namely 
 %
