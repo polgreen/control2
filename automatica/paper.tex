@@ -1604,7 +1604,7 @@ The checks that these assumptions hold are performed by subsequent {\sc verify} 
 \caption{Safety check\label{alg:safetycheck}}
 \end{algorithm}
 
-\item The first {\sc verify} stage, {\sc safety}, shown in Alg.~\ref{alg:safetycheck} \note{Num\_States = ?, plant\_typet = ? controller_typet =?}, checks that the candidate
+\item The first {\sc verify} stage, {\sc safety}, shown in Alg.~\ref{alg:safetycheck} \note{$Num\_States = ?, plant\_typet = ? controller_typet =?$}, checks that the candidate
 solution $K$, which we synthesized to be safe for at least one initial
 state, is safe for \emph{all} possible initial states, i.e., does not reach
 an unsafe state within $k$ steps.  After unfolding the transition system corresponding
@@ -1940,15 +1940,14 @@ given~\cite{DBLP:conf/arith/BrainTRW15}:
 \item {\bf Truncation:} Let $x$ be a real number, and $\mathcal{F}_{\langle
 I,F \rangle}(x)$ be the same number represented in a fixed-point domain as
 above.  Then $\mathcal{F}_{\langle I,F \rangle}(x) = x-\delta_T$ where the
-error $ \delta_T=x\ \%_{c_m}\ \tilde x$, and $\%_{c_m}$ is the modulus
+error $ \delta_T=x\ \%_{c_m}\ \tilde x$ \note{define tilde x}, and $\%_{c_m}$ is the modulus
 operation performed on the last bit. 
 Thus, $\delta_T$ is the truncation error and it will propagate across
 operations.
 %
-\item {\bf Rounding:} The following errors appear in basic operations.  Let
-$c_1, c_2$ and $c_3$ be real numbers, and $\delta_{T1}$ and $\delta_{T2}$ be
-the truncation errors caused by representing $c_1$ and $c_2$ in the
-fixed-point domain as above.
+\item {\bf Rounding:} The following errors are due to basic arithmetic operations.  
+Let $c_1, c_2$ and $c_3$ be real numbers, and $\delta_{T1}$ and $\delta_{T2}$ be
+the truncation errors caused by representing $c_1$ and $c_2$ in a fixed-point domain.
 %
 \begin{enumerate}
 %
@@ -1963,11 +1962,10 @@ with $|\delta_3| \leq |\delta_{T1}| + |\delta_{T2}|$.
 |\delta_{T2}\cdot\mathcal{F}_{\langle I,F \rangle}(c_1)| + c_m$, where
 $c_m=2^{-F}$ as above.
 %
-\item Division: the operations performed by our controllers in the FWL
-domain do not include division.  However, we do use division in computations
-at the precision of the plant.  Here the error depends on whether the
-divisor is greater or smaller than the dividend:  $\mathcal{F}_{\langle I,F
-\rangle}(c_1) / \mathcal{F}_{\langle I,F \rangle}(c_2) = c_3 + \delta_{T3}$
+\item Division: the operations performed by the controllers in the FWL
+domain do not include division.  However, we do use division in computations within the plant.  
+Here the error depends on whether the divisor is greater or smaller than the dividend:  $\mathcal{F}_{\langle I,F
+\rangle}(c_1) / \mathcal{F}_{\langle I,F \rangle}(c_2) = c_3 + \delta_{T3}$, 
 where $\delta_{T3}$ is $(\delta_{T2}\cdot c_1 - \delta_{T1}\cdot
 c_2)/(\delta_{T2}^2 - \delta_{T2} c_2)$,
 %
@@ -1978,7 +1976,7 @@ c_2)/(\delta_{T2}^2 - \delta_{T2} c_2)$,
 The maximum size of a real number $x$ that can be represented in a fixed
 point domain as $\mathcal{F}_{\langle I,F \rangle}(x)$ is $\pm
 (2^{I-1}+1-2^{-F})$.  Numbers outside this range cannot be represented by
-the domain.  We check that overflow does not occur.
+the domain.  We check that overflow does not occur \note{and if it does \ldots}.
 
 \end{enumerate}
 
