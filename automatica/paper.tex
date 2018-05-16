@@ -277,7 +277,8 @@ In this paper we present two novel approaches for the synthesis of
 digital controllers, both of which make use of the framework known as counterexample guided
 inductive synthesis (CEGIS)~\cite{jha-icse10,
   DBLP:conf/asplos/Solar-LezamaTBSS06}, 
-  a technique from formal methods that has recently shown much promise and which we export in this work to a control-theoretical setup.  
+  a technique from formal methods that has recently shown much promise and which we 
+  export in this work to a control-theoretical setup.  
 CEGIS is an iterative process, where each iteration performs inductive
 generalisation based on counterexamples provided by a verification
 oracle (see Section~\ref{ssec:cegis}). The inductive generalisation uses information 
@@ -358,7 +359,8 @@ specific extensions over~\cite{DBLP:conf/cav/AbateBCCDKKP17}):
   their effect on safety.  We give bounds that ensure the
   safety of our controllers in a hybrid (i.e., continuous/digital) domain.
 
-\item While~\cite{DBLP:conf/cav/AbateBCCDKKP17} is restricted to models in discrete time, in the current paper we present an approach for
+\item While~\cite{DBLP:conf/cav/AbateBCCDKKP17} is restricted to models in discrete 
+time, in the current paper we present an approach for
   soundly evaluating safety in combined continuous-discrete time and space. 
 
 \item A further limitation of the work in~\cite{DBLP:conf/cav/AbateBCCDKKP17} 
@@ -1954,7 +1956,8 @@ number $x$ represented at the fixed-point precision of the controller, and
 $\mathcal{F}_{\langle I_p,F_p \rangle}(x)$ to denote a real number $x$
 represented at the fixed-point precision of the plant model ($I_c$ and $F_c$
 are determined by the controller.  We pick $I_p$ and $F_p$ for our synthesis
-such that $I_p \geq I_c$ and $\allowbreak F_p \geq F_c$, so that our controller can be represented accurately in the plant domain).  
+such that $I_p \geq I_c$ and $\allowbreak F_p \geq F_c$, so that our controller 
+can be represented accurately in the plant domain).  
 Thus any mathematical operations in our modelled digital controller will be in the
 range of $\mathcal{F}_{\langle I_c,F_c \rangle}$, and all other calculations
 in our model will be carried out in the range of $\mathcal{F}_{\langle
@@ -1971,13 +1974,21 @@ precision $\mathcal{F}_{\langle I_p,F_p \rangle}$.
 
 Let $\mathcal{F}_{\langle E,M \rangle}(x)$ denote a real number $x$
 represented in a floating point domain, with $E$ bits representing the exponent
-part and $M$ bits representing the mantissa part. Bounds for errors introduced by performing basic mathematical operators at this precision can be derived~\cite{DBLP:conf/arith/BrainTRW15}.
+part and $M$ bits representing the mantissa part. Bounds for errors introduced by 
+performing basic mathematical operators at this precision can be derived~\cite{DBLP:conf/arith/BrainTRW15}.
 
-We use $\mathcal{F}_{\langle E_c,M_c \rangle}(x)$ to denote a real number represented at the floating-point precision of the controller, and $\mathcal{F}_{\langle E_p,M_p \rangle}(x)$ to denote a real number represented at the fixed-point precision of the plant model. We apply the same principles as in the preceding section when selection the plant precision.
+We use $\mathcal{F}_{\langle E_c,M_c \rangle}(x)$ to denote a real number 
+represented at the floating-point precision of the controller, and 
+$\mathcal{F}_{\langle E_p,M_p \rangle}(x)$ to denote a real number 
+represented at the fixed-point precision of the plant model. We apply 
+the same principles as in the preceding section when selection the plant precision.
 
 \subsection{ADC/DAC quantization errors} 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-In this section we describe how quantization errors can be modelled as noise. Note that this is only applicable to the acceleration back end, as the multi-stage back end makes use of CBMC's bit-precise model checking capabilities to account for these deterministic errors.
+In this section we describe how quantization errors can be modelled as noise. 
+Note that this is only applicable to the acceleration back end, as the multi-stage back 
+end makes use of CBMC's bit-precise model checking capabilities to account 
+for these deterministic errors.
 
 During any given ADC conversion, the continuous signal will be sampled in
 the real domain and transformed by $\mathcal{F}\langle I_{c},F_{c} \rangle
