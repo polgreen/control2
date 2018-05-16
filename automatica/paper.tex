@@ -1258,7 +1258,7 @@ we use the same principle on Eqn. \eqref{eq:feedback_cont} to obtain
 We next describe how to obtain an over-approximation of such a set. 
 This is defined as a polyhedron, expressed as an intersection of hyperplanes. 
 A tight polyhedron can be obtained with hyperplanes that are tangent to the set,  
-which is achieved by selecting a number of points \note{on the boundary} of the set, 
+which is achieved by selecting a number of points on the boundary of the set, 
 and finding corresponding hyperplanes that are tangent to those points with respect to the dynamics.  
 \note{[you are essentially taking the Lie derivative of the set wrt the dynamics at the selected point?]}
 In order to simplify this procedure, we look at two-dimensional cuts \note{projection?} of the space, one at a time (i.e., for every pair
@@ -1691,9 +1691,8 @@ It comprises the following steps:
   \begin{enumerate}
 \item Compute the characteristic polynomial of the matrix $(A_d-B_dK)$ as 
 $P_a(z) = z^n+\sum_{i=1}^n{(a_i-k_i)z^{n-i}}$.  As with the multi-staged approach, this polynomial must satisfy Jury's criterion.
-\note{are we assuming to be working with a controllable form? should we emphasize that some elements are known, others are parameters? also, why do we use a different notation for this char poly than before?
-\reply{[we don't need to talk about controllable form a we only use the characteristic polynomial, but we describe it in more detail because we work directly with the shape indicated here (a-k).}}   
-\note{but, this very shape of the characteristic polynomial holds only for LTI models in controllable canonical form.}
+\reply{The polynomial $P_a(z)$ is obtained by transforming the system into controllable form( See~\cite{astrom1997computer}, where both the dynamics and the controller are multiplied by a matrix $\mat{T}$ (derived from $\mat{A}$ and $\mat{B}$), which is given to the synthesiser.  The synthesizer is thus able to provide a $\mat{K}$ such that $k_i$ are the elements  of $\mat{K}\mat{T}^{-1}$.
+}
 %\blue{[shouldn't there be a b term in the polynomial's coefficients here? No. the polynomial only evaluates the poles]}
 %%   A controllable system with quantization will have the following dynamics, where
 %% we use underscript ``n'' to denote a noise term,
@@ -1758,7 +1757,7 @@ $$
 \phi_\mathit{init}^{K} := (\phi_\mathit{init} \wedge \phi_\mathit{input} \wedge u_k=-K x_k)
 $$
 Note that these bounds will be used by the {\sc synthesize} phase to reduce the size of the solution space.
-The specification $\phi(K)$ will later be updated by the  {\sc abstract} phase to include the possible refinements. 
+The specification $\phi(K)$ will later be updated by the {\sc abstract} phase to include the possible refinements. 
 
 \end{enumerate}
 \item In the {\sc synthesize} phase, we synthesize a candidate controller
@@ -1772,8 +1771,8 @@ The specification $\phi(K)$ will later be updated by the  {\sc abstract} phase t
 % safety specification $\phi_\mathit{safety}$.
   $K$ 
   that satisfies
-  $\phi_\mathit{stability} \wedge \phi_\mathit{safety} \wedge \phi_\mathit{init}^{K}$ \note{you mean $\phi (K)$?} by invoking a SAT solver.  
-  The safety specification in the SAT formula \note{[clarify:] is an over-approximation} that has constraints for a given set of iterations ($k$) \note{and initial values [conditions?]}.  
+  $\phi_\mathit{stability} \wedge \phi (K)$ by invoking a SAT solver.  
+  The safety specification given to the SAT formula is an over-approximation of the original safety specification that only has constraints for a given set of iterations ($k$) and initial values.  
  The program search algorithm is as in the multi-staged approach.  
 %%   We obtain it by solving the SAT formula 
 %% $$\mathcal{J}_K=\mathcal{J}\langle I,F \rangle (P_{a-k},\mat{T})\wedge \phi_\mathit{safety}$$ 
@@ -1839,7 +1838,7 @@ the faces of the polyhedra described by $\hat{X}^\#$ and $\phi_\mathit{safety}$ 
 If the verification holds we have a solution, and exit the loop with a PASS.  Otherwise, we
 find a counterexample iteration $k$ and corresponding initial condition $x_0$
 for which the property does not hold, which we use to locally refine the
-abstraction by adding the constraint $\mat{A}^k\vec{x}_0 \models \phi_\mathit{safety}$ \note{how is this local refinement practically performed?}.  
+abstraction by adding the constraint $\mat{A}^k\vec{x}_0 \models \phi_\mathit{safety}$ (which is calculated explicitly using acceleration for the given $k$ and $\vec{x}_0$).  
 When the abstraction cannot be further refined, we provide $(k, x_0)$ to the {\sc abstract} phase.
 %
 %\todo{we should have a better argument here.}
@@ -1847,7 +1846,7 @@ When the abstraction cannot be further refined, we provide $(k, x_0)$ to the {\s
 \item If we reach the {\sc abstract} phase, it means that the candidate solution is not valid,
   in which case we must refine the abstraction used by the synthesizer.
 \begin{enumerate}
-\item Find the constraints that invalidate the property \reply{($\{ k, x_0 : \mat{A}^k\vec{x}_0 \not \models \phi_\mathit{safety}\}$) as a set of counterexamples for the eigenvalues, which we define as $\phi_\Lambda=\{ k, x_0 : \mat{J}^k\mat{S}^{-1}\vec{x}_0 \models \phi_\mathit{safety}\}$}. 
+\item Find the constraints that invalidate the property ($\{ k, x_0 : \mat{A}^k\vec{x}_0 \not \models \phi_\mathit{safety}\}$) as a set of counterexamples for the eigenvalues, which we define as $\phi_\Lambda=\{ k, x_0 : \mat{J}^k\mat{S}^{-1}\vec{x}_0 \models \phi_\mathit{safety}\}$. 
 This is a constraint for the spectrum of the closed-loop dynamics.  
 \item We use $\phi_\Lambda$ to
   further constrain the characteristic polynomial %\blue{[again, check the coefficients of the characteristic polynomial.]I don't find any error} 
