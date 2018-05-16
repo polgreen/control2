@@ -1246,7 +1246,7 @@ which accelerating results and setting $T=kT_s+t'$ becomes
 \end{proof}
 
 %-------------------------------
- \subsubsection{Abstract Supports for Continuous Dynamics}
+ \subsubsection{Abstract Supports for Continuous-Time Dynamics}
  \label{sec:cont_aasup}
 %-------------------------------
 
@@ -1268,6 +1268,9 @@ the progression of that pair in a two dimensional space and use it as a face of
 the polyhedron).  The difference with~\cite{cattaruzza2015unbounded} is that
 in the continuous case, the tangent is found by derivation \note{cf. `Lie derivative' above} rather than
 differentialtion, thus including all intermediate points \note{[?] in the arc}. 
+
+\note{So the case study section should emphasise that the AA-based back-end can handle continuous-time benchmarks/models? 
+It seems like the discussion in this section is not reflected on the case study section yet. } 
 
 %Abstract acceleration works by finding support functions of the set that encompasses the matrices $\mat{A}^k$.
 %Support functions are scalars that measure the distance of a hyperplane tangent to the set boundary to the origin.
@@ -1829,6 +1832,8 @@ where $\mathcal{A}=\bigcup_{k=1}^\infty (A_d-B_dK)^k,
 \mathcal{B}_{n}=\bigcup_{k=1}^\infty \sum_{i=0}^k(A_d-B_dK)^iB_{n}$ are
 abstract matrices for the closed-loop system~\cite{cattaruzza2015unbounded},
 whereas the set $N$ is obtained above. 
+
+\note{What about the continuous-time abstract acceleration? Where in the case studies? }
 
 We next evaluate whether $\hat{X}^\# \models \phi_\mathit{safety}$ using set inclusion, cf. Section \ref{sec:cont_aasup}: 
 the faces of the polyhedra described by $\hat{X}^\#$ and $\phi_\mathit{safety}$ are aligned, so we only need to check that all the supports of $\hat{X}^\#$ are smaller.   
@@ -2664,12 +2669,10 @@ the evaluation study has the following two experimental goals:
 CEGIS approaches are able to generate FWL digital controllers using floating-point arithmetic 
 in a reasonable amount of time.
 
-\item[EG2] \textbf{(Sanity check)} \textcolor{blue}{Confirm the stability and safety of the synthesized controllers outside 
-of our model representation using MATLAB}.
+\item[EG2] \textbf{(Sanity check)} Confirm the stability and safety of the synthesized controllers outside 
+of our model representation using MATLAB. \note{Where is this done?}
 
 \end{enumerate}
-
-\note{Perhaps rather than `safety check' we could speak about robustness to changes in sampling time.}
 
 %-------------------------------
 \subsection{Results}
@@ -2683,7 +2686,7 @@ $\mathcal{F}_{\langle I_p,F_p \rangle}$, where $I_p$ and $F_p$ indicate the inte
 and \textcolor{blue}{ $\mathcal{F}_{\langle W_p,F_p \rangle}$}, where $W_p$ and $F_p$ indicate the total word-length and fractional part, 
 are the fixed- and floating-point precisions used to model the plant, respectively; } 
 and \textit{Time} is the total time required to synthesize a controller for the given plant.    
-Timeouts are indicated by~\xmark, \textcolor{blue}{while failures to synthesise the digital controllers are indicated by $\dagger$}.
+Timeouts are indicated by~\xmark, while failures to synthesise the digital controllers are indicated by $\dagger$.  
 The precision for the controller, $\mathcal{F}_{\langle I_c,F_c \rangle}$, is
 chosen to be $I_c = 8$, $F_c = 8$ for fixed-point, \textcolor{blue}{whereas  
 $\mathcal{F}_{\langle W_c, F_c \rangle}$ is chosen to be $W_c = 16$ and $F_c = 10$
@@ -2767,8 +2770,8 @@ the plant model.
 \textit{Benchmark selection:} We report an assessment of both our approaches
 over a diverse set of real-world benchmarks.  Nevertheless, this set of
 benchmarks is limited within the scope of this paper and the performance may
-not generalize to other benchmarks.\\
-%
+not generalize to other benchmarks.\note{is this where we attempt asserting EG2?}
+
 \textit{Plant precision and discretization heuristics:} Our algorithm to
 select suitable FWL word widths to model the plant behavior 
 increases the precision by 8 bits at each step 
@@ -2777,8 +2780,8 @@ Similarly, for discretization, we run multiple discretizations for each
 benchmark and retain the fastest run.
 This works sufficiently well for our benchmarks, but
 performance may suffer in some cases, for example if the completeness
-threshold is high.\\
-%
+threshold is high. 
+
 \textit{Abstraction on other properties:} The performance gain from abstract
 acceleration may not hold for more complex properties than safety, for
 instance ``eventually reach and always remain in a given safe set''.
