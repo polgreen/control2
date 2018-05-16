@@ -651,7 +651,7 @@ and $r_{k}$ is a reference signal (again digital).
 We will assume $r_k=0$, thus 
 $\vec{x}_{k+1}=(\mat{A}_d-\mat{B}_d\mat{K})\vec{x}_k$. 
 
-\note{Anticipate here connection with characteristic polynomial?}
+\note{Anticipate here connection with characteristic polynomial? See Section 4.}
 
 %-------------------------------
 \subsection{Errors}
@@ -817,7 +817,7 @@ considered in its general form as
 \begin{equation*}
 S(z) = a_0z^N+a_1z^{N-1}+\cdots+a_{N-1}z+a_N,\,\, a_0\neq0. 
 \end{equation*}
-\note{The characteristic polynomial $S(z)$ represents the dynamical model in \ldots }
+\note{The characteristic polynomial $S(z)$ represents the dynamical model in \ldots [clarify whether we use the CPol to describe the open- or closed-loop model. Relate parameters to matrices A,B,K. ]}
 %\cdsay{is this for the matrix $\left( \begin{array}{c} Y \\ U \end{array}\right)$?} 
 % Assuming that $\hat{G}(z) = \frac{\hat{N_G}(z)}{\hat{D_G}(z)}$
 % and $\hat{C}(z) = \frac{\hat{N_C}(z)}{\hat{D_C}(z)}$, then:
@@ -1533,7 +1533,7 @@ ensuring that the safety boundaries are not violated for any other $k{>}\overlin
 
 Next, 
 with reference to the CEGIS scheme in Figure~\ref{fig:CEGIS}, 
-we describe in detail the different phases in Fig.~\ref{fig:CEGIS-precision-increment} (blocks 1 to 4). 
+we describe in detail the different phases in Fig.~\ref{fig:CEGIS-precision-increment} (shaded blocks 1 to 4). 
 
 \note{we need to refer to the parts of Algorithm 1 more closely - point to specific lines in the explanation below.} 
 
@@ -1594,7 +1594,7 @@ The checks that these assumptions hold are performed by subsequent {\sc verify} 
 \caption{Safety check\label{alg:safetycheck}}
 \end{algorithm}
 
-\item The first {\sc verify} stage, {\sc safety}, shown in alg.~\ref{alg:safetycheck}, checks that the candidate
+\item The first {\sc verify} stage, {\sc safety}, shown in Alg.~\ref{alg:safetycheck}, checks that the candidate
 solution $K$, which we synthesized to be safe for at least one initial
 state, is safe for \emph{all} possible initial states, i.e., does not reach
 an unsafe state within $k$ steps.  After unfolding the transition system corresponding
@@ -1602,7 +1602,7 @@ to the previously synthesized controller $k$ steps, we check that the safety
 specification holds for any initial state. 
 
 \item The second {\sc verify} stage, {\sc precision}, 
- restores soundness with respect to the plant's precision
+ restores soundness with respect to the plant precision
 by using interval arithmetic \cite{moore1966interval} to validate the 
 operations performed by the previous stage. 
 
@@ -1610,7 +1610,8 @@ operations performed by the previous stage.
 $k$ is large enough to ensure safety for any $k'{>}k$.  Here, we compute the
 completeness threshold $\overline{k}$ for the current candidate controller $K$ and
 check that $k{\geq}\overline{k}$.  This is done by computing the number of time steps
-required for the states to have completed a 360\textdegree circle as illustrated in Fig.~\ref{fig:ct}. 
+required for the states to have completed a 360\textdegree circle, as illustrated in Fig.~\ref{fig:ct}. 
+\note{This is only for spiralling dynamics.}
 
 \end{enumerate}
 
