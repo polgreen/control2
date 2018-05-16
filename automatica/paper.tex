@@ -656,30 +656,23 @@ $\vec{x}_{k+1}=(\mat{A}_d-\mat{B}_d\mat{K})\vec{x}_k$.
 %-------------------------------
 \subsection{Errors}
 
-\note{back end vs back-end?} 
-
-We account for the presence of errors originating from a number of sources, shown in Figure~\ref{} \note{fix}:
+We account for the presence of errors originating from a number of sources, shown in Figure~\ref{fig:digitalsystem}:
 \begin{itemize}
 \item We represent the plant variables $x(t)$ and $u(t)$, which are continuous quantities, with finite precision in our model. 
 It is necessary to account for the errors introduced by this representation: 
-we account for these errors in both back ends \note{did we explain the two back ends already?} by using interval arithmetic, as detailed in section~\ref{} \note{fix}. 
+we account for these errors in both approaches by using standard interval arithmetic. 
 \item The quantisation errors by the ADC, which converts the analogue signal $x(t)$ into the digital signal $x_k$, 
-which is then fed into the controller \note{cf. Figure~\ref{} }. 
-We account for this error in the acceleration-based back-end by introducing a noise signal $\nu_1$ that over-approximates it. Further details are found in section~\ref{}.  
-In the naive back-end we use bit-precise modelling in \note{[clear? discussed before?] CBMC}~\cite{} to accurately encompass this conversion.   
-In other words, CBMC constructs a boolean formula that explicitly unwinds the transition system for any \note{[unclear] symbolically represented} input state, 
-\note{[unclear how the initial conditions bound the input state? use formulas or figure to explain.] bounded by the initial conditions}, 
-and performs the ADC conversion precisely on that symbolically represented input state. 
-When we check for a safety property, 
-the boolean formula is satisfied only if there is an input state value for which the subsequent trace through the transition system eventually violates the safety property.  
+which is then fed into the controller cf. Figure~\ref{fig:digitalsystem}. 
+We account for this error in the acceleration-based back-end by introducing a noise signal $\nu_1$ that over-approximates it. Further details are found in section~\ref{sssec:abstraction}.  
+In the multi-stage back-end we use bit-precise modelling in CBMC~\cite{ClarkeKL04}, a bounded model checker for C-programs, to accurately encompass this conver- sion. In other words, CBMC constructs a boolean formula that explicitly unwinds the transition system for symbolically represented inital states. The possi- ble bounds that this symbolically represented initial state may take are restricted by upper and lower bounds as described in section . The boolean formula constructed by CBMC models the ADC conversions precisely on the symbolically represented states at every time step. When we check for a safety prop- erty, the boolean formula is satisfied only if there is an input state value for which the subsequent trace through the transition system eventually violates the safety property.
 \item The representation errors due to performing finite-precision arithmetic in the controller block. 
 In the acceleration-based back-end, 
 this is again treated by the introduction of a noise signal that bounds the error. 
 The naive back-end uses the bit-precise modelling of finite-precision arithmetic in CBMC, 
 in the same way as we handled the ADC conversion. 
-We assume that the controller represents numbers to the same precision as the ADC \note{why is this legit?}. 
-\item We assume \note{why is this reasonable?} that the DAC converts numbers to analogue signals with the same precision as the controller. 
-As a result we can ignore any additional errors introduced by the DAC.  
+We assume that the ADC represents numbers to the same precision as the controller, or higher, and thus the precision is limited by the controller. 
+\item We assume that the DAC converts numbers to analogue signals with the same precision as the controller. 
+As a result we can ignore any additional errors introduced by the DAC.  Both the assumptions about the ADC and the DAC are reasonable assumptions based on commonly available hardware. 
 \end{itemize}
 
 
