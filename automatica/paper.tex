@@ -663,35 +663,39 @@ $\vec{x}_{k+1}=(\mat{A}_d-\mat{B}_d\mat{K})\vec{x}_k$.
 We account for the presence of errors originating from a number of sources, shown in Figure~\ref{fig:digitalsystem}:
 \begin{itemize}
 \item We represent the plant variables $x(t)$ and $u(t)$, which are continuous quantities, with finite precision in our model. 
-It is necessary to account for the errors introduced by this representation: 
-we account for these errors in both approaches by using standard interval arithmetic. 
+It is necessary to account for the errors introduced by this representation, 
+which we do using standard interval arithmetic. 
 \item The quantisation errors by the ADC, which converts the analogue signal $x(t)$ into the digital signal $x_k$, 
 which is then fed into the controller cf. Figure~\ref{fig:digitalsystem}. 
-We account for this error in the acceleration-based back-end by introducing a noise signal $\nu_1$ that over-approximates it. Further details are found in section~\ref{sssec:abstraction}.  
-In the multi-stage back-end we use bit-precise modelling in CBMC~\cite{ClarkeKL04}, a bounded model checker for C-programs, to accurately encompass this conver- sion. In other words, CBMC constructs a boolean formula that explicitly unwinds the transition system for symbolically represented inital states. The possi- ble bounds that this symbolically represented initial state may take are restricted by upper and lower bounds as described in section . The boolean formula constructed by CBMC models the ADC conversions precisely on the symbolically represented states at every time step. When we check for a safety prop- erty, the boolean formula is satisfied only if there is an input state value for which the subsequent trace through the transition system eventually violates the safety property.
+We account for this error in the acceleration-based back-end by introducing a noise signal $\nu_1$ that over-approximates it. 
+Further details are found in Section~\ref{sssec:abstraction}.  
+In the multi-stage back-end we use bit-precise modelling in CBMC~\cite{ClarkeKL04}, a bounded model checker for C-programs, to accurately encompass this conversion. 
+In other words, CBMC constructs a Boolean formula that explicitly unwinds the transition system for symbolically represented initial states. 
+\note{[rephrase:] The possible bounds that this symbolically represented initial state may take are restricted by upper and lower bounds as described in section . } 
+The Boolean formula constructed by CBMC models the ADC conversions precisely on the symbolically represented states at every time step. 
+When we check for a safety property, the Boolean formula is satisfied only if there is an input state value for which the subsequent trace through the transition system eventually violates the safety property. 
 \item The representation errors due to performing finite-precision arithmetic in the controller block. 
 In the acceleration-based back-end, 
 this is again treated by the introduction of a noise signal that bounds the error. 
-The naive back-end uses the bit-precise modelling of finite-precision arithmetic in CBMC, 
-in the same way as we handled the ADC conversion. 
-We assume that the ADC represents numbers to the same precision as the controller, or higher, and thus the precision is limited by the controller. 
+The multi-stage back-end uses the bit-precise modelling of finite-precision arithmetic in CBMC, 
+in the same way as the ADC conversion was handled. 
+We assume that the ADC represents numbers with a higher precision than the controller \note{why is this reasonable?}, 
+and thus the precision is limited by the controller. 
 \item We assume that the DAC converts numbers to analogue signals with the same precision as the controller. 
 As a result we can ignore any additional errors introduced by the DAC.  Both the assumptions about the ADC and the DAC are reasonable assumptions based on commonly available hardware. 
 \end{itemize}
 
-\subsection{Notation for fixed-point precision}  
+\subsection{Notation for fixed- and floating-point precision}  
 
-In this paper we will use $\mathcal{F}_{\langle I,F \rangle}(x)$ to denote a real number
-$x$ represented at a fixed-point precision using $I$ bits to represent the integer part of the number
-and $F$ bits to represented the decimal part.
+In this paper we will use $\mathcal{F}_{\langle I,F \rangle}(x)$ to denote a real number $x$ expressed at a fixed-point precision, 
+using $I$ bits to represent the integer part of the number and $F$ bits to represent the decimal part. 
 
-$\mathcal{F}_{\langle I_c,F_c \rangle}(x)$ to denote a real
-number $x$ represented at the fixed-point precision of the controller, and
-$\mathcal{F}_{\langle I_p,F_p \rangle}(x)$ to denote a real number $x$
-represented at the fixed-point precision of the plant model ($I_c$ and $F_c$
-are determined by the controller.  We pick $I_p$ and $F_p$ for our synthesis
+$\mathcal{F}_{\langle I_c,F_c \rangle}(x)$ denotes a real number $x$ represented at the fixed-point precision of the controller, 
+and $\mathcal{F}_{\langle I_p,F_p \rangle}(x)$ denotes a real number $x$
+represented at the fixed-point precision of the plant model. 
+$I_c$ and $F_c$ are determined by the controller.  We pick $I_p$ and $F_p$ for our synthesis
 such that $I_p \geq I_c$ and $\allowbreak F_p \geq F_c$, so that our controller 
-can be represented accurately in the plant domain).  
+can be represented accurately in the plant domain.    
 Thus any mathematical operations in our modelled digital controller will be in the
 range of $\mathcal{F}_{\langle I_c,F_c \rangle}$, and all other calculations
 in our model will be carried out in the range of $\mathcal{F}_{\langle
@@ -707,7 +711,8 @@ part and $M$ bits representing the mantissa part.
 In particular, we use $\mathcal{F}_{\langle E_c,M_c \rangle}(x)$ to denote a real number 
 represented at the floating-point precision of the controller, and 
 $\mathcal{F}_{\langle E_p,M_p \rangle}(x)$ to denote a real number 
-represented at the fixed-point precision of the plant model. 
+represented at the fixed-point precision of the plant model.  \note{no assumptions on relative value btw controller and plant?}
+
 %-------------------------------
 \subsection{Counterexample-Guided Inductive Synthesis} 
 \label{ssec:cegis}
