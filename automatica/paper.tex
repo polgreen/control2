@@ -146,7 +146,7 @@ for Continuous Plants}
 \address[manaus]{Federal University of Amazonas, Brazil} 
           
 \begin{keyword}                           % Five to ten keywords,  
-Digital control synthesis; Safety requirements; Analog/Digital conversion; Quantization errors; Sampling.               % chosen from the IFAC 
+Digital control synthesis; Safety requirements; Analog/Digital conversion; Quantization errors; Time sampling.               % chosen from the IFAC 
 \end{keyword}                             % keyword list or with the 
                                           % help of the Automatica 
                                           % keyword wizard
@@ -267,7 +267,7 @@ in a finite-precision domain.
 We reason about high level properties such as stability, robustness, and safety, which define the
 behaviour of the whole model.  
 Notably, safety requirements are frequently overlooked in conventional feedback control synthesis, but
-play a key role in systems engineering, particularly in safety-critical applications.  
+play a key role in systems engineering, particularly for safety-critical applications of clear concern in modern autonomy contexts.  
 
 %% Using state of the art verifiers, we evaluate these models against
 %% automatically synthesised controllers using CEGIS-based synsthesis that
@@ -306,7 +306,7 @@ approach is computationally expensive.
 Instead of unfolding the dynamics, \emph{the second approach}
 employs \emph{abstract acceleration}~\cite{cattaruzza2015unbounded} to
 evaluate all possible progressions of the model simultaneously. 
-Additionally, this approach uses \emph{abstraction refinement} \cite{DBLP:conf/cav/ClarkeGJLV00},
+Additionally, this approach uses the \emph{abstraction-refinement} template \cite{DBLP:conf/cav/ClarkeGJLV00},
 enabling one to start with a very simple (abstract) description of the model 
 regardless of the complexity of its dynamics, and to refine to more complex models only 
 when a solution cannot be found.
@@ -356,21 +356,23 @@ specific extensions over~\cite{DBLP:conf/cav/AbateBCCDKKP17}):
   plant. 
 %
 \item We develop a model for different sources of quantization error and account for 
-  their effect on safety.  We give bounds that ensure the
+  their effect on safety.  We provide bounds that ensure the
   safety of our controllers in a hybrid (i.e., continuous/digital) domain.
 
 \item While~\cite{DBLP:conf/cav/AbateBCCDKKP17} is restricted to models in discrete 
-time, in the current paper we present an approach for
-  soundly evaluating safety in combined continuous-discrete time and space. 
+time, \note{in the current paper we present an approach for
+  soundly evaluating safety in combined continuous-discrete time and space. [this is via the AA-based back-end. However this part is not in the experiments, afaik.]}
 
 \item A further limitation of the work in~\cite{DBLP:conf/cav/AbateBCCDKKP17} 
   is its restriction to fixed-point arithmetic, meaning that fixed-point
   numbers are employed for the representation of both the plant and the
   controller, as well as for the operations performed by each of them. 
   Conversely, in the current paper we also make use of floating-point
-  arithmetic, and compare the two approaches.  Additionally, we enhance the
+  arithmetic, and compare the two approaches.  \note{Additionally, we enhance the
   implementation with an SMT back-end, allowing us to also use reals in order
-  to represent the states of the plant. 
+  to represent the states of the plant.} 
+  
+\item \note{Shall we mention the broader set of benchmarks?}  
 
 \end{enumerate}
   
@@ -433,11 +435,12 @@ representation~\cite{Franklin15}, as
 % it naturally generalizes to multivariate systems (i.e., with multiple inputs and outputs); and 
 it allows synthesis of controllers with guarantees on the internal dynamics, e.g., 
 %to synthesize controllers that make the closed-loop model 
-\emph{safety}.  Our work indeed focuses on the \emph{safety} of internal states, which is usually
-overlooked in the standard control literature with its default focus on stability properties.  
-Moreover, our work integrates an abstraction/refinement (CEGAR) step inside the main CEGIS loop.
+\emph{safety}.  Our work indeed focuses on the safety of internal states, 
+which is by and large overlooked in the standard (digital) control literature, 
+by default focussed on stability properties.  
+Moreover, our work integrates an abstraction-refinement (CEGAR) step inside the main CEGIS loop.
 
-The approach underpinning tools such as Pessoa~\cite{mazo2010pessoa} and related extensions \cite{Anta2010,liu16} and applications \cite{zamani2014}, 
+The technique underpinning tools such as Pessoa~\cite{mazo2010pessoa} and related extensions \cite{Anta2010,liu16} and applications \cite{zamani2014}, 
 synthesizes correct-by-design embedded control software for LTI models.    
 It is based on the abstraction of the model to a finite-state machine, 
 and on the formal control synthesis over safety- and reachability-based temporal properties thereon.  
