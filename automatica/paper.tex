@@ -1771,8 +1771,8 @@ The specification $\phi(K)$ will later be updated by the  {\sc abstract} phase t
   $K$ 
   that satisfies
   $\phi_\mathit{stability} \wedge \phi_\mathit{safety} \wedge \phi_\mathit{init}^{K}$ \note{you mean $\phi (K)$?} by invoking a SAT solver.  
-  The safety specification in the SAT formula is an over-approximation that has constraints for a given set of iterations ($k$) and initial values
-  \note{the corresponding block in the figure accepts two inputs - can you comment on them? also: is this SAT solving step obvious? Sat solvers resolve Boolean formulae, but here we have something else. So, explain block `Program search'. \reply{the SAT solving and program search are exactly as in the naive approach. Only the formula changes.} }
+  The safety specification in the SAT formula \note{[clarify:] is an over-approximation} that has constraints for a given set of iterations ($k$) \note{and initial values [conditions?]}.  
+ The program search algorithm is as in the multi-staged approach.  
 %%   We obtain it by solving the SAT formula 
 %% $$\mathcal{J}_K=\mathcal{J}\langle I,F \rangle (P_{a-k},\mat{T})\wedge \phi_\mathit{safety}$$ 
 %% that satisfies the input constraint and Jury's criteria for 
@@ -1813,7 +1813,7 @@ where $B_n= [1 \cdots 1]^T$.
 %\label{eq:acc_observer_LTI_cf}
 %+\sum_{i=0}^{k-1} \mat{A}_t^i \mat{B}_{t} r_i 
 %
-As we require to verify the system for every $k$ up to infinity, 
+As we require to verify the closed-loop model for any $k$ up to infinity, 
 we use Abstract Acceleration again to compute the reach-tube, 
 i.e., the set of all reachable states at all times given an initial set
 $\phi_\mathit{init}$:
@@ -1828,14 +1828,15 @@ X_0 =\left \{x: x \models \phi_\mathit{init} \right\},
 where $\mathcal{A}=\bigcup_{k=1}^\infty (A_d-B_dK)^k,
 \mathcal{B}_{n}=\bigcup_{k=1}^\infty \sum_{i=0}^k(A_d-B_dK)^iB_{n}$ are
 abstract matrices for the closed-loop system~\cite{cattaruzza2015unbounded},
-whereas the set $N$ is obtained from above. 
+whereas the set $N$ is obtained above. 
 
- \note{Ref Abstraction Verifier in Figure?}
-\reply{We next evaluate whether $\hat{X}^\# \models \phi_\mathit{safety}$ using set inclusion (in our case, the faces of the polyhedra described by $\hat{X}^\#$ and $\phi_\mathit{safety}$ are aligned, so we only need to check that all the supports of $\hat{X}^\#$ are smaller).}
+We next evaluate whether $\hat{X}^\# \models \phi_\mathit{safety}$ using set inclusion, cf. Section \ref{sec:cont_aasup}: 
+the faces of the polyhedra described by $\hat{X}^\#$ and $\phi_\mathit{safety}$ are aligned, so we only need to check that all the supports of $\hat{X}^\#$ are smaller.   
 If the verification holds we have a solution, and exit the loop with a PASS.  Otherwise, we
-find a counterexample iteration $k$ and corresponding initial point $x_0$
-for which the property does not hold, which we use to \reply{locally refine the
-abstraction by adding the constraint $\mat{A}^k\vec{x}_0 \models \phi_\mathit{safety}$}.  When the abstraction cannot be further refined, we provide $(k, x_0)$ to the {\sc abstract} phase.
+find a counterexample iteration $k$ and corresponding initial condition $x_0$
+for which the property does not hold, which we use to locally refine the
+abstraction by adding the constraint $\mat{A}^k\vec{x}_0 \models \phi_\mathit{safety}$ \note{how is this local refinement practically performed?}.  
+When the abstraction cannot be further refined, we provide $(k, x_0)$ to the {\sc abstract} phase.
 %
 %\todo{we should have a better argument here.}
 %\end{enumerate} 
@@ -1843,7 +1844,7 @@ abstraction by adding the constraint $\mat{A}^k\vec{x}_0 \models \phi_\mathit{sa
   in which case we must refine the abstraction used by the synthesizer.
 \begin{enumerate}
 \item Find the constraints that invalidate the property \reply{($\{ k, x_0 : \mat{A}^k\vec{x}_0 \not \models \phi_\mathit{safety}\}$) as a set of counterexamples for the eigenvalues, which we define as $\phi_\Lambda=\{ k, x_0 : \mat{J}^k\mat{S}^{-1}\vec{x}_0 \models \phi_\mathit{safety}\}$}. 
-This is a constraint in the spectrum i.e., transfer function) of the closed-loop dynamics.  
+This is a constraint for the spectrum of the closed-loop dynamics.  
 \item We use $\phi_\Lambda$ to
   further constrain the characteristic polynomial %\blue{[again, check the coefficients of the characteristic polynomial.]I don't find any error} 
 $z^n+\sum_{i=1}^n(a_i-k_i)z^{n-i}=\prod_{i=1}^n (z-\lambda_i) \text{ where } |\lambda_i|<1 \wedge \lambda_i \models \phi_{\Lambda}$. These constraints correspond to specific iterations for which the system may be unsafe.
