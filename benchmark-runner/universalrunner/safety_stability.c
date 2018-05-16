@@ -506,12 +506,15 @@ void safety_stability(void) {
 #endif
 }
 
+ __plant_typet _state_poles[16777216][8];
+
 int main(int argc, const char *argv[]) {
 #ifdef CPROVER
   assume_corner_cases_for_states();
   safety_stability();
 #else
   NUMBERLOOPS=atoi(argv[1]);
+
   for (int i = 0; i < NSTATES; ++i) {
     K_fxp[i]=interval(atof(argv[2+i]));
   }
@@ -520,8 +523,6 @@ int main(int argc, const char *argv[]) {
   for (int i=0; i < NSTATES; i++){
    npoles = npoles*NSTATES;
   }
-
-  __plant_typet _state_poles[npoles][NSTATES];
 
     for(int i=0; i<npoles; i++)
     {
