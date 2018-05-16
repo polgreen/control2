@@ -655,6 +655,7 @@ $\vec{x}_{k+1}=(\mat{A}_d-\mat{B}_d\mat{K})\vec{x}_k$.
 
 %-------------------------------
 \subsection{Errors}
+\label{sec:errors}
 
 We account for the presence of errors originating from a number of sources, shown in Figure~\ref{fig:digitalsystem}:
 \begin{itemize}
@@ -675,7 +676,36 @@ We assume that the ADC represents numbers to the same precision as the controlle
 As a result we can ignore any additional errors introduced by the DAC.  Both the assumptions about the ADC and the DAC are reasonable assumptions based on commonly available hardware. 
 \end{itemize}
 
+\subsection{Notation for fixed-point precision}  
 
+In this paper we will use $\mathcal{F}_{\langle I,F \rangle}(x)$ to denote a real number
+$x$ represented at a fixed-point precision using $I$ bits to represent the integer part of the number
+and $F$ bits to represented the decimal part.
+
+$\mathcal{F}_{\langle I_c,F_c \rangle}(x)$ to denote a real
+number $x$ represented at the fixed-point precision of the controller, and
+$\mathcal{F}_{\langle I_p,F_p \rangle}(x)$ to denote a real number $x$
+represented at the fixed-point precision of the plant model ($I_c$ and $F_c$
+are determined by the controller.  We pick $I_p$ and $F_p$ for our synthesis
+such that $I_p \geq I_c$ and $\allowbreak F_p \geq F_c$, so that our controller 
+can be represented accurately in the plant domain).  
+Thus any mathematical operations in our modelled digital controller will be in the
+range of $\mathcal{F}_{\langle I_c,F_c \rangle}$, and all other calculations
+in our model will be carried out in the range of $\mathcal{F}_{\langle
+I_p,F_p \rangle}$.  The physical plant operates in the reals, which means
+our verification phase must also account for the numerical error and
+quantization errors caused by representing the physical plant at the finite
+precision $\mathcal{F}_{\langle I_p,F_p \rangle}$.
+
+
+We use $\mathcal{F}_{\langle E,M \rangle}(x)$ to denote a real number $x$
+represented in a floating point domain, with $E$ bits representing the exponent
+part and $M$ bits representing the mantissa part. 
+
+We use $\mathcal{F}_{\langle E_c,M_c \rangle}(x)$ to denote a real number 
+represented at the floating-point precision of the controller, and 
+$\mathcal{F}_{\langle E_p,M_p \rangle}(x)$ to denote a real number 
+represented at the fixed-point precision of the plant model. 
 %-------------------------------
 \subsection{Counterexample-Guided Inductive Synthesis} 
 \label{ssec:cegis}
@@ -1523,11 +1553,11 @@ we fix an index $k$,
 and we synthesize a safe controller by
 unfolding the transition system $k$ steps and by selecting a controller $K$ and a single initial state, 
 such that the states at each step do not violate the safety criteria (see Section~\ref{ssec:safespecification}).    
-That is, we ask the bounded model checker \note{have we discussed the BMC earlier?} if there exists a $K$ that is safe for at least one $x_0$ in our set of all possible initial states.  
-This is sound if the current $k$ is greater than the completeness threshold (see later step).  
+That is, we ask the bounded model checker~\cite{ClarkeKL04} if there exists a $K$ that is safe for at least one $x_0$ in our set of all possible initial states, and a given fixed point precision for the controller, and where the input signal remains within the specified bounds.
+This approach sound if the current $k$ is greater than the completeness threshold (see later step).  
 We~also assume some (fixed or floating point) precision $\langle I_p,F_p\rangle$ for the plant and a sampling rate.  
 The checks that these assumptions hold are performed by subsequent {\sc verify} stages. 
-\note{we have not discussed the bounds on the input signal. }
+
 
 %\begin{algorithm}[]
 %\scriptsize
@@ -1564,13 +1594,12 @@ The checks that these assumptions hold are performed by subsequent {\sc verify} 
 \caption{Safety check\label{alg:safetycheck}}
 \end{algorithm}
 
-\item The first {\sc verify} stage, {\sc safety}, checks that the candidate
+\item The first {\sc verify} stage, {\sc safety}, shown in alg.~\ref{alg:safetycheck}, checks that the candidate
 solution $K$, which we synthesized to be safe for at least one initial
 state, is safe for \emph{all} possible initial states, i.e., does not reach
-an unsafe state within $k$ steps \note{where we assume $k$ to be under the
-completeness threshold}.  After unfolding the transition system corresponding
+an unsafe state within $k$ steps.  After unfolding the transition system corresponding
 to the previously synthesized controller $k$ steps, we check that the safety
-specification holds for any initial state. This is shown in Alg.~~\ref{alg:safetycheck}. 
+specification holds for any initial state. 
 
 \item The second {\sc verify} stage, {\sc precision}, 
  restores soundness with respect to the plant's precision
@@ -1580,9 +1609,8 @@ operations performed by the previous stage.
 \item The third {\sc verify} stage, {\sc complete}, checks that the current
 $k$ is large enough to ensure safety for any $k'{>}k$.  Here, we compute the
 completeness threshold $\overline{k}$ for the current candidate controller $K$ and
-check that $k{\geq}\overline{k}$.  This is done according to the argument
-given above and illustrated in Fig.~\ref{fig:ct}. 
-\note{it is not clear how we find $\overline{k}$.}
+check that $k{\geq}\overline{k}$.  This is done by computing the number of time steps
+required for the states to have completed a 360\textdegree circle as illustrated in Fig.~\ref{fig:ct}. 
 
 \end{enumerate}
 
@@ -1594,9 +1622,9 @@ given above and illustrated in Fig.~\ref{fig:ct}.
 \label{fig:ct}
 \end{figure}
 
-Checking that the safety specification holds for any initial state can be
-computationally expensive if the bounds on the allowed initial states are
-large. \note{we have not discussed the bounds on the input signal. }
+%Checking that the safety specification holds for any initial state can be
+%computationally expensive if the bounds on the allowed initial states are
+%large. \note{we have not discussed the bounds on the input signal. }
 
 %-------------------------------
 \subsection{Abstraction-based CEGIS} 
@@ -1872,7 +1900,7 @@ $z^n+\sum_{i=1}^n(a_i-k_i)z^{n-i}=\prod_{i=1}^n (z-\lambda_i) \text{ where } |\l
 \label{sec:numeric_rep}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-As discussed in \note{Section~\ref{sec:}}, 
+As discussed in Section~\ref{sec:errors}, 
 the models we consider have to account for errors from several sources: 
 the numerical error introduced by the finite precision used to represent the plant (and its operations),  
 the error introduced by the ADC/DAC conversions, 
@@ -1885,7 +1913,7 @@ Then we account for the quantization errors introduced by the ADC/DAC.
 Let us first consider the case of fixed-point representation of the model, 
 and of synthesis of fixed-point controllers. 
 
-Let $\mathcal{F}_{\langle I,F \rangle}(x)$ denote a real number $x$
+Recall we use $\mathcal{F}_{\langle I,F \rangle}(x)$ denote a real number $x$
 represented in a fixed point domain, with $I$ bits representing the integer
 part and $F$ bits representing the decimal part.  The smallest number that
 can be represented in this domain is $c_m=2^{-F}$.  Any mathematical
@@ -1940,43 +1968,11 @@ the domain.  We check that overflow does not occur.
 
 \end{enumerate}
 
-\subsection{Notations}  
+Similar bounds for errors introduced by 
+performing basic mathematical operators in floating-point precision can be derived~\cite{DBLP:conf/arith/BrainTRW15}.
 
-\note{If these notations are used in earlier Sections, shall we anticipate the paragraph to the preliminaries? }
 
-In this paper we will use $\mathcal{F}_{\langle I_c,F_c \rangle}(x)$ to denote a real
-number $x$ represented at the fixed-point precision of the controller, and
-$\mathcal{F}_{\langle I_p,F_p \rangle}(x)$ to denote a real number $x$
-represented at the fixed-point precision of the plant model ($I_c$ and $F_c$
-are determined by the controller.  We pick $I_p$ and $F_p$ for our synthesis
-such that $I_p \geq I_c$ and $\allowbreak F_p \geq F_c$, so that our controller 
-can be represented accurately in the plant domain).  
-Thus any mathematical operations in our modelled digital controller will be in the
-range of $\mathcal{F}_{\langle I_c,F_c \rangle}$, and all other calculations
-in our model will be carried out in the range of $\mathcal{F}_{\langle
-I_p,F_p \rangle}$.  The physical plant operates in the reals, which means
-our verification phase must also account for the numerical error and
-quantization errors caused by representing the physical plant at the finite
-precision $\mathcal{F}_{\langle I_p,F_p \rangle}$.
-
-\note{also introduce notations for floats?}
-
-\subsection{Floating-point representation}
-
-\note{Notice that this notation is different than the one used in the results section. pls fix. }
-
-Let $\mathcal{F}_{\langle E,M \rangle}(x)$ denote a real number $x$
-represented in a floating point domain, with $E$ bits representing the exponent
-part and $M$ bits representing the mantissa part. Bounds for errors introduced by 
-performing basic mathematical operators at this precision can be derived~\cite{DBLP:conf/arith/BrainTRW15}.
-
-We use $\mathcal{F}_{\langle E_c,M_c \rangle}(x)$ to denote a real number 
-represented at the floating-point precision of the controller, and 
-$\mathcal{F}_{\langle E_p,M_p \rangle}(x)$ to denote a real number 
-represented at the fixed-point precision of the plant model. We apply 
-the same principles as in the preceding section when selection the plant precision.
-
-\subsection{ADC/DAC quantization errors} 
+\subsection{ADC/DAC quantization errors modelled as noise} 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 In this section we describe how quantization errors can be modelled as noise. 
 Note that this is only applicable to the acceleration back end, as the multi-stage back 
@@ -1984,25 +1980,25 @@ end makes use of CBMC's bit-precise model checking capabilities to account
 for these deterministic errors.
 
 During any given ADC conversion, the continuous signal will be sampled in
-the real domain and transformed by $\mathcal{F}\langle I_{c},F_{c} \rangle
+the real domain and transformed by $\mathcal{F}_{\langle I_{c},F_{c} \rangle}
 (x)$ (assuming the ADC discretization is the same as the digital
 implementation).  This sampling uses a threshold which is defined by the
 less significant bit ($q_{c}=c_{m_c}=2^{-F_c}$) 
 %\blue{[this quantity was named $c_m$ above and in other parts of the paper - please uniformise notations]}
 of the ADC and some non-linearities of the circuitry.  The overall conversion is
 %
-$$\mathcal{F}\langle I_{c},F_{c} \rangle(y(t)) = y_k :
+$$\mathcal{F}_{\langle I_{c},F_{c} \rangle}(y(t)) = y_k :
 y_k \in \left[y(t)-\frac{q_{c}}{2}\ \ \ \ y(t)+\frac{q_{c}}{2}\right] \,.$$
 %
 If we denote the error in the conversion by $\nu_k=y_k-y(t)$ where $t = nk$,
 and $n$ is the sampling time and $k$ the number of steps, then we may define
 some bounds for it $\nu_k \in [-\frac{q_{c}}{2}\ \ \frac{q_{c}}{2}]$.
 
-We will assume, for the purposes of this analysis, that the domain of the
+As stated before, we assume that the domain of the
 ADC is that of the digital controller (i.e, the quantizer includes any
 digital gain added in the code).  The process of quantization in the DAC is
-similar except that it is calculating $\mathcal{F}\langle I_{dac},F_{dac}
-\rangle (\mathcal{F}\langle I_{c},F_{c} \rangle (x)) $.  If these domains
+similar except that it is calculating $\mathcal{F}_{\langle I_{dac},F_{dac}
+\rangle} (\mathcal{F}_{\langle I_{c},F_{c} \rangle }(x)) $.  If these domains
 are the same ($I_{c}=I_{dac},\allowbreak F_{c}=F_{dac}$), or if the DAC
 resolution in higher than the ADCs, then the DAC quantization error is equal
 to zero.  From the above equations we can now define the ADC and DAC
@@ -2042,7 +2038,7 @@ u_{k}&=-(\mathcal{F}_{\langle I_c,F_c \rangle}(K)\cdot\mathcal{F}_{\langle I_c,F
 \end{align*}
 
 This induces two types of the errors detailed above: first, the truncation
-error due to representing $x_k$ as $\mathcal{F}{\langle I_c,F_c
+error due to representing $x_k$ as $\mathcal{F}_{\langle I_c,F_c
 \rangle}(x_{k})$; and second, the rounding error introduced by the
 multiplication operation.  We represent these errors as non-deterministic
 additive noise.
@@ -2717,7 +2713,7 @@ benchmark coverage and together solve 54\% of the benchmarks \note{somewhat unde
 %
 \hline
 \# & \multicolumn{1}{|c|}{Benchmark} & \multicolumn{1}{|c|}{Order} & \multicolumn{4}{|c|}{Multi-staged}                 & \multicolumn{4}{|c|}{Abstraction} \\
-   &                                  & & \multicolumn{1}{|c|}{$\mathcal{F}_{\langle I_p,F_p \rangle}$} & \multicolumn{1}{|c|}{Time} & \multicolumn{1}{|c|}{$\mathcal{F}_{\langle W_p, F_p \rangle}$} & \multicolumn{1}{|c|}{Time} & \multicolumn{1}{|c|}{$\mathcal{F}_{\langle I_p,F_p \rangle}$} & \multicolumn{1}{|c|}{Time} & \multicolumn{1}{|c|}{$\mathcal{F}_{\langle W_p, F_p \rangle}$} & \multicolumn{1}{|c|}{Time}\\\hline
+   &                                  & & \multicolumn{1}{|c|}{$\mathcal{F}_{\langle I_p,F_p \rangle}$} & \multicolumn{1}{|c|}{Time} & \multicolumn{1}{|c|}{$\mathcal{F}_{\langle E_p, M_p \rangle}$} & \multicolumn{1}{|c|}{Time} & \multicolumn{1}{|c|}{$\mathcal{F}_{\langle I_p,F_p \rangle}$} & \multicolumn{1}{|c|}{Time} & \multicolumn{1}{|c|}{$\mathcal{F}_{\langle E_p, M_p \rangle}$} & \multicolumn{1}{|c|}{Time}\\\hline
 1  & Acrobot  & 4 &  & \xmark &  & ~\xmark & & ~\xmark &  & ~\xmark \\
 2  & Antenna  & 6 &  & ~\xmark &  & ~\xmark & & ~\xmark & & ~\xmark\\
 3  & Ballmaglev  & 3 &  & ~\xmark &  & ~\xmark & & ~\xmark & & ~\xmark\\
