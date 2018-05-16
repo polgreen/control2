@@ -291,7 +291,7 @@ for the entire range of possible inputs. Our two instantiations of CEGIS are des
 %% collection of unstable plants.  Inthis case, there is no safety
 %% specification since we are working in the frequency domain.
 
-\emph{The first approach} uses a na\"ive technique that starts by devising a
+\emph{The first approach} uses a multi-staged technique that starts by devising a
 digital controller that stabilizes the plant model while remaining safe for a
 pre-selected time horizon and a single initial state; then, it verifies
 unbounded-time safety by unfolding the model dynamics, considering the 
@@ -343,7 +343,7 @@ specific extensions over~\cite{DBLP:conf/cav/AbateBCCDKKP17}):
 %%   \note{[this statement is way too broad] Existing methods for controller synthesis rely on transfer 
 %%   function representations, which are inadequate to prove safety requirements. } 
 %% %
-\item We provide two novel algorithms: the first, a na\"ive approach, relies on 
+\item We provide two novel algorithms: the first, a multi-staged approach, relies on 
   an unfolding of the dynamics up to a completeness threshold, while the
   second one is abstraction-based and leverages abstraction/refinement and
   acceleration to improve scalability while retaining soundness.  %% A third
@@ -936,7 +936,7 @@ set $\hat{X}^\sharp$ is further defined as
 where the newly introduced \emph{abstract reach tube} $\hat{X}^\sharp$ is an
 over-approximation of the reach tube of the model: 
 \cite{JSS14} details algorithms to compute such set, 
-whereas \cite{cattaruzza2015unbounded} extends this to LTI models with inputs as in \note{Eqn. XX}.  
+whereas \cite{cattaruzza2015unbounded} extends this to LTI models with inputs as in Eqn. \eqref{eq:plant}.  
 In view of the overall goal of this work, 
 we extend the algorithm to continuous-time models.  
 % and  For this reason we must first look at the acceleration of continuous-time dynamics.
@@ -1233,15 +1233,16 @@ we use the same principle on Eqn. \eqref{eq:feedback_cont} to obtain
 
 We next describe how to obtain an over-approximation of such a set. 
 This is defined as a polyhedron, expressed as an intersection of hyperplanes. 
-A tight polyhedron that can be obtained with faces (hyperplanes) that touch the set. 
-\reply{This is achieved by picking a number of points in the set, and finding a hyperplane
-tangent to that point w.r.t. dynamics.  Inorder to simplify this procedure, we
-look at two-dimensional cuts of the space, one at a time (i.e., for every pair
-of eigenvalues of the closed loop dynamics, we find a hyperplane tangent to
+A tight polyhedron can be obtained with hyperplanes that are tangent to the set,  
+which is achieved by selecting a number of points \note{on the boundary} of the set, 
+and finding corresponding hyperplanes that are tangent to those points with respect to the dynamics.  
+\note{[you are essentially taking the Lie derivative of the set wrt the dynamics at the selected point?]}
+In order to simplify this procedure, we look at two-dimensional cuts \note{projection?} of the space, one at a time (i.e., for every pair
+of eigenvalues of the closed-loop dynamics, we find a hyperplane tangent to
 the progression of that pair in a two dimensional space and use it as a face of
 the polyhedron).  The difference with~\cite{cattaruzza2015unbounded} is that
-in the continuous case, the tangent is found by derivation rather than
-differentialtion, thus including all intermediate points in the arc.}
+in the continuous case, the tangent is found by derivation \note{cf. `Lie derivative' above} rather than
+differentialtion, thus including all intermediate points \note{[?] in the arc}. 
 
 %Abstract acceleration works by finding support functions of the set that encompasses the matrices $\mat{A}^k$.
 %Support functions are scalars that measure the distance of a hyperplane tangent to the set boundary to the origin.
@@ -1393,7 +1394,7 @@ the first one,
 named {\it multi-stage} approach, 
 relies on an unfolding of the dynamics up to a completeness threshold; 
 the second one is {\it abstraction-based}, 
-and it leverages abstraction-refinement \note{ cit.} and acceleration \note{ref to relevant section} to improve scalability,  
+and it leverages abstraction-refinement \cite{DBLP:conf/cav/ClarkeGJLV00} and acceleration (cf. Sec.~\ref{ssec:aa}) to improve scalability,  
 while retaining soundness. 
 
 %-------------------------------
@@ -1520,13 +1521,13 @@ safety specification.
 
 To synthesize a controller that satisfies the
 stability criteria, we require that a computed polynomial satisfies Jury's
-criterion~\cite{fadali} (\reply{see Section~\ref{ssec:stabspecification}}).
+criterion~\cite{fadali} (see Section~\ref{ssec:stabspecification}).
 
 Regarding the second requirement, 
 we fix an index $k$, 
 and we synthesize a safe controller by
 unfolding the transition system $k$ steps and by selecting a controller $K$ and a single initial state, 
-such that the states at each step do not violate the safety criteria (\reply{see Section~\ref{ssec:safespecification}}).  
+such that the states at each step do not violate the safety criteria (see Section~\ref{ssec:safespecification}).    
 That is, we ask the bounded model checker \note{have we discussed the BMC earlier?} if there exists a $K$ that is safe for at least one $x_0$ in our set of all possible initial states.  
 This is sound if the current $k$ is greater than the completeness threshold (see later step).  
 We~also assume some (fixed or floating point) precision $\langle I_p,F_p\rangle$ for the plant and a sampling rate.  
@@ -1609,7 +1610,7 @@ large. \note{we have not discussed the bounds on the input signal. }
 
 %\textcolor{red}{[Dario: can you update the following part, aligning it with hers?]}
 
-%  The na\"ive approach described in Sec.~\ref{sec:CEGIS-precision-incrementation}
+%  The multi-staged approach described in Sec.~\ref{sec:CEGIS-precision-incrementation}
   %uses a multi-staged verification phase and performs solution generalization based on
 %the plant precision, the number of loop unrollings, 
   %and the sampling rate. Essentially, it
@@ -1632,7 +1633,7 @@ and on the generalization to continuous sets and over an infinite time horizon.
 %% infinite set of states, which is undecidable.
 
 
-%% Our na\"ive approach
+%% Our multi-staged approach
 %% creates an abstraction of the system by establishing bounds on the
 %% error between such a system and a discrete-time/continuous-space
 %% model.  This model is still however, quite complex, hard to verify,
@@ -1663,9 +1664,10 @@ It comprises the following steps:
   % in sections \ref{sec:reachable} and \ref{sec:observable}.
   \begin{enumerate}
 \item Compute the characteristic polynomial of the matrix $(A_d-B_dK)$ as 
-$P_a(z) = z^n+\sum_{i=1}^n{(a_i-k_i)z^{n-i}}$.  As with the na\"ive approach, this polynomial must satisfy Jury's criterion.
+$P_a(z) = z^n+\sum_{i=1}^n{(a_i-k_i)z^{n-i}}$.  As with the multi-staged approach, this polynomial must satisfy Jury's criterion.
 \note{are we assuming to be working with a controllable form? should we emphasize that some elements are known, others are parameters? also, why do we use a different notation for this char poly than before?
 \reply{[we don't need to talk about controllable form a we only use the characteristic polynomial, but we describe it in more detail because we work directly with the shape indicated here (a-k).}}   
+\note{but, this very shape of the characteristic polynomial holds only for LTI models in controllable canonical form.}
 %\blue{[shouldn't there be a b term in the polynomial's coefficients here? No. the polynomial only evaluates the poles]}
 %%   A controllable system with quantization will have the following dynamics, where
 %% we use underscript ``n'' to denote a noise term,
@@ -1952,7 +1954,7 @@ number $x$ represented at the fixed-point precision of the controller, and
 $\mathcal{F}_{\langle I_p,F_p \rangle}(x)$ to denote a real number $x$
 represented at the fixed-point precision of the plant model ($I_c$ and $F_c$
 are determined by the controller.  We pick $I_p$ and $F_p$ for our synthesis
-such that $I_p \geq I_c$ and $\allowbreak F_p \geq F_c$, \reply{so that our controller can be represented accurately in the plant domain}).  
+such that $I_p \geq I_c$ and $\allowbreak F_p \geq F_c$, so that our controller can be represented accurately in the plant domain).  
 Thus any mathematical operations in our modelled digital controller will be in the
 range of $\mathcal{F}_{\langle I_c,F_c \rangle}$, and all other calculations
 in our model will be carried out in the range of $\mathcal{F}_{\langle
