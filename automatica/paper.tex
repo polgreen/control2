@@ -907,7 +907,7 @@ In~this work, the safety property is expressed as the formula:
 %
 \begin{equation}
 \label{eq:safetyliteral}
-\phi_\mathit{safety} := \forall k\ge 0.\, \bigwedge_{i=1}^{n}{\underline{x_{i}} \leq x_{i,k} \leq \overline{x_{i}}},
+\phi_\mathit{safety} := \forall k\ge 0,\, \bigwedge_{i=1}^{n}{\underline{x_{i}} \leq x_{i,k} \leq \overline{x_{i}}},
 \end{equation}
 %
 %\addtodo{We consider $x_{i}^{-}$ and $x_{i}^{+}$ to be -1 and 1, respectively.}
@@ -919,7 +919,7 @@ This means that the states are required to remain within an $n$-dimensional hype
 Furthermore, it is practically relevant to consider constraints $\phi_\mathit{input}$ on the input
 signal $u_{k}$ and requirements $\phi_\mathit{init}$ on the initial states $x_0$, 
 both of which we be expressed via given bounds as: 
-$\phi_\mathit{input} := {\forall k.\underline{u} \leq u_{k} \leq \overline{u}} $, 
+$\phi_\mathit{input} := {\forall k\ge 0, \underline{u} \leq u_{k} \leq \overline{u}} $, 
 and $\phi_\mathit{init} := \bigwedge_{i=1}^{n} \underline{x_{i,0}} \leq x_{i,0} \leq \overline{x_{i,0}}$. 
 For the input signal, these requirements practically mean that the control input saturates in view of physical constraints. 
 
@@ -1253,7 +1253,7 @@ which accelerating results and setting $T=kT_s+t'$ becomes
 \end{proof}
 
 %-------------------------------
- \subsubsection{Abstract Supports for Continuous-Time Dynamics}
+ \subsubsection{Abstract supports for continuous-time models}
  \label{sec:cont_aasup}
 %-------------------------------
 
@@ -1429,7 +1429,7 @@ the first one,
 named {\it multi-stage} approach, 
 relies on an unfolding of the dynamics up to a completeness threshold; 
 the second one is {\it abstraction-based}, 
-and it leverages abstraction-refinement \cite{DBLP:conf/cav/ClarkeGJLV00} and acceleration (cf. Sec.~\ref{ssec:aa}) to improve scalability,  
+and it leverages abstraction-refinement \cite{DBLP:conf/cav/ClarkeGJLV00} and abstract acceleration (cf. Sec.~\ref{ssec:aa}) to improve scalability,  
 while retaining soundness. 
 
 %-------------------------------
@@ -1587,8 +1587,8 @@ The checks that these assumptions hold are performed by subsequent {\sc verify} 
 \begin{algorithmic}[1]
 \Function{$\mathit{safetyCheck}()$}{}
 \State assert($ \underline{u}  \leq u \leq \overline{u}$)
- \State set $x_0$ to be a \note{vertex state}, e.g., $[\underline{x_0},\underline{x_0}]$	
-\For {($c=0;~c < 2^\mathit{Num\_States};~c\mbox{++}$)}
+ \State set $x_0$ to be a \note{vertex state[?]}, e.g., $[\underline{x_0},\underline{x_0}]$	
+\For {($c=0;~c < 2^\mathit{Num\_States};~c\mbox{++}$) }
   %\State assert($ \underline{x_0}  \leq x_0 \leq \overline{x_0}$)
 	\For{($i=0;~i< k;~i\mbox{++}$)}
 		%\State $u = (\langle I_p,F_p\rangle)((\langle I_c,F_c\rangle)K * (\langle I_c,F_c\rangle) x)$
@@ -1596,7 +1596,7 @@ The checks that these assumptions hold are performed by subsequent {\sc verify} 
 		\State $x = A * x + B * u$
 		\State assert($\underline{x} \leq x \leq \overline{x}$ )
   	\EndFor
-  	\State set $x_0$ to be a new vertex state
+  	\State set $x_0$ to be a new \note{vertex state}
   	\EndFor
   %\State Return $K$
 \EndFunction
@@ -1604,7 +1604,7 @@ The checks that these assumptions hold are performed by subsequent {\sc verify} 
 \caption{Safety check\label{alg:safetycheck}}
 \end{algorithm}
 
-\item The first {\sc verify} stage, {\sc safety}, shown in Alg.~\ref{alg:safetycheck}, checks that the candidate
+\item The first {\sc verify} stage, {\sc safety}, shown in Alg.~\ref{alg:safetycheck} \note{Num\_States = ?, plant\_typet = ? controller_typet =?}, checks that the candidate
 solution $K$, which we synthesized to be safe for at least one initial
 state, is safe for \emph{all} possible initial states, i.e., does not reach
 an unsafe state within $k$ steps.  After unfolding the transition system corresponding
@@ -1621,7 +1621,7 @@ $k$ is large enough to ensure safety for any $k'{>}k$.  Here, we compute the
 completeness threshold $\overline{k}$ for the current candidate controller $K$ and
 check that $k{\geq}\overline{k}$.  This is done by computing the number of time steps
 required for the states to have completed a 360\textdegree circle, as illustrated in Fig.~\ref{fig:ct}. 
-\note{This is only for spiralling dynamics - more generally, we need to clarify how the CT is computed. }
+\note{This is only for spiralling dynamics - more generally, we need to clarify how the CT is computed. Shall we add the CAV17 proof?}
 
 \end{enumerate}
 
