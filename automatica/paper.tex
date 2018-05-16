@@ -305,7 +305,7 @@ approach is computationally expensive.
 Instead of unfolding the dynamics, \emph{the second approach}
 employs \emph{abstract acceleration}~\cite{cattaruzza2015unbounded} to
 evaluate all possible progressions of the model simultaneously. 
-Additionally, this approach uses \emph{abstraction refinement} \note{add cit.},
+Additionally, this approach uses \emph{abstraction refinement} \cite{DBLP:conf/cav/ClarkeGJLV00},
 enabling one to start with a very simple (abstract) description of the model 
 regardless of the complexity of its dynamics, and to refine to more complex models only 
 when a solution cannot be found.
@@ -426,28 +426,27 @@ physical system, which requires ensuring the specification over actual
 traces of the model, alongside the numerical soundness required by the
 effects of discretisation and finite-precision errors.
 \note{Next paragraph is naive for a control audience - amend} 
-A~state-space model
-has known advantages over the transfer function
-representation~\cite{Franklin15}: it naturally generalizes to multivariate
-systems (i.e., with multiple inputs and outputs); and it allows synthesis of
-control systems with guarantees on the internal dynamics, e.g., to
-synthesize controllers that make the closed-loop system \emph{safe}.  Our
-work focuses on the \emph{safety} of internal states, which is usually
-overlooked in the literature.  Moreover, our work integrates an
-abstraction/refinement (CEGAR) step inside the main CEGIS loop.
+A~state-space model has known advantages over the transfer function
+representation~\cite{Franklin15}, as 
+% it naturally generalizes to multivariate systems (i.e., with multiple inputs and outputs); and 
+it allows synthesis of controllers with guarantees on the internal dynamics, e.g., 
+%to synthesize controllers that make the closed-loop model 
+\emph{safety}.  Our work indeed focuses on the \emph{safety} of internal states, which is usually
+overlooked in the standard control literature with its default focus on stability properties.  
+Moreover, our work integrates an abstraction/refinement (CEGAR) step inside the main CEGIS loop.
 
-The tool Pessoa~\cite{mazo2010pessoa} synthesizes correct-by-design embedded
-control software in a Matlab toolbox.  It is based on the abstraction of a
-physical system to an equivalent finite-state machine and on the computation
-of reachability properties thereon.  Based on this safety specification,
-\mbox{Pessoa} can synthesize embedded controller software for a range of
-properties.  The embedded controller software can be more complicated than
-the state-feedback control we synthesize, and the properties available cover
-more detail.  However, relying on state-space discretization \mbox{Pessoa}
-is likely to incur in scalability limitations.  \note{Mention SCOTS?}
-Along this research line,
-\cite{Anta2010,liu16} studies the synthesis of digital controllers for
-continuous dynamics, and \cite{zamani2014} extends the approach to the Network Control Systems setup. 
+The approach underpinning tools such as Pessoa~\cite{mazo2010pessoa} and related extensions \cite{Anta2010,liu16} and applications \cite{zamani2014}, 
+synthesizes correct-by-design embedded control software for LTI models.    
+It is based on the abstraction of the model to a finite-state machine, 
+and on the formal control synthesis over safety- and reachability-based temporal properties thereon.  
+%Based on this safety specification, \mbox{Pessoa} can synthesize embedded controller software for a range of
+%properties.  
+The controller software can then be refined (implemented) over the concrete LTI model. 
+%can be more complicated than
+%the state-feedback control we synthesize, and the properties available cover more detail.  
+However, relying on state-space discretization \mbox{Pessoa} is likely to incur in scalability limitations.   
+%Along this research line, \cite{Anta2010,liu16} studies the synthesis of digital controllers for
+%continuous dynamics, and \cite{zamani2014} extends the approach to the Network Control Systems setup. 
 
 \textbf{Discretization Effects in Control Design --}
 Classical work in control synthesis has often disregarded digitalization effects, 
