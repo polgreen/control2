@@ -506,7 +506,9 @@ void safety_stability(void) {
 #endif
 }
 
+#ifndef CPROVER
  __plant_typet _state_poles[16777216][8];
+#endif
 
 int main(int argc, const char *argv[]) {
 #ifdef CPROVER
