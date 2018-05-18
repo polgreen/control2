@@ -397,8 +397,8 @@ int check_safety(void)
 #ifdef INTERVAL
   int_vectort error_coeffs;
   bound_error(_AminusBK,K_fxp,error_coeffs);
-  printf("Bound errors: %f %f %f %f\n", error_coeffs[0].low, error_coeffs[0].high, error_coeffs[1].low, error_coeffs[1].high);
-  printf("Noise: %f %f\n", noise.low, noise.high);
+  //printf("Bound errors: %f %f %f %f\n", error_coeffs[0].low, error_coeffs[0].high, error_coeffs[1].low, error_coeffs[1].high);
+  printf("Noise: {%f %f}\n", noise.low, noise.high);
 #endif  
   for(int k=0; k<NUMBERLOOPS; k++)
   {
@@ -406,14 +406,14 @@ int check_safety(void)
     inputs_equal_ref_minus_k_times_states(); //update inputs one time step //this is still needed for INTERVALS because it enforces bounds on the input
 
     #ifdef INTERVAL
-    printf("States: %f %f, %f %f, %f %f\n", _controller_states[0].low, _controller_states[0].high, _controller_states[1].low, _controller_states[1].high, _controller_states[2].low, _controller_states[2].high);
+    printf("States: {%f %f}, {%f %f}, {%f %f}\n", _controller_states[0].low, _controller_states[0].high, _controller_states[1].low, _controller_states[1].high, _controller_states[2].low, _controller_states[2].high);
     matrix_vector_mult(_AminusBK,_controller_states);
-    printf("Next states: %f %f, %f %f, %f %f\n", _controller_states[0].low, _controller_states[0].high, _controller_states[1].low, _controller_states[1].high,  _controller_states[2].low, _controller_states[2].high);
+    printf("Next states: {%f %f}, {%f %f}, {%f %f}\n", _controller_states[0].low, _controller_states[0].high, _controller_states[1].low, _controller_states[1].high,  _controller_states[2].low, _controller_states[2].high);
       for (int j=0; j < NSTATES; j++)
       {
         _controller_states[j]=interval_add(_controller_states[j], noise);
       }
-     printf("Next states with noise: %f %f, %f %f, %f %f\n", _controller_states[0].low, _controller_states[0].high, _controller_states[1].low, _controller_states[1].high,  _controller_states[2].low, _controller_states[2].high);
+     printf("Next states with noise: {%f %f}, {%f %f}, {%f %f}\n", _controller_states[0].low, _controller_states[0].high, _controller_states[1].low, _controller_states[1].high,  _controller_states[2].low, _controller_states[2].high);
     #endif
     #ifndef INTERVAL
         states_equals_A_states_plus_B_inputs(); //update states one time step
