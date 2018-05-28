@@ -169,8 +169,8 @@ fi
 #radix_width=$((impl_int_bits+impl_frac_bits))
 min_size_offset=$(((integer_width+radix_width)%16))
 [ ${min_size_offset} -ne 0 ] && integer_width=$((integer_width+16-min_size_offset))
-timeout_time=300
-kill_time=310
+timeout_time=3600
+kill_time=3610
 rm "output.txt"
 nudge="-CNFP"
 if [ -n "$5" ]; then
@@ -284,7 +284,7 @@ while [ $((integer_width+radix_width)) -le ${max_length} ]; do
         solution_found=false
         synthesis_in_progress=false
        else
-        if [ ${precision} -ne 1 ]; then
+        if [ ${precision} == 0 ]; then
          out_content=`cat "output.txt"`
          new_integer_width=$(extract_int_bits "${out_content}")
          new_radix_width=$(extract_frac_bits "${out_content}")
