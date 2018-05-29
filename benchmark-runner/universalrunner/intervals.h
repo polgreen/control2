@@ -452,14 +452,19 @@ void bound_error(int_matrixt closed_loop,int_vectort K,int_vectort error_coeffs)
   {
    if (K[i].low>=0)
    {
-    noise.low+=K[i].low;
+    noise.low-=K[i].high;
     noise.high+=K[i].high;
    }
-   else
+   else if (K[i].high<=0)
    {
-    noise.low-=K[i].high;
+    noise.low+=K[i].low;
     noise.high-=K[i].low;    
-   }   
+   }
+	 else
+	 {
+		noise.low+=K[i].low;
+    noise.high+=K[i].high;
+	 }
   }
   noise.low*=_dbl_lsb;
   noise.high*=_dbl_lsb;
