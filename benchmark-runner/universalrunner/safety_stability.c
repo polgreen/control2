@@ -422,7 +422,7 @@ int check_safety(void)
     for(int i=0; i<NSTATES; i++)
     {
       #ifdef INTERVAL
-      if(_controller_states[i].low/*-error_coeffs[i].high*/>SAFE_STATE_UPPERBOUND || _controller_states[i].high/*+error_coeffs[i].high*/<SAFE_STATE_LOWERBOUND)
+      if(_controller_states[i].high/*-error_coeffs[i].high*/>SAFE_STATE_UPPERBOUND || _controller_states[i].low/*+error_coeffs[i].high*/<SAFE_STATE_LOWERBOUND)
         {
         return 0;
         }
