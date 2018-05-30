@@ -12,7 +12,9 @@ display('Creating test suite for DS Tools...')
 dcmotor
 display('DC Motor - 8 benchmarks')
 hscc
-display('HSCC 2017 - 6 benchmarks')
+display('HSCC 2017 - 4 benchmarks')
+ballmaglev
+display('Ball Maglev - 6 benchmarks')
 pendulum
 display('Pendulum - 8 benchmarks')
 invertedpendulum
@@ -55,7 +57,7 @@ display('Done')
 steamdrum
 display('Level control of boiler steam drum - 8 benchmarks')
 display('Done')
-display('Total of benchmarks: 191')
+display('Total of benchmarks: 185')
 display('The .mat file benchmark_tf.mat contains the transfer function models.')
 display('The .mat file benchmark_ss.mat contains the state space models.')
 display(' ')
