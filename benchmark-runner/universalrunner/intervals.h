@@ -446,28 +446,25 @@ void bound_error(int_matrixt closed_loop,int_vectort K,int_vectort error_coeffs)
   }
   int_matrixt invIminA;
   inverse(invIminA,IminA);
-  if (K[0].low>=0)
-  {
-   noise.low=K[0].low;
-   noise.high=K[0].high;
-  }
-  else
-  {
-   noise.low=-K[0].high;
-   noise.high=-K[0].low;
-  }
-  for (i=1;i<NSTATES;i++)
+  noise.low=-1;
+  noise.high=1;
+  for (i=0;i<NSTATES;i++)
   {
    if (K[i].low>=0)
    {
-    noise.low+=K[i].low;
+    noise.low-=K[i].high;
     noise.high+=K[i].high;
    }
-   else
+   else if (K[i].high<=0)
    {
-    noise.low-=K[i].high;
+    noise.low+=K[i].low;
     noise.high-=K[i].low;    
-   }   
+   }
+	 else
+	 {
+		noise.low+=K[i].low;
+    noise.high+=K[i].high;
+	 }
   }
   noise.low*=_dbl_lsb;
   noise.high*=_dbl_lsb;
