@@ -118,7 +118,7 @@ output_lower_bound=$(extract_output_lower_bound "${spec_content}")
 output_upper_bound=$(extract_output_upper_bound "${spec_content}")
 sampling="$(extract_spec_interval "${spec_content}" 'sampling')"
 if [ ${sampling} ]; then
-  sampling="-sample \"${sampling}\""
+  sampling="-cont -sample \"${sampling}\""
 fi
 speed=1
 if [ -n "$7" ]; then
