@@ -656,6 +656,16 @@ $\vec{x}_{k+1}=(\mat{A}_d-\mat{B}_d\mat{K})\vec{x}_k$.
 
 \note{Anticipate here connection with characteristic polynomial? See Section 4.}
 
+\subsection{Symbolic execution}
+We use the bounded model checker CBMC~\cite{ClarkeKL04} to model controller behaviour on digitial signals with finite
+bit-precision.  We express these controller semantics as C programs, which is CBMC's preferred input language.  CBMC
+symbolically executes every instruction in an input program by translating it to a boolean satisfiability problem.  At
+the end of this process, the entire input program is translated to a boolean satisfiability formula which is satisfiable
+iff a certain property about the program holds.  CBMC's API allows to specify these properties in the form of assertions
+in the input program, and we use these properties to express that our generated controllers are modelled in a stable and
+safe fashion. \note{Do we need more details here? Should we explain e.g. SSA or give examples of how assignments, loops,
+etc. are turned into formulas? Part of Sec.~\ref{sec:errors} can probably be moved here.}
+
 %-------------------------------
 \subsection{Errors}
 \label{sec:errors}
