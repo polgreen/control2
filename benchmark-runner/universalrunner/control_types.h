@@ -46,12 +46,8 @@
 #else
   #ifndef FLOAT
      #ifdef INTERVAL
-       typedef double __plant_precisiont;
-        #include "intervals.h"
-       typedef struct intervalt __plant_typet;
-       typedef double __controller_precisiont; //fixed point arithmetic is implemented using doubles
-       typedef struct intervalt __controller_typet;
-       #define interval(x) interval_cast(x)
+       // We are in safety_stability.cpp mode
+       #include "control_types.hpp"
      #endif
     #ifndef INTERVAL
        typedef double __plant_precisiont;
