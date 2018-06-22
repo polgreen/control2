@@ -16,6 +16,9 @@ for i=1:length(benchmark_names_ss)
     Name = strsplit(benchmark_names_ss{i},'_ss_disc');
     INPUT=get_inputs(Name{1});
     parserss2ss(system, INPUT, 8, 8, 1, -1, '', benchmark_names_ss{i})
+    mkdir(strcat('benchmarks-ss/',benchmark_names_ss{i}(1:end-9)));
+    movefile('*.ss',strcat('benchmarks-ss/',benchmark_names_ss{i}(1:end-9)));
+
 end
 
 for i=1:length(benchmark_names_tf)
@@ -23,8 +26,6 @@ for i=1:length(benchmark_names_tf)
     parsertf2c(system, 8, 8, 1, -1, benchmark_names_tf{i})
 end
 
-mkdir('benchmarks-ss');
-movefile('*.ss','benchmarks-ss')
 
 mkdir('benchmarks-tf');
 movefile('*.c','benchmarks-tf')
