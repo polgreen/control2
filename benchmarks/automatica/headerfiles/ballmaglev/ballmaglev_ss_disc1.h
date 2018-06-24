@@ -1,7 +1,7 @@
 #ifndef BENCHMARK_H_ 
 #define BENCHMARK_H_ 
 
-// time discretisation 0.001  
+// time discretisation 0.100  
 #ifndef INT_BITS 
 #define INT_BITS 8
 #define FRAC_BITS 8
@@ -10,16 +10,16 @@
 #include "control_types.h"
 #define NINPUTS 1 
 #define NOUTPUTS 1
-#define INPUT_UPPERBOUND (__plant_precisiont)1000000
-#define INPUT_LOWERBOUND (__plant_precisiont)-1000000
-const __plant_typet _controller_A[NSTATES][NSTATES] = {{ interval(1.001000e+00),  interval(1.000000e-03),  interval(-1.686000e-05)},
-{ interval(1.867000e+00),  interval(1.001000e+00),  interval(-3.349000e-02)},
-{ interval(0),  interval(0),  interval(9.585000e-01)}};
-const __plant_typet _controller_B[NSTATES] = {interval(-1.200000e-08), interval(3.587000e-05), interval(2.083000e-03)};
+#define INPUT_UPPERBOUND (__plant_precisiont)10000
+#define INPUT_LOWERBOUND (__plant_precisiont)-10000
+const __plant_typet _controller_A[NSTATES][NSTATES] = {{ interval(3.288536e+01),  interval(7.852508e-01),  interval(-3.331115e-01)},
+{ interval(1.375926e+03),  interval(3.288536e+01),  interval(-1.400620e+01)},
+{ interval(0),  interval(0),  interval(2.177652e-02)}};
+const __plant_typet _controller_B[NSTATES] = {interval(-1.441616e-02), interval(-6.405991e-01), interval(4.915696e-02)};
 const __plant_typet __char_poly_const[4][4] = 
  {{ 1,  0,  0,  0},
-{ -2.960500e+00,  2.083000e-03,  3.587000e-05,  -1.200000e-08},
-{ 2.919051e+00,  -4.170166e-03,  -1.400693e-04,  2.426462e-08},
-{ -9.586284e-01,  2.083279e-03,  1.042011e-04,  -8.050007e-08}};
+{ -6.579250e+01,  4.915696e-02,  -6.405991e-01,  -1.441616e-02},
+{ 2.432257e+00,  -3.233089e+00,  5.562075e-01,  -4.501104e-02},
+{ -2.177652e-02,  4.915696e-02,  8.439162e-02,  -1.526751e-03}};
 
 #endif /*BENCHMARK_H_*/
