@@ -1,6 +1,8 @@
 #ifndef FIXEDBV_H_
 #define FIXEDBV_H_
 
+#define INTERVAL 1
+
 #include "benchmark.h"
 
 class __controller_precisiont

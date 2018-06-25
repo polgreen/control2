@@ -1,3 +1,4 @@
+
 #define INTERVAL 1
 
 #include "benchmark.h"
@@ -5,7 +6,7 @@
 
 #include <boost/numeric/ublas/lu.hpp>
 
-#include <stdlib.h>
+#include <cstdlib>
 
 #define INITIALSTATE_UPPERBOUND (__plant_precisiont)0.5
 #define INITIALSTATE_LOWERBOUND (__plant_precisiont)-0.5
@@ -14,11 +15,24 @@
 
 static int NUMBERLOOPS;
 static __plant_matrixt _controller_states(NSTATES, 1);
-static __controller__matrixt K_fxp(NSTATES, 1);
+static __controller__matrixt K_fxp(1, NSTATES);
 static __plant_typet _state_poles[256][8];
 
 static __plant_matrixt _controller_A_matrix(NSTATES, NSTATES);
 static __plant_matrixt _controller_B_matrix(NSTATES, 1);
+
+template<class T>
+std::string to_string(const boost::numeric::ublas::matrix<T> &matrix)
+{
+  std::ostringstream oss;
+  for(size_t i=0; i < matrix.size1(); ++i)
+  {
+    for(size_t j=0; j< matrix.size2(); ++j)
+      oss << '(' << matrix(i, j).lower() << ',' << matrix(i, j).lower() << ") ";
+    oss << std::endl;
+  }
+  return oss.str();
+}
 
 static bool check_safety()
 {
@@ -28,20 +42,18 @@ static bool check_safety()
     const __controller__matrixt inputs=prod(-K_fxp,
         static_cast<__controller__matrixt >(_controller_states));
 
-    for(int k=0; k<NSTATES; k++)
-    {
-      const __controller_typet &entry=inputs(k, 0);
-      assert(entry.upper()<=INPUT_UPPERBOUND &&entry.lower()>=INPUT_LOWERBOUND);
-    }
+    for(size_t i=0; i<inputs.size1(); ++i)
+      for(size_t j=0; j<inputs.size2(); ++j)
+      {
+        const __controller_typet &e=inputs(i, j);
+        assert(e.upper()<=INPUT_UPPERBOUND &&e.lower()>=INPUT_LOWERBOUND);
+      }
 
     // states = A*states + B*inputs
     _controller_states=prod(_controller_A_matrix, _controller_states)
         +prod(_controller_B_matrix, static_cast<__plant_matrixt >(inputs));
 
-    printf("States: {%f %f}, {%f %f}, {%f %f}\n",
-        _controller_states(0, 0).lower(), _controller_states(0, 0).upper(),
-        _controller_states(1, 0).lower(), _controller_states(1, 0).upper(),
-        _controller_states(2, 0).lower(), _controller_states(2, 0).upper());
+    std::cout << "States: " << to_string(_controller_states) << std::endl;
 
     for(int i=0; i<NSTATES; i++)
     {
@@ -66,14 +78,14 @@ int main(int argc, char * const argv[])
 
   for(int i=0; i<NSTATES; i++)
   {
-    _controller_B_matrix(i, 1)=_controller_B[i];
+    _controller_B_matrix(i, 0)=_controller_B[i];
     for(int j=0; j<NSTATES; j++)
       _controller_A_matrix(i, j)=_controller_A[i][j];
   }
 
   NUMBERLOOPS=atoi(argv[1]);
   for(int i=0; i<NSTATES; ++i)
-    K_fxp(i, 0)=interval(atof(argv[2+i]));
+    K_fxp(0, i)=interval(atof(argv[2+i]));
 
   int npoles=1<<NSTATES;
 

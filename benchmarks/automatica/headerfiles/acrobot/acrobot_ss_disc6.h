@@ -10,8 +10,8 @@
 #include "control_types.h"
 #define NINPUTS 1 
 #define NOUTPUTS 1
-#define INPUT_UPPERBOUND (__plant_precisiont)1
-#define INPUT_LOWERBOUND (__plant_precisiont)-1
+#define INPUT_UPPERBOUND (__plant_precisiont)10000
+#define INPUT_LOWERBOUND (__plant_precisiont)-10000
 const __plant_typet _controller_A[NSTATES][NSTATES] = {{ interval(1.000156e+00),  interval(-1.567637e-04),  interval(5.000260e-03),  interval(-2.612637e-07)},
 { interval(-1.811408e-04),  interval(1.000367e+00),  interval(-3.018908e-07),  interval(5.000612e-03)},
 { interval(6.245704e-02),  interval(-6.271093e-02),  interval(1.000156e+00),  interval(-1.567637e-04)},
