@@ -30,11 +30,15 @@ bool operator>(const __controller_precisiont &lhs,
 __controller_precisiont operator*(const __controller_precisiont &lhs,
     const __controller_precisiont &rhs)
 {
+#ifdef FLOAT
+  return lhs.value*rhs.value;
+#else
   return multiply(lhs.value, rhs.value);
+#endif
 }
 
 __controller_precisiont operator+(const __controller_precisiont &lhs,
     const __controller_precisiont &rhs)
 {
-  return lhs.value + rhs.value;
+  return lhs.value+rhs.value;
 }

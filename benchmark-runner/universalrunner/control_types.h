@@ -44,30 +44,22 @@
     #endif
 #endif
 #else
-  #ifndef FLOAT
-     #ifdef INTERVAL
-       // We are in safety_stability.cpp mode
-       #include "control_types.hpp"
-     #endif
-    #ifndef INTERVAL
-       typedef double __plant_precisiont;
-       typedef __plant_precisiont __plant_typet;
-       typedef double __controller_precisiont; //fixed point arithmetic is implemented using doubles
-       typedef __controller_precisiont __controller_typet;
-       #define interval(x) (x)
-       #define plant_cast(x) x
-       #define controller_cast(x) x
-    #endif
+  #ifdef INTERVAL
+    // We are in safety_stability.cpp mode
+    #include "control_types.hpp"
   #else
-    #ifdef INTERVAL
-       typedef double __plant_precisiont;
-	#include "intervals.h"
-       typedef struct intervalt __plant_typet;
-       typedef double __controller_precisiont; //float arithmetic is implemnted using doubles
-       typedef struct intervalt __controller_typet;
-      	  #define interval(x) interval_cast(x)
-     #endif // end of interval def
-  #endif //end of float def
+    #ifdef FLOAT
+      #error "Unsupported configuration."
+    #else
+      typedef double __plant_precisiont;
+      typedef __plant_precisiont __plant_typet;
+      typedef double __controller_precisiont; //fixed point arithmetic is implemented using doubles
+      typedef __controller_precisiont __controller_typet;
+      #define interval(x) (x)
+      #define plant_cast(x) x
+      #define controller_cast(x) x
+    #endif
+  #endif
 #endif // end of not cprover def
 
 #endif /* CONTROL_TYPES_H_ */

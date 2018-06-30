@@ -3,11 +3,18 @@
 
 #include <boost/numeric/interval.hpp>
 #include <boost/numeric/ublas/matrix.hpp>
+#ifndef FLOAT
 #include <cnl/fixed_point.h>
+#else
+#include <half.hpp>
+#endif
 
 typedef double __plant_precisiont;
 
 #define CONTROL_WIDTH (INT_BITS + FRAC_BITS)
+
+#ifndef FLOAT
+
 #if CONTROL_WIDTH == 8u
 typedef uint8_t __controller_base_typet;
 #elif CONTROL_WIDTH == 16u
@@ -19,6 +26,21 @@ typedef uint32_t __controller_base_typet;
 #else
 #error "Unsupported controller width."
 #endif
+
+#else
+
+#if CONTROL_WIDTH == 16u
+typedef half_float::half __controller_base_typet;
+#elif CONTROL_WIDTH == 32u
+typedef float __controller_base_typet;
+#elif CONTROL_WIDTH == 64u
+typedef double __controller_base_typet;
+#else
+#error "Unsupported controller width."
+#endif
+
+#endif
+
 class __controller_precisiont;
 
 typedef boost::numeric::interval<__plant_precisiont> __plant_typet;
