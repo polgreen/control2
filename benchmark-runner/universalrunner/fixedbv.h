@@ -7,7 +7,11 @@
 
 class __controller_precisiont
 {
+#ifdef FLOAT
+  __controller_base_typet value;
+#else
   cnl::fixed_point<__controller_base_typet, -FRAC_BITS> value;
+#endif
 public:
   __controller_precisiont();
 

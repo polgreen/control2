@@ -7,6 +7,8 @@
 #max output overrides the output safety specification with +/- this value as a limit
 script_base_directory=`pwd`
 synth_type='observer'
+timeout_time=7200
+kill_time=7210
 
 benchmark_base_dir=("${PWD}/../benchmarks/automatica/")
 if [ -z "$1" ]; then
@@ -55,16 +57,16 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
   if [ $current -ge $min ]; then
    if [ -n "$4" ]; then
     if [ -n "$8" ]; then
-     (time "${PWD}/float-benchmark-individual-runner.sh" $1 $benchmark $2 $synth_type $4 $7 $8) >>"${working_directory_base_suffix}-$4-$2.log" 2>&1
+     (time timeout --kill-after=${kill_time} ${timeout_time} "${PWD}/float-benchmark-individual-runner.sh" $1 $benchmark $2 $synth_type $4 $7 $8) >>"${working_directory_base_suffix}-$4-$2.log" 2>&1
     elif [ -n "$7" ]; then
-     (time "${PWD}/float-benchmark-individual-runner.sh" $1 $benchmark $2 $synth_type $4 $7) >>"${working_directory_base_suffix}-$4-$2.log" 2>&1
+     (time timeout --kill-after=${kill_time} ${timeout_time} "${PWD}/float-benchmark-individual-runner.sh" $1 $benchmark $2 $synth_type $4 $7) >>"${working_directory_base_suffix}-$4-$2.log" 2>&1
     else
-     (time "${PWD}/float-benchmark-individual-runner.sh" $1 $benchmark $2 $synth_type $4) >>"${working_directory_base_suffix}-$4-$2.log" 2>&1
+     (time timeout --kill-after=${kill_time} ${timeout_time} "${PWD}/float-benchmark-individual-runner.sh" $1 $benchmark $2 $synth_type $4) >>"${working_directory_base_suffix}-$4-$2.log" 2>&1
     fi
    elif [ -n "$2" ]; then
-    (time "${PWD}/float-benchmark-individual-runner.sh" $1 $benchmark $2 $synth_type) >>"${working_directory_base_suffix}-$2.log" 2>&1
+    (time timeout --kill-after=${kill_time} ${timeout_time} "${PWD}/float-benchmark-individual-runner.sh" $1 $benchmark $2 $synth_type) >>"${working_directory_base_suffix}-$2.log" 2>&1
    else
-    (time "${PWD}/float-benchmark-individual-runner.sh" $1 $benchmark) >>"${working_directory_base_suffix}.log" 2>&1
+    (time timeout --kill-after=${kill_time} ${timeout_time} "${PWD}/float-benchmark-individual-runner.sh" $1 $benchmark) >>"${working_directory_base_suffix}.log" 2>&1
    fi
   fi
  done
