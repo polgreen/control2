@@ -38,7 +38,11 @@ int main(const int argc, const char * const argv[]) {
   const realt two = "2.0";
   const realt two_pi = const_pi() * two;
   const realt imaginary_offset = pow(two, -PRECISION/4);
-  if (argc != NUM_PROG_ARGS) return EXIT_FAILURE;
+  if (argc != NUM_PROG_ARGS) 
+  {
+   cout << "number of args wrong " <<endl;
+   return EXIT_FAILURE;
+  }
   mpreal::set_default_prec(PRECISION);
   const realt K_SIZE = argv[K_SIZE_ARG_INDEX];
   for (size_t i=0; i < NSTATES; ++i)
@@ -63,7 +67,10 @@ int main(const int argc, const char * const argv[]) {
   matrixt result = A - B * K;
   EigenSolver<matrixt> eigenSpace(result);
   if (Success != eigenSpace.info())
+  {
+    cout << "failed to find eigenspace" << endl;
     return EXIT_FAILURE;
+  }
   const EigenSolver<matrixt>::EigenvalueType eigenvalues = eigenSpace.eigenvalues();
   cout << "num_eigenvalues: " << eigenvalues.size() << endl;
   for (size_t i=0; i < eigenvalues.size(); ++i) {
