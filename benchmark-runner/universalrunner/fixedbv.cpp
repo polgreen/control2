@@ -33,7 +33,7 @@ __controller_precisiont operator*(const __controller_precisiont &lhs,
 #ifdef FLOAT
   return lhs.value*rhs.value;
 #else
-  return multiply(lhs.value, rhs.value);
+  return cnl::multiply(lhs.value, rhs.value);
 #endif
 }
 
