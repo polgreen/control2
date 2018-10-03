@@ -53,6 +53,11 @@ function setup_benchmark_directory {
  cp ${benchmark} ${working_directory}/benchmark.h
  cp ${source_template_directory}/${synthesis_file} ${working_directory}/
  cp ${source_template_directory}/control_types.h ${working_directory}/
+ cp ${source_template_directory}/control_types.hpp ${working_directory}/
+ cp ${source_template_directory}/fixedbv.* ${working_directory}/
+ cp ${source_template_directory}/half.hpp ${working_directory}/
+ cp ${source_template_directory}/fixedbv.h ${working_directory}/
+ cp ${source_template_directory}/safety_stability.cpp ${working_directory}/ 
  cp ${source_template_directory}/operators.h ${working_directory}/
  cp ${source_template_directory}/intervals.h ${working_directory}/
  cp ${source_template_directory}/mpreal.h ${working_directory}/
@@ -65,7 +70,7 @@ function compile_precision_check {
  cd ${working_directory}
  g++ -I . -I /usr/include/eigen3/ discrete_step_k_completeness_check.cpp -o discrete_step_k_completeness_check -lmpfr
  chmod +x discrete_step_k_completeness_check
- gcc -D INTERVAL -D FLOAT safety_stability.c -o precision_check
+ g++ -I /users/elipol/cnl/include -D FLOAT safety_stability.cpp fixedbv.cpp -o precision_check
  chmod +x precision_check
 }
 
