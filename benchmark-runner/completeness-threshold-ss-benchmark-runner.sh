@@ -58,13 +58,18 @@ function setup_benchmark_directory {
  cp ${source_template_directory}/int_2Inverse.h ${working_directory}/
  cp ${source_template_directory}/int_3Inverse.h ${working_directory}/
  cp ${source_template_directory}/discrete_step_k_completeness_check.cpp ${working_directory}/
+ cp ${source_template_directory}/fixedbv.cpp ${working_directory}/
+ cp ${source_template_directory}/safety_stability.cpp ${working_directory}/
+ cp ${source_template_directory}/control_types.hpp ${working_directory}/
+ cp ${source_template_directory}/fixedbv.h ${working_directory}/
+ cp ${source_template_directory}/fixedbv.inc ${working_directory}/
 }
 
 function compile_precision_check {
  cd ${working_directory}
  g++ -I . -I /usr/include/eigen3/ discrete_step_k_completeness_check.cpp -o discrete_step_k_completeness_check -lmpfr
  chmod +x discrete_step_k_completeness_check
- gcc -D INTERVAL -D FIXEDBV safety_stability.c -o precision_check
+ g++ -I /users/elipol/cnl/include -D FIXEDBV safety_stability.cpp fixedbv.cpp -o precision_check
  chmod +x precision_check
 }
 
@@ -93,6 +98,11 @@ fi
 #dkr13
 if [ "$1" == "dkr13" ]; then
 benchmark_dirs=(${BENCHMARK_BASE_DIR}/magneticpointer/ ${BENCHMARK_BASE_DIR}/magsuspension/ ${BENCHMARK_BASE_DIR}/pendulum/ ${BENCHMARK_BASE_DIR}/regulator/ ${BENCHMARK_BASE_DIR}/springmassdamperHSCC/ ${BENCHMARK_BASE_DIR}/steamdrum/ ${BENCHMARK_BASE_DIR}/suspension/ ${BENCHMARK_BASE_DIR}/tapedriver/ ${BENCHMARK_BASE_DIR}/usgtampa/) 
+fi
+
+#dkr15
+if [ "$1" == "dkr15" ]; then
+benchmark_dirs=(${BENCHMARK_BASE_DIR}/tapedriver/)
 fi
 
 working_directory_base="/tmp/control_synthesis-fixed-ss-${working_directory_base_suffix}"
