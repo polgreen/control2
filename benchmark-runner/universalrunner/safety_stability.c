@@ -315,12 +315,7 @@ void inputs_equal_ref_minus_k_times_states(void)
      {
     	   result_fxp = add (result_fxp, mult(K_fxp[k] , controller_cast(_controller_states[k])));
         _controller_inputs = sub(zero_type, plant_cast(result_fxp));
-        #ifdef INTERVAL
-        __DSVERIFIER_assert(_controller_inputs.high<=INPUT_UPPERBOUND && _controller_inputs.low >=INPUT_LOWERBOUND);
-        #else
         __DSVERIFIER_assert(_controller_inputs <= INPUT_UPPERBOUND && _controller_inputs >= INPUT_LOWERBOUND);
-        #endif
-
   }
  }
 
@@ -345,7 +340,6 @@ void states_equals_A_states_plus_B_inputs(void)
     states_equals_A_states_plus_B_inputs_result[i] = add(states_equals_A_states_plus_B_inputs_result[i] , mult( _controller_B[i],_controller_inputs));
    }
 
-#ifndef INTERVAL
 #ifdef CPROVER
    __CPROVER_array_copy(_controller_states, states_equals_A_states_plus_B_inputs_result);
    /*for(i=0; i<NSTATES; i++)
@@ -364,29 +358,6 @@ void states_equals_A_states_plus_B_inputs(void)
        __DSVERIFIER_assert( _controller_states[i]<=SAFE_STATE_UPPERBOUND && _controller_states[i]>=SAFE_STATE_LOWERBOUND);
        }
 #endif
-#else
-#ifdef CPROVER
-   __CPROVER_array_copy(_controller_states, states_equals_A_states_plus_B_inputs_result);
-   /*for(i=0; i<NSTATES; i++)
-       {_controller_states[i] = states_equals_A_states_plus_B_inputs_result[i];}*/
-  __DSVERIFIER_assert( _controller_states[0].high<=SAFE_STATE_UPPERBOUND && _controller_states[0].low>=SAFE_STATE_LOWERBOUND);
-  __DSVERIFIER_assert( _controller_states[1].high<=SAFE_STATE_UPPERBOUND && _controller_states[1].low>=SAFE_STATE_LOWERBOUND);
-  #if NSTATES==3 || NSTATES==4
-      __DSVERIFIER_assert( _controller_states[2].high<=SAFE_STATE_UPPERBOUND && _controller_states[2].low>=SAFE_STATE_LOWERBOUND);
-  #endif
-  #if NSTATES==4
-      __DSVERIFIER_assert( _controller_states[3].high<=SAFE_STATE_UPPERBOUND && _controller_states[3].low=>SAFE_STATE_LOWERBOUND);
-  #endif
-#else
-  for(int i=0; i<NSTATES; i++)
-       {_controller_states[i] = states_equals_A_states_plus_B_inputs_result[i];
-       __DSVERIFIER_assert( _controller_states[i].high<=SAFE_STATE_UPPERBOUND && _controller_states[i].low>=SAFE_STATE_LOWERBOUND);
-       }
-#endif
-#endif
-
-
-
  }
 
 
@@ -394,42 +365,16 @@ void states_equals_A_states_plus_B_inputs(void)
 int check_safety(void)
 {
 
-#ifdef INTERVAL
-  int_vectort error_coeffs;
-  bound_error(_AminusBK,K_fxp,error_coeffs);
-  //printf("Bound errors: %f %f %f %f\n", error_coeffs[0].low, error_coeffs[0].high, error_coeffs[1].low, error_coeffs[1].high);
-  printf("Noise: {%f %f}\n", noise.low, noise.high);
-#endif  
   for(int k=0; k<NUMBERLOOPS; k++)
   {
 
     inputs_equal_ref_minus_k_times_states(); //update inputs one time step //this is still needed for INTERVALS because it enforces bounds on the input
-
-    #ifdef INTERVAL
-    printf("States: {%f %f}, {%f %f}, {%f %f}\n", _controller_states[0].low, _controller_states[0].high, _controller_states[1].low, _controller_states[1].high, _controller_states[2].low, _controller_states[2].high);
-    matrix_vector_mult(_AminusBK,_controller_states);
-    printf("Next states: {%f %f}, {%f %f}, {%f %f}\n", _controller_states[0].low, _controller_states[0].high, _controller_states[1].low, _controller_states[1].high,  _controller_states[2].low, _controller_states[2].high);
-      for (int j=0; j < NSTATES; j++)
-      {
-        _controller_states[j]=interval_add(_controller_states[j], noise);
-      }
-     printf("Next states with noise: {%f %f}, {%f %f}, {%f %f}\n", _controller_states[0].low, _controller_states[0].high, _controller_states[1].low, _controller_states[1].high,  _controller_states[2].low, _controller_states[2].high);
-    #endif
-    #ifndef INTERVAL
-        states_equals_A_states_plus_B_inputs(); //update states one time step
-    #endif
+    states_equals_A_states_plus_B_inputs(); //update states one time step
 
     for(int i=0; i<NSTATES; i++)
     {
-      #ifdef INTERVAL
-      if(_controller_states[i].high/*-error_coeffs[i].high*/>SAFE_STATE_UPPERBOUND || _controller_states[i].low/*+error_coeffs[i].high*/<SAFE_STATE_LOWERBOUND)
-        {
-        return 0;
-        }
-      #else
       if(_controller_states[i]>SAFE_STATE_UPPERBOUND || _controller_states[i]<SAFE_STATE_LOWERBOUND)
         {return 0;}
-      #endif
     }
   }
   return 1;
@@ -495,14 +440,9 @@ void assert_nonzero_controller(void) {
 }
 
 void safety_stability(void) {
-#ifdef INTERVAL
-  get_bounds(); //get interval bounds
-#endif
   closed_loop(); //calculate A - BK
   __CPROVER_EIGEN_charpoly();
-#ifndef INTERVAL
   __DSVERIFIER_assert(check_stability());
-#endif
 #if NSTATES != 1
   __DSVERIFIER_assert(check_safety());
 #endif
