@@ -17,13 +17,13 @@ typedef double __plant_precisiont;
 typedef __int128 uint128_t;
 typedef __int128 int128_t;
 #if CONTROL_WIDTH == 8u
-typedef uint8_t __controller_base_typet;
+typedef int8_t __controller_base_typet;
 #elif CONTROL_WIDTH == 16u
-typedef uint16_t __controller_base_typet;
+typedef int16_t __controller_base_typet;
 #elif CONTROL_WIDTH == 32u
-typedef uint32_t __controller_base_typet;
+typedef int32_t __controller_base_typet;
 #elif CONTROL_WIDTH == 64u
-typedef uint64_t __controller_base_typet;
+typedef int64_t __controller_base_typet;
 #else
 #error "Unsupported controller width."
 #endif
