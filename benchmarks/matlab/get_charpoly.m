@@ -7,6 +7,7 @@ K = sym('k',[1,n]);
 I = eye(n);
 x = sym('x');
 
-res = det(x*I - (A-B*K))
+charpoly = det(x*I - (A-B*K));
+res = coeffs(charpoly,x)
 
     
