@@ -830,8 +830,11 @@ If the solution space is finite then the CEGIS loop is guaranteed to
 terminate by either finding a solution or showing that no solution
 exists.
 
-\note{In the context of the formal synthesis of safe controllers, 
-the CEGIS architecture is applicable as follows: \ldots }
+In the context of the formal synthesis of safe controllers, 
+the set of possible {\sc inputs} corresponds to the set of possible initial states and the 
+candidate program $P$ is a candidate controllers $K$. The synthesis block generates a candidate
+controller that works for a subset of the possible initial states, and the verifier checks whether 
+the controller works for all possible initial states. 
 
 %-------------------------------
 \section{Formal specification of properties on a model} 
@@ -841,8 +844,9 @@ the CEGIS architecture is applicable as follows: \ldots }
 %While in the previous section we have discussed the generic CEGIS framework, 
 In the rest of the paper we explain how to adapt the generic CEGIS framework to the synthesis of digital controllers. 
 We start by describing the specific property that we pass to the synthesizer as the specification $\phi$. 
-Namely, we are interested in capturing stability and safety, 
-which we discuss in Sections~\ref{ssec:stabspecification} and~\ref{ssec:safespecification}, respectively.
+Namely, we are interested in capturing safety, 
+which we discuss in Section~\ref{ssec:safespecification}. We use a stability specification 
+in order to narrow the search space of possible controllers, as discussed in Section~\ref{ssec:stabspecification}.
 
 %-------------------------------
 \subsection{Formal specification of stability} 
@@ -936,10 +940,11 @@ $
 \label{ssec:safespecification}
 %-------------------------------
 
-We are not limited to the synthesis of digital stabilizing controllers -- a
-well known task in the literature on digital control systems -- but target
-safety requirements with an overall approach that is sound and automated. 
+%We are not limited to the synthesis of digital stabilizing controllers -- a
+%well known task in the literature on digital control systems -- but target
+%safety requirements with an overall approach that is sound and automated. 
 %More specifically, we require that the closed-loop system meets given safety specifications.  
+We target synthesis of safe digital controllers with an overall approach that is sound and automated.
 A safety specification translates into a requirement on the states of the closed-loop model, 
 which hinges on the choice of the feedback controller (namely the choice of the gains in the matrix~$K$):  
 we must ensure that the states of the closed-loop model never violate this requirement, expressed as a given subset of the state space.  
@@ -969,6 +974,7 @@ and $\phi_\mathit{init} := \bigwedge_{i=1}^{n} \underline{x_{i,0}} \leq x_{i,0} 
 For the input signal, these requirements practically mean that the control input saturates in view of physical constraints. 
 
 %-------------------------------
+\ifx\axelerator
 \subsection{Abstract acceleration of linear dynamics \note{Shall we move the material on AAccel to the Preliminaries?}} 
 \label{ssec:aa}
 %-------------------------------
@@ -1162,19 +1168,26 @@ It seems like the discussion in this section is not reflected on the case study 
 \label{sssec:cegisdig}
 %-------------------------------
 
-In this section we discuss two instantiations of CEGIS: 
+In this section we discuss 
+\ifx\axelerator
+two instantiations of CEGIS: 
 the first one,
 named {\it multi-stage} approach, 
 relies on an unfolding of the dynamics up to a completeness threshold; 
 the second one is {\it abstraction-based}, 
 and it leverages abstraction-refinement \cite{DBLP:conf/cav/ClarkeGJLV00} and abstract acceleration (cf. Sec.~\ref{ssec:aa}) to improve scalability,  
 while retaining soundness. 
+\else
+the instantiation of CEGIS we use to synthesise safe digital controllers. We use a multi-stage approach
+that unwinds the dynamics yup to a completeness threshold, verifying soundness using bit-precise bounded model checking.
+\fi
 
+\ifx\axelerator
 %-------------------------------
 \subsection{Multi-stage CEGIS} 
 \label{sssec:naive}
 %-------------------------------
-
+\fi
 
 \begin{figure*}[htb]
 \scriptsize\centering
@@ -1375,6 +1388,7 @@ required for the states to have completed a 360\textdegree circle, as illustrate
 %computationally expensive if the bounds on the allowed initial states are
 %large. \note{we have not discussed the bounds on the input signal. }
 
+\ifx\axelerator
 %-------------------------------
 \subsection{Abstraction-based CEGIS} 
 \label{sssec:abstraction}
@@ -1411,7 +1425,7 @@ $P_a(z) = z^n+\sum_{i=1}^n{(a_i-k_i)z^{n-i}}$.  As with the multi-staged approac
 
 
 \item Calculate the noise set $N$ from the quantizer resolutions and estimated round-off errors as follows: 
-%($\frac{q_1}{2},\frac{q_2}{2},q_3$)
+
 \begin{align*}
 \nonumber
 \begin{split}
@@ -1422,9 +1436,7 @@ N=\left \{ \nu_1+\nu_2+ \nu_3: \nu_1 \in \left[-\frac{q_1}{2}\ \ \frac{q_1}{2}\r
 where  $q_1$ is the error introduced by the truncation in the ADC (Q1 in Fig. \ref{fig:digitalsystem}), 
 $q_2$ is the error introduced by the DAC (Q2 in Fig. \ref{fig:digitalsystem}), 
 and $q_3$ is the maximum truncation and rounding error in $u_k=-K \cdot \mathcal{F}_{\langle I_c,F_c \rangle}(x_k)$, 
-as further discussed in Section~\ref{sec:numeric_rep}. % More details on how to model
-%quantization as noise are given in
-%Appendix~\ref{appendix:quantization-noise}.
+as further discussed in Section~\ref{sec:numeric_rep}.
 
 \item Calculate a set of initial bounds on $K$, $\phi(K)=\phi_\mathit{init}^{K}$,
 based on the constraints %\blue{[how is this practically done?With the equation below]}.  
@@ -1443,19 +1455,14 @@ The specification $\phi(K)$ will later be updated by the {\sc abstract} phase to
   The safety specification given to the SAT formula is an over-approximation of the original safety specification that only has constraints for a given set of iterations ($k$) and initial values.  
  The program search algorithm is as in the multi-staged approach.  
 If there is no candidate solution we return UNSAT and exit the loop. 
-\item Once we have a candidate solution, we perform a safety verification % If this step fails, we find a counterexample iteration and initial state and create a new constraint to refine our abstraction.
-  %
+\item Once we have a candidate solution, we perform a safety verification 
   of the 
   %consisting of evaluating the
   progression of the system from $\phi_\mathit{init}$ over time,
 $x_{k} \models \phi_\mathit{safety}$. 
   In order to compute the progression of point $x_0$ at iteration $k$,
   we consider the solution of the closed-loop model 
-  %we take the
-  %the closed-loop model:
-  %$x_{k+1}=\mat{A}_{t}x_k+\mat{B}_{n} (\nu_1 + \nu_2 + \nu_3)$
-  %and accelerate it to:
-%
+
 {
 \scriptsize
 \begin{align*}
@@ -1465,9 +1472,6 @@ x=(A_d-B_dK)^kx_0+ \sum_{i=0}^{k-1} (A_d-B_dK)^i B_{n}(\nu_1+\nu_2+\nu_3),
 \end{align*}
 }
 where $B_n= [1 \cdots 1]^T$. 
-%\label{eq:acc_observer_LTI_cf}
-%+\sum_{i=0}^{k-1} \mat{A}_t^i \mat{B}_{t} r_i 
-%
 As we require to verify the closed-loop model for any $k$ up to infinity, 
 we use Abstract Acceleration again to compute the reach-tube, 
 i.e., the set of all reachable states at all times given an initial set
@@ -1494,9 +1498,7 @@ find a counterexample iteration $k$ and corresponding initial condition $x_0$
 for which the property does not hold, which we use to locally refine the
 abstraction by adding the constraint $\mat{A}^k\vec{x}_0 \models \phi_\mathit{safety}$ (which is calculated explicitly using acceleration for the given $k$ and $\vec{x}_0$).  
 When the abstraction cannot be further refined, we provide $(k, x_0)$ to the {\sc abstract} phase.
-%
-%\todo{we should have a better argument here.}
-%\end{enumerate} 
+
 \item If we reach the {\sc abstract} phase, it means that the candidate solution is not valid,
   in which case we must refine the abstraction used by the synthesizer.
 \begin{enumerate}
@@ -1554,7 +1556,7 @@ $z^n+\sum_{i=1}^n(a_i-k_i)z^{n-i}=\prod_{i=1}^n (z-\lambda_i) \text{ where } |\l
 \label{fig:CEGARIS} 
 \end{figure*} 
 
-
+\fi
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 \section{Numerical representation and soundness} 
 \label{sec:numeric_rep}
@@ -1629,7 +1631,7 @@ the domain.  We check that overflow does not occur \note{and if it does \ldots}.
 Similar bounds for errors introduced by 
 performing basic mathematical operators in floating-point precision can be derived~\cite{DBLP:conf/arith/BrainTRW15}.
 
-
+\ifx\axelerator
 \subsection{ADC/DAC quantization errors modelled as noise} 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 In this section we describe how quantization errors can be modelled as noise. 
@@ -1682,7 +1684,7 @@ which result in the following closed-loop dynamics:
 {x}_{k+1} &= ({A}_d-{B}_d{K}_d) {x}_k+{B}_d{{\nu}_2}_k +{{\nu}_1}_k \,. 
 \end{align*}
 
-
+\fi
 
 
 \subsection{Effect on safety specification and stability}
