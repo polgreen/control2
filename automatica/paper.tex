@@ -173,8 +173,14 @@ accounts for errors caused by the digitization effects introduced by
 the controller. Our approach uses counterexample-guided inductive
 synthesis (CEGIS): an inductive generalisation phase produces a
 possible solution that is known to stabilize the system but that may
-not be safe for all initial conditions. Safety is then verified either
-via BMC or abstract acceleration; if the verification step fails, a
+not be safe for all initial conditions. 
+\ifx\axelerator
+Safety is then verified either
+via Bounded Model Checking or abstract acceleration;
+\else
+Safety is then verified via Bounded Model Checking;
+\fi 
+if the verification step fails, a
 counterexample is provided to the inductive generalisation and the
 process iterates until a safe controller is obtained.  We demonstrate
 the practical value of this approach by automatically synthesizing
@@ -199,11 +205,12 @@ models, for which the synthesis of controllers is well understood.
 However, the use of digital control architectures adds new challenges
 caused by artefacts specific to digital control, such as the effects
 of finite-precision arithmetic, time discretization and quantization
-noise introduced by A/D and D/A conversion.
+errors introduced by A/D and D/A conversion.
 %
 Given an LTI model, we develop an automatic technique for generating
 correct-by-construction digital controllers that addresses all these
-challenges. Specifically, we automatically synthesize stable and safe,
+challenges. Specifically, we automatically synthesize %stable and 
+safe,
 software-implemented embedded controllers.  
 %Due to the complexity of
 %such closed-loop systems, we focus on linear models with known
@@ -260,21 +267,25 @@ we perform digital control synthesis over a ``hybrid model'',
 namely a model encompassing a plant exhibiting continuous behavior, 
 whereas the controller operates in discrete time and over a quantized domain.  
 In particular, our model evaluates the effects of the quantizers (A/D and D/A
-converters) and of time discretization, as well as representation
+converters), as well as representation
 errors introduced by working  %% artifacts such as an
 %% observer~\cite{astrom1997computer}
 in a finite-precision domain. 
-We reason about high level properties such as stability, robustness, and safety, which define the
-behaviour of the whole model.  
-Notably, safety requirements are frequently overlooked in conventional feedback control synthesis, but
+We reason safety requirements, which are frequently overlooked in conventional feedback control synthesis, but
 play a key role in systems engineering, particularly for safety-critical applications of clear concern in modern autonomy contexts.  
 
 %% Using state of the art verifiers, we evaluate these models against
 %% automatically synthesised controllers using CEGIS-based synsthesis that
 %% incorporate the above mentioned artifacts in different models of
 %% Single-Input/Single-Output (SISO) systems.
+\ifx\axelerator
 In this paper we present two novel approaches for the synthesis of
-digital controllers, both of which make use of the framework known as counterexample guided
+digital controllers, both of which make 
+\else
+In this paper we present a novel approach for the synthesis of digital controllers,
+making 
+\fi
+use of the framework known as counterexample guided
 inductive synthesis (CEGIS)~\cite{jha-icse10,
   DBLP:conf/asplos/Solar-LezamaTBSS06}, 
   a technique from formal methods that has recently shown much promise and which we 
@@ -291,8 +302,12 @@ for the entire range of possible inputs. Our two instantiations of CEGIS are des
 %% solves the problem of robust stability for closed loop systems for a
 %% collection of unstable plants.  Inthis case, there is no safety
 %% specification since we are working in the frequency domain.
-
-\emph{The first approach} uses a multi-staged technique that starts by devising a
+\ifx\axelerator
+\emph{The first approach} 
+\else
+Our approach
+\fi
+uses a multi-staged technique that starts by devising a
 digital controller that stabilizes the plant model while remaining safe for a
 pre-selected time horizon and a single initial state; then, it verifies
 unbounded-time safety by unfolding the model dynamics, considering the 
@@ -300,9 +315,9 @@ full set of initial states, and checking a \emph{completeness
 threshold}~\cite{DBLP:conf/vmcai/KroeningS03}, i.e., the number of
 iterations required to sufficiently unwind the closed-loop state-space
 model such that the safety boundaries are not violated for any larger number of
-iterations.  Requiring unfolding up to the completeness threshold, this
-approach is computationally expensive.
+iterations.  
 
+\ifx\axelerator
 Instead of unfolding the dynamics, \emph{the second approach}
 employs \emph{abstract acceleration}~\cite{cattaruzza2015unbounded} to
 evaluate all possible progressions of the model simultaneously. 
@@ -310,6 +325,7 @@ Additionally, this approach uses the \emph{abstraction-refinement} template \cit
 enabling one to start with a very simple (abstract) description of the model 
 regardless of the complexity of its dynamics, and to refine to more complex models only 
 when a solution cannot be found.
+\fi
 
 We provide experimental results showing that both our approaches are able to
 efficiently synthesize safe controllers for a set of intricate physical
@@ -318,8 +334,8 @@ plant models taken from the digital control literature.
 
 %% \addtodo{CD: the novelty compared to CAV'17 needs to be clarified}
 This paper is an extension of~\cite{DBLP:conf/cav/AbateBCCDKKP17}
-and makes the following contributions (the fourth and the fifth are
-specific extensions over~\cite{DBLP:conf/cav/AbateBCCDKKP17}): 
+and makes the following contributions (the fourth is a 
+specific extension to~\cite{DBLP:conf/cav/AbateBCCDKKP17}): 
 %
 \begin{enumerate}
 
@@ -344,6 +360,7 @@ specific extensions over~\cite{DBLP:conf/cav/AbateBCCDKKP17}):
 %%   \note{[this statement is way too broad] Existing methods for controller synthesis rely on transfer 
 %%   function representations, which are inadequate to prove safety requirements. } 
 %% %
+\ifx\axelerator
 \item We provide two novel algorithms: the first, a multi-staged approach, relies on 
   an unfolding of the dynamics up to a completeness threshold, while the
   second one is abstraction-based and leverages abstraction/refinement and
@@ -354,26 +371,33 @@ specific extensions over~\cite{DBLP:conf/cav/AbateBCCDKKP17}):
   feedback controllers and consider the various sources of imprecision in
   the implementation of the control algorithm and in the modeling of the
   plant. 
+\else  
+\item We present a novel multi-staged approach to synthesising digital controllers, using on 
+  an unfolding of the dynamics up to a completeness threshold, and bit precise Bounded Model
+  Checking to account for sources of imprecision in the implementation of the digital control algorithm
+  and the modelling of the plant.
+  \fi
+  
 %
 \item We develop a model for different sources of quantization error and account for 
   their effect on safety.  We provide bounds that ensure the
   safety of our controllers in a hybrid (i.e., continuous/digital) domain.
 
-\item While~\cite{DBLP:conf/cav/AbateBCCDKKP17} is restricted to models in discrete 
-time, \note{in the current paper we present an approach for
-  soundly evaluating safety in combined continuous-discrete time and space. [this is via the AA-based back-end. However this part is not in the experiments, afaik.]}
 
-\item A further limitation of the work in~\cite{DBLP:conf/cav/AbateBCCDKKP17} 
+%\item While~\cite{DBLP:conf/cav/AbateBCCDKKP17} is restricted to models in discrete 
+%time, \note{in the current paper we present an approach for
+%  soundly evaluating safety in combined continuous-discrete time and space. [this is via the AA-based back-end. However this part is not in the experiments, afaik.]}
+
+\item A limitation of the work in~\cite{DBLP:conf/cav/AbateBCCDKKP17} 
   is its restriction to fixed-point arithmetic, meaning that fixed-point
   numbers are employed for the representation of both the plant and the
   controller, as well as for the operations performed by each of them. 
   Conversely, in the current paper we also make use of floating-point
-  arithmetic, and compare the two approaches.  \note{Additionally, we enhance the
-  implementation with an SMT back-end, allowing us to also use reals in order
-  to represent the states of the plant.} 
+  arithmetic.  
+  %\note{Additionally, we enhance the
+  %implementation with an SMT back-end, allowing us to also use reals in order
+  %to represent the states of the plant.} 
   
-\item \note{Shall we mention the broader set of benchmarks?}  
-
 \end{enumerate}
   
 %-------------------------------
@@ -429,7 +453,7 @@ in the current paper we consider a state-space representation of the
 physical system, which requires ensuring the specification over actual
 traces of the model, alongside the numerical soundness required by the
 effects of discretisation and finite-precision errors.
-\note{Next paragraph is naive for a control audience - amend} 
+
 A~state-space model has known advantages over the transfer function
 representation~\cite{Franklin15}, as 
 % it naturally generalizes to multivariate systems (i.e., with multiple inputs and outputs); and 
@@ -454,16 +478,15 @@ However, relying on state-space discretization \mbox{Pessoa} is likely to incur 
 %continuous dynamics, and \cite{zamani2014} extends the approach to the Network Control Systems setup. 
 
 \textbf{Discretization Effects in Control Design --}
-Classical work in control synthesis has often disregarded digitalization effects, 
-\note{[this paragraph needs more work:]
-whereas recent results in digital control have focused on separate aspects of discretization, 
+Classical work in control synthesis has often disregarded digitalization effects.
+Recent results in digital control, however, have focused on separate aspects of discretization, 
 including delayed response~\cite{Duggirala2015} and finite word length (FWL) semantics, 
-with the goal either to verify~\cite{daes20161} or to optimize~\cite{oudjida2014design} given implementations. }
+with the goal either to verify~\cite{daes20161} the correctness of the implementation or to optimize~\cite{oudjida2014design} the design.
 
 There are two different problems that arise from FWL semantics.  The first
-is the error in the model dynamics caused by the inability to represent the exact
+is the error caused by the inability to represent the exact
 state of the physical system, while the second relates to rounding and
-saturation errors during model manipulation.  
+saturation errors during mathematical operations.  
 In~\cite{fialho1994stability}, a stability measure based on the error of the digital dynamics ensures that
 the deviation introduced by FWL does not lead to instability.  
 \cite{DBLP:journals/automatica/WuLCC09} uses $\mu$-calculus to directly model the digital controller so that selected
@@ -643,9 +666,9 @@ Models \eqref{eq:ode1} and \eqref{eq:plant} depend on external non-determinism i
 Feedback architectures can be employed to manipulate the properties and behaviors of the plant:    
 we are interested in the synthesis of digital feedback controllers $u_k$,  
 as practically implemented on Field-Programmable Gate Arrays or Digital Signal Processors. 
-\note{next: why only this single issue, rather than all discretisation effects as presented earlier?} Later, we will address the issue of variable quantization, 
-introduced by ADC/DAC conversion blocks of Figure \ref{fig:digitalsystem}, 
-as classically studied in \cite{astrom1997computer}. 
+%This requires us to consider the errors introduced by, we will address the issue of variable quantization, 
+%introduced by ADC/DAC conversion blocks of Figure \ref{fig:digitalsystem}, 
+%as classically studied in \cite{astrom1997computer}. 
 
 We consider state feedback control architectures, 
 where $u_k$ (notice we work with the discretized signal) is $u_k = r_{k} - K x_k$. 
@@ -663,8 +686,8 @@ symbolically executes every instruction in an input program by translating it to
 the end of this process, the entire input program is translated to a boolean satisfiability formula which is satisfiable
 iff a certain property about the program holds.  CBMC's API allows to specify these properties in the form of assertions
 in the input program, and we use these properties to express that our generated controllers are modelled in a stable and
-safe fashion. \note{Do we need more details here? Should we explain e.g. SSA or give examples of how assignments, loops,
-etc. are turned into formulas? Part of Sec.~\ref{sec:errors} can probably be moved here.}
+safe fashion. %\note{Do we need more details here? Should we explain e.g. SSA or give examples of how assignments, loops,
+%etc. are turned into formulas? Part of Sec.~\ref{sec:errors} can probably be moved here.}
 
 %-------------------------------
 \subsection{Errors}
@@ -677,22 +700,34 @@ It is necessary to account for the errors introduced by this representation,
 which we do using standard interval arithmetic. 
 \item The quantisation errors by the ADC, which converts the analogue signal $x(t)$ into the digital signal $x_k$, 
 which is then fed into the controller cf. Figure~\ref{fig:digitalsystem}. 
+\ifx\axelerator
 We account for this error in the acceleration-based back-end by introducing a noise signal $\nu_1$ that over-approximates it. 
 Further details are found in Section~\ref{sssec:abstraction}.  
-In the multi-stage back-end we use bit-precise modelling in CBMC~\cite{ClarkeKL04}, a bounded model checker for C-programs, to accurately encompass this conversion. 
+In the multi-stage back-end we
+\else
+We
+\fi
+use bit-precise modelling in CBMC~\cite{ClarkeKL04}, a bounded model checker for C-programs, to accurately encompass this conversion. 
 In other words, CBMC constructs a Boolean formula that explicitly unwinds the transition system for symbolically represented initial states. 
-\note{[rephrase:] The possible bounds that this symbolically represented initial state may take are restricted by upper and lower bounds as described in section . } 
+The values that the symbolically represented initial state may take are restricted by upper and lower bounds as described in section~\ref{}.
 The Boolean formula constructed by CBMC models the ADC conversions precisely on the symbolically represented states at every time step. 
 When we check for a safety property, the Boolean formula is satisfied only if there is an input state value for which the subsequent trace through the transition system eventually violates the safety property. 
+
+
 \item The representation errors due to performing finite-precision arithmetic in the controller block. 
+\ifx\axelerator
 In the acceleration-based back-end, 
 this is again treated by the introduction of a noise signal that bounds the error. 
-The multi-stage back-end uses the bit-precise modelling of finite-precision arithmetic in CBMC, 
+The multi-stage back-end uses 
+\else
+We use
+\fi
+the bit-precise modelling of finite-precision arithmetic in CBMC, 
 in the same way as the ADC conversion was handled. 
-We assume that the ADC represents numbers with a higher precision than the controller \note{why is this reasonable?}, 
-and thus the precision is limited by the controller. 
+We assume that the ADC represents numbers with a higher precision than the controller, 
+and thus the precision is limited by the controller. This is a reasonable assumption based on commonly available hardware.
 \item We assume that the DAC converts numbers to analogue signals with the same precision as the controller. 
-As a result we can ignore any additional errors introduced by the DAC.  Both the assumptions about the ADC and the DAC are reasonable assumptions based on commonly available hardware. 
+As a result we can ignore any additional errors introduced by the DAC. Again, this assumption is reasonable based on commonly available hardware. 
 \end{itemize}
 
 \subsection{Notation for fixed- and floating-point precision}  
