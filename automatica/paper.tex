@@ -1315,7 +1315,7 @@ and we synthesize a safe controller by
 unfolding the transition system $k$ steps and by selecting a controller $K$ and a single initial state, 
 such that the states at each step do not violate the safety criteria (see Section~\ref{ssec:safespecification}).    
 That is, we ask the bounded model checker~\cite{ClarkeKL04} if there exists a $K$ that is safe for at least one $x_0$ in our set of all possible initial states, and a given fixed point precision for the controller, and where the input signal remains within the specified bounds.
-This approach sound if the current $k$ is greater than the completeness threshold (see later step).  
+This approach is sound if the current $k$ is greater than the completeness threshold (see later step).  
 We~also assume some (fixed or floating point) precision $\langle I_p,F_p\rangle$ for the plant and a sampling rate.  
 The checks that these assumptions hold are performed by subsequent {\sc verify} stages. 
 
