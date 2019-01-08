@@ -632,7 +632,7 @@ Similarly,
 
 
 We consider models of physical plants expressed as ordinary differential
-equations, which we assume to be controllable~\cite{Astrom08}: 
+equations, which we assume are controllable~\cite{Astrom08}: 
 %
 \begin{align}
 \label{eq:ode1}
@@ -697,7 +697,6 @@ safe fashion. %\note{Do we need more details here? Should we explain e.g. SSA or
 We account for the presence of errors originating from a number of sources, shown in Figure~\ref{fig:digitalsystem}:
 \begin{itemize}
 \item We represent the plant variables $x(t)$ and $u(t)$, which are continuous quantities, with finite precision in our model. 
-It is necessary to account for the errors introduced by this representation, 
 which we do using standard interval arithmetic. 
 \item The quantisation errors by the ADC, which converts the analogue signal $x(t)$ into the digital signal $x_k$, 
 which is then fed into the controller cf. Figure~\ref{fig:digitalsystem}. 
