@@ -328,10 +328,10 @@ regardless of the complexity of its dynamics, and to refine to more complex mode
 when a solution cannot be found.
 \fi
 
-We provide experimental results showing that both our approaches are able to
+We provide experimental results showing that we are able to
 efficiently synthesize safe controllers for a set of intricate physical
 plant models taken from the digital control literature.
-\addtodo{add more here once we have the experimental results ready}
+%\addtodo{add more here once we have the experimental results ready}
 
 %% \addtodo{CD: the novelty compared to CAV'17 needs to be clarified}
 This paper is an extension of~\cite{DBLP:conf/cav/AbateBCCDKKP17}
@@ -678,60 +678,110 @@ and $r_{k}$ is a reference signal (again digital).
 We will assume $r_k=0$, thus 
 $\vec{x}_{k+1}=(\mat{A}_d-\mat{B}_d\mat{K})\vec{x}_k$. 
 
-\note{Anticipate here connection with characteristic polynomial? See Section 4.}
+The gain matrix $K$ can be set so that the closed-loop discrete dynamics are
+shaped as desired, for instance according to a specific stability goal or
+around a specific dynamical behavior \cite{astrom1997computer}.  As argued
+later in this work, we will target more complex objectives, such as
+quantitative safety requirements, which are not typical in the digital
+control literature.  Further, we will embrace the digital nature of the
+controller, which manipulates quantized signals as discrete quantities represented with finite precision. 
 
-\subsection{Symbolic execution}
+\subsection{Stability of closed-loop systems}
+
+In this work we employ asymptotic stability in the CEGIS loop,  
+as an objective for guessing controllers that are later proven sound over safety requirements.  
+Asymptotic stability is a property that amounts to convergence of the model executions to an equilibrium point, 
+starting from any states in a neighborhood of the point (see Figure~\ref{fig:ct} for the portrait of a stable execution, converging to the origin).   
+In the case of linear systems as in~\eqref{eq:closedloopss}, 
+considered with a zero reference signal, 
+the equilibrium point of interest is the origin. 
+
+A discrete-time LTI system as \eqref{eq:closedloopss} is asymptotically
+stable if all the roots of its characteristic polynomial (i.e., the
+eigenvalues of the closed-loop matrix $A_d - B_d K$) are inside the unity
+circle of the complex plane, i.e., their absolute values are strictly less than
+one~\cite{astrom1997computer} (this simple sufficient condition can be generalised, 
+however this is not necessary in our work).  
+In this paper, we express this stability specification $\phi_\mathit{stability}$ in terms of a check known as
+\emph{Jury's criterion}~\cite{fadali}: this is an easy algebraic formula to
+select the entries of matrix $K$ so that the closed-loop dynamics are shaped
+as desired.
+
+\subsection{Safety of closed-loop systems}
+
+We are not limited to the synthesis of digital stabilizing controllers -- a
+well known task in the literature on digital control systems -- but target
+safety requirements with an overall approach that is sound and automated. 
+More specifically, we require that the closed-loop system
+\eqref{eq:closedloopss} meets given safety specifications.  A safety
+specification gives raise to a requirement on the states of the model, such
+that the feedback controller (namely the choice of the gains matrix~$K$)
+must ensure that the state never violates the requirement.  Note that a
+stable, closed-loop system is not necessarily a safe system: indeed, the
+state values may leave the safe part of the state space while they converge
+to the equilibrium, which is typical in the case of oscillatory dynamics. 
+%However, a safe system will always be stable.  
+In~this work, the safety property is expressed as:
+%
+\begin{equation}
+\label{eq:safetyliteral}
+\phi_\mathit{safety}\iff \forall k\ge 0.\, \bigwedge_{i=1}^{n}{\underline{x_{i}} \leq x_{i,k} \leq \overline{x_{i}}},
+\end{equation}
+%
+%\addtodo{We consider $x_{i}^{-}$ and $x_{i}^{+}$ to be -1 and 1, respectively.}
+%
+where $\underline{x_{i}}$ and $\overline{x_{i}}$ are lower and upper bounds
+for the $i$-th coordinate $x_{i}$ of state $x\in \mathbb R^n$ at the $k$-th
+instant, respectively.  This means that the states will always be within an $n$-dimensional hyper-box.
+
+Furthermore, it is practically relevant to consider the 
+constraints $\phi_\mathit{input}$ on the input
+signal $u_{k}$ and $\phi_\mathit{init}$ on the initial states $x_0$,
+which we assume have given bounds:
+$\phi_\mathit{input} = {\forall k.\underline{u} \leq u_{k} \leq \overline{u}} $, 
+$\phi_\mathit{init} = \bigwedge_{i=1}^{n} \underline{x_{i,0}} \leq x_{i,0} \leq \overline{x_{i,0}}.$
+For the former, this means that the control input might saturates in view of
+physical constraints.
+
+
+
+\subsection{Bounded Model Checking}
 We use the bounded model checker CBMC~\cite{ClarkeKL04} to model controller behaviour on digitial signals with finite
-bit-precision.  We express these controller semantics as C programs, which is CBMC's preferred input language.  CBMC
-symbolically executes every instruction in an input program by translating it to a boolean satisfiability problem.  At
+bit-precision.  
+We express these controller semantics as C programs, which is CBMC's preferred input language.  
+CBMC
+symbolically executes every instruction in an input program by translating it to a boolean satisfiability problem.  
+At
 the end of this process, the entire input program is translated to a boolean satisfiability formula which is satisfiable
-iff a certain property about the program holds.  CBMC's API allows to specify these properties in the form of assertions
-in the input program, and we use these properties to express that our generated controllers are modelled in a stable and
-safe fashion. %\note{Do we need more details here? Should we explain e.g. SSA or give examples of how assignments, loops,
+iff a certain property about the program holds.  
+CBMC's API allows to specify these properties in the form of assertions
+in the input program, and we use these properties to express that our generated controllers are stable and safe.
+%\note{Do we need more details here? Should we explain e.g. SSA or give examples of how assignments, loops,
 %etc. are turned into formulas? Part of Sec.~\ref{sec:errors} can probably be moved here.}
 
 %-------------------------------
-\subsection{Errors}
+\subsection{Finite precision errors}
 \label{sec:errors}
 
-We account for the presence of errors originating from a number of sources, shown in Figure~\ref{fig:digitalsystem}:
+The key contribution of our work is that, when synthesising controllers, we precisely model the finite-precision arithmetic in the digital controller, guaranteeing that the controllers are safe. The finite precision arithmetic introduces the following errors, shown in Figure~\ref{fig:digitalsystem}. These errors are present in the real world, and we must model them accurately 
+in order to capture the full behaviour of the system. Details of how we model this arithmetic are in Section~\ref{sec:}:
+
 \begin{itemize}
-\item We represent the plant variables $x(t)$ and $u(t)$, which are continuous quantities, with finite precision in our model. 
-which we do using standard interval arithmetic. 
-\item The quantisation errors by the ADC, which converts the analogue signal $x(t)$ into the digital signal $x_k$, 
-which is then fed into the controller cf. Figure~\ref{fig:digitalsystem}. 
-\ifx\axelerator
-We account for this error in the acceleration-based back-end by introducing a noise signal $\nu_1$ that over-approximates it. 
-Further details are found in Section~\ref{sssec:abstraction}.  
-In the multi-stage back-end we
-\else
-We
-\fi
-use bit-precise modelling in CBMC~\cite{ClarkeKL04}, a bounded model checker for C-programs, to accurately encompass this conversion. 
-In other words, CBMC constructs a Boolean formula that explicitly unwinds the transition system for symbolically represented initial states. 
-The values that the symbolically represented initial state may take are restricted by upper and lower bounds as described in section~\ref{}.
-The Boolean formula constructed by CBMC models the ADC conversions precisely on the symbolically represented states at every time step. 
-When we check for a safety property, the Boolean formula is satisfied only if there is an input state value for which the subsequent trace through the transition system eventually violates the safety property. 
+
+\item The ADC introduces quantisation errors when it converts the analogue signal $x(t)$ into the digital signal $x_k$. This signal is then fed into the controller cf. Figure~\ref{fig:digitalsystem}. 
 
 
-\item The representation errors due to performing finite-precision arithmetic in the controller block. 
-\ifx\axelerator
-In the acceleration-based back-end, 
-this is again treated by the introduction of a noise signal that bounds the error. 
-The multi-stage back-end uses 
-\else
-We use
-\fi
-the bit-precise modelling of finite-precision arithmetic in CBMC, 
-in the same way as the ADC conversion was handled. 
-We assume that the ADC represents numbers with a higher precision than the controller, 
-and thus the precision is limited by the controller. This is a reasonable assumption based on commonly available hardware.
-\item We assume that the DAC converts numbers to analogue signals with the same precision as the controller. 
+\item The controller block performs arithmetic at a finite-precision, which introduces additional errors on top of the error introduced by the ADC. We assume the ADC represents numbers with at least the same precision
+as the controller and thus the precision is limited by the controller. This is a reasonable assumption based on commonly available hardware.
+
+\item The DAC could potentially introduce further errors. However, we assume that the DAC converts numbers to analogue signals with the same precision as the controller. 
 As a result we can ignore any additional errors introduced by the DAC. Again, this assumption is reasonable based on commonly available hardware. 
 \end{itemize}
 
-\subsection{Notation for fixed- and floating-point precision}  
+The arithmetic and representations used in our modelling are also carried out at a finite precision, and so we must also account for the errors in our own modelling. Specifically our model of the plant variables  $x(t)$ and $u(t)$, which are, in reality, continuous quantities, with finite precision in our model. We guarantee that the precision we use to represent the plant variables is at least as precise as the precision used in the digital controller and we use interval arithmetic to bound the errors, as detailed in Section~\ref{sec:}. 
 
+
+\subsection{Notation for fixed- and floating-point precision}  
 In this paper we will use $\mathcal{F}_{\langle I,F \rangle}(x)$ to denote a real number $x$ expressed at a fixed-point precision, 
 using $I$ bits to represent the integer part of the number and $F$ bits to represent the decimal part. 
 
@@ -873,11 +923,12 @@ considered in its general form as
 \begin{equation*}
 S(z) = a_0z^N+a_1z^{N-1}+\cdots+a_{N-1}z+a_N,\,\, a_0\neq0. 
 \end{equation*}
-\note{The characteristic polynomial $S(z)$ represents the dynamical model in \ldots [clarify whether we use the CPol to describe the open- or closed-loop model. Relate parameters to matrices A,B,K. Notice that these parameters are used later in the Section where AA-based backend is explained.]}
-%\cdsay{is this for the matrix $\left( \begin{array}{c} Y \\ U \end{array}\right)$?} 
-% Assuming that $\hat{G}(z) = \frac{\hat{N_G}(z)}{\hat{D_G}(z)}$
-% and $\hat{C}(z) = \frac{\hat{N_C}(z)}{\hat{D_C}(z)}$, then:
-% $$S(z) = FWL[N_C(z)] \times \hat{N_G}(z) + FWL[D_C(z)] \times \hat{D_G}(z)$$
+An LTI system is stable if all the roots of its characteristic polynomial $S(z)$ (i.e., the 
+eigen values of the closed loop matrix $A_d-B_dK$) are inside the unit circle of the complex plane, 
+i.e., their absolute values are less than one. 
+
+%\note{The characteristic polynomial $S(z)$ represents the dynamical model in \ldots [clarify whether we use the CPol to describe the open- or closed-loop model. Relate parameters to matrices A,B,K. Notice that these parameters are used later in the Section where AA-based backend is explained.]}
+
 The following matrix $M$ with dimension $(2N-2)\times N$ and elements $m_{(\cdot),(\cdot)}$ is built from the coefficients of $S(z)$ as:  
 %
 $$
@@ -1305,7 +1356,7 @@ we describe in detail the different phases in Fig.~\ref{fig:CEGIS-precision-incr
 candidate solution $K$ that satisfies both the stability criteria and the
 safety specification.  
 
-To synthesize a controller that satisfies the
+To synthesize a controller that satisfies the 
 stability criteria, we require that a computed polynomial satisfies Jury's
 criterion~\cite{fadali} (see Section~\ref{ssec:stabspecification}).
 
@@ -1338,7 +1389,7 @@ The checks that these assumptions hold are performed by subsequent {\sc verify} 
 \begin{algorithmic}[1]
 \Function{$\mathit{safetyCheck}()$}{}
 \State assert($ \underline{u}  \leq u \leq \overline{u}$)
- \State set $x_0$ to be a \note{vertex state[?]}, e.g., $[\underline{x_0},\underline{x_0}]$	
+ \State set $x_0$ to be a vertex state, e.g., $[\underline{x_0},\underline{x_0}]$	
 \For {($c=0;~c < 2^\mathit{Num\_States};~c\mbox{++}$) }
   %\State assert($ \underline{x_0}  \leq x_0 \leq \overline{x_0}$)
 	\For{($i=0;~i< k;~i\mbox{++}$)}
@@ -1347,7 +1398,7 @@ The checks that these assumptions hold are performed by subsequent {\sc verify} 
 		\State $x = A * x + B * u$
 		\State assert($\underline{x} \leq x \leq \overline{x}$ )
   	\EndFor
-  	\State set $x_0$ to be a new \note{vertex state}
+  	\State set $x_0$ to be a new vertex state
   	\EndFor
   %\State Return $K$
 \EndFunction
@@ -1355,12 +1406,48 @@ The checks that these assumptions hold are performed by subsequent {\sc verify} 
 \caption{Safety check\label{alg:safetycheck}}
 \end{algorithm}
 
-\item The first {\sc verify} stage, {\sc safety}, shown in Alg.~\ref{alg:safetycheck} \note{$Num\_States = ?, plant\_typet = ? controller_typet =?$}, checks that the candidate
+\item The first {\sc verify} stage, {\sc safety} is shown in Alg.~\ref{alg:safetycheck}. 
+The algorithm checks that the candidate
 solution $K$, which we synthesized to be safe for at least one initial
 state, is safe for \emph{all} possible initial states, i.e., does not reach
 an unsafe state within $k$ steps.  After unfolding the transition system corresponding
 to the previously synthesized controller $k$ steps, we check that the safety
 specification holds for any initial state. 
+
+We use $(controller\_typet)$ to denote a
+cast or conversion to the controller precision, and $(plant\_typet)$ to denote a cast or conversion to the 
+plant precision. A \emph{vertex state} is defined as a state where all values are either equal to the upper or lower
+bound of the initial states. It is sufficient to verify that the controller is safe for all vertex
+states, and the proof is shown later in this section. We thus only need to iterate through the $2^{Num\_States}$ vertex
+states, where $Num\_States$ is the number of dimensions in $x$.
+
+
+\begin{theorem} 
+If a controller is safe for each of the corner cases of our hypercube of
+allowed initial states, i.e., the vertex states, it is safe for any initial state in the hypercube. 
+\end{theorem}
+
+Thus we only need to check $2^n$ initial states, where $n$
+is the dimension of the state space (number of continuous variables). 
+\begin{proof}
+Consider the set of initial states, $X_0$, which we assume to be convex since it is a hypercube. 
+Name $v_i$ its vertexes, where $i=1,\ldots, 2^n$.  
+Thus any point $x \in X_0$ can be expressed by convexity as $x = \sum_{i=1}^{2^n} \alpha_i v_i$, 
+where $\sum_{i=1}^{2^n} \alpha_i =1$. Then if $x_0=x$, we obtain 
+\begin{align*}
+x_k   &= (A_d - B_d K)^k x \\
+&= (A_d - B_d K)^k \sum_{i=1}^{2^n} \alpha_i v_i \\
+      &= \sum_{i=1}^{2^n} \alpha_i (A_d - B_d K)^k v_i \\
+      &= \sum_{i=1}^{2^n} \alpha_i x_k^i, 
+ \end{align*}     
+%
+where $x_k^i$ denotes the trajectories obtained from the single vertex
+$v_i$.  We~conclude that any $k$-step trajectory is encompassed, within a
+convex set, by those generated from the vertices. 
+\qed
+\end{proof}
+
+
 
 \item The second {\sc verify} stage, {\sc precision}, 
  restores soundness with respect to the plant precision
@@ -1372,9 +1459,34 @@ $k$ is large enough to ensure safety for any $k'{>}k$.  Here, we compute the
 completeness threshold $\overline{k}$ for the current candidate controller $K$ and
 check that $k{\geq}\overline{k}$.  This is done by computing the number of time steps
 required for the states to have completed a 360\textdegree circle, as illustrated in Fig.~\ref{fig:ct}. 
-\note{This is only for spiralling dynamics - more generally, we need to clarify how the CT is computed. Shall we add the CAV17 proof?}
+
+\begin{theorem} There exists a finite $\overline{k}$ such that it is
+sufficient to unwind the closed-loop state-space system up to $\overline{k}$
+in order to ensure that $\phi_\mathit{safety}$ holds. 
+\end{theorem}
+
+\begin{proof}
+%
+A stable control system is known to have converging dynamics.  Assume the
+closed-loop matrix eigenvalues are not repeated (which is sensible to do,
+since we select them).  The distance of the trajectory from the reference
+point (origin) decreases over time within subspaces related to real-valued
+eigenvalues; however, this is not the case in general when dealing with
+complex eigenvalues.  Consider the closed-loop matrix that updates the
+states in every discrete time step, and select the eigenvalue $\vartheta$
+with the smallest (non-trivial) imaginary value.  Between every pair of
+consecutive time steps $k\,T_s$ and $(k+1)\,T_s$, the dynamics projected on
+the corresponding eigenspace rotate $\vartheta T_s$ radians.  Thus, taking
+$\overline{k}$ as the ceiling of $\frac{2\pi}{\vartheta T_s}$, after
+$k{\geq}\overline{k}$ steps we have completed a full rotation, which results
+in a point closer to the origin.  The synthesized $\overline{k}$ is the completeness threshold.
+\qed 
+%
+\end{proof}
 
 \end{enumerate}
+
+
 
 \begin{figure}[t]
 \centering
@@ -1563,25 +1675,41 @@ $z^n+\sum_{i=1}^n(a_i-k_i)z^{n-i}=\prod_{i=1}^n (z-\lambda_i) \text{ where } |\l
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 As discussed in Section~\ref{sec:errors}, 
-the models we consider have to account for errors from several sources: 
-the numerical error introduced by the finite precision used to represent the plant (and its operations),  
-the error introduced by the ADC/DAC conversions, 
+the models we consider must account for errors from several sources: 
+we must bound the numerical error introduced by the finite precision we use to represent the plant (and its operations), and precisely model
+the error introduced by the ADC/DAC conversions
 and the error introduced by the limited precision used to represent the controller. 
-First we consider the numerical errors introduced by the finite precision numbers (either fixed- or floating-point) used to model the plant and used by the digital controller. 
-Then we account for the quantization errors introduced by the ADC/DAC.
+We use interval arithmetic to bound the error introduced by the finite precision plant, and bounded model checking to precisely model the error introduced by the ADC/DAC and the finite precision controller.
 
-\subsection{Errors due to numerical representations} 
 
-Let us first consider the case of fixed-point representation of the model, 
-and of synthesis of fixed-point controllers. 
+\subsection{Bit-precise symbolic model checking}
+As described in section~\ref{sec:preliminaries}, we use CBMC, a bit-precise bounded model checker to synthesise and verify candidate controllers. CBMC performs precisely the fixed or floating point arithmetic used in the controller, as well as the ADC/DAC conversions, according to the IEEE standards.
 
-Recall we use $\mathcal{F}_{\langle I,F \rangle}(x)$ denote a real number $x$
-represented in a fixed point domain, with $I$ bits representing the integer
-part and $F$ bits representing the decimal part.  The smallest number that
-can be represented in this domain is $c_m=2^{-F}$.  Any mathematical
-operations performed at the precision $\mathcal{F}_{\langle I,F \rangle}(x)$
-will introduce errors, for which an upper bound can be
-given~\cite{DBLP:conf/arith/BrainTRW15}:
+\subsection{Interval arithmetic over errors in numeric representation} 
+We use finite-precision arithmetic to model the plant. This is an approximation that speeds up each CEGIS
+iteration but necessitates a further stage where we verify that the errors introduced by the
+approximation have not caused us to generate a controller that is unsafe when executed with real numbers 
+for the plant. In this stage, we represent the plant using double precision floating point
+and we use the Boost interval arithmetic library~\cite{} to bound the error in this representation. We use a compositional numeric library to perform the fixed point arithmetic for the controller~\cite{}. We check the controller is safe starting from each vertex state, which we have shown to be sufficient to prove safety from any initial state in the hypercube of possible initial states. 
+
+We outline here the mathematics behind bounding the errors on the double precision floating point.
+Recall we use $\mathcal{F}_{\langle E,M \rangle}(x)$ denote a real number $x$
+represented in a floating point domain, with $E$ bits representing the exponent and $M$ bits representing the mantissa part. Any representation of a real number using the floating point domain will
+introduce an error, for which an upper bound can be given~\cite{DBLP:conf/arith/BrainTRW15}.
+For each number represented in floating point, we store an interval that encompasses this error.
+Further
+mathematical
+operations performed at the precision $\mathcal{F}_{\langle E,M \rangle}(x)$
+will propagate these errors forward and 
+introduce further errors for which bounds can be derived~\cite{DBLP:conf/arith/BrainTRW15}. 
+
+The fixed point arithmetic of the digital controller is performed on the upper and lower limit of each interval independently. Since the precision of the floating point is greater than the precision
+of the controller, this is guaranteed to bound the real behaviour of the controller.
+
+
+
+\ifx\axelerator
+
 
 \begin{enumerate}
 
@@ -1631,7 +1759,7 @@ the domain.  If overflow occurs, the interval bound becomes infinite.
 Similar bounds for errors introduced by 
 performing basic mathematical operators in floating-point precision can be derived~\cite{DBLP:conf/arith/BrainTRW15}.
 
-\ifx\axelerator
+
 \subsection{ADC/DAC quantization errors modelled as noise} 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 In this section we describe how quantization errors can be modelled as noise. 
@@ -1920,59 +2048,100 @@ $\mathcal{F}_{\langle W_c, F_c \rangle}$ is chosen to be $W_c = 16$ and $F_c = 1
 for half-precision floating-point format}.
 
 We separate our evaluation into two sets of results: fixed- and floating-point. 
-For the majority of the {\it fixed-point} benchmarks, we observe that the abstraction-based
-back-end is faster than the basic multi-staged verification approach; \textcolor{blue}{additionally, 
-from 26 benchmarks, we observed that the abstraction-based back-end finds a solution for more benchmarks 
-(14) than the multi-staged back-end (13)}.
-%\note{we should clarify that this is out of 26 in total, not 191?}  
-In direct comparison, the abstraction-based approach is on average able to find a
-solution in approximately 53\% of the time required using the multi-staged
-back-end, and has a median run-time 0.5\,s, which is twenty times smaller
-than the multi-staged approach.  The two back-ends complement each other in terms of 
-benchmark coverage, and together solve 58\% of the benchmarks \note{only? this does not sound much really}.  
-%
-For the majority of the benchmarks with {\it floating-point} implementation, 
-we also observe that the abstraction-based back-end is much faster than the basic multi-staged verification approach, 
-but both back-ends find the same amount of solutions (13).  
-In direct comparison, the abstraction-based approach is on average able to find a
-solution in approximately 50\% of the time required using the multi-staged
-back-end, and has a median run-time 0.6\,s, which is forty times smaller
-than the multi-staged approach.  The two back-ends complement each other in
-benchmark coverage and together solve 54\% of the benchmarks \note{somewhat underwhelming}.
+%For the majority of the {\it fixed-point} benchmarks, we observe that the abstraction-based
+%back-end is faster than the basic multi-staged verification approach; \textcolor{blue}{additionally, 
+%from 26 benchmarks, we observed that the abstraction-based back-end finds a solution for more benchmarks 
+%(14) than the multi-staged back-end (13)}.
+%%\note{we should clarify that this is out of 26 in total, not 191?}  
+%In direct comparison, the abstraction-based approach is on average able to find a
+%solution in approximately 53\% of the time required using the multi-staged
+%back-end, and has a median run-time 0.5\,s, which is twenty times smaller
+%than the multi-staged approach.  The two back-ends complement each other in terms of 
+%benchmark coverage, and together solve 58\% of the benchmarks \note{only? this does not sound much really}.  
+%%
+%For the majority of the benchmarks with {\it floating-point} implementation, 
+%we also observe that the abstraction-based back-end is much faster than the basic multi-staged verification approach, 
+%but both back-ends find the same amount of solutions (13).  
+%In direct comparison, the abstraction-based approach is on average able to find a
+%solution in approximately 50\% of the time required using the multi-staged
+%back-end, and has a median run-time 0.6\,s, which is forty times smaller
+%than the multi-staged approach.  The two back-ends complement each other in
+%benchmark coverage and together solve 54\% of the benchmarks \note{somewhat underwhelming}.
+
+
+%\begin{table*}
+%\centering
+%\begin{tabular}{| r | l | c | c | r | c | r | c | r | c | r |}
+%%
+%\hline
+%\# & \multicolumn{1}{|c|}{Benchmark} & \multicolumn{1}{|c|}{Order} & \multicolumn{4}{|c|}{Multi-staged}                 & \multicolumn{4}{|c|}{Abstraction} \\
+%   &                                  & & \multicolumn{1}{|c|}{$\mathcal{F}_{\langle I_p,F_p \rangle}$} & \multicolumn{1}{|c|}{Time} & \multicolumn{1}{|c|}{$\mathcal{F}_{\langle E_p, M_p \rangle}$} & \multicolumn{1}{|c|}{Time} & \multicolumn{1}{|c|}{$\mathcal{F}_{\langle I_p,F_p \rangle}$} & \multicolumn{1}{|c|}{Time} & \multicolumn{1}{|c|}{$\mathcal{F}_{\langle E_p, M_p \rangle}$} & \multicolumn{1}{|c|}{Time}\\\hline
+%1  & Acrobot     & 4 & 16,8 & 61959.4\,s &  & ~\xmark & & ~\xmark &  & ~\xmark \\
+%2  & Antenna     & 6 &  & ~\xmark &  & ~\xmark & & ~\xmark & & 2903s~\xmark\\
+%3  & Ballmaglev  & 3 &  & ~\xmark &  & ~\xmark & & ~\xmark & & ~\xmark\\
+%4  & Bioreact    & 3 & 16,8 & 11.5\,s & 16,10 &14.6\,s & 24,14 & 0.4\,s & 16,10 & 0.5\,s\\
+%5  & Chen\_ex1   & 3 & 16,8 & 10.3\,s  & 16,10 & 9.2\,s & & ~\xmark & 16,10 & 1.4\,s\\
+%6  & Chen\_ex2   & 8& & ~\xmark & 32,23 & 4683.8\,s &  & ~\xmark & & ~\xmark\\
+%7  & Chen\_ex3   & 7 &   & ~\xmark & & ~\xmark & & ~\xmark & & ~\xmark\\
+%8  & Chen\_ex4   & 9 & & ~\xmark & & ~\xmark & & ~\xmark & & ~\xmark\\
+%9  & Cruise      & 1 & 16,8 & 9.6\,s & 16,10 & 6.5\,s & 24,14 & 0.3\,s& 16,10 & 0.3\,s\\
+%10 & CruiseHSCC & 1 & 16,8 & 9.6\,s & 16,10 & 6.6\,s &  24,14 & 0.3\,s & 16,10 & 0.3\,s \\
+%11 & Cstr & 3 & & ~\xmark & & ~\xmark & & ~\xmark & & 181s~\xmark\\
+%12 & Cstrtmp  & 3 &  & ~\xmark & & ~\xmark & 24,14 & 0.5\,s & & ~\xmark\\
+%13 & DCmotor   & 2 & 16,8  & 11.3\,s & 16,10 & 7.8\,s & 24,14 & 0.4\,s & 16,10 & 0.5\,s (4.0\,s) \\
+%14 & Flexbeam   & 6 & & ~\xmark & & ~\xmark & 24,14 & 72.1\,s & & ~\xmark\\
+%15 & Guidance chen  & 5 & & ~\xmark & & ~\xmark & & ~\xmark & & ~\xmark\\
+%16 & Helicopter   & 3 & 16,8 & 13.8\,s & 32,23 & 148\,s & 24,14 & 0.8\,s& 16,10 & 1.1\,s (56.6\,s)\\
+%17 & Invpendulum\_cartpos & 4 & & ~\xmark & & ~\xmark & & ~\xmark & & ~\xmark\\
+%18 & Invpendulum\_pendang & 2 & 24,12 & 9.8\,s & 16,10 & 28.2\,s & 24,14 & 0.4\,s & 16,10 & 0.5\,s\\
+%19 & Magpointer   & 2 & 16,8 & 10.1\,s & 16,10 & 20.4\,s & 24,14  & 1\,s& 16,10 & 1.3\,s (\xmark)\\
+%20 & Magsuspension  & 2 & 12,12  & 22.2\,s  & 16,10 & 34.8\,s & 24,14 & 0.5\,s & 16,10 & 0.6\,s (\xmark)\\
+%21 & Pendulum   & 2 & 16,8 & 8.5\,s & 32,23 & 24\,s & 24,14 & 0.4\,s & 16,10 & 0.5\,s (2.4\,s)\\
+%22 & Regulator   & 5 & & ~\xmark & & ~\xmark & &~\xmark  & & 529s~\xmark\\
+%23 & Springmassdamper & 2 & & ~\xmark & & ~\xmark & & ~\xmark & & 14.1s~\xmark\\
+%24 & streamdrum   & 3 & 16,8  & 332.5\,s & 16,10 & 590.5\,s & 24,14 & 0.7\,s & 16,10 &1.3\,s\\
+%25 & Suspension  & 4 & 16,8  & 17.2\,s & 16,10 &1373\,s & 56,30 & 15.3\,s & 16,10 & 4.4\,s (313.6\,s)\\
+%26 & Tapedriver   & 3 & 16,8  & 8.2\,s & & ~\xmark & 64,22 & 2.1\,s & 16,10 & 1.1\,s (6.0\,s)\\
+%\hline
+%%
+%\end{tabular}
+%\vspace{0.05in}
+%\caption{Experimental results\label{tab:results}}
+%\end{table*}
 
 \begin{table*}
 \centering
-\begin{tabular}{| r | l | c | c | r | c | r | c | r | c | r |}
+\begin{tabular}{| r | l | c | c | r | c | r |}
 %
 \hline
-\# & \multicolumn{1}{|c|}{Benchmark} & \multicolumn{1}{|c|}{Order} & \multicolumn{4}{|c|}{Multi-staged}                 & \multicolumn{4}{|c|}{Abstraction} \\
-   &                                  & & \multicolumn{1}{|c|}{$\mathcal{F}_{\langle I_p,F_p \rangle}$} & \multicolumn{1}{|c|}{Time} & \multicolumn{1}{|c|}{$\mathcal{F}_{\langle E_p, M_p \rangle}$} & \multicolumn{1}{|c|}{Time} & \multicolumn{1}{|c|}{$\mathcal{F}_{\langle I_p,F_p \rangle}$} & \multicolumn{1}{|c|}{Time} & \multicolumn{1}{|c|}{$\mathcal{F}_{\langle E_p, M_p \rangle}$} & \multicolumn{1}{|c|}{Time}\\\hline
-1  & Acrobot     & 4 & 16,8 & 61959.4\,s &  & ~\xmark & & ~\xmark &  & ~\xmark \\
-2  & Antenna     & 6 &  & ~\xmark &  & ~\xmark & & ~\xmark & & 2903s~\xmark\\
-3  & Ballmaglev  & 3 &  & ~\xmark &  & ~\xmark & & ~\xmark & & ~\xmark\\
-4  & Bioreact    & 3 & 16,8 & 11.5\,s & 16,10 &14.6\,s & 24,14 & 0.4\,s & 16,10 & 0.5\,s\\
-5  & Chen\_ex1   & 3 & 16,8 & 10.3\,s  & 16,10 & 9.2\,s & & ~\xmark & 16,10 & 1.4\,s\\
-6  & Chen\_ex2   & 8& & ~\xmark & 32,23 & 4683.8\,s &  & ~\xmark & & ~\xmark\\
-7  & Chen\_ex3   & 7 &   & ~\xmark & & ~\xmark & & ~\xmark & & ~\xmark\\
-8  & Chen\_ex4   & 9 & & ~\xmark & & ~\xmark & & ~\xmark & & ~\xmark\\
-9  & Cruise      & 1 & 16,8 & 9.6\,s & 16,10 & 6.5\,s & 24,14 & 0.3\,s& 16,10 & 0.3\,s\\
-10 & CruiseHSCC & 1 & 16,8 & 9.6\,s & 16,10 & 6.6\,s &  24,14 & 0.3\,s & 16,10 & 0.3\,s \\
-11 & Cstr & 3 & & ~\xmark & & ~\xmark & & ~\xmark & & 181s~\xmark\\
-12 & Cstrtmp  & 3 &  & ~\xmark & & ~\xmark & 24,14 & 0.5\,s & & ~\xmark\\
-13 & DCmotor   & 2 & 16,8  & 11.3\,s & 16,10 & 7.8\,s & 24,14 & 0.4\,s & 16,10 & 0.5\,s (4.0\,s) \\
-14 & Flexbeam   & 6 & & ~\xmark & & ~\xmark & 24,14 & 72.1\,s & & ~\xmark\\
-15 & Guidance chen  & 5 & & ~\xmark & & ~\xmark & & ~\xmark & & ~\xmark\\
-16 & Helicopter   & 3 & 16,8 & 13.8\,s & 32,23 & 148\,s & 24,14 & 0.8\,s& 16,10 & 1.1\,s (56.6\,s)\\
-17 & Invpendulum\_cartpos & 4 & & ~\xmark & & ~\xmark & & ~\xmark & & ~\xmark\\
-18 & Invpendulum\_pendang & 2 & 24,12 & 9.8\,s & 16,10 & 28.2\,s & 24,14 & 0.4\,s & 16,10 & 0.5\,s\\
-19 & Magpointer   & 2 & 16,8 & 10.1\,s & 16,10 & 20.4\,s & 24,14  & 1\,s& 16,10 & 1.3\,s (\xmark)\\
-20 & Magsuspension  & 2 & 12,12  & 22.2\,s  & 16,10 & 34.8\,s & 24,14 & 0.5\,s & 16,10 & 0.6\,s (\xmark)\\
-21 & Pendulum   & 2 & 16,8 & 8.5\,s & 32,23 & 24\,s & 24,14 & 0.4\,s & 16,10 & 0.5\,s (2.4\,s)\\
-22 & Regulator   & 5 & & ~\xmark & & ~\xmark & &~\xmark  & & 529s~\xmark\\
-23 & Springmassdamper & 2 & & ~\xmark & & ~\xmark & & ~\xmark & & 14.1s~\xmark\\
-24 & streamdrum   & 3 & 16,8  & 332.5\,s & 16,10 & 590.5\,s & 24,14 & 0.7\,s & 16,10 &1.3\,s\\
-25 & Suspension  & 4 & 16,8  & 17.2\,s & 16,10 &1373\,s & 56,30 & 15.3\,s & 16,10 & 4.4\,s (313.6\,s)\\
-26 & Tapedriver   & 3 & 16,8  & 8.2\,s & & ~\xmark & 64,22 & 2.1\,s & 16,10 & 1.1\,s (6.0\,s)\\
+\# & \multicolumn{1}{|c|}{Benchmark} & \multicolumn{1}{|c|}{Order} & \multicolumn{4}{|c|}{Multi-staged}                  \\
+   &     & & \multicolumn{1}{|c|}{$\mathcal{F}_{\langle I_p,F_p \rangle}$} & \multicolumn{1}{|c|}{Time} & \multicolumn{1}{|c|}{$\mathcal{F}_{\langle E_p, M_p \rangle}$}& \multicolumn{1}{|c|}{Time}  \\\hline
+1  & Acrobot     & 4 & 16,8 & 61959.4\,s &  & ~\xmark \\
+%2  & Antenna     & 6 &  & ~\xmark &  & ~\xmark & \\
+2  & Ballmaglev  & 3 &  & ~\xmark &  & ~\xmark \\
+3  & Bioreact    & 3 & 16,8 & 11.5\,s & 16,10 &14.6\,s \\
+4  & Chen\_ex1   & 3 & 16,8 & 10.3\,s  & 16,10 & 9.2\,s \\
+5  & Chen\_ex2   & 8& & ~\xmark & 32,23 & 4683.8\,s \\
+%7  & Chen\_ex3   & 7 &   & ~\xmark & & ~\xmark & & ~\xmark & & ~\xmark\\
+%8  & Chen\_ex4   & 9 & & ~\xmark & & ~\xmark & & ~\xmark & & ~\xmark\\
+6  & Cruise      & 1 & 16,8 & 9.6\,s & 16,10 & 6.5\,s \\
+7 & CruiseHSCC & 1 & 16,8 & 9.6\,s & 16,10 & 6.6\,s  \\
+8 & Cstr & 3 & & ~\xmark & & ~\xmark \\
+9 & Cstrtmp  & 3 &  & ~\xmark & & ~\xmark \\
+10 & DCmotor   & 2 & 16,8  & 11.3\,s & 16,10 & 7.8\,s  \\
+11 & Flexbeam   & 6 & & ~\xmark & & ~\xmark \\
+12 & Guidance chen  & 5 & & ~\xmark & & ~\xmark \\
+13 & Helicopter   & 3 & 16,8 & 13.8\,s & 32,23 & 148\,s \\
+%17 & Invpendulum\_cartpos & 4 & & ~\xmark & & ~\xmark & & ~\xmark & & ~\xmark\\
+14 & Invpendulum\_pendang & 2 & 24,12 & 9.8\,s & 16,10 & 28.2\,s\\
+15 & Magpointer   & 2 & 16,8 & 10.1\,s & 16,10 & 20.4\,s \\
+16 & Magsuspension  & 2 & 12,12  & 22.2\,s  & 16,10 & 34.8\,s \\
+17 & Pendulum   & 2 & 16,8 & 8.5\,s & 32,23 & 24\,s\\
+%22 & Regulator   & 5 & & ~\xmark & & ~\xmark & &~\xmark  & & 529s~\xmark\\
+%23 & Springmassdamper & 2 & & ~\xmark & & ~\xmark & & ~\xmark & & 14.1s~\xmark\\
+18 & streamdrum   & 3 & 16,8  & 332.5\,s & 16,10 & 590.5\,s \\
+19 & Suspension  & 4 & 16,8  & 17.2\,s & 16,10 &1373\,s \\
+20 & Tapedriver   & 3 & 16,8  & 8.2\,s & & ~\xmark \\
 \hline
 %
 \end{tabular}
@@ -1983,9 +2152,10 @@ benchmark coverage and together solve 54\% of the benchmarks \note{somewhat unde
 The median run-time for \textcolor{blue}{the successful} benchmarks is 6.6\,s for the fixed-point and 5.45\,s for floating-point implementations, respectively.  
 We consider these times short enough to be of practical use to control engineers, and thus affirm the validity of EG1.
 
-\textcolor{blue}{Both approaches fail to synthesise a controller for half of the instances.}  
-For the multi-stage approach, the completeness threshold may be too large, thus causing a timeout.  
-On the other hand, the abstraction-based approach may require a very precise abstraction, resulting in too many refinements and, consequently, again in a timeout.  
+\textcolor{blue}{We fail to synthesise a controller for several instances.}  
+For the multi-stage approach, the completeness threshold may be too large, thus causing a timeout. 
+A controller simply may not exist for these benchmarks at this given time discretisation and controller
+precision.  
 Yet another source of incompleteness is the inability of the {\sc synthesize} phase to use a large enough precision for
 the plant model.
 
@@ -2018,9 +2188,9 @@ This works sufficiently well for our benchmarks, but
 performance may suffer in some cases, for example if the completeness
 threshold is high. 
 
-\textit{Abstraction on other properties:} The performance gain from abstract
-acceleration may not hold for more complex properties than safety, for
-instance ``eventually reach and always remain in a given safe set''.
+%\textit{Abstraction on other properties:} The performance gain from abstract
+%acceleration may not hold for more complex properties than safety, for
+%instance ``eventually reach and always remain in a given safe set''.
 
 %\note{So, what about EG2? Shall we assert it? }
 
@@ -2029,26 +2199,28 @@ instance ``eventually reach and always remain in a given safe set''.
 \label{sec:conclusions}
 %-------------------------------
 
-We have presented two automated approaches to synthesize digital
+We have presented an automated approach to synthesize digital
 state-feedback controllers that ensure both stability and safety over state-space models.   
-The first approach relies on unfolding of the closed-loop model dynamics up to a completeness threshold, while the second
-one applies abstraction-refinement and acceleration to increase speed, whilst retaining soundness.
+%The first approach relies on unfolding of the closed-loop model dynamics up to a completeness threshold, while the second
+%one applies abstraction-refinement and acceleration to increase speed, whilst retaining soundness.
 %
-Both approaches are novel within the control literature: they give a fully
+Our approach is novel within the control literature: we give a fully
 automated synthesis method that is algorithmically and numerically sound,
 considering various error sources in the implementation of the digital
 control algorithm and in the computational modeling of plant dynamics.
 %
-Our experimental results show that both approaches are able to synthesize fully automatically 
+Our experimental results show we are able to synthesize fully automatically 
 safe controllers for most benchmarks, which have been derived from the control literature, 
 within a reasonable amount of time.  
 
-\note{Let us collect here the main extensions we regard to be relevant: \\ 
-models with partial observations; \\ 
-implementation with SMT; \\ 
-continuous-time; \\ 
-more complex specs; \\ 
-\ldots }
+
+%
+%\note{Let us collect here the main extensions we regard to be relevant: \\ 
+%models with partial observations; \\ 
+%implementation with SMT; \\ 
+%continuous-time; \\ 
+%more complex specs; \\ 
+%\ldots }
 
 %\addtodo{[Move material from \ref{sec:rw} here]}
 
