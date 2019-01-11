@@ -30,6 +30,7 @@ function echo_log {
 function echo_success_message {
  start_time=$1
  end_time=$2
+ echo_log "start time: $start_time, end time: $end_time"
  runtime=$((end_time-start_time))
  echo_log 'SYNTHESIS SUCCESSFUL'
  echo_log "<control_synthesis_time>${runtime}</control_synthesis_time>"
@@ -76,6 +77,7 @@ function compile_precision_check {
 function get_current_cpu_millis {
  cat ${time_tmp_file} >>${log_file}
  formula=$(sed -r 's/([0-9]+(\.[0-9]+)?)m([0-9]+)\.0*([0-9]+)?s/60000*\1+1000*\3+\4/g' ${time_tmp_file} | tr '\n' ' ' | sed -r 's/ /+/g' | sed -r 's/(.*)[+]$/\1/' | sed -r 's/(.*)[+]$/\1/' | sed -r 's/[+]+/+/')
+ 
  echo $((${formula}))
 }
 
@@ -102,7 +104,17 @@ fi
 
 #dkr15
 if [ "$1" == "dkr15" ]; then
-benchmark_dirs=(${BENCHMARK_BASE_DIR}/tapedriver/)
+benchmark_dirs=(${BENCHMARK_BASE_DIR}/chen_ex2/ ${BENCHMARK_BASE_DIR}/chen_ex3/ ${BENCHMARK_BASE_DIR}/antenna/)
+fi
+
+#dkr15
+if [ "$1" == "dkr16" ]; then
+benchmark_dirs=(${BENCHMARK_BASE_DIR}/chen_ex4/ ${BENCHMARK_BASE_DIR}/flexbeam/)
+fi
+
+#dkr15
+if [ "$1" == "dkr17" ]; then
+benchmark_dirs=(${BENCHMARK_BASE_DIR}/bioreact/ )
 fi
 
 working_directory_base="/tmp/control_synthesis-fixed-ss-${working_directory_base_suffix}"
@@ -110,15 +122,16 @@ mkdir -p ${working_directory_base} 2>/dev/null
 
 for benchmark_dir in ${benchmark_dirs[@]}; do
   echo "benchmark dir $benchmark_dir"	
- time_tmp_file=/tmp/times${working_directory_base_suffix}.log
+ time_tmp_file=/tmp/times${working_directory_base_suffix}_ss.log
  times >${time_tmp_file}; start_time=$(get_current_cpu_millis)
+ echo "start time $start_time"
 
  for benchmark in ${benchmark_dir}*.h; do
   log_file="${benchmark%.h}_completeness-threshold-ss-fixed.log"
   truncate -s 0 ${log_file}
   echo_log ${benchmark}
   echo_log 'completeness-threshold-ss-fixed'
-
+  echo_log "start time:  ${start_time}"
   working_directory="${working_directory_base}/completeness-threshold-ss-fixed"
   setup_benchmark_directory ${working_directory}
   cd ${working_directory}
@@ -153,6 +166,7 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
    cat ${cbmc_log_file} >>${log_file}
    controller_items=$(grep '<item>' ${cbmc_log_file} | tail -n ${num_states})
    controller_params=$(echo "${controller_items}" | sed -r 's/<\/item> <item>/ /g' | sed -r 's/<item>//g' | sed -r 's/<\/item>//g' | tr '\n' ' ')
+   echo "CONTROLLER PARAMS ARE $controller_params"
    if [ ${cbmc_result} -eq 0 ] || [ ${k_size_index} -eq 0 ]; then
     echo_log "./discrete_step_k_completeness_check ${k_size} ${controller_params}"
     eval "./discrete_step_k_completeness_check ${k_size} ${controller_params}"

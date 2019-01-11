@@ -101,12 +101,17 @@ if [ "$1" == "dkr13" ]; then
 benchmark_dirs=(${BENCHMARK_BASE_DIR}/magneticpointer/ ${BENCHMARK_BASE_DIR}/magsuspension/ ${BENCHMARK_BASE_DIR}/pendulum/ ${BENCHMARK_BASE_DIR}/regulator/ ${BENCHMARK_BASE_DIR}/springmassdamperHSCC/ ${BENCHMARK_BASE_DIR}/steamdrum/ ${BENCHMARK_BASE_DIR}/suspension/ ${BENCHMARK_BASE_DIR}/tapedriver/ ${BENCHMARK_BASE_DIR}/usgtampa/) 
 fi
 
+#dkr13
+if [ "$1" == "dkr14" ]; then
+benchmark_dirs=(${BENCHMARK_BASE_DIR}/uscgtampa/)
+fi
+
 working_directory_base="/tmp/control_synthesis-float-${working_directory_base_suffix}"
 mkdir -p ${working_directory_base} 2>/dev/null
 
 for benchmark_dir in ${benchmark_dirs[@]}; do
   echo "benchmark dir $benchmark_dir"	
- time_tmp_file=/tmp/times${working_directory_base_suffix}.log
+ time_tmp_file=/tmp/times${working_directory_base_suffix}_float.log
  times >${time_tmp_file}; start_time=$(get_current_cpu_millis)
 
  for benchmark in ${benchmark_dir}*.h; do
