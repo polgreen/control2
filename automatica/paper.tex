@@ -2049,6 +2049,10 @@ $\mathcal{F}_{\langle W_c, F_c \rangle}$ is chosen to be $W_c = 16$ and $F_c = 1
 for half-precision floating-point format}.
 
 We separate our evaluation into two sets of results: fixed- and floating-point. 
+We are able to synthesise more floating point controllers than fixed point controllers, likely because the
+floating point controllers are at a higher precision than the fixed point. It may be that the precision of the fixed-point
+controllers is too low to be able to meet the safety specification. The floating point controllers take longer to synthesise
+than the fixed point controllers.
 %For the majority of the {\it fixed-point} benchmarks, we observe that the abstraction-based
 %back-end is faster than the basic multi-staged verification approach; \textcolor{blue}{additionally, 
 %from 26 benchmarks, we observed that the abstraction-based back-end finds a solution for more benchmarks 
@@ -2112,37 +2116,37 @@ We separate our evaluation into two sets of results: fixed- and floating-point.
 
 \begin{table*}
 \centering
-\begin{tabular}{| r | l | c | c | r | c | r |}
+\begin{tabular}{| l | c | c | r | c | r |}
 %
 \hline
-\# & \multicolumn{1}{|c|}{Benchmark} & \multicolumn{1}{|c|}{Order} & \multicolumn{4}{|c|}{Multi-staged}                  \\
-   &     & & \multicolumn{1}{|c|}{$\mathcal{F}_{\langle I_p,F_p \rangle}$} & \multicolumn{1}{|c|}{Time} & \multicolumn{1}{|c|}{$\mathcal{F}_{\langle E_p, M_p \rangle}$}& \multicolumn{1}{|c|}{Time}  \\\hline
-1  & Acrobot     & 4 & 16,8 & 61529.8\,s &  & ~\xmark \\
-%2  & Antenna     & 6 &  & ~\xmark &  & ~\xmark & \\
+% \multicolumn{1}{|c|}{Benchmark} & \multicolumn{1}{|c|}{Order} & \multicolumn{4}{|c|}{Run-time} \\
+ Benchmark  &  Order  & $\mathcal{F}_{\langle I_p,F_p \rangle}$ & Time & $\mathcal{F}_{\langle E_p, M_p \rangle}$ & Time \\\hline
+%1  & Acrobot     & 4 & 16,8 & 61529.8\,s &  & ~\xmark \\
+ Antenna     & 6 &  & ~\xmark & 16,10 & 817.4\,s \\
 %2  & Ballmaglev  & 3 &  & ~\xmark &  & ~\xmark \\
-2  & Bioreact    & 3 & 16,8 & 11.5\,s & 16,10 &21.8\,s \\
-3  & Chen\_ex1   & 3 & 16,8 & 10.3\,s  & 16,10 & 12.1\,s \\
-4  & Chen\_ex2   & 8& & ~\xmark & 32,23 & 3535s.1\,s \\
-5  & Chen\_ex3   & 7 & 16,8  & 11.4\,s & 16,10 & 59.1\,s \\
+ Bioreact    & 3 & 16,8 & 11.5\,s & 16,10 &23.6\,s \\
+ Chen\_ex1   & 3 & 16,8 & 10.3\,s  & 16,10 & 12.7\,s \\
+%4  & Chen\_ex2   & 8& & ~\xmark & 32,23 & 3535s.1\,s \\
+ Chen\_ex3   & 7 & 16,8  & 11.4\,s & 16,10 & 59.1\,s \\
 %8  & Chen\_ex4   & 9 & & ~\xmark & & ~\xmark & & ~\xmark & & ~\xmark\\
-6  & Cruise      & 1 & 16,8 & 9.7\,s & 16,10 & 9.7\,s \\
-7 & CruiseHSCC & 1 & 16,8 & 9.7\,s & 16,10 & 9.7\,s  \\
-8 & Cstr & 3 & & ~\xmark & & 19.842\,s \\
-9 & Cstrtmp  & 3 & 16,8 & 12.5\,s &16,10 & 14.4\,s \\
-10 & DCmotor   & 2 & 16,8  & 10.0\,s & 16,10 & 11.4\,s  \\
-11 & Flexbeam   & 6 & & ~\xmark & 16, 10 & 10916.1\,s \\
+ Cruise      & 1 & 16,8 & 9.7\,s & 16,10 & 10.3\,s \\
+ CruiseHSCC & 1 & 16,8 & 9.7\,s & 16,10 & 10.3\,s  \\
+ Cstr & 3 & & ~\xmark & 16,10 & 21.4\,s \\
+ Cstrtmp  & 3 & 16,8 & 12.5\,s &16,10 & 15.4\,s \\
+ DCmotor   & 2 & 16,8  & 10.0\,s & 16,10 & 11.4\,s  \\
+%11 & Flexbeam   & 6 & & ~\xmark & 16, 10 & 10916.1\,s \\
 %12 & Guidance chen  & 5 & & ~\xmark & & ~\xmark \\
-12 & Helicopter   & 3 &  & ~\xmark & 16,10 & 28.7\,s \\
+ Helicopter   & 3 &  & ~\xmark & 16,10 & 32.0\,s \\
 %17 & Invpendulum\_cartpos & 4 & & ~\xmark & & ~\xmark & & ~\xmark & & ~\xmark\\
-13 & Invpendulum\_pendang & 2 &  & ~\xmark & 16,10 & 13.8\,s\\
-14 & Magpointer   & 2 &  & ~\xmark & 16,10 & 80.7\,s \\
-15 & Magsuspension  & 2 & 12,12  & 22.2\,s  & 16,10 & 42.3\,s \\
-16 & Pendulum   & 2 & 16,8 & 13.6\,s & 16,10 & 16.1\,s\\
-17 & Regulator   & 5 & & ~\xmark & 16,10 & 996.4\,s\\
-18 & Springmassdamper & 2 & & ~\xmark &16,10 & 16.0s \\
-19 & Streamdrum   & 3 & 16,8  & 700.9s & 16,10 & 24.4\,s \\
-20 & Suspension  & 4 & 16,8  & 11.4\,s & 16,10 &15.4\,s \\
-21 & Tapedriver   & 3 & 16,8  & 11.1\,s &16,10 & 13.2\,s \\
+ Invpendulum\_pendang & 2 & 16,8  & 10.7 & 16,10 & 14.8\,s\\
+ Magpointer   & 2 &  & ~\xmark & 16,10 & 86.0\,s \\
+ Magsuspension  & 2 & 12,12  & 39.0\,s  & 16,10 & 43.2\,s \\
+ Pendulum   & 2 & 16,8 & 13.2\,s & 16,10 & 16.6\,s\\
+ Regulator   & 5 & 16,8 & 1532.7\,s & 16,10 & 999.6\,s\\
+ Springmassdamper & 2 & & ~\xmark &16,10 & 24.2s \\
+ Steamdrum   & 3 & 16,8  & 700.9s & 16,10 & 24.4\,s \\
+ Suspension  & 4 & 16,8  & 11.4\,s & 16,10 &15.4\,s \\
+ Tapedriver   & 3 & 16,8  & 11.4\,s &16,10 & 13.3\,s \\
 \hline
 %
 \end{tabular}
@@ -2150,13 +2154,12 @@ We separate our evaluation into two sets of results: fixed- and floating-point.
 \caption{Experimental results\label{tab:results}}
 \end{table*}
 
-The median run-time for \textcolor{blue}{the successful} benchmarks is 6.6\,s for the fixed-point and 5.45\,s for floating-point implementations, respectively.  
+The mean run-time for \textcolor{blue}{the successful} benchmarks is 152.6\,s for the fixed-point and 117.5\,s for floating-point implementations, respectively.  The mean run-time for \textcolor{blue}{the successful} benchmarks is 16\,s for the fixed-point and 11\,s for floating-point implementations, respectively.
 We consider these times short enough to be of practical use to control engineers, and thus affirm the validity of EG1.
 
 \textcolor{blue}{We fail to synthesise a controller for several instances.}  
-For the multi-stage approach, the completeness threshold may be too large, thus causing a timeout. 
-A controller simply may not exist for these benchmarks at this given time discretisation and controller
-precision.  
+The completeness threshold may be too large, thus causing a timeout, or controller simply may not exist for these benchmarks at this given time discretisation and controller
+precision.
 Yet another source of incompleteness is the inability of the {\sc synthesize} phase to use a large enough precision for
 the plant model.
 
