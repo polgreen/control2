@@ -75,6 +75,11 @@ int main(const int argc, const char * const argv[]) {
   cout << "num_eigenvalues: " << eigenvalues.size() << endl;
   for (size_t i=0; i < eigenvalues.size(); ++i) {
     cout << "eigenvalue: " << eigenvalues[i] << endl;
+    if(std::abs(eigenvalues[i]) > 1)
+    {
+     cout << "unstable controller " << endl;
+     return EXIT_INCREASE_K;
+    }
     if (!is_imaginary(imaginary_offset, eigenvalues[i])) continue;
     const realt angle = std::arg(eigenvalues[i]);
     const realt expected = abs(two_pi / angle);
