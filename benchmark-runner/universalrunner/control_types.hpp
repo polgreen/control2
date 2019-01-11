@@ -9,13 +9,14 @@
 #include "half.hpp"
 #endif
 
-typedef double __plant_precisiont;
+typedef long double __plant_precisiont;
 
 #define CONTROL_WIDTH (INT_BITS + FRAC_BITS)
 
 #ifndef FLOAT
-typedef __int128 uint128_t;
-typedef __int128 int128_t;
+//typedef __int128 uint128_t;
+
+//typedef __int128 int128_t;
 #if CONTROL_WIDTH == 8u
 typedef int8_t __controller_base_typet;
 #elif CONTROL_WIDTH == 16u
