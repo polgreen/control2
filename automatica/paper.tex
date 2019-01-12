@@ -265,14 +265,14 @@ software-implemented embedded controllers.
 Our work addresses challenging aspects of the control synthesis problem:  
 we perform digital control synthesis over a ``hybrid model'',
 namely a model encompassing a plant exhibiting continuous behavior, 
-whereas the controller operates in discrete time and over a quantized domain.  
+and a controller operating in discrete time and over a quantized domain.  
 In particular, our model evaluates the effects of the quantizers (A/D and D/A
 converters), as well as representation
 errors introduced by the controller working  %% artifacts such as an
 %% observer~\cite{astrom1997computer}
 in a finite-precision domain. Our model also accounts for representation errors introduced
 by our modelling of the plant using finite precision arithmetic. 
-We reason safety requirements, which are frequently overlooked in conventional feedback control synthesis, but
+We reason about safety requirements, which are frequently overlooked in conventional feedback control synthesis, but
 play a key role in systems engineering, particularly for safety-critical applications of clear concern in modern autonomy contexts.  
 
 %% Using state of the art verifiers, we evaluate these models against
@@ -347,8 +347,8 @@ specific extension to~\cite{DBLP:conf/cav/AbateBCCDKKP17}):
   controllers using an inductive synthesis approach (CEGIS).  
   %% This application is non-trivial and addresses challenges specific to digital control
   %% systems, such as the presence of A/D quantizers and FWL operations.  
-  In addition a stability property, the automatically computed state-feedback
-  controllers must also guarantee a given safety specification.
+  The automatically computed state-feedback
+  controllers guarantee a given safety specification.
   The implication is that, as opposed to existing
   methods for controller synthesis which rely on transfer function
   representations, we must consider a state-space representation of
@@ -373,10 +373,10 @@ specific extension to~\cite{DBLP:conf/cav/AbateBCCDKKP17}):
   the implementation of the control algorithm and in the modeling of the
   plant. 
 \else  
-\item We present a novel multi-staged approach to synthesising digital controllers, using on 
+\item We present a novel multi-staged approach to synthesising digital controllers, using 
   an unfolding of the dynamics up to a completeness threshold, and bit precise Bounded Model
-  Checking to account for sources of imprecision in the implementation of the digital control algorithm
-  and the modelling of the plant.
+  Checking to account for fixed-point arithmetic used in the implementation of the digital control algorithm
+  and interval arithmetic to account for the imprecision in the modelling of the plant. 
   \fi
   
 %
@@ -465,7 +465,7 @@ which is by and large overlooked in the standard (digital) control literature,
 by default focussed on stability properties.  
 Moreover, our work integrates an abstraction-refinement (CEGAR) step inside the main CEGIS loop.
 
-The technique underpinning tools such as Pessoa~\cite{mazo2010pessoa} and related extensions \cite{Anta2010,liu16} and applications \cite{zamani2014}, 
+The technique underpinning tools such as Pessoa~\cite{mazo2010pessoa}, related extensions \cite{Anta2010,liu16} and applications \cite{zamani2014}, 
 synthesizes correct-by-design embedded control software for LTI models.    
 It is based on the abstraction of the model to a finite-state machine, 
 and on the formal control synthesis over safety- and reachability-based temporal properties thereon.  

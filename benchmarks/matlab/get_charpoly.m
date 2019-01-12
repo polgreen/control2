@@ -4,7 +4,7 @@ filename = strcat('charpolys.h')
 fileID = fopen(filename,'w');
 fprintf(fileID, '#if NSTATES==1\n\n');
 
-for n=2:8
+for n=9
     
 %A = sym('A',[n,n]);
 %B = sym('B',[n,1]);
