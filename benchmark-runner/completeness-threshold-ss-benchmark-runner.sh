@@ -64,6 +64,7 @@ function setup_benchmark_directory {
  cp ${source_template_directory}/control_types.hpp ${working_directory}/
  cp ${source_template_directory}/fixedbv.h ${working_directory}/
  cp ${source_template_directory}/fixedbv.inc ${working_directory}/
+ cp ${source_template_directory}/charpolys.h ${working_directory}/
 }
 
 function compile_precision_check {

@@ -63,6 +63,7 @@ function setup_benchmark_directory {
  cp ${source_template_directory}/mpreal.h ${working_directory}/
  cp ${source_template_directory}/int_2Inverse.h ${working_directory}/
  cp ${source_template_directory}/int_3Inverse.h ${working_directory}/
+  cp ${source_template_directory}/charpolys.h ${working_directory}/
  cp ${source_template_directory}/discrete_step_k_completeness_check.cpp ${working_directory}/
 }
 
