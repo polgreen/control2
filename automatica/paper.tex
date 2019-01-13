@@ -753,6 +753,7 @@ physical constraints.
 
 
 \subsection{Bounded Model Checking}
+\label{sec:BMC}
 We use the bounded model checker CBMC~\cite{ClarkeKL04} to model controller behaviour on digitial signals with finite
 bit-precision.  
 We express these controller semantics as C programs, which is CBMC's preferred input language.  
@@ -1046,14 +1047,14 @@ We use interval arithmetic to bound the error introduced by the finite precision
 
 
 \subsection{Bit-precise symbolic model checking}
-As described in section~\ref{sec:preliminaries}, we use CBMC, a bit-precise bounded model checker to synthesise and verify candidate controllers. CBMC performs precisely the fixed or floating point arithmetic used in the controller, as well as the ADC/DAC conversions, according to the IEEE standards.
+As described in section~\ref{sec:BMC}, we use CBMC, a bit-precise bounded model checker to synthesise and verify candidate controllers. CBMC performs precisely the fixed or floating point arithmetic used in the controller, as well as the ADC/DAC conversions, according to the IEEE standards.
 
 \subsection{Interval arithmetic over errors in numeric representation} 
 We use finite-precision arithmetic to model the plant. This is an approximation that speeds up each CEGIS
 iteration but necessitates a further stage where we verify that the errors introduced by the
 approximation have not caused us to generate a controller that is unsafe when executed with real numbers 
 for the plant. In this stage, we represent the plant using double precision floating point
-and we use the Boost interval arithmetic library~\cite{} to bound the error in this representation. We use a compositional numeric library to perform the fixed point arithmetic for the controller~\cite{}. We check the controller is safe starting from each vertex state, which we have shown to be sufficient to prove safety from any initial state in the hypercube of possible initial states. 
+and we use the Boost interval arithmetic library~\cite{DBLP:journals/tcs/BronnimannMP06} to bound the error in this representation. We use a compositional numeric library to perform the fixed point arithmetic for the controller~\cite{}. We check the controller is safe starting from each vertex state, which we have shown to be sufficient to prove safety from any initial state in the hypercube of possible initial states. 
 
 We outline here the mathematics behind bounding the errors on the double precision floating point.
 Recall we use $\mathcal{F}_{\langle E,M \rangle}(x)$ denote a real number $x$
