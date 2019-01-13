@@ -465,16 +465,16 @@ which is by and large overlooked in the standard (digital) control literature,
 by default focussed on stability properties.  
 Moreover, our work integrates an abstraction-refinement (CEGAR) step inside the main CEGIS loop.
 
-The technique underpinning tools such as Pessoa~\cite{mazo2010pessoa}, related extensions \cite{Anta2010,liu16} and applications \cite{zamani2014}, 
+The technique underpinning tools such as Pessoa~\cite{mazo2010pessoa}, related extensions \cite{Anta2010,liu16}, and applications \cite{zamani2014}
 synthesizes correct-by-design embedded control software for LTI models.    
 It is based on the abstraction of the model to a finite-state machine, 
 and on the formal control synthesis over safety- and reachability-based temporal properties thereon.  
 %Based on this safety specification, \mbox{Pessoa} can synthesize embedded controller software for a range of
 %properties.  
-The controller software can then be refined (implemented) over the concrete LTI model. 
+The controller software can then be implemented over the concrete LTI model. 
 %can be more complicated than
 %the state-feedback control we synthesize, and the properties available cover more detail.  
-However, relying on state-space discretization \mbox{Pessoa} is likely to incur in scalability limitations.   
+However, relying on state-space discretization, \mbox{Pessoa} is likely to incur scalability limitations.   
 %Along this research line, \cite{Anta2010,liu16} studies the synthesis of digital controllers for
 %continuous dynamics, and \cite{zamani2014} extends the approach to the Network Control Systems setup. 
 
@@ -484,7 +484,7 @@ Recent results in digital control, however, have focused on separate aspects of 
 including delayed response~\cite{Duggirala2015} and finite word length (FWL) semantics, 
 with the goal either to verify~\cite{daes20161} the correctness of the implementation or to optimize~\cite{oudjida2014design} the design.
 
-There are two different problems that arise from FWL semantics.  The first
+There are two different problems that arise from FWL semantics in digital controllers.  The first
 is the error caused by the inability to represent the exact
 state of the physical system, while the second relates to rounding and
 saturation errors during mathematical operations.  
@@ -506,7 +506,8 @@ The work in~\cite{picasso2003stabilization} introduces invariant sets as a mecha
 bound the quantization error effect on stabilization.  
 % as an invariant set that always converges toward the controllable set.  
 Similarly, 
-\cite{liberzon2003hybrid} evaluates the quantization error dynamics and \note{[unclear] bounds its trajectory to a known region over a finite time period}.   
+\cite{liberzon2003hybrid} evaluates the quantization error dynamics and calculates an upper and lower
+bound for the possible trajectory of the system up to a finite time. 
 %This technique works for both linear and non-linear systems.
 
 %\note{Add note explaining relationship of this work with previously published papers. }
@@ -681,22 +682,28 @@ $\vec{x}_{k+1}=(\mat{A}_d-\mat{B}_d\mat{K})\vec{x}_k$.
 The gain matrix $K$ can be set so that the closed-loop discrete dynamics are
 shaped as desired, for instance according to a specific stability goal or
 around a specific dynamical behavior \cite{astrom1997computer}.  As argued
-later in this work, we will target more complex objectives, such as
+later in this work, we will target a more complex objective,
 quantitative safety requirements, which are not typical in the digital
-control literature.  Further, we will embrace the digital nature of the
-controller, which manipulates quantized signals as discrete quantities represented with finite precision. 
+control literature. We will precisely account for the digital nature
+of the controller, which manipulates quantised signals as discrete quantities represented with
+finite precision.
+
+% Further, we will embrace the digital nature of the
+%controller, which manipulates quantized signals as discrete quantities represented with finite precision. 
 
 \subsection{Stability of closed-loop systems}
 
 In this work we employ asymptotic stability in the CEGIS loop,  
-as an objective for guessing controllers that are later proven sound over safety requirements.  
+as a means for reducing the search space of possible safe controller. As discussed later, a safe controller is necessarily asymptotically stable, although the reverse is not true.
+%as an objective for guessing controllers that are later proven sound over safety requirements.  
 Asymptotic stability is a property that amounts to convergence of the model executions to an equilibrium point, 
 starting from any states in a neighborhood of the point (see Figure~\ref{fig:ct} for the portrait of a stable execution, converging to the origin).   
-In the case of linear systems as in~\eqref{eq:closedloopss}, 
+In the case of linear systems %as in~\eqref{eq:closedloopss}, 
 considered with a zero reference signal, 
 the equilibrium point of interest is the origin. 
 
-A discrete-time LTI system as \eqref{eq:closedloopss} is asymptotically
+A discrete-time LTI system %as \eqref{eq:closedloopss} 
+is asymptotically
 stable if all the roots of its characteristic polynomial (i.e., the
 eigenvalues of the closed-loop matrix $A_d - B_d K$) are inside the unity
 circle of the complex plane, i.e., their absolute values are strictly less than
@@ -714,8 +721,8 @@ well known task in the literature on digital control systems -- but target
 safety requirements with an overall approach that is sound and automated. 
 More specifically, we require that the closed-loop system
 \eqref{eq:closedloopss} meets given safety specifications.  A safety
-specification gives raise to a requirement on the states of the model, such
-that the feedback controller (namely the choice of the gains matrix~$K$)
+specification gives rise to a requirement on the states of the model, such
+that the feedback controller (namely the choice of the gain matrix~$K$)
 must ensure that the state never violates the requirement.  Note that a
 stable, closed-loop system is not necessarily a safe system: indeed, the
 state values may leave the safe part of the state space while they converge
@@ -732,7 +739,7 @@ In~this work, the safety property is expressed as:
 %
 where $\underline{x_{i}}$ and $\overline{x_{i}}$ are lower and upper bounds
 for the $i$-th coordinate $x_{i}$ of state $x\in \mathbb R^n$ at the $k$-th
-instant, respectively.  This means that the states will always be within an $n$-dimensional hyper-box.
+instant, respectively.  This requires that the states will always be within an $n$-dimensional hyper-box.
 
 Furthermore, it is practically relevant to consider the 
 constraints $\phi_\mathit{input}$ on the input
@@ -763,7 +770,7 @@ in the input program, and we use these properties to express that our generated 
 \subsection{Finite precision errors}
 \label{sec:errors}
 
-The key contribution of our work is that, when synthesising controllers, we precisely model the finite-precision arithmetic in the digital controller, guaranteeing that the controllers are safe. The finite precision arithmetic introduces the following errors, shown in Figure~\ref{fig:digitalsystem}. These errors are present in the real world, and we must model them accurately 
+The key contribution of our work is that, when synthesising controllers, we precisely model the finite-precision arithmetic in the digital controller, guaranteeing that these controllers implemented with finite-precision arithmetic are safe. The finite precision arithmetic introduces the following errors, shown in Figure~\ref{fig:digitalsystem}. These errors are present in the real world, and we must model them accurately 
 in order to capture the full behaviour of the system. Details of how we model this arithmetic are in Section~\ref{sec:}:
 
 \begin{itemize}
@@ -775,7 +782,7 @@ in order to capture the full behaviour of the system. Details of how we model th
 as the controller and thus the precision is limited by the controller. This is a reasonable assumption based on commonly available hardware.
 
 \item The DAC could potentially introduce further errors. However, we assume that the DAC converts numbers to analogue signals with the same precision as the controller. 
-As a result we can ignore any additional errors introduced by the DAC. Again, this assumption is reasonable based on commonly available hardware. 
+As a result we can ignore any additional errors introduced by the DAC. Again, this assumption is reasonable based on commonly available hardware. It would, however, be straight forward to account for a DAC or ADC of different precision to the controller in our algorithm if necessary.
 \end{itemize}
 
 The arithmetic and representations used in our modelling are also carried out at a finite precision, and so we must also account for the errors in our own modelling. Specifically our model of the plant variables  $x(t)$ and $u(t)$, which are, in reality, continuous quantities, with finite precision in our model. We guarantee that the precision we use to represent the plant variables is at least as precise as the precision used in the digital controller and we use interval arithmetic to bound the errors, as detailed in Section~\ref{sec:}. 
@@ -853,7 +860,7 @@ where $P$ ranges over functions (where a function is represented by the program 
 $a$ ranges over ground terms, 
 and $\phi$ is a quantifier-free logical formula. 
 We~interpret the ground terms over some domain~$\mathcal{D}$. 
-This is a synthesis problem, where the objective is indeed to select a valid $P$ satisfying $\phi$ over all the $a$ terms. 
+This is a synthesis problem, where the objective is to synthesise a valid $P$ that satisfies $\phi$ over all the $a$ terms. 
 
 CEGIS breaks down this generally hard synthesis problem into two easier parts:
 %The design consists of two phases,
@@ -882,7 +889,7 @@ exists.
 
 In the context of the formal synthesis of safe controllers, 
 the set of possible {\sc inputs} corresponds to the set of possible initial states and the 
-candidate program $P$ is a candidate controllers $K$. The synthesis block generates a candidate
+candidate program $P$ is a candidate controller $K$. The synthesis block generates a candidate
 controller that works for a subset of the possible initial states, and the verifier checks whether 
 the controller works for all possible initial states. 
 
@@ -899,12 +906,12 @@ which we discuss in Section~\ref{ssec:safespecification}. We use a stability spe
 in order to narrow the search space of possible controllers, as discussed in Section~\ref{ssec:stabspecification}.
 
 %-------------------------------
-\subsection{Formal specification of stability} 
+\subsection{Jury's stability criteria} 
 \label{ssec:stabspecification}
 %-------------------------------
 
-There are a number of procedures that can be used for stability analysis of dynamical models~\cite{daes20161, Bessa16}, 
-which can fit our automatic verification engine.  
+There are a number of procedures that can be used for stability analysis of dynamical models\note{~\cite{daes20161, Bessa16} is self-citation really the best citation for this statement??}.
+%which can fit our automatic verification engine.  
 %one based on Schur's decomposition
 %and another one based on Jury's criterion~\cite{astrom1997computer}.  
 Here we choose Jury stability criterion~\cite{astrom1997computer}, 
@@ -985,7 +992,7 @@ $
 \phi_\mathit{stability} := (R_1 \wedge R_2 \wedge R_3 \wedge R_4).
 $
 
-
+\ifx\safetyrep
 %-------------------------------
 \subsection{Formal specification of safety} 
 \label{ssec:safespecification}
@@ -1023,6 +1030,251 @@ both of which we be expressed via given bounds as:
 $\phi_\mathit{input} := {\forall k\ge 0, \underline{u} \leq u_{k} \leq \overline{u}} $, 
 and $\phi_\mathit{init} := \bigwedge_{i=1}^{n} \underline{x_{i,0}} \leq x_{i,0} \leq \overline{x_{i,0}}$. 
 For the input signal, these requirements practically mean that the control input saturates in view of physical constraints. 
+\fi
+
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+\section{Numerical representation and soundness} 
+\label{sec:numeric_rep}
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+As discussed in Section~\ref{sec:errors}, 
+the models we consider must account for errors from several sources: 
+we must bound the numerical error introduced by the finite precision we use to represent the plant (and its operations), and precisely model
+the error introduced by the ADC/DAC conversions
+and the error introduced by the limited precision used to represent the controller. 
+We use interval arithmetic to bound the error introduced by the finite precision plant, and bounded model checking to precisely model the error introduced by the ADC/DAC and the finite precision controller.
+
+
+\subsection{Bit-precise symbolic model checking}
+As described in section~\ref{sec:preliminaries}, we use CBMC, a bit-precise bounded model checker to synthesise and verify candidate controllers. CBMC performs precisely the fixed or floating point arithmetic used in the controller, as well as the ADC/DAC conversions, according to the IEEE standards.
+
+\subsection{Interval arithmetic over errors in numeric representation} 
+We use finite-precision arithmetic to model the plant. This is an approximation that speeds up each CEGIS
+iteration but necessitates a further stage where we verify that the errors introduced by the
+approximation have not caused us to generate a controller that is unsafe when executed with real numbers 
+for the plant. In this stage, we represent the plant using double precision floating point
+and we use the Boost interval arithmetic library~\cite{} to bound the error in this representation. We use a compositional numeric library to perform the fixed point arithmetic for the controller~\cite{}. We check the controller is safe starting from each vertex state, which we have shown to be sufficient to prove safety from any initial state in the hypercube of possible initial states. 
+
+We outline here the mathematics behind bounding the errors on the double precision floating point.
+Recall we use $\mathcal{F}_{\langle E,M \rangle}(x)$ denote a real number $x$
+represented in a floating point domain, with $E$ bits representing the exponent and $M$ bits representing the mantissa part. Any representation of a real number using the floating point domain will
+introduce an error, for which an upper bound can be given~\cite{DBLP:conf/arith/BrainTRW15}.
+For each number represented in floating point, we store an interval that encompasses this error.
+Further
+mathematical
+operations performed at the precision $\mathcal{F}_{\langle E,M \rangle}(x)$
+will propagate these errors forward and 
+introduce further errors for which bounds can be derived~\cite{DBLP:conf/arith/BrainTRW15}. 
+
+The fixed point arithmetic of the digital controller is performed on the upper and lower limit of each interval independently. Since the precision of the floating point is greater than the precision
+of the controller, this is guaranteed to bound the real behaviour of the controller.
+
+
+
+\ifx\axelerator
+
+
+\begin{enumerate}
+
+\item {\bf Truncation:} Let $x$ be a real number, and $\mathcal{F}_{\langle
+I,F \rangle}(x)$ be the same number represented in a fixed-point domain as
+above.  Then $\mathcal{F}_{\langle I,F \rangle}(x) = x-\delta_T$ where the
+error $ \delta_T=x\ \%_{c_m}\ \tilde x$ \note{define tilde x}, and $\%_{c_m}$ is the modulus
+operation performed on the last bit. 
+Thus, $\delta_T$ is the truncation error and it will propagate across
+operations.
+%
+\item {\bf Rounding:} The following errors are due to basic arithmetic operations.  
+Let $c_1, c_2$ and $c_3$ be real numbers, and $\delta_{T1}$ and $\delta_{T2}$ be
+the truncation errors caused by representing $c_1$ and $c_2$ in a fixed-point domain.
+%
+\begin{enumerate}
+%
+\item Addition/Subtraction: these operations only propagate errors coming
+from truncation of the operands, namely $\mathcal{F}_{\langle I,F
+\rangle}(c_1) \pm \mathcal{F}_{\langle I,F \rangle}(c_2) = c_3 + \delta_3$
+with $|\delta_3| \leq |\delta_{T1}| + |\delta_{T2}|$.
+%
+\item Multiplication: $\mathcal{F}_{\langle I,F \rangle}(c_1) \cdot
+\mathcal{F}_{\langle I,F \rangle}(c_2) =  c_3 + \delta_3$ with $|\delta_3|
+\leq |\delta_{T1}\cdot\mathcal{F}_{\langle I,F \rangle}(c_2)|\allowbreak +
+|\delta_{T2}\cdot\mathcal{F}_{\langle I,F \rangle}(c_1)| + c_m$, where
+$c_m=2^{-F}$ as above.
+%
+\item Division: the operations performed by the controllers in the FWL
+domain do not include division.  However, we do use division in computations within the plant.  
+Here the error depends on whether the divisor is greater or smaller than the dividend:  $\mathcal{F}_{\langle I,F
+\rangle}(c_1) / \mathcal{F}_{\langle I,F \rangle}(c_2) = c_3 + \delta_{T3}$, 
+where $\delta_{T3}$ is $(\delta_{T2}\cdot c_1 - \delta_{T1}\cdot
+c_2)/(\delta_{T2}^2 - \delta_{T2} c_2)$,
+%
+%$\mathcal{F}_{\langle I,F \rangle}(c_1) / \mathcal{F}_{\langle I,F \rangle}(c_2) =  (c_1 - \delta_{T1})/ (c_2 + \delta_{T2}) + c_m $, where $c_m=2^{-F}$ as above.
+\end{enumerate}
+
+\item {\bf Overflow:}
+The maximum size of a real number $x$ that can be represented in a fixed
+point domain as $\mathcal{F}_{\langle I,F \rangle}(x)$ is $\pm
+(2^{I-1}+1-2^{-F})$.  Numbers outside this range cannot be represented by
+the domain.  If overflow occurs, the interval bound becomes infinite.
+
+\end{enumerate}
+
+Similar bounds for errors introduced by 
+performing basic mathematical operators in floating-point precision can be derived~\cite{DBLP:conf/arith/BrainTRW15}.
+
+
+\subsection{ADC/DAC quantization errors modelled as noise} 
+%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+In this section we describe how quantization errors can be modelled as noise. 
+Note that this is only applicable to the acceleration back end, as the multi-stage back 
+end makes use of CBMC's bit-precise model checking capabilities to account 
+for these deterministic errors.
+
+During any given ADC conversion, the continuous signal will be sampled in
+the real domain and transformed by $\mathcal{F}_{\langle I_{c},F_{c} \rangle}
+(x)$ (assuming the ADC discretization is the same as the digital
+implementation).  This sampling uses a threshold which is defined by the
+less significant bit ($q_{c}=c_{m_c}=2^{-F_c}$) 
+%\blue{[this quantity was named $c_m$ above and in other parts of the paper - please uniformise notations]}
+of the ADC and some non-linearities of the circuitry.  The overall conversion is
+%
+$$\mathcal{F}_{\langle I_{c},F_{c} \rangle}(x(t)) = x_k :
+(x_k)_i \in \left[x_i(t)-\frac{q_{c}}{2}\ \ \ \ x_i(t)+\frac{q_{c}}{2}\right] \,.$$
+%
+\reply{where $x_i$ is the $i^{th}$ component of the vector $x$.}
+If we denote the error in the conversion by $\nu_k=x_k-x(t)$ where $t = nk$,
+and $n$ is the sampling time and $k$ the number of steps, then we may define
+some bounds for it $(\nu_k)_i \in [-\frac{q_{c}}{2}\ \ \frac{q_{c}}{2}]$.
+
+As stated before, we assume that the domain of the
+ADC is that of the digital controller (i.e, the quantizer includes any
+digital gain added in the code).  The process of quantization in the DAC is
+similar except that it is calculating $\mathcal{F}_{\langle I_{dac},F_{dac}
+\rangle} (\mathcal{F}_{\langle I_{c},F_{c} \rangle }(x)) $.  If these domains
+are the same ($I_{c}=I_{dac},\allowbreak F_{c}=F_{dac}$), or if the DAC
+resolution in higher than the ADC, then the DAC quantization error is equal
+to zero.  From the above equations we can now define the ADC and DAC
+quantization noises ${\nu_1}_k \in [-\frac{q_1}{2}\ \ \frac{q_1}{2}]$ and
+${\nu_2}_k \in [-\frac{q_2}{2}\ \ \frac{q_2}{2}]$, where $q_1=q_{c}$ and 
+$q_2=q_\mathit{dac}$.  This is illustrated in
+Fig.~\ref{fig:digitalsystem} where $Q_1$ is the quantizer of the ADC
+and $Q_2$ the quantizer for the DAC.  These bounds hold irrespective of
+whether the noise is correlated, hence we may use them to over-approximate
+the noise effect on the state space progression over time.  The
+resulting dynamics are
+%
+\begin{align*}
+%\label{eq:pre_quantization}
+{x}_{k+1} = {A}_d{x}_k+{B}_d({u}_k+{{\nu}_2}_k), \quad u_k = -K{x}_{k}+{{\nu}_1}_k, 
+\end{align*}
+%
+which result in the following closed-loop dynamics:
+%
+\begin{align*}
+%\label{eq:quantization}
+{x}_{k+1} &= ({A}_d-{B}_d{K}_d) {x}_k+{B}_d{{\nu}_2}_k +{{\nu}_1}_k \,. 
+\end{align*}
+
+\fi
+
+
+\subsection{Effect on safety specification and stability}
+
+In this section we will quantify how the finite precision arithmetic in a digital controller affects the
+safety and stability properties of an LTI system
+
+\subsubsection{Safety of closed-loop models with finite precision controller error}
+Let us first consider the effect of the quantization errors on safety. 
+Within the controller, state values are manipulated at low precision,
+alongside the vector multiplication $Kx$.
+The inputs are computed using the following equation: 
+%
+\begin{align*}
+u_{k}&=-(\mathcal{F}_{\langle I_c,F_c \rangle}(K)\cdot\mathcal{F}_{\langle I_c,F_c \rangle}(x_{k})). 
+\end{align*}
+
+This induces two types of the errors detailed above: first, the truncation
+error due to representing $x_k$ as $\mathcal{F}_{\langle I_c,F_c
+\rangle}(x_{k})$; and second, the rounding error introduced by the
+multiplication operation. This error is behaviour modelled by the bounded model checking.
+
+An additional error is due to the representation of the plant dynamics, namely 
+%
+{\scriptsize
+\begin{equation}
+x_{k+1} =\mathcal{F}_{\langle I_p,F_p \rangle}(A_d) \mathcal{F}_{\langle I_p,F_p \rangle}(x_{k}) + \mathcal{F}_{\langle I_p,F_p \rangle}(B_d)\mathcal{F}_{\langle I_p,F_p \rangle}(u_{k}).
+\end{equation}
+}
+We address this error by use of interval
+arithmetic~\cite{moore1966interval} in the verification phase.
+
+\subsubsection{Stability of closed-loop models with fixed-point controller error}
+%-------------------------------
+\label{sec:stab_FWL}
+The proof of Jury's criterion~\cite{fadali} relies on the fact that the relationship between states and
+next states is defined by $x_{k+1} = (A_d - B_dK) x_k$, all computed
+at infinite precision.  When we employ a FWL digital controller, the
+operation becomes:
+%
+\begin{align*}
+x_{k+1} &= A_d \cdot x_{k} -(\mathcal{F}_{\langle I_c,F_c \rangle}(K)\cdot\mathcal{F}_{\langle I_c,F_c \rangle}(x_{k})).  \\
+x_{k+1} &= (A_d  - B_dK) \cdot x_k + B_dK\delta, 
+%\\ x_{k+1}&=A_d x_{k} + B_du_{k}
+\end{align*}
+%
+where $\delta$ is the maximum error that can be introduced by the FWL
+controller in one step, i.e., by reading the states values once and
+multiplying by $K$ once.  We derive the closed form expression for $x_n$ as
+follows:
+%
+\small
+\begin{align*}
+x_{1} &= (A_d  - B_dK)x_0 + B_dK\delta \\
+x_{2} %&= (A_d  - B_dK)((A_d  - B_dK)x_0 + B_dK\delta ) + B_dK\delta \\
+ &=(A_d  - B_dK)^2x_0 + (A_d  - B_dK)B_dK\delta + B_dK\delta \\
+%x_{3}  &=(A_d  - B_dK)^3x_0 + (A_d  - B_dK)^2B_dK\delta + (A_d  - B_dK)B_dK\delta + B_dK\delta\\
+x_{n} &= (A_d  - B_dK)^nx_0 + (A_d  - B_dK)^{n-1}B_dK\delta +\\
+&\phantom{{}=1} ... + (A_d  - B_dK)^1B_dK \delta + B_dK\delta \\
+  &= (A_d - B_dK)^nx_0 + \sum_{i=0}^{i=n-1}(A_d - B_dK)^iB_dk\delta. 
+\end{align*}
+\normalsize
+The definition of asymptotic stability is that the system converges to a
+reference signal, in this case we use no reference signal so an
+asymptotically stable system will converge to the origin.  We know that the
+original system with an infinite-precision controller is stable, because we
+have synthesized it to meet Jury's criterion.  Hence, $(A_d - B_dK)^n x_0$ 
+must converge to zero.
+
+%T%o show that a fixed-point implementation of the same controller will
+%converge to a finite value, we need to show that the infinite sum converges. 
+The power series of matrices
+converges~\cite{horn1990matrix} iff the eigenvalues of the matrix are less
+than~1 as follows:
+%
+%\begin{align*}
+$\sum_{i=0}^{\infty}T^i  = (I - T)^{-1}$, 
+%\end{align*}
+%
+where $I$ is the identity matrix and $T$ is a square matrix. Thus, our system will converge to the value 
+%
+\begin{align*}
+0 + (I - A_d + B_dK)^{-1}B_dk\delta \,. 
+\end{align*}
+%
+As a result, if the value $(I - A_d + B_dK)^{-1}B_dk\delta$ is within the
+safe space, then the synthesized fixed-point controller results in a safe
+closed-loop model.  The convergence to a finite value, however, will not
+make it asymptomatically stable.
+However,
+since in this paper we require stability only as a precursor to safety, it
+is sufficient to check that the (perturbed, noisy) model converges to a
+neighborhood of the equilibrium within the safe set.
+
+We can thus disregard these steady-state errors (caused by
+FWL effects) when stability is ensured by synthesis, and then verify its
+safety accounting for the finite-precision errors.
+
+
 
 %-------------------------------
 \ifx\axelerator
@@ -1669,190 +1921,6 @@ $z^n+\sum_{i=1}^n(a_i-k_i)z^{n-i}=\prod_{i=1}^n (z-\lambda_i) \text{ where } |\l
 \end{figure*} 
 
 \fi
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-\section{Numerical representation and soundness} 
-\label{sec:numeric_rep}
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-As discussed in Section~\ref{sec:errors}, 
-the models we consider must account for errors from several sources: 
-we must bound the numerical error introduced by the finite precision we use to represent the plant (and its operations), and precisely model
-the error introduced by the ADC/DAC conversions
-and the error introduced by the limited precision used to represent the controller. 
-We use interval arithmetic to bound the error introduced by the finite precision plant, and bounded model checking to precisely model the error introduced by the ADC/DAC and the finite precision controller.
-
-
-\subsection{Bit-precise symbolic model checking}
-As described in section~\ref{sec:preliminaries}, we use CBMC, a bit-precise bounded model checker to synthesise and verify candidate controllers. CBMC performs precisely the fixed or floating point arithmetic used in the controller, as well as the ADC/DAC conversions, according to the IEEE standards.
-
-\subsection{Interval arithmetic over errors in numeric representation} 
-We use finite-precision arithmetic to model the plant. This is an approximation that speeds up each CEGIS
-iteration but necessitates a further stage where we verify that the errors introduced by the
-approximation have not caused us to generate a controller that is unsafe when executed with real numbers 
-for the plant. In this stage, we represent the plant using double precision floating point
-and we use the Boost interval arithmetic library~\cite{} to bound the error in this representation. We use a compositional numeric library to perform the fixed point arithmetic for the controller~\cite{}. We check the controller is safe starting from each vertex state, which we have shown to be sufficient to prove safety from any initial state in the hypercube of possible initial states. 
-
-We outline here the mathematics behind bounding the errors on the double precision floating point.
-Recall we use $\mathcal{F}_{\langle E,M \rangle}(x)$ denote a real number $x$
-represented in a floating point domain, with $E$ bits representing the exponent and $M$ bits representing the mantissa part. Any representation of a real number using the floating point domain will
-introduce an error, for which an upper bound can be given~\cite{DBLP:conf/arith/BrainTRW15}.
-For each number represented in floating point, we store an interval that encompasses this error.
-Further
-mathematical
-operations performed at the precision $\mathcal{F}_{\langle E,M \rangle}(x)$
-will propagate these errors forward and 
-introduce further errors for which bounds can be derived~\cite{DBLP:conf/arith/BrainTRW15}. 
-
-The fixed point arithmetic of the digital controller is performed on the upper and lower limit of each interval independently. Since the precision of the floating point is greater than the precision
-of the controller, this is guaranteed to bound the real behaviour of the controller.
-
-
-
-\ifx\axelerator
-
-
-\begin{enumerate}
-
-\item {\bf Truncation:} Let $x$ be a real number, and $\mathcal{F}_{\langle
-I,F \rangle}(x)$ be the same number represented in a fixed-point domain as
-above.  Then $\mathcal{F}_{\langle I,F \rangle}(x) = x-\delta_T$ where the
-error $ \delta_T=x\ \%_{c_m}\ \tilde x$ \note{define tilde x}, and $\%_{c_m}$ is the modulus
-operation performed on the last bit. 
-Thus, $\delta_T$ is the truncation error and it will propagate across
-operations.
-%
-\item {\bf Rounding:} The following errors are due to basic arithmetic operations.  
-Let $c_1, c_2$ and $c_3$ be real numbers, and $\delta_{T1}$ and $\delta_{T2}$ be
-the truncation errors caused by representing $c_1$ and $c_2$ in a fixed-point domain.
-%
-\begin{enumerate}
-%
-\item Addition/Subtraction: these operations only propagate errors coming
-from truncation of the operands, namely $\mathcal{F}_{\langle I,F
-\rangle}(c_1) \pm \mathcal{F}_{\langle I,F \rangle}(c_2) = c_3 + \delta_3$
-with $|\delta_3| \leq |\delta_{T1}| + |\delta_{T2}|$.
-%
-\item Multiplication: $\mathcal{F}_{\langle I,F \rangle}(c_1) \cdot
-\mathcal{F}_{\langle I,F \rangle}(c_2) =  c_3 + \delta_3$ with $|\delta_3|
-\leq |\delta_{T1}\cdot\mathcal{F}_{\langle I,F \rangle}(c_2)|\allowbreak +
-|\delta_{T2}\cdot\mathcal{F}_{\langle I,F \rangle}(c_1)| + c_m$, where
-$c_m=2^{-F}$ as above.
-%
-\item Division: the operations performed by the controllers in the FWL
-domain do not include division.  However, we do use division in computations within the plant.  
-Here the error depends on whether the divisor is greater or smaller than the dividend:  $\mathcal{F}_{\langle I,F
-\rangle}(c_1) / \mathcal{F}_{\langle I,F \rangle}(c_2) = c_3 + \delta_{T3}$, 
-where $\delta_{T3}$ is $(\delta_{T2}\cdot c_1 - \delta_{T1}\cdot
-c_2)/(\delta_{T2}^2 - \delta_{T2} c_2)$,
-%
-%$\mathcal{F}_{\langle I,F \rangle}(c_1) / \mathcal{F}_{\langle I,F \rangle}(c_2) =  (c_1 - \delta_{T1})/ (c_2 + \delta_{T2}) + c_m $, where $c_m=2^{-F}$ as above.
-\end{enumerate}
-
-\item {\bf Overflow:}
-The maximum size of a real number $x$ that can be represented in a fixed
-point domain as $\mathcal{F}_{\langle I,F \rangle}(x)$ is $\pm
-(2^{I-1}+1-2^{-F})$.  Numbers outside this range cannot be represented by
-the domain.  If overflow occurs, the interval bound becomes infinite.
-
-\end{enumerate}
-
-Similar bounds for errors introduced by 
-performing basic mathematical operators in floating-point precision can be derived~\cite{DBLP:conf/arith/BrainTRW15}.
-
-
-\subsection{ADC/DAC quantization errors modelled as noise} 
-%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-In this section we describe how quantization errors can be modelled as noise. 
-Note that this is only applicable to the acceleration back end, as the multi-stage back 
-end makes use of CBMC's bit-precise model checking capabilities to account 
-for these deterministic errors.
-
-During any given ADC conversion, the continuous signal will be sampled in
-the real domain and transformed by $\mathcal{F}_{\langle I_{c},F_{c} \rangle}
-(x)$ (assuming the ADC discretization is the same as the digital
-implementation).  This sampling uses a threshold which is defined by the
-less significant bit ($q_{c}=c_{m_c}=2^{-F_c}$) 
-%\blue{[this quantity was named $c_m$ above and in other parts of the paper - please uniformise notations]}
-of the ADC and some non-linearities of the circuitry.  The overall conversion is
-%
-$$\mathcal{F}_{\langle I_{c},F_{c} \rangle}(x(t)) = x_k :
-(x_k)_i \in \left[x_i(t)-\frac{q_{c}}{2}\ \ \ \ x_i(t)+\frac{q_{c}}{2}\right] \,.$$
-%
-\reply{where $x_i$ is the $i^{th}$ component of the vector $x$.}
-If we denote the error in the conversion by $\nu_k=x_k-x(t)$ where $t = nk$,
-and $n$ is the sampling time and $k$ the number of steps, then we may define
-some bounds for it $(\nu_k)_i \in [-\frac{q_{c}}{2}\ \ \frac{q_{c}}{2}]$.
-
-As stated before, we assume that the domain of the
-ADC is that of the digital controller (i.e, the quantizer includes any
-digital gain added in the code).  The process of quantization in the DAC is
-similar except that it is calculating $\mathcal{F}_{\langle I_{dac},F_{dac}
-\rangle} (\mathcal{F}_{\langle I_{c},F_{c} \rangle }(x)) $.  If these domains
-are the same ($I_{c}=I_{dac},\allowbreak F_{c}=F_{dac}$), or if the DAC
-resolution in higher than the ADC, then the DAC quantization error is equal
-to zero.  From the above equations we can now define the ADC and DAC
-quantization noises ${\nu_1}_k \in [-\frac{q_1}{2}\ \ \frac{q_1}{2}]$ and
-${\nu_2}_k \in [-\frac{q_2}{2}\ \ \frac{q_2}{2}]$, where $q_1=q_{c}$ and 
-$q_2=q_\mathit{dac}$.  This is illustrated in
-Fig.~\ref{fig:digitalsystem} where $Q_1$ is the quantizer of the ADC
-and $Q_2$ the quantizer for the DAC.  These bounds hold irrespective of
-whether the noise is correlated, hence we may use them to over-approximate
-the noise effect on the state space progression over time.  The
-resulting dynamics are
-%
-\begin{align*}
-%\label{eq:pre_quantization}
-{x}_{k+1} = {A}_d{x}_k+{B}_d({u}_k+{{\nu}_2}_k), \quad u_k = -K{x}_{k}+{{\nu}_1}_k, 
-\end{align*}
-%
-which result in the following closed-loop dynamics:
-%
-\begin{align*}
-%\label{eq:quantization}
-{x}_{k+1} &= ({A}_d-{B}_d{K}_d) {x}_k+{B}_d{{\nu}_2}_k +{{\nu}_1}_k \,. 
-\end{align*}
-
-\fi
-
-
-\subsection{Effect on safety specification and stability}
-
-Let us first consider the effect of the quantization errors on safety. 
-Within the controller, state values are manipulated at low precision,
-alongside the vector multiplication $Kx$.
-The inputs are computed using the following equation: 
-%
-\begin{align*}
-u_{k}&=-(\mathcal{F}_{\langle I_c,F_c \rangle}(K)\cdot\mathcal{F}_{\langle I_c,F_c \rangle}(x_{k})). 
-\end{align*}
-
-This induces two types of the errors detailed above: first, the truncation
-error due to representing $x_k$ as $\mathcal{F}_{\langle I_c,F_c
-\rangle}(x_{k})$; and second, the rounding error introduced by the
-multiplication operation.  
-
-An additional error is due to the representation of the plant dynamics, namely 
-%
-{\scriptsize
-\begin{equation}
-x_{k+1} =\mathcal{F}_{\langle I_p,F_p \rangle}(A_d) \mathcal{F}_{\langle I_p,F_p \rangle}(x_{k}) + \mathcal{F}_{\langle I_p,F_p \rangle}(B_d)\mathcal{F}_{\langle I_p,F_p \rangle}(u_{k}).
-\end{equation}
-}
-We address this error by use of interval
-arithmetic~\cite{moore1966interval} in the verification phase.
-
-Previous studies~\cite{gangli1} show that the FWL affects the poles and
-zeros positions, degrading the closed-loop dynamics, causing steady-state
-errors and eventually de-stabilizing the system~\cite{Bessa16}.  However,
-since in this paper we require stability only as a precursor to safety, it
-is sufficient to check that the (perturbed, noisy) model converges to a
-neighborhood of the equilibrium within the safe set.
-
-In the following, we shall disregard these steady-state errors (caused by
-FWL effects) when stability is ensured by synthesis, and then verify its
-safety accounting for the finite-precision errors.
-
-
 
 %-------------------------------
 \section{DSSynth: An Automated Digital Controller Synthesis Tool for Physical Plants}
