@@ -326,7 +326,7 @@ void assert_nonzero_controller(void) {
 
 void safety_stability(void) {
   closed_loop(); //calculate A - BK
-#if NSTATES < 5  
+#if NSTATES < 9  
   __CPROVER_EIGEN_charpoly();
   __DSVERIFIER_assert(check_stability());
 #endif
