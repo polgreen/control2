@@ -53,18 +53,18 @@ function setup_benchmark_directory {
  cp ${benchmark} ${working_directory}/benchmark.h
  cp ${source_template_directory}/${synthesis_file} ${working_directory}/
  cp ${source_template_directory}/control_types.h ${working_directory}/
- cp ${source_template_directory}/control_types.hpp ${working_directory}/
- cp ${source_template_directory}/fixedbv.* ${working_directory}/
- cp ${source_template_directory}/half.hpp ${working_directory}/
- cp ${source_template_directory}/fixedbv.h ${working_directory}/
- cp ${source_template_directory}/safety_stability.cpp ${working_directory}/ 
  cp ${source_template_directory}/operators.h ${working_directory}/
  cp ${source_template_directory}/intervals.h ${working_directory}/
  cp ${source_template_directory}/mpreal.h ${working_directory}/
  cp ${source_template_directory}/int_2Inverse.h ${working_directory}/
  cp ${source_template_directory}/int_3Inverse.h ${working_directory}/
-  cp ${source_template_directory}/charpolys.h ${working_directory}/
  cp ${source_template_directory}/discrete_step_k_completeness_check.cpp ${working_directory}/
+ cp ${source_template_directory}/fixedbv.cpp ${working_directory}/
+ cp ${source_template_directory}/safety_stability.cpp ${working_directory}/
+ cp ${source_template_directory}/control_types.hpp ${working_directory}/
+ cp ${source_template_directory}/fixedbv.h ${working_directory}/
+ cp ${source_template_directory}/fixedbv.inc ${working_directory}/
+ cp ${source_template_directory}/charpolys.h ${working_directory}/
 }
 
 function compile_precision_check {
@@ -168,7 +168,7 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
     else
      echo_log "./precision_check ${k_size} ${controller_params}"
      ./precision_check ${k_size} ${controller_params}
-     if [ $? -eq 0 ] || [ ${k_size_index} -eq 0 ]; then
+     if [ $? -eq 0 ]; then
       times >${time_tmp_file}; end_time=$(get_current_cpu_millis)
       echo_success_message ${start_time} ${end_time}
       echo_log "<controller>${controller_params}</controller>"

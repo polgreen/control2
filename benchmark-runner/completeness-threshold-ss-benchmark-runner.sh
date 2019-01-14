@@ -168,7 +168,7 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
    controller_items=$(grep '<item>' ${cbmc_log_file} | tail -n ${num_states})
    controller_params=$(echo "${controller_items}" | sed -r 's/<\/item> <item>/ /g' | sed -r 's/<item>//g' | sed -r 's/<\/item>//g' | tr '\n' ' ')
    echo "CONTROLLER PARAMS ARE $controller_params"
-   if [ ${cbmc_result} -eq 0 ] || [ ${k_size_index} -eq 0 ]; then
+   if [ ${cbmc_result} -eq 0 ] ]; then
     echo_log "./discrete_step_k_completeness_check ${k_size} ${controller_params}"
     eval "./discrete_step_k_completeness_check ${k_size} ${controller_params}"
     k_check_result=$?
