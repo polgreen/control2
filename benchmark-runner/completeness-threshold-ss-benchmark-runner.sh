@@ -115,7 +115,7 @@ fi
 
 #dkr15
 if [ "$1" == "dkr17" ]; then
-benchmark_dirs=(${BENCHMARK_BASE_DIR}/bioreact/ )
+benchmark_dirs=(${BENCHMARK_BASE_DIR}/magneticpointer/ )
 fi
 
 working_directory_base="/tmp/control_synthesis-fixed-ss-${working_directory_base_suffix}"
@@ -167,8 +167,8 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
    cat ${cbmc_log_file} >>${log_file}
    controller_items=$(grep '<item>' ${cbmc_log_file} | tail -n ${num_states})
    controller_params=$(echo "${controller_items}" | sed -r 's/<\/item> <item>/ /g' | sed -r 's/<item>//g' | sed -r 's/<\/item>//g' | tr '\n' ' ')
-   echo "CONTROLLER PARAMS ARE $controller_params"
-   if [ ${cbmc_result} -eq 0 ] ]; then
+   echo_log "CONTROLLER PARAMS ARE $controller_params"
+   if [ ${cbmc_result} -eq 0 ]; then
     echo_log "./discrete_step_k_completeness_check ${k_size} ${controller_params}"
     eval "./discrete_step_k_completeness_check ${k_size} ${controller_params}"
     k_check_result=$?
