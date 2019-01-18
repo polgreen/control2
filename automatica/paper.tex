@@ -647,12 +647,12 @@ $\mat{A} \in \mathbb{R}^{p \times p}$,
 $\mat{B} \in \mathbb{R}^{p \times q}$,
 and $t \in \mathbb R_0^+$ denotes continuous time. 
 %$\mat{A}$ and $\mat{B}$ are matrices that fully characterize the dynamics of the continuous plant,
-We denote with $x(0)$ the initial state of the model.
+We denote with $x(0)$ the model initial condition, which can be non-deterministic. 
 
 Equation~\eqref{eq:ode1} is 
 %soundly 
-discretized in time~\cite{middleton1990digital,van1978computing} at constant time intervals,
-of duration $T_s$ (the sample time), 
+discretized in time~\cite{middleton1990digital,van1978computing} with constant sampling intervals, 
+each of duration $T_s$ (the sample time), 
 into the difference equation
 %
 \begin{align}
@@ -664,71 +664,80 @@ $\mat{A}_d=e^{\mat{A}T_s}$ and
 $\mat{B}_d = \int_{t = 0}^{T_s} e^{\mat{A} t} dt\ \mat{B}$, 
 $k \in \mathbb N$ is a discrete counter and where $\vec{x}_{0}=\vec{x}(0)$ denotes the initial state.  
 
+\subsection{Digital control synthesis}
+
 Models \eqref{eq:ode1} and \eqref{eq:plant} depend on external non-determinism in the form of input signals $u (t)$ and  $u_k$, respectively. 
-Feedback architectures can be employed to manipulate the properties and behaviors of the plant:    
+Feedback architectures can be employed to manipulate properties and behaviors of the plant:    
 we are interested in the synthesis of digital feedback controllers $u_k$,  
-as practically implemented on Field-Programmable Gate Arrays or Digital Signal Processors. 
+as practically implemented on Field-Programmable Gate Arrays or Digital Signal Processors,  
 %This requires us to consider the errors introduced by, we will address the issue of variable quantization, 
 %introduced by ADC/DAC conversion blocks of Figure \ref{fig:digitalsystem}, 
-%as classically studied in \cite{astrom1997computer}. 
+and as classically studied in \cite{astrom1997computer}. 
 
 We consider state feedback control architectures, 
 where $u_k$ (notice we work with the discretized signal) is $u_k = r_{k} - K x_k$. 
-Here $K \in \mathbb{R}^{m \times n}$ is a state-feedback gain matrix, 
+Here $K \in \mathbb{R}^{m \times n}$ \note{wrong dimensions?} is a state-feedback gain matrix, 
 and $r_{k}$ is a reference signal (again digital). 
-We will assume $r_k=0$, thus 
+We will assume $r_k=0$, thus obtaining the closed-loop model 
 $\vec{x}_{k+1}=(\mat{A}_d-\mat{B}_d\mat{K})\vec{x}_k$. 
 
 The gain matrix $K$ can be set so that the closed-loop discrete dynamics are
 shaped as desired, for instance according to a specific stability goal or
-around a specific dynamical behavior \cite{astrom1997computer}.  As argued
-later in this work, we will target a more complex objective,
-quantitative safety requirements, which are not typical in the digital
-control literature. We will precisely account for the digital nature
+around a dynamical behavior of interest \cite{astrom1997computer}.  As argued
+later in this work, we will target a less standard objective,
+namely a quantitative safety requirement, which opens up to more complex specifications \note{[belta, tabuada]}. 
+This is not typical in the digital control literature. We will further precisely account for the digital nature
 of the controller, which manipulates quantised signals as discrete quantities represented with
-finite precision.
+finite precision. The new approach is fully automated and leverages an approach based on CEGIS. 
 
 % Further, we will embrace the digital nature of the
 %controller, which manipulates quantized signals as discrete quantities represented with finite precision. 
 
+\note{Ref to Fig. \ref{fig:digitalsystem} anywhere?}
+
 \subsection{Stability of closed-loop systems}
 
-In this work we employ asymptotic stability in the CEGIS loop,  
-as a means for reducing the search space of possible safe controller. As discussed later, a safe controller is necessarily asymptotically stable, although the reverse is not true.
+In this work we employ the notion of asymptotic stability within the CEGIS loop,  
+as a means for reducing the search space of possible safe controllers. 
+\note{next statement is not true - also, we have not defined safety} 
+As discussed later, a safe controller is necessarily asymptotically stable, although the reverse is not true. 
 %as an objective for guessing controllers that are later proven sound over safety requirements.  
-Asymptotic stability is a property that amounts to convergence of the model executions to an equilibrium point, 
-starting from any states in a neighborhood of the point (see Figure~\ref{fig:ct} for the portrait of a stable execution, converging to the origin).   
+Qualitatively, (local) asymptotic stability is a property denoting the convergence of the model executions towards an equilibrium point, 
+starting from any states in a neighborhood of the point. 
 In the case of linear systems %as in~\eqref{eq:closedloopss}, 
 considered with a zero reference signal, 
-the equilibrium point of interest is the origin. 
+the equilibrium point of interest is the origin (see Figure~\ref{fig:ct} for the portrait of an asymptotically stable execution, converging to the origin). 
 
-A discrete-time LTI system %as \eqref{eq:closedloopss} 
-is asymptotically
-stable if all the roots of its characteristic polynomial (i.e., the
+Of interest for this work, 
+it can be shown that a discrete-time LTI system %as \eqref{eq:closedloopss} 
+is asymptotically stable if all the roots of its characteristic polynomial (i.e., the
 eigenvalues of the closed-loop matrix $A_d - B_d K$) are inside the unity
-circle of the complex plane, i.e., their absolute values are strictly less than
-one~\cite{astrom1997computer} (this simple sufficient condition can be generalized, 
-however this is not necessary in our work).  
-In this paper, we express this stability specification $\phi_\mathit{stability}$ in terms of a check known as
-\emph{Jury's criterion}~\cite{fadali}: this is an easy algebraic formula to
-select the entries of matrix $K$ so that the closed-loop dynamics are shaped
-as desired.
+circle of the complex plane, i.e., if their absolute values are strictly less than
+one~\cite{astrom1997computer}. 
+Whilst this simple sufficient condition can be either generalized or strengthen to be necessary, 
+this is not necessary in the context of this work.    
+What is technically key is that in this paper, 
+we shall express this asymptotic stability as a specification $\phi_\mathit{stability}$, 
+and encode it in terms of a check known as \emph{Jury's criterion}~\cite{fadali}: 
+this is an easy algebraic formula to check the entries of matrix $K$, 
+so that the closed-loop dynamics are shaped as desired. 
 
 \subsection{Safety of closed-loop systems}
 
 We are not limited to the synthesis of digital stabilizing controllers -- a
 well known task in the literature on digital control systems -- but target
 safety requirements with an overall approach that is sound and automated. 
-More specifically, we require that the closed-loop system
-\eqref{eq:closedloopss} meets given safety specifications.  A safety
-specification gives rise to a requirement on the states of the model, such
+More specifically, we require that the closed-loop model 
+%\eqref{eq:closedloopss} 
+meets a given safety specification.  
+A safety specification gives rise to a requirement on the states of the model, such
 that the feedback controller (namely the choice of the gain matrix~$K$)
-must ensure that the state never violates the requirement.  Note that a
-stable, closed-loop system is not necessarily a safe system: indeed, the
+must ensure that the state never violates the requirement.  Note that an asymptotically 
+stable, closed-loop system is not necessarily a safe system: indeed, the 
 state values may leave the safe part of the state space while they converge
 to the equilibrium, which is typical in the case of oscillatory dynamics. 
 %However, a safe system will always be stable.  
-In~this work, the safety property is expressed as:
+In~this work, the safety property is expressed as: 
 %
 \begin{equation}
 \label{eq:safetyliteral}
@@ -738,52 +747,59 @@ In~this work, the safety property is expressed as:
 %\addtodo{We consider $x_{i}^{-}$ and $x_{i}^{+}$ to be -1 and 1, respectively.}
 %
 where $\underline{x_{i}}$ and $\overline{x_{i}}$ are lower and upper bounds
-for the $i$-th coordinate $x_{i}$ of state $x\in \mathbb R^n$ at the $k$-th
-instant, respectively.  This requires that the states will always be within an $n$-dimensional hyper-box.
+for the $i$-th coordinate $x_{i}$ of state $x\in \mathbb R^n$ 
+\note{Fix/align dimensions of main model} 
+at the $k$-th instant, respectively.  This requires that the states will always be within an $n$-dimensional hyper-box.
 
 Furthermore, it is practically relevant to consider the 
 constraints $\phi_\mathit{input}$ on the input
 signal $u_{k}$ and $\phi_\mathit{init}$ on the initial states $x_0$,
 which we assume have given bounds:
 $\phi_\mathit{input} = {\forall k.\underline{u} \leq u_{k} \leq \overline{u}} $, 
-$\phi_\mathit{init} = \bigwedge_{i=1}^{n} \underline{x_{i,0}} \leq x_{i,0} \leq \overline{x_{i,0}}.$
-For the former, this means that the control input might saturates in view of
-physical constraints.
+\note{here you're assuming that u is 1-dim. This needs to be said somewhere. }
+and $\phi_\mathit{init} = \bigwedge_{i=1}^{n} \underline{x_{i,0}} \leq x_{i,0} \leq \overline{x_{i,0}}.$
+The former constraint expresses that control input, possibly shaped via state-feedback, 
+might saturates in view of physical constraints.
 
 
 
 \subsection{Bounded Model Checking}
 \label{sec:BMC}
-We use the bounded model checker CBMC~\cite{ClarkeKL04} to model controller behaviour on digital signals with finite
-bit-precision.  
-We express these controller semantics as C programs, which is CBMC's preferred input language.  
-CBMC
-symbolically executes every instruction in an input program by translating it to a boolean satisfiability problem.  
-At
-the end of this process, the entire input program is translated to a boolean satisfiability formula which is satisfiable
-iff a certain property about the program holds.  
-CBMC's API allows to specify these properties in the form of assertions
-in the input program, and we use these properties to express that our generated controllers are stable and safe.
+
+We employ the bounded model checker CBMC~\cite{ClarkeKL04} \note{newer reference?} to model the controller behavior on digital signals with finite bit-precision.  
+We express the controller semantics as C programs, which is CBMC's preferable input language.  
+CBMC symbolically executes every instruction in an input program by translating it to a boolean satisfiability problem \note{merge this sentence with next?}.  
+At the end of this process, the entire input program is translated to a boolean satisfiability formula which is satisfiable iff a certain property about the program holds.  
+CBMC's API allows to specify these properties in the form of assertions in the input program: 
+we set these properties to express that our controllers generate (asymptotically stable and) safe dynamics. 
 %\note{Do we need more details here? Should we explain e.g. SSA or give examples of how assignments, loops,
 %etc. are turned into formulas? Part of Sec.~\ref{sec:errors} can probably be moved here.}
 
 %-------------------------------s
-\subsection{Finite precision errors}
+\subsection{Errors from finite-precision arithmetics}
 \label{sec:errors}
 
-The key contribution of our work is that, when synthesizing controllers, we precisely model the finite-precision arithmetic in the digital controller, guaranteeing that these controllers implemented with finite-precision arithmetic are safe. The finite precision arithmetic introduces the following errors, shown in Figure~\ref{fig:digitalsystem}. These errors are present in the real world, and we must model them accurately 
-in order to capture the full behaviour of the system. Details of how we model this arithmetic are in Section~\ref{sec:}:
+A key contribution of this work is that, when synthesizing controllers, it precisely models the finite-precision arithmetic in the digital controller, guaranteeing that these controllers implemented with finite-precision arithmetic are safe. 
+Finite-precision arithmetic introduces errors, as shown in Figure~\ref{fig:digitalsystem}. 
+Details of how we model this arithmetic are in Section~\ref{sec:} \note{fix?}. 
+These errors are present in the real world, and we must model them accurately in order to capture the full behaviour of the model:  
 
 \begin{itemize}
 
-\item The ADC introduces quantisation errors when it converts the analogue signal $x(t)$ into the digital signal $x_k$. This signal is then fed into the controller cf. Figure~\ref{fig:digitalsystem}. 
+\item The ADC introduces quantisation errors when it converts the analog signal $x(t)$ into a digital signal $x_k$, which is then fed into the controller.  
+% cf. Figure~\ref{fig:digitalsystem}. 
 
+\item The controller block performs arithmetic at finite precision, 
+which introduces additional errors on top of that introduced by the ADC. 
+We assume the ADC represents numbers with at least the same precision as the controller, 
+and thus focus on the precision limited by the controller. 
+This is a reasonable assumption based on commonly available hardware. 
 
-\item The controller block performs arithmetic at a finite-precision, which introduces additional errors on top of the error introduced by the ADC. We assume the ADC represents numbers with at least the same precision
-as the controller and thus the precision is limited by the controller. This is a reasonable assumption based on commonly available hardware.
-
-\item The DAC could potentially introduce further errors. However, we assume that the DAC converts numbers to analogue signals with the same precision as the controller. 
-As a result we can ignore any additional errors introduced by the DAC. Again, this assumption is reasonable based on commonly available hardware. It would, however, be straight forward to account for a DAC or ADC of different precision to the controller in our algorithm if necessary.
+\item The DAC can potentially introduce further errors. 
+However, we assume that the DAC converts numbers to analog signals with the same precision as the controller. 
+As a result we can ignore any additional errors introduced by the DAC. 
+Again, this assumption is practically reasonable. 
+It would, however, be straightforward to account for a DAC or ADC of different precision to the controller in our algorithm, if necessary. 
 \end{itemize}
 
 The arithmetic and representations used in our modelling are also carried out at a finite precision, and so we must also account for the errors in our own modelling. Specifically our model of the plant variables  $x(t)$ and $u(t)$, which are, in reality, continuous quantities, with finite precision in our model. We guarantee that the precision we use to represent the plant variables is at least as precise as the precision used in the digital controller and we use interval arithmetic to bound the errors, as detailed in Section~\ref{sec:}. 
