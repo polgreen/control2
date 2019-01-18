@@ -802,13 +802,15 @@ Again, this assumption is practically reasonable.
 It would, however, be straightforward to account for a DAC or ADC of different precision to the controller in our algorithm, if necessary. 
 \end{itemize}
 
-The arithmetic and representations used in our modelling are also carried out at a finite precision, and so we must also account for the errors in our own modelling. Specifically our model of the plant variables  $x(t)$ and $u(t)$, which are, in reality, continuous quantities, with finite precision in our model. We guarantee that the precision we use to represent the plant variables is at least as precise as the precision used in the digital controller and we use interval arithmetic to bound the errors, as detailed in Section~\ref{sec:}. 
-
+The representations used in the plant model and its arithmetic operations are also carried out at a finite precision, 
+thus we must account for the corresponding errors.  
+\note{rephrase next:} Specifically, our model of the plant variables $x(t)$ and $u(t)$, which are, in reality, continuous quantities, with finite precision in our model. 
+We guarantee that the precision we use to represent the plant variables is at least as precise as the precision used in the digital controller and we use interval arithmetic to bound the errors, as detailed in Section~\ref{sec:} \note{fix?}. 
 
 \subsection{Notation for fixed- and floating-point precision}  
-In this paper we will use $\mathcal{F}_{\langle I,F \rangle}(x)$ to denote a real number $x$ expressed at a fixed-point precision, 
-using $I$ bits to represent the integer part of the number and $F$ bits to represent the decimal part. 
 
+In this paper we will use $\mathcal{F}_{\langle I,F \rangle}(x)$ to denote a real number $x$ expressed at a fixed-point precision, 
+using $I$ bits to represent the integer part of the number and $F$ bits to represent its decimal part.  
 $\mathcal{F}_{\langle I_c,F_c \rangle}(x)$ denotes a real number $x$ represented at the fixed-point precision of the controller, 
 and $\mathcal{F}_{\langle I_p,F_p \rangle}(x)$ denotes a real number $x$
 represented at the fixed-point precision of the plant model. 
@@ -818,19 +820,19 @@ can be represented accurately in the plant domain.
 Thus any mathematical operations in our modelled digital controller will be in the
 range of $\mathcal{F}_{\langle I_c,F_c \rangle}$, and all other calculations
 in our model will be carried out in the range of $\mathcal{F}_{\langle
-I_p,F_p \rangle}$.  The physical plant operates in the reals, which means
-our verification phase must also account for the numerical error and
-quantization errors caused by representing the physical plant at the finite
-precision $\mathcal{F}_{\langle I_p,F_p \rangle}$.
+I_p,F_p \rangle}$.  
 
-
-We use $\mathcal{F}_{\langle E,M \rangle}(x)$ to denote a real number $x$
-represented in a floating point domain, with $E$ bits representing the exponent
-part and $M$ bits representing the mantissa part. 
-In particular, we use $\mathcal{F}_{\langle E_c,M_c \rangle}(x)$ to denote a real number 
-represented at the floating-point precision of the controller, and 
-$\mathcal{F}_{\langle E_p,M_p \rangle}(x)$ to denote a real number 
-represented at the fixed-point precision of the plant model.
+Notice that the physical plant model operates over real-valued signals, 
+which means that our verification phase must also account for the numerical error, 
+as well as quantization errors caused by representing the physical plant at finite 
+precision $\mathcal{F}_{\langle I_p,F_p \rangle}$. 
+ 
+We use $\mathcal{F}_{\langle E,M \rangle}(x)$ to denote a real number $x$ represented in a floating point domain, 
+with $E$ bits representing the exponent part and $M$ bits representing the mantissa part. 
+In particular, 
+we use $\mathcal{F}_{\langle E_c,M_c \rangle}(x)$ to denote a real number 
+represented at the floating-point precision of the controller, 
+whereas $\mathcal{F}_{\langle E_p,M_p \rangle}(x)$ denotes a real number represented at the fixed-point precision of the plant model.  
 
 %-------------------------------
 \subsection{Counterexample-Guided Inductive Synthesis} 
@@ -866,10 +868,8 @@ represented at the fixed-point precision of the plant model.
 
 In this section, we give a brief description of the CEGIS framework~\cite{jha-icse10,
   DBLP:conf/asplos/Solar-LezamaTBSS06}, which is illustrated in Figure~\ref{fig:CEGIS}. 
-  CEGIS has been recently used for the automated synthesis of software programs, 
-  and its setup is naturally that of mathematical logic. 
-
-We consider an input specification of the form 
+  CEGIS has been recently developed for the automated synthesis of software programs, 
+  and its setup is naturally that of mathematical logic. We consider an input specification of the form 
 $$
 \exists P .\, \forall a.\, \phi(a, P),
 $$  
@@ -877,7 +877,7 @@ where $P$ ranges over functions (where a function is represented by the program 
 $a$ ranges over ground terms, 
 and $\phi$ is a quantifier-free logical formula. 
 We~interpret the ground terms over some domain~$\mathcal{D}$. 
-This is a synthesis problem, where the objective is to synthesise a valid $P$ that satisfies $\phi$ over all the $a$ terms. 
+This is a design problem, where the objective is to synthesise a valid $P$ that satisfies $\phi$ over all the $a$ terms. 
 
 CEGIS breaks down this generally hard synthesis problem into two easier parts:
 %The design consists of two phases,
