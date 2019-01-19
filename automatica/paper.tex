@@ -1080,19 +1080,18 @@ We employ a compositional numeric library to model the fixed point arithmetic fo
 We check the controller is safe starting from each vertex of the set of initial states,  
 and show that this is sufficient to prove safety from any state in this set. 
 
-We outline here the mathematics behind bounding the errors on the double precision floating point.
-Recall we use $\mathcal{F}_{\langle E,M \rangle}(x)$ denote a real number $x$
-represented in a floating point domain, with $E$ bits representing the exponent and $M$ bits representing the mantissa part. Any representation of a real number using the floating point domain will
-introduce an error, for which an upper bound can be given~\cite{DBLP:conf/arith/BrainTRW15}.
-For each number represented in floating point, we store an interval that encompasses this error.
-Further
-mathematical
-operations performed at the precision $\mathcal{F}_{\langle E,M \rangle}(x)$
-will propagate these errors forward and 
-introduce further errors for which bounds can be derived~\cite{DBLP:conf/arith/BrainTRW15}. 
+We outline here the mathematics behind bounding the errors on the double-precision floating-point numbers. 
+Recall we use $\mathcal{F}_{\langle E,M \rangle}(x)$ denote a real number $x$ represented in a floating point domain, 
+with $E$ bits representing the exponent part, and $M$ bits representing the mantissa. 
+In general the representation of a real number using the floating-point domain introduces an error, 
+for which an upper bound can be given~\cite{DBLP:conf/arith/BrainTRW15}.
+For each number $x$ represented in the floating-point domain as $\mathcal{F}_{\langle E,M \rangle}(x)$, 
+we store an interval that encompasses this error. 
+Further mathematical operations performed at the precision $\mathcal{F}_{\langle E,M \rangle}(x)$ will propagate this error, 
+leading to further errors for which bounds can be derived~\cite{DBLP:conf/arith/BrainTRW15}.  
 
-The fixed point arithmetic of the digital controller is performed on the upper and lower limit of each interval independently. Since the precision of the floating point is greater than the precision
-of the controller, this is guaranteed to bound the real behaviour of the controller.
+The fixed-point arithmetic of the digital controller is performed on the upper and lower limit of each interval independently \note{clarify what is meant by 'limit' and by 'each' (each amongst what?)} .  
+Since the precision of the floating point domain is greater than the precision of the controller, this is guaranteed to bound the real behaviour of the controller. 
 
 
 
@@ -1203,43 +1202,41 @@ which result in the following closed-loop dynamics:
 \fi
 
 
-\subsection{Effect on safety specification and stability}
+\subsection{Effect of precision arithmetic on safety specification and on stability} 
 
 In this section we will quantify how the finite precision arithmetic in a digital controller affects the
-safety and stability properties of an LTI system
+safety and stability properties of an LTI model. 
 
-\subsubsection{Safety of closed-loop models with finite precision controller error}
+\subsubsection{Safety of closed-loop models with finite precision controller error} 
+
 Let us first consider the effect of the quantization errors on safety. 
 Within the controller, state values are manipulated at low precision,
-alongside the vector multiplication $Kx$.
-The inputs are computed using the following equation: 
+by means of the vector multiplication $Kx$.
+The inputs are thus computed using the following equation: 
 %
 \begin{align*}
 u_{k}&=-(\mathcal{F}_{\langle I_c,F_c \rangle}(K)\cdot\mathcal{F}_{\langle I_c,F_c \rangle}(x_{k})). 
 \end{align*}
-
-This induces two types of the errors detailed above: first, the truncation
-error due to representing $x_k$ as $\mathcal{F}_{\langle I_c,F_c
-\rangle}(x_{k})$; and second, the rounding error introduced by the
-multiplication operation. This error is behaviour modelled by the bounded model checking.
+This induces two types of the errors, 
+as detailed above: 
+first, the truncation error due to the representation of $x_k$ as $\mathcal{F}_{\langle I_c,F_c
+\rangle}(x_{k})$; and second, the rounding error introduced by the multiplication operation. 
+This error is modelled by the bounded model checking \note{clarify, elaborate (recall)}.
 
 An additional error is due to the representation of the plant dynamics, namely 
 %
 {\scriptsize
-\begin{equation}
+\begin{equation*}
 x_{k+1} =\mathcal{F}_{\langle I_p,F_p \rangle}(A_d) \mathcal{F}_{\langle I_p,F_p \rangle}(x_{k}) + \mathcal{F}_{\langle I_p,F_p \rangle}(B_d)\mathcal{F}_{\langle I_p,F_p \rangle}(u_{k}).
-\end{equation}
+\end{equation*}
 }
-We address this error by use of interval
-arithmetic~\cite{moore1966interval} in the verification phase.
+We encompass this error using interval arithmetic~\cite{moore1966interval} in the verification phase \note{this statement might also need more details}. 
 
 \subsubsection{Stability of closed-loop models with fixed-point controller error}
 %-------------------------------
 \label{sec:stab_FWL}
-The proof of Jury's criterion~\cite{fadali} relies on the fact that the relationship between states and
-next states is defined by $x_{k+1} = (A_d - B_dK) x_k$, all computed
-at infinite precision.  When we employ a FWL digital controller, the
-operation becomes:
+The validity of Jury's criterion~\cite{fadali} relies on the representation of the closed-loop dynamics $x_{k+1} = (A_d - B_dK) x_k$ at infinite precision.  
+When we employ a FWL \note{did we define this acronym} digital controller, the operation above becomes:
 %
 \begin{align*}
 x_{k+1} &= A_d \cdot x_{k} -(\mathcal{F}_{\langle I_c,F_c \rangle}(K)\cdot\mathcal{F}_{\langle I_c,F_c \rangle}(x_{k})).  \\
@@ -1247,10 +1244,9 @@ x_{k+1} &= (A_d  - B_dK) \cdot x_k + B_dK\delta,
 %\\ x_{k+1}&=A_d x_{k} + B_du_{k}
 \end{align*}
 %
-where $\delta$ is the maximum error that can be introduced by the FWL
-controller in one step, i.e., by reading the states values once and
-multiplying by $K$ once.  We derive the closed form expression for $x_n$ as
-follows:
+where $\delta$ is the maximum error that can be introduced by the FWL controller in one step, 
+i.e., by reading the states values once and multiplying by $K$ once.  
+We derive the closed form expression for $x_n$ recursively, as follows:
 %
 \small
 \begin{align*}
@@ -1263,31 +1259,30 @@ x_{n} &= (A_d  - B_dK)^nx_0 + (A_d  - B_dK)^{n-1}B_dK\delta +\\
   &= (A_d - B_dK)^nx_0 + \sum_{i=0}^{i=n-1}(A_d - B_dK)^iB_dk\delta. 
 \end{align*}
 \normalsize
-The definition of asymptotic stability is that the system converges to a
-reference signal, in this case we use no reference signal so an
-asymptotically stable system will converge to the origin.  We know that the
-original system with an infinite-precision controller is stable, because we
-have synthesized it to meet Jury's criterion.  Hence, $(A_d - B_dK)^n x_0$ 
-must converge to zero.
-
+%The definition of asymptotic stability is that the system converges to a
+%reference signal, in this case we use no reference signal so 
+Recall that a closed-loop asymptotically stable system will converge to the origin.  
+We know that the original system with an infinite-precision controller is stable, 
+because we have synthesized it to meet Jury's criterion.  
+Hence, $(A_d - B_dK)^n x_0$  must converge to zero as $n \uparrow \infty$. 
 %T%o show that a fixed-point implementation of the same controller will
 %converge to a finite value, we need to show that the infinite sum converges. 
-The power series of matrices
-converges~\cite{horn1990matrix} iff the eigenvalues of the matrix are less
-than~1 as follows:
+Furthermore, the power series of a square matrix $T$ converges~\cite{horn1990matrix} iff the eigenvalues of the matrix are less
+than~1, and the limit results in 
 %
 %\begin{align*}
 $\sum_{i=0}^{\infty}T^i  = (I - T)^{-1}$, 
 %\end{align*}
 %
-where $I$ is the identity matrix and $T$ is a square matrix. Thus, our system will converge to the value 
+where $I$ is the identity matrix. 
+Thus, the closed-loop model converges to the value 
 %
 \begin{align*}
 0 + (I - A_d + B_dK)^{-1}B_dk\delta \,. 
 \end{align*}
 %
-As a result, if the value $(I - A_d + B_dK)^{-1}B_dk\delta$ is within the
-safe space, then the synthesized fixed-point controller results in a safe
+As a result, if the value $(I - A_d + B_dK)^{-1}B_dk\delta$ is within the safe space \note{qualitative statement - is this a scalar or a vector, and what is the `safe space'? you mean safe set?}, 
+then the synthesized fixed-point controller results in a safe
 closed-loop model.  The convergence to a finite value, however, will not
 make it asymptomatically stable.
 However,
