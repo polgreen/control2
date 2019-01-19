@@ -1236,7 +1236,8 @@ We encompass this error using interval arithmetic~\cite{moore1966interval} in th
 %-------------------------------
 \label{sec:stab_FWL}
 The validity of Jury's criterion~\cite{fadali} relies on the representation of the closed-loop dynamics $x_{k+1} = (A_d - B_dK) x_k$ at infinite precision.  
-When we employ a FWL \note{did we define this acronym} digital controller, the operation above becomes:
+When we employ a FWL \note{did we define this acronym} digital controller, the operation above becomes: 
+\note{the first of the two equations is not clear}
 %
 \begin{align*}
 x_{k+1} &= A_d \cdot x_{k} -(\mathcal{F}_{\langle I_c,F_c \rangle}(K)\cdot\mathcal{F}_{\langle I_c,F_c \rangle}(x_{k})).  \\
@@ -1501,8 +1502,11 @@ the second one is {\it abstraction-based},
 and it leverages abstraction-refinement \cite{DBLP:conf/cav/ClarkeGJLV00} and abstract acceleration (cf. Sec.~\ref{ssec:aa}) to improve scalability,  
 while retaining soundness. 
 \else
-the instantiation of CEGIS we use to synthesise safe digital controllers, accounting for the precision issues detailed in previous sections. We use a multi-stage approach
-that unwinds the dynamics up to a completeness threshold, modelling finite-precision arithmetic using bit-precise bounded model checking, and then verifying soundness of the resulting controller using interval arithmetic.
+the CEGIS procedure that is used to synthesise safe digital controllers, 
+accounting for the precision issues detailed in the previous sections. 
+We employ a multi-stage approach that unwinds the dynamics of the model up to a completeness threshold, 
+modelling finite-precision arithmetic using bit-precise bounded model checking, 
+and then verifying soundness of the resulting controller using interval arithmetic. 
 \fi
 
 \ifx\axelerator
@@ -1576,7 +1580,7 @@ that unwinds the dynamics up to a completeness threshold, modelling finite-preci
    %(verif4.north) edge node[align=center] {} ([xshift=10.5cm]aux2)
    %([xshift=10.5cm]aux2) edge node[align=center] {Increase Sampling Rate} (aux1);
 \end{tikzpicture}
-\caption{CEGIS with multi-staged verification}
+\caption{CEGIS with multi-staged verification for digital controller synthesis}
 \label{fig:CEGIS-precision-increment}
 \end{figure*}
 
@@ -1625,12 +1629,9 @@ we describe in detail the different phases in Fig.~\ref{fig:CEGIS-precision-incr
 \begin{enumerate}
 
 \item The inductive synthesis phase ({\sc synthesize}) uses BMC to compute a
-candidate solution $K$ that satisfies both the stability criteria and the
-safety specification.  
-
-To synthesize a controller that satisfies the 
-stability criteria, we require that a computed polynomial satisfies Jury's
-criterion~\cite{fadali} (see Section~\ref{ssec:stabspecification}).
+candidate solution $K$ that satisfies both the stability requirement and \note{next: already at this stage?} the safety specification.  
+In order to synthesize a controller that satisfies the stability requirement, 
+we need the computed characteristic polynomial to satisfy Jury's criterion~\cite{fadali} (see Section~\ref{ssec:stabspecification}). 
 
 We fix an index $k$, 
 and we synthesize a safe controller by
@@ -1638,8 +1639,8 @@ unfolding the transition system $k$ steps and by selecting a controller $K$ and 
 such that the states at each step do not violate the safety criteria (see Section~\ref{ssec:safespecification}).    
 That is, we ask the bounded model checker~\cite{ClarkeKL04} if there exists a $K$ that is safe for at least one $x_0$ in our set of all possible initial states, and a given fixed point precision for the controller, and where the input signal remains within the specified bounds.
 This approach is sound if the current $k$ is greater than the completeness threshold (see later step).  
-We~also assume some (fixed or floating point) precision $\langle I_p,F_p\rangle$ for the plant and a sampling rate.  
-The checks that these assumptions hold are performed by subsequent {\sc verify} stages. 
+We~also assume some (fixed or floating point \note{both?}) precision $\langle I_p,F_p\rangle$ for the plant and a sampling rate.  
+The checks that these assumptions hold are performed by the subsequent {\sc verify} stages. 
 
 
 %\begin{algorithm}[]
@@ -1674,14 +1675,14 @@ The checks that these assumptions hold are performed by subsequent {\sc verify} 
   %\State Return $K$
 \EndFunction
 \end{algorithmic}
-\caption{Safety check\label{alg:safetycheck}}
+\caption{Safety check ({\sc safety} stage in Fig.~\ref{fig:CEGIS-precision-increment})\label{alg:safetycheck}}
 \end{algorithm}
 
 \item The first {\sc verify} stage, {\sc safety} is shown in Alg.~\ref{alg:safetycheck}. 
 The algorithm checks that the candidate
-solution $K$, which we synthesized to be safe for at least one initial
-state, is safe for \emph{all} possible initial states, i.e., does not reach
-an unsafe state within $k$ steps.  After unfolding the transition system corresponding
+solution $K$, which we have synthesized to be safe for at least one initial
+state, is safe for \emph{all} possible initial states, i.e., it does not reach
+the (complement) unsafe state within $k$ steps.  After unfolding the transition system corresponding
 to the previously synthesized controller $k$ steps, we check that the safety
 specification holds for any initial state. 
 
@@ -1689,7 +1690,7 @@ We use $(controller\_typet)$ to denote a
 cast or conversion to the controller precision, and $(plant\_typet)$ to denote a cast or conversion to the 
 plant precision. A \emph{vertex state} is defined as a state where all values are either equal to the upper or lower
 bound of the initial states. It is sufficient to verify that the controller is safe for all vertex
-states, and the proof is shown later in this section. We thus only need to iterate through the $2^{Num\_States}$ vertex
+states, and the proof is shown later in this section. We thus only need to iterate through the $2^{Num\_States}$ \note{new quantity, different than n?} vertex
 states, where $n$ is dimension of the state space (number of continuous variables).
 
 
@@ -1697,19 +1698,14 @@ states, where $n$ is dimension of the state space (number of continuous variable
 If a controller is safe for each of the corner cases of our hypercube of
 allowed initial states, i.e., the vertex states, it is safe for any initial state in the hypercube. 
 \end{theorem}
-
-Thus we only need to check $2^n$ initial states, where $n$
-is the dimension of the state space, as before. 
 \begin{proof}
 Consider the set of initial states, $X_0$, which we assume to be convex since it is a hypercube. 
 Name $v_i$ its vertices, where $i=1,\ldots, 2^n$.  
 Thus any point $x \in X_0$ can be expressed by convexity as $x = \sum_{i=1}^{2^n} \alpha_i v_i$, 
 where $\sum_{i=1}^{2^n} \alpha_i =1$. Then if $x_0=x$, we obtain 
 \begin{align*}
-x_k   &= (A_d - B_d K)^k x \\
-&= (A_d - B_d K)^k \sum_{i=1}^{2^n} \alpha_i v_i \\
-      &= \sum_{i=1}^{2^n} \alpha_i (A_d - B_d K)^k v_i \\
-      &= \sum_{i=1}^{2^n} \alpha_i x_k^i, 
+x_k   &= (A_d - B_d K)^k x = (A_d - B_d K)^k \sum_{i=1}^{2^n} \alpha_i v_i \\
+      &= \sum_{i=1}^{2^n} \alpha_i (A_d - B_d K)^k v_i = \sum_{i=1}^{2^n} \alpha_i x_k^i, 
  \end{align*}     
 %
 where $x_k^i$ denotes the trajectories obtained from the single vertex
@@ -1717,7 +1713,8 @@ $v_i$.  We~conclude that any $k$-step trajectory is encompassed, within a
 convex set, by those generated from the vertices. 
 \qed
 \end{proof}
-
+In conclusion, we only need to check $2^n$ initial states, 
+where $n$ is the dimension of the state space. 
 
 
 \item The second {\sc verify} stage, {\sc precision}, 
@@ -1726,8 +1723,8 @@ by using interval arithmetic \cite{moore1966interval} to validate the
 operations performed by the previous stage. 
 
 \item The third {\sc verify} stage, {\sc complete}, checks that the current
-$k$ is large enough to ensure safety for any $k'{>}k$.  Here, we compute the
-completeness threshold $\overline{k}$ for the current candidate controller $K$ and
+$k$ is large enough to ensure safety for any further time steps.  
+Here, we compute the completeness threshold $\overline{k}$ for the current candidate controller $K$ and
 check that $k{\geq}\overline{k}$.  This is done by computing the number of time steps
 required for the states to have completed a 360\textdegree circle, as illustrated in Fig.~\ref{fig:ct}. 
 
@@ -1763,7 +1760,7 @@ in a point closer to the origin.  The synthesized $\overline{k}$ is the complete
 \centering
 \includegraphics[width=\columnwidth]{figures/ct.eps}
 %\vspace{0.1cm}
-\caption{Completeness threshold for multi-staged verification. $T_s$ is the time step for the time discretization of the control matrices.}
+\caption{Completeness threshold for multi-staged verification (quantity $T_s$ is the time discretization step) }
 \label{fig:ct}
 \end{figure}
 
