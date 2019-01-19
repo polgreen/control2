@@ -685,7 +685,7 @@ The gain matrix $K$ can be set so that the closed-loop discrete dynamics are
 shaped as desired, for instance according to a specific stability goal or
 around a dynamical behavior of interest \cite{astrom1997computer}.  As argued
 later in this work, we will target a less standard objective,
-namely a quantitative safety requirement, which opens up to more complex specifications \note{[belta, tabuada]}. 
+namely a quantitative safety requirement, which opens up to more complex specifications \cite{BYG16, Tab09}. 
 This is not typical in the digital control literature. We will further precisely account for the digital nature
 of the controller, which manipulates quantised signals as discrete quantities represented with
 finite precision. The new approach is fully automated and leverages an approach based on CEGIS. 
@@ -741,7 +741,7 @@ In~this work, the safety property is expressed as:
 %
 \begin{equation}
 \label{eq:safetyliteral}
-\phi_\mathit{safety}\iff \forall k\ge 0.\, \bigwedge_{i=1}^{n}{\underline{x_{i}} \leq x_{i,k} \leq \overline{x_{i}}},
+\phi_\mathit{safety} = \left\{ \forall k\ge 0.\, \bigwedge_{i=1}^{n}{\underline{x_{i}} \leq x_{i,k} \leq \overline{x_{i}}}\right\},
 \end{equation}
 %
 %\addtodo{We consider $x_{i}^{-}$ and $x_{i}^{+}$ to be -1 and 1, respectively.}
@@ -755,9 +755,9 @@ Furthermore, it is practically relevant to consider the
 constraints $\phi_\mathit{input}$ on the input
 signal $u_{k}$ and $\phi_\mathit{init}$ on the initial states $x_0$,
 which we assume have given bounds:
-$\phi_\mathit{input} = {\forall k.\underline{u} \leq u_{k} \leq \overline{u}} $, 
+$\phi_\mathit{input} = \{\forall k.\underline{u} \leq u_{k} \leq \overline{u}\} $, 
 \note{here you're assuming that u is 1-dim. This needs to be said somewhere. }
-and $\phi_\mathit{init} = \bigwedge_{i=1}^{n} \underline{x_{i,0}} \leq x_{i,0} \leq \overline{x_{i,0}}.$
+and $\phi_\mathit{init} = \{ \bigwedge_{i=1}^{n} \underline{x_{i,0}} \leq x_{i,0} \leq \overline{x_{i,0}}\}$. 
 The former constraint expresses that control input, possibly shaped via state-feedback, 
 might saturates in view of physical constraints.
 
@@ -827,7 +827,7 @@ which means that our verification phase must also account for the numerical erro
 as well as quantization errors caused by representing the physical plant at finite 
 precision $\mathcal{F}_{\langle I_p,F_p \rangle}$. 
  
-We use $\mathcal{F}_{\langle E,M \rangle}(x)$ to denote a real number $x$ represented in a floating point domain, 
+We further employ $\mathcal{F}_{\langle E,M \rangle}(x)$ to denote a real number $x$ represented in a floating point domain, 
 with $E$ bits representing the exponent part and $M$ bits representing the mantissa part. 
 In particular, 
 we use $\mathcal{F}_{\langle E_c,M_c \rangle}(x)$ to denote a real number 
@@ -916,24 +916,25 @@ the controller works for all possible initial states.
 %-------------------------------
 
 %While in the previous section we have discussed the generic CEGIS framework, 
-In the rest of the paper we explain how to adapt the generic CEGIS framework to the synthesis of digital controllers. 
-We start by describing the specific property that we pass to the synthesizer as the specification $\phi$. 
-Namely, we are interested in capturing safety, 
-which we discuss in Section~\ref{ssec:safespecification}. We use a stability specification 
-in order to narrow the search space of possible controllers, as detailed in Section~\ref{ssec:stabspecification}.
+We are now equipped to apply the general CEGIS framework to the synthesis of digital controllers. 
+We start by describing the property that we pass to the synthesizer as the specification $\phi$. 
+Namely, as are interested in capturing safety (to be discussed in Section~\ref{ssec:safespecification}) \note{fix?},  
+we use a stability specification to narrow the search space of possible controllers, as detailed in Section~\ref{ssec:stabspecification}.
 
 %-------------------------------
-\subsection{Jury's stability criteria} 
+\subsection{Jury's stability criterion} 
 \label{ssec:stabspecification}
 %-------------------------------
 
-There are a number of procedures that can be used for stability analysis of dynamical models\note{~\cite{daes20161, Bessa16} is self-citation really the best citation for this statement??}.
+\note{reminder AA: check throughout use of 'model vs system'}
+
+There are a number of well known procedures to perform stability analysis of dynamical models~\cite{Astrom08}. 
 %which can fit our automatic verification engine.  
 %one based on Schur's decomposition
 %and another one based on Jury's criterion~\cite{astrom1997computer}.  
-Here we choose Jury stability criterion~\cite{astrom1997computer}, 
+Here we select the Jury stability criterion~\cite{astrom1997computer}, 
 in view of its efficiency and ease of integration within our implementation.  
-This method checks the stability working in the complex domain of the characteristic polynomial $S(z)$,  
+This method checks the stability working in the complex domain of the characteristic polynomial $S(z)$ \note{could be better and formally introduced in earlier section?},  
 %
 % of the matrix $\left( \begin{array}{c} Y \\ U \end{array}\right)$, where $Y(z)$ is the closed-loop system output and U(z) is the controller output. 
 %% \red{[unclear: what matrix? We need to clarify the relationship
@@ -947,9 +948,10 @@ considered in its general form as
 \begin{equation*}
 S(z) = a_0z^N+a_1z^{N-1}+\cdots+a_{N-1}z+a_N,\,\, a_0\neq0. 
 \end{equation*}
-An LTI system is stable if all the roots of its characteristic polynomial $S(z)$ (i.e., the 
-eigen values of the closed loop matrix $A_d-B_dK$) are inside the unit circle of the complex plane, 
-i.e., their absolute values are less than one. 
+\note{clarify degree $N$ vs model dimensions} 
+An closed-loop LTI model is stable~\cite{astrom1997computer} \note{asymptotically?} if \note{make sure: only sufficient condition?}all the roots of its characteristic polynomial $S(z)$ (i.e., the 
+eigenvalues of the matrix $A_d-B_dK$) are inside the unit circle in the complex plane, 
+i.e., if their absolute values are less than one. 
 
 %\note{The characteristic polynomial $S(z)$ represents the dynamical model in \ldots [clarify whether we use the CPol to describe the open- or closed-loop model. Relate parameters to matrices A,B,K. Notice that these parameters are used later in the Section where AA-based backend is explained.]}
 
@@ -1004,9 +1006,9 @@ $R_4: m_{11} > 0 \wedge\allowbreak
       m_{(2N{-}3)(1)}>0$.
 %\end{itemize}
 
-The stability property is finally encoded by a constraint expressed as the following formula: 
+The \note{asympt?} stability property is finally encoded by a constraint expressed as the following formula: 
 $
-\phi_\mathit{stability} := (R_1 \wedge R_2 \wedge R_3 \wedge R_4).
+\phi_\mathit{stability} = \{R_1 \wedge R_2 \wedge R_3 \wedge R_4\}.
 $
 
 \ifx\safetyrep
@@ -1055,24 +1057,28 @@ For the input signal, these requirements practically mean that the control input
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 As discussed in Section~\ref{sec:errors}, 
-the models we consider must account for errors from several sources: 
-we must bound the numerical error introduced by the finite precision we use to represent the plant (and its operations), and precisely model
-the error introduced by the ADC/DAC conversions
-and the behaviour of the limited precision arithmetic used by the controller. 
-We use interval arithmetic to bound the error introduced by the finite precision plant, and bounded model checking to precisely model the error introduced by the ADC/DAC and the finite precision controller.
-
+the considered models must account for errors deriving from several sources: 
+we must bound the numerical error introduced by the finite-precision representation of the plant (and its operations), 
+and precisely model the error introduced by the ADC/DAC conversions, 
+as well as the behaviour of the limited-precision arithmetic used by the controller. 
+We use interval arithmetic to bound the error introduced by the finite-precision plant, 
+and bounded model checking to precisely model the error introduced by the ADC/DAC and the finite-precision controller.
 
 \subsection{Bit-precise symbolic model checking}
-As described in section~\ref{sec:BMC}, we use CBMC, a bit-precise bounded model checker to synthesise and verify candidate controllers. CBMC performs precisely the fixed or floating point arithmetic used in the controller, as well as the ADC/DAC conversions, according to the IEEE standards.
+As described in section~\ref{sec:BMC}, we use CBMC, a bit-precise bounded model checker to synthesise and verify candidate controllers. 
+CBMC manipulates precisely the fixed- or floating-point arithmetic used in the controller, 
+as well as the ADC/DAC conversions, 
+according to the IEEE standards. 
 
 \subsection{Interval arithmetic over errors in numeric representation} 
-We use finite-precision arithmetic to model the plant. This is an approximation that speeds up each CEGIS
-iteration but necessitates a further stage where we verify that the errors introduced by the
-approximation have not caused us to generate a controller that is unsafe when executed with real numbers 
-for the plant. In this stage, we represent the plant using double precision floating point
-and we use the Boost interval arithmetic library~\cite{DBLP:journals/tcs/BronnimannMP06} to bound the error in this representation. We use a compositional numeric library to model the fixed point arithmetic for the controller~\cite{} within
-double precision floating point numbers. We check the controller is safe starting from each vertex state, which we
-will show to be sufficient to prove safety from any initial state in the hypercube of possible initial states. 
+We use finite-precision arithmetic to model the plant. 
+This is an approximation that speeds up each CEGIS iteration, 
+however it necessitates a further stage where we verify that the errors introduced by the approximation have not resulted in a controller that is unsafe when executed on a plant expressed over real numbers.  
+In this stage, we represent the plant using double-precision floating-point
+and we use the Boost interval arithmetic library~\cite{DBLP:journals/tcs/BronnimannMP06} to bound the error in this representation. 
+We employ a compositional numeric library to model the fixed point arithmetic for the controller~\cite{} \note{fix} within double-precision floating-point numbers. 
+We check the controller is safe starting from each vertex of the set of initial states,  
+and show that this is sufficient to prove safety from any state in this set. 
 
 We outline here the mathematics behind bounding the errors on the double precision floating point.
 Recall we use $\mathcal{F}_{\langle E,M \rangle}(x)$ denote a real number $x$
