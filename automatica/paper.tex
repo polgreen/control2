@@ -1972,7 +1972,7 @@ The synthesis is considered to be \emph{successful} if a digital controller is
 correctly synthesized w.r.t.~FWL effects; otherwise, \note{needed next?}if any parameter is
 incorrectly defined in previous steps, \note{next OK;} or if there is no solution (no
 controller) for the corresponding physical plant (given the implementation
-requirements), then the synthesis is considered to have \emph{failed}.
+requirements), then the synthesis is considered to have \emph{failed} \note{we don't seem to have any such instance.}.
 
 Our CEGIS engine is implemented as an integrated module within the C bounded
 model checker (CBMC)~\cite{ClarkeKL04}.  CBMC transforms the ANSI-C representation
@@ -2003,10 +2003,10 @@ experiments.\footnote{\note{\url{XXXXXXXXXX}}}
 \label{exp:evaluation}
 %-------------------------------
 
-Our benchmark suite consists of 20 SISO models extracted from the 
+Our benchmark suite consists of \note{update} 20 SISO models extracted from the 
 control literature~\cite{acrobot,cstr,CHEN1979389,KOKOTOVIC198023,gajic2008optimal,Franklin15, maglev, converters, CTMS, gajic2008optimal}.
 The models are discretized with sampling times ranging from 1.5s to 0.005s, and if CEGIS is unable to 
-synthesise a controller for a given sampling time, CEGIS heuristically selects a new sampling time.
+synthesise a controller for a given sampling time, CEGIS heuristically selects a new sampling time \note{do we, still?}.
 
 %-------------------------------
 \subsection{Description of the control benchmarks}
@@ -2099,11 +2099,11 @@ the evaluation study has the following two experimental goals:
 
 \begin{enumerate}
 
-\item[EG1] \textbf{(Performance)} Show that both the multi-staged and the abstraction-based
-CEGIS approaches are able to generate FWL digital controllers using floating-point arithmetic 
-in a reasonable amount of time.
+\item[EG1] \textbf{(Performance)} Show that the multi-staged 
+%and the abstraction-based 
+CEGIS approach is able to generate FWL digital controllers using floating-point arithmetic in a reasonable amount of time.
 
-\item[EG2] \textbf{(Sanity check)} Confirm the stability and safety of the synthesized controllers outside 
+\item[EG2] \textbf{(Sanity check)} Confirm the stability \note{also?} and safety of the synthesized controllers outside 
 of our model representation using MATLAB. 
 %\note{Where is this done?}
 
@@ -2114,14 +2114,14 @@ of our model representation using MATLAB.
 \label{exp:results}
 %-------------------------------
 
-We provide the results in Table~\ref{tab:results}, 
-where \textit{Benchmark} is the name of the respective benchmark; 
-\textit{Order} is the number of continuous variables of the model; \textcolor{blue}{ 
-$\mathcal{F}_{\langle I_p,F_p \rangle}$, where $I_p$ and $F_p$ indicate the integer and fractional parts,  
+We provide the results in Table~\ref{tab:results}, where: 
+\textit{Benchmark} is the name of the corresponding benchmark; 
+\textit{Order} is the number of continuous variables of the model; 
+\textcolor{blue}{$\mathcal{F}_{\langle I_p,F_p \rangle}$, where $I_p$ and $F_p$ indicate the integer and fractional parts,  
 and \textcolor{blue}{ $\mathcal{F}_{\langle W_p,F_p \rangle}$}, where $W_p$ and $F_p$ indicate the total word-length and fractional part, 
 are the fixed- and floating-point precisions used to model the plant, respectively; } 
 and \textit{Time} is the total time required to synthesize a controller for the given plant.    
-Timeouts are indicated by~\xmark, while failures to synthesise the digital controllers are indicated by $\dagger$.  
+Timeouts are indicated by~\xmark, while failures to synthesise the digital controllers are indicated by $\dagger$ \note{no such instances}.  
 The precision for the controller, $\mathcal{F}_{\langle I_c,F_c \rangle}$, is
 chosen to be $I_c = 8$, $F_c = 8$ for fixed-point, \textcolor{blue}{whereas  
 $\mathcal{F}_{\langle W_c, F_c \rangle}$ is chosen to be $W_c = 16$ and $F_c = 10$
@@ -2130,8 +2130,8 @@ for half-precision floating-point format}.
 We separate our evaluation into two sets of results: fixed- and floating-point. 
 We are able to synthesise more floating point controllers than fixed point controllers, likely because the
 floating point controllers are at a higher precision than the fixed point. It may be that the precision of the fixed-point
-controllers is too low to be able to meet the safety specification. The floating point controllers take longer to synthesise
-than the fixed point controllers.
+controllers is too low to be able to meet the safety specification. The floating point controllers in general take longer to synthesise
+than the fixed point controllers \note{there is one surprising exception - check please}.
 %For the majority of the {\it fixed-point} benchmarks, we observe that the abstraction-based
 %back-end is faster than the basic multi-staged verification approach; \textcolor{blue}{additionally, 
 %from 26 benchmarks, we observed that the abstraction-based back-end finds a solution for more benchmarks 
@@ -2233,25 +2233,25 @@ than the fixed point controllers.
 \caption{Experimental results\label{tab:results}}
 \end{table*}
 
-The mean run-time for \textcolor{blue}{the successful} benchmarks is 152.6\,s for the fixed-point and 117.5\,s for floating-point implementations, respectively.  The mean run-time for \textcolor{blue}{the successful} benchmarks is 16\,s for the fixed-point and 11\,s for floating-point implementations, respectively.
-We consider these times short enough to be of practical use to control engineers, and thus affirm the validity of EG1.
+The mean run-time for \textcolor{blue}{the successful} benchmarks is 152.6\,s for fixed-point and 117.5\,s for floating-point implementations, respectively.  
+\note{unclear repeat next:} The mean run-time for \textcolor{blue}{the successful} benchmarks is 16\,s for fixed-point and 11\,s for floating-point implementations, respectively.
+We consider these times to be short enough to be of practical use to control engineers, and thus affirm the validity of EG1.
 
 \textcolor{blue}{We fail to synthesise a controller for several instances.}  
-The completeness threshold may be too large, thus causing a timeout, or controller simply may not exist for these benchmarks at this given time discretisation and controller
-precision.
-Yet another source of incompleteness is the inability of the {\sc synthesize} phase to use a large enough precision for
-the plant model.
+The completeness threshold may be too large, thus causing a timeout \note{but timeouts are handled separately than failures?}, 
+or a controller simply may not exist for a benchmark at a given time discretisation and required controller precision. 
+Yet another source of incompleteness is the inability of the {\sc synthesize} phase to use a large enough precision for the plant model. 
 
 \textcolor{blue}{The synthesized controllers are confirmed to be safe outside of our model
-representation using MATLAB, achieving EG2.  A~link to the full
-experimental environment, including scripts to reproduce the results, all
+representation using MATLAB, achieving EG2 \note{please explain how this check is performed - is the check itself sound?}.  
+A~link to the full experimental environment, including scripts to reproduce the results, all
 benchmarks and the tool, is provided in the
 footnote as an Open Virtual Appliance (OVA).\footnote{\url{XXXX}}
 The provided experimental environment runs multiple discretisations for each
 benchmark, and lists the fastest as the result synthesis time.}
 
 %-------------------------------
-\subsection{Threats to validity}
+\subsection{Threats to validity \note{generality?}}
 \label{exp:threats-to-validity}
 %-------------------------------
 
@@ -2287,13 +2287,13 @@ state-feedback controllers that ensure both stability and safety over state-spac
 %The first approach relies on unfolding of the closed-loop model dynamics up to a completeness threshold, while the second
 %one applies abstraction-refinement and acceleration to increase speed, whilst retaining soundness.
 %
-Our approach is novel within the control literature: we give a fully
+Our approach is novel within the digital control literature: we provide a fully
 automated synthesis method that is algorithmically and numerically sound,
 considering various error sources in the implementation of the digital
 control algorithm and in the computational modeling of plant dynamics.
 %
 Our experimental results show we are able to synthesize fully automatically 
-safe controllers for most benchmarks, which have been derived from the control literature, 
+safe controllers for diverse benchmarks from the control literature, 
 within a reasonable amount of time.  
 
 
