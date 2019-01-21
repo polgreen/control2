@@ -641,10 +641,10 @@ equations, which we assume are controllable~\cite{Astrom08}:
 \end{align}
 %
 where 
-$\vec{x} \in \mathbb{R}^p$,  
-$\vec{u} \in \mathbb{R}^q$, 
-$\mat{A} \in \mathbb{R}^{p \times p}$, 
-$\mat{B} \in \mathbb{R}^{p \times q}$,
+$\vec{x} \in \mathbb{R}^n$,  
+$\vec{u} \in \mathbb{R}^p$, 
+$\mat{A} \in \mathbb{R}^{n \times n}$, 
+$\mat{B} \in \mathbb{R}^{n \times p}$,
 and $t \in \mathbb R_0^+$ denotes continuous time. 
 %$\mat{A}$ and $\mat{B}$ are matrices that fully characterize the dynamics of the continuous plant,
 We denote with $x(0)$ the model initial condition, which can be non-deterministic. 
@@ -676,7 +676,7 @@ and as classically studied in \cite{astrom1997computer}.
 
 We consider state feedback control architectures, 
 where $u_k$ (notice we work with the discretized signal) is $u_k = r_{k} - K x_k$. 
-Here $K \in \mathbb{R}^{m \times n}$ \note{wrong dimensions?} is a state-feedback gain matrix, 
+Here $K \in \mathbb{R}^{p \times n}$ is a state-feedback gain matrix, 
 and $r_{k}$ is a reference signal (again digital). 
 We will assume $r_k=0$, thus obtaining the closed-loop model 
 $\vec{x}_{k+1}=(\mat{A}_d-\mat{B}_d\mat{K})\vec{x}_k$. 
@@ -699,9 +699,10 @@ refer to it before we have explained the DAC, ADC and the errors shown in the fi
 \subsection{Stability of closed-loop systems}
 
 In this work we employ the notion of asymptotic stability within the CEGIS loop,  
-as a means for reducing the search space of possible safe controllers. 
-\note{next statement is not true - also, we have not defined safety} 
-As discussed later, a safe controller is necessarily asymptotically stable, although the reverse is not true. 
+as a means for reducing the search space of possible safe controllers, where the definition of a safe controller
+is defined in the following section. 
+As discussed later, for linear systems a safe controller is necessarily asymptotically stable, 
+although the reverse is not true. 
 %as an objective for guessing controllers that are later proven sound over safety requirements.  
 Qualitatively, (local) asymptotic stability is a property denoting the convergence of the model executions towards an equilibrium point, 
 starting from any states in a neighborhood of the point. 
@@ -749,15 +750,13 @@ In~this work, the safety property is expressed as:
 %
 where $\underline{x_{i}}$ and $\overline{x_{i}}$ are lower and upper bounds
 for the $i$-th coordinate $x_{i}$ of state $x\in \mathbb R^n$ 
-\note{Fix/align dimensions of main model} 
 at the $k$-th instant, respectively.  This requires that the states will always be within an $n$-dimensional hyper-box.
 
 Furthermore, it is practically relevant to consider the 
 constraints $\phi_\mathit{input}$ on the input
 signal $u_{k}$ and $\phi_\mathit{init}$ on the initial states $x_0$,
 which we assume have given bounds:
-$\phi_\mathit{input} = \{\forall k.\underline{u} \leq u_{k} \leq \overline{u}\} $, 
-\note{here you're assuming that u is 1-dim. This needs to be said somewhere. }
+$\phi_\mathit{input} = \{\forall k \geq 0.\bigwedge_{i=1}^{p} \underline{u} \leq u_{i} \leq \overline{u}\} $,
 and $\phi_\mathit{init} = \{ \bigwedge_{i=1}^{n} \underline{x_{i,0}} \leq x_{i,0} \leq \overline{x_{i,0}}\}$. 
 The former constraint expresses that control input, possibly shaped via state-feedback, 
 might saturates in view of physical constraints.
