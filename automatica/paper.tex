@@ -568,10 +568,10 @@ bound for the possible trajectory of the system up to a finite time.
    
    \& complexnode/.pic={ 
       \node[rectangle,dashed,draw,minimum width=3cm,minimum height=1.6cm,label=\textbf{DAC}] (dac) {};
-     \node[circle,add={+}{+}{}{},fill=gray!20] (q2) at ([xshift=-.65cm]dac.center) {};
-     \node[draw=none] (q2t)  at ([yshift=.55cm]q2) {{\sc Q2}};
-     \node[draw=none] (v2)  at ([yshift=-1.5cm]q2) {$\nu_2$};
-     \node[fill=gray!20] (zoh) at ([xshift=.65cm]dac.center) {\sc ZOH};
+   %  \node[circle,add={+}{+}{}{},fill=gray!20] (q2) at ([xshift=-.65cm]dac.center) {};
+   %  \node[draw=none] (q2t)  at ([yshift=.55cm]q2) {{\sc Q2}};
+   %  \node[draw=none] (v2)  at ([yshift=-1.5cm]q2) {$\nu_2$};
+     \node[fill=gray!20] (zoh) at ([xshift=.0cm]dac.center) {\sc ZOH};
    }   
 
    \& complexnode/.pic={ 
@@ -593,22 +593,22 @@ bound for the possible trajectory of the system up to a finite time.
      \draw[] ([xshift=-1cm]adc.center) -- ++(0.5,0.2cm);
      \coordinate (switch1) at ([xshift=-1cm]adc.center);
      \coordinate (switch2) at ([xshift=-0.4cm]adc.center);
-     \node[circle,add={+}{+}{}{},fill=gray!20] (q1) at ([xshift=.6cm]adc.center) {};
-     \node[draw=none] (q2t)  at ([yshift=.55cm]q1) {\sc Q1};
-     \node[draw=none] (v1)  at ([yshift=-1.5cm]q1) {$\nu_1$};
-     \node[draw=none] (y) at ([xshift=.85cm,yshift=.15cm]q1)  {$\vec{x}_k$};       
-     \coordinate (ykeast) at ([xshift=1.9cm]q1);
-     \coordinate (yksouth) at ([xshift=1.9cm,yshift=-3.5cm]q1);
+   %  \node[circle,add={+}{+}{}{},fill=gray!20] (q1) at ([xshift=.6cm]adc.center) {};
+   %  \node[draw=none] (q2t)  at ([yshift=.55cm]q1) {\sc Q1};
+   %  \node[draw=none] (v1)  at ([yshift=-1.5cm]q1) {$\nu_1$};
+     \node[draw=none] (y) at ([xshift=.85cm,yshift=.15cm]switch2)  {$\vec{x}_k$};       
+     \coordinate (ykeast) at ([xshift=2.9cm]switch2);
+     \coordinate (yksouth) at ([xshift=2.9cm,yshift=-3.5cm]switch2);
    } 
    \& \coordinate (aux1);
    \& \\
   };
 
-  \path[->] (v1) edge (q1.south);
-  \path[->] (v2) edge (q2.south);
+%  \path[->] (v1) edge (q1.south);
+%  \path[->] (v2) edge (q2.south);
   \path[->] (r) edge (circle.west);
-  \path[->] (circle.east) edge (q2.west);
-  \path       (q2.east) edge (zoh.west);
+  \path[->] (circle.east) edge (zoh.west);
+%  \path       (q2.east) edge (zoh.west);
   \path[->] (zoh.east) edge (B.west);
   \path
    (B.east) edge (p1.west)
@@ -618,9 +618,9 @@ bound for the possible trajectory of the system up to a finite time.
    (A.west) edge (awest)
    (awest) edge (p1.south)
    (int.east) edge (switch1.west)
-   (switch2) edge (q1.west);
+   (switch2) edge (ykeast);
   \path
-   (q1.east) edge (ykeast)
+ %  (q1.east) edge (ykeast)
    (ykeast) edge (yksouth)
    (yksouth) edge (kdsouth);
   \path[->]  (kdsouth) edge (Kd.south);
