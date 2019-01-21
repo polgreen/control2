@@ -762,14 +762,13 @@ The former constraint expresses that control input, possibly shaped via state-fe
 might saturates in view of physical constraints.
 
 
-
 \subsection{Bounded Model Checking}
 \label{sec:BMC}
 
 We employ the bounded model checker CBMC~\cite{DBLP:conf/tacas/KroeningT14} to model the controller behavior on digital signals with finite bit-precision.  
 We express the controller semantics as C programs, which is CBMC's preferable input language.  
-CBMC symbolically executes every instruction in an input program by translating it to a boolean satisfiability problem \note{merge this sentence with next?}.  
-At the end of this process, the entire input program is translated to a boolean satisfiability formula which is satisfiable iff a certain property about the program holds.  
+CBMC symbolically executes every instruction in an input program by translating it to a boolean satisfiability problem,
+ which is satisfiable iff a certain property about the program holds.  
 CBMC's API allows to specify these properties in the form of assertions in the input program: 
 we set these properties to express that our controllers generate (asymptotically stable and) safe dynamics. 
 %\note{Do we need more details here? Should we explain e.g. SSA or give examples of how assignments, loops,
