@@ -701,7 +701,7 @@ refer to it before we have explained the DAC, ADC and the errors shown in the fi
 In this work we employ the notion of asymptotic stability within the CEGIS loop,  
 as a means for reducing the search space of possible safe controllers, where the definition of a safe controller
 is defined in the following section. 
-As discussed later, for linear systems a safe controller is necessarily asymptotically stable, 
+As discussed later, specifically for linear models a safe controller is necessarily asymptotically stable, 
 although the reverse is not true. 
 %as an objective for guessing controllers that are later proven sound over safety requirements.  
 Qualitatively, (local) asymptotic stability is a property denoting the convergence of the model executions towards an equilibrium point, 
@@ -711,7 +711,7 @@ considered with a zero reference signal,
 the equilibrium point of interest is the origin (see Figure~\ref{fig:ct} for the portrait of an asymptotically stable execution, converging to the origin). 
 
 Of interest for this work, 
-it can be shown that a discrete-time LTI system %as \eqref{eq:closedloopss} 
+it can be shown that a discrete-time LTI model %as \eqref{eq:closedloopss} 
 is asymptotically stable if all the roots of its characteristic polynomial (i.e., the
 eigenvalues of the closed-loop matrix $A_d - B_d K$) are inside the unity
 circle of the complex plane, i.e., if their absolute values are strictly less than
@@ -781,7 +781,7 @@ we set these properties to express that our controllers generate (asymptotically
 A key contribution of this work is that, when synthesizing controllers, it precisely models the finite-precision arithmetic in the digital controller, guaranteeing that these controllers implemented with finite-precision arithmetic are safe. 
 Finite-precision arithmetic introduces errors, as shown in Figure~\ref{fig:digitalsystem}. 
 Details of how we model this arithmetic are in Section~\ref{sec:numeric_rep}. 
-These errors are present in the real world, and we must model them accurately in order to capture the full behaviour of the model:  
+\note{[rephrase?] These errors are present in the real world}, and we must model them accurately in order to capture the full behaviour of the model:  
 
 \begin{itemize}
 
@@ -796,21 +796,22 @@ This is a reasonable assumption based on commonly available hardware.
 
 \item The DAC can potentially introduce further errors. 
 However, we assume that the DAC converts numbers to analog signals with the same precision as the controller. 
-As a result we can ignore any additional errors introduced by the DAC. 
 Again, this assumption is practically reasonable. 
+As a result we can ignore any additional errors introduced by the DAC. 
 It would, however, be straightforward to account for a DAC or ADC of different precision to the controller in our algorithm, if necessary. 
 \end{itemize}
 
+\note{[shouldn't this be a bullet point too?]}
 The representations used in the plant model and its arithmetic operations are also carried out at a finite precision, 
 thus we must account for the corresponding errors.  
-\note{rephrase next:} Specifically, our model of the plant variables $x(t)$ and $u(t)$, which are, in reality, continuous quantities, with finite precision in our model. 
-We guarantee that the precision we use to represent the plant variables is at least as precise as the precision used in the digital controller and we use interval arithmetic to bound the errors, as detailed in Section~\ref{sec:numeric_rep}. 
+\note{rephrase next - main clause has no verb:} Specifically, our model of the plant variables $x(t)$ and $u(t)$, which are, in reality, continuous quantities, with finite precision in our model. 
+We \note{guarantee [?]} that the precision we use to represent the plant variables is at least as precise as the precision used in the digital controller and we use interval arithmetic to bound the errors, as detailed in Section~\ref{sec:numeric_rep}. 
 
 \subsection{Notation for fixed- and floating-point precision}  
 
 In this paper we will use $\mathcal{F}_{\langle I,F \rangle}(x)$ to denote a real number $x$ expressed at a fixed-point precision, 
 using $I$ bits to represent the integer part of the number and $F$ bits to represent its decimal part.  
-$\mathcal{F}_{\langle I_c,F_c \rangle}(x)$ denotes a real number $x$ represented at the fixed-point precision of the controller, 
+In particular, $\mathcal{F}_{\langle I_c,F_c \rangle}(x)$ denotes a real number $x$ represented at the fixed-point precision of the controller, 
 and $\mathcal{F}_{\langle I_p,F_p \rangle}(x)$ denotes a real number $x$
 represented at the fixed-point precision of the plant model. 
 $I_c$ and $F_c$ are determined by the controller.  We pick $I_p$ and $F_p$ for our synthesis
@@ -917,7 +918,7 @@ the controller works for all possible initial states.
 %While in the previous section we have discussed the generic CEGIS framework, 
 We are now equipped to apply the general CEGIS framework to the synthesis of digital controllers. 
 We start by describing the property that we pass to the synthesizer as the specification $\phi$. 
-Namely, as are interested in capturing safety (to be discussed in Section~\ref{ssec:safespecification}) \note{fix?},  
+Namely, as we are interested in capturing safety (to be discussed in Section~\ref{ssec:safespecification}\note{fix?}),  
 we use a stability specification to narrow the search space of possible controllers, as detailed in Section~\ref{ssec:stabspecification}.
 
 %-------------------------------
@@ -1060,7 +1061,8 @@ the considered models must account for errors deriving from several sources:
 we must bound the numerical error introduced by the finite-precision representation of the plant (and its operations), 
 and precisely model the error introduced by the ADC/DAC conversions, 
 as well as the behaviour of the limited-precision arithmetic used by the controller. 
-We use interval arithmetic to bound the error introduced by the finite-precision plant, 
+
+We employ interval arithmetic to bound the error introduced by the finite-precision plant, 
 and bounded model checking to precisely model the error introduced by the ADC/DAC and the finite-precision controller.
 
 \subsection{Bit-precise symbolic model checking}
@@ -1076,7 +1078,7 @@ however it necessitates a further stage where we verify that the errors introduc
 In this stage, we represent the plant using double-precision floating-point
 and we use the Boost interval arithmetic library~\cite{DBLP:journals/tcs/BronnimannMP06} to bound the error in this representation. 
 We employ a compositional numeric library to model the fixed point arithmetic for the controller~\cite{CNL} within double-precision floating-point numbers. 
-We check the controller is safe starting from each vertex of the set of initial states,  
+We check that the controller is safe starting from each vertex of the set of initial states,  
 and show that this is sufficient to prove safety from any state in this set. 
 
 We outline here the mathematics behind bounding the errors on the double-precision floating-point numbers. 
@@ -1216,7 +1218,7 @@ The inputs are thus computed using the following equation:
 \begin{align*}
 u_{k}&=-(\mathcal{F}_{\langle I_c,F_c \rangle}(K)\cdot\mathcal{F}_{\langle I_c,F_c \rangle}(x_{k})). 
 \end{align*}
-This induces two types of the errors, 
+This induces two types of errors, 
 as detailed above: 
 first, the truncation error due to the representation of $x_k$ as $\mathcal{F}_{\langle I_c,F_c
 \rangle}(x_{k})$; and second, the rounding error introduced by the multiplication operation. 
@@ -1236,7 +1238,7 @@ We encompass this error using interval arithmetic~\cite{moore1966interval} in th
 \label{sec:stab_FWL}
 The validity of Jury's criterion~\cite{fadali} relies on the representation of the closed-loop dynamics $x_{k+1} = (A_d - B_dK) x_k$ at infinite precision.  
 When we employ a fixed-point arithmetic digital controller, the operation above can be expressed as follows, where we use $\mathcal{F}_{\langle I_c,F_c \rangle}$ preceding a variable to indicate that variable is converted into the fixed-point precision given by $\mathcal{F}_{\langle I_c,F_c \rangle}$: 
-\note{the first of the two equations is not clear}
+\note{the first of the two equations is not clear - don't you miss a B matrix?}
 %
 \begin{align*}
 x_{k+1} &= A_d \cdot x_{k} -(\mathcal{F}_{\langle I_c,F_c \rangle}(K)\cdot\mathcal{F}_{\langle I_c,F_c \rangle}(x_{k})).  \\
@@ -1287,7 +1289,7 @@ closed-loop model.  The convergence to a finite value, however, will not
 make it asymptomatically stable.
 However,
 since in this paper we require stability only as a precursor to safety, it
-is sufficient to check that the (perturbed, noisy) model converges to a
+is sufficient to check that the perturbed model converges to a
 neighborhood of the equilibrium within the safe set. 
 
 A similar argument can be made for floating-point arithmetic.
