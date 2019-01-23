@@ -2008,7 +2008,7 @@ experiments.\footnote{\note{\url{XXXXXXXXXX}}}
 Our benchmark suite consists of \note{update} 20 SISO models extracted from the 
 control literature~\cite{acrobot,cstr,CHEN1979389,KOKOTOVIC198023,gajic2008optimal,Franklin15, maglev, converters, CTMS, gajic2008optimal}.
 The models are discretized with sampling times ranging from 1.5s to 0.005s, and if CEGIS is unable to 
-synthesise a controller for a given sampling time, CEGIS heuristically selects a new sampling time \note{do we, still?}.
+synthesise a controller for a given sampling time, CEGIS heuristically selects a new sampling time \note{do we, still? Yes, each benchmark has up to 8 time discretisations, that we run through in the order they are written in the benchmark. ``heuristically'' is a euphemism for the fact the order is not consistent for each benchmark and we dont run through them in e.g., increasing order.}.
 
 %-------------------------------
 \subsection{Description of the control benchmarks}
