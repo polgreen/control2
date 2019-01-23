@@ -2123,13 +2123,13 @@ We provide the results in Table~\ref{tab:results}, where:
 \textit{Benchmark} is the name of the corresponding benchmark; 
 \textit{Order} is the number of continuous variables of the model; 
 \textcolor{blue}{$\mathcal{F}_{\langle I_p,F_p \rangle}$, where $I_p$ and $F_p$ indicate the integer and fractional parts,  
-and \note[make this align with the notation earlier in the paper]}\textcolor{blue}{ $\mathcal{F}_{\langle W_p,F_p \rangle}$}, where $W_p$ and $F_p$ indicate the total word-length and fractional part, 
-are the fixed- and floating-point precisions used to model the plant, respectively; } 
+and $\mathcal{F}_{\langle E_p,M_p \rangle}$}, where $E_p$ and $M_p$ indicate the exponent and mantissa part, 
+are the fixed- and floating-point precisions used to model the plant, respectively; 
 and \textit{Time} is the total time required to synthesize a controller for the given plant.    
 Timeouts are indicated by~\xmark, while failures to synthesise the digital controllers are indicated by $\dagger$ \note{no such instances}.  
 The precision for the controller, $\mathcal{F}_{\langle I_c,F_c \rangle}$, is
 chosen to be $I_c = 8$, $F_c = 8$ for fixed-point, \textcolor{blue}{whereas  
-$\mathcal{F}_{\langle W_c, F_c \rangle}$ is chosen to be $W_c = 16$ and $F_c = 10$
+$\mathcal{F}_{\langle E_c, M_c \rangle}$ is chosen to be $W_c = 6$ and $F_c = 10$
 for half-precision floating-point format}.
 
 We separate our evaluation into two sets of results: fixed- and floating-point. 
@@ -2168,32 +2168,32 @@ because a fixed-point controller lacked the precision to control the system unde
 %\hline
 %\# & \multicolumn{1}{|c|}{Benchmark} & \multicolumn{1}{|c|}{Order} & \multicolumn{4}{|c|}{Multi-staged}                 & \multicolumn{4}{|c|}{Abstraction} \\
 %   &                                  & & \multicolumn{1}{|c|}{$\mathcal{F}_{\langle I_p,F_p \rangle}$} & \multicolumn{1}{|c|}{Time} & \multicolumn{1}{|c|}{$\mathcal{F}_{\langle E_p, M_p \rangle}$} & \multicolumn{1}{|c|}{Time} & \multicolumn{1}{|c|}{$\mathcal{F}_{\langle I_p,F_p \rangle}$} & \multicolumn{1}{|c|}{Time} & \multicolumn{1}{|c|}{$\mathcal{F}_{\langle E_p, M_p \rangle}$} & \multicolumn{1}{|c|}{Time}\\\hline
-%1  & Acrobot     & 4 & 16,8 & 61959.4\,s &  & ~\xmark & & ~\xmark &  & ~\xmark \\
+%1  & Acrobot     & 4 & 8,8 & 61959.4\,s &  & ~\xmark & & ~\xmark &  & ~\xmark \\
 %2  & Antenna     & 6 &  & ~\xmark &  & ~\xmark & & ~\xmark & & 2903s~\xmark\\
 %3  & Ballmaglev  & 3 &  & ~\xmark &  & ~\xmark & & ~\xmark & & ~\xmark\\
-%4  & Bioreact    & 3 & 16,8 & 11.5\,s & 16,10 &14.6\,s & 24,14 & 0.4\,s & 16,10 & 0.5\,s\\
-%5  & Chen\_ex1   & 3 & 16,8 & 10.3\,s  & 16,10 & 9.2\,s & & ~\xmark & 16,10 & 1.4\,s\\
+%4  & Bioreact    & 3 & 8,8 & 11.5\,s & 6,10 &14.6\,s & 24,14 & 0.4\,s & 6,10 & 0.5\,s\\
+%5  & Chen\_ex1   & 3 & 8,8 & 10.3\,s  & 6,10 & 9.2\,s & & ~\xmark & 6,10 & 1.4\,s\\
 %6  & Chen\_ex2   & 8& & ~\xmark & 32,23 & 4683.8\,s &  & ~\xmark & & ~\xmark\\
 %7  & Chen\_ex3   & 7 &   & ~\xmark & & ~\xmark & & ~\xmark & & ~\xmark\\
 %8  & Chen\_ex4   & 9 & & ~\xmark & & ~\xmark & & ~\xmark & & ~\xmark\\
-%9  & Cruise      & 1 & 16,8 & 9.6\,s & 16,10 & 6.5\,s & 24,14 & 0.3\,s& 16,10 & 0.3\,s\\
-%10 & CruiseHSCC & 1 & 16,8 & 9.6\,s & 16,10 & 6.6\,s &  24,14 & 0.3\,s & 16,10 & 0.3\,s \\
+%9  & Cruise      & 1 & 8,8 & 9.6\,s & 6,10 & 6.5\,s & 24,14 & 0.3\,s& 6,10 & 0.3\,s\\
+%10 & CruiseHSCC & 1 & 8,8 & 9.6\,s & 6,10 & 6.6\,s &  24,14 & 0.3\,s & 6,10 & 0.3\,s \\
 %11 & Cstr & 3 & & ~\xmark & & ~\xmark & & ~\xmark & & 181s~\xmark\\
 %12 & Cstrtmp  & 3 &  & ~\xmark & & ~\xmark & 24,14 & 0.5\,s & & ~\xmark\\
-%13 & DCmotor   & 2 & 16,8  & 11.3\,s & 16,10 & 7.8\,s & 24,14 & 0.4\,s & 16,10 & 0.5\,s (4.0\,s) \\
+%13 & DCmotor   & 2 & 8,8  & 11.3\,s & 6,10 & 7.8\,s & 24,14 & 0.4\,s & 6,10 & 0.5\,s (4.0\,s) \\
 %14 & Flexbeam   & 6 & & ~\xmark & & ~\xmark & 24,14 & 72.1\,s & & ~\xmark\\
 %15 & Guidance chen  & 5 & & ~\xmark & & ~\xmark & & ~\xmark & & ~\xmark\\
-%16 & Helicopter   & 3 & 16,8 & 13.8\,s & 32,23 & 148\,s & 24,14 & 0.8\,s& 16,10 & 1.1\,s (56.6\,s)\\
+%16 & Helicopter   & 3 & 8,8 & 13.8\,s & 32,23 & 148\,s & 24,14 & 0.8\,s& 6,10 & 1.1\,s (56.6\,s)\\
 %17 & Invpendulum\_cartpos & 4 & & ~\xmark & & ~\xmark & & ~\xmark & & ~\xmark\\
-%18 & Invpendulum\_pendang & 2 & 24,12 & 9.8\,s & 16,10 & 28.2\,s & 24,14 & 0.4\,s & 16,10 & 0.5\,s\\
-%19 & Magpointer   & 2 & 16,8 & 10.1\,s & 16,10 & 20.4\,s & 24,14  & 1\,s& 16,10 & 1.3\,s (\xmark)\\
-%20 & Magsuspension  & 2 & 12,12  & 22.2\,s  & 16,10 & 34.8\,s & 24,14 & 0.5\,s & 16,10 & 0.6\,s (\xmark)\\
-%21 & Pendulum   & 2 & 16,8 & 8.5\,s & 32,23 & 24\,s & 24,14 & 0.4\,s & 16,10 & 0.5\,s (2.4\,s)\\
+%18 & Invpendulum\_pendang & 2 & 24,12 & 9.8\,s & 6,10 & 28.2\,s & 24,14 & 0.4\,s & 6,10 & 0.5\,s\\
+%19 & Magpointer   & 2 & 8,8 & 10.1\,s & 6,10 & 20.4\,s & 24,14  & 1\,s& 6,10 & 1.3\,s (\xmark)\\
+%20 & Magsuspension  & 2 & 12,12  & 22.2\,s  & 6,10 & 34.8\,s & 24,14 & 0.5\,s & 6,10 & 0.6\,s (\xmark)\\
+%21 & Pendulum   & 2 & 8,8 & 8.5\,s & 32,23 & 24\,s & 24,14 & 0.4\,s & 6,10 & 0.5\,s (2.4\,s)\\
 %22 & Regulator   & 5 & & ~\xmark & & ~\xmark & &~\xmark  & & 529s~\xmark\\
 %23 & Springmassdamper & 2 & & ~\xmark & & ~\xmark & & ~\xmark & & 14.1s~\xmark\\
-%24 & streamdrum   & 3 & 16,8  & 332.5\,s & 16,10 & 590.5\,s & 24,14 & 0.7\,s & 16,10 &1.3\,s\\
-%25 & Suspension  & 4 & 16,8  & 17.2\,s & 16,10 &1373\,s & 56,30 & 15.3\,s & 16,10 & 4.4\,s (313.6\,s)\\
-%26 & Tapedriver   & 3 & 16,8  & 8.2\,s & & ~\xmark & 64,22 & 2.1\,s & 16,10 & 1.1\,s (6.0\,s)\\
+%24 & streamdrum   & 3 & 8,8  & 332.5\,s & 6,10 & 590.5\,s & 24,14 & 0.7\,s & 6,10 &1.3\,s\\
+%25 & Suspension  & 4 & 8,8  & 17.2\,s & 6,10 &1373\,s & 56,30 & 15.3\,s & 6,10 & 4.4\,s (313.6\,s)\\
+%26 & Tapedriver   & 3 & 8,8  & 8.2\,s & & ~\xmark & 64,22 & 2.1\,s & 6,10 & 1.1\,s (6.0\,s)\\
 %\hline
 %%
 %\end{tabular}
@@ -2208,32 +2208,32 @@ because a fixed-point controller lacked the precision to control the system unde
 \hline
 % \multicolumn{1}{|c|}{Benchmark} & \multicolumn{1}{|c|}{Order} & \multicolumn{4}{|c|}{Run-time} \\
  Benchmark  &  Order  & $\mathcal{F}_{\langle I_p,F_p \rangle}$ & Time & $\mathcal{F}_{\langle E_p, M_p \rangle}$ & Time \\\hline
-%1  & Acrobot     & 4 & 16,8 & 61529.8\,s &  & ~\xmark \\
- Antenna     & 6 &  & ~\xmark & 16,10 & 817.4\,s \\
+%1  & Acrobot     & 4 & 8,8 & 61529.8\,s &  & ~\xmark \\
+ Antenna     & 6 &  & ~\xmark & 6,10 & 817.4\,s \\
 %2  & Ballmaglev  & 3 &  & ~\xmark &  & ~\xmark \\
- Bioreact    & 3 & 16,8 & 11.5\,s & 16,10 &23.6\,s \\
- Chen\_ex1   & 3 & 16,8 & 10.3\,s  & 16,10 & 12.7\,s \\
+ Bioreact    & 3 & 8,8 & 11.5\,s & 6,10 &23.6\,s \\
+ Chen\_ex1   & 3 & 8,8 & 10.3\,s  & 6,10 & 12.7\,s \\
 %4  & Chen\_ex2   & 8& & ~\xmark & 32,23 & 3535s.1\,s \\
- Chen\_ex3   & 7 & 16,8  & 11.4\,s & 16,10 & 59.1\,s \\
+ Chen\_ex3   & 7 & 8,8  & 11.4\,s & 6,10 & 59.1\,s \\
 %8  & Chen\_ex4   & 9 & & ~\xmark & & ~\xmark & & ~\xmark & & ~\xmark\\
- Cruise      & 1 & 16,8 & 9.7\,s & 16,10 & 10.3\,s \\
- CruiseHSCC & 1 & 16,8 & 9.7\,s & 16,10 & 10.3\,s  \\
- Cstr & 3 & & ~\xmark & 16,10 & 21.4\,s \\
- Cstrtmp  & 3 & 16,8 & 12.5\,s &16,10 & 15.4\,s \\
- DCmotor   & 2 & 16,8  & 10.0\,s & 16,10 & 11.4\,s  \\
+ Cruise      & 1 & 8,8 & 9.7\,s & 6,10 & 10.3\,s \\
+ CruiseHSCC & 1 & 8,8 & 9.7\,s & 6,10 & 10.3\,s  \\
+ Cstr & 3 & & ~\xmark & 6,10 & 21.4\,s \\
+ Cstrtmp  & 3 & 8,8 & 12.5\,s &6,10 & 15.4\,s \\
+ DCmotor   & 2 & 8,8  & 10.0\,s & 6,10 & 11.4\,s  \\
 %11 & Flexbeam   & 6 & & ~\xmark & 16, 10 & 10916.1\,s \\
 %12 & Guidance chen  & 5 & & ~\xmark & & ~\xmark \\
- Helicopter   & 3 &  & ~\xmark & 16,10 & 32.0\,s \\
+ Helicopter   & 3 &  & ~\xmark & 6,10 & 32.0\,s \\
 %17 & Invpendulum\_cartpos & 4 & & ~\xmark & & ~\xmark & & ~\xmark & & ~\xmark\\
- Invpendulum\_pendang & 2 & 16,8  & 10.7 & 16,10 & 14.8\,s\\
- Magpointer   & 2 &  & ~\xmark & 16,10 & 86.0\,s \\
- Magsuspension  & 2 & 12,12  & 39.0\,s  & 16,10 & 43.2\,s \\
- Pendulum   & 2 & 16,8 & 13.2\,s & 16,10 & 16.6\,s\\
- Regulator   & 5 & 16,8 & 1532.7\,s & 16,10 & 999.6\,s\\
- Springmassdamper & 2 & & ~\xmark &16,10 & 24.2s \\
- Steamdrum   & 3 & 16,8  & 700.9s & 16,10 & 24.4\,s \\
- Suspension  & 4 & 16,8  & 11.4\,s & 16,10 &15.4\,s \\
- Tapedriver   & 3 & 16,8  & 11.4\,s &16,10 & 13.3\,s \\
+ Invpendulum\_pendang & 2 & 8,8  & 10.7 & 6,10 & 14.8\,s\\
+ Magpointer   & 2 &  & ~\xmark & 6,10 & 86.0\,s \\
+ Magsuspension  & 2 & 12,12  & 39.0\,s  & 6,10 & 43.2\,s \\
+ Pendulum   & 2 & 8,8 & 13.2\,s & 6,10 & 16.6\,s\\
+ Regulator   & 5 & 8,8 & 1532.7\,s & 6,10 & 999.6\,s\\
+ Springmassdamper & 2 & & ~\xmark &6,10 & 24.2s \\
+ Steamdrum   & 3 & 8,8  & 700.9s & 6,10 & 24.4\,s \\
+ Suspension  & 4 & 8,8  & 11.4\,s & 6,10 &15.4\,s \\
+ Tapedriver   & 3 & 8,8  & 11.4\,s &6,10 & 13.3\,s \\
 \hline
 %
 \end{tabular}
