@@ -1238,10 +1238,9 @@ We encompass this error using interval arithmetic~\cite{moore1966interval} in th
 \label{sec:stab_FWL}
 The validity of Jury's criterion~\cite{fadali} relies on the representation of the closed-loop dynamics $x_{k+1} = (A_d - B_dK) x_k$ at infinite precision.  
 When we employ a fixed-point arithmetic digital controller, the operation above can be expressed as follows, where we use $\mathcal{F}_{\langle I_c,F_c \rangle}$ preceding a variable to indicate that variable is converted into the fixed-point precision given by $\mathcal{F}_{\langle I_c,F_c \rangle}$: 
-\note{the first of the two equations is not clear - don't you miss a B matrix?}
 %
 \begin{align*}
-x_{k+1} &= A_d \cdot x_{k} -(\mathcal{F}_{\langle I_c,F_c \rangle}(K)\cdot\mathcal{F}_{\langle I_c,F_c \rangle}(x_{k})).  \\
+x_{k+1} &= A_d \cdot x_{k} -B_d(\mathcal{F}_{\langle I_c,F_c \rangle}(K)\cdot\mathcal{F}_{\langle I_c,F_c \rangle}(x_{k})).  \\
 x_{k+1} &= (A_d  - B_dK) \cdot x_k + B_dK\delta, 
 %\\ x_{k+1}&=A_d x_{k} + B_du_{k}
 \end{align*}
