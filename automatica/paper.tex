@@ -2136,7 +2136,10 @@ We separate our evaluation into two sets of results: fixed- and floating-point.
 We are able to synthesise more floating point controllers than fixed point controllers, likely because the
 floating point controllers are at a higher precision than the fixed point. It may be that the precision of the fixed-point
 controllers is too low to be able to meet the safety specification. The floating point controllers in general take longer to synthesise
-than the fixed point controllers \note{there is one surprising exception - check please}.
+than the fixed point controllers. There is one exception to this, which is due to the fact that it is not guaranteed that a controller
+exists for all the time discretizations we give the algorithm and, in this case, the fixed-point algorithm was forced to try more time discretizations
+than the floating-point algorithm
+because a fixed-point controller lacked the precision to control the system under the first few time discretizations. 
 %For the majority of the {\it fixed-point} benchmarks, we observe that the abstraction-based
 %back-end is faster than the basic multi-staged verification approach; \textcolor{blue}{additionally, 
 %from 26 benchmarks, we observed that the abstraction-based back-end finds a solution for more benchmarks 
