@@ -481,15 +481,15 @@ However, relying on state-space discretization, \mbox{Pessoa} is likely to incur
 \textbf{Discretization Effects in Control Design --}
 Classical work in control synthesis has often disregarded digitalization effects.
 Recent results in digital control, however, have focused on separate aspects of discretization, 
-including delayed response~\cite{Duggirala2015} and finite word length (FWL) semantics, 
+including delayed response~\cite{Duggirala2015} and finite-precision arithmetic, 
 with the goal either to verify~\cite{daes20161} the correctness of the implementation or to optimize~\cite{oudjida2014design} the design.
 
-There are two different problems that arise from FWL semantics in digital controllers.  The first
+There are two different problems that arise from finite-precision arithmetic in digital controllers.  The first
 is the error caused by the inability to represent the exact
 state of the physical system, while the second relates to rounding and
 saturation errors during mathematical operations.  
 In~\cite{fialho1994stability}, a stability measure based on the error of the digital dynamics ensures that
-the deviation introduced by FWL does not lead to instability.  
+the deviation introduced by finite-precision arithmetic does not lead to instability.  
 \cite{DBLP:journals/automatica/WuLCC09} uses $\mu$-calculus to directly model the digital controller so that selected
 parameters result by design in stable dynamics.  
 The analyses in~\cite{DBLP:conf/hybrid/RouxJG15, DBLP:conf/hybrid/WangGRJF16} rely on an
@@ -1127,7 +1127,7 @@ with $|\delta_3| \leq |\delta_{T1}| + |\delta_{T2}|$.
 |\delta_{T2}\cdot\mathcal{F}_{\langle I,F \rangle}(c_1)| + c_m$, where
 $c_m=2^{-F}$ as above.
 %
-\item Division: the operations performed by the controllers in the FWL
+\item Division: the operations performed by the controllers in the finite-precision
 domain do not include division.  However, we do use division in computations within the plant.  
 Here the error depends on whether the divisor is greater or smaller than the dividend:  $\mathcal{F}_{\langle I,F
 \rangle}(c_1) / \mathcal{F}_{\langle I,F \rangle}(c_2) = c_3 + \delta_{T3}$, 
@@ -1960,7 +1960,7 @@ which can be split into two main stages: manual and automated, as illustrated in
 In Step~1, the user selects the system representation, which can be a transfer function or a state-space model.  
 In Step~2, the physical plant (e.g., in the form of Equation~\eqref{eq:ode1}) is provided~\cite{astrom1997computer}.  
 Finally, in Step~3, the numerical representation for the digital controller implementation must be set by the user, i.e., 
-the FWL format that defines the number of bits of integer and fractional parts when using fixed-point arithmetic, 
+the finite-precision arithmetic that defines the number of bits of integer and fractional parts when using fixed-point arithmetic, 
 or half- and single-precision when using floating-point arithmetic, 
 as well as the input range.  
 % This input, provided by the user, is a specification of the physical plant.
@@ -1972,8 +1972,7 @@ In Step~B, the proposed CEGIS engine is invoked to synthesize the digital contro
 Finally, in Step~C, the synthesized digital controller is generated.  
 The output by \tool~is the synthesized digital controller represented either as a transfer function or in state-space form.  
 The synthesis is considered to be \emph{successful} if a digital controller is
-correctly synthesized w.r.t.~FWL effects; otherwise, \note{needed next?}if any parameter is
-incorrectly defined in previous steps, \note{next OK;} or if there is no solution (no
+correctly synthesized w.r.t. effects of finite-precision arithmetic; or if there is no solution (no
 controller) for the corresponding physical plant (given the implementation
 requirements), then the synthesis is considered to have \emph{failed} \note{we don't seem to have any such instance.}.
 
@@ -1982,8 +1981,8 @@ model checker (CBMC)~\cite{ClarkeKL04}.  CBMC transforms the ANSI-C representati
 of the closed-loop control model model into its internal representation (IR).  We
 instrument this IR for each synthesis or verification scenario accordingly,
 and use CBMC as an oracle to answer our queries.  CBMC itself relies on an
-underlying SAT or SMT solver to address verification conditions.  We~model FWL
-effects, time discretization \note{keep time-d?}, and the presence of quantization noise
+underlying SAT or SMT solver to address verification conditions.  We~model
+effects of finite-precision arithmetic 
 explicitly using CBMC's nondeterminism API (e.g., \texttt{nondet},
 \texttt{CPROVER\_assume} intrinsic functions).  Our module is included into
 CBMC~5.7 and is available for
@@ -2106,7 +2105,7 @@ the evaluation study has the following experimental goal:
 
 \item[EG1] \textbf{(Performance)} Show that the multi-staged 
 %and the abstraction-based 
-CEGIS approach is able to generate FWL digital controllers using floating-point arithmetic in a reasonable amount of time.
+CEGIS approach is able to generate finite-precision digital controllers using fixed-point and floating-point arithmetic in a reasonable amount of time.
 
 %\item[EG2] \textbf{(Sanity check)} Confirm the stability \note{also?} and safety of the synthesized controllers outside 
 %of our model representation using MATLAB. 
@@ -2270,7 +2269,7 @@ not generalize to other benchmarks.
 %\note{is this where we attempt asserting EG2?}
 
 \textit{Plant precision and discretization heuristics:} Our algorithm to
-select suitable FWL word widths to model the plant behavior 
+select suitable finite-precision arithmetic to model the plant behavior 
 increases the precision by 8 bits at each step 
 in order to be compliant with the CBMC type API. 
 Similarly, for discretization, we run multiple discretizations for each
