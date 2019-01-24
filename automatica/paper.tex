@@ -132,7 +132,7 @@ grestore
 %\thanksref{footnoteinfo}
 
 \title{Automated Formal Synthesis\\ 
-of Safe Digital Controllers 
+of Provably Safe Digital Controllers 
 for Continuous Plants}
 % Title, preferably not more
 % than 10 words.
@@ -197,26 +197,21 @@ Digital control synthesis \and Safety requirements \and Analog/Digital conversio
 \begin{abstract}                          % Abstract of not more than 200 words.
 %\textcolor{red}{Cristina: Can you please write an initial version of the abstract.}
 We present a sound and automated approach to synthesizing safe,
-digital controllers for physical plants represented as linear,
-time-invariant models. Models are defined as differential equations
-with inputs, evolving over a continuous state space. The synthesis
-accounts for errors caused by the digitization effects introduced by
-the controller. Our approach uses counterexample-guided inductive
-synthesis (CEGIS): an inductive generalization phase produces a
-possible solution that is known to stabilize the system but that may
-not be safe for all initial conditions. 
+digital controllers for physical plants represented as time-invariant models. 
+Models are linear differential equations with inputs, evolving over a continuous state space. 
+The synthesis accounts for errors caused by the digitization effects introduced by the controller. 
+The approach uses counterexample-guided inductive synthesis (CEGIS): 
+an inductive generalization phase produces a controller that is known to stabilize the system but that may
+not be safe for all initial conditions of the model.  
 \ifx\axelerator
 Safety is then verified either
 via Bounded Model Checking or abstract acceleration;
 \else
-Safety is then verified via Bounded Model Checking;
+Safety is then verified via Bounded Model Checking: 
 \fi 
-if the verification step fails, a
-counterexample is provided to the inductive generalization and the
-process iterates until a safe controller is obtained.  We demonstrate
-the practical value of this approach by automatically synthesizing
-safe controllers for physical plant models from the digital control
-literature.
+if the verification step fails, 
+a counterexample is provided to the inductive generalization and the process iterates until a safe controller is obtained.  
+We demonstrate the practical value of this approach by automatically synthesizing safe controllers for physical plant models from the digital control literature.
 \end{abstract}
 
 
@@ -226,23 +221,23 @@ literature.
 Modern implementations of embedded control systems have proliferated
 with the availability of low-cost devices that can perform highly
 non-trivial control tasks, with significant impact in numerous
-application areas such as the life sciences, high-precision control, 
+application areas such as process and industrial engineering, high-precision control, 
 automotive and robotics~\cite{astrom1997computer, Franklin15}.  
-Provably correct synthesis of control software for such platforms is non-trivial, 
-even in cases with unsophisticated dynamics. 
+However, provably correct synthesis of control software for such platforms, 
+needed if certification is in order, is non-trivial even in cases with unsophisticated dynamics. 
 
-In this paper, we examine the case of Linear Time Invariant (LTI)
-models, for which the synthesis of controllers is well understood.
+In this paper, we examine the case of physical systems (plants) described mathematically as 
+Linear Time Invariant (LTI) models, for which the classical synthesis of controllers is well understood.
 However, the use of digital control architectures adds new challenges
 caused by artefacts specific to digital control, such as the effects
 of finite-precision arithmetic, time discretization and quantization
 errors introduced by A/D and D/A conversion.
 %
 Given an LTI model, we develop an automatic technique for generating
-correct-by-construction digital controllers that addresses all these
-challenges. Specifically, we automatically synthesize %stable and 
+correct-by-design digital controllers that addresses these challenges. 
+Specifically, we automatically synthesize %stable and 
 safe,
-software-implemented embedded controllers.  
+software-implemented embedded controllers for physical plants.   
 %Due to the complexity of
 %such closed-loop systems, we focus on linear models with known
 %configurations, and perform parametric synthesis of controllers.
@@ -293,18 +288,18 @@ software-implemented embedded controllers.
 %% synthesis of stabilizing digital controllers with a number of properties that
 %% define their desired behaviour.
 
-Our work addresses challenging aspects of the control synthesis problem:  
-we perform digital control synthesis over a ``hybrid model'',
+Our work addresses challenging aspects of control synthesis:  
+we perform automated control synthesis over a ``hybrid model'', 
 namely a model encompassing a plant exhibiting continuous behavior, 
 and a controller operating in discrete time and over a quantized domain.  
 In particular, our model evaluates the effects of the quantizers (A/D and D/A
-converters), as well as representation
-errors introduced by the controller working  %% artifacts such as an
+converters), as well as representation errors introduced by the controller working  %% artifacts such as an
 %% observer~\cite{astrom1997computer}
 in a finite-precision domain. Our model also accounts for representation errors introduced
-by our modelling of the plant using finite precision arithmetic. 
-We reason about safety requirements, which are frequently overlooked in conventional feedback control synthesis, but
-play a key role in systems engineering, particularly for safety-critical applications of clear concern in modern autonomy contexts.  
+by our modelling of the plant using finite-precision arithmetic. 
+We reason about safety requirements, which are frequently overlooked in conventional feedback control synthesis, 
+but which nevertheless play a key role in safety-critical applications, of clear concern in numerous modern contexts, 
+e.g. autonomy in robotics, avionics, and automotive.  
 
 %% Using state of the art verifiers, we evaluate these models against
 %% automatically synthesised controllers using CEGIS-based synsthesis that
@@ -314,14 +309,13 @@ play a key role in systems engineering, particularly for safety-critical applica
 In this paper we present two novel approaches for the synthesis of
 digital controllers, both of which make 
 \else
-In this paper we present a novel approach for the synthesis of digital controllers,
-making 
+We present a novel approach for the synthesis of digital controllers making 
 \fi
-use of the framework known as counterexample guided
-inductive synthesis (CEGIS)~\cite{jha-icse10,
+use of a recently investigated framework known as counterexample-guided
+inductive synthesis (CEGIS)~\cite{jha-icse10, 
   DBLP:conf/asplos/Solar-LezamaTBSS06}, 
   a technique from formal methods that has recently shown much promise and which we 
-  export in this work to a control-theoretical setup.  
+  export in this work to a control engineering setup.  
 CEGIS is an iterative process, where each iteration performs inductive
 generalization based on counterexamples provided by a verification
 oracle (see Section~\ref{ssec:cegis}). The inductive generalization uses information 
