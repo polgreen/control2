@@ -311,16 +311,16 @@ digital controllers, both of which make
 \else
 We present a novel approach for the synthesis of digital controllers making 
 \fi
-use of a recently investigated framework known as counterexample-guided
-inductive synthesis (CEGIS)~\cite{jha-icse10, 
-  DBLP:conf/asplos/Solar-LezamaTBSS06}, 
-  a technique from formal methods that has recently shown much promise and which we 
-  export in this work to a control engineering setup.  
+use of a recently investigated framework known as counterexample-guided 
+inductive synthesis (CEGIS)~\cite{jha-icse10, DBLP:conf/asplos/Solar-LezamaTBSS06},  
+a technique from formal methods that has recently shown much promise and which we 
+export in this work to a control engineering setup. 
 CEGIS is an iterative process, where each iteration performs inductive
 generalization based on counterexamples provided by a verification
 oracle (see Section~\ref{ssec:cegis}). The inductive generalization uses information 
 about a limited number of inputs to compute a candidate solution
-for the entire range of possible inputs. Our two instantiations of CEGIS are described next.
+for the entire range of possible inputs. 
+%Our two instantiations of CEGIS are described next.
 
 %% offer three modes of
 %% operation that address different aspects of the problem.
@@ -333,15 +333,15 @@ for the entire range of possible inputs. Our two instantiations of CEGIS are des
 \else
 Our approach
 \fi
-uses a multi-staged technique that starts by devising a
+uses a multi-staged \note{we should state what we mean by `stage' in multi-stage?} technique that starts by devising a
 digital controller that stabilizes the plant model while remaining safe for a
 pre-selected time horizon and a single initial state; then, it verifies
 unbounded-time safety by unfolding the model dynamics, considering the 
 full set of initial states, and checking a \emph{completeness
-threshold}~\cite{DBLP:conf/vmcai/KroeningS03}, i.e., the number of
-iterations required to sufficiently unwind the closed-loop state-space
-model such that the safety boundaries are not violated for any larger number of
-iterations.  
+threshold}~\cite{DBLP:conf/vmcai/KroeningS03}, i.e., 
+the number of iterations\note{stages?} required to sufficiently unwind the closed-loop model, 
+such that the safety boundaries are not violated for any larger number of iterations.  
+\note{we do not state the contribution about errors - this should be briefly mentioned here, before the item below. }
 
 \ifx\axelerator
 Instead of unfolding the dynamics, \emph{the second approach}
@@ -407,7 +407,7 @@ specific extension to~\cite{DBLP:conf/cav/AbateBCCDKKP17}):
 %
 \item We develop a model for different sources of quantization error and account for 
   their effect on safety.  We provide bounds that ensure the
-  safety of our controllers in a hybrid (i.e., continuous/digital) domain.
+  safety of our controllers in a hybrid (i.e., continuous/digital) domain \note{keep? needed?}.
 
 
 %\item While~\cite{DBLP:conf/cav/AbateBCCDKKP17} is restricted to models in discrete 
@@ -454,7 +454,7 @@ Program synthesizers are an ideal fit for the synthesis of digital controllers, 
 the semantics of programs precisely capture the effects of finite-precision arithmetic.  
 In~\cite{DBLP:conf/cdc/RavanbakhshS15}, the authors use CEGIS 
 for the synthesis of switching controllers for stabilizing continuous-time
-plants with polynomial dynamics.  The work extends to affine systems, but is
+plants with polynomial dynamics.  The work extends to affine systems \note{extension or restriction?}, but is
 limited by the capacity of the state-of-the-art SMT solvers for solving
 linear arithmetic.  Since this approach uses switching models instead of
 linear dynamics for the digital controller, it avoids problems related to
@@ -467,18 +467,18 @@ safe states (constrained reachability).  This solution is based on
 synthesizing control Lyapunov functions for switched systems that yield
 switching controllers with a guaranteed minimum dwell time in each mode. 
 However, both approaches are unsuitable for the kind of controllers that we seek to
-synthesize.
+synthesize \note{why?}.
 
 The work in~\cite{hscc-paper} synthesizes stabilizing controllers for
 continuous plants given as transfer functions by exploiting bit-accurate
 verification of software-implemented digital controllers~\cite{Bessa16}. 
 While this work also uses CEGIS, the approach is restricted to digital
-controllers for stable closed-loop systems given as transfer function
+controllers for stable closed-loop systems expressed as transfer function
 models: this results in a static check on their coefficients.  By contrast,
 in the current paper we consider a state-space representation of the
 physical system, which requires ensuring the specification over actual
 traces of the model, alongside the numerical soundness required by the
-effects of discretisation and finite-precision errors.
+effects of discretisation and the errors related to finite-precision arithmetic.  
 
 A~state-space model has known advantages over the transfer function
 representation~\cite{Franklin15}, as 
@@ -487,12 +487,12 @@ it allows synthesis of controllers with guarantees on the internal dynamics, e.g
 %to synthesize controllers that make the closed-loop model 
 \emph{safety}.  Our work indeed focuses on the safety of internal states, 
 which is by and large overlooked in the standard (digital) control literature, 
-by default focussed on stability properties.  
+by default focussed on stability/regulation/tracking properties.  
 Moreover, our work integrates an abstraction-refinement (CEGAR) step inside the main CEGIS loop.
 
-The technique underpinning tools such as Pessoa~\cite{mazo2010pessoa}, related extensions \cite{Anta2010,liu16}, and applications \cite{zamani2014}
+The technique underpinning tools such as Pessoa~\cite{mazo2010pessoa}, related extensions \cite{Anta2010,liu16} and applications \cite{zamani2014}
 synthesizes correct-by-design embedded control software for LTI models.    
-It is based on the abstraction of the model to a finite-state machine, 
+It is based on the abstraction of the model as a finite-state machine, 
 and on the formal control synthesis over safety- and reachability-based temporal properties thereon.  
 %Based on this safety specification, \mbox{Pessoa} can synthesize embedded controller software for a range of
 %properties.  
@@ -507,7 +507,7 @@ However, relying on state-space discretization, \mbox{Pessoa} is likely to incur
 Classical work in control synthesis has often disregarded digitalization effects.
 Recent results in digital control, however, have focused on separate aspects of discretization, 
 including delayed response~\cite{Duggirala2015} and finite-precision arithmetic, 
-with the goal either to verify~\cite{daes20161} the correctness of the implementation or to optimize~\cite{oudjida2014design} the design.
+with the goal either to verify~\cite{daes20161} the correctness of the implementation or to optimize~\cite{oudjida2014design} its design.
 
 There are two different problems that arise from finite-precision arithmetic in digital controllers.  The first
 is the error caused by the inability to represent the exact
@@ -516,7 +516,7 @@ saturation errors during mathematical operations.
 In~\cite{fialho1994stability}, a stability measure based on the error of the digital dynamics ensures that
 the deviation introduced by finite-precision arithmetic does not lead to instability.  
 \cite{DBLP:journals/automatica/WuLCC09} uses $\mu$-calculus to directly model the digital controller so that selected
-parameters result by design in stable dynamics.  
+parameters result by design in stable dynamics \note{unclear}.  
 The analyses in~\cite{DBLP:conf/hybrid/RouxJG15, DBLP:conf/hybrid/WangGRJF16} rely on an
 invariant computation on the discrete dynamics using Semi-Definite
 Programming (SDP):  while the former contribution uses bounded-input and bounded-output
@@ -534,8 +534,7 @@ Similarly,
 \cite{liberzon2003hybrid} evaluates the quantization error dynamics and calculates an upper and lower
 bound for the possible trajectory of the system up to a finite time. 
 %This technique works for both linear and non-linear systems.
-
-%\note{Add note explaining relationship of this work with previously published papers. }
+\note{Add note explaining relationship of this work with previously published reviewed literature?} 
 
 %-------------------------------
 \section{Preliminaries}
