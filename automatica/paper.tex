@@ -1,41 +1,51 @@
-% autosam.tex
-% Annotated sample file for the preparation of LaTeX files
-% for the final versions of papers submitted to or accepted for 
-% publication in AUTOMATICA.
+%%%%%%%%%%%%%%%%%%%%%%% file template.tex %%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% This is a general template file for the LaTeX package SVJour3
+% for Springer journals.          Springer Heidelberg 2010/09/16
+%
+% Copy it to a new file with a new name and use it as the basis
+% for your article. Delete % signs as needed.
+%
+% This template includes a few options for different layouts and
+% content for various journals. Please consult a previous issue of
+% your journal as needed.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% First comes an example EPS file -- just ignore it and
+% proceed on the \documentclass line
+% your LaTeX will extract the file if required
+\begin{filecontents*}{example.eps}
+%!PS-Adobe-3.0 EPSF-3.0
+%%BoundingBox: 19 19 221 221
+%%CreationDate: Mon Sep 29 1997
+%%Creator: programmed by hand (JK)
+%%EndComments
+gsave
+newpath
+  20 20 moveto
+  20 220 lineto
+  220 220 lineto
+  220 20 lineto
+closepath
+2 setlinewidth
+gsave
+  .4 setgray fill
+grestore
+stroke
+grestore
+\end{filecontents*}
+%
+\RequirePackage{fix-cm}
+%
+%\documentclass{svjour3}                     % onecolumn (standard format)
+%\documentclass[smallcondensed]{svjour3}     % onecolumn (ditto)
+\documentclass[smallextended]{svjour3}       % onecolumn (second format)
+%\documentclass[twocolumn]{svjour3}          % twocolumn
+%
+\smartqed  % flush right qed marks, e.g. at end of proof
+%
 
-% See also the Information for Authors.
-
-% Make sure that the zip file that you send contains all the 
-% files, including the files for the figures and the bib file.
-
-% Output produced with the elsart style file does not imitate the
-% AUTOMATICA style. The style file is generic for all Elsevier
-% journals and the output is laid out for easy copy editing. The
-% final document is produced from the source file in the
-% AUTOMATICA style at Elsevier.
-
-% You may use the style file autart.cls to obtain a two-column 
-% document (see below) that more or less imitates the printed 
-% Automatica style. This may helpful to improve the formatting 
-% of the equations, tables and figures, and also serves to check 
-% whether the paper satisfies the length requirements.
-
-% Please note: Authors must not create their own macros.
-
-% For further information regarding the preparation of LaTeX files 
-% for Elsevier, please refer to the "Full Instructions to Authors" 
-% from Elsevier's anonymous ftp server on ftp.elsevier.nl in the
-% directory pub/styles, or from the internet (CTAN sites) on
-% ftp.shsu.edu, ftp.dante.de and ftp.tex.ac.uk in the directory
-% tex-archive/macros/latex/contrib/supported/elsevier.
-
-
-%\documentclass{elsart}               % The use of LaTeX2e is preferred.
-
-\documentclass[twocolumn]{autart}    % Enable this line and disable the 
-                                     % preceding line to obtain a two-column 
-                                     % document whose style resembles the
-                                     % printed Automatica style.
 
 \usepackage{graphicx}
 \usepackage{color}
@@ -100,10 +110,10 @@
 \newcommand{\mat}[1]{{#1}}
 \renewcommand{\vec}[1]{{#1}}
 \newcommand{\comment}[1]{}
-\newtheorem{lemma}{Lemma}
-\newtheorem{theorem}{Theorem}
-\newtheorem{corollary}{Corollary}
-\newtheorem{proof}{Proof}
+%\newtheorem{lemma}{Lemma}
+%\newtheorem{theorem}{Theorem}
+%\newtheorem{corollary}{Corollary}
+%\newtheorem{proof}{Proof}
 
 \newcommand{\xmark}{\ding{55}}
 
@@ -112,7 +122,7 @@
 
 \begin{document}
 \newcommand\tool{{\sf DSSynth}}
-\begin{frontmatter}
+
 
 %\runtitle{Insert a suggested running title}  % Running title for regular 
                                               % papers but only if the title  
@@ -127,27 +137,48 @@ for Continuous Plants}
 % Title, preferably not more
 % than 10 words.
 
-%\thanks[footnoteinfo]{This paper was not presented at any IFAC 
-%meeting. Corresponding author M.~T.~Cicero. Tel. +XXXIX-VI-mmmxxi. 
-%Fax +XXXIX-VI-mmmxxv.}
 
-\author[oxford]{Alessandro Abate}\ead{alessandro.abate@cs.ox.ac.uk},
-\author[manaus]{Iury Bessa}\ead{iurybessa@ufam.edu.br},
-\author[oxford]{Dario Cattaruzza}\ead{dario.cattaruzza@cs.ox.ac.uk},
-\author[manchester]{Lucas Cordeiro}\ead{lucas.cordeiro@manchester.ac.uk},
-\author[cambridge]{Cristina David}\ead{cd652@cam.ac.uk},
-\author[oxford]{Pascal Kessel}\ead{pascal.kesseli@cs.ox.ac.uk},
-\author[oxford]{Daniel Kroening}\ead{kroening@cs.ox.ac.uk},
-\author[oxford]{Elizabeth Polgreen}\ead{elizabeth.polgreen@cs.ox.ac.uk}
+\author{Alessandro Abate         \and
+        Iury Bessa \and
+        Dario Cattaruzza \and
+        Lucas Cordeiro \and
+        Cristina David \and
+        Pascal Kesseli \and
+        Daniel Kroening \and
+        Elizabeth Polgreen
+}
 
-\address[oxford]{University of Oxford, UK}
-\address[cambridge]{University of Cambridge, UK}
-\address[manchester]{University of Manchester, UK}
-\address[manaus]{Federal University of Amazonas, Brazil} 
+\authorrunning{Abate et al.} % if too long for running head
+
+%\institute{F. Author \at
+%              first address \\
+%
+%              \email{fauthor@example.com}           %  \\
+%%             \emph{Present address:} of F. Author  %  if needed
+%           \and
+%           S. Author \at
+%              second address
+%}
+
+
+\maketitle
+%\author[oxford]{Alessandro Abate}\ead{alessandro.abate@cs.ox.ac.uk},
+%\author[manaus]{Iury Bessa}\ead{iurybessa@ufam.edu.br},
+%\author[oxford]{Dario Cattaruzza}\ead{dario.cattaruzza@cs.ox.ac.uk},
+%\author[manchester]{Lucas Cordeiro}\ead{lucas.cordeiro@manchester.ac.uk},
+%\author[cambridge]{Cristina David}\ead{cd652@cam.ac.uk},
+%\author[oxford]{Pascal Kessel}\ead{pascal.kesseli@cs.ox.ac.uk},
+%\author[oxford]{Daniel Kroening}\ead{kroening@cs.ox.ac.uk},
+%\author[oxford]{Elizabeth Polgreen}\ead{elizabeth.polgreen@cs.ox.ac.uk}
+%
+%\address[oxford]{University of Oxford, UK}
+%\address[cambridge]{University of Cambridge, UK}
+%\address[manchester]{University of Manchester, UK}
+%\address[manaus]{Federal University of Amazonas, Brazil} 
           
-\begin{keyword}                           % Five to ten keywords,  
-Digital control synthesis; Safety requirements; Analog/Digital conversion; Quantization errors; Time sampling.               % chosen from the IFAC 
-\end{keyword}                             % keyword list or with the 
+\keywords{                        % Five to ten keywords,  
+Digital control synthesis \and Safety requirements \and Analog/Digital conversion \and Quantization errors \and Time sampling              % chosen from the IFAC 
+}                            % keyword list or with the 
                                           % help of the Automatica 
                                           % keyword wizard
 
@@ -188,7 +219,7 @@ safe controllers for physical plant models from the digital control
 literature.
 \end{abstract}
 
-\end{frontmatter}
+
 
 \section{Introduction}
 
@@ -2319,7 +2350,7 @@ within a reasonable amount of time.
 %Partially supported by the Roman Senate.  % here.
 %\end{ack}
 
-\bibliographystyle{plain}        % Include this if you use bibtex 
+\bibliographystyle{spbasic}       % Include this if you use bibtex 
 \bibliography{paper}           % and a bib file to produce the 
                                  % bibliography (preferred). The
                                  % correct style is generated by
