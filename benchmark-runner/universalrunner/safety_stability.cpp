@@ -10,8 +10,8 @@
 
 #define INITIALSTATE_UPPERBOUND (__plant_precisiont)0.5
 #define INITIALSTATE_LOWERBOUND (__plant_precisiont)-0.5
-#define SAFE_STATE_UPPERBOUND (__plant_precisiont)1.0
-#define SAFE_STATE_LOWERBOUND (__plant_precisiont)-1.0
+#define SAFE_STATE_UPPERBOUND (__plant_precisiont)1.5
+#define SAFE_STATE_LOWERBOUND (__plant_precisiont)-1.5
 
 static int NUMBERLOOPS;
 static __plant_matrixt _controller_states(NSTATES, 1);
