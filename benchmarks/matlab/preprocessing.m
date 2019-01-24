@@ -13,7 +13,7 @@
 SS_benchmarks = load('benchmark_ss.mat');
 SS_names = fieldnames(SS_benchmarks);
 
-directory = '../headerfiles/';
+directory = 'headerfiles/';
 safecount=0;
 unsafecount=0;
 stablecount=0;
