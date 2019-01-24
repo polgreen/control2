@@ -115,7 +115,7 @@ fi
 
 #dkr15
 if [ "$1" == "dkr17" ]; then
-benchmark_dirs=(${BENCHMARK_BASE_DIR}/magneticpointer/ )
+benchmark_dirs=(${BENCHMARK_BASE_DIR}/antenna/ )
 fi
 
 working_directory_base="/tmp/control_synthesis-fixed-ss-${working_directory_base_suffix}"
@@ -164,6 +164,7 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
    echo_log "$CEGIS_ARGS -D _PLANT_TOTAL_BITS=$((integer_width+radix_width)) -D _PLANT_RADIX_BITS=${radix_width} -D NUMBERLOOPS=${k_size} ${synthesis_file}"
    timeout --preserve-status --kill-after=${kill_time} ${timeout_time} cegis $CEGIS_ARGS -D _PLANT_TOTAL_BITS=$((integer_width+radix_width)) -D _PLANT_RADIX_BITS=${radix_width} -D NUMBERLOOPS=${k_size} ${synthesis_file} 2>>${log_file} 1>${cbmc_log_file}
    cbmc_result=$?
+   echo_log "CBMC result: ${cbmc_result}"
    cat ${cbmc_log_file} >>${log_file}
    controller_items=$(grep '<item>' ${cbmc_log_file} | tail -n ${num_states})
    controller_params=$(echo "${controller_items}" | sed -r 's/<\/item> <item>/ /g' | sed -r 's/<item>//g' | sed -r 's/<\/item>//g' | tr '\n' ' ')
@@ -202,6 +203,7 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
       solution_found=true
       break
      else
+      echo_log "failed precision check, increase precision"
       integer_width=$((integer_width+4))
       radix_width=$((radix_width+4))
      fi
