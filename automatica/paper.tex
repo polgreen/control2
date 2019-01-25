@@ -150,21 +150,22 @@ for Continuous Plants}
 
 \authorrunning{Abate et al.} % if too long for running head
 
-\institute{A. Abate \at
-              University of Oxford
-              \and
-              I. Bessa \at University of Manaus
-              \and
-              L. Cordeiro \at University of Manchester
-              \and
-              C. David \at University of Cambridge
-              \and
-              P. Kesseli \at DiffBlue 
-              \and
-              D. Kroening \at University of Oxford
-              \and
-              E. Polgreen \at University of Oxford 
-}
+\institute{}
+%A. Abate \at
+%              University of Oxford
+%              \and
+%              I. Bessa \at University of Manaus
+%              \and
+%              L. Cordeiro \at University of Manchester
+%              \and
+%              C. David \at University of Cambridge
+%              \and
+%              P. Kesseli \at DiffBlue 
+%              \and
+%              D. Kroening \at University of Oxford
+%              \and
+%              E. Polgreen \at University of Oxford 
+%}
 
 
 
@@ -518,44 +519,44 @@ and on the formal control synthesis over safety- and reachability-based temporal
 The obtained finite controller software can then be implemented over the concrete LTI model. 
 %can be more complicated than
 %the state-feedback control we synthesize, and the properties available cover more detail.  
-However, relying on state-space discretization, this set of approaches is likely to incur scalability limitations.   
+However, relying on state-space discretization, this class of approaches is likely to incur scalability limitations.   
 %Along this research line, \cite{Anta2010,liu16} studies the synthesis of digital controllers for
 %continuous dynamics, and \cite{zamani2014} extends the approach to the Network Control Systems setup. 
 
 \medskip
 
 \textbf{Discretization Effects in Control Design --}
-Classical work in control synthesis has often disregarded digitalization effects.
-Recent results in digital control, however, have focused on separate aspects of discretization, 
-including delayed response~\cite{Duggirala2015} and finite-precision arithmetic, 
+%Classical work in control synthesis has often disregarded digitalization effects.
+Recent results in digital control have focused on separate aspects of discretization, 
+e.g. delayed response~\cite{Duggirala2015} and finite-precision arithmetic, 
 with the goal either to verify~\cite{daes20161} the correctness of the implementation or to optimize~\cite{oudjida2014design} its design.
 
-There are two different problems that arise from finite-precision arithmetic in digital controllers.  The first
-is the error caused by the inability to represent the exact
-state of the physical system, while the second relates to rounding and
-saturation errors during mathematical operations.  
+There are two different problems that arise from finite-precision arithmetic in digital controllers.  
+The first is the error caused by the inability to represent the exact state of the physical system, 
+while the second relates to rounding and saturation errors during mathematical operations.  
 In~\cite{fialho1994stability}, a stability measure based on the error of the digital dynamics ensures that
 the deviation introduced by finite-precision arithmetic does not lead to instability.  
-\cite{DBLP:journals/automatica/WuLCC09} uses $\mu$-calculus to directly model the digital controller so that selected
-parameters result by design in stable dynamics \note{unclear}.  
+\cite{DBLP:journals/automatica/WuLCC09} uses $\mu$-calculus to synthesise directly a digital controller, 
+so that selected parameters result in stable model dynamics.  
 The analyses in~\cite{DBLP:conf/hybrid/RouxJG15, DBLP:conf/hybrid/WangGRJF16} rely on an
 invariant computation on the discrete dynamics using Semi-Definite
-Programming (SDP):  while the former contribution uses bounded-input and bounded-output
-(BIBO) properties to determine stability, the latter uses Lyapunov-based
+Programming (SDP):  while the former contribution a uses bounded-input and bounded-output
+(BIBO) notion of stability, the latter employs Lyapunov-based
 quadratic invariants.  In both cases, the SDP solver uses floating-point
-arithmetic and soundness is checked by bounding the error.  
+arithmetic and soundness is checked by bounding the obtained error.  
 An alternative is~\cite{park2016scalable}, where the verification of given control code is
-performed against a known model by extracting an LTI model of the code by
-symbolic execution: to account for rounding errors, an upper bound is
+performed against a known model by extracting an LTI model of the code via 
+symbolic execution: to account for rounding errors, upper bounds of their values are 
 introduced in the verification phase.  
 The work in~\cite{picasso2003stabilization} introduces invariant sets as a mechanism to
 bound the quantization error effect on stabilization.  
 % as an invariant set that always converges toward the controllable set.  
 Similarly, 
 \cite{liberzon2003hybrid} evaluates the quantization error dynamics and calculates an upper and lower
-bound for the possible trajectory of the system up to a finite time. 
+bound for the possible trajectory of the system, up to a finite time. 
+The last two approaches can be placed within the research area known as ``hybrid systems theory.''  
 %This technique works for both linear and non-linear systems.
-\note{Add note explaining relationship of this work with previously published reviewed literature?} 
+The present contribution distances itself from all these cognate results. 
 
 %-------------------------------
 \section{Preliminaries}
@@ -778,8 +779,9 @@ safety requirements with an overall approach that is sound and automated.
 More specifically, we require that the closed-loop model 
 %\eqref{eq:closedloopss} 
 meets a given safety specification.  
-A safety specification gives rise to a requirement on the states of the model, such
-that the feedback controller (namely the choice of the gain matrix~$K$)
+A safety specification gives rise to a requirement on the states of the model, 
+namely that they remain within the safe set at all times (that is, over an infinite number of time steps).  
+So the feedback controller (namely the choice of the gain matrix~$K$)
 must ensure that the state never violates the requirement.  Note that an asymptotically 
 stable, closed-loop system is not necessarily a safe system: indeed, the 
 state values may leave the safe part of the state space while they converge
@@ -798,7 +800,9 @@ where $\underline{x_{i}}$ and $\overline{x_{i}}$ are lower and upper bounds
 for the $i$-th coordinate $x_{i}$ of state $x\in \mathbb R^n$ 
 at the $k$-th instant, respectively.  This requires that the states will always be within an $n$-dimensional hyper-box.
 
-Furthermore, it is practically relevant to consider the 
+\medskip 
+
+Beyond the main requirement on safety, it is practically relevant to consider the 
 constraints $\phi_\mathit{input}$ on the input
 signal $u_{k}$ and $\phi_\mathit{init}$ on the initial states $x_0$,
 which we assume have given bounds:
@@ -812,7 +816,7 @@ might saturates in view of physical constraints.
 \label{sec:BMC}
 
 We employ the bounded model checker CBMC~\cite{DBLP:conf/tacas/KroeningT14} to model the controller behavior on digital signals with finite bit-precision.  
-We express the controller semantics as C programs, which is CBMC's preferable input language.  
+We express the controller semantics as C programs, which is CBMC's preferred input language.  
 CBMC symbolically executes every instruction in an input program by translating it to a boolean satisfiability problem,
  which is satisfiable iff a certain property about the program holds.  
 CBMC's API allows to specify these properties in the form of assertions in the input program: 
@@ -827,7 +831,7 @@ we set these properties to express that our controllers generate (asymptotically
 A key contribution of this work is that, when synthesizing controllers, it precisely models the finite-precision arithmetic in the digital controller, guaranteeing that these controllers implemented with finite-precision arithmetic are safe. 
 Finite-precision arithmetic introduces errors, as shown in Figure~\ref{fig:digitalsystem}. 
 Details of how we model this arithmetic are in Section~\ref{sec:numeric_rep}. 
-\note{[rephrase?] These errors are present in the real world}, and we must model them accurately in order to capture the full behaviour of the model:  
+\note{[rephrase?] These errors are present in the real world [as opposed to being absent? vacuous statement?]}, and we must model them accurately in order to capture the full behaviour of the model:  
 
 \begin{itemize}
 
@@ -843,15 +847,19 @@ This is a reasonable assumption based on commonly available hardware.
 \item The DAC can potentially introduce further errors. 
 However, we assume that the DAC converts numbers to analog signals with the same precision as the controller. 
 Again, this assumption is practically reasonable. 
-As a result we can ignore any additional errors introduced by the DAC. 
-It would, however, be straightforward to account for a DAC or ADC of different precision to the controller in our algorithm, if necessary. 
+As a result we can ignore possible additional errors introduced by the DAC. 
+It would, however, be straightforward to account for a DAC or ADC of different precision than the controller in our algorithm, if necessary. 
 \end{itemize}
 
-\note{[shouldn't this be a bullet point too?] It can't be in the previous list though because ti isn't an error introduced by the nature of digital control and that we need to model, it is an error introduced *by* our modelling}
+We furthermore encompass the following error that is due to modelling (as opposed to the nature of the digital control).  
+\begin{itemize} 
+\item
 The representations used in the plant model and its arithmetic operations are also carried out at a finite precision, 
 thus we must account for the corresponding errors.  
 Specifically, we must account for the error introduced by our model using finite-precision arithmetic for the plant variables $x(t)$ and $u(t)$, which are, in reality, continuous quantities. 
 We guarantee that the precision we use to represent the plant variables is at least as precise as the precision used in the digital controller and we use interval arithmetic to bound the errors, as detailed in Section~\ref{sec:numeric_rep}. 
+\end{itemize}
+
 
 \subsection{Notation for fixed- and floating-point precision}  
 
@@ -994,8 +1002,9 @@ considered in its general form as
 \begin{equation*}
 S(z) = a_0z^N+a_1z^{N-1}+\cdots+a_{N-1}z+a_N,\,\, a_0\neq0. 
 \end{equation*}
-\note{clarify degree $N$ vs model dimensions} 
-An closed-loop LTI model is stable~\cite{astrom1997computer} \note{asymptotically?} if \note{make sure: only sufficient condition?}all the roots of its characteristic polynomial $S(z)$ (i.e., the 
+Here $N$ corresponds to the dimensions of the state variables (above $n$ ). 
+A sufficient condition for asymptotic stability of the closed-loop LTI model~\cite{astrom1997computer} 
+is when all the roots of its characteristic polynomial $S(z)$ (which correspond to the 
 eigenvalues of the matrix $A_d-B_dK$) are inside the unit circle in the complex plane, 
 i.e., if their absolute values are less than one. 
 
@@ -1052,7 +1061,8 @@ $R_4: m_{11} > 0 \wedge\allowbreak
       m_{(2N{-}3)(1)}>0$.
 %\end{itemize}
 
-The \note{asympt?} stability property is finally encoded by a constraint expressed as the following formula: 
+In conclusion, 
+the asymptotic stability property is finally encoded by a constraint expressed as the following formula: 
 $
 \phi_\mathit{stability} = \{R_1 \wedge R_2 \wedge R_3 \wedge R_4\}.
 $
