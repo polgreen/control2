@@ -131,7 +131,7 @@ grestore
 
 %\thanksref{footnoteinfo}
 
-\title{Automated Formal Synthesis\\ 
+\title{Automated Formal Synthesis 
 of Provably Safe Digital Controllers 
 for Continuous Plants}
 % Title, preferably not more
@@ -193,7 +193,8 @@ for Continuous Plants}
 %\address[manaus]{Federal University of Amazonas, Brazil} 
           
 \keywords{                        % Five to ten keywords,  
-Digital control synthesis \and Safety requirements \and Analog/Digital conversion \and Quantization errors \and Time sampling              % chosen from the IFAC 
+Formal Verification \and Safety requirements \and Dynamical models \and Digital control synthesis \and Analog/Digital conversion \and Time sampling \and Quantization errors \\
+            % chosen from the IFAC 
 }                            % keyword list or with the 
                                           % help of the Automatica 
                                           % keyword wizard
@@ -242,7 +243,7 @@ automotive and robotics~\cite{astrom1997computer, Franklin15}.
 However, provably correct synthesis of control software for such platforms, 
 needed if certification is in order, is non-trivial even in cases with unsophisticated dynamics. 
 
-In this paper, we examine the case of physical systems (plants) described mathematically as 
+In this paper, we examine the case of physical systems (a.k.a. plants in control literature) described mathematically as 
 Linear Time Invariant (LTI) models, for which the classical synthesis of controllers is well understood.
 However, the use of digital control architectures adds new challenges
 caused by artefacts specific to digital control, such as the effects
@@ -305,8 +306,7 @@ software-implemented embedded controllers for physical plants.
 %% define their desired behaviour.
 
 Our work addresses challenging aspects of control synthesis:  
-we perform automated control synthesis over a ``hybrid model'', 
-namely a model encompassing a plant exhibiting continuous behavior, 
+we perform automated control synthesis over a model encompassing both a plant exhibiting continuous behavior  
 and a controller operating in discrete time and over a quantized domain.  
 In particular, our model evaluates the effects of the quantizers (A/D and D/A
 converters), as well as representation errors introduced by the controller working  %% artifacts such as an
@@ -325,7 +325,7 @@ e.g. autonomy in robotics, avionics, and automotive.
 In this paper we present two novel approaches for the synthesis of
 digital controllers, both of which make 
 \else
-We present a novel approach for the synthesis of digital controllers making 
+We further present a novel approach for the synthesis of digital controllers making 
 \fi
 use of a recently investigated framework known as counterexample-guided 
 inductive synthesis (CEGIS)~\cite{jha-icse10, DBLP:conf/asplos/Solar-LezamaTBSS06},  
@@ -349,15 +349,14 @@ for the entire range of possible inputs.
 \else
 Our approach
 \fi
-uses a multi-staged \note{we should state what we mean by `stage' in multi-stage?} technique that starts by devising a
+uses a multi-staged technique that starts by devising a
 digital controller that stabilizes the plant model while remaining safe for a
 pre-selected time horizon and a single initial state; then, it verifies
 unbounded-time safety by unfolding the model dynamics, considering the 
 full set of initial states, and checking a \emph{completeness
 threshold}~\cite{DBLP:conf/vmcai/KroeningS03}, i.e., 
-the number of iterations\note{stages?} required to sufficiently unwind the closed-loop model, 
+the number of stages required to sufficiently unwind the closed-loop model, 
 such that the safety boundaries are not violated for any larger number of iterations.  
-\note{we do not state the contribution about errors - this should be briefly mentioned here, before the item below. }
 
 \ifx\axelerator
 Instead of unfolding the dynamics, \emph{the second approach}
@@ -376,8 +375,8 @@ plant models taken from the digital control literature.
 
 %% \addtodo{CD: the novelty compared to CAV'17 needs to be clarified}
 This paper is an extension of~\cite{DBLP:conf/cav/AbateBCCDKKP17}
-and makes the following contributions (the fourth is a 
-specific extension to~\cite{DBLP:conf/cav/AbateBCCDKKP17}): 
+and puts forward the following contributions: 
+% (the fourth is a  specific extension to~\cite{DBLP:conf/cav/AbateBCCDKKP17}): 
 %
 \begin{enumerate}
 
@@ -394,7 +393,7 @@ specific extension to~\cite{DBLP:conf/cav/AbateBCCDKKP17}):
   methods for controller synthesis which rely on transfer function
   representations, we must consider a state-space representation of
   the physical system. Such a representation requires ensuring the
-  specification over actual traces of the model, alongside the
+  specification over actual traces of the state-space model, alongside the
   numerical soundness required by the effects of discretisation and
   finite-precision errors.
 
@@ -415,16 +414,15 @@ specific extension to~\cite{DBLP:conf/cav/AbateBCCDKKP17}):
   plant. 
 \else  
 \item We present a novel multi-staged approach to synthesizing digital controllers, using 
-  an unfolding of the dynamics up to a completeness threshold, and bit precise Bounded Model
-  Checking to account for fixed-point arithmetic used in the implementation of the digital control algorithm
+  an unfolding of the dynamics up to a completeness threshold. 
+  We employ bit-precise Bounded Model Checking to account for fixed-point arithmetic used in the implementation of the digital control algorithm, 
   and interval arithmetic to account for the imprecision in the modelling of the plant. 
   \fi
   
 %
 \item We develop a model for different sources of quantization error and account for 
-  their effect on safety.  We provide bounds that ensure the
-  safety of our controllers in a hybrid (i.e., continuous/digital) domain \note{keep? needed?}.
-
+  their effect on safety.  We provide bounds that ensure the 
+  safety of our controllers in a hybrid (i.e., continuous/digital) domain. \note{is this point repeating the previous one?}
 
 %\item While~\cite{DBLP:conf/cav/AbateBCCDKKP17} is restricted to models in discrete 
 %time, \note{in the current paper we present an approach for
@@ -466,14 +464,17 @@ particular CEGIS, which is a recent approach to inductive synthesis.
 %% for instance~\cite{itzhaky2010simple} 
 %% to inductively synthesize invariants for the generation of desired programs.
 
-Program synthesizers are an ideal fit for the synthesis of digital controllers, since
-the semantics of programs precisely capture the effects of finite-precision arithmetic.  
-In~\cite{DBLP:conf/cdc/RavanbakhshS15}, the authors use CEGIS 
-for the synthesis of switching controllers for stabilizing continuous-time
-plants with polynomial dynamics.  The work extends to affine systems \note{extension or restriction?}, but is
-limited by the capacity of the state-of-the-art SMT solvers for solving
-linear arithmetic.  Since this approach uses switching models instead of
-linear dynamics for the digital controller, it avoids problems related to
+Program synthesizers are an ideal fit for the synthesis of digital controllers, 
+since the semantics of programs precisely capture the effects of finite-precision arithmetic.  
+However the control literature has been oblivious to this relevant connection. 
+A relevant exception is~\cite{DBLP:conf/cdc/RavanbakhshS15}, 
+which employs CEGIS for the synthesis of switching controllers for stabilizing continuous-time
+plants.  
+%with polynomial dynamics.  
+The work 
+% extends to affine systems \note{extension or restriction?}, but 
+is limited by the capacity of the state-of-the-art SMT solvers for solving
+linear arithmetic.  Since this approach uses switching actions for the digital controller, it avoids problems related to
 finite precision arithmetic, but potentially suffers from state-space
 explosion.  Moreover, in \cite{DBLP:conf/emsoft/RavanbakhshS16} the same
 authors use a CEGIS-based approach for synthesizing continuous-time
@@ -483,7 +484,7 @@ safe states (constrained reachability).  This solution is based on
 synthesizing control Lyapunov functions for switched systems that yield
 switching controllers with a guaranteed minimum dwell time in each mode. 
 However, both approaches are unsuitable for the kind of controllers that we seek to
-synthesize \note{why?}.
+synthesize, which are not switching in nature. 
 
 The work in~\cite{hscc-paper} synthesizes stabilizing controllers for
 continuous plants given as transfer functions by exploiting bit-accurate
@@ -506,18 +507,22 @@ which is by and large overlooked in the standard (digital) control literature,
 by default focussed on stability/regulation/tracking properties.  
 Moreover, our work integrates an abstraction-refinement (CEGAR) step inside the main CEGIS loop.
 
-The technique underpinning tools such as Pessoa~\cite{mazo2010pessoa}, related extensions \cite{Anta2010,liu16} and applications \cite{zamani2014}
-synthesizes correct-by-design embedded control software for LTI models.    
-It is based on the abstraction of the model as a finite-state machine, 
+Beyond CEGIS-based architectures, 
+there is an important line of research on provably correct control synthesis for dynamical models, 
+which leverages formal abstractions. 
+The approach underpinning tools such as Pessoa~\cite{mazo2010pessoa}, related extensions \cite{Anta2010,liu16} and applications \cite{zamani2014} 
+synthesizes correct-by-design embedded control software by abstraction of the model as a finite-state machine, 
 and on the formal control synthesis over safety- and reachability-based temporal properties thereon.  
 %Based on this safety specification, \mbox{Pessoa} can synthesize embedded controller software for a range of
 %properties.  
-The controller software can then be implemented over the concrete LTI model. 
+The obtained finite controller software can then be implemented over the concrete LTI model. 
 %can be more complicated than
 %the state-feedback control we synthesize, and the properties available cover more detail.  
-However, relying on state-space discretization, \mbox{Pessoa} is likely to incur scalability limitations.   
+However, relying on state-space discretization, this set of approaches is likely to incur scalability limitations.   
 %Along this research line, \cite{Anta2010,liu16} studies the synthesis of digital controllers for
 %continuous dynamics, and \cite{zamani2014} extends the approach to the Network Control Systems setup. 
+
+\medskip
 
 \textbf{Discretization Effects in Control Design --}
 Classical work in control synthesis has often disregarded digitalization effects.
@@ -667,7 +672,9 @@ bound for the possible trajectory of the system up to a finite time.
   \path (Kd.north) edge (circle.south);
  \end{tikzpicture}
 }
- \caption{Closed-loop digital control system 
+ \caption{Closed-loop digital control setup: 
+ the plant is intended to be an analogue model of the underlying real system, 
+ whereas the controller is digital. 
  \label{fig:digitalsystem}}
 \end{figure*}
 
@@ -702,14 +709,15 @@ into the difference equation
 where 
 $\mat{A}_d=e^{\mat{A}T_s}$ and 
 $\mat{B}_d = \int_{t = 0}^{T_s} e^{\mat{A} t} dt\ \mat{B}$, 
-$k \in \mathbb N$ is a discrete counter and where $\vec{x}_{0}=\vec{x}(0)$ denotes the initial state.  
+$k \in \mathbb N$ is a discrete counter and where $\vec{x}_{0}=\vec{x}(0)$ denotes the initial state. 
+\note{shall we add a note on time discretization errors? namely that we disregard them? } 
 
 \subsection{Digital control synthesis}
 
 Models \eqref{eq:ode1} and \eqref{eq:plant} depend on external non-determinism in the form of input signals $u (t)$ and  $u_k$, respectively. 
 Feedback architectures can be employed to manipulate properties and behaviors of the plant:    
-we are interested in the synthesis of digital feedback controllers $u_k$,  
-as practically implemented on Field-Programmable Gate Arrays or Digital Signal Processors,  
+we are interested in the synthesis of digital feedback controllers $u_k$, as in Fig. \ref{fig:digitalsystem},  
+as practically implemented on Field-Programmable Gate Arrays or Digital Signal Processors   
 %This requires us to consider the errors introduced by, we will address the issue of variable quantization, 
 %introduced by ADC/DAC conversion blocks of Figure \ref{fig:digitalsystem}, 
 and as classically studied in \cite{astrom1997computer}. 
@@ -733,13 +741,10 @@ finite precision. The new approach is fully automated and leverages an approach 
 % Further, we will embrace the digital nature of the
 %controller, which manipulates quantized signals as discrete quantities represented with finite precision. 
 
-\note{Ref to Fig. \ref{fig:digitalsystem} anywhere?. That figure is referred to in the section on errors. I think it is confusing to
-refer to it before we have explained the DAC, ADC and the errors shown in the figure.}
-
-\subsection{Stability of closed-loop systems}
+\subsection{Stability of closed-loop models}
 
 In this work we employ the notion of asymptotic stability within the CEGIS loop,  
-as a means for reducing the search space of possible safe controllers, where the definition of a safe controller
+as a means for reducing the search space of possible safe controllers, where the notion of a safe controller
 is defined in the following section. 
 As discussed later, specifically for linear models a safe controller is necessarily asymptotically stable, 
 although the reverse is not true. 
@@ -764,7 +769,7 @@ and encode it in terms of a check known as \emph{Jury's criterion}~\cite{fadali}
 this is an easy algebraic formula to check the entries of matrix $K$, 
 so that the closed-loop dynamics are shaped as desired. 
 
-\subsection{Safety of closed-loop systems}
+\subsection{Safety of closed-loop models}
 \label{sec:safety}
 
 We are not limited to the synthesis of digital stabilizing controllers -- a
@@ -883,7 +888,7 @@ whereas $\mathcal{F}_{\langle E_p,M_p \rangle}(x)$ denotes a real number represe
 \begin{figure}
 %\hspace{-2cm}
 \centering
-\resizebox{.48\textwidth}{!}{
+\resizebox{.8\textwidth}{!}{
  \begin{tikzpicture}[scale=0.3,->,>=stealth',shorten >=.2pt,auto,
  semithick, initial text=, ampersand replacement=\&,]
 
@@ -904,7 +909,7 @@ whereas $\mathcal{F}_{\langle E_p,M_p \rangle}(x)$ denotes a real number represe
     (verif) edge node {} (done);
  \end{tikzpicture}
 }
- \caption{The CEGIS framework\label{fig:CEGIS}}
+ \caption{The general CEGIS framework\label{fig:CEGIS}}
 \end{figure}
 
 In this section, we give a brief description of the CEGIS framework~\cite{jha-icse10,
@@ -1272,7 +1277,7 @@ An additional error is due to the representation of the plant dynamics, namely
 x_{k+1} =\mathcal{F}_{\langle I_p,F_p \rangle}(A_d) \mathcal{F}_{\langle I_p,F_p \rangle}(x_{k}) + \mathcal{F}_{\langle I_p,F_p \rangle}(B_d)\mathcal{F}_{\langle I_p,F_p \rangle}(u_{k}).
 \end{equation*}
 }
-We encompass this error using interval arithmetic~\cite{moore1966interval} in the verification phase \note{this statement might also need more details}. 
+We encompass this error using interval arithmetic~\cite{moore1966interval} in the verification phase \note{please add more details here}. 
 
 \subsubsection{Stability of closed-loop models with fixed-point controller error}
 %-------------------------------
@@ -1663,7 +1668,9 @@ ensuring that the safety boundaries are not violated for any other $k{>}\overlin
 
 Next, 
 with reference to the CEGIS scheme in Figure~\ref{fig:CEGIS}, 
-we describe in detail the different phases in Fig.~\ref{fig:CEGIS-precision-increment} (shaded blocks 1 to 4). 
+we describe in detail the different phases in Fig.~\ref{fig:CEGIS-precision-increment} (shaded blocks 1 to 4).  
+
+\note{Please turn itemisation below into sub(sub?)sections.}
 
 %\note{we need to refer to the parts of Algorithm 1 more closely - point to specific lines in the explanation below.} 
 
@@ -1988,7 +1995,7 @@ $z^n+\sum_{i=1}^n(a_i-k_i)z^{n-i}=\prod_{i=1}^n (z-\lambda_i) \text{ where } |\l
 
 \begin{figure*}[t]
 \centering
-\includegraphics[width=0.7\textwidth]{figures/synthesis-flow.pdf}
+\includegraphics[width=0.9\textwidth]{figures/synthesis-flow.pdf}
 \caption{Phases of the controller synthesis}
 \label{fig:synthesis-flow}
 \end{figure*}
