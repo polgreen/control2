@@ -988,7 +988,7 @@ There are a number of well known procedures to perform stability analysis of dyn
 %and another one based on Jury's criterion~\cite{astrom1997computer}.  
 Here we select the Jury stability criterion~\cite{astrom1997computer}, 
 in view of its efficiency and ease of integration within our implementation.  
-This method checks the stability working in the complex domain of the characteristic polynomial $S(z)$ \note{could be better and formally introduced in earlier section?},  
+This method checks the stability working in the complex domain of the characteristic polynomial $S(z)$,  
 %
 % of the matrix $\left( \begin{array}{c} Y \\ U \end{array}\right)$, where $Y(z)$ is the closed-loop system output and U(z) is the controller output. 
 %% \red{[unclear: what matrix? We need to clarify the relationship
@@ -1002,7 +1002,8 @@ considered in its general form as
 \begin{equation*}
 S(z) = a_0z^N+a_1z^{N-1}+\cdots+a_{N-1}z+a_N,\,\, a_0\neq0. 
 \end{equation*}
-Here $N$ corresponds to the dimensions of the state variables (above $n$ ). 
+This polynomial is obtained as a function of the state-space matrices $A,B$~\cite{Astrom08}, 
+and in particular its order $N$ corresponds to the dimensions of the state variables (above $n$).  
 A sufficient condition for asymptotic stability of the closed-loop LTI model~\cite{astrom1997computer} 
 is when all the roots of its characteristic polynomial $S(z)$ (which correspond to the 
 eigenvalues of the matrix $A_d-B_dK$) are inside the unit circle in the complex plane, 
@@ -1046,7 +1047,7 @@ $$
 %
 and where $k \in \mathbb{Z}$ is such that $0 < k < N - 2$.  
 
-We have that $S(z)$ is the characteristic polynomial of a stable system if and only if the following four conditions $R_i, i = 1,2,3,4,$ hold~\cite{astrom1997computer}:
+We have that $S(z)$ is the characteristic polynomial of an asymptotically stable system if and only if the following four conditions $R_i, i = 1,2,3,4,$ hold~\cite{astrom1997computer}: 
 %\begin{itemize}
 %\item 
 $R_1: S(1) > 0$;
@@ -1114,24 +1115,25 @@ For the input signal, these requirements practically mean that the control input
 
 As discussed in Section~\ref{sec:errors}, 
 the considered models must account for errors deriving from several sources: 
-we must bound the numerical error introduced by the finite-precision representation of the plant (and its operations), 
+we formally bound the numerical error introduced by the finite-precision representation of the plant (and its operations), 
 and precisely model the error introduced by the ADC/DAC conversions, 
 as well as the behaviour of the limited-precision arithmetic used by the controller. 
 
-We employ interval arithmetic to bound the error introduced by the finite-precision plant, 
-and bounded model checking to precisely model the error introduced by the ADC/DAC and the finite-precision controller.
+Technically, we employ interval arithmetic to bound the error introduced by the finite-precision plant, 
+and we use bounded model checking to precisely model the error introduced by the ADC/DAC and the finite-precision controller.
 
 \subsection{Bit-precise symbolic model checking}
-As described in section~\ref{sec:BMC}, we use CBMC, a bit-precise bounded model checker to synthesise and verify candidate controllers. 
+As described in Section~\ref{sec:BMC}, we use CBMC, a bit-precise bounded model checker to synthesise and verify candidate controllers. 
 CBMC manipulates precisely the fixed- or floating-point arithmetic used in the controller, 
 as well as the ADC/DAC conversions, 
 according to the IEEE standards. 
 
-\subsection{Interval arithmetic over errors in numeric representation} 
+\subsection{Interval arithmetic for errors in the numerical representation} 
+
 We use finite-precision arithmetic to model the plant. 
 This is an approximation that speeds up each CEGIS iteration, 
 however it necessitates a further stage where we verify that the errors introduced by the approximation have not resulted in a controller that is unsafe when executed on a plant expressed over real numbers.  
-In this stage, we represent the plant using double-precision floating-point
+In this stage, we represent the plant using double-precision floating-point numbers 
 and we use the Boost interval arithmetic library~\cite{DBLP:journals/tcs/BronnimannMP06} to bound the error in this representation. 
 We employ a compositional numerical library to model the fixed point arithmetic for the controller~\cite{CNL} within double-precision floating-point numbers. 
 We check that the controller is safe starting from each vertex of the set of initial states,  
@@ -1344,7 +1346,7 @@ Thus, the closed-loop model converges to the value
 As a result, if the value $(I - A_d + B_dK)^{-1}B_dk\delta$ is within the safe set of states given by the safety specification
 then the synthesized fixed-point controller results in a safe
 closed-loop model.  The convergence to a finite value, however, will not
-make it asymptomatically stable.
+make it asymptotically stable.
 However,
 since in this paper we require stability only as a precursor to safety, it
 is sufficient to check that the perturbed model converges to a
@@ -1647,7 +1649,7 @@ and then verifying soundness of the resulting controller using interval arithmet
 %\subsubsection{Controller synthesis}
 
 An overview of the algorithm for controller synthesis is given in Figure~\ref{fig:CEGIS-precision-increment}.   
-One important point is that we formally synthesize a controller over a finite number ($k$) of time steps.  
+One important point is that we formally synthesize a controller over a finite number ($k$) of time steps (i.e., it is multi-stage).  
 We then compute a completeness threshold $\overline{k}$~\cite{DBLP:conf/vmcai/KroeningS03} for this controller, 
 and verify the correct behaviour for $\overline{k}$ time steps. 
 As we will later argue, $\overline{k}$ is the number of iterations required to sufficiently unwind the dynamics of the closed-loop state-space model,  
@@ -1690,14 +1692,14 @@ we describe in detail the different phases in Fig.~\ref{fig:CEGIS-precision-incr
 
 The inductive synthesis phase ({\sc synthesize}) uses BMC to compute a
 candidate solution $K$ that satisfies both the stability requirement and the safety specification, 
-within a finite precision model.  
+within a finite-precision model.  
 In order to synthesize a controller that satisfies the stability requirement, 
 we need the computed characteristic polynomial to satisfy Jury's criterion~\cite{fadali} (see Section~\ref{ssec:stabspecification}). 
 
 We fix an index $k$, 
 and we synthesize a safe controller by
 unfolding the transition system $k$ steps and by selecting a controller $K$ and a single initial state, 
-such that the states at each step do not violate the safety criteria (see Section~\ref{ssec:safespecification}).    
+such that the states at each step do not violate the safety criteria (see Section~\ref{ssec:safespecification} \note{fix}).    
 That is, we ask the bounded model checker~\cite{ClarkeKL04} if there exists a $K$ that is safe for at least one $x_0$ in our set of all possible initial states, and a given fixed point precision for the controller, and where the input signal remains within the specified bounds.
 This approach is sound if the current $k$ is greater than the completeness threshold (see later step).  
 We~also assume some finite precision for the plant and a sampling rate. We use a fixed-point precision in this description, given by $\langle I_p,F_p\rangle$, but if we are considering a floating-point controller we will instead model the plant with a floating-point precision, $\langle E_p,M_p\rangle$.
@@ -1752,9 +1754,9 @@ specification holds for any initial state.
 We use $(controller\_typet)$ to denote a
 cast or conversion to the controller precision, and $(plant\_typet)$ to denote a cast or conversion to the 
 plant precision. A \emph{vertex state} is defined as a state where all values are either equal to the upper or lower
-bound of the initial states. It is sufficient to verify that the controller is safe for all vertex
-states, and the proof is shown later in this section. We thus only need to iterate through the $2^{n}$ vertex
-states, where $n$ is dimension of the state space (number of continuous variables).
+bound of the initial states. It is sufficient to verify that the controller is safe for all vertex states, as shown next. 
+%We thus only need to iterate through the $2^{n}$ vertex
+%states, where $n$ is dimension of the state space (number of continuous variables).
 
 
 \begin{theorem} 
@@ -1777,7 +1779,7 @@ convex set, by those generated from the vertices.
 \qed
 \end{proof}
 In conclusion, we only need to check $2^n$ initial states, 
-where $n$ is the dimension of the state space. 
+where $n$ is the dimension of the state space (number of continuous variables).
 
 \subsubsection{Block 3}
 
@@ -1795,13 +1797,13 @@ check that $k{\geq}\overline{k}$.  This is done by computing the number of time 
 required for the states to have completed a 360\textdegree circle, as illustrated in Fig.~\ref{fig:ct}. 
 
 \begin{theorem} There exists a finite $\overline{k}$ such that it is
-sufficient to unwind the closed-loop state-space system up to $\overline{k}$
+sufficient to unwind the closed-loop state-space model up to $\overline{k}$
 in order to ensure that $\phi_\mathit{safety}$ holds. 
 \end{theorem}
 
 \begin{proof}
 %
-A stable control system is known to have converging dynamics.  Assume the
+An asymptotically stable model is known to have converging dynamics.  Assume the
 closed-loop matrix eigenvalues are not repeated (which is sensible to do,
 since we select them).  The distance of the trajectory from the reference
 point (origin) decreases over time within subspaces related to real-valued
@@ -2019,7 +2021,7 @@ The implementation of the proposed methodology for synthesis of digital controls
 which can be split into two main stages: manual and automated, as illustrated in Fig.~\ref{fig:synthesis-flow} and detailed next. 
 
 In Step~1, the user selects the system representation, which can be a transfer function or a state-space model.  
-In Step~2, the physical plant (e.g., in the form of Equation~\eqref{eq:ode1}) is provided~\cite{astrom1997computer}.  
+In Step~2, the plant (e.g., in the form of Equation~\eqref{eq:ode1}) is provided~\cite{astrom1997computer}.  
 Finally, in Step~3, the numerical representation for the digital controller implementation must be set by the user, i.e., 
 the finite-precision arithmetic that defines the number of bits of integer and fractional parts when using fixed-point arithmetic, 
 or half- and single-precision when using floating-point arithmetic, 
@@ -2182,8 +2184,8 @@ CEGIS approach is able to generate finite-precision digital controllers using fi
 We provide the results in Table~\ref{tab:results}, where: 
 \textit{Benchmark} is the name of the corresponding benchmark; 
 \textit{Order} is the number of continuous variables of the model; 
-\textcolor{blue}{$\mathcal{F}_{\langle I_p,F_p \rangle}$, where $I_p$ and $F_p$ indicate the integer and fractional parts,  
-and $\mathcal{F}_{\langle E_p,M_p \rangle}$}, where $E_p$ and $M_p$ indicate the exponent and mantissa part, 
+$\mathcal{F}_{\langle I_p,F_p \rangle}$, where $I_p$ and $F_p$ indicate the integer and fractional parts,  
+and $\mathcal{F}_{\langle E_p,M_p \rangle}$, where $E_p$ and $M_p$ indicate the exponent and mantissa part, 
 are the fixed- and floating-point precisions used to model the plant, respectively; 
 and \textit{Time} is the total time required to synthesize a controller for the given plant.    
 Timeouts are indicated by~\xmark, while failures to synthesise the digital controllers are indicated by $\dagger$ \note{no such instances}.  
@@ -2193,13 +2195,12 @@ $\mathcal{F}_{\langle E_c, M_c \rangle}$ is chosen to be $W_c = 6$ and $F_c = 10
 for half-precision floating-point format.
 
 We separate our evaluation into two sets of results: fixed- and floating-point. 
-We are able to synthesise more floating point controllers than fixed point controllers, likely because the
-floating point controllers are at a higher precision than the fixed point. It may be that the precision of the fixed-point
-controllers is too low to be able to meet the safety specification. The floating point controllers in general take longer to synthesise
-than the fixed point controllers. There is one exception to this, which is due to the fact that it is not guaranteed that a controller
-exists for all the time discretizations we give the algorithm and, in this case, the fixed-point algorithm was forced to try more time discretizations
-than the floating-point algorithm
-because a fixed-point controller lacked the precision to control the system under the first few time discretizations. 
+We are able to synthesise more floating-point controllers than fixed-point controllers, likely because the
+floating-point controllers are at a higher precision than the fixed-point ones. It may be that the precision of the fixed-point
+controllers is too low to be able to meet the safety specification. The floating-point controllers in general take longer to synthesise
+than the fixed-point ones. There is one exception to this, which is due to the fact that it is not guaranteed that a controller
+exists for all the time discretizations we give the algorithm and, in this case, the fixed-point algorithm might be forced to try more time discretizations
+than the floating-point algorithm because a fixed-point controller lacks the precision to control the system under the first (larger) time discretizations. 
 %For the majority of the {\it fixed-point} benchmarks, we observe that the abstraction-based
 %back-end is faster than the basic multi-staged verification approach; \textcolor{blue}{additionally, 
 %from 26 benchmarks, we observed that the abstraction-based back-end finds a solution for more benchmarks 
@@ -2476,7 +2477,7 @@ within a reasonable amount of time.
 %As a result, if the value $(I - A_d + B_dK)^{-1}B_dk\delta$ is within the
 %safe space, then the synthesized fixed-point controller results in a safe
 %closed-loop model.  The convergence to a finite value, however, will not
-%make it asymptomatically stable.
+%make it asymptotically stable.
 %
 %%+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 %\section{Errors in LTI models} \label{sec:appendix:LTIbackground}
