@@ -217,7 +217,7 @@ Formal Verification \and Safety requirements \and Dynamical models \and Digital 
 We present a sound and automated approach to synthesizing safe,
 digital controllers for physical plants represented as time-invariant models. 
 Models are linear differential equations with inputs, evolving over a continuous state space. 
-The synthesis accounts for errors caused by the digitization effects introduced by the controller. 
+The synthesis precisely accounts for the effects of finite-precision arithmetic introduced by the controller. 
 The approach uses counterexample-guided inductive synthesis (CEGIS): 
 an inductive generalization phase produces a controller that is known to stabilize the system but that may
 not be safe for all initial conditions of the model.  
@@ -248,7 +248,7 @@ In this paper, we examine the case of physical systems (a.k.a. plants in control
 Linear Time Invariant (LTI) models, for which the classical synthesis of controllers is well understood.
 However, the use of digital control architectures adds new challenges
 caused by artefacts specific to digital control, such as the effects
-of finite-precision arithmetic, time discretization and quantization
+of finite-precision arithmetic and quantization
 errors introduced by A/D and D/A conversion.
 %
 Given an LTI model, we develop an automatic technique for generating
@@ -710,8 +710,9 @@ into the difference equation
 where 
 $\mat{A}_d=e^{\mat{A}T_s}$ and 
 $\mat{B}_d = \int_{t = 0}^{T_s} e^{\mat{A} t} dt\ \mat{B}$, 
-$k \in \mathbb N$ is a discrete counter and where $\vec{x}_{0}=\vec{x}(0)$ denotes the initial state. 
-\note{shall we add a note on time discretization errors? namely that we disregard them? } 
+$k \in \mathbb N$ is a discrete counter and where $\vec{x}_{0}=\vec{x}(0)$ denotes the initial state.
+\reply{This time discretization introduces errors that fall outside the scope of this work.}
+%\note{shall we add a note on time discretization errors? namely that we disregard them? } 
 
 \subsection{Digital control synthesis}
 
@@ -825,33 +826,31 @@ we set these properties to express that our controllers generate (asymptotically
 %etc. are turned into formulas? Part of Sec.~\ref{sec:errors} can probably be moved here.}
 
 %-------------------------------s
-\subsection{Errors from finite-precision arithmetics}
+\subsection{Semantics of finite-precision arithmetics}
 \label{sec:errors}
 
-A key contribution of this work is that, when synthesizing controllers, it precisely models the finite-precision arithmetic in the digital controller, guaranteeing that these controllers implemented with finite-precision arithmetic are safe. 
-Finite-precision arithmetic introduces errors, as shown in Figure~\ref{fig:digitalsystem}. 
-Details of how we model this arithmetic are in Section~\ref{sec:numeric_rep}. 
-\note{[rephrase?] These errors are present in the real world [as opposed to being absent? vacuous statement?]}, and we must model them accurately in order to capture the full behaviour of the model:  
+A key contribution of this work is that, when synthesizing controllers, it precisely replicates the finite-precision arithmetic in the digital controller, guaranteeing that these controllers implemented with finite-precision arithmetic are safe. 
+The specific components of the system, shown in Figure~\ref{fig:digitalsystem}, we are concerned with are the ADC, digital controller and DAC.
+Details of how we model the behaviour of the finite-precision arithmetic in these components are in Section~\ref{sec:numeric_rep}. We must model the semantics precisely in order to capture the full behaviour of the system:  
 
 \begin{itemize}
 
-\item The ADC introduces quantisation errors when it converts the analog signal $x(t)$ into a digital signal $x_k$, which is then fed into the controller.  
+\item The ADC converts the analog signal $x(t)$ into a digital signal $x_k$, which is then fed into the controller, converting a real value to a finite-precision value.  
 % cf. Figure~\ref{fig:digitalsystem}. 
 
-\item The controller block performs arithmetic at finite precision, 
-which introduces additional errors on top of that introduced by the ADC. 
+\item The controller block performs arithmetic at finite precision. 
 We assume the ADC represents numbers with at least the same precision as the controller, 
 and thus focus on the precision limited by the controller. 
 This is a reasonable assumption based on commonly available hardware. 
 
-\item The DAC can potentially introduce further errors. 
-However, we assume that the DAC converts numbers to analog signals with the same precision as the controller. 
-Again, this assumption is practically reasonable. 
-As a result we can ignore possible additional errors introduced by the DAC. 
+\item The DAC converts finite-precision values back to real values. 
+We assume that the input to the DAC is the same precision as the output of the controller. 
 It would, however, be straightforward to account for a DAC or ADC of different precision than the controller in our algorithm, if necessary. 
 \end{itemize}
 
-We furthermore encompass the following error that is due to modelling (as opposed to the nature of the digital control).  
+\subsection{Soundness of modelling}
+
+In addition to precisely replicating the finite-precision arithmetic of the digital controller, we must consider that our \emph{model} itself uses finite-precision arithmetic to model the behaviour of the system. In order to guarantee soundness, we therefore encompass the following error that is due to modelling (as opposed to the nature of the digital control).  
 \begin{itemize} 
 \item
 The representations used in the plant model and its arithmetic operations are also carried out at a finite precision, 
@@ -1114,13 +1113,13 @@ For the input signal, these requirements practically mean that the control input
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 As discussed in Section~\ref{sec:errors}, 
-the considered models must account for errors deriving from several sources: 
+the considered models must account for finite-precision arithmetic semantics deriving from several sources: 
 we formally bound the numerical error introduced by the finite-precision representation of the plant (and its operations), 
-and precisely model the error introduced by the ADC/DAC conversions, 
+and precisely model the behaviour introduced by the ADC/DAC conversions, 
 as well as the behaviour of the limited-precision arithmetic used by the controller. 
 
 Technically, we employ interval arithmetic to bound the error introduced by the finite-precision plant, 
-and we use bounded model checking to precisely model the error introduced by the ADC/DAC and the finite-precision controller.
+and we use bounded model checking to precisely model the semantics of finite-precision arithmetic introduced by the ADC/DAC and the finite-precision controller.
 
 \subsection{Bit-precise symbolic model checking}
 As described in Section~\ref{sec:BMC}, we use CBMC, a bit-precise bounded model checker to synthesise and verify candidate controllers. 
@@ -1149,7 +1148,8 @@ we store an interval that encompasses this error.
 Further mathematical operations performed at the precision $\mathcal{F}_{\langle E,M \rangle}(x)$ will propagate this error, 
 leading to further errors for which bounds can be derived~\cite{DBLP:conf/arith/BrainTRW15}.  
 
-The fixed-point arithmetic of the digital controller is performed on the upper and lower bound of the intervals from above independently, [I DO NOT UNDERSTAND THE REMAINING PART OF THE SENTENCE.] and the upper and lower bound of the result taken as the interval result\note{Would an example make this clearer?, e.g., consider the conversion from plant precision to controller precision performed by the ADC on a single state value. The state value is represented as an interval $\{x.high, x.low\}$, and the result of the conversion is an interval where the upper bound is the conversion of $x.high$ and the lower bound is the conversion of $x.low$?}. 
+The fixed-point arithmetic of the digital controller is performed on the upper and lower bound of the intervals from above independently, and the upper and lower bound of the result taken as the interval result. For example,
+consider consider the conversion from plant precision to controller precision performed by the ADC on a single state value. The state value is represented as an interval $\{x.high, x.low\}$, and the result of the conversion is an interval where the upper bound is the conversion of $x.high$ and the lower bound is the conversion of $x.low$. 
 Since the precision of the floating point domain is greater than the precision of the controller, this is guaranteed to bound the real behaviour of the controller. 
 
 
@@ -1289,7 +1289,8 @@ An additional error is due to the representation of the plant dynamics, namely
 x_{k+1} =\mathcal{F}_{\langle I_p,F_p \rangle}(A_d) \mathcal{F}_{\langle I_p,F_p \rangle}(x_{k}) + \mathcal{F}_{\langle I_p,F_p \rangle}(B_d)\mathcal{F}_{\langle I_p,F_p \rangle}(u_{k}).
 \end{equation*}
 }
-We encompass this error using interval arithmetic~\cite{moore1966interval} in the verification phase \note{please add more details here on the ``verification phase''}. 
+We encompass this error using interval arithmetic~\cite{moore1966interval} in the precision check shown in Figure~\ref{fig:CEGIS-precision-increment} and detailed in the following section.
+
 
 \subsubsection{Stability of closed-loop models with fixed-point controller error}
 %-------------------------------
