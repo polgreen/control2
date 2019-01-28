@@ -2,7 +2,7 @@
 #FIXED POINT FILE RUNNER
 export PATH=/users/elipol/cbmc-5.7/src/cegis:${PATH}: #cegis path
 #export PATH=/users/pkesseli/software/cpp/z3/trunk/target/i686-linux/bin:${PATH} #z3 path
-BENCHMARK_BASE_DIR="/users/elipol/control-synthesis/benchmarks/automatica/headerfiles/"
+BENCHMARK_BASE_DIR="/users/elipol/control-synthesis/benchmarks/automatica/headerfiles2/"
 
 CEGIS_ARGS="--round-to-minus-inf --cegis-control --cegis-statistics --cegis-max-size 1 --cegis-show-iterations -D CPROVER -D FIXEDBV"
 
@@ -85,37 +85,27 @@ function get_current_cpu_millis {
 working_directory_base_suffix="$1"
 #dkr10
 if [ "$1" == "dkr10" ]; then
- benchmark_dirs=(${BENCHMARK_BASE_DIR}/acrobot/ ${BENCHMARK_BASE_DIR}/antenna/ ${BENCHMARK_BASE_DIR}/ballmaglev/ ${BENCHMARK_BASE_DIR}/bioreact/ ${BENCHMARK_BASE_DIR}/chen_ex1/ ${BENCHMARK_BASE_DIR}/chen_ex2/) 
-fi
+ benchmark_dirs=( ${BENCHMARK_BASE_DIR}/antenna/ ${BENCHMARK_BASE_DIR}/ballmaglev/ ${BENCHMARK_BASE_DIR}/bioreact/ ${BENCHMARK_BASE_DIR}/chen_ex1/ ${BENCHMARK_BASE_DIR}/chen_ex2/) 
 
 #dkr11
-if [ "$1" == "dkr11" ]; then
+elif [ "$1" == "dkr11" ]; then
 benchmark_dirs=(${BENCHMARK_BASE_DIR}/chen_ex3/ ${BENCHMARK_BASE_DIR}/chen_ex4/ ${BENCHMARK_BASE_DIR}/cruise/ ${BENCHMARK_BASE_DIR}/cruiseHSCC/ ${BENCHMARK_BASE_DIR}/cstr/ ${BENCHMARK_BASE_DIR}/cstrtemp/  ) 
-fi
+
 
 #dkr12
-if [ "$1" == "dkr12" ]; then
+elif [ "$1" == "dkr12" ]; then
 benchmark_dirs=(${BENCHMARK_BASE_DIR}/dcmotor/ ${BENCHMARK_BASE_DIR}/flexbeam/ ${BENCHMARK_BASE_DIR}/guidance_chen/ ${BENCHMARK_BASE_DIR}/helicopter/ ${BENCHMARK_BASE_DIR}/invpendulum_cartpos/ ${BENCHMARK_BASE_DIR}/invpendulum_pendang/) 
-fi
 
 #dkr13
-if [ "$1" == "dkr13" ]; then
-benchmark_dirs=(${BENCHMARK_BASE_DIR}/magneticpointer/ ${BENCHMARK_BASE_DIR}/magsuspension/ ${BENCHMARK_BASE_DIR}/pendulum/ ${BENCHMARK_BASE_DIR}/regulator/ ${BENCHMARK_BASE_DIR}/springmassdamperHSCC/ ${BENCHMARK_BASE_DIR}/steamdrum/ ${BENCHMARK_BASE_DIR}/suspension/ ${BENCHMARK_BASE_DIR}/tapedriver/ ${BENCHMARK_BASE_DIR}/usgtampa/) 
-fi
+elif [ "$1" == "dkr13" ]; then
+benchmark_dirs=(${BENCHMARK_BASE_DIR}/magneticpointer/ ${BENCHMARK_BASE_DIR}/magsuspension/ ${BENCHMARK_BASE_DIR}/pendulum/ ${BENCHMARK_BASE_DIR}/regulator/ ${BENCHMARK_BASE_DIR}/springmassdamperHSCC/ ${BENCHMARK_BASE_DIR}/steamdrum/ ${BENCHMARK_BASE_DIR}/suspension/ ${BENCHMARK_BASE_DIR}/tapedriver/ ${BENCHMARK_BASE_DIR}/uscgtampa/) 
 
 #dkr15
-if [ "$1" == "dkr15" ]; then
-benchmark_dirs=(${BENCHMARK_BASE_DIR}/chen_ex2/ ${BENCHMARK_BASE_DIR}/chen_ex3/ ${BENCHMARK_BASE_DIR}/antenna/)
-fi
+elif [ "$1" == "dkr15" ]; then
+benchmark_dirs=(${BENCHMARK_BASE_DIR}/chen_ex2/  ${BENCHMARK_BASE_DIR}/chen_ex1/)
 
-#dkr15
-if [ "$1" == "dkr16" ]; then
-benchmark_dirs=(${BENCHMARK_BASE_DIR}/chen_ex4/ ${BENCHMARK_BASE_DIR}/flexbeam/)
-fi
-
-#dkr15
-if [ "$1" == "dkr17" ]; then
-benchmark_dirs=(${BENCHMARK_BASE_DIR}/antenna/ )
+else
+benchmark_dirs=(${BENCHMARK_BASE_DIR}/$1/ )
 fi
 
 working_directory_base="/tmp/control_synthesis-fixed-ss-${working_directory_base_suffix}"
@@ -171,17 +161,18 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
    echo_log "CONTROLLER PARAMS ARE $controller_params"
    if [ ${cbmc_result} -eq 0 ]; then
     echo_log "./discrete_step_k_completeness_check ${k_size} ${controller_params}"
-    eval "./discrete_step_k_completeness_check ${k_size} ${controller_params}"
+    output=$(./discrete_step_k_completeness_check ${k_size} ${controller_params})
     k_check_result=$?
-    echo_log "k_check_result: ${k_check_result}"
-    if [ ${k_check_result} -eq 2 ]; then
-     k_size_index=$((k_size_index+1))
-    elif [ ${k_check_result} -eq 1 ]; then
+    new_k=$(echo ${output} | sed "s/.*expected_k_size=\([[:digit:]]\+\).*/\1/")
+    echo "new k ${new_k}"
+    new_k=$((new_k+1))
+    echo_log "k_check_result: ${k_check_result}, new_k ${new_k}"
+    if [ ${k_check_result} -eq 1 ]; then
      echo_log 'K check error occurred'
      break
     else
-     echo_log "./precision_check ${k_size} ${controller_params}"
-     ./precision_check ${k_size} ${controller_params}
+     echo_log "./precision_check ${new_k} ${controller_params}"
+     ./precision_check ${new_k} ${controller_params}
      if [ $? -eq 0 ]; then
       times >${time_tmp_file}; end_time=$(get_current_cpu_millis)
       echo_success_message ${start_time} ${end_time}
@@ -202,7 +193,10 @@ for benchmark_dir in ${benchmark_dirs[@]}; do
       echo "" >>${solution_file}
       solution_found=true
       break
-     else
+     elif [ ${k_check_result} -eq 2 ]; then
+      echo_log "increasing completeness threshold"
+      k_size_index=$((k_size_index+1))
+     else  
       echo_log "failed precision check, increase precision"
       integer_width=$((integer_width+4))
       radix_width=$((radix_width+4))
