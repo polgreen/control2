@@ -29,8 +29,8 @@ realt _controller_K[NSTATES];
 
 bool is_imaginary(const realt &imaginary_offset, const complext &complex) {
   const realt imag_value = std::imag(complex);
-  cout << "imag_value: " << imag_value << endl;
-  cout << "imaginary_offset: " << imaginary_offset << endl;
+//  cout << "imag_value: " << imag_value << endl;
+//  cout << "imaginary_offset: " << imaginary_offset << endl;
   return abs(imag_value) > imaginary_offset;
 }
 
@@ -72,9 +72,9 @@ int main(const int argc, const char * const argv[]) {
     return EXIT_FAILURE;
   }
   const EigenSolver<matrixt>::EigenvalueType eigenvalues = eigenSpace.eigenvalues();
-  cout << "num_eigenvalues: " << eigenvalues.size() << endl;
+  //cout << "num_eigenvalues: " << eigenvalues.size() << endl;
   for (size_t i=0; i < eigenvalues.size(); ++i) {
-    cout << "eigenvalue: " << eigenvalues[i] << endl;
+    //cout << "eigenvalue: " << eigenvalues[i] << endl;
     if(std::abs(eigenvalues[i]) > 1)
     {
      cout << "unstable controller " << endl;
