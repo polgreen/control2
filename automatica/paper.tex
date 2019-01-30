@@ -1136,7 +1136,7 @@ In this stage, we represent the plant using double-precision floating-point numb
 and we use the Boost interval arithmetic library~\cite{DBLP:journals/tcs/BronnimannMP06} to bound the error in this representation. 
 We employ a compositional numerical library to model the fixed point arithmetic for the controller~\cite{CNL} within double-precision floating-point numbers. 
 We check that the controller is safe starting from each vertex of the set of initial states,  
-and show that this is sufficient to prove safety from any state in this set. \note{add forward reference to proof.}
+and show that this is sufficient to prove safety from any state in this set (see Theorem~\ref{th:safety}). %\note{add forward reference to proof.}
 
 We outline here the mathematics behind bounding the errors on the double-precision floating-point numbers. 
 Recall we use $\mathcal{F}_{\langle E,M \rangle}(x)$ denote a real number $x$ represented in a floating point domain, 
@@ -1760,7 +1760,8 @@ bound of the initial states. It is sufficient to verify that the controller is s
 %states, where $n$ is dimension of the state space (number of continuous variables).
 
 
-\begin{theorem} 
+\begin{theorem}
+  \label{th:safety}
 If a controller is safe for each of the corner cases of our hypercube of
 allowed initial states, i.e., the vertex states, it is safe for any initial state in the hypercube. 
 \end{theorem}
