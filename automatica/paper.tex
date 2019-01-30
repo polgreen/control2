@@ -1689,7 +1689,7 @@ we describe in detail the different phases in Fig.~\ref{fig:CEGIS-precision-incr
 %\note{we need to refer to the parts of Algorithm 1 more closely - point to specific lines in the explanation below.} 
 
 %\todo{please eventually itemize next}
-\subsubsection{Block 1}
+\subsection{Block 1}
 
 The inductive synthesis phase ({\sc synthesize}) uses BMC to compute a
 candidate solution $K$ that satisfies both the stability requirement and the safety specification, 
@@ -1742,7 +1742,7 @@ The checks that these assumptions hold are performed by the subsequent {\sc veri
 \caption{Safety check ({\sc safety} stage in Fig.~\ref{fig:CEGIS-precision-increment})\label{alg:safetycheck}}
 \end{algorithm}
 
-\subsubsection{Block 2}
+\subsection{Block 2}
 
 The first {\sc verify} stage, {\sc safety} is shown in Alg.~\ref{alg:safetycheck}. 
 The algorithm checks that the candidate
@@ -1782,14 +1782,14 @@ convex set, by those generated from the vertices.
 In conclusion, we only need to check $2^n$ initial states, 
 where $n$ is the dimension of the state space (number of continuous variables).
 
-\subsubsection{Block 3}
+\subsection{Block 3}
 
 The second {\sc verify} stage, {\sc precision}, 
  restores soundness with respect to the plant precision
 by using interval arithmetic \cite{moore1966interval} to validate the 
 operations performed by the previous stage. 
 
-\subsubsection{Block 4}
+\subsection{Block 4}
 
 The third {\sc verify} stage, {\sc complete}, checks that the current
 $k$ is large enough to ensure safety for any further time steps.  
