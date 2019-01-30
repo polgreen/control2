@@ -880,7 +880,7 @@ which means that our verification phase \note{I'm not sure that it's clear at th
 as well as quantization errors caused by representing the physical plant at finite 
 precision $\mathcal{F}_{\langle I_p,F_p \rangle}$. \note{Also, isn't this paragraph redundant after sec 3.7?}
  
-We further employ $\mathcal{F}_{\langle E,M \rangle}(x)$ to denote a real number $x$ represented in a floating point domain, 
+We further employ $\mathcal{F}_{\langle E,M \rangle}(x)$ to denote a real number $x$ represented in a floating-point domain, 
 with $E$ bits representing the exponent part and $M$ bits representing the mantissa part. 
 In particular, 
 we use $\mathcal{F}_{\langle E_c,M_c \rangle}(x)$ to denote a real number 
@@ -1139,7 +1139,7 @@ We check that the controller is safe starting from each vertex of the set of ini
 and show that this is sufficient to prove safety from any state in this set (see Theorem~\ref{th:safety}). %\note{add forward reference to proof.}
 
 We outline here the mathematics behind bounding the errors on the double-precision floating-point numbers. 
-Recall we use $\mathcal{F}_{\langle E,M \rangle}(x)$ denote a real number $x$ represented in a floating point domain, 
+Recall we use $\mathcal{F}_{\langle E,M \rangle}(x)$ denote a real number $x$ represented in a floating-point domain, 
 with $E$ bits representing the exponent part, and $M$ bits representing the mantissa. 
 In general the representation of a real number using the floating-point domain introduces an error, 
 for which an upper bound can be given~\cite{DBLP:conf/arith/BrainTRW15}.
@@ -1150,7 +1150,7 @@ leading to further errors for which bounds can be derived~\cite{DBLP:conf/arith/
 
 The fixed-point arithmetic of the digital controller is performed on the upper and lower bound of the intervals from above independently, and the upper and lower bound of the result taken as the interval result. For example,
 consider consider the conversion from plant precision to controller precision performed by the ADC on a single state value. The state value is represented as an interval $\{x.high, x.low\}$, and the result of the conversion is an interval where the upper bound is the conversion of $x.high$ and the lower bound is the conversion of $x.low$. 
-Since the precision of the floating point domain is greater than the precision of the controller, this is guaranteed to bound the real behaviour of the controller. 
+Since the precision of the floating-point domain is greater than the precision of the controller, this is guaranteed to bound the real behaviour of the controller. 
 
 
 
