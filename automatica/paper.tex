@@ -1700,7 +1700,7 @@ we need the computed characteristic polynomial to satisfy Jury's criterion~\cite
 We fix an index $k$, 
 and we synthesize a safe controller by
 unfolding the transition system $k$ steps and by selecting a controller $K$ and a single initial state, 
-such that the states at each step do not violate the safety criteria (see Section~\ref{ssec:safespecification} \note{fix}).    
+such that the states at each step do not violate the safety criteria (see Section~\ref{sec:safety}).    
 That is, we ask the bounded model checker~\cite{ClarkeKL04} if there exists a $K$ that is safe for at least one $x_0$ in our set of all possible initial states, and a given fixed point precision for the controller, and where the input signal remains within the specified bounds.
 This approach is sound if the current $k$ is greater than the completeness threshold (see later step).  
 We~also assume some finite precision for the plant and a sampling rate. We use a fixed-point precision in this description, given by $\langle I_p,F_p\rangle$, but if we are considering a floating-point controller we will instead model the plant with a floating-point precision, $\langle E_p,M_p\rangle$.
