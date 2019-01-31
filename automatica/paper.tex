@@ -2062,15 +2062,15 @@ model checker (CBMC)~\cite{ClarkeKL04}.  CBMC transforms the ANSI-C representati
 of the closed-loop control model model into its internal representation (IR).  We
 instrument this IR for each synthesis or verification scenario accordingly,
 and use CBMC as an oracle to answer our queries.  CBMC itself relies on an
-underlying SAT or SMT solver to address verification conditions.  We~model
+underlying SAT/SMT solver to address verification checks.  We~model the 
 effects of finite precision arithmetic 
 explicitly using CBMC's nondeterminism API (e.g., \texttt{nondet},
 \texttt{CPROVER\_assume} intrinsic functions).  Our module is included into
-CBMC~5.7 and is available for
+CBMC~5.7 and is available for 
 download.\footnote{\url{https://github.com/diffblue/cbmc/archive/cbmc-5.7.zip}}
-We further created a VirtualBox OVA image with our tool pre-installed,
-including our MATLAB-generated benchmarks and benchmark shell script with
-instructions to run all benchmarks and to reproduce our
+We have further created a VirtualBox OVA image with our tool pre-installed,
+including our MATLAB-generated benchmarks and benchmark shell script, 
+with instructions to run all benchmarks and to reproduce our
 experiments.\footnote{\note{\url{XXXXXXXXXX}}}
 %
 %\textcolor{red}{This paragraph needs to be updated by Elizabeth and Dario.}
@@ -2086,9 +2086,10 @@ experiments.\footnote{\note{\url{XXXXXXXXXX}}}
 \label{exp:evaluation}
 %-------------------------------
 
-Our benchmark suite consists of 19 SISO case studies extracted from the 
-control literature~\cite{acrobot,cstr,CHEN1979389,KOKOTOVIC198023,gajic2008optimal,Franklin15, maglev, converters, CTMS, gajic2008optimal}. 
-The models are discretized with sampling times ranging from 1s to 0.0001s. CEGIS initially starts with the coarsest discretisation (i.e., 1s sampling time), and if it fails to find a controller, reduces the sampling time. 
+Our benchmark suite consists of 19 case studies extracted from the control literature~\cite{acrobot,cstr,CHEN1979389,KOKOTOVIC198023,gajic2008optimal,Franklin15, maglev, converters, CTMS, gajic2008optimal}. These case studies comprise control models, which we represent in state space form as in \eqref{eq:ode1}. 
+The models are time discretized, with sampling times ranging from 1s to 0.0001s. 
+CEGIS initially starts with the coarsest discretisation (i.e., 1s sampling time), and if it fails to find a controller, reduces the sampling time. 
+\note{we need to at least qualitatively mention input selection, initial conditions, and also safe sets. how much can you say? } 
 
 %-------------------------------
 \subsection{Description of the control benchmarks}
@@ -2165,8 +2166,7 @@ The \textit{steam drum} benchmark describes a linear model for the level dynamic
 The \textit{suspension} models the single-wheel suspension system of a car, 
 namely the relative motion dynamics of a mass-spring-damper model, which connects the car to one of its wheels.  \\
 The \textit{tapedriver} benchmark models a computer tape driver, 
-that is a computer storage device used to read and write data on magnetic tapes. 
-
+that is a computer storage device used to read and write data on magnetic tapes. \\ 
 The \textit{USCG cutter tampa heading angle} plant describes the heading angle dynamics of a Coast 
 Guard cutter. 
 
@@ -2180,18 +2180,16 @@ Guard cutter.
 %-------------------------------
 
 Using the state-space models described in Section~\ref{exp:benchmarks}, 
-the evaluation study has the following experimental goal: 
-
+the evaluation study has the following experimental goal:  
 \begin{enumerate}
-
-\item[EG1] \textbf{(Performance)} Show that the multi-staged 
+\item[] 
+%[EG1] \textbf{(Performance)} 
+Show that the multi-staged 
 %and the abstraction-based 
 CEGIS approach is able to generate finite precision digital controllers using fixed-point and floating-point arithmetic in a reasonable amount of time.
-
 %\item[EG2] \textbf{(Sanity check)} Confirm the stability \note{also?} and safety of the synthesized controllers outside 
 %of our model representation using MATLAB. 
 %\note{Where is this done?}
-
 \end{enumerate}
 
 %-------------------------------
@@ -2206,7 +2204,7 @@ $\mathcal{F}_{\langle I_p,F_p \rangle}$, where $I_p$ and $F_p$ indicate the inte
 and $\mathcal{F}_{\langle E_p,M_p \rangle}$, where $E_p$ and $M_p$ indicate the exponent and mantissa part, 
 are the fixed- and floating-point precisions used to model the plant, respectively; 
 and \textit{Time} is the total time required to synthesize a controller for the given plant.    
-Timeouts are indicated by~\xmark.  
+Timeouts \note{above: failures} are indicated by~\xmark.  
 The precision for the controller, $\mathcal{F}_{\langle I_c,F_c \rangle}$, is
 chosen to be $I_c = 8$, $F_c = 8$ for fixed-point, whereas  
 $\mathcal{F}_{\langle E_c, M_c \rangle}$ is chosen to be $W_c = 6$ and $F_c = 10$
@@ -2303,36 +2301,45 @@ USCG tampa	&	3	&	12,12	&	1143.35	&	10,6	&	210.70	\\
 
 The mean run-time for the successful benchmarks is 225\,s for fixed-point and 125\,s for floating-point implementations, respectively.  
 The median run-time for the successful benchmarks is 15.7\,s for fixed-point and 17.8\,s for floating-point implementations, respectively.
-We consider these times to be short enough to be of practical use to control engineers, and thus affirm the validity of EG1.
+We consider these times to be short enough to be of practical use to control engineers, and thus affirm the validity of 
+%EG1. 
+the objective we have raised. 
 
-We present in this paper a selection of case studies for which we are able to synthesise controllers. In the full experimental environment, 
-which is available to download, we include further case studies that we were unable to synthesise controllers for. This is in many cases
-due to timeouts, especially when the completeness threshold is too large, 
-or a controller simply may not exist for a benchmark at a given time discretisation and required controller precision. 
-Yet another source of incompleteness is the inability of the {\sc synthesize} phase to use a large enough precision for the plant model. 
+\smallskip 
 
 %\textcolor{blue}{The synthesized controllers are confirmed to be safe outside of our model
 %representation using MATLAB, achieving EG2 \note{please explain how this check is performed - is the check itself sound?}.  
-A~link to the full experimental environment, including scripts to reproduce the results, all
-benchmarks and the tool, is provided in the
-footnote as an Open Virtual Appliance (OVA).\footnote{\url{XXXX}}
-The provided experimental environment runs multiple discretisations for each
-benchmark, and lists the fastest as the result synthesis time.
+A~link to the full experimental environment, including scripts to reproduce the results, all benchmarks and the tool, is provided in the
+footnote as an Open Virtual Appliance (OVA).\footnote{\url{XXXX}} 
+The provided experimental environment runs multiple discretisations for each benchmark, and lists the fastest as the result synthesis time. 
+
+In this article we have presented a selection of case studies for which we have been able to automatically synthesise safe controllers. 
+In the full experimental environment we have included further case studies that we have been unable to synthesise controllers for. 
+This is in many cases due to timeouts, 
+especially when the set completeness threshold is too large, 
+or when a controller simply may not exist for a benchmark at a given time discretisation and required controller precision. 
+Yet another source of incompleteness is the inability of the {\sc synthesize} phase to employ a large-enough precision for the plant model.  
 
 %-------------------------------
 \subsection{Threats to generality}
 \label{exp:threats-to-validity}
 %-------------------------------
 
+We identify the following factors as potential limits to the generality of the obtained results. 
+
+\begin{itemize} 
+
+\item[] 
 \textit{Benchmark selection:} We report an assessment of both our approaches
 over a diverse set of real-world benchmarks.  Nevertheless, this set of
 benchmarks is limited within the scope of this paper and the performance may
 not generalize to other benchmarks.
 %\note{is this where we attempt asserting EG2?}
 
+\item[]
 \textit{Plant precision and discretization heuristics:} Our algorithm to
-select suitable finite precision arithmetic to model the plant behavior 
-increases the precision by 8 bits at each step 
+select suitable finite-precision arithmetic to model the plant behavior 
+increases the precision by 8 bits at each step,  
 in order to be compliant with the CBMC type API. 
 Similarly, for time-discretization, we try a set of pre-defined time discretisations.
 This works sufficiently well for our benchmarks, but
@@ -2343,7 +2350,7 @@ threshold is high.
 %acceleration may not hold for more complex properties than safety, for
 %instance ``eventually reach and always remain in a given safe set''.
 
-%\note{So, what about EG2? Shall we assert it? }
+\end{itemize} 
 
 %-------------------------------
 \section{Conclusions}
