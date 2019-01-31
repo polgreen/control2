@@ -2086,8 +2086,8 @@ experiments.\footnote{\note{\url{XXXXXXXXXX}}}
 
 Our benchmark suite consists of 19 case studies extracted from the control literature~\cite{acrobot,cstr,CHEN1979389,KOKOTOVIC198023,gajic2008optimal,Franklin15, maglev, converters, CTMS, gajic2008optimal}. These case studies comprise control models, which we represent in state space form as in \eqref{eq:ode1}. 
 The models are time discretized, with sampling times ranging from 1s to 0.0001s. 
-CEGIS initially starts with the coarsest discretisation (i.e., 1s sampling time), and if it fails to find a controller, reduces the sampling time. 
-\note{we need to at least qualitatively mention input selection, initial conditions, and also safe sets. how much can you say? } 
+CEGIS initially starts with the coarsest discretisation (i.e., 1s sampling time), and if it fails to find a controller, reduces the sampling time. The initial states are bounded between $0.5$ and $-0.5$ for all states, and the safety specification requires that the states remain between $-1.5$ and $1.5$. The input bounds are selected individually for each benchmark.
+%\note{we need to at least qualitatively mention input selection, initial conditions, and also safe sets. how much can you say? } 
 
 %-------------------------------
 \subsection{Description of the control benchmarks}
