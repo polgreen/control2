@@ -217,7 +217,7 @@ Formal Verification \and Safety requirements \and Dynamical models \and Digital 
 We present a sound and automated approach to synthesizing safe,
 digital controllers for physical plants represented as time-invariant models. 
 Models are linear differential equations with inputs, evolving over a continuous state space. 
-The synthesis precisely accounts for the effects of finite-precision arithmetic introduced by the controller. 
+The synthesis precisely accounts for the effects of finite precision arithmetic introduced by the controller. 
 The approach uses counterexample-guided inductive synthesis (CEGIS): 
 an inductive generalization phase produces a controller that is known to stabilize the system but that may
 not be safe for all initial conditions of the model.  
@@ -248,7 +248,7 @@ In this paper, we examine the case of physical systems (a.k.a. plants in control
 Linear Time Invariant (LTI) models, for which the classical synthesis of controllers is well understood.
 However, the use of digital control architectures adds new challenges
 caused by artefacts specific to digital control, such as the effects
-of finite-precision arithmetic and quantization
+of finite precision arithmetic and quantization
 errors introduced by A/D and D/A conversion.
 %
 Given an LTI model, we develop an automatic technique for generating
@@ -312,8 +312,8 @@ and a controller operating in discrete time and over a quantized domain.
 In particular, our model evaluates the effects of the quantizers (A/D and D/A
 converters), as well as representation errors introduced by the controller working  %% artifacts such as an
 %% observer~\cite{astrom1997computer}
-in a finite-precision domain. Our model also accounts for representation errors introduced
-by our modelling of the plant using finite-precision arithmetic. 
+in a finite precision domain. Our model also accounts for representation errors introduced
+by our modelling of the plant using finite precision arithmetic. 
 We reason about safety requirements, which are frequently overlooked in conventional feedback control synthesis, 
 but which nevertheless play a key role in safety-critical applications, of clear concern in numerous modern contexts, 
 e.g. autonomy in robotics, avionics, and automotive.  
@@ -396,7 +396,7 @@ and puts forward the following contributions:
   the physical system. Such a representation requires ensuring the
   specification over actual traces of the state-space model, alongside the
   numerical soundness required by the effects of discretisation and
-  finite-precision errors.
+  finite precision errors.
 
   
 %%   \note{[this statement is way too broad] Existing methods for controller synthesis rely on transfer 
@@ -466,7 +466,7 @@ particular CEGIS, which is a recent approach to inductive synthesis.
 %% to inductively synthesize invariants for the generation of desired programs.
 
 Program synthesizers are an ideal fit for the synthesis of digital controllers, 
-since the semantics of programs precisely capture the effects of finite-precision arithmetic.  
+since the semantics of programs precisely capture the effects of finite precision arithmetic.  
 However the control literature has been oblivious to this relevant connection. 
 A relevant exception is~\cite{DBLP:conf/cdc/RavanbakhshS15}, 
 which employs CEGIS for the synthesis of switching controllers for stabilizing continuous-time
@@ -476,7 +476,7 @@ The work
 % extends to affine systems \note{extension or restriction?}, but 
 is limited by the capacity of the state-of-the-art SMT solvers for solving
 linear arithmetic.  Since this approach uses switching actions for the digital controller, it avoids problems related to
-finite-precision arithmetic, but potentially suffers from state-space
+finite precision arithmetic, but potentially suffers from state-space
 explosion.  Moreover, in \cite{DBLP:conf/emsoft/RavanbakhshS16} the same
 authors use a CEGIS-based approach for synthesizing continuous-time
 switching controllers that guarantee \emph{reach-while-stay} properties of
@@ -496,7 +496,7 @@ models: this results in a static check on their coefficients.  By contrast,
 in the current paper we consider a state-space representation of the
 physical system, which requires ensuring the specification over actual
 traces of the model, alongside the numerical soundness required by the
-effects of discretisation and the errors related to finite-precision arithmetic.  
+effects of discretisation and the errors related to finite precision arithmetic.  
 
 A~state-space model has known advantages over the transfer function
 representation~\cite{Franklin15}, as 
@@ -528,14 +528,14 @@ However, relying on state-space discretization, this class of approaches is like
 \textbf{Discretization Effects in Control Design --}
 %Classical work in control synthesis has often disregarded digitalization effects.
 Recent results in digital control have focused on separate aspects of discretization, 
-e.g. delayed response~\cite{Duggirala2015} and finite-precision arithmetic, 
+e.g. delayed response~\cite{Duggirala2015} and finite precision arithmetic, 
 with the goal either to verify~\cite{daes20161} the correctness of the implementation or to optimize~\cite{oudjida2014design} its design.
 
-There are two different problems that arise from finite-precision arithmetic in digital controllers.  
+There are two different problems that arise from finite precision arithmetic in digital controllers.  
 The first is the error caused by the inability to represent the exact state of the physical system, 
 while the second relates to rounding and saturation errors during mathematical operations.  
 In~\cite{fialho1994stability}, a stability measure based on the error of the digital dynamics ensures that
-the deviation introduced by finite-precision arithmetic does not lead to instability.  
+the deviation introduced by finite precision arithmetic does not lead to instability.  
 \cite{DBLP:journals/automatica/WuLCC09} uses $\mu$-calculus to synthesise directly a digital controller, 
 so that selected parameters result in stable model dynamics.  
 The analyses in~\cite{DBLP:conf/hybrid/RouxJG15, DBLP:conf/hybrid/WangGRJF16} rely on an
@@ -738,7 +738,7 @@ later in this work, we will target a less standard objective,
 namely a quantitative safety requirement, which opens up to more complex specifications \cite{BYG16, Tab09}. 
 This is not typical in the digital control literature. We will further precisely account for the digital nature
 of the controller, which manipulates quantised signals as discrete quantities represented with
-finite-precision. The new approach is fully automated and leverages an approach based on CEGIS. 
+finite precision. The new approach is fully automated and leverages an approach based on CEGIS. 
 
 % Further, we will embrace the digital nature of the
 %controller, which manipulates quantized signals as discrete quantities represented with finite precision. 
@@ -826,36 +826,36 @@ we set these properties to express that our controllers generate (asymptotically
 %etc. are turned into formulas? Part of Sec.~\ref{sec:errors} can probably be moved here.}
 
 %-------------------------------s
-\subsection{Semantics of finite-precision arithmetics}
+\subsection{Semantics of finite precision arithmetics}
 \label{sec:errors}
 
-A key contribution of this work is that, when synthesizing controllers, it precisely replicates the finite-precision arithmetic in the digital controller, guaranteeing that these controllers implemented with finite-precision arithmetic are safe. 
+A key contribution of this work is that, when synthesizing controllers, it precisely replicates the finite precision arithmetic in the digital controller, guaranteeing that these controllers implemented with finite precision arithmetic are safe. 
 The specific components of the system, shown in Figure~\ref{fig:digitalsystem}, we are concerned with are the ADC, digital controller and DAC.
-Details of how we model the behaviour of the finite-precision arithmetic in these components are in Section~\ref{sec:numeric_rep}. We must model the semantics precisely in order to capture the full behaviour of the system:  
+Details of how we model the behaviour of the finite precision arithmetic in these components are in Section~\ref{sec:numeric_rep}. We must model the semantics precisely in order to capture the full behaviour of the system:  
 
 \begin{itemize}
 
-\item The ADC converts the analog signal $x(t)$ into a digital signal $x_k$, which is then fed into the controller, converting a real value to a finite-precision value.  
+\item The ADC converts the analog signal $x(t)$ into a digital signal $x_k$, which is then fed into the controller, converting a real value to a finite precision value.  
 % cf. Figure~\ref{fig:digitalsystem}. 
 
-\item The controller block performs arithmetic at finite-precision. 
+\item The controller block performs arithmetic at finite precision. 
 We assume the ADC represents numbers with at least the same precision as the controller, 
 and thus focus on the precision limited by the controller. 
 This is a reasonable assumption based on commonly available hardware. 
 
-\item The DAC converts finite-precision values back to real values. 
+\item The DAC converts finite precision values back to real values. 
 We assume that the input to the DAC is the same precision as the output of the controller. 
 It would, however, be straightforward to account for a DAC or ADC of different precision than the controller in our algorithm, if necessary. 
 \end{itemize}
 
 \subsection{Soundness of modelling}
 
-In addition to precisely replicating the finite-precision arithmetic of the digital controller, we must consider that our \emph{model} itself uses finite-precision arithmetic to model the behaviour of the system. In order to guarantee soundness, we therefore encompass the following error that is due to modelling (as opposed to the nature of the digital control).  
+In addition to precisely replicating the finite precision arithmetic of the digital controller, we must consider that our \emph{model} itself uses finite precision arithmetic to model the behaviour of the system. In order to guarantee soundness, we therefore encompass the following error that is due to modelling (as opposed to the nature of the digital control).  
 \begin{itemize} 
 \item
-The representations used in the plant model and its arithmetic operations are also carried out at a finite-precision, 
+The representations used in the plant model and its arithmetic operations are also carried out at a finite precision, 
 thus we must account for the corresponding errors.  
-Specifically, we must account for the error introduced by our model using finite-precision arithmetic for the plant variables $x(t)$ and $u(t)$, which are, in reality, continuous quantities. 
+Specifically, we must account for the error introduced by our model using finite precision arithmetic for the plant variables $x(t)$ and $u(t)$, which are, in reality, continuous quantities. 
 We guarantee that the precision we use to represent the plant variables is at least as precise as the precision used in the digital controller and we use interval arithmetic to bound the errors, as detailed in Section~\ref{sec:numeric_rep}. 
 \end{itemize}
 
@@ -877,7 +877,7 @@ I_p,F_p \rangle}$.
 
 Notice that the physical plant model operates over real-valued signals, 
 which means that our verification phase \note{I'm not sure that it's clear at this point what the verification phase consists of} must also account for the numerical error, 
-as well as quantization errors caused by representing the physical plant at finite-precision $\mathcal{F}_{\langle I_p,F_p \rangle}$. \note{Also, isn't this paragraph redundant after sec 3.7?}
+as well as quantization errors caused by representing the physical plant at finite precision $\mathcal{F}_{\langle I_p,F_p \rangle}$. \note{Also, isn't this paragraph redundant after sec 3.7?}
  
 We further employ $\mathcal{F}_{\langle E,M \rangle}(x)$ to denote a real number $x$ represented in a floating-point domain, 
 with $E$ bits representing the exponent part and $M$ bits representing the mantissa part. 
@@ -1112,13 +1112,13 @@ For the input signal, these requirements practically mean that the control input
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 As discussed in Section~\ref{sec:errors}, 
-the considered models must account for finite-precision arithmetic semantics deriving from several sources: 
-we formally bound the numerical error introduced by the finite-precision representation of the plant (and its operations), 
+the considered models must account for finite precision arithmetic semantics deriving from several sources: 
+we formally bound the numerical error introduced by the finite precision representation of the plant (and its operations), 
 and precisely model the behaviour introduced by the ADC/DAC conversions, 
 as well as the behaviour of the limited-precision arithmetic used by the controller. 
 
-Technically, we employ interval arithmetic to bound the error introduced by the finite-precision plant, 
-and we use bounded model checking to precisely model the semantics of finite-precision arithmetic introduced by the ADC/DAC and the finite-precision controller.
+Technically, we employ interval arithmetic to bound the error introduced by the finite precision plant, 
+and we use bounded model checking to precisely model the semantics of finite precision arithmetic introduced by the ADC/DAC and the finite precision controller.
 
 \subsection{Bit-precise symbolic model checking}
 As described in Section~\ref{sec:BMC}, we use CBMC, a bit-precise bounded model checker to synthesise and verify candidate controllers. 
@@ -1128,7 +1128,7 @@ according to the IEEE standards.
 
 \subsection{Interval arithmetic for errors in the numerical representation} 
 
-We use finite-precision arithmetic to model the plant. 
+We use finite precision arithmetic to model the plant. 
 This is an approximation that speeds up each CEGIS iteration, 
 however it necessitates a further stage where we verify that the errors introduced by the approximation have not resulted in a controller that is unsafe when executed on a plant expressed over real numbers.  
 In this stage, we represent the plant using double-precision floating-point numbers 
@@ -1183,7 +1183,7 @@ with $|\delta_3| \leq |\delta_{T1}| + |\delta_{T2}|$.
 |\delta_{T2}\cdot\mathcal{F}_{\langle I,F \rangle}(c_1)| + c_m$, where
 $c_m=2^{-F}$ as above.
 %
-\item Division: the operations performed by the controllers in the finite-precision
+\item Division: the operations performed by the controllers in the finite precision
 domain do not include division.  However, we do use division in computations within the plant.  
 Here the error depends on whether the divisor is greater or smaller than the dividend:  $\mathcal{F}_{\langle I,F
 \rangle}(c_1) / \mathcal{F}_{\langle I,F \rangle}(c_2) = c_3 + \delta_{T3}$, 
@@ -1260,12 +1260,12 @@ which result in the following closed-loop dynamics:
 \fi
 
 
-\subsection{Effect of finite-precision arithmetic on safety specification and on stability} 
+\subsection{Effect of finite precision arithmetic on safety specification and on stability} 
 
-In this section we will quantify how the finite-precision arithmetic in a digital controller affects the
+In this section we will quantify how the finite precision arithmetic in a digital controller affects the
 safety and stability properties of an LTI model. 
 
-\subsubsection{Safety of closed-loop models with finite-precision controller error} 
+\subsubsection{Safety of closed-loop models with finite precision controller error} 
 
 Let us first consider the effect of the quantization errors on safety. 
 Within the controller, state values are manipulated at low precision,
@@ -1294,7 +1294,7 @@ We encompass this error using interval arithmetic~\cite{moore1966interval} in th
 \subsubsection{Stability of closed-loop models with fixed-point controller error}
 %-------------------------------
 \label{sec:stab_FWL}
-The validity of Jury's criterion~\cite{fadali} relies on the representation of the closed-loop dynamics $x_{k+1} = (A_d - B_dK) x_k$ at infinite-precision.  
+The validity of Jury's criterion~\cite{fadali} relies on the representation of the closed-loop dynamics $x_{k+1} = (A_d - B_dK) x_k$ at infinite precision.  
 When we employ a fixed-point arithmetic digital controller, the operation above can be expressed as follows, where we use $\mathcal{F}_{\langle I_c,F_c \rangle}$ preceding a variable to indicate that variable is converted into the fixed-point precision given by $\mathcal{F}_{\langle I_c,F_c \rangle}$: 
 %
 \begin{align*}
@@ -1324,7 +1324,7 @@ x_{n} &= (A_d  - B_dK)^nx_0 + (A_d  - B_dK)^{n-1}B_dK\delta +\\
 %The definition of asymptotic stability is that the system converges to a
 %reference signal, in this case we use no reference signal so 
 Recall that a closed-loop asymptotically stable system will converge to the origin.  
-We know that the original system with an infinite-precision controller is stable, 
+We know that the original system with an infinite precision controller is stable, 
 because we have synthesized it to meet Jury's criterion.  
 Hence, $(A_d - B_dK)^n x_0$  must converge to zero as $n \uparrow \infty$. 
 %T%o show that a fixed-point implementation of the same controller will
@@ -1354,8 +1354,8 @@ neighborhood of the equilibrium within the safe set.
 
 A similar argument can be made for floating-point arithmetic.
 We can thus disregard these steady-state errors (caused by
-finite-precision arithmetic) when stability is ensured by synthesis, and then verify its
-safety accounting for the finite-precision errors.
+finite precision arithmetic) when stability is ensured by synthesis, and then verify its
+safety accounting for the finite precision errors.
 
 
 
@@ -1567,7 +1567,7 @@ while retaining soundness.
 the CEGIS procedure that is used to synthesise safe digital controllers, 
 accounting for the precision issues detailed in the previous sections. 
 We employ a multi-stage approach that unwinds the dynamics of the model up to a completeness threshold, 
-modelling finite-precision arithmetic using bit-precise bounded model checking, 
+modelling finite precision arithmetic using bit-precise bounded model checking, 
 and then verifying soundness of the resulting controller using interval arithmetic. 
 \fi
 
@@ -1692,7 +1692,7 @@ we describe in detail the different phases in Fig.~\ref{fig:CEGIS-precision-incr
 
 The inductive synthesis phase ({\sc synthesize}) uses BMC to compute a
 candidate solution $K$ that satisfies both the stability requirement and the safety specification, 
-within a finite-precision model.  
+within a finite precision model.  
 In order to synthesize a controller that satisfies the stability requirement, 
 we need the computed characteristic polynomial to satisfy Jury's criterion~\cite{fadali} (see Section~\ref{ssec:stabspecification}). 
 
@@ -1702,7 +1702,7 @@ unfolding the transition system $k$ steps and by selecting a controller $K$ and 
 such that the states at each step do not violate the safety criteria (see Section~\ref{sec:safety}).    
 That is, we ask the bounded model checker~\cite{ClarkeKL04} if there exists a $K$ that is safe for at least one $x_0$ in our set of all possible initial states, and a given fixed point precision for the controller, and where the input signal remains within the specified bounds.
 This approach is sound if the current $k$ is greater than the completeness threshold (see later step).  
-We~also assume some finite-precision for the plant and a sampling rate. We use a fixed-point precision in this description, given by $\langle I_p,F_p\rangle$, but if we are considering a floating-point controller we will instead model the plant with a floating-point precision, $\langle E_p,M_p\rangle$.
+We~also assume some finite precision for the plant and a sampling rate. We use a fixed-point precision in this description, given by $\langle I_p,F_p\rangle$, but if we are considering a floating-point controller we will instead model the plant with a floating-point precision, $\langle E_p,M_p\rangle$.
 The checks that these assumptions hold are performed by the subsequent {\sc verify} stages. 
 
 
@@ -2024,7 +2024,7 @@ which can be split into two main stages: manual and automated, as illustrated in
 In Step~1, the user selects the system representation, which can be a transfer function or a state-space model.  
 In Step~2, the plant (e.g., in the form of Equation~\eqref{eq:ode1}) is provided~\cite{astrom1997computer}.  
 Finally, in Step~3, the numerical representation for the digital controller implementation must be set by the user, i.e., 
-the finite-precision arithmetic that defines the number of bits of integer and fractional parts when using fixed-point arithmetic, 
+the finite precision arithmetic that defines the number of bits of integer and fractional parts when using fixed-point arithmetic, 
 or half- and single-precision when using floating-point arithmetic, 
 as well as the input range.  
 % This input, provided by the user, is a specification of the physical plant.
@@ -2036,7 +2036,7 @@ In Step~B, the proposed CEGIS engine is invoked to synthesize the digital contro
 Finally, in Step~C, the synthesized digital controller is generated.  
 The output by \tool~is the synthesized digital controller represented either as a transfer function or in state-space form.  
 The synthesis is considered to be \emph{successful} if a digital controller is
-correctly synthesized w.r.t. effects of finite-precision arithmetic; or if there is no solution (no
+correctly synthesized w.r.t. effects of finite precision arithmetic; or if there is no solution (no
 controller) for the corresponding physical plant (given the implementation
 requirements), then the synthesis is considered to have \emph{failed} \note{we don't seem to have any such instance.}.
 
@@ -2046,7 +2046,7 @@ of the closed-loop control model model into its internal representation (IR).  W
 instrument this IR for each synthesis or verification scenario accordingly,
 and use CBMC as an oracle to answer our queries.  CBMC itself relies on an
 underlying SAT or SMT solver to address verification conditions.  We~model
-effects of finite-precision arithmetic 
+effects of finite precision arithmetic 
 explicitly using CBMC's nondeterminism API (e.g., \texttt{nondet},
 \texttt{CPROVER\_assume} intrinsic functions).  Our module is included into
 CBMC~5.7 and is available for
@@ -2169,7 +2169,7 @@ the evaluation study has the following experimental goal:
 
 \item[EG1] \textbf{(Performance)} Show that the multi-staged 
 %and the abstraction-based 
-CEGIS approach is able to generate finite-precision digital controllers using fixed-point and floating-point arithmetic in a reasonable amount of time.
+CEGIS approach is able to generate finite precision digital controllers using fixed-point and floating-point arithmetic in a reasonable amount of time.
 
 %\item[EG2] \textbf{(Sanity check)} Confirm the stability \note{also?} and safety of the synthesized controllers outside 
 %of our model representation using MATLAB. 
@@ -2314,7 +2314,7 @@ not generalize to other benchmarks.
 %\note{is this where we attempt asserting EG2?}
 
 \textit{Plant precision and discretization heuristics:} Our algorithm to
-select suitable finite-precision arithmetic to model the plant behavior 
+select suitable finite precision arithmetic to model the plant behavior 
 increases the precision by 8 bits at each step 
 in order to be compliant with the CBMC type API. 
 Similarly, for time-discretization, we try a set of pre-defined time discretisations.
@@ -2438,7 +2438,7 @@ within a reasonable amount of time.
 %The definition of asymptotic stability is that the system converges to a
 %reference signal, in this case we use no reference signal so an
 %asymptotically stable system will converge to the origin.  We know that the
-%original system with an infinite-precision controller is stable, because we
+%original system with an infinite precision controller is stable, because we
 %have synthesized it to meet Jury's criterion.  Hence, $(A_d - B_dK)^n x_0$ 
 %must converge to zero.
 %
