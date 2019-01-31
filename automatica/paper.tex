@@ -678,6 +678,14 @@ The present contribution distances itself from all these cognate results.
  \label{fig:digitalsystem}}
 \end{figure*}
 
+\note{throughout the article, we mix the notions of system, plant, and model. 
+I propose to clarify throughout as follows: \\ 
+we do not use the term plant (eliminate from text). \\ 
+we have an underlying physical/real/actual system. \\ 
+we have an analogue model of it (1), with continuous variables and continuous time. \\ 
+we discretise time, obtain the reference model for this article (2).  \\ 
+we define specs and properties over this discrete-time model. and we synthesise controllers $u_k$ (not $u(t)$) on it. 
+}
 
 We consider models of physical plants expressed as ordinary differential
 equations, which we assume are controllable~\cite{Astrom08}: 
@@ -1117,23 +1125,26 @@ For the input signal, these requirements practically mean that the control input
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 As discussed in Section~\ref{sec:errors}, 
-the considered models must account for finite precision arithmetic semantics deriving from several sources: 
+the considered models must account for the semantics of finite-precision arithmetic, 
+deriving from several sources: 
 we formally bound the numerical error introduced by the finite precision representation of the plant (and its operations), 
 and precisely model the behaviour introduced by the ADC/DAC conversions, 
 as well as the behaviour of the limited-precision arithmetic used by the controller. 
 
-Technically, we employ interval arithmetic to bound the error introduced by the finite precision plant, 
-and we use bounded model checking to precisely model the semantics of finite precision arithmetic introduced by the ADC/DAC and the finite precision controller.
+Technically, we employ interval arithmetic to bound the error introduced by the finite-precision plant model, 
+and we use bounded model checking to precisely model the semantics of finite-precision arithmetic, 
+as introduced by the ADC/DAC blocks and by the finite-precision controller. 
 
-\subsection{Bit-precise symbolic model checking}
-As described in Section~\ref{sec:BMC}, we use CBMC, a bit-precise bounded model checker to synthesise and verify candidate controllers. 
+\subsection{Bit-precise bounded model checking} 
+
+As described in Section~\ref{sec:BMC}, we use CBMC, a bit-precise bounded model checker, 
+to synthesise and verify candidate controllers. 
 CBMC manipulates precisely the fixed- or floating-point arithmetic used in the controller, 
-as well as the ADC/DAC conversions, 
-according to the IEEE standards. 
+as well as the ADC/DAC conversions, according to the IEEE standards. 
 
-\subsection{Interval arithmetic for errors in the numerical representation} 
+\subsection{Interval arithmetic for errors in numerical representations}  
 
-We use finite precision arithmetic to model the plant. 
+We use finite-precision arithmetic to model the plant. 
 This is an approximation that speeds up each CEGIS iteration, 
 however it necessitates a further stage where we verify that the errors introduced by the approximation have not resulted in a controller that is unsafe when executed on a plant expressed over real numbers.  
 In this stage, we represent the plant using double-precision floating-point numbers 
