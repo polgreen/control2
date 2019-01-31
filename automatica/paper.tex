@@ -866,7 +866,9 @@ In order to guarantee soundness, we therefore encompass the error that is due to
 the representations used in the plant model and its arithmetic operations are carried out at finite precision.  
 \begin{itemize} 
 \item
-We account for the error introduced by finite precision arithmetic applied over the plant variables $x_k$ and $u_k$ \note{here I have replaced the continuous-time signals with discrete-time ones}, which are actually continuous quantities. 
+We account for the error introduced by finite precision arithmetic applied over the plant variables $x_k$ and $u_k$, 
+%\note{here I have replaced the continuous-time signals with discrete-time ones}, 
+which are actually continuous quantities. 
 We guarantee that the precision we use to represent the plant variables is at least as precise as the precision used in the digital controller, 
 and we use interval arithmetic to bound the incurred errors, as further detailed in Section~\ref{sec:numeric_rep}. 
 \end{itemize}
@@ -1715,8 +1717,8 @@ and we synthesize a safe controller by
 unfolding the transition system (.e., the closed-loop model) $k$ steps and by selecting a controller $K$ and a single initial state, 
 such that the states at each step do not violate the safety criteria (see Section~\ref{sec:safety}).    
 That is, we ask the bounded model checker~\cite{ClarkeKL04} if there exists a $K$ that is safe for at least one $x_0$ in our set of all possible initial states, and a given fixed-point precision for the controller, and where the input signal remains within the specified bounds. 
-This approach is sound \note{you mean complete?} if the current $k$ is greater than the completeness threshold (see later step).  
-We also assume some finite precision for the plant and a given sampling time \note{sampling time comes out of nowhere - also not in the algorithm}.  
+This approach is sound, i.e., the controller produced is guaranteed to be safe, \note{you mean complete? No, i mean sound} if the current $k$ is greater than the completeness threshold (see later step).  
+We also assume some finite precision for the plant and a given time discretisation, as described in section~\ref{sec:model}.  
 We use a fixed-point precision in this description, given by $\langle I_p,F_p\rangle$, but if we are considering a floating-point controller we will instead model the plant with a floating-point precision, $\langle E_p,M_p\rangle$.
 The checks that these assumptions hold are performed by the subsequent {\sc verify} stages. 
 
