@@ -2337,7 +2337,7 @@ not generalize to other benchmarks.
 %\note{is this where we attempt asserting EG2?}
 
 \item[]
-\textit{Plant precision and discretization heuristics:} Our algorithm to
+\textit{Plant model precision and discretization heuristics:} Our algorithm to
 select suitable finite-precision arithmetic to model the plant behavior 
 increases the precision by 8 bits at each step,  
 in order to be compliant with the CBMC type API. 
@@ -2357,21 +2357,16 @@ threshold is high.
 \label{sec:conclusions}
 %-------------------------------
 
-We have presented an automated approach to synthesize digital
-state-feedback controllers that ensure both stability and safety over state-space models.   
+We have presented an automated approach to synthesize provably-correct digital state-feedback controllers that ensure both stability and safety over state-space models.   
 %The first approach relies on unfolding of the closed-loop model dynamics up to a completeness threshold, while the second
 %one applies abstraction-refinement and acceleration to increase speed, whilst retaining soundness.
 %
-Our approach is novel within the digital control literature: we provide a fully
-automated synthesis method that is algorithmically and numerically sound,
-considering various error sources in the implementation of the digital
-control algorithm and in the computational modeling of plant dynamics.
+Our approach is novel within the digital control literature: 
+we provide a fully automated synthesis method that is algorithmically and numerically sound,
+considering various error sources in the implementation of the digital control algorithm and in the computational modeling of plant dynamics.
 %
-Our experimental results show we are able to synthesize fully automatically 
-safe controllers for diverse benchmarks from the control literature, 
+Our experimental results show we are able to synthesize fully automatically safe controllers for diverse benchmarks from the control literature, 
 within a reasonable amount of time.  
-
-
 %
 %\note{Let us collect here the main extensions we regard to be relevant: \\ 
 %models with partial observations; \\ 
