@@ -680,8 +680,7 @@ The present contribution distances itself from all these cognate results.
 
 \note{throughout the article, we mix the notions of system, plant, and model. 
 I propose to clarify throughout as follows: \\ 
-we do not use the term plant (eliminate from text). \\ 
-we have an underlying physical/real/actual system. \\ 
+the term plant is the underlying physical/real/actual system. \\ 
 we have an analogue model of it (1), with continuous variables and continuous time. \\ 
 we discretise time, obtain the reference model for this article (2).  \\ 
 we define specs and properties over this discrete-time model. and we synthesise controllers $u_k$ (not $u(t)$) on it. 
@@ -1763,22 +1762,22 @@ The first {\sc verify} stage, {\sc safety} is shown in Alg.~\ref{alg:safetycheck
 The algorithm checks that the candidate
 solution $K$, which we have synthesized to be safe for at least one initial
 state, is safe for \emph{all} possible initial states, i.e., it does not reach
-the (complement) unsafe state within $k$ steps.  After unfolding the transition system corresponding
+the (complement) unsafe set within $k$ steps.  After unfolding the transition system corresponding
 to the previously synthesized controller $k$ steps, we check that the safety
 specification holds for any initial state. 
 
 We use $(controller\_typet)$ to denote a
 cast or conversion to the controller precision, and $(plant\_typet)$ to denote a cast or conversion to the 
 plant precision. A \emph{vertex state} is defined as a state where all values are either equal to the upper or lower
-bound of the initial states. It is sufficient to verify that the controller is safe for all vertex states, as shown next. 
+bound of the states in the initial set. It is sufficient to verify that the controller is safe for all vertex states, as shown next.  
 %We thus only need to iterate through the $2^{n}$ vertex
 %states, where $n$ is dimension of the state space (number of continuous variables).
 
 
 \begin{theorem}
   \label{th:safety}
-If a controller is safe for each of the corner cases of our hypercube of
-allowed initial states, i.e., the vertex states, it is safe for any initial state in the hypercube. 
+If a controller is safe for each of the corner cases of the hypercube of allowed initial states, 
+i.e., the vertex states, then it is safe for any initial state in the hypercube. 
 \end{theorem}
 \begin{proof}
 Consider the set of initial states, $X_0$, which we assume to be convex since it is a hypercube. 
@@ -1798,16 +1797,16 @@ convex set, by those generated from the vertices.
 In conclusion, we only need to check $2^n$ initial states, 
 where $n$ is the dimension of the state space (number of continuous variables).
 
-\subsection{Block 3}
+\subsection{{\sc precision} Block}
 
 The second {\sc verify} stage, {\sc precision}, 
  restores soundness with respect to the plant precision
 by using interval arithmetic \cite{moore1966interval} to validate the 
 operations performed by the previous stage. 
 
-\subsection{Block 4}
+\subsection{{\sc complete} Block}
 
-The third {\sc verify} stage, {\sc complete}, checks that the current
+The third and last {\sc verify} stage, {\sc complete}, checks that the current
 $k$ is large enough to ensure safety for any further time steps.  
 Here, we compute the completeness threshold $\overline{k}$ for the current candidate controller $K$ and
 check that $k{\geq}\overline{k}$.  This is done by computing the number of time steps
