@@ -826,37 +826,42 @@ we set these properties to express that our controllers generate (asymptotically
 %etc. are turned into formulas? Part of Sec.~\ref{sec:errors} can probably be moved here.}
 
 %-------------------------------s
-\subsection{Semantics of finite precision arithmetics}
+\subsection{Semantics of finite-precision arithmetics}
 \label{sec:errors}
 
-A key contribution of this work is that, when synthesizing controllers, it precisely replicates the finite precision arithmetic in the digital controller, guaranteeing that these controllers implemented with finite precision arithmetic are safe. 
-The specific components of the system, shown in Figure~\ref{fig:digitalsystem}, we are concerned with are the ADC, digital controller and DAC.
-Details of how we model the behaviour of the finite precision arithmetic in these components are in Section~\ref{sec:numeric_rep}. We must model the semantics precisely in order to capture the full behaviour of the system:  
+A key contribution of this work is that, when synthesizing controllers, it precisely replicates the finite-precision arithmetic within the digital controller, 
+thus guaranteeing that controllers implemented with finite-precision arithmetic are safe. 
+The specific components of the model, shown in Figure~\ref{fig:digitalsystem}, we are concerned with are the ADC, digital controller and DAC.
+Details of how we model the behaviour of the finite-precision arithmetic in these components are in Section~\ref{sec:numeric_rep}. 
+We must model the semantics precisely, in order to capture the full behaviour of the model. 
+More specifically, we encompass the following features: 
 
 \begin{itemize}
 
-\item The ADC converts the analog signal $x(t)$ into a digital signal $x_k$, which is then fed into the controller, converting a real value to a finite precision value.  
+\item The ADC converts the analog signal $x(t)$ into a digital signal $x_k$, which is then fed into the controller, converting a real value to a finite-precision value.  
 % cf. Figure~\ref{fig:digitalsystem}. 
 
 \item The controller block performs arithmetic at finite precision. 
 We assume the ADC represents numbers with at least the same precision as the controller, 
-and thus focus on the precision limited by the controller. 
+and thus focus on the precision as limited by the controller. 
 This is a reasonable assumption based on commonly available hardware. 
 
-\item The DAC converts finite precision values back to real values. 
-We assume that the input to the DAC is the same precision as the output of the controller. 
+\item The DAC converts finite-precision values back to real values. 
+We assume that the input to the DAC has the same precision as the output of the controller. 
 It would, however, be straightforward to account for a DAC or ADC of different precision than the controller in our algorithm, if necessary. 
 \end{itemize}
 
 \subsection{Soundness of modelling}
 
-In addition to precisely replicating the finite precision arithmetic of the digital controller, we must consider that our \emph{model} itself uses finite precision arithmetic to model the behaviour of the system. In order to guarantee soundness, we therefore encompass the following error that is due to modelling (as opposed to the nature of the digital control).  
+In addition to precisely replicating the finite-precision arithmetic of the digital controller, 
+we must consider that our \emph{model} itself in \eqref{eq:plant} employs finite-precision arithmetic to represent the behaviour of the real system. 
+In order to guarantee soundness, we therefore encompass the error that is due to modelling (as opposed to the nature of the digital controller):   
+the representations used in the plant model and its arithmetic operations are carried out at finite precision.  
 \begin{itemize} 
 \item
-The representations used in the plant model and its arithmetic operations are also carried out at a finite precision, 
-thus we must account for the corresponding errors.  
-Specifically, we must account for the error introduced by our model using finite precision arithmetic for the plant variables $x(t)$ and $u(t)$, which are, in reality, continuous quantities. 
-We guarantee that the precision we use to represent the plant variables is at least as precise as the precision used in the digital controller and we use interval arithmetic to bound the errors, as detailed in Section~\ref{sec:numeric_rep}. 
+We account for the error introduced by finite precision arithmetic applied over the plant variables $x_k$ and $u_k$ \note{here I have replaced the continuous-time signals with discrete-time ones}, which are actually continuous quantities. 
+We guarantee that the precision we use to represent the plant variables is at least as precise as the precision used in the digital controller, 
+and we use interval arithmetic to bound the incurred errors, as further detailed in Section~\ref{sec:numeric_rep}. 
 \end{itemize}
 
 
