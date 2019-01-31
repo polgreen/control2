@@ -2028,32 +2028,34 @@ $z^n+\sum_{i=1}^n(a_i-k_i)z^{n-i}=\prod_{i=1}^n (z-\lambda_i) \text{ where } |\l
 \begin{figure*}[t]
 \centering
 \includegraphics[width=0.9\textwidth]{figures/synthesis-flow.pdf}
-\caption{Phases of the controller synthesis}
+\caption{The Digital-System Synthesizer (\tool) tool - distinct phases of the controller synthesis }
 \label{fig:synthesis-flow}
 \end{figure*}
 
 The implementation of the proposed methodology for synthesis of digital controls for physical plants is based on the Digital-System Synthesizer 
-(DSSynth) tool~\cite{DBLP:conf/kbse/AbateBCCCDKKP17}, 
+(\tool) tool~\cite{DBLP:conf/kbse/AbateBCCCDKKP17}, 
 which can be split into two main stages: manual and automated, as illustrated in Fig.~\ref{fig:synthesis-flow} and detailed next. 
 
-In Step~1, the user selects the system representation, which can be a transfer function or a state-space model.  
+The first stage comprises the following steps. 
+In Step~1, the user selects the system representation, which can be a transfer function or a state-space model (we focus on the latter in this article).   
 In Step~2, the plant (e.g., in the form of Equation~\eqref{eq:ode1}) is provided~\cite{astrom1997computer}.  
-Finally, in Step~3, the numerical representation for the digital controller implementation must be set by the user, i.e., 
-the finite precision arithmetic that defines the number of bits of integer and fractional parts when using fixed-point arithmetic, 
-or half- and single-precision when using floating-point arithmetic, 
-as well as the input range.  
-% This input, provided by the user, is a specification of the physical plant.
+Finally, in Step~3, the numerical representation for the digital controller implementation must be set by the user: 
+this is the finite-precision arithmetic that defines the number of bits of integer and fractional parts when using fixed-point arithmetic, 
+or half- and single-precision when using floating-point arithmetic. 
+The user also specifies the input range.  
 
 In the second stage, 
 the automated synthesis process starts with Step~A, where the
 \tool~translates the model specification into an ANSI-C program.  
-In Step~B, the proposed CEGIS engine is invoked to synthesize the digital controller w.r.t.~the specification on the digital model.  
+In Step~B, the discussed CEGIS engine is invoked, 
+in order to synthesize the digital controller w.r.t.~the specification given on the model.  
 Finally, in Step~C, the synthesized digital controller is generated.  
-The output by \tool~is the synthesized digital controller represented either as a transfer function or in state-space form.  
+The output of \tool~is the synthesized digital controller \note{you mean: the closed-loop model}, 
+which is represented either as a transfer function or in state-space form (in this article we consider the latter case).  
 The synthesis is considered to be \emph{successful} if a digital controller is
-correctly synthesized w.r.t. effects of finite precision arithmetic; or if there is no solution (no
-controller) for the corresponding physical plant (given the implementation
-requirements), then the synthesis is considered to have \emph{failed} \note{we don't seem to have any such instance.}.
+correctly synthesized with respect to the effects of finite-precision arithmetic; 
+otherwise, if there is no solution (no controller) for the corresponding physical plant (given the implementation requirements), 
+then the synthesis is considered to have \emph{failed}. 
 
 Our CEGIS engine is implemented as an integrated module within the C bounded
 model checker (CBMC)~\cite{ClarkeKL04}.  CBMC transforms the ANSI-C representation
