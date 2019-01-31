@@ -123,12 +123,6 @@ grestore
 \begin{document}
 \newcommand\tool{{\sf DSSynth}}
 
-
-%\runtitle{Automated Synthesis of Safe Digital Controllers}  % Running title for regular 
-                                              % papers but only if the title  
-                                              % is over 5 words. Running title 
-                                              % is not shown in output.
-
 %\thanksref{footnoteinfo}
 
 \title{Automated Formal Synthesis 
@@ -149,6 +143,11 @@ for Continuous Plants}
 }
 
 \authorrunning{Abate et al.} % if too long for running head
+
+\titlerunning{Automated Synthesis of Safe Digital Controllers}  % Running title for regular 
+                                              % papers but only if the title  
+                                              % is over 5 words. Running title 
+                                              % is not shown in output
 
 \institute{}
 %A. Abate \at
@@ -710,9 +709,10 @@ into the difference equation
 where 
 $\mat{A}_d=e^{\mat{A}T_s}$ and 
 $\mat{B}_d = \int_{t = 0}^{T_s} e^{\mat{A} t} dt\ \mat{B}$, 
-$k \in \mathbb N$ is a discrete counter and where $\vec{x}_{0}=\vec{x}(0)$ denotes the initial state.
-\reply{This time discretization introduces errors that fall outside the scope of this work.}
-%\note{shall we add a note on time discretization errors? namely that we disregard them? } 
+$k \in \mathbb N$ is a discrete counter and where $\vec{x}_{0}=\vec{x}(0)$ denotes the initial state. 
+We assume that specifications on the model concern \eqref{eq:plant}, 
+and plan to devise controllers $\vec{u}_k$ to meet them. 
+(The more general problem of synthesising controllers $u(t)$ for \eqref{eq:ode1} fall outside the scope of the present work.)  
 
 \subsection{Digital control synthesis}
 
