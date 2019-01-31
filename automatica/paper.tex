@@ -889,10 +889,6 @@ range of $\mathcal{F}_{\langle I_c,F_c \rangle}$, and all other calculations
 in our model will be carried out in the range of $\mathcal{F}_{\langle
 I_p,F_p \rangle}$.  
 
-Notice that the physical plant model operates over real-valued signals, 
-which means that our verification \note{also called validation below ... } phase \note{I'm not sure that it's clear at this point what the verification phase consists of} must also account for the numerical error, 
-as well as quantization errors caused by representing the physical plant at finite precision $\mathcal{F}_{\langle I_p,F_p \rangle}$. \note{Also, isn't this paragraph redundant after sec 3.7?}
- 
 We further employ $\mathcal{F}_{\langle E,M \rangle}(x)$ to denote a real number $x$ represented in a floating-point domain, 
 with $E$ bits representing the exponent part and $M$ bits representing the mantissa part. 
 In particular, 
@@ -948,8 +944,8 @@ This is a design problem, where the objective is to synthesise a valid $P$ that 
 CEGIS breaks down this generally hard synthesis problem into two easier parts:
 %The design consists of two phases,
 an inductive synthesis phase (denoted by {\sc Synthesize} in
-Figure~\ref{fig:CEGIS}) and a validation phase (denoted by {\sc
-  Verify}) \note{why do we use validation-VERIFY; this can be confusing, if you regard validation as a form of soft verification via data ... }, which interacts via a finite set of tests {\sc
+Figure~\ref{fig:CEGIS}) and a verification phase (denoted by {\sc
+  Verify}), which interacts via a finite set of tests {\sc
   inputs} that is updated incrementally.
 Given the specification $\phi$, the inductive synthesis procedure tries to
 find an existential witness $P$ satisfying the specification
@@ -958,7 +954,7 @@ $\phi(a, P)$ for all $a$ in {\sc inputs} (as opposed to all $a \in
 %
 If the synthesis phase succeeds in finding a witness~$P$, this witness is a
 candidate solution to the full synthesis formula.  We pass this candidate
-solution to the validation phase, which checks whether it is a full solution
+solution to the verification phase, which checks whether it is a full solution
 (i.e., $P$ satisfies the specification $\phi(a, P)$ for all
 $a\in\mathcal{D}$).  If this is the case, then the algorithm terminates. 
 Otherwise, additional information is provided to the inductive synthesis
@@ -1717,7 +1713,7 @@ and we synthesize a safe controller by
 unfolding the transition system (.e., the closed-loop model) $k$ steps and by selecting a controller $K$ and a single initial state, 
 such that the states at each step do not violate the safety criteria (see Section~\ref{sec:safety}).    
 That is, we ask the bounded model checker~\cite{ClarkeKL04} if there exists a $K$ that is safe for at least one $x_0$ in our set of all possible initial states, and a given fixed-point precision for the controller, and where the input signal remains within the specified bounds. 
-This approach is sound, i.e., the controller produced is guaranteed to be safe, \note{you mean complete? No, i mean sound} if the current $k$ is greater than the completeness threshold (see later step).  
+This approach is sound, i.e., the controller produced is guaranteed to be safe, if the current $k$ is greater than the completeness threshold (see later step).  
 We also assume some finite precision for the plant and a given time discretisation, as described in section~\ref{sec:model}.  
 We use a fixed-point precision in this description, given by $\langle I_p,F_p\rangle$, but if we are considering a floating-point controller we will instead model the plant with a floating-point precision, $\langle E_p,M_p\rangle$.
 The checks that these assumptions hold are performed by the subsequent {\sc verify} stages. 
