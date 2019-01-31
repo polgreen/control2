@@ -2048,7 +2048,7 @@ the automated synthesis process starts with Step~A, where the
 In Step~B, the discussed CEGIS engine is invoked, 
 in order to synthesize the digital controller w.r.t.~the specification given on the model.  
 Finally, in Step~C, the synthesized digital controller is generated.  
-The output of \tool~is the synthesized digital controller \note{you mean: the closed-loop model}, 
+The output of \tool~is the closed-loop model with the synthesized digital controller, 
 which is represented either as a transfer function or in state-space form (in this article we consider the latter case).  
 The synthesis is considered to be \emph{successful} if a digital controller is
 correctly synthesized with respect to the effects of finite-precision arithmetic; 
@@ -2202,7 +2202,7 @@ $\mathcal{F}_{\langle I_p,F_p \rangle}$, where $I_p$ and $F_p$ indicate the inte
 and $\mathcal{F}_{\langle E_p,M_p \rangle}$, where $E_p$ and $M_p$ indicate the exponent and mantissa part, 
 are the fixed- and floating-point precisions used to model the plant, respectively; 
 and \textit{Time} is the total time required to synthesize a controller for the given plant.    
-Timeouts \note{above: failures} are indicated by~\xmark.  
+Timeouts \note{above: failures. No, these are timeouts. I can't find any mention of failures} are indicated by~\xmark.  
 The precision for the controller, $\mathcal{F}_{\langle I_c,F_c \rangle}$, is
 chosen to be $I_c = 8$, $F_c = 8$ for fixed-point, whereas  
 $\mathcal{F}_{\langle E_c, M_c \rangle}$ is chosen to be $W_c = 6$ and $F_c = 10$
