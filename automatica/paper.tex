@@ -672,9 +672,9 @@ The present contribution distances itself from all these cognate results.
   \path (Kd.north) edge (circle.south);
  \end{tikzpicture}
 }
- \caption{Closed-loop digital control setup: 
- the plant is intended to be an analogue model of the underlying real system, 
- whereas the controller is digital. 
+ \caption{Closed-loop digital control setup, 
+ comprising an analogue model of the underlying real system, 
+ alongside a digital controller. 
  \label{fig:digitalsystem}}
 \end{figure*}
 
@@ -1013,7 +1013,7 @@ considered in its general form as
 \begin{equation*}
 S(z) = a_0z^N+a_1z^{N-1}+\cdots+a_{N-1}z+a_N,\,\, a_0\neq0. 
 \end{equation*}
-This polynomial is obtained as a function of the state-space matrices $A,B$~\cite{Astrom08}, 
+This polynomial is obtained as a function of the state-space matrices $A_d,B_d$~\cite{Astrom08}, 
 and in particular its order $N$ corresponds to the dimensions of the state variables (above, $n$).  
 A sufficient condition for asymptotic stability of the closed-loop LTI model~\cite{astrom1997computer} 
 is when all the roots of its characteristic polynomial $S(z)$ (which correspond to the 
@@ -1163,8 +1163,9 @@ we store an interval that encompasses this error.
 Further mathematical operations performed at the precision $\mathcal{F}_{\langle E,M \rangle}(x)$ will propagate this error, 
 leading to further errors for which bounds can be derived~\cite{DBLP:conf/arith/BrainTRW15}.  
 
-The fixed-point arithmetic of the digital controller is performed on the upper and lower bound of the intervals from above independently, and the upper and lower bound of the result taken as the interval result. For example,
-consider the conversion from plant precision to controller precision performed by the ADC on a single state value. The state value is represented as an interval $\{x.high, x.low\}$, and the result of the conversion is an interval where the upper bound is the conversion of $x.high$ and the lower bound is the conversion of $x.low$. 
+The fixed-point arithmetic of the digital controller is performed on the upper and lower bound of the intervals from above independently, 
+and the upper and lower bound of the result is taken as the interval result. For example,
+consider the conversion from the model precision to controller precision performed by the ADC on a single state value. The state value is represented as an interval $\{x.high, x.low\}$, and the result of the conversion is an interval where the upper bound is the conversion of $x.high$ and the lower bound is the conversion of $x.low$. 
 Since the precision of the floating-point domain is greater than the precision of the controller, this is guaranteed to bound the real behaviour of the controller. 
 
 
@@ -1299,11 +1300,11 @@ Recall this error is modelled precisely by bounded model checking.
 
 An additional error is due to the representation of the plant dynamics, namely 
 %
-{\scriptsize
+%{\scriptsize
 \begin{equation*}
 x_{k+1} =\mathcal{F}_{\langle I_p,F_p \rangle}(A_d) \mathcal{F}_{\langle I_p,F_p \rangle}(x_{k}) + \mathcal{F}_{\langle I_p,F_p \rangle}(B_d)\mathcal{F}_{\langle I_p,F_p \rangle}(u_{k}).
 \end{equation*}
-}
+%}
 We encompass this error using interval arithmetic~\cite{moore1966interval} in the precision check shown in Figure~\ref{fig:CEGIS-precision-increment} and detailed in the following section \note{previous section?}.
 
 
@@ -1326,7 +1327,6 @@ where $\delta$ is the maximum error that can be introduced by the digital contro
 i.e., by reading the states values once and multiplying by $K$ once.  
 We derive the closed form expression for $x_n$ recursively, as follows:
 %
-\small
 \begin{align*}
 x_{1} &= (A_d  - B_dK)x_0 + B_dK\delta \\
 x_{2} %&= (A_d  - B_dK)((A_d  - B_dK)x_0 + B_dK\delta ) + B_dK\delta \\
@@ -1334,9 +1334,8 @@ x_{2} %&= (A_d  - B_dK)((A_d  - B_dK)x_0 + B_dK\delta ) + B_dK\delta \\
 %x_{3}  &=(A_d  - B_dK)^3x_0 + (A_d  - B_dK)^2B_dK\delta + (A_d  - B_dK)B_dK\delta + B_dK\delta\\
 x_{n} &= (A_d  - B_dK)^nx_0 + (A_d  - B_dK)^{n-1}B_dK\delta +\\
 &\phantom{{}=1} ... + (A_d  - B_dK)^1B_dK \delta + B_dK\delta \\
-  &= (A_d - B_dK)^nx_0 + \sum_{i=0}^{i=n-1}(A_d - B_dK)^iB_dk\delta. 
+  &= (A_d - B_dK)^nx_0 + \sum_{i=0}^{n-1}(A_d - B_dK)^iB_dk\delta. 
 \end{align*}
-\normalsize
 %The definition of asymptotic stability is that the system converges to a
 %reference signal, in this case we use no reference signal so 
 Recall that a closed-loop asymptotically stable system will converge to the origin.  
@@ -1583,7 +1582,7 @@ while retaining soundness.
 the CEGIS procedure that is used to synthesise safe digital controllers, 
 accounting for the precision issues detailed in the previous sections. 
 We employ a multi-stage approach that unwinds the dynamics of the model up to a completeness threshold, 
-modelling finite precision arithmetic using bit-precise bounded model checking, 
+encompassing finite precision arithmetic using bit-precise bounded model checking, 
 and then verifying soundness of the resulting controller using interval arithmetic. 
 \fi
 
@@ -1704,21 +1703,22 @@ we describe in detail the different phases in Fig.~\ref{fig:CEGIS-precision-incr
 %\note{we need to refer to the parts of Algorithm 1 more closely - point to specific lines in the explanation below.} 
 
 %\todo{please eventually itemize next}
-\subsection{Block 1}
+\subsection{{\sc synthesize} Block}
 
 The inductive synthesis phase ({\sc synthesize}) uses BMC to compute a
 candidate solution $K$ that satisfies both the stability requirement and the safety specification, 
-within a finite precision model.  
+within a finite-precision model.  
 In order to synthesize a controller that satisfies the stability requirement, 
-we need the computed characteristic polynomial to satisfy Jury's criterion~\cite{fadali} (see Section~\ref{ssec:stabspecification}). 
+we need the characteristic polynomial of the closed-loop model to satisfy Jury's criterion~\cite{fadali} (see Section~\ref{ssec:stabspecification}). 
 
 We fix an index $k$, 
 and we synthesize a safe controller by
-unfolding the transition system $k$ steps and by selecting a controller $K$ and a single initial state, 
+unfolding the transition system (.e., the closed-loop model) $k$ steps and by selecting a controller $K$ and a single initial state, 
 such that the states at each step do not violate the safety criteria (see Section~\ref{sec:safety}).    
-That is, we ask the bounded model checker~\cite{ClarkeKL04} if there exists a $K$ that is safe for at least one $x_0$ in our set of all possible initial states, and a given fixed point precision for the controller, and where the input signal remains within the specified bounds.
-This approach is sound if the current $k$ is greater than the completeness threshold (see later step).  
-We~also assume some finite precision for the plant and a sampling rate. We use a fixed-point precision in this description, given by $\langle I_p,F_p\rangle$, but if we are considering a floating-point controller we will instead model the plant with a floating-point precision, $\langle E_p,M_p\rangle$.
+That is, we ask the bounded model checker~\cite{ClarkeKL04} if there exists a $K$ that is safe for at least one $x_0$ in our set of all possible initial states, and a given fixed-point precision for the controller, and where the input signal remains within the specified bounds. 
+This approach is sound \note{you mean complete?} if the current $k$ is greater than the completeness threshold (see later step).  
+We also assume some finite precision for the plant and a given sampling time \note{sampling time comes out of nowhere - also not in the algorithm}.  
+We use a fixed-point precision in this description, given by $\langle I_p,F_p\rangle$, but if we are considering a floating-point controller we will instead model the plant with a floating-point precision, $\langle E_p,M_p\rangle$.
 The checks that these assumptions hold are performed by the subsequent {\sc verify} stages. 
 
 
@@ -1757,7 +1757,7 @@ The checks that these assumptions hold are performed by the subsequent {\sc veri
 \caption{Safety check ({\sc safety} stage in Fig.~\ref{fig:CEGIS-precision-increment})\label{alg:safetycheck}}
 \end{algorithm}
 
-\subsection{Block 2}
+\subsection{{\sc safety} Block}
 
 The first {\sc verify} stage, {\sc safety} is shown in Alg.~\ref{alg:safetycheck}. 
 The algorithm checks that the candidate
