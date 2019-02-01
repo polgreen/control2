@@ -249,8 +249,8 @@ In this paper, we examine the case of physical systems (a.k.a. plants in control
 Linear Time Invariant (LTI) models, for which the classical synthesis of controllers is well understood.
 However, the use of digital control architectures adds new challenges
 caused by artefacts specific to digital control, such as the effects
-of finite precision arithmetic and quantization
-errors introduced by A/D and D/A conversion.
+of finite-precision arithmetic and quantization 
+errors introduced by A/D and D/A conversion. 
 %
 Given an LTI model, we develop an automatic technique for generating
 correct-by-design digital controllers that addresses these challenges. 
@@ -499,7 +499,7 @@ physical system, which requires ensuring the specification over actual
 traces of the model, alongside the numerical soundness required by the
 effects of discretisation and the errors related to finite precision arithmetic.  
 
-A~state-space model has known advantages over the transfer function
+A~state-space model has well known advantages over the transfer function
 representation~\cite{Franklin15}, as 
 % it naturally generalizes to multivariate systems (i.e., with multiple inputs and outputs); and 
 it allows synthesis of controllers with guarantees on the internal dynamics, e.g., 
@@ -868,10 +868,10 @@ In order to guarantee soundness, we therefore encompass the error that is due to
 the representations used in the plant model and its arithmetic operations are carried out at finite precision.  
 \begin{itemize} 
 \item
-We account for the error introduced by finite precision arithmetic applied over the plant variables $x_k$ and $u_k$, 
+We account for the error introduced by finite precision arithmetic applied over the model variables $x_k$ and $u_k$, 
 %\note{here I have replaced the continuous-time signals with discrete-time ones}, 
 which are actually continuous quantities. 
-We guarantee that the precision we use to represent the plant variables is at least as precise as the precision used in the digital controller, 
+We guarantee that the precision we use to represent the model variables is at least as precise as the precision used in the digital controller, 
 and we use interval arithmetic to bound the incurred errors, as further detailed in Section~\ref{sec:numeric_rep}. 
 \end{itemize}
 
@@ -885,7 +885,7 @@ and $\mathcal{F}_{\langle I_p,F_p \rangle}(x)$ denotes a real number $x$
 represented at the fixed-point precision of the plant model. 
 $I_c$ and $F_c$ are determined by the controller.  We pick $I_p$ and $F_p$ for our synthesis
 such that $I_p \geq I_c$ and $\allowbreak F_p \geq F_c$, so that our controller 
-can be represented accurately in the plant domain.    
+can be represented accurately in the model domain.    
 Thus any mathematical operations in our modelled digital controller will be in the
 range of $\mathcal{F}_{\langle I_c,F_c \rangle}$, and all other calculations
 in our model will be carried out in the range of $\mathcal{F}_{\langle
@@ -1145,8 +1145,8 @@ as well as the ADC/DAC conversions, according to the IEEE standards.
 
 We use finite-precision arithmetic to model the plant. 
 This is an approximation that speeds up each CEGIS iteration, 
-however it necessitates a further stage where we verify that the errors introduced by the approximation have not resulted in a controller that is unsafe when executed on a plant expressed over real numbers.  
-In this stage, we represent the plant using double-precision floating-point numbers 
+however it necessitates a further stage where we verify that the errors introduced by the approximation have not resulted in a controller that is unsafe when executed on a model expressed over real numbers.  
+In this stage, we represent the plant model using double-precision floating-point numbers 
 and we use the Boost interval arithmetic library~\cite{DBLP:journals/tcs/BronnimannMP06} to bound the error in this representation. 
 We employ a compositional numerical library to model the fixed point arithmetic for the controller~\cite{CNL} within double-precision floating-point numbers. 
 We check that the controller is safe starting from each vertex of the set of initial states,  
@@ -1200,7 +1200,7 @@ with $|\delta_3| \leq |\delta_{T1}| + |\delta_{T2}|$.
 $c_m=2^{-F}$ as above.
 %
 \item Division: the operations performed by the controllers in the finite precision
-domain do not include division.  However, we do use division in computations within the plant.  
+domain do not include division.  However, we do use division in computations within the model.  
 Here the error depends on whether the divisor is greater or smaller than the dividend:  $\mathcal{F}_{\langle I,F
 \rangle}(c_1) / \mathcal{F}_{\langle I,F \rangle}(c_2) = c_3 + \delta_{T3}$, 
 where $\delta_{T3}$ is $(\delta_{T2}\cdot c_1 - \delta_{T1}\cdot
@@ -1426,12 +1426,12 @@ we extend the algorithm to continuous-time models.
 
 
 The time discretization in Sec.~\ref{sec:model} only allows us to evaluate
-the state of the plant at integer multiples of the sample time.  
+the state of the model at integer multiples of the sample time.  
 %\note{Unlike the CAV18 paper, these gain matrices have not been discussed yet. }
 However, in order to synthesize a soundly safe controller, 
 % $\mat{K}$, 
-we must be able to ensure that the safety of the plant holds at any continuous point in time.  
-In order to do so, we accelerate the dynamics of the plant according to the continuous-time model
+we must be able to ensure that the safety of the model holds at any continuous point in time.  
+In order to do so, we accelerate the dynamics of the model according to the continuous-time model
 semantics in Sec.~\ref{sec:model}. 
 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -1482,9 +1482,9 @@ where $\mat{A}_d^{\frac{T}{T_s}} =e^{log(\mat{A}_d) \frac{T}{T_s}} = e^{\mat{A} 
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 We analyze the case of hybrid-time models, 
-namely where the plant dynamics evolve in continuous time, 
+namely where the model dynamics evolve in continuous time, 
 while the feedback dynamics evolve in discrete time.  
-A new input value is accepted by the plant only at sample times $T_s$.
+A new input value is accepted by the model only at sample times $T_s$.
 %but implemented over the continuous-time plant dynamics.
 %
 %\note{Matrix K has not been introduced yet. }
@@ -1498,7 +1498,7 @@ The expression
 %
 with $\mat{A}_T$ as in \eqref{eq:continuous_tube_dyn2}, $\mat{B}_T$ as in
 \eqref{eq:continuous_tube_param}, and where $\mat{A}_d=\mat{A}_{T_s}$,
-$\mat{B}_d=\mat{B}_{T_s}$ describe the discretized plant dynamics with
+$\mat{B}_d=\mat{B}_{T_s}$ describe the discretized model dynamics with
 sample time $T_s$, is the state of the model
 %
 \begin{align*}
@@ -1716,7 +1716,7 @@ unfolding the transition system (.e., the closed-loop model) $k$ steps and by se
 such that the states at each step do not violate the safety criteria (see Section~\ref{sec:safety}).    
 That is, we ask the bounded model checker~\cite{ClarkeKL04} if there exists a $K$ that is safe for at least one $x_0$ in our set of all possible initial states, and a given fixed-point precision for the controller, and where the input signal remains within the specified bounds. 
 This approach is sound, i.e., the controller produced is guaranteed to be safe, if the current $k$ is greater than the completeness threshold (see later step).  
-We also assume some finite precision for the plant and a given time discretisation, as described in section~\ref{sec:model}.  
+We also assume some finite precision for the model and a given time discretisation, as described in section~\ref{sec:model}.  
 We use a fixed-point precision in this description, given by $\langle I_p,F_p\rangle$, but if we are considering a floating-point controller we will instead model the plant with a floating-point precision, $\langle E_p,M_p\rangle$.
 The checks that these assumptions hold are performed by the subsequent {\sc verify} stages. 
 
@@ -1768,7 +1768,7 @@ specification holds for any initial state.
 
 We use $(controller\_typet)$ to denote a
 cast or conversion to the controller precision, and $(plant\_typet)$ to denote a cast or conversion to the 
-plant precision. A \emph{vertex state} is defined as a state where all values are either equal to the upper or lower
+model precision. A \emph{vertex state} is defined as a state where all values are either equal to the upper or lower
 bound of the states in the initial set. It is sufficient to verify that the controller is safe for all vertex states, as shown next.  
 %We thus only need to iterate through the $2^{n}$ vertex
 %states, where $n$ is dimension of the state space (number of continuous variables).
@@ -1800,7 +1800,7 @@ where $n$ is the dimension of the state space (number of continuous variables).
 \subsection{{\sc precision} Block}
 
 The second {\sc verify} stage, {\sc precision}, 
- restores soundness with respect to the plant precision
+ restores soundness with respect to the plant model precision
 by using interval arithmetic \cite{moore1966interval} to validate the 
 operations performed by the previous stage. 
 
@@ -2203,7 +2203,7 @@ We provide the results in Table~\ref{tab:results}, where:
 $\mathcal{F}_{\langle I_p,F_p \rangle}$, where $I_p$ and $F_p$ indicate the integer and fractional parts,  
 and $\mathcal{F}_{\langle E_p,M_p \rangle}$, where $E_p$ and $M_p$ indicate the exponent and mantissa part, 
 are the fixed- and floating-point precisions used to model the plant, respectively; 
-and \textit{Time} is the total time required to synthesize a controller for the given plant.    
+and \textit{Time} is the total time required to synthesize a controller for the given model.    
 Timeouts \note{above: failures. No, these are timeouts. I can't find any mention of failures; 
 From Section 7: ``
 otherwise, if there is no solution (no controller) for the corresponding physical plant (given the implementation requirements), 
