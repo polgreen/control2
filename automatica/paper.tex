@@ -2204,7 +2204,11 @@ $\mathcal{F}_{\langle I_p,F_p \rangle}$, where $I_p$ and $F_p$ indicate the inte
 and $\mathcal{F}_{\langle E_p,M_p \rangle}$, where $E_p$ and $M_p$ indicate the exponent and mantissa part, 
 are the fixed- and floating-point precisions used to model the plant, respectively; 
 and \textit{Time} is the total time required to synthesize a controller for the given plant.    
-Timeouts \note{above: failures. No, these are timeouts. I can't find any mention of failures} are indicated by~\xmark.  
+Timeouts \note{above: failures. No, these are timeouts. I can't find any mention of failures; 
+From Section 7: ``
+otherwise, if there is no solution (no controller) for the corresponding physical plant (given the implementation requirements), 
+then the synthesis is considered to have \emph{failed}
+''} are indicated by~\xmark.  
 The precision for the controller, $\mathcal{F}_{\langle I_c,F_c \rangle}$, is
 chosen to be $I_c = 8$, $F_c = 8$ for fixed-point, whereas  
 $\mathcal{F}_{\langle E_c, M_c \rangle}$ is chosen to be $W_c = 6$ and $F_c = 10$
