@@ -220,7 +220,7 @@ digital controllers for physical plants represented as time-invariant models.
 Models are linear differential equations with inputs, evolving over a continuous state space. 
 The synthesis precisely accounts for the effects of finite precision arithmetic introduced by the controller. 
 The approach uses counterexample-guided inductive synthesis (CEGIS): 
-an inductive generalization phase produces a controller that is known to stabilize the system but that may
+an inductive generalization phase produces a controller that is known to stabilize the model but that may
 not be safe for all initial conditions of the model.  
 \ifx\axelerator
 Safety is then verified either
@@ -680,14 +680,6 @@ The present contribution distances itself from all these cognate results.
  \label{fig:digitalsystem}}
 \end{figure*}
 
-\note{throughout the article, we mix the notions of system, plant, and model. 
-I propose to clarify throughout as follows: \\ 
-the term plant is the underlying physical/real/actual system. \\ 
-we have an analogue model of it (1), with continuous variables and continuous time. \\ 
-we discretise time, obtain the reference model for this article (2).  \\ 
-we define specs and properties over this discrete-time model. and we synthesise controllers $u_k$ (not $u(t)$) on it. 
-}
-
 We consider models of physical plants expressed as ordinary differential
 equations, which we assume are controllable~\cite{Astrom08}: 
 %
@@ -725,7 +717,7 @@ and plan to devise controllers $\vec{u}_k$ to meet them.
 
 \subsection{Digital control synthesis}
 
-Models \eqref{eq:ode1} and \eqref{eq:plant} depend on external non-determinism in the form of input signals $u (t)$ and  $u_k$, respectively. 
+Models \eqref{eq:ode1} and \eqref{eq:plant} depend on external non-determinism in the form of input signals $u(t)$ and  $u_k$, respectively. 
 Feedback architectures can be employed to manipulate properties and behaviors of the plant:    
 we are interested in the synthesis of digital feedback controllers $u_k$, as in Fig. \ref{fig:digitalsystem},  
 as practically implemented on Field-Programmable Gate Arrays or Digital Signal Processors   
@@ -1148,7 +1140,7 @@ This is an approximation that speeds up each CEGIS iteration,
 however it necessitates a further stage where we verify that the errors introduced by the approximation have not resulted in a controller that is unsafe when executed on a model expressed over real numbers.  
 In this stage, we represent the plant model using double-precision floating-point numbers 
 and we use the Boost interval arithmetic library~\cite{DBLP:journals/tcs/BronnimannMP06} to bound the error in this representation. 
-We employ a compositional numerical library to model the fixed point arithmetic for the controller~\cite{CNL} within double-precision floating-point numbers. 
+We employ a compositional numerical library to model the fixed point arithmetic for the controller\footnote{\url{https://github.com/johnmcfarlane/cnl}} within double-precision floating-point numbers. 
 We check that the controller is safe starting from each vertex of the set of initial states,  
 and show that this is sufficient to prove safety from any state in this set (see Theorem~\ref{th:safety}). %\note{add forward reference to proof.}
 
@@ -1304,7 +1296,7 @@ An additional error is due to the representation of the plant dynamics, namely
 x_{k+1} =\mathcal{F}_{\langle I_p,F_p \rangle}(A_d) \mathcal{F}_{\langle I_p,F_p \rangle}(x_{k}) + \mathcal{F}_{\langle I_p,F_p \rangle}(B_d)\mathcal{F}_{\langle I_p,F_p \rangle}(u_{k}).
 \end{equation*}
 %}
-We encompass this error using interval arithmetic~\cite{moore1966interval} in the precision check shown in Figure~\ref{fig:CEGIS-precision-increment} and detailed in the following section \note{previous section?}.
+We encompass this error using interval arithmetic~\cite{moore1966interval} in the precision check shown in Figure~\ref{fig:CEGIS-precision-increment} and detailed in the previous section.
 
 
 \subsubsection{Stability of closed-loop models with fixed-point controller error}
@@ -1920,7 +1912,7 @@ If there is no candidate solution we return UNSAT and exit the loop.
 \item Once we have a candidate solution, we perform a safety verification 
   of the 
   %consisting of evaluating the
-  progression of the system from $\phi_\mathit{init}$ over time,
+  progression of the model from $\phi_\mathit{init}$ over time,
 $x_{k} \models \phi_\mathit{safety}$. 
   In order to compute the progression of point $x_0$ at iteration $k$,
   we consider the solution of the closed-loop model 
@@ -1968,7 +1960,7 @@ When the abstraction cannot be further refined, we provide $(k, x_0)$ to the {\s
 This is a constraint for the spectrum of the closed-loop dynamics.  
 \item We use $\phi_\Lambda$ to
   further constrain the characteristic polynomial %\blue{[again, check the coefficients of the characteristic polynomial.]I don't find any error} 
-$z^n+\sum_{i=1}^n(a_i-k_i)z^{n-i}=\prod_{i=1}^n (z-\lambda_i) \text{ where } |\lambda_i|<1 \wedge \lambda_i \models \phi_{\Lambda}$. These constraints correspond to specific iterations for which the system may be unsafe.
+$z^n+\sum_{i=1}^n(a_i-k_i)z^{n-i}=\prod_{i=1}^n (z-\lambda_i) \text{ where } |\lambda_i|<1 \wedge \lambda_i \models \phi_{\Lambda}$. These constraints correspond to specific iterations for which the model may be unsafe.
 \item Pass the refined abstraction $\phi(K)$ with the new constraints and the list of iterations $k$ to the {\sc synthesize} phase (step (2)).
   %, as well as a counterexample plant coefficients ($P_a$) and repeat the loop again. 
 \end{enumerate} 
@@ -2053,9 +2045,7 @@ Finally, in Step~C, the synthesized digital controller is generated.
 The output of \tool~is the closed-loop model with the synthesized digital controller, 
 which is represented either as a transfer function or in state-space form (in this article we consider the latter case).  
 The synthesis is considered to be \emph{successful} if a digital controller is
-correctly synthesized with respect to the effects of finite-precision arithmetic; 
-otherwise, if there is no solution (no controller) for the corresponding physical plant (given the implementation requirements), 
-then the synthesis is considered to have \emph{failed}. 
+correctly synthesized with respect to the effects of finite-precision arithmetic within the 5 hour time-out.
 
 Our CEGIS engine is implemented as an integrated module within the C bounded
 model checker (CBMC)~\cite{ClarkeKL04}.  CBMC transforms the ANSI-C representation
@@ -2071,7 +2061,7 @@ download.\footnote{\url{https://github.com/diffblue/cbmc/archive/cbmc-5.7.zip}}
 We have further created a VirtualBox OVA image with our tool pre-installed,
 including our MATLAB-generated benchmarks and benchmark shell script, 
 with instructions to run all benchmarks and to reproduce our
-experiments.\footnote{\url{http://www.cprover.org/synthesis/}}
+experiments.\footnote{\url{http://www.cprover.org/DSSynth/}}
 %
 %\textcolor{red}{This paragraph needs to be updated by Elizabeth and Dario.}
 %
@@ -2086,7 +2076,7 @@ experiments.\footnote{\url{http://www.cprover.org/synthesis/}}
 \label{exp:evaluation}
 %-------------------------------
 
-Our benchmark suite consists of 19 case studies extracted from the control literature~\cite{acrobot,cstr,CHEN1979389,KOKOTOVIC198023,gajic2008optimal,Franklin15, maglev, converters, CTMS, gajic2008optimal}. These case studies comprise control models, which we represent in state space form as in \eqref{eq:ode1}. 
+Our benchmark suite consists of 19 case studies extracted from the control literature~\cite{acrobot,cstr,CHEN1979389,KOKOTOVIC198023,gajic2008optimal,Franklin15, maglev, converters, gajic2008optimal}. These case studies comprise control models, which we represent in state space form as in \eqref{eq:ode1}. 
 The models are time discretized, with sampling times ranging from 1s to 0.0001s. 
 CEGIS initially starts with the coarsest discretisation (i.e., 1s sampling time), and if it fails to find a controller, reduces the sampling time. The initial states are bounded between $0.5$ and $-0.5$ for all states, and the safety specification requires that the states remain between $-1.5$ and $1.5$. The input bounds are selected individually for each benchmark.
 %\note{we need to at least qualitatively mention input selection, initial conditions, and also safe sets. how much can you say? } 
@@ -2107,26 +2097,25 @@ CEGIS initially starts with the coarsest discretisation (i.e., 1s sampling time)
 %eletromagnet-ball system, where a steel ball can be levitated by the force generated by an electromagnet~\cite{Franklin15}.  
 The \textit{bioreactor} benchmark is a linear model 
 %identified by least squares 
-of the cell mass concentration controlled through the dilution rate of a bioreactor~\cite{bioreactor}.\\ 
-%
+of the cell mass concentration controlled through the dilution rate of a bioreactor~\cite{bioreactor}.
 The \textit{Chen}
 benchmark correspond to a higher-order control system 
 %discrete 
-model employed as a case study for model-order reduction techniques~\cite{CHEN1979389}.  \\
+model employed as a case study for model-order reduction techniques~\cite{CHEN1979389}.  
 %
 The benchmarks \textit{Cruise 1}~\cite{Franklin15} and \textit{Cruise 2}~\cite{Astrom08} deal with automotive cruise control models, 
 where the control is used to maintain the speed of an automobile constant, 
-tracking a desired speed reference, and compensating disturbances and uncertainties. \\ % related to relief and terrain. 
+tracking a desired speed reference, and compensating disturbances and uncertainties.  % related to relief and terrain. 
 %There are two continuous stirred tank reactor models named 
 \textit{cstr}  and \textit{cstrtmp}  describe the pH dynamics of a reaction 
 of an aqueous solution of sodium acetate with hydrochloric acid~\cite{cstr} and 
 the temperature of a reaction~\cite{astrom2006advanced} in a 
 %continuous flow stirred-
-tank reactor. \\ 
+tank reactor. 
 The \textit{DC motor} plant  describes the velocity 
 dynamics of a 
 %basic brushed 
-direct-current electrical machine. \\ 
+direct-current electrical machine. 
 %
 %The \textit{Flexbeam} benchmark  is 
 %a plant 
@@ -2138,35 +2127,35 @@ direct-current electrical machine. \\
 %which is used to determine the path of an autonomous vehicle \note{This is similar to the two benchmarks above?}. \\ 
 The \textit{helicopter} benchmark plant  describes the transitional and rotational dynamics 
 %of transitional motion with respect to a longitudinal plane and the rotational motion around the longitudinal axis for 
-of a coaxial helicopter. \\ 
+of a coaxial helicopter. 
 %
 %\textit{Invpendulum\_cartpos}  and 
 The \textit{inverted pendulum} benchmark  
 describes a model for the cart position and the angle of an inverted pendulum placed on the cart,  
 %plant composed by a point mass, which must be equilibrated above the pivot point and is mounted on an one degree of freedom cart that 
-which moves over a track through a DC motor. \\ 
+which moves over a track through a DC motor.  
 %
 The \textit{magnetic pointer} benchmark  describes a magnetic pointer, 
 % plant composed by a pointer employed in analogue gauges and indicators, 
-whose angular position dynamics is controlled by a magnetic field. \\ 
+whose angular position dynamics is controlled by a magnetic field. 
 %
-The \textit{magsuspension} describes  the dynamic of a magnetic car suspension system. \\
-The \textit{pendulum}  plant consists of a swinging point mass suspended from a frictionless pivot by means of a rod with negligible mass.  \\ 
+The \textit{magsuspension} describes  the dynamic of a magnetic car suspension system. 
+The \textit{pendulum}  plant consists of a swinging point mass suspended from a frictionless pivot by means of a rod with negligible mass.  
 %
 The \textit{Regulator} consists of a linear model of a synchronous electrical machine% connected to an infinite bus
-~\cite{KOKOTOVIC198023}. \\
+~\cite{KOKOTOVIC198023}. 
 The \textit{satellite attitude control system} plant describes the dynamics of a satellite 
 attitude, {\it i.e.}, the orientation angles. An attitude control system must maintain the desired 
 orientation of a satellite with respect to an 
 inertial frame during all the excursion. 
-The \textit{springer-mass damper system} plant is a standard model for the dynamics of several mechanical systems. \\ 
+The \textit{springer-mass damper system} plant is a standard model for the dynamics of several mechanical systems. 
 %This benchmark describes a mass, which is fixed to a node by means of a springer and moves under the action of an input force, damping, and elastic force.
-The \textit{steam drum} benchmark describes a linear model for the level dynamics of a boiler steam drum~\cite{boiler}. \\ 
+The \textit{steam drum} benchmark describes a linear model for the level dynamics of a boiler steam drum~\cite{boiler}. 
 %
 The \textit{suspension} models the single-wheel suspension system of a car, 
-namely the relative motion dynamics of a mass-spring-damper model, which connects the car to one of its wheels.  \\
+namely the relative motion dynamics of a mass-spring-damper model, which connects the car to one of its wheels.  
 The \textit{tapedriver} benchmark models a computer tape driver, 
-that is a computer storage device used to read and write data on magnetic tapes. \\ 
+that is a computer storage device used to read and write data on magnetic tapes. 
 The \textit{USCG cutter tampa heading angle} plant describes the heading angle dynamics of a Coast 
 Guard cutter. 
 
@@ -2204,11 +2193,7 @@ $\mathcal{F}_{\langle I_p,F_p \rangle}$, where $I_p$ and $F_p$ indicate the inte
 and $\mathcal{F}_{\langle E_p,M_p \rangle}$, where $E_p$ and $M_p$ indicate the exponent and mantissa part, 
 are the fixed- and floating-point precisions used to model the plant, respectively; 
 and \textit{Time} is the total time required to synthesize a controller for the given model.    
-Timeouts \note{above: failures. No, these are timeouts. I can't find any mention of failures; 
-From Section 7: ``
-otherwise, if there is no solution (no controller) for the corresponding physical plant (given the implementation requirements), 
-then the synthesis is considered to have \emph{failed}
-''} are indicated by~\xmark.  
+Time-outs are indicated by~\xmark, where the time-out used is 5 hours.  
 The precision for the controller, $\mathcal{F}_{\langle I_c,F_c \rangle}$, is
 chosen to be $I_c = 8$, $F_c = 8$ for fixed-point, whereas  
 $\mathcal{F}_{\langle E_c, M_c \rangle}$ is chosen to be $W_c = 6$ and $F_c = 10$
@@ -2314,7 +2299,7 @@ the objective we have raised.
 %\textcolor{blue}{The synthesized controllers are confirmed to be safe outside of our model
 %representation using MATLAB, achieving EG2 \note{please explain how this check is performed - is the check itself sound?}.  
 A~link to the full experimental environment, including scripts to reproduce the results, all benchmarks and the tool, is provided in the
-footnote as an Open Virtual Appliance (OVA).\footnote{\url{XXXX}} 
+footnote as an Open Virtual Appliance (OVA).\footnote{\url{www.cprover.org/DSSynth}} 
 The provided experimental environment runs multiple discretisations for each benchmark, and lists the fastest as the result synthesis time. 
 
 In this article we have presented a selection of case studies for which we have been able to automatically synthesise safe controllers. 
