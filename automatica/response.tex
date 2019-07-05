@@ -1,0 +1,246 @@
+\documentclass{article}
+
+\setlength\parindent{0pt}
+
+\usepackage{amssymb,latexsym,amsfonts,amsmath, amsthm,color,mathrsfs}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{amsthm}
+\usepackage{mathtools}
+\usepackage{dsfont}
+\usepackage{mathtools}
+\usepackage{todonotes}
+%\usepackage{utf8}
+\usepackage{fullpage}
+\def\SS#1{{\textcolor{red}{ {\bf SS:} #1}}}
+\renewcommand{\b}{\textcolor{blue}}
+%\newcommand{\red}{\textcolor{red}}
+%
+\newcommand{\vold}[1]{\colorbox{red!20}{\bfseries #1}}
+\newcommand{\vnew}[1]{\colorbox{blue!30}{\bfseries #1}}
+
+\renewcommand{\t}{\new{(t)}}
+\newcommand{\tp}{\new{(t+1)}}
+\newcommand{\fei}[1]{{\color{purple}#1 \color{black}}}
+
+\begin{document}
+\begin{center}
+{\Large Responses to the Comments}\\\vspace{0.3cm}
+\today
+\end{center}
+\vspace{1cm}
+Dear Associate Editor and Reviewers,\vspace{0.3cm}
+\\
+We would like to deeply thank you for reviewing our paper and providing us with the constructive comments and suggestions. We have carefully addressed
+all the comments and incorporated them in the revised manuscript.
+
+We present below a detailed discussion of all comments, questions, and concerns raised by the reviewers. The major modifications are highlighted in
+blue in the revised manuscript. For clarity,  we also use \vold{v1} and \vnew{v2} in the response letter for referring respectively to the previous
+and current versions of the manuscript.
+%I do not like color coding that much. And definitely not with red and blue.
+\\
+\\
+With kind regards,\vspace{0.1cm}
+\\
+
+%The Authors
+%
+\newpage
+
+\section{General response}
+
+
+
+
+\section{Response to Reviewer (1)}
+\bigskip
+
+{\bf Comment: }{\itshape This paper presents an approach for synthesizing 
+digital/software controllers for continuous plants (linear time invariant / LTI) 
+such that they satisfy safety/stability requirements, as would show up in closed-loop 
+control of cyber-physical systems (CPS). The approach extends earlier work of the authors, 
+the primary of which in my view is toward floating-point implementation as opposed to only fixed-point. 
+I did not entirely buy that using CEGIS is a contribution, as from looking over the earlier related publications 
+(e.g., ASE'17, CAV'17, HSCC'17, SYNT'18 abstract), all of them use CEGIS.}
+
+\vspace{1em}
+
+{\bf Response: }
+
+Do we actually say that CEGIS is a contribution? We should change that
+
+\todo[inline]{check that we don't say CEGIS is a contribution}
+
+\vspace{2em}
+{\bf Comment: } {\itshape he results are evaluated on about a dozen and a half examples from the controls literature all with relatively small
+dimensionality (2 to 5 real variables in the continuous state space), and while the authors claim the software artifacts and benchmarks are available
+for evaluation, when this reviewer browsed to the link (http://www.cprover.org/DSSynth/), a page with "TBD" was shown. I did a little digging and
+eventually found what I presume is the same / similar artifacts here: https://github.com/ssvlab/dsverifier and/or http://dsverifier.org/}
+
+\vspace{1em}
+{\bf Response: }
+
+Fixed this now
+
+\todo[inline]{Elizabeth: fix this}
+\vspace{2em}
+{\bf Comment: } {\itshape On the control theory side, the approach uses standard results to synthesize stabilizing controllers for LTI systems,
+specifically linear state feedback controllers (u=Kx with a possible reference signal to track), under the assumption the plant is controllable. It
+seems the approach requires full-state observability as well, which is a fairly standard assumption as one can typically implement various filters /
+estimators (Kalman, Leuenberger, etc.) to ensure state observability assuming detectability of the plant, but the authors should clarify this point to
+make the assumptions more precise.}
+\vspace{1em}
+{\bf Response: }
+
+We have clarified this on page [X] as follows: 
+
+\todo[inline]{fix this}
+\vspace{2em}
+{\bf Comment: } {\itshape Theorem 2 states completeness of the approach, specifically that there exists a finite k for which BMC can be done up-to to
+provide a guarantee of future safety for all larger k' > k. Assuming the benchmarks all work up to some completeness threshold, I would like to see
+the completeness threshold for each benchmark in table 1. The reason being, I find this result a bit surprising in the given context (albeit not
+unbelievable given the focus on LTI) and would like to see further evidence illustrating the point beyond the fairly informal proof, and it would
+greatly enhance the existing discussion of timeouts, etc. related to completeness thresholds being too high for some cases.}
+
+\vspace{1em}
+
+{\bf Response: }
+
+We have added the completeness threshold for each benchmark in the table. Note that the completeness threshold is dependent on the controller, 
+and a controller with a smaller completeness threshold may exist. 
+
+The proof has been elaborated on as follows:
+
+\todo[inline]{Elizabeth: add completeness thresholds to table}
+\todo[inline]{Alessandro: Elaborate and make more formal Theorem 2}
+
+\vspace{2em}
+
+{\bf Comment: }
+{\itshape I would like to see some additional discussion and/or comparison to hybrid systems reachability. While the focus of this work is on lower-level
+software synthesis, if the approach is to be believed in the context of closed-loop systems satisfying specifications, then I would like some
+discussion/comparison to that vast existing literature. Specifically, I presume the reason the benchmarks are not scalable beyond ~n=4 dimensionality
+(as the n=5 benchmark appears to timeout), which is trivially small at this stage for linear systems (e.g., given a recent HSCC'19 paper on verifying
+$R^{billion}$ linear systems, or at least n=100 to n=1000 with standard approaches like SpaceEx), is due to overapproximation error growth with the
+interval representation of plant behaviors, whereas most scalable approaches utilize better data structures for representing geometric sets
+(zonotopes, support functions, star sets, Taylor models, etc.). This likewise limits the possible applicability of the
+approach for nonlinear plants, although there are a host of technical issues in that potential extension. }
+
+\vspace{1em}
+{\bf Response: }
+
+
+\vspace{2em}
+{\bf Comment: }
+{\itshape Finally, while checking the $2^n$ vertices
+are sufficient (theorem 1), I doubt this is necessary, as e.g. the star set approaches avoid this blow-up that would also limit the dimensionality
+the approach can work toward.}
+\vspace{1em}
+
+
+{\bf Response: }
+\todo[inline]{Alessandro: response to this (Theorem 1)}
+
+\vspace{2em}
+
+{\bf Comment: }
+{\itshape While I may have missed it, I didn't see how the controller gain K is initially selected. I presume under the given assumptions a standard approach
+such as pole placement, but this should be clarified}
+\vspace{1em}
+{\bf Response: }
+
+The controller gain is initially nondeterministically selected by the bounded model checking synthesis step, i.e., the SAT solver returns the first assignment to the controller
+values it finds
+that satisfies the boolean formula which encodes the specification, by using Conflict Driven Clause Learning.
+We have added the following sentence to clarify this:
+\todo[inline]{add this}
+
+\vspace{2em}
+\todo[inline]{fix reviewer 1 typos}
+
+\section{Response to Reviewer (3)}
+
+{\bf Comment: }{\itshape
+The verification condition, given in Theorem 1, is wrong. Here is an example system, with dynamics, initial set, and unsafe set.
+
+\begin{verbatim}
+x+ = -0.5*y
+y+ = 0.5*x
+\end{verbatim}
+
+
+Rotation by 90 degrees in counterclock wise and shrinking it to the origin by 0.5.
+\begin{verbatim}
+initial set is 0 <= x <= 1 and 0 <= y <= 1.
+unsafe set -3/20 <= x <= -2/20 and -3/20 <= y <= -2/20.
+\end{verbatim}
+
+It is easy to see that after two transformations, the initial set would be
+\begin{verbatim}
+-0.25 <= x <= 0 and -0.25 <= y <= 0.
+\end{verbatim}
+The unsafe set lies completely within the reachable set, but none of the edges in the hyperrectangle is unsafe. The next time the initial set reaches
+this quadrant, the reachable set is
+\begin{verbatim}
+-1/(2^6) <= x <= 0
+-1/(2^6) <= y <= 0.
+\end{verbatim}
+
+I believe that for this case, the K returned from completeness is 4 or 5.
+
+The same theorem is also present in [1]. The proof, upon careful inspection, is not a proof of the statement given in the theorem. It only proves
+that the reachable set is the convex set obtained by the trajectories of the corner states. However, it does not prove that if the trajectories are
+safe, their convex combination is also safe. In fact, as given in the above counterexample, the vertices of polytope are safe does not mean that the
+convex combination is safe.
+
+I think this bug needs to be fixed in the BMC part of the verifier. Instead of checking the individual trajectories, you should in fact compute the
+convex combination of trajectories (reachable set) and then perform the verification.}
+\vspace{1em}
+{\bf Response: }
+\todo[inline]{Alessandro: Response to this (Theorem 1)}
+\vspace{2em}
+
+\section{Response to Reviewer (4)}
+
+{\bf Comment:  } {\itshape The safety property in Eqn 3 focuses on interval constraints. One can generate auxiliary variables such that range constraints over them can encode
+more complex safety properties. It would be nice to bring this up in the discussion after equation 3 that $x_i$ need not be just $i$-th component of the
+state.  Can these also incorporate temporal properties (say STL properties with bounded time-horizon) without having to unroll the transition and
+create auxiliary variables that track history explicitly?}
+\vspace{1em}
+{\bf Response: }
+
+\vspace{2em}
+{\bf Comment: } {\itshape The paper would benefit with a restructuring of the discussion. Figure 2 and 3 will be more useful
+earlier in the paper (Section 1 or 3).}
+
+\vspace{1em}
+{\bf Response: }
+We have moved these figures to [] 
+\todo[inline]{move figure}
+\vspace{2em}
+
+{\bf Comment: } {\itshape
+Some other relevant applications of CEGIS to CPS/dynamical systems include: Synthesizing switching logic for
+safety and dwell-time requirements in ICCPS, 2010; Synthesis of optimal switching logic for hybrid systems in EMSOFT, 2011, Synthesis of Optimal
+Fixed-Point Implementation of Numerical Software Routines in NSV'13, Bridging boolean and quantitative synthesis using smoothed proof search,
+POPL'14, Synthesis of fixed-point programs in EMSOFT'13}
+
+\vspace{1em}
+{\bf Response: }
+We have added a discussion about these applications and results to the related work as follows:
+\todo[inline]{add discussion}
+
+\vspace{2em}
+{\bf Comment: } {\itshape Could you add one example to the end of Section 4 to show $R_1$, $R_2$, $R_3$, $R_4$ for a simple LTI system? Section 4 is one the most interesting parts
+of the paper and its current presentation is a bit sketchy. What are $m_{ij}$?}
+\vspace{1em}
+{\bf Response: }
+
+
+
+\bibliographystyle{alpha}
+\bibliography{}
+
+
+
+
+\end{document}
