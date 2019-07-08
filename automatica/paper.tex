@@ -119,6 +119,7 @@ grestore
 
 \renewcommand{\note}[1]{\textcolor{red}{[#1]}}
 \newcommand{\reply}[1]{\textcolor{blue}{[#1]}}
+\newcommand{\rev}[1]{\textcolor{blue}{#1}}
 
 \begin{document}
 \newcommand\tool{{\sf DSSynth}}
@@ -315,7 +316,7 @@ converters), as well as representation errors introduced by the controller worki
 %% observer~\cite{astrom1997computer}
 in a finite precision domain. Our model also accounts for representation errors introduced
 by our modelling of the plant using finite precision arithmetic. 
-We reason about safety requirements, which are frequently overlooked in conventional feedback control synthesis, 
+We reason about \rev{specific} safety requirements, which are frequently overlooked in conventional feedback control synthesis, 
 but which nevertheless play a key role in safety-critical applications, of clear concern in numerous modern contexts, 
 e.g. autonomy in robotics, avionics, and automotive.  
 
@@ -358,7 +359,7 @@ unbounded-time safety by unfolding the model dynamics, considering the
 full set of initial states, and checking a \emph{completeness
 threshold}~\cite{DBLP:conf/vmcai/KroeningS03}, i.e., 
 the number of stages required to sufficiently unwind the closed-loop model, 
-such that the safety boundaries are not violated for any larger number of iterations.  
+such that the safety boundaries \rev{(assumed to be a compact set)} are not violated for any larger number of iterations.  
 
 \ifx\axelerator
 Instead of unfolding the dynamics, \emph{the second approach}
@@ -736,7 +737,8 @@ The gain matrix $K$ can be set so that the closed-loop discrete dynamics are
 shaped as desired, for instance according to a specific stability goal or
 around a dynamical behavior of interest \cite{astrom1997computer}.  As argued
 later in this work, we will target a less standard objective,
-namely a quantitative safety requirement, which opens up to more complex specifications \cite{BYG16, Tab09}. 
+namely a quantitative safety requirement \rev{over a convex set around the origin}, 
+which opens up to more complex specifications \cite{BYG16, Tab09}. 
 This is not typical in the digital control literature. We will further precisely account for the digital nature
 of the controller, which manipulates quantised signals as discrete quantities represented with
 finite precision. The new approach is fully automated and leverages an approach based on CEGIS. 
@@ -780,7 +782,7 @@ well known task in the literature on digital control systems -- but target
 safety requirements with an overall approach that is sound and automated. 
 More specifically, we require that the closed-loop model 
 %\eqref{eq:closedloopss} 
-meets a given safety specification.  
+meets a given safety specification \rev{that depends on a given set around the origin}.  
 A safety specification gives rise to a requirement on the states of the model, 
 namely that they remain within the safe set at all times (that is, over an infinite number of time steps).  
 So the feedback controller (namely the choice of the gain matrix~$K$)
@@ -812,7 +814,8 @@ $\phi_\mathit{input} = \{\forall k \geq 0.\bigwedge_{i=1}^{p} \underline{u} \leq
 and $\phi_\mathit{init} = \{ \bigwedge_{i=1}^{n} \underline{x_{i,0}} \leq x_{i,0} \leq \overline{x_{i,0}}\}$. 
 The former constraint expresses that control input, possibly shaped via state-feedback, 
 might saturate in view of physical constraints.
-
+\rev{Notice that we will assume that the set of initial states lies within the safe set, since the contrary leads to dynamics that are trivially unsafe. 
+Furthermore, whilst the problem can handle general hyper-boxes, we will in practice work with set that contain the origin. }
 
 \subsection{Bounded Model Checking}
 \label{sec:BMC}
@@ -1144,7 +1147,7 @@ We employ a compositional numerical library to model the fixed point arithmetic 
 We check that the controller is safe starting from each vertex of the set of initial states,  
 and show that this is sufficient to prove safety from any state in this set (see Theorem~\ref{th:safety}). %\note{add forward reference to proof.}
 
-We outline here the mathematics behind bounding the errors on the double-precision floating-point numbers. 
+We describe here the mathematics behind bounding the errors on the double-precision floating-point numbers. 
 Recall we use $\mathcal{F}_{\langle E,M \rangle}(x)$ denote a real number $x$ represented in a floating-point domain, 
 with $E$ bits representing the exponent part, and $M$ bits representing the mantissa. 
 In general the representation of a real number using the floating-point domain introduces an error, 
@@ -1287,7 +1290,7 @@ This induces two types of errors,
 as detailed above: 
 first, the truncation error due to the representation of $x_k$ as $\mathcal{F}_{\langle I_c,F_c
 \rangle}(x_{k})$; and second, the rounding error introduced by the multiplication operation. 
-Recall this error is modelled precisely by bounded model checking.
+Recall that this error is modelled precisely by bounded model checking.
 
 An additional error is due to the representation of the plant dynamics, namely 
 %
@@ -1768,11 +1771,12 @@ bound of the states in the initial set. It is sufficient to verify that the cont
 
 \begin{theorem}
   \label{th:safety}
-If a controller is safe for each of the corner cases of the hypercube of allowed initial states, 
+\rev{Assuming that the initial state is in the safe set, }
+if a controller is safe for each of the corner cases of the hypercube of allowed initial states, 
 i.e., the vertex states, then it is safe for any initial state in the hypercube. 
 \end{theorem}
 \begin{proof}
-Consider the set of initial states, $X_0$, which we assume to be convex since it is a hypercube. 
+Consider the set of initial states, $X_0$, which we note is convex since it is a hypercube. 
 Name $v_i$ its vertices, where $i=1,\ldots, 2^n$.  
 Thus any point $x \in X_0$ can be expressed by convexity as $x = \sum_{i=1}^{2^n} \alpha_i v_i$, 
 where $\sum_{i=1}^{2^n} \alpha_i =1$. Then if $x_0=x$, we obtain 
@@ -1784,9 +1788,10 @@ x_k   &= (A_d - B_d K)^k x = (A_d - B_d K)^k \sum_{i=1}^{2^n} \alpha_i v_i \\
 where $x_k^i$ denotes the trajectories obtained from the single vertex
 $v_i$.  We~conclude that any $k$-step trajectory is encompassed, within a
 convex set, by those generated from the vertices. 
+\rev{Recall that we have assumed that the initial set lies within the safe set, and that both are (convex) hyper-boxes. The conclusion follows. }
 \qed
 \end{proof}
-In conclusion, we only need to check $2^n$ initial states, 
+Summarising, we only need to check $2^n$ initial states, 
 where $n$ is the dimension of the state space (number of continuous variables).
 
 \subsection{{\sc precision} Block}
@@ -1814,7 +1819,7 @@ in order to ensure that $\phi_\mathit{safety}$ holds.
 An asymptotically stable model is known to have converging dynamics.  Assume the
 closed-loop matrix eigenvalues are not repeated (which is sensible to do,
 since we select them).  The distance of the trajectory from the reference
-point (origin) decreases over time within subspaces related to real-valued
+point (which, for linear models, is the origin) decreases over time within subspaces related to real-valued
 eigenvalues; however, this is not the case in general when dealing with
 complex eigenvalues.  Consider the closed-loop matrix that updates the
 states in every discrete time step, and select the eigenvalue $\vartheta$
@@ -2078,7 +2083,7 @@ experiments.\footnote{\url{http://www.cprover.org/DSSynth/}}
 
 Our benchmark suite consists of 19 case studies extracted from the control literature~\cite{acrobot,cstr,CHEN1979389,KOKOTOVIC198023,gajic2008optimal,Franklin15, maglev, converters, gajic2008optimal}. These case studies comprise control models, which we represent in state space form as in \eqref{eq:ode1}. 
 The models are time discretized, with sampling times ranging from 1s to 0.0001s. 
-CEGIS initially starts with the coarsest discretisation (i.e., 1s sampling time), and if it fails to find a controller, reduces the sampling time. The initial states are bounded between $0.5$ and $-0.5$ for all states, and the safety specification requires that the states remain between $-1.5$ and $1.5$. The input bounds are selected individually for each benchmark.
+CEGIS initially starts with the coarsest discretisation (i.e., 1s sampling time), and if it fails to find a controller, reduces the sampling time. The initial states are bounded between $0.5$ and $-0.5$ for all states, and the safety specification requires that the states remain between $-1.5$ and $1.5$ \rev{(as remarked above, the initial set lies within the safe set and contains the origin)}. The input bounds are selected individually for each benchmark.
 %\note{we need to at least qualitatively mention input selection, initial conditions, and also safe sets. how much can you say? } 
 
 %-------------------------------
