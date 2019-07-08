@@ -21,6 +21,7 @@
 \renewcommand{\t}{\new{(t)}}
 \newcommand{\tp}{\new{(t+1)}}
 \newcommand{\fei}[1]{{\color{purple}#1 \color{black}}}
+\newcommand{\rev}[1]{\textcolor{blue}{#1}}
 
 \begin{document}
 \begin{center}
@@ -88,10 +89,10 @@ specifically linear state feedback controllers (u=Kx with a possible reference s
 seems the approach requires full-state observability as well, which is a fairly standard assumption as one can typically implement various filters /
 estimators (Kalman, Leuenberger, etc.) to ensure state observability assuming detectability of the plant, but the authors should clarify this point to
 make the assumptions more precise.}
+
 \vspace{1em}
 {\bf Response: }
-
-We have clarified this on page [X] as follows: 
+We do need full observability of the (states of the) model, and have clarified this on page [X] as follows: \ldots 
 
 \todo[inline]{fix this}
 \vspace{2em}
@@ -136,9 +137,10 @@ are sufficient (theorem 1), I doubt this is necessary, as e.g. the star set appr
 the approach can work toward.}
 \vspace{1em}
 
-
 {\bf Response: }
 \todo[inline]{Alessandro: response to this (Theorem 1)}
+
+\rev{It is probably true that the check on all vertices might not be necessary and could be simplified in special cases or under some conditions. The check however, as it currently is implemented, does not represent the bottleneck of our overall method, so we can safely reply on it as it stands. }
 
 \vspace{2em}
 
@@ -194,10 +196,14 @@ convex combination is safe.
 
 I think this bug needs to be fixed in the BMC part of the verifier. Instead of checking the individual trajectories, you should in fact compute the
 convex combination of trajectories (reachable set) and then perform the verification.}
+
 \vspace{1em}
 {\bf Response: }
 \todo[inline]{Alessandro: Response to this (Theorem 1)}
 \vspace{2em}
+
+\rev{We have emphasised that the initial set is assumed to lie within the safe set - the contrary would trivially result in an unsafe condition. 
+Recall further that the sets are hyper-boxes, thus convex. In view of the linear dynamics of the considered models, in practice both are assumed to contain the origin.  }
 
 \section{Response to Reviewer (4)}
 
