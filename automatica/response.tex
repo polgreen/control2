@@ -131,6 +131,13 @@ approach for nonlinear plants, although there are a host of technical issues in 
 \vspace{1em}
 {\bf Response: }
 
+We have reviewed relevant literature on controller synthesis based on finite abstractions, cf. Belta and Tabuada. 
+
+Literature on reachability analysis tackles a different problem, namely one of verification, rather than one of control synthesis (which this work focuses on). 
+
+Admittedly reachability analysis tool scale quite well (as the reviewer points out), however this is under clear assumptions on model dynamics. 
+
+One might argue that reachability analysis tools could be embedded within the CEGIS framework, however they currently lack full soundness: namely they are algorithmically sound, but not numerically sound. On the contrary our work is sound on both sides. (Shall we mention that indeed we do reachability analysis via Axelerator in CAV17?)
 
 \vspace{2em}
 {\bf Comment: }
@@ -140,9 +147,8 @@ the approach can work toward.}
 \vspace{1em}
 
 {\bf Response: }
-\todo[inline]{Alessandro: response to this (Theorem 1)}
 
-\rev{It is probably true that the check on all vertices might not be necessary and could be simplified in special cases or under some conditions. The check however, as it currently is implemented, does not represent the bottleneck of our overall method, so we can safely reply on it as it stands. }
+\rev{It is probably true that the check on all vertices might not be necessary in general, that that this check might be simplified in special cases or under special conditions. The check however, as it currently is implemented, does not represent the bottleneck of our overall method, so we can safely rely on its current form, as it stands. }
 
 \vspace{2em}
 
@@ -204,8 +210,12 @@ convex combination of trajectories (reachable set) and then perform the verifica
 \todo[inline]{Alessandro: Response to this (Theorem 1)}
 \vspace{2em}
 
-\rev{We have emphasised that the initial set is assumed to lie within the safe set - the contrary would trivially result in an unsafe condition. 
-Recall further that the sets are hyper-boxes, thus convex. In view of the linear dynamics of the considered models, in practice both are assumed to contain the origin.  }
+\rev{
+Many thanks for this note. 
+Notice that in the submitted manuscript we had focused on special shapes of initial and safe sets, namely (convex) hyper-boxes, which included the origin. 
+In the amended draft, we have better clarified these assumptions, and 
+we have emphasised that the initial set is assumed to lie within the safe set: indeed, the contrary would trivially result in an unsafe condition. 
+In conclusion, recall that the sets are hyper-boxes, thus convex, and that in view of the linear dynamics of the considered models, in practice both are assumed to contain the origin.  }
 
 \section{Response to Reviewer (4)}
 
@@ -213,8 +223,11 @@ Recall further that the sets are hyper-boxes, thus convex. In view of the linear
 more complex safety properties. It would be nice to bring this up in the discussion after equation 3 that $x_i$ need not be just $i$-th component of the
 state.  Can these also incorporate temporal properties (say STL properties with bounded time-horizon) without having to unroll the transition and
 create auxiliary variables that track history explicitly?}
+
 \vspace{1em}
 {\bf Response: }
+
+\todo[inline]{Eli: can we generalise according to the suggestion of the reviewer?}
 
 \vspace{2em}
 {\bf Comment: } {\itshape The paper would benefit with a restructuring of the discussion. Figure 2 and 3 will be more useful
@@ -238,11 +251,22 @@ We have added a discussion about these applications and results to the related w
 \todo[inline]{add discussion}
 
 \vspace{2em}
-{\bf Comment: } {\itshape Could you add one example to the end of Section 4 to show $R_1$, $R_2$, $R_3$, $R_4$ for a simple LTI system? Section 4 is one the most interesting parts
-of the paper and its current presentation is a bit sketchy. What are $m_{ij}$?}
+{\bf Comment: } {\itshape Could you add one example to the end of Section 4 to show $R_1$, $R_2$, $R_3$, $R_4$ for a simple LTI system? 
+
 \vspace{1em}
 {\bf Response: }
 
+\todo[inline]{Eli: can you clarify?}
+
+\vspace{2em}
+{\bf Comment: } {\itshape 
+Section 4 is one the most interesting parts
+of the paper and its current presentation is a bit sketchy. What are $m_{ij}$?} } 
+
+\vspace{1em}
+{\bf Response: }
+
+\todo[inline]{Eli: can we elaborate?}
 
 
 \bibliographystyle{alpha}
