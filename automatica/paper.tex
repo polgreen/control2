@@ -696,7 +696,8 @@ $\mat{A} \in \mathbb{R}^{n \times n}$,
 $\mat{B} \in \mathbb{R}^{n \times p}$,
 and $t \in \mathbb R_0^+$ denotes continuous time. 
 %$\mat{A}$ and $\mat{B}$ are matrices that fully characterize the dynamics of the continuous plant,
-We denote with $x(0)$ the model initial condition, which can be non-deterministic. 
+We denote with $x(0)$ the model initial condition, which can be non-deterministic.  
+\rev{ We assume full observability of the states of the model, namely the output states correspond with the model variables.  }
 
 Equation~\eqref{eq:ode1} is 
 %soundly 
@@ -726,6 +727,7 @@ as practically implemented on Field-Programmable Gate Arrays or Digital Signal P
 %introduced by ADC/DAC conversion blocks of Figure \ref{fig:digitalsystem}, 
 and as classically studied in \cite{astrom1997computer}. 
 
+\rev{ Recall that the states of the model are fully accessible (namely, observable). } 
 We consider state feedback control architectures, 
 where $u_k$ (notice we work with the discretized signal) is $u_k = r_{k} - K x_k$. 
 Here $K \in \mathbb{R}^{p \times n}$ is a state-feedback gain matrix, 
@@ -1828,7 +1830,8 @@ consecutive time steps $k\,T_s$ and $(k+1)\,T_s$, the dynamics projected on
 the corresponding eigenspace rotate $\vartheta T_s$ radians.  Thus, taking
 $\overline{k}$ as the ceiling of $\frac{2\pi}{\vartheta T_s}$, after
 $k{\geq}\overline{k}$ steps we have completed a full rotation, which results
-in a point closer to the origin.  The synthesized $\overline{k}$ is the completeness threshold.
+in a point closer to the origin.  The synthesized $\overline{k}$ is the completeness threshold. 
+\rev{[I will try to spin this more formally. ]}
 \qed 
 %
 \end{proof}
