@@ -1773,7 +1773,7 @@ bound of the states in the initial set. It is sufficient to verify that the cont
 
 \begin{theorem}
   \label{th:safety}
-\rev{Assuming that the initial state is in the safe set, }
+\rev{Assuming that the initial set is included within the safe set, }
 if a controller is safe for each of the corner cases of the hypercube of allowed initial states, 
 i.e., the vertex states, then it is safe for any initial state in the hypercube. 
 \end{theorem}
@@ -1818,20 +1818,24 @@ in order to ensure that $\phi_\mathit{safety}$ holds.
 
 \begin{proof}
 %
-An asymptotically stable model is known to have converging dynamics.  Assume the
-closed-loop matrix eigenvalues are not repeated (which is sensible to do,
-since we select them).  The distance of the trajectory from the reference
+An asymptotically stable model is known to have converging dynamics.  
+Assume that the eigenvalues of the closed-loop matrix are not repeated: this is sensible assumption to raise, 
+since the eigenvalues are selected by the user. \rev{ The distance of the trajectory from the reference
 point (which, for linear models, is the origin) decreases over time within subspaces related to real-valued
-eigenvalues; however, this is not the case in general when dealing with
-complex eigenvalues.  Consider the closed-loop matrix that updates the
-states in every discrete time step, and select the eigenvalue $\vartheta$
-with the smallest (non-trivial) imaginary value.  Between every pair of
-consecutive time steps $k\,T_s$ and $(k+1)\,T_s$, the dynamics projected on
-the corresponding eigenspace rotate $\vartheta T_s$ radians.  Thus, taking
+eigenvalues (say, $\theta < 0$): this can be shown considering the exponential $e^{\theta t} x_0$ ($x_0$ being the initial condition), 
+which envelops the model dynamics within subspaces and is monotonically decreasing. } 
+\rev{ However, this monotonic decrease cannot be ensured in general when dealing with complex eigenvalues. } 
+Consider the closed-loop matrix that updates the
+states in every discrete time step, and select the eigenvalue $\vartheta$ 
+with the smallest (non-zero) imaginary part.  
+Between any pair of consecutive time steps $k\,T_s$ and $(k+1)\,T_s$, the dynamics projected on
+the corresponding eigenspace rotate of $\vartheta T_s$ radians.  Thus, taking
 $\overline{k}$ as the ceiling of $\frac{2\pi}{\vartheta T_s}$, after
-$k{\geq}\overline{k}$ steps we have completed a full rotation, which results
-in a point closer to the origin.  The synthesized $\overline{k}$ is the completeness threshold. 
-\rev{[I will try to spin this more formally. ]}
+$k{\geq}\overline{k}$ steps the model trajectory has completed a full rotation \rev{within the relevant eigenspace}: 
+this results in a point closer to the origin, \rev{as shown in Fig. \ref{fig:ct}}.  The synthesized $\overline{k}$ is thus a completeness threshold: 
+\rev{indeed, since we have selected $\vartheta$ to be the complex eigenvalue with smallest imaginary part, 
+any other pair of complex eigenvalues will correspond to dynamics that rotate faster within the corresponding eigenspace. 
+Hence, $\overline{k}$ will again represent a completeness threshold. }
 \qed 
 %
 \end{proof}
