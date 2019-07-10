@@ -350,16 +350,92 @@ for the entire range of possible inputs.
 \ifx\axelerator
 \emph{The first approach} 
 \else
+\begin{figure*}[htb]
+\scriptsize\centering
+\begin{tikzpicture}[scale=0.3,->,>=stealth',shorten >=.2pt,auto, semithick, initial text=, ampersand replacement=\&,]
+  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center},
+          row sep=.6cm, column sep=.9cm] {
+   \coordinate (aux1);
+   \& \coordinate (aux2);
+   \&;\\
+   \coordinate (aux3);
+   \& \coordinate (aux4);
+   \&;\\
+   \coordinate (aux5);
+   \& \coordinate (aux6);
+   \&;\\
+   \node[minimum width=1.5cm, minimum height=0.6cm, fill=gray!20] (synth) {{\sc 1.Synthesize}};
+   \&
+   complexnode/.pic={ 
+     \node[rectangle,draw,dotted,
+	minimum width=6cm,
+	minimum height=1cm,
+        pattern=north west lines, pattern color=gray!20,
+	label={\sc ~~~~~~~~~~~~Verify},] (verif) {};
+     \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif1) at ([xshift=-2cm]verif.center) {{\sc 2.Safety}};
+     \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif2) at ([xshift=0cm]verif.center) {{\sc 3.Precision}};
+     \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif3) at ([xshift=2cm]verif.center) {{\sc 4.Complete}};
+     %\node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif4) at ([xshift=3.1cm]verif.center) {{\sc 5.Sampling}};
+   } 
+   \& \node[ellipse, fill=gray!20] (done) {{\sc Done}};\\
+   \& \\
+   \node[minimum height=0cm] (gp) {\sf Program Search};
+   \&
+   complexnode/.pic={ 
+     \coordinate (aux);
+   \node (bmc) at ([xshift=-2cm]aux.center) {\sf BMC-based \\ \sf Verifier};
+   \node (fp)  at ([xshift=0cm]aux.center) {\sf Fixed-point \\ \sf Arithmetic\\ \sf Verifier};
+   \node (sv)  at ([xshift=2cm]aux.center) {\sf Completeness\\ \sf Verifier};
+   %\node (cv)  at ([xshift=3.1cm]aux.center) {\sf Sampling\\Verifier};
+   }   
+    \\
+  };
+
+   \path
+    ([yshift=2em]synth.east) edge node[xshift=-0.5em,align=center] {$K$} ([yshift=2em]verif1.west)
+    ([yshift=-2em]verif1.west) edge node {C-ex} ([yshift=-2em]synth.east)
+    ([xshift=-5em]fp.north) edge node[align=center]  {T/F} ([xshift=-5em]verif2.south)
+    ([xshift=-5em]sv.north) edge node[align=center]  {T/F} ([xshift=-5em]verif3.south)
+    %([xshift=-5em]cv.north) edge node[align=center]  {T/F} ([xshift=-5em]verif4.south)
+    ([xshift=5em]verif1.south) edge node[align=center] {$K$} ([xshift=5em]bmc.north)
+    ([xshift=5em]verif2.south) edge node[align=center] {$K$} ([xshift=5em]fp.north)
+    ([xshift=5em]verif3.south) edge node[align=center] {$K$} ([xshift=5em]sv.north)
+    %([xshift=5em]verif4.south) edge node[align=center] {$K$} ([xshift=5em]cv.north)
+    ([xshift=-5em]bmc.north) edge node[align=center]  {UNSAT/\\model} ([xshift=-5em]verif1.south)
+    (verif) edge node {PASS} (done)
+    ([xshift=5em]synth.south) edge node[align=center] {Inputs} ([xshift=5em]gp.north)
+    ([xshift=-5em]gp.north) edge node[align=center] {UNSAT/\\$K$} ([xshift=-5em]synth.south)
+    (aux3) edge (synth.north);
+   \path[-]
+   (verif2.north) edge node[align=center] {} ([xshift=0cm]aux6)
+   ([xshift=0cm]aux6) edge node[align=center] {Increase Precision} (aux5)
+   (verif3.north) edge node[align=center] {} ([xshift=6.7cm]aux4)
+   ([xshift=6.7cm]aux4) edge node[align=center] {Increase Unfolding Bound} (aux3);
+   %(verif4.north) edge node[align=center] {} ([xshift=10.5cm]aux2)
+   %([xshift=10.5cm]aux2) edge node[align=center] {Increase Sampling Rate} (aux1);
+\end{tikzpicture}
+\caption{CEGIS with multi-staged verification for digital controller synthesis}
+\label{fig:CEGIS-precision-increment}
+\end{figure*}
 Our approach
 \fi
-uses a multi-staged technique that starts by devising a
+uses a multi-staged technique\rev{, shown in Figure~\ref{fig:CEGIS-precision-increment}}, that starts by devising a
 digital controller that stabilizes the plant model while remaining safe for a
 pre-selected time horizon and a single initial state; then, it verifies
 unbounded-time safety by unfolding the model dynamics, considering the 
 full set of initial states, and checking a \emph{completeness
 threshold}~\cite{DBLP:conf/vmcai/KroeningS03}, i.e., 
-the number of stages required to sufficiently unwind the closed-loop model, 
-such that the safety boundaries \rev{(assumed to be a compact set)} are not violated for any larger number of iterations.  
+the number of stages required to sufficiently unwind the closed-loop model 
+such that the safety boundaries \rev{(assumed to be a compact set)} are not violated for any 
+larger number of iterations\rev{, illustrated in Figure~\ref{fig:ct}}.  
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=.7\columnwidth]{figures/ct.eps}
+%\vspace{0.1cm}
+\caption{Completeness threshold for multi-staged verification (quantity $T_s$ is the time discretization step) }
+\label{fig:ct}
+\end{figure}
 
 \ifx\axelerator
 Instead of unfolding the dynamics, \emph{the second approach}
@@ -1589,73 +1665,73 @@ and then verifying soundness of the resulting controller using interval arithmet
 %-------------------------------
 \fi
 
-\begin{figure*}[htb]
-\scriptsize\centering
-\begin{tikzpicture}[scale=0.3,->,>=stealth',shorten >=.2pt,auto, semithick, initial text=, ampersand replacement=\&,]
-  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center},
-          row sep=.6cm, column sep=.9cm] {
-   \coordinate (aux1);
-   \& \coordinate (aux2);
-   \&;\\
-   \coordinate (aux3);
-   \& \coordinate (aux4);
-   \&;\\
-   \coordinate (aux5);
-   \& \coordinate (aux6);
-   \&;\\
-   \node[minimum width=1.5cm, minimum height=0.6cm, fill=gray!20] (synth) {{\sc 1.Synthesize}};
-   \&
-   complexnode/.pic={ 
-     \node[rectangle,draw,dotted,
-	minimum width=6cm,
-	minimum height=1cm,
-        pattern=north west lines, pattern color=gray!20,
-	label={\sc ~~~~~~~~~~~~Verify},] (verif) {};
-     \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif1) at ([xshift=-2cm]verif.center) {{\sc 2.Safety}};
-     \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif2) at ([xshift=0cm]verif.center) {{\sc 3.Precision}};
-     \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif3) at ([xshift=2cm]verif.center) {{\sc 4.Complete}};
-     %\node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif4) at ([xshift=3.1cm]verif.center) {{\sc 5.Sampling}};
-   } 
-   \& \node[ellipse, fill=gray!20] (done) {{\sc Done}};\\
-   \& \\
-   \node[minimum height=0cm] (gp) {\sf Program Search};
-   \&
-   complexnode/.pic={ 
-     \coordinate (aux);
-   \node (bmc) at ([xshift=-2cm]aux.center) {\sf BMC-based \\ \sf Verifier};
-   \node (fp)  at ([xshift=0cm]aux.center) {\sf Fixed-point \\ \sf Arithmetic\\ \sf Verifier};
-   \node (sv)  at ([xshift=2cm]aux.center) {\sf Completeness\\ \sf Verifier};
-   %\node (cv)  at ([xshift=3.1cm]aux.center) {\sf Sampling\\Verifier};
-   }   
-    \\
-  };
-
-   \path
-    ([yshift=2em]synth.east) edge node[xshift=-0.5em,align=center] {$K$} ([yshift=2em]verif1.west)
-    ([yshift=-2em]verif1.west) edge node {C-ex} ([yshift=-2em]synth.east)
-    ([xshift=-5em]fp.north) edge node[align=center]  {T/F} ([xshift=-5em]verif2.south)
-    ([xshift=-5em]sv.north) edge node[align=center]  {T/F} ([xshift=-5em]verif3.south)
-    %([xshift=-5em]cv.north) edge node[align=center]  {T/F} ([xshift=-5em]verif4.south)
-    ([xshift=5em]verif1.south) edge node[align=center] {$K$} ([xshift=5em]bmc.north)
-    ([xshift=5em]verif2.south) edge node[align=center] {$K$} ([xshift=5em]fp.north)
-    ([xshift=5em]verif3.south) edge node[align=center] {$K$} ([xshift=5em]sv.north)
-    %([xshift=5em]verif4.south) edge node[align=center] {$K$} ([xshift=5em]cv.north)
-    ([xshift=-5em]bmc.north) edge node[align=center]  {UNSAT/\\model} ([xshift=-5em]verif1.south)
-    (verif) edge node {PASS} (done)
-    ([xshift=5em]synth.south) edge node[align=center] {Inputs} ([xshift=5em]gp.north)
-    ([xshift=-5em]gp.north) edge node[align=center] {UNSAT/\\$K$} ([xshift=-5em]synth.south)
-    (aux3) edge (synth.north);
-   \path[-]
-   (verif2.north) edge node[align=center] {} ([xshift=0cm]aux6)
-   ([xshift=0cm]aux6) edge node[align=center] {Increase Precision} (aux5)
-   (verif3.north) edge node[align=center] {} ([xshift=6.7cm]aux4)
-   ([xshift=6.7cm]aux4) edge node[align=center] {Increase Unfolding Bound} (aux3);
-   %(verif4.north) edge node[align=center] {} ([xshift=10.5cm]aux2)
-   %([xshift=10.5cm]aux2) edge node[align=center] {Increase Sampling Rate} (aux1);
-\end{tikzpicture}
-\caption{CEGIS with multi-staged verification for digital controller synthesis}
-\label{fig:CEGIS-precision-increment}
-\end{figure*}
+%\begin{figure*}[htb]
+%\scriptsize\centering
+%\begin{tikzpicture}[scale=0.3,->,>=stealth',shorten >=.2pt,auto, semithick, initial text=, ampersand replacement=\&,]
+%  \matrix[nodes={draw, fill=none, shape=rectangle, minimum height=.2cm, minimum width=.2cm, align=center},
+%          row sep=.6cm, column sep=.9cm] {
+%   \coordinate (aux1);
+%   \& \coordinate (aux2);
+%   \&;\\
+%   \coordinate (aux3);
+%   \& \coordinate (aux4);
+%   \&;\\
+%   \coordinate (aux5);
+%   \& \coordinate (aux6);
+%   \&;\\
+%   \node[minimum width=1.5cm, minimum height=0.6cm, fill=gray!20] (synth) {{\sc 1.Synthesize}};
+%   \&
+%   complexnode/.pic={ 
+%     \node[rectangle,draw,dotted,
+%	minimum width=6cm,
+%	minimum height=1cm,
+%        pattern=north west lines, pattern color=gray!20,
+%	label={\sc ~~~~~~~~~~~~Verify},] (verif) {};
+%     \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif1) at ([xshift=-2cm]verif.center) {{\sc 2.Safety}};
+%     \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif2) at ([xshift=0cm]verif.center) {{\sc 3.Precision}};
+%     \node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif3) at ([xshift=2cm]verif.center) {{\sc 4.Complete}};
+%     %\node[minimum width=1cm, minimum height=0.6cm, fill=gray!20] (verif4) at ([xshift=3.1cm]verif.center) {{\sc 5.Sampling}};
+%   } 
+%   \& \node[ellipse, fill=gray!20] (done) {{\sc Done}};\\
+%   \& \\
+%   \node[minimum height=0cm] (gp) {\sf Program Search};
+%   \&
+%   complexnode/.pic={ 
+%     \coordinate (aux);
+%   \node (bmc) at ([xshift=-2cm]aux.center) {\sf BMC-based \\ \sf Verifier};
+%   \node (fp)  at ([xshift=0cm]aux.center) {\sf Fixed-point \\ \sf Arithmetic\\ \sf Verifier};
+%   \node (sv)  at ([xshift=2cm]aux.center) {\sf Completeness\\ \sf Verifier};
+%   %\node (cv)  at ([xshift=3.1cm]aux.center) {\sf Sampling\\Verifier};
+%   }   
+%    \\
+%  };
+%
+%   \path
+%    ([yshift=2em]synth.east) edge node[xshift=-0.5em,align=center] {$K$} ([yshift=2em]verif1.west)
+%    ([yshift=-2em]verif1.west) edge node {C-ex} ([yshift=-2em]synth.east)
+%    ([xshift=-5em]fp.north) edge node[align=center]  {T/F} ([xshift=-5em]verif2.south)
+%    ([xshift=-5em]sv.north) edge node[align=center]  {T/F} ([xshift=-5em]verif3.south)
+%    %([xshift=-5em]cv.north) edge node[align=center]  {T/F} ([xshift=-5em]verif4.south)
+%    ([xshift=5em]verif1.south) edge node[align=center] {$K$} ([xshift=5em]bmc.north)
+%    ([xshift=5em]verif2.south) edge node[align=center] {$K$} ([xshift=5em]fp.north)
+%    ([xshift=5em]verif3.south) edge node[align=center] {$K$} ([xshift=5em]sv.north)
+%    %([xshift=5em]verif4.south) edge node[align=center] {$K$} ([xshift=5em]cv.north)
+%    ([xshift=-5em]bmc.north) edge node[align=center]  {UNSAT/\\model} ([xshift=-5em]verif1.south)
+%    (verif) edge node {PASS} (done)
+%    ([xshift=5em]synth.south) edge node[align=center] {Inputs} ([xshift=5em]gp.north)
+%    ([xshift=-5em]gp.north) edge node[align=center] {UNSAT/\\$K$} ([xshift=-5em]synth.south)
+%    (aux3) edge (synth.north);
+%   \path[-]
+%   (verif2.north) edge node[align=center] {} ([xshift=0cm]aux6)
+%   ([xshift=0cm]aux6) edge node[align=center] {Increase Precision} (aux5)
+%   (verif3.north) edge node[align=center] {} ([xshift=6.7cm]aux4)
+%   ([xshift=6.7cm]aux4) edge node[align=center] {Increase Unfolding Bound} (aux3);
+%   %(verif4.north) edge node[align=center] {} ([xshift=10.5cm]aux2)
+%   %([xshift=10.5cm]aux2) edge node[align=center] {Increase Sampling Rate} (aux1);
+%\end{tikzpicture}
+%\caption{CEGIS with multi-staged verification for digital controller synthesis}
+%\label{fig:CEGIS-precision-increment}
+%\end{figure*}
 
 %\subsubsection{Controller synthesis}
 
@@ -1842,13 +1918,13 @@ Hence, $\overline{k}$ will again represent a completeness threshold. }
 
 
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=.7\columnwidth]{figures/ct.eps}
-%\vspace{0.1cm}
-\caption{Completeness threshold for multi-staged verification (quantity $T_s$ is the time discretization step) }
-\label{fig:ct}
-\end{figure}
+%\begin{figure}[t]
+%\centering
+%\includegraphics[width=.7\columnwidth]{figures/ct.eps}
+%%\vspace{0.1cm}
+%\caption{Completeness threshold for multi-staged verification (quantity $T_s$ is the time discretization step) }
+%\label{fig:ct}
+%\end{figure}
 
 %Checking that the safety specification holds for any initial state can be
 %computationally expensive if the bounds on the allowed initial states are

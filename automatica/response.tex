@@ -73,11 +73,9 @@ whereas the ASE is a tool paper.
 The application of the CEGIS architecture to the synthesis of digital controllers for continuous plants is indeed a novel contribution of this line of
 work. 
 
-\todo[inline]{Do we actually say that CEGIS is a contribution? We should change that. Check that we don't say CEGIS is a contribution. AA: I think the
-reviewers complain about our earlier conference publications. We should rectify this view. I've added the text above. }
 
 \vspace{2em}
-{\bf Comment: } {\itshape he results are evaluated on about a dozen and a half examples from the controls literature all with relatively small
+{\bf Comment: } {\itshape The results are evaluated on about a dozen and a half examples from the controls literature all with relatively small
 dimensionality (2 to 5 real variables in the continuous state space), and while the authors claim the software artifacts and benchmarks are available
 for evaluation, when this reviewer browsed to the link (http://www.cprover.org/DSSynth/), a page with "TBD" was shown. I did a little digging and
 eventually found what I presume is the same / similar artifacts here: https://github.com/ssvlab/dsverifier and/or http://dsverifier.org/}
@@ -241,9 +239,13 @@ state.  Can these also incorporate temporal properties (say STL properties with 
 create auxiliary variables that track history explicitly?}
 
 \vspace{1em}
-{\bf Response: }
+{\bf Response:}
+ It is true that we would be able to encode more complex properties by introducing auxiliary variables; however theorem 2 is dependent on the safe set being convex, and 
+so this proof would not necessarily hold with more complex properties. It would be possible to construct time-bounded properties as automata that track history explicitly, but I can't see how
+it would be possible to avoid unwinding the transition relation using this method. In the case of the example given by the reviewer, an STL property with bounded time-horizon, unwinding
+the transition relation would not pose much of a problem anyway as a time-bounded property would only require unwinding up to the time-bound.
 
-\todo[inline]{Eli: can we generalise according to the suggestion of the reviewer?}
+%\todo[inline]{Eli: can we generalise according to the suggestion of the reviewer?}
 
 \vspace{2em}
 {\bf Comment: } {\itshape The paper would benefit with a restructuring of the discussion. Figure 2 and 3 will be more useful
@@ -251,8 +253,8 @@ earlier in the paper (Section 1 or 3).}
 
 \vspace{1em}
 {\bf Response: }
-We have moved these figures to [] 
-\todo[inline]{move figure}
+We have moved these figures to section 1 and incorporated them into the introduction. We are still referring back to these figures from section 5.
+
 \vspace{2em}
 
 {\bf Comment: } {\itshape
