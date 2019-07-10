@@ -70,9 +70,11 @@ This journal submission encompasses and summarises the mentioned conference arti
 It is a more mature, complete, and comprehensive presentation of the conference material. 
 Of these conference articles, the CAV/HSCC contributions presented the theory underlying the approach, 
 whereas the ASE is a tool paper. 
-The application of the CEGIS architecture to the synthesis of digital controllers for continuous plants is indeed a novel contribution of this line of work. 
+The application of the CEGIS architecture to the synthesis of digital controllers for continuous plants is indeed a novel contribution of this line of
+work. 
 
-\todo[inline]{Do we actually say that CEGIS is a contribution? We should change that. Check that we don't say CEGIS is a contribution. AA: I think the reviewers complain about our earlier conference publications. We should rectify this view. I've added the text above. }
+\todo[inline]{Do we actually say that CEGIS is a contribution? We should change that. Check that we don't say CEGIS is a contribution. AA: I think the
+reviewers complain about our earlier conference publications. We should rectify this view. I've added the text above. }
 
 \vspace{2em}
 {\bf Comment: } {\itshape he results are evaluated on about a dozen and a half examples from the controls literature all with relatively small
@@ -96,11 +98,13 @@ make the assumptions more precise.}
 
 \vspace{1em}
 {\bf Response: }
-We do need full observability of the (states of the) model, and have clarified this in Section 3.1, as follows: {\it We assume full observability of the states of the model, namely the output states correspond with the model variables.  } We recall this assumption later in the text. 
+We do need full observability of the (states of the) model, and have clarified this in Section 3.1, as follows: {\it We assume full observability of
+the states of the model, namely the output states correspond with the model variables.  } We recall this assumption later in the text. 
 
 \vspace{2em}
 {\bf Comment: } {\itshape Theorem 2 states completeness of the approach, specifically that there exists a finite k for which BMC can be done up-to to
-provide a guarantee of future safety for all larger k' greater than k. Assuming the benchmarks all work up to some completeness threshold, I would like to see
+provide a guarantee of future safety for all larger k' greater than k. Assuming the benchmarks all work up to some completeness threshold, I would
+like to see
 the completeness threshold for each benchmark in table 1. The reason being, I find this result a bit surprising in the given context (albeit not
 unbelievable given the focus on LTI) and would like to see further evidence illustrating the point beyond the fairly informal proof, and it would
 greatly enhance the existing discussion of timeouts, etc. related to completeness thresholds being too high for some cases.}
@@ -119,7 +123,8 @@ The proof of Theorem 2 has been elaborated and made more comprehensive and detai
 \vspace{2em}
 
 {\bf Comment: }
-{\itshape I would like to see some additional discussion and/or comparison to hybrid systems reachability. While the focus of this work is on lower-level
+{\itshape I would like to see some additional discussion and/or comparison to hybrid systems reachability. While the focus of this work is on
+lower-level
 software synthesis, if the approach is to be believed in the context of closed-loop systems satisfying specifications, then I would like some
 discussion/comparison to that vast existing literature. Specifically, I presume the reason the benchmarks are not scalable beyond ~n=4 dimensionality
 (as the n=5 benchmark appears to timeout), which is trivially small at this stage for linear systems (e.g., given a recent HSCC'19 paper on verifying
@@ -133,11 +138,14 @@ approach for nonlinear plants, although there are a host of technical issues in 
 
 We have reviewed relevant literature on controller synthesis based on finite abstractions, cf. Belta and Tabuada. 
 
-Literature on reachability analysis tackles a different problem, namely one of verification, rather than one of control synthesis (which this work focuses on). 
+Literature on reachability analysis tackles a different problem, namely one of verification, rather than one of control synthesis (which this work
+focuses on). 
 
 Admittedly reachability analysis tool scale quite well (as the reviewer points out), however this is under clear assumptions on model dynamics. 
 
-One might argue that reachability analysis tools could be embedded within the CEGIS framework, however they currently lack full soundness: namely they are algorithmically sound, but not numerically sound. On the contrary our work is sound on both sides. (Shall we mention that indeed we do reachability analysis via Axelerator in CAV17?)
+One might argue that reachability analysis tools could be embedded within the CEGIS framework, however they currently lack full soundness: namely they
+are algorithmically sound, but not numerically sound. On the contrary our work is sound on both sides. (Shall we mention that indeed we do
+reachability analysis via Axelerator in CAV17?)
 
 \vspace{2em}
 {\bf Comment: }
@@ -148,17 +156,21 @@ the approach can work toward.}
 
 {\bf Response: }
 
-\rev{It is probably true that the check on all vertices might not be necessary in general, that that this check might be simplified in special cases or under special conditions. The check however, as it currently is implemented, does not represent the bottleneck of our overall method, so we can safely rely on its current form, as it stands. }
+\rev{It is probably true that the check on all vertices might not be necessary in general, that that this check might be simplified in special cases
+or under special conditions. The check however, as it currently is implemented, does not represent the bottleneck of our overall method, so we can
+safely rely on its current form, as it stands. }
 
 \vspace{2em}
 
 {\bf Comment: }
-{\itshape While I may have missed it, I didn't see how the controller gain K is initially selected. I presume under the given assumptions a standard approach
+{\itshape While I may have missed it, I didn't see how the controller gain K is initially selected. I presume under the given assumptions a standard
+approach
 such as pole placement, but this should be clarified}
 \vspace{1em}
 {\bf Response: }
 
-The controller gain is initially nondeterministically selected by the bounded model checking synthesis step, i.e., the SAT solver returns the first assignment to the controller
+The controller gain is initially nondeterministically selected by the bounded model checking synthesis step, i.e., the SAT solver returns the first
+assignment to the controller
 values it finds
 that satisfies the boolean formula which encodes the specification, by using Conflict Driven Clause Learning.
 We have added the following sentence to clarify this:
@@ -212,15 +224,19 @@ convex combination of trajectories (reachable set) and then perform the verifica
 
 \rev{
 Many thanks for this note. 
-Notice that in the submitted manuscript we had focused on special shapes of initial and safe sets, namely (convex) hyper-boxes, which included the origin. 
+Notice that in the submitted manuscript we had focused on special shapes of initial and safe sets, namely (convex) hyper-boxes, which included the
+origin. 
 In the amended draft, we have better clarified these assumptions, and 
 we have emphasised that the initial set is assumed to lie within the safe set: indeed, the contrary would trivially result in an unsafe condition. 
-In conclusion, recall that the sets are hyper-boxes, thus convex, and that in view of the linear dynamics of the considered models, in practice both are assumed to contain the origin.  }
+In conclusion, recall that the sets are hyper-boxes, thus convex, and that in view of the linear dynamics of the considered models, in practice both
+are assumed to contain the origin.  }
 
 \section{Response to Reviewer (4)}
 
-{\bf Comment:  } {\itshape The safety property in Eqn 3 focuses on interval constraints. One can generate auxiliary variables such that range constraints over them can encode
-more complex safety properties. It would be nice to bring this up in the discussion after equation 3 that $x_i$ need not be just $i$-th component of the
+{\bf Comment:  } {\itshape The safety property in Eqn 3 focuses on interval constraints. One can generate auxiliary variables such that range
+constraints over them can encode
+more complex safety properties. It would be nice to bring this up in the discussion after equation 3 that $x_i$ need not be just $i$-th component of
+the
 state.  Can these also incorporate temporal properties (say STL properties with bounded time-horizon) without having to unroll the transition and
 create auxiliary variables that track history explicitly?}
 
