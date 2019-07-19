@@ -219,7 +219,7 @@ Formal Verification \and Safety requirements \and Dynamical models \and Digital 
 We present a sound and automated approach to synthesizing safe,
 digital controllers for physical plants represented as time-invariant models. 
 Models are linear differential equations with inputs, evolving over a continuous state space. 
-The synthesis precisely accounts for the effects of finite precision arithmetic introduced by the controller. 
+The synthesis precisely accounts for the effects of finite-precision arithmetic introduced by the controller. 
 The approach uses counterexample-guided inductive synthesis (CEGIS): 
 an inductive generalization phase produces a controller that is known to stabilize the model but that may
 not be safe for all initial conditions of the model.  
@@ -230,7 +230,7 @@ via Bounded Model Checking or abstract acceleration;
 Safety is then verified via Bounded Model Checking: 
 \fi 
 if the verification step fails, 
-a counterexample is provided to the inductive generalization and the process iterates until a safe controller is obtained.  
+a counterexample is provided to the inductive generalization, and the process further iterates until a safe controller is obtained.  
 We demonstrate the practical value of this approach by automatically synthesizing safe controllers for physical plant models from the digital control literature.
 \end{abstract}
 
@@ -244,18 +244,19 @@ non-trivial control tasks, with significant impact in numerous
 application areas such as process and industrial engineering, high-precision control, 
 automotive and robotics~\cite{astrom1997computer, Franklin15}.  
 However, provably correct synthesis of control software for such platforms, 
-needed if certification is in order, is non-trivial even in cases with unsophisticated dynamics. 
+needed if certification is in order, is non-trivial even in cases with unsophisticated system dynamics. 
 
-In this paper, we examine the case of physical systems (a.k.a. plants in control literature) described mathematically as 
-Linear Time Invariant (LTI) models, for which the classical synthesis of controllers is well understood.
+In this paper, we examine the case of physical systems (known as `plants' in the control literature) that are mathematically described as 
+Linear Time Invariant (LTI) models, for which the classical synthesis of controllers is well understood. 
 However, the use of digital control architectures adds new challenges
-caused by artefacts specific to digital control, such as the effects
+caused by artefacts that are specific to digital control, such as the effects 
 of finite-precision arithmetic and quantization 
-errors introduced by A/D and D/A conversion. 
+errors introduced by A/D and D/A conversion.  
 %
 Given an LTI model, we develop an automatic technique for generating
 correct-by-design digital controllers that addresses these challenges. 
-Specifically, we automatically synthesize %stable and 
+Specifically, \rev{moving beyond classical literature in digital control~\cite{astrom1997computer, Franklin15}}, 
+we automatically synthesize %stable and 
 safe,
 software-implemented embedded controllers for physical plants.   
 %Due to the complexity of
@@ -314,8 +315,8 @@ and a controller operating in discrete time and over a quantized domain.
 In particular, our model evaluates the effects of the quantizers (A/D and D/A
 converters), as well as representation errors introduced by the controller working  %% artifacts such as an
 %% observer~\cite{astrom1997computer}
-in a finite precision domain. Our model also accounts for representation errors introduced
-by our modelling of the plant using finite precision arithmetic. 
+in a finite-precision domain. Our model also accounts for representation errors introduced
+by our modelling of the plant using finite-precision arithmetic. 
 We reason about \rev{specific} safety requirements, which are frequently overlooked in conventional feedback control synthesis, 
 but which nevertheless play a key role in safety-critical applications, of clear concern in numerous modern contexts, 
 e.g. autonomy in robotics, avionics, and automotive.  
@@ -328,7 +329,7 @@ e.g. autonomy in robotics, avionics, and automotive.
 In this paper we present two novel approaches for the synthesis of
 digital controllers, both of which make 
 \else
-We further present a novel approach for the synthesis of digital controllers making 
+We present a novel approach for the synthesis of digital controllers that makes  
 \fi
 use of a recently investigated framework known as counterexample-guided 
 inductive synthesis (CEGIS)~\cite{jha-icse10, DBLP:conf/asplos/Solar-LezamaTBSS06},  
@@ -419,15 +420,16 @@ for the entire range of possible inputs.
 \end{figure*}
 Our approach
 \fi
-uses a multi-staged technique\rev{, shown in Figure~\ref{fig:CEGIS-precision-increment}}, that starts by devising a
+uses a multi-staged technique\rev{, shown in Figure~\ref{fig:CEGIS-precision-increment}}: 
+it starts by devising a
 digital controller that stabilizes the plant model while remaining safe for a
 pre-selected time horizon and a single initial state; then, it verifies
-unbounded-time safety by unfolding the model dynamics, considering the 
+an unbounded-time safety requirement by unfolding the model dynamics, considering the 
 full set of initial states, and checking a \emph{completeness
-threshold}~\cite{DBLP:conf/vmcai/KroeningS03}, i.e., 
-the number of stages required to sufficiently unwind the closed-loop model 
-such that the safety boundaries \rev{(assumed to be a compact set)} are not violated for any 
-larger number of iterations\rev{, illustrated in Figure~\ref{fig:ct}}.  
+threshold}~\cite{DBLP:conf/vmcai/KroeningS03}: 
+\rev{this is the number of stages required to sufficiently unwind the closed-loop model}  
+such that the safety boundaries \rev{(which are assumed to be a compact set)} are not violated for any 
+larger number of iterations\rev{, as illustrated in Figure~\ref{fig:ct}}.  
 
 \begin{figure}[t]
 \centering
@@ -452,9 +454,11 @@ efficiently synthesize safe controllers for a set of intricate physical
 plant models taken from the digital control literature.
 %\addtodo{add more here once we have the experimental results ready}
 
+\medskip 
+
 %% \addtodo{CD: the novelty compared to CAV'17 needs to be clarified}
-This paper is an extension of~\cite{DBLP:conf/cav/AbateBCCDKKP17}
-and puts forward the following contributions: 
+In summary this paper, which is an extension of~\cite{DBLP:conf/cav/AbateBCCDKKP17}, 
+puts forward the following contributions: 
 % (the fourth is a  specific extension to~\cite{DBLP:conf/cav/AbateBCCDKKP17}): 
 %
 \begin{enumerate}
@@ -467,14 +471,13 @@ and puts forward the following contributions:
   %% This application is non-trivial and addresses challenges specific to digital control
   %% systems, such as the presence of A/D quantizers and FWL operations.  
   The automatically computed state-feedback
-  controllers guarantee a given safety specification.
-  The implication is that, as opposed to existing
-  methods for controller synthesis which rely on transfer function
-  representations, we must consider a state-space representation of
-  the physical system. Such a representation requires ensuring the
+  controllers guarantee the validity of a given safety specification. 
+  This objective, unlike existing methods for controller synthesis that rely on transfer function
+  representations, requires to consider a state-space representation of
+  the physical system. Such a representation ensures the validity of the 
   specification over actual traces of the state-space model, alongside the
-  numerical soundness required by the effects of discretisation and
-  finite precision errors.
+  numerical soundness required by the effects of discretisation and 
+  finite-precision errors.
 
   
 %%   \note{[this statement is way too broad] Existing methods for controller synthesis rely on transfer 
@@ -507,7 +510,7 @@ and puts forward the following contributions:
 %time, \note{in the current paper we present an approach for
 %  soundly evaluating safety in combined continuous-discrete time and space. [this is via the AA-based back-end. However this part is not in the experiments, afaik.]}
 
-\item A limitation of the work in~\cite{DBLP:conf/cav/AbateBCCDKKP17} 
+\item A limitation of the work in~\cite{DBLP:conf/cav/AbateBCCDKKP17}, which this contribution extends,  
   is its restriction to fixed-point arithmetic, meaning that fixed-point
   numbers are employed for the representation of both the plant and the
   controller, as well as for the operations performed by each of them. 
@@ -526,8 +529,8 @@ and puts forward the following contributions:
 
 \textbf{CEGIS --} Program synthesis is the problem of computing
 correct-by-design programs from high-level specifications. Algorithms
-for this problem have made substantial progress in recent years, in
-particular CEGIS, which is a recent approach to inductive synthesis.
+for this task have made substantial progress over recent years, in
+particular the architecture known as CEGIS, which is a recent approach to inductive synthesis.
 %% borrowing ideas from counterexample guided abstraction refinement
 %% (CEGAR)~\cite{DBLP:conf/cav/ClarkeGJLV00} and
 %% superoptimisation~\cite{DBLP:conf/iclp/BrainCVF06,
@@ -544,7 +547,7 @@ particular CEGIS, which is a recent approach to inductive synthesis.
 %% to inductively synthesize invariants for the generation of desired programs.
 
 Program synthesizers are an ideal fit for the synthesis of digital controllers, 
-since the semantics of programs precisely capture the effects of finite precision arithmetic.  
+since the semantics of programs precisely capture the effects of finite-precision arithmetic.  
 However the control literature has been oblivious to this relevant connection. 
 A relevant exception is~\cite{DBLP:conf/cdc/RavanbakhshS15}, 
 which employs CEGIS for the synthesis of switching controllers for stabilizing continuous-time
@@ -554,7 +557,7 @@ The work
 % extends to affine systems \note{extension or restriction?}, but 
 is limited by the capacity of the state-of-the-art SMT solvers for solving
 linear arithmetic.  Since this approach uses switching actions for the digital controller, it avoids problems related to
-finite precision arithmetic, but potentially suffers from state-space
+finite-precision arithmetic, but potentially suffers from state-space
 explosion.  Moreover, in \cite{DBLP:conf/emsoft/RavanbakhshS16} the same
 authors use a CEGIS-based approach for synthesizing continuous-time
 switching controllers that guarantee \emph{reach-while-stay} properties of
@@ -574,7 +577,7 @@ models: this results in a static check on their coefficients.  By contrast,
 in the current paper we consider a state-space representation of the
 physical system, which requires ensuring the specification over actual
 traces of the model, alongside the numerical soundness required by the
-effects of discretisation and the errors related to finite precision arithmetic.  
+effects of discretisation and the errors related to finite-precision arithmetic.  
 
 A~state-space model has well known advantages over the transfer function
 representation~\cite{Franklin15}, as 
@@ -606,14 +609,14 @@ However, relying on state-space discretization, this class of approaches is like
 \textbf{Discretization Effects in Control Design --}
 %Classical work in control synthesis has often disregarded digitalization effects.
 Recent results in digital control have focused on separate aspects of discretization, 
-e.g. delayed response~\cite{Duggirala2015} and finite precision arithmetic, 
+e.g. delayed response~\cite{Duggirala2015} and finite-precision arithmetic, 
 with the goal either to verify~\cite{daes20161} the correctness of the implementation or to optimize~\cite{oudjida2014design} its design.
 
-There are two different problems that arise from finite precision arithmetic in digital controllers.  
+There are two different problems that arise from finite-precision arithmetic in digital controllers.  
 The first is the error caused by the inability to represent the exact state of the physical system, 
 while the second relates to rounding and saturation errors during mathematical operations.  
 In~\cite{fialho1994stability}, a stability measure based on the error of the digital dynamics ensures that
-the deviation introduced by finite precision arithmetic does not lead to instability.  
+the deviation introduced by finite-precision arithmetic does not lead to instability.  
 \cite{DBLP:journals/automatica/WuLCC09} uses $\mu$-calculus to synthesise directly a digital controller, 
 so that selected parameters result in stable model dynamics.  
 The analyses in~\cite{DBLP:conf/hybrid/RouxJG15, DBLP:conf/hybrid/WangGRJF16} rely on an
@@ -941,7 +944,7 @@ In order to guarantee soundness, we therefore encompass the error that is due to
 the representations used in the plant model and its arithmetic operations are carried out at finite precision.  
 \begin{itemize} 
 \item
-We account for the error introduced by finite precision arithmetic applied over the model variables $x_k$ and $u_k$, 
+We account for the error introduced by finite-precision arithmetic applied over the model variables $x_k$ and $u_k$, 
 %\note{here I have replaced the continuous-time signals with discrete-time ones}, 
 which are actually continuous quantities. 
 We guarantee that the precision we use to represent the model variables is at least as precise as the precision used in the digital controller, 
@@ -1199,7 +1202,7 @@ For the input signal, these requirements practically mean that the control input
 As discussed in Section~\ref{sec:errors}, 
 the considered models must account for the semantics of finite-precision arithmetic, 
 deriving from several sources: 
-we formally bound the numerical error introduced by the finite precision representation of the plant (and its operations), 
+we formally bound the numerical error introduced by the finite-precision representation of the plant (and its operations), 
 and precisely model the behaviour introduced by the ADC/DAC conversions, 
 as well as the behaviour of the limited-precision arithmetic used by the controller. 
 
@@ -1272,7 +1275,7 @@ with $|\delta_3| \leq |\delta_{T1}| + |\delta_{T2}|$.
 |\delta_{T2}\cdot\mathcal{F}_{\langle I,F \rangle}(c_1)| + c_m$, where
 $c_m=2^{-F}$ as above.
 %
-\item Division: the operations performed by the controllers in the finite precision
+\item Division: the operations performed by the controllers in the finite-precision
 domain do not include division.  However, we do use division in computations within the model.  
 Here the error depends on whether the divisor is greater or smaller than the dividend:  $\mathcal{F}_{\langle I,F
 \rangle}(c_1) / \mathcal{F}_{\langle I,F \rangle}(c_2) = c_3 + \delta_{T3}$, 
@@ -1349,12 +1352,12 @@ which result in the following closed-loop dynamics:
 \fi
 
 
-\subsection{Effect of finite precision arithmetic on safety specification and on stability} 
+\subsection{Effect of finite-precision arithmetic on safety specification and on stability} 
 
-In this section we will quantify how the finite precision arithmetic in a digital controller affects the
+In this section we will quantify how the finite-precision arithmetic in a digital controller affects the
 safety and stability properties of an LTI model. 
 
-\subsubsection{Safety of closed-loop models with finite precision controller error} 
+\subsubsection{Safety of closed-loop models with finite-precision controller error} 
 
 Let us first consider the effect of the quantization errors on safety. 
 Within the controller, state values are manipulated at low precision,
@@ -1411,7 +1414,7 @@ x_{n} &= (A_d  - B_dK)^nx_0 + (A_d  - B_dK)^{n-1}B_dK\delta +\\
 %The definition of asymptotic stability is that the system converges to a
 %reference signal, in this case we use no reference signal so 
 Recall that a closed-loop asymptotically stable system will converge to the origin.  
-We know that the original system with an infinite precision controller is stable, 
+We know that the original system with an infinite-precision controller is stable, 
 because we have synthesized it to meet Jury's criterion.  
 Hence, $(A_d - B_dK)^n x_0$  must converge to zero as $n \uparrow \infty$. 
 %T%o show that a fixed-point implementation of the same controller will
@@ -1441,8 +1444,8 @@ neighborhood of the equilibrium within the safe set.
 
 A similar argument can be made for floating-point arithmetic.
 We can thus disregard these steady-state errors (caused by
-finite precision arithmetic) when stability is ensured by synthesis, and then verify its
-safety accounting for the finite precision errors.
+finite-precision arithmetic) when stability is ensured by synthesis, and then verify its
+safety accounting for the finite-precision errors.
 
 
 
@@ -1654,7 +1657,7 @@ while retaining soundness.
 the CEGIS procedure that is used to synthesise safe digital controllers, 
 accounting for the precision issues detailed in the previous sections. 
 We employ a multi-stage approach that unwinds the dynamics of the model up to a completeness threshold, 
-encompassing finite precision arithmetic using bit-precise bounded model checking, 
+encompassing finite-precision arithmetic using bit-precise bounded model checking, 
 and then verifying soundness of the resulting controller using interval arithmetic. 
 \fi
 
@@ -2141,7 +2144,7 @@ of the closed-loop control model model into its internal representation (IR).  W
 instrument this IR for each synthesis or verification scenario accordingly,
 and use CBMC as an oracle to answer our queries.  CBMC itself relies on an
 underlying SAT/SMT solver to address verification checks.  We~model the 
-effects of finite precision arithmetic 
+effects of finite-precision arithmetic 
 explicitly using CBMC's nondeterminism API (e.g., \texttt{nondet},
 \texttt{CPROVER\_assume} intrinsic functions).  Our module is included into
 CBMC~5.7 and is available for 
@@ -2263,7 +2266,7 @@ the evaluation study has the following experimental goal:
 %[EG1] \textbf{(Performance)} 
 Show that the multi-staged 
 %and the abstraction-based 
-CEGIS approach is able to generate finite precision digital controllers using fixed-point and floating-point arithmetic in a reasonable amount of time.
+CEGIS approach is able to generate finite-precision digital controllers using fixed-point and floating-point arithmetic in a reasonable amount of time.
 %\item[EG2] \textbf{(Sanity check)} Confirm the stability \note{also?} and safety of the synthesized controllers outside 
 %of our model representation using MATLAB. 
 %\note{Where is this done?}
@@ -2442,7 +2445,7 @@ Our approach is novel within the digital control literature:
 we provide a fully automated synthesis method that is algorithmically and numerically sound,
 considering various error sources in the implementation of the digital control algorithm and in the computational modeling of plant dynamics.
 %
-Our experimental results show we are able to synthesize fully automatically safe controllers for diverse benchmarks from the control literature, 
+Our experimental results show that we are able to synthesize automatically safe controllers for diverse benchmarks from the digital control literature, 
 within a reasonable amount of time.  
 %
 %\note{Let us collect here the main extensions we regard to be relevant: \\ 
@@ -2459,7 +2462,7 @@ within a reasonable amount of time.
 %Partially supported by the Roman Senate.  % here.
 %\end{ack}
 
-\bibliographystyle{spbasic}       % Include this if you use bibtex 
+\bibliographystyle{plain}       % Include this if you use bibtex 
 \bibliography{paper}           % and a bib file to produce the 
                                  % bibliography (preferred). The
                                  % correct style is generated by
