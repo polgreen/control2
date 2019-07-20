@@ -1458,8 +1458,8 @@ is thus sufficient to check that the perturbed model converges to a
 neighborhood of the equilibrium within the safe set. 
 
 A similar argument can be made for floating-point arithmetic.
-We can thus disregard these steady-state errors (caused by
-finite-precision arithmetic) when stability is ensured by synthesis, and then verify its
+In conclusion, we can thus disregard these steady-state errors (caused by
+finite-precision arithmetic) when stability is ensured by synthesis, and then verify  
 safety accounting for the finite-precision errors.
 
 
@@ -1803,8 +1803,8 @@ we need the characteristic polynomial of the closed-loop model to satisfy Jury's
 
 We fix an index $k$, 
 and we synthesize a safe controller by
-unfolding the transition system (.e., the closed-loop model) $k$ steps and by selecting a controller $K$ and a single initial state, 
-such that the states at each step do not violate the safety criteria (see Section~\ref{sec:safety}).    
+unfolding the transition system (i.e., the closed-loop model) $k$ steps and by selecting a controller $K$ and a single initial state, 
+such that the states at each step do not violate the safety requirement (see Section~\ref{sec:safety}).    
 That is, we ask the bounded model checker~\cite{ClarkeKL04} if there exists a $K$ that is safe for at least one $x_0$ in our set of all possible initial states, and a given fixed-point precision for the controller, and where the input signal remains within the specified bounds. 
 This approach is sound, i.e., the controller produced is guaranteed to be safe, if the current $k$ is greater than the completeness threshold (see later step).  
 We also assume some finite precision for the model and a given time discretisation, as described in section~\ref{sec:model}.  
@@ -1849,7 +1849,7 @@ The checks that these assumptions hold are performed by the subsequent {\sc veri
 
 \subsection{{\sc safety} Block}
 
-The first {\sc verify} stage, {\sc safety} is shown in Alg.~\ref{alg:safetycheck}. 
+The first {\sc verify} stage, {\sc safety} is shown in Algorithm~\ref{alg:safetycheck}. 
 The algorithm checks that the candidate
 solution $K$, which we have synthesized to be safe for at least one initial
 state, is safe for \emph{all} possible initial states, i.e., it does not reach
@@ -1868,11 +1868,11 @@ bound of the states in the initial set. It is sufficient to verify that the cont
 \begin{theorem}
   \label{th:safety}
 \rev{Assuming that the initial set is included within the safe set, }
-if a controller is safe for each of the corner cases of the hypercube of allowed initial states, 
-i.e., the vertex states, then it is safe for any initial state in the hypercube. 
+if a controller is safe for each of the corner cases of the hyper-box of allowed initial states, 
+i.e., the vertex states, then it is safe for any initial state in the hyper-box. 
 \end{theorem}
 \begin{proof}
-Consider the set of initial states, $X_0$, which we note is convex since it is a hypercube. 
+Consider the set of initial states, $X_0$, which we note is convex since it is a hyper-box. 
 Name $v_i$ its vertices, where $i=1,\ldots, 2^n$.  
 Thus any point $x \in X_0$ can be expressed by convexity as $x = \sum_{i=1}^{2^n} \alpha_i v_i$, 
 where $\sum_{i=1}^{2^n} \alpha_i =1$. Then if $x_0=x$, we obtain 
@@ -1888,7 +1888,7 @@ convex set, by those generated from the vertices.
 \qed
 \end{proof}
 Summarising, we only need to check $2^n$ initial states, 
-where $n$ is the dimension of the state space (number of continuous variables).
+where $n$ is the dimension of the state space (number of continuous variables). \todo{Add remark from reviewer that this number can be lower in actuality?}
 
 \subsection{{\sc precision} Block}
 
@@ -1919,8 +1919,8 @@ point (which, for linear models, is the origin) decreases over time within subsp
 eigenvalues (say, $\theta < 0$): this can be shown considering the exponential $e^{\theta t} x_0$ ($x_0$ being the initial condition), 
 which envelops the model dynamics within subspaces and is monotonically decreasing. } 
 \rev{ However, this monotonic decrease cannot be ensured in general when dealing with complex eigenvalues. } 
-Consider the closed-loop matrix that updates the
-states in every discrete time step, and select the eigenvalue $\vartheta$ 
+In this second instance, consider the closed-loop matrix that updates the
+states at each discrete time step, and select the eigenvalue $\vartheta$ 
 with the smallest (non-zero) imaginary part.  
 Between any pair of consecutive time steps $k\,T_s$ and $(k+1)\,T_s$, the dynamics projected on
 the corresponding eigenspace rotate of $\vartheta T_s$ radians.  Thus, taking
@@ -1929,7 +1929,7 @@ $k{\geq}\overline{k}$ steps the model trajectory has completed a full rotation \
 this results in a point closer to the origin, \rev{as shown in Fig. \ref{fig:ct}}.  The synthesized $\overline{k}$ is thus a completeness threshold: 
 \rev{indeed, since we have selected $\vartheta$ to be the complex eigenvalue with smallest imaginary part, 
 any other pair of complex eigenvalues will correspond to dynamics that rotate faster within the corresponding eigenspace. 
-Hence, $\overline{k}$ will again represent a completeness threshold. }
+Hence, $\overline{k}$ will again represent a global completeness threshold. }
 \qed 
 %
 \end{proof}
@@ -2151,9 +2151,9 @@ Finally, in Step~C, the synthesized digital controller is generated.
 The output of \tool~is the closed-loop model with the synthesized digital controller, 
 which is represented either as a transfer function or in state-space form (in this article we consider the latter case).  
 The synthesis is considered to be \emph{successful} if a digital controller is
-correctly synthesized with respect to the effects of finite-precision arithmetic within the 5 hour time-out.
+correctly synthesized with respect to the effects of finite-precision arithmetic within a time-out set to 5 hours. 
 
-Our CEGIS engine is implemented as an integrated module within the C bounded
+The CEGIS engine is implemented as an integrated module within the C bounded
 model checker (CBMC)~\cite{ClarkeKL04}.  CBMC transforms the ANSI-C representation
 of the closed-loop control model model into its internal representation (IR).  We
 instrument this IR for each synthesis or verification scenario accordingly,
@@ -2182,9 +2182,10 @@ experiments.\footnote{\url{http://www.cprover.org/DSSynth/}}
 \label{exp:evaluation}
 %-------------------------------
 
-Our benchmark suite consists of 19 case studies extracted from the control literature~\cite{acrobot,cstr,CHEN1979389,KOKOTOVIC198023,gajic2008optimal,Franklin15, maglev, converters, gajic2008optimal}. These case studies comprise control models, which we represent in state space form as in \eqref{eq:ode1}. 
+Our benchmark suite consists of 19 case studies extracted from the control literature~\cite{acrobot,cstr,CHEN1979389,KOKOTOVIC198023,gajic2008optimal,Franklin15, maglev, converters, gajic2008optimal}. These case studies comprise control models, which we represent in state space form as in Equation \eqref{eq:ode1}. 
 The models are time discretized, with sampling times ranging from 1s to 0.0001s. 
-CEGIS initially starts with the coarsest discretisation (i.e., 1s sampling time), and if it fails to find a controller, reduces the sampling time. The initial states are bounded between $0.5$ and $-0.5$ for all states, and the safety specification requires that the states remain between $-1.5$ and $1.5$ \rev{(as remarked above, the initial set lies within the safe set and contains the origin)}. The input bounds are selected individually for each benchmark.
+CEGIS initially starts with the coarsest discretisation (i.e., 1s sampling time), and if it fails to find a controller, it reduces the sampling time. 
+The initial states are bounded between $0.5$ and $-0.5$ for all states, and the safety specification requires that the states remain between $-1.5$ and $1.5$ \rev{(as remarked above, the initial set lies within the safe set and contains the origin)}. The input bounds are selected individually for each benchmark.
 %\note{we need to at least qualitatively mention input selection, initial conditions, and also safe sets. how much can you say? } 
 
 %-------------------------------
@@ -2210,10 +2211,10 @@ benchmark correspond to a higher-order control system
 model employed as a case study for model-order reduction techniques~\cite{CHEN1979389}.  
 %
 The benchmarks \textit{Cruise 1}~\cite{Franklin15} and \textit{Cruise 2}~\cite{Astrom08} deal with automotive cruise control models, 
-where the control is used to maintain the speed of an automobile constant, 
-tracking a desired speed reference, and compensating disturbances and uncertainties.  % related to relief and terrain. 
+where the control is used to maintain the speed of an automobile at a constant value (after tracking a desired speed reference), 
+and compensating disturbances and uncertainties.  % related to relief and terrain. 
 %There are two continuous stirred tank reactor models named 
-\textit{cstr}  and \textit{cstrtmp}  describe the pH dynamics of a reaction 
+The models \textit{cstr}  and \textit{cstrtmp}  describe the pH dynamics of a reaction 
 of an aqueous solution of sodium acetate with hydrochloric acid~\cite{cstr} and 
 the temperature of a reaction~\cite{astrom2006advanced} in a 
 %continuous flow stirred-
@@ -2237,23 +2238,22 @@ of a coaxial helicopter.
 %
 %\textit{Invpendulum\_cartpos}  and 
 The \textit{inverted pendulum} benchmark  
-describes a model for the cart position and the angle of an inverted pendulum placed on the cart,  
+describes a model for the cart position and for the angle of an inverted pendulum placed on the cart,  
 %plant composed by a point mass, which must be equilibrated above the pivot point and is mounted on an one degree of freedom cart that 
-which moves over a track through a DC motor.  
+which moves over a track by means of a DC motor.  
 %
 The \textit{magnetic pointer} benchmark  describes a magnetic pointer, 
 % plant composed by a pointer employed in analogue gauges and indicators, 
 whose angular position dynamics is controlled by a magnetic field. 
 %
-The \textit{magsuspension} describes  the dynamic of a magnetic car suspension system. 
+The \textit{magsuspension} describes  the dynamics of a magnetic car suspension system. 
 The \textit{pendulum}  plant consists of a swinging point mass suspended from a frictionless pivot by means of a rod with negligible mass.  
 %
 The \textit{Regulator} consists of a linear model of a synchronous electrical machine% connected to an infinite bus
 ~\cite{KOKOTOVIC198023}. 
 The \textit{satellite attitude control system} plant describes the dynamics of a satellite 
 attitude, {\it i.e.}, the orientation angles. An attitude control system must maintain the desired 
-orientation of a satellite with respect to an 
-inertial frame during all the excursion. 
+orientation of a satellite with respect to an inertial frame. % during all the excursion. 
 The \textit{springer-mass damper system} plant is a standard model for the dynamics of several mechanical systems. 
 %This benchmark describes a mass, which is fixed to a node by means of a springer and moves under the action of an input force, damping, and elastic force.
 The \textit{steam drum} benchmark describes a linear model for the level dynamics of a boiler steam drum~\cite{boiler}. 
@@ -2275,7 +2275,7 @@ Guard cutter.
 %-------------------------------
 
 Using the state-space models described in Section~\ref{exp:benchmarks}, 
-the evaluation study has the following experimental goal:  
+the evaluation study has the following overall experimental goal:  
 \begin{enumerate}
 \item[] 
 %[EG1] \textbf{(Performance)} 
@@ -2396,17 +2396,17 @@ USCG tampa	&	3	&	12,12	&	1143.35	&	10,6	&	210.70	\\
 
 The mean run-time for the successful benchmarks is 225\,s for fixed-point and 125\,s for floating-point implementations, respectively.  
 The median run-time for the successful benchmarks is 15.7\,s for fixed-point and 17.8\,s for floating-point implementations, respectively.
-We consider these times to be short enough to be of practical use to control engineers, and thus affirm the validity of 
+We consider these times to be short enough to be of practical use to control engineers, and thus assert the success of 
 %EG1. 
-the objective we have raised. 
-
-\smallskip 
+the overall objective of the study that we have raised above. 
 
 %\textcolor{blue}{The synthesized controllers are confirmed to be safe outside of our model
 %representation using MATLAB, achieving EG2 \note{please explain how this check is performed - is the check itself sound?}.  
 A~link to the full experimental environment, including scripts to reproduce the results, all benchmarks and the tool, is provided in the
 footnote as an Open Virtual Appliance (OVA).\footnote{\url{www.cprover.org/DSSynth}} 
-The provided experimental environment runs multiple discretisations for each benchmark, and lists the fastest as the result synthesis time. 
+The provided experimental environment runs multiple discretisations for each benchmark, and lists the fastest as the resulting synthesis time. 
+
+\smallskip 
 
 In this article we have presented a selection of case studies for which we have been able to automatically synthesise safe controllers. 
 In the full experimental environment we have included further case studies that we have been unable to synthesise controllers for. 
@@ -2432,6 +2432,7 @@ not generalize to other benchmarks.
 %\note{is this where we attempt asserting EG2?}
 
 \item[]
+\item[]
 \textit{Plant model precision and discretization heuristics:} Our algorithm to
 select suitable finite-precision arithmetic to model the plant behavior 
 increases the precision by 8 bits at each step,  
@@ -2452,7 +2453,9 @@ threshold is high.
 \label{sec:conclusions}
 %-------------------------------
 
-We have presented an automated approach to synthesize provably-correct digital state-feedback controllers that ensure both stability and safety over state-space models.   
+We have presented an automated approach to synthesize provably-correct digital state-feedback controllers that ensure 
+%both stability and 
+safety over state-space models.   
 %The first approach relies on unfolding of the closed-loop model dynamics up to a completeness threshold, while the second
 %one applies abstraction-refinement and acceleration to increase speed, whilst retaining soundness.
 %
