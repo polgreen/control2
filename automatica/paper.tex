@@ -983,7 +983,7 @@ represented at the floating-point precision of the controller,
 whereas $\mathcal{F}_{\langle E_p,M_p \rangle}(x)$ denotes a real number represented at the floating-point precision of the plant model.  
 
 %-------------------------------
-\subsection{Counterexample-Guided Inductive Synthesis} 
+\subsection{Counterexample-Guided Inductive Synthesis (CEGIS)} 
 \label{ssec:cegis}
 %-------------------------------
 
@@ -1033,7 +1033,7 @@ CEGIS breaks down this generally hard synthesis problem into two easier parts:
 %The design consists of two phases,
 an inductive synthesis phase (denoted by {\sc Synthesize} in
 Figure~\ref{fig:CEGIS}) and a verification phase (denoted by {\sc
-  Verify}), which interacts via a finite set of tests {\sc
+  Verify} in Figure~\ref{fig:CEGIS}), which interacts via a finite set of tests {\sc
   inputs} that is updated incrementally.
 Given the specification $\phi$, the inductive synthesis procedure tries to
 find an existential witness $P$ satisfying the specification
@@ -1055,22 +1055,23 @@ terminate by either finding a solution or showing that no solution
 exists.
 
 In the context of the formal synthesis of safe controllers, 
-of interest or this work, 
+of interest for this work, 
 the set of possible {\sc inputs} corresponds to the set of possible initial states and the 
 candidate program $P$ is a candidate controller $K$. The synthesis block generates a candidate
 controller that works for a subset of the possible initial states, and the verifier checks whether 
 the controller works for all possible initial states. 
 
 %-------------------------------
-\section{Formal specification of properties on a model} 
+\section{Formal specification of \rev{stability on a model}} 
 \label{sec:specification}
 %-------------------------------
 
-%While in the previous section we have discussed the generic CEGIS framework, 
-We are now equipped to apply the general CEGIS framework to the synthesis of digital controllers. 
-We start by describing the property that we pass to the synthesizer as the specification $\phi$. 
-Namely, as we are interested in capturing safety (as discussed in Section~\ref{sec:safety}),  
-we use a stability specification to narrow the search space of possible controllers, as detailed in Section~\ref{ssec:stabspecification}.
+\todo{I feel that this section had an overtly general title and intro, but was actually limited to discussing the encoding of stability - I have focussed this.}
+
+%While in the previous section we have discussed the generic CEGIS framework, We are now equipped to apply the general CEGIS framework to the synthesis of digital controllers. We start by describing the property that we pass to the synthesizer as a specification $\phi$. 
+Since we are interested in capturing safety (as encoded in Equation~\eqref{eq:safetyliteral} in Section~\ref{sec:safety}),  
+we use a stability specification to narrow the search space of possible controllers, as detailed in Section~\ref{ssec:stabspecification}. 
+\rev{Essentially, we employ stability as a precursor to safety.} 
 
 %-------------------------------
 \subsection{Jury's stability criterion} 
@@ -1083,9 +1084,9 @@ There are a number of well known procedures to perform stability analysis of dyn
 %which can fit our automatic verification engine.  
 %one based on Schur's decomposition
 %and another one based on Jury's criterion~\cite{astrom1997computer}.  
-Here we select the Jury stability criterion~\cite{astrom1997computer}, 
+Here we select the classical {\it Jury's stability criterion}~\cite{astrom1997computer}, 
 in view of its efficiency and ease of integration within our implementation.  
-This method checks the stability working in the complex domain of the characteristic polynomial $S(z)$,  
+This method checks the stability \rev{of a model} working over the complex domain of its characteristic polynomial $S(z)$,   
 %
 % of the matrix $\left( \begin{array}{c} Y \\ U \end{array}\right)$, where $Y(z)$ is the closed-loop system output and U(z) is the controller output. 
 %% \red{[unclear: what matrix? We need to clarify the relationship
@@ -1099,16 +1100,18 @@ considered in its general form as
 \begin{equation*}
 S(z) = a_0z^N+a_1z^{N-1}+\cdots+a_{N-1}z+a_N,\,\, a_0\neq0. 
 \end{equation*}
-This polynomial is obtained as a function of the state-space matrices $A_d,B_d$~\cite{Astrom08}, 
+\rev{A standard result in Control theory~\cite{Astrom08} states that }
+this polynomial can be obtained as a function of the state-space matrices $A_d,B_d$,  
 and in particular its order $N$ corresponds to the dimensions of the state variables (above, $n$).  
 A sufficient condition for asymptotic stability of the closed-loop LTI model~\cite{astrom1997computer} 
 is when all the roots of its characteristic polynomial $S(z)$ (which correspond to the 
 eigenvalues of the matrix $A_d-B_dK$) are inside the unit circle in the complex plane, 
-i.e., if their absolute values are less than one. 
+i.e., when the absolute values of the roots are less than one. 
 
 %\note{The characteristic polynomial $S(z)$ represents the dynamical model in \ldots [clarify whether we use the CPol to describe the open- or closed-loop model. Relate parameters to matrices A,B,K. Notice that these parameters are used later in the Section where AA-based backend is explained.]}
 
-The following matrix $M$ with dimension $(2N-2)\times N$ and elements $m_{(\cdot),(\cdot)}$ is built from the coefficients of $S(z)$ as:  
+\rev{Skipping the full algebraic derivation for the sake of space (this can be found in~\cite{astrom1997computer}), }
+the following matrix $M$ with dimension $(2N-2)\times N$ and elements $m_{(\cdot),(\cdot)}$ is built from the coefficients of $S(z)$ as:  
 %
 $$
 M=\left( 
@@ -1159,7 +1162,7 @@ $R_4: m_{11} > 0 \wedge\allowbreak
       m_{(2N{-}3)(1)}>0$, \rev{where $m_{ij}$ denotes the element in position $(i,j)$ of the matrix $M$, as defined previously}.
 %\end{itemize}
 
-In conclusion, 
+Finally, 
 the asymptotic stability property is finally encoded by a constraint expressed as the following formula: 
 $
 \phi_\mathit{stability} = \{R_1 \wedge R_2 \wedge R_3 \wedge R_4\}.
@@ -1210,12 +1213,14 @@ For the input signal, these requirements practically mean that the control input
 \label{sec:numeric_rep}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+\todo{This Section seems coherent. However, Elizabeth can you carefully check it once again?}
+
 As discussed in Section~\ref{sec:errors}, 
 the considered models must account for the semantics of finite-precision arithmetic, 
 deriving from several sources: 
 we formally bound the numerical error introduced by the finite-precision representation of the plant (and its operations), 
 and precisely model the behaviour introduced by the ADC/DAC conversions, 
-as well as the behaviour of the limited-precision arithmetic used by the controller. 
+as well as the behaviour of the limited-precision arithmetic used in the controller. 
 
 Technically, we employ interval arithmetic to bound the error introduced by the finite-precision plant model, 
 and we use bounded model checking to precisely model the semantics of finite-precision arithmetic, 
@@ -1235,7 +1240,7 @@ This is an approximation that speeds up each CEGIS iteration,
 however it necessitates a further stage where we verify that the errors introduced by the approximation have not resulted in a controller that is unsafe when executed on a model expressed over real numbers.  
 In this stage, we represent the plant model using double-precision floating-point numbers 
 and we use the Boost interval arithmetic library~\cite{DBLP:journals/tcs/BronnimannMP06} to bound the error in this representation. 
-We employ a compositional numerical library to model the fixed point arithmetic for the controller\footnote{\url{https://github.com/johnmcfarlane/cnl}} within double-precision floating-point numbers. 
+We employ a compositional numerical library to model the fixed-point arithmetic for the controller\footnote{\url{https://github.com/johnmcfarlane/cnl}} within double-precision floating-point numbers. 
 We check that the controller is safe starting from each vertex of the set of initial states,  
 and show that this is sufficient to prove safety from any state in this set (see Theorem~\ref{th:safety}). %\note{add forward reference to proof.}
 
@@ -1382,7 +1387,7 @@ This induces two types of errors,
 as detailed above: 
 first, the truncation error due to the representation of $x_k$ as $\mathcal{F}_{\langle I_c,F_c
 \rangle}(x_{k})$; and second, the rounding error introduced by the multiplication operation. 
-Recall that this error is modelled precisely by bounded model checking.
+Recall that this error \rev{[CLARIFY WHICH OF THE PREVIOUS TWO]} is modelled precisely by bounded model checking.
 
 An additional error is due to the representation of the plant dynamics, namely 
 %
@@ -1398,7 +1403,7 @@ We encompass this error using interval arithmetic~\cite{moore1966interval} in th
 %-------------------------------
 \label{sec:stab_FWL}
 The validity of Jury's criterion~\cite{fadali} relies on the representation of the closed-loop dynamics $x_{k+1} = (A_d - B_dK) x_k$ at infinite precision.  
-When we employ a fixed-point arithmetic digital controller, the operation above can be expressed as follows, where we use $\mathcal{F}_{\langle I_c,F_c \rangle}$ preceding a variable to indicate that variable is converted into the fixed-point precision given by $\mathcal{F}_{\langle I_c,F_c \rangle}$: 
+\rev{When we employ a digital controller with fixed-point arithmetic}, the operation above can be expressed as follows, where we use $\mathcal{F}_{\langle I_c,F_c \rangle}$ preceding a variable to indicate that variable is converted into the fixed-point precision given by $\mathcal{F}_{\langle I_c,F_c \rangle}$: 
 %
 \begin{align*}
 x_{k+1} &= A_d \cdot x_{k} -B_d(\mathcal{F}_{\langle I_c,F_c \rangle}(K)\cdot\mathcal{F}_{\langle I_c,F_c \rangle}(x_{k})).  
@@ -1444,13 +1449,12 @@ Thus, the closed-loop model converges to the value
 0 + (I - A_d + B_dK)^{-1}B_dk\delta \,. 
 \end{align*}
 %
-As a result, if the value $(I - A_d + B_dK)^{-1}B_dk\delta$ is within the safe set of states given by the safety specification
+As a result, if the value $(I - A_d + B_dK)^{-1}B_dk\delta$ is within the safe set of states given by the safety specification, 
 then the synthesized fixed-point controller results in a safe
 closed-loop model.  The convergence to a finite value, however, will not
 make it asymptotically stable.
-However,
-since in this paper we require stability only as a precursor to safety, it
-is sufficient to check that the perturbed model converges to a
+Since in this paper we require stability only as a precursor to safety, it
+is thus sufficient to check that the perturbed model converges to a
 neighborhood of the equilibrium within the safe set. 
 
 A similar argument can be made for floating-point arithmetic.
