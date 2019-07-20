@@ -35,12 +35,13 @@ We would like to deeply thank you for reviewing our paper and providing us with 
 all the comments and incorporated them in the revised manuscript.
 
 We present below a detailed discussion of all comments, questions, and concerns raised by the reviewers. The major modifications are highlighted in
-blue in the revised manuscript. For clarity,  we also use \vold{v1} and \vnew{v2} in the response letter for referring respectively to the previous
+blue in the revised manuscript. 
+\todo{keep next?} For clarity,  we also use \vold{v1} and \vnew{v2} in the response letter for referring respectively to the previous
 and current versions of the manuscript.
 %I do not like color coding that much. And definitely not with red and blue.
 \\
 \\
-With kind regards,\vspace{0.1cm}
+Best regards,\vspace{0.1cm}
 \\
 The Authors
 %
@@ -68,8 +69,9 @@ I did not entirely buy that using CEGIS is a contribution, as from looking over 
 
 This journal submission encompasses and summarises the mentioned conference articles (CAV, HSCC, ASE) or workshop abstract (SYNTH). 
 It is a more mature, complete, and comprehensive presentation of the conference material. 
-Of these conference articles, the CAV/HSCC contributions presented the theory underlying the approach, 
-whereas the ASE is a tool paper. 
+Of these conference articles, the CAV/HSCC contributions provided an early presentation of the theory underlying the approach, 
+whereas the ASE was a tool paper.  
+The present contribution has new or updated experimental outcomes. 
 The application of the CEGIS architecture to the synthesis of digital controllers for continuous plants is indeed a novel contribution of this line of
 work. 
 
@@ -97,7 +99,7 @@ make the assumptions more precise.}
 \vspace{1em}
 {\bf Response: }
 We do need full observability of the (states of the) model, and have clarified this in Section 3.1, as follows: {\it We assume full observability of
-the states of the model, namely the output states correspond with the model variables.  } We recall this assumption later in the text. 
+the states of the model, namely the output states correspond with the model variables.  } We recall this assumption later, throughout the manuscript. 
 
 \vspace{2em}
 {\bf Comment: } {\itshape Theorem 2 states completeness of the approach, specifically that there exists a finite k for which BMC can be done up-to to
@@ -114,7 +116,7 @@ greatly enhance the existing discussion of timeouts, etc. related to completenes
 We have added the completeness threshold for each benchmark in the table. Note that the completeness threshold is dependent on the controller, 
 and a controller with a smaller completeness threshold may exist. 
 
-The proof of Theorem 2 has been elaborated and made more comprehensive and detailed. 
+The proof of Theorem 2 has been elaborated and has been made more detailed. 
 
 \todo[inline]{Elizabeth: add completeness thresholds to table}
 
@@ -134,16 +136,16 @@ approach for nonlinear plants, although there are a host of technical issues in 
 \vspace{1em}
 {\bf Response: }
 
-We have reviewed relevant literature on controller synthesis based on finite abstractions, cf. Belta and Tabuada. 
+We have reviewed relevant literature on controller synthesis based on finite abstractions, cf. Belta, Tabuada, Zamani, et al.. We have clarified the differences with our approach in the manuscript. 
 
-Literature on reachability analysis tackles a different problem, namely one of verification, rather than one of control synthesis (which this work
-focuses on). 
+Furthermore, most literature on reachability analysis tackles a different problem, namely one of verification, rather than one of control synthesis (which this work
+focuses on). Admittedly, reachability analysis tool scale quite well (as the reviewer points out), however this is under clear assumptions on model dynamics. 
+Whilst algorithmically very advanced, notice that only a few of the available software tools for reachability analysis are actually numerically sound. 
 
-Admittedly reachability analysis tool scale quite well (as the reviewer points out), however this is under clear assumptions on model dynamics. 
+So one might argue that reachability analysis tools could be embedded within the CEGIS framework (incidentally, this was partly attempted in our CAV17 contribution), 
+however they currently lack full soundness: namely they 
+are algorithmically sound, but not numerically sound. On the contrary our work is sound on both sides. 
 
-One might argue that reachability analysis tools could be embedded within the CEGIS framework, however they currently lack full soundness: namely they
-are algorithmically sound, but not numerically sound. On the contrary our work is sound on both sides. (Shall we mention that indeed we do
-reachability analysis via Axelerator in CAV17?)
 
 \vspace{2em}
 {\bf Comment: }
@@ -154,9 +156,9 @@ the approach can work toward.}
 
 {\bf Response: }
 
-\rev{It is probably true that the check on all vertices might not be necessary in general, that that this check might be simplified in special cases
+It is probably true that the check on all vertices might not be necessary in general, that that this check might be simplified in special cases
 or under special conditions. The check however, as it currently is implemented, does not represent the bottleneck of our overall method, so we can
-safely rely on its current form, as it stands. }
+safely rely on its current form, as it stands.  \todo{Add note to manuscript?}
 
 \vspace{2em}
 
@@ -220,14 +222,13 @@ convex combination of trajectories (reachable set) and then perform the verifica
 \todo[inline]{Alessandro: Response to this (Theorem 1)}
 \vspace{2em}
 
-\rev{
 Many thanks for this note. 
-Notice that in the submitted manuscript we had focused on special shapes of initial and safe sets, namely (convex) hyper-boxes, which included the
+Notice that already in the previous manuscript we had focused on special shapes of initial and safe sets, namely (convex) hyper-boxes, which include the
 origin. 
 In the amended draft, we have better clarified these assumptions, and 
 we have emphasised that the initial set is assumed to lie within the safe set: indeed, the contrary would trivially result in an unsafe condition. 
-In conclusion, recall that the sets are hyper-boxes, thus convex, and that in view of the linear dynamics of the considered models, in practice both
-are assumed to contain the origin.  }
+In conclusion, recall that the sets are hyper-boxes, thus convex, and that in view of the linear dynamics of the considered models, in practice both 
+are assumed to contain the origin.   
 
 \section{Response to Reviewer (4)}
 
@@ -240,8 +241,9 @@ create auxiliary variables that track history explicitly?}
 
 \vspace{1em}
 {\bf Response:}
- It is true that we would be able to encode more complex properties by introducing auxiliary variables; however theorem 2 is dependent on the safe set being convex, and 
-so this proof would not necessarily hold with more complex properties. It would be possible to construct time-bounded properties as automata that track history explicitly, but I can't see how
+ It is true that we would be able to encode more complex properties by introducing auxiliary variables; 
+ however,  Theorem 2 is dependent on the safe set being convex, and so this proof would not necessarily hold with more complex properties. 
+ It would be possible to construct time-bounded properties as automata that track history explicitly, but we can't see how
 it would be possible to avoid unwinding the transition relation using this method. In the case of the example given by the reviewer, an STL property with bounded time-horizon, unwinding
 the transition relation would not pose much of a problem anyway as a time-bounded property would only require unwinding up to the time-bound.
 
@@ -253,7 +255,7 @@ earlier in the paper (Section 1 or 3).}
 
 \vspace{1em}
 {\bf Response: }
-We have moved these figures to section 1 and incorporated them into the introduction. We are still referring back to these figures from section 5.
+We have moved these figures to Section 1 and incorporated them into the Introduction. We are still referring back to these figures from Section 5.
 
 \vspace{2em}
 
@@ -276,6 +278,8 @@ Could you add one example to the end of Section 4 to show $R_1$, $R_2$, $R_3$, $
 {\bf Response: }
 
 \todo[inline]{Eli: can you clarify? Again, this is just Jury's criteria, we don't really have space to go over examples of basic control theory }
+
+\todo{can we at least say that the values can be obtained form the SW tool, and say where in the tool they are computed? }
 
 \vspace{2em}
 {\bf Comment: } {\itshape 
