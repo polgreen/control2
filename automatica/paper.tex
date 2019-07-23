@@ -638,16 +638,21 @@ bound the effect of quantization error on stabilization.
 % as an invariant set that always converges toward the controllable set.  
 Similarly, 
 \cite{liberzon2003hybrid} evaluates the quantization error dynamics and calculates upper and lower
-bounds for the possible trajectory of the system, up to a finite time. 
-The last two approaches can be placed within the research area known as ``hybrid systems theory.''  
+bounds for the possible trajectory of the system, up to a finite time. \rev{Considering the problem of multi-modal
+dynamics,~\cite{DBLP:conf/emsoft/JhaST11} uses numerical optimization techniques to learn optimal switching logic for hybrid systems.
+The last three} approaches can be placed within the research area known as ``hybrid systems theory.''  
 %This technique works for both linear and non-linear systems.
 The present contribution distances itself from all these cognate results. 
 
-A large body of work exists on evaluating fixed-point errors and bridging the gap between real value
+\rev{A large body of work exists on evaluating fixed-point errors and bridging the gap between real value
 and fixed-point values in synthesis in other application areas and using other
-algorithmic techniques; 
-Genetic programming has been used to minimise the error in synthesised fixed-point programs~\cite{Darulova};
-Smoothed proof search reduces the problem of boolean  a sequence of optimization problems
+algorithmic techniques:
+Genetic programming has been used to minimise the error in synthesised fixed-point programs~\cite{DBLP:conf/emsoft/DarulovaKMS13};
+Smoothed proof search reduces the problem of parameter synthesis under boolean and quantitative 
+objectives to a sequence of optimisation problems~\cite{DBLP:conf/popl/ChaudhuriCS14}; Synthesis of 
+optimal fixed-point implementations of floating-point numerical software can be done using testing and induction~\cite{DBLP:journals/corr/abs-1302-1920}.
+All of these works present potential future applications for CEGIS in synthesising implementations in fixed-point arithmetic.}
+
 
 %-------------------------------
 \section{Preliminaries}

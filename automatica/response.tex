@@ -271,18 +271,28 @@ POPL'14, Synthesis of fixed-point programs in EMSOFT'13}
 \vspace{1em}
 {\bf Response: }
 We have added a discussion about these applications and results to the related work as follows:
-\todo[inline]{add discussion}
+
+\vskip{2em}
+Similarly, 
+\cite{liberzon2003hybrid} evaluates the quantization error dynamics and calculates upper and lower
+bounds for the possible trajectory of the system, up to a finite time. \rev{Considering the problem of multi-modal
+dynamics,~\cite{DBLP:conf/emsoft/JhaST11} uses numerical optimization techniques to learn optimal switching logic for hybrid systems.
+The last three} approaches can be placed within the research area known as ``hybrid systems theory.''  
+%This technique works for both linear and non-linear systems.
+The present contribution distances itself from all these cognate results. 
+
+\rev{A large body of work exists on evaluating fixed-point errors and bridging the gap between real value
+and fixed-point values in synthesis in other application areas and using other
+algorithmic techniques:
+Genetic programming has been used to minimise the error in synthesised fixed-point programs~\cite{DBLP:conf/emsoft/DarulovaKMS13};
+Smoothed proof search reduces the problem of parameter synthesis under boolean and quantitative 
+objectives to a sequence of optimisation problems~\cite{DBLP:conf/popl/ChaudhuriCS14}; Synthesis of 
+optimal fixed-point implementations of floating-point numerical software can be done using testing and induction~\cite{DBLP:journals/corr/abs-1302-1920}.
+All of these works present potential future applications for CEGIS in synthesising implementations in fixed-point arithmetic.}
 
 \vspace{2em}
 {\bf Comment: } {\itshape 
 Could you add one example to the end of Section 4 to show $R_1$, $R_2$, $R_3$, $R_4$ for a simple LTI system? 
-
-\vspace{1em}
-{\bf Response: }
-
-\todo[inline]{Eli: can you clarify? Again, this is just Jury's criteria, we don't really have space to go over examples of basic control theory }
-
-\todo{can we at least say that the values can be obtained form the SW tool, and say where in the tool they are computed? }
 
 \vspace{2em}
 {\bf Comment: } {\itshape 
@@ -293,12 +303,16 @@ of the paper and its current presentation is a bit sketchy. What are $m_{ij}$?} 
 {\bf Response: }
 We apologise for leaving the relatively brief presentation of Jury's criteria in section 4. This is standard
 work in the control literature, and so, given the space restrictions, we prioritised our contributions in the write up. 
+The values for $R_1$, $R_2$, $R_3$, $R_4$, and the corresponding values in the matrix $M$ are outputted in the counterexample
+trace obtained from the synthesis phase in the software tool 
+if it is run with full verbosity.
+
 We have added a brief clarification of the notation $m_{ij}$ as follows:
 
 \rev{where $m_{ij}$ denotes the element in position $(i,j)$ of the matrix $M$, as defined previously}.
 
 
-\bibliographystyle{alpha}
+\bibliographystyle{plain}
 \bibliography{}
 
 
