@@ -791,7 +791,7 @@ $\mat{B} \in \mathbb{R}^{n \times p}$,
 and $t \in \mathbb R_0^+$ denotes continuous time. 
 %$\mat{A}$ and $\mat{B}$ are matrices that fully characterize the dynamics of the continuous plant,
 We denote with $x(0)$ the model initial condition, which can be non-deterministic.  
-\rev{ We assume full observability of the states of the model, namely the output states correspond with the model variables.  }
+\rev{ We assume full observability of the states of the model, namely the output states correspond with the model variables, which we can thus fully access.  }
 
 Equation~\eqref{eq:ode1} is 
 %soundly 
@@ -826,8 +826,8 @@ We consider state feedback control architectures,
 where $u_k$ (notice we work with the discretized signal) is $u_k = r_{k} - K x_k$. 
 Here $K \in \mathbb{R}^{p \times n}$ is a state-feedback gain matrix, 
 and $r_{k}$ is a reference signal (again digital). 
-We will assume $r_k=0$ \rev{(meaning that the reference signal is just the origin)}, thus obtaining the closed-loop model 
-$\vec{x}_{k+1}=(\mat{A}_d-\mat{B}_d\mat{K})\vec{x}_k$. 
+We will assume $r_k=0$ \rev{(meaning that the reference signal is just a zero signal)}, thus obtaining the closed-loop model 
+$\vec{x}_{k+1}=(\mat{A}_d-\mat{B}_d\mat{K})\vec{x}_k$ \rev{with the origin as its equilibrium point}. 
 
 The gain matrix $K$ can be set so that the closed-loop discrete dynamics are
 shaped as desired, for instance according to a specific stability goal or
