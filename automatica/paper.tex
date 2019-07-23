@@ -643,6 +643,12 @@ The last two approaches can be placed within the research area known as ``hybrid
 %This technique works for both linear and non-linear systems.
 The present contribution distances itself from all these cognate results. 
 
+A large body of work exists on evaluating fixed-point errors and bridging the gap between real value
+and fixed-point values in synthesis in other application areas and using other
+algorithmic techniques; 
+Genetic programming has been used to minimise the error in synthesised fixed-point programs~\cite{Darulova};
+Smoothed proof search reduces the problem of boolean  a sequence of optimization problems
+
 %-------------------------------
 \section{Preliminaries}
 %\label{sec:preliminaries}
@@ -1805,8 +1811,13 @@ We fix an index $k$,
 and we synthesize a safe controller by
 unfolding the transition system (i.e., the closed-loop model) $k$ steps and by selecting a controller $K$ and a single initial state, 
 such that the states at each step do not violate the safety requirement (see Section~\ref{sec:safety}).    
-That is, we ask the bounded model checker~\cite{ClarkeKL04} if there exists a $K$ that is safe for at least one $x_0$ in our set of all possible initial states, and a given fixed-point precision for the controller, and where the input signal remains within the specified bounds. 
-This approach is sound, i.e., the controller produced is guaranteed to be safe, if the current $k$ is greater than the completeness threshold (see later step).  
+That is, we ask the bounded model checker~\cite{ClarkeKL04} if there exists a $K$ that is safe for at least 
+one $x_0$ in our set of all possible initial states, and a given fixed-point precision for 
+the controller, and where the input signal remains within the specified bounds. 
+\rev{The bounded model checker selects the controller $K$ values using a satisfiability solver, i.e.,
+by constraint solving. As such, we do not need to consider traditional control approaches such as pole placement.}
+This approach is sound, i.e., the controller produced is guaranteed to be safe, if the 
+current $k$ is greater than the completeness threshold (see later step).  
 We also assume some finite precision for the model and a given time discretisation, as described in section~\ref{sec:model}.  
 We use a fixed-point precision in this description, given by $\langle I_p,F_p\rangle$, but if we are considering a floating-point controller we will instead model the plant with a floating-point precision, $\langle E_p,M_p\rangle$.
 The checks that these assumptions hold are performed by the subsequent {\sc verify} stages. 
