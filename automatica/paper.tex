@@ -870,7 +870,8 @@ we shall express this asymptotic stability as a specification $\phi_\mathit{stab
 and encode it in terms of a check known as \emph{Jury's criterion}~\cite{fadali}: 
 this is an easy algebraic formula to check the entries of matrix $K$, 
 so that the closed-loop dynamics are shaped as desired.  
-\rev{We refer the interested reader to~\cite{fadali} for further details about Jury's criterion, which we omit for the sake of space and since it is a standard result in the control literature that we just leverage for our overall approach. }
+\rev{We refer the interested reader to~\cite{fadali} for further details about Jury's criterion, 
+which we omit for the sake of space and since it is a standard result in the control literature that we just leverage for our overall approach. }
 
 \subsection{Safety of closed-loop models}
 \label{sec:safety}
@@ -2188,7 +2189,7 @@ download.\footnote{\url{https://github.com/diffblue/cbmc/archive/cbmc-5.7.zip}}
 We have further created a VirtualBox OVA image with our tool pre-installed,
 including our MATLAB-generated benchmarks and benchmark shell script, 
 with instructions to run all benchmarks and to reproduce our
-experiments.\footnote{\url{http://www.cprover.org/DSSynth/}}
+experiments.\footnote{\url{http://www.cprover.org/DSSynth/journal.tar.gz}}
 %
 %\textcolor{red}{This paragraph needs to be updated by Elizabeth and Dario.}
 %
@@ -2356,30 +2357,35 @@ lacks the precision to control the system at the coarser time discretisation.
 
 \begin{table*}
 \centering
-\begin{tabular}{| l | c | c | r | c | r |}
+\begin{tabular}{| l | c | c | c| r | c | r | c |}
 %
 \hline
 % \multicolumn{1}{|c|}{Benchmark} & \multicolumn{1}{|c|}{Order} & \multicolumn{4}{|c|}{Run-time} \\
- Benchmark  &  Order  & $\mathcal{F}_{\langle I_p,F_p \rangle}$ & Time(s) & $\mathcal{F}_{\langle E_p, M_p \rangle}$ & Time(s) \\\hline
-Bioreact	&	2	&	8,8	&	15.35	&	10,6	&	23.76	\\
-Chen	&	3	&	8,8	&	11.24	&	10,6	&	14.25	\\
-Cruise 2	&	1	&	8,8	&	11.03	&	10,6	&	11.17	\\
-Cruise 2	&	1	&	8,8	&	9.93	&	10,6	&	10.54	\\
-cstrtmp	&	3	&	12,12	&	90.03	&	10,6	&	321.12	\\
-Cstrtmp	&	2	&	8,8	&	18.56	&	10,6	&	16.99	\\
-DC motor	&	2	&	8,8	&	10.34	&	10,6	&	12.32	\\
-Helicopter	&	3	&	16,16	&	1116.08	&	10,6	&	168.43	\\
-Inverted pendulum	&	2	&	12,12	&	16.01	&	10,6	&	18.73	\\
-Magnetic pointer	&	3	&	12,12	&	1071.02	&	10,6	&	207.60	\\
-Magnetic suspension	&	3	&	20,20	&	56.9	&	10,6	&	998.3	\\
-Pendulum	&	2	&	8,8	&	11.74	&	10,6	&	13.69	\\
-Regulator	&	5	&	10,16	&	190.28	&		&	~\xmark	\\
-Satellite	&	2	&	8,8	&	13.91	&	10,6	&	16.92	\\
-Spring-mass-damper	&	2	&	12,12	&	16.09	&	10,6	&	23.21	\\
-Steam drum	&	3	&		&	~\xmark	&	10,16	&	21.16	\\
-Supension	&	4	&	8,8	&	12.40	&	10,6	&	17.03	\\
-Tape driver	&	3	&	8,8	&	12.18	&	10,6	&	14.34	\\
-USCG tampa	&	3	&	12,12	&	1143.35	&	10,6	&	210.70	\\
+ Benchmark  &  Order  & $\mathcal{F}_{\langle I_p,F_p \rangle}$ & Time(s) & k & $\mathcal{F}_{\langle E_p, M_p \rangle}$ & Time(s)  & k\\\hline
+Bioreact	&	2	&	8,8	&	15.35 & 4	&	10,6	&	23.76 & 2	\\
+Chen	    &	3	&	8,8	& 	11.24& 0	&	10,6	&	14.25 & 0	\\
+%Chen 2	    &	3	&	8,8	&	11.24	&	10,6	&	14.25	\\
+Cruise    	&	1	&	8,8	&	11.03	& 0&	10,6	&	11.17& 0	\\
+Cruise 2	&	1	&	8,8	&	9.93 & 0	&	10,6	&	10.54 & 0	\\
+Cst  	&	3	&	12,12	&	90.03 & 2	&	10,6	&	321.12 & 2	\\
+Cstrtmp	    &	2	&	8,8	&	18.56 & 2	&	10,6	&	16.99 & 2	\\
+DC motor	&	2	&	8,8	&	10.34 & 0	&	10,6	&	12.32 & 0	\\
+Helicopter	&	3	&	16,16	&	1116.08 & 2	&	10,6	&	168.43 & 38	\\
+Inverted %
+pendulum	&	2	&	12,12 &	16.01&	2 &	10,6	&	18.73 &0	\\
+Magnetic %
+pointer	    &	3	&	12,12	&	1071.02	 & 10 &	10,6	&	207.60 & 9	\\
+Magnetic %
+suspension	&	3	&	20,20	&	56.9 & 2	&	10,6	&	998.3 & 6	\\
+Pendulum	&	2	&	8,8	&	11.74 & 0	&	10,6	&	13.69 & 0	\\
+Regulator	&	5	&		&	~\xmark	&  & 10,16	&	190.28	& 2 	\\
+Satellite	&	2	&	8,8	&	13.91 & 3	&	10,6	&	16.92	& 7\\
+Spring-%
+mass-damper	&	2	&	12,12	&	16.09&	0  &	10,6	&	23.21 & 4	\\
+Steam drum	&	3	&		&	~\xmark	&	& 10,16	&	21.16	& 4\\
+Supension	&	4	&	8,8	&	12.40	& 5 &	10,6	&	17.03 & 5	\\
+Tape driver	&	3	&	8,8	&	12.18 & 0	&	10,6	&	14.34	& 0\\
+USCG tampa	&	3	&	12,12	&	1143.35 & 10 	&	10,6	&	210.70 & 9	\\
 % 
 %%1  & Acrobot     & 4 & 8,8 & 61529.8\,s &  & ~\xmark \\
 %% Antenna     & 6 &  & ~\xmark & 6,10 & 817.4\,s \\
@@ -2419,7 +2425,9 @@ The mean run-time for the successful benchmarks is 225\,s for fixed-point and 12
 The median run-time for the successful benchmarks is 15.7\,s for fixed-point and 17.8\,s for floating-point implementations, respectively.
 We consider these times to be short enough to be of practical use to control engineers, and thus assert the success of 
 %EG1. 
-the overall objective of the study that we have raised above. 
+the overall objective of the study that we have raised above. \rev{The completeness threshold depends upon the controller
+selected, and the SAT/SMT solver picks a controller with a low completeness threshold for all the time discretisations that we solve.
+The completeness threshold is zero where the controller synthesised results in a system with real valued eigenvalues.} 
 
 %\textcolor{blue}{The synthesized controllers are confirmed to be safe outside of our model
 %representation using MATLAB, achieving EG2 \note{please explain how this check is performed - is the check itself sound?}.  

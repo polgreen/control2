@@ -84,9 +84,7 @@ eventually found what I presume is the same / similar artifacts here: https://gi
 {\bf Response: }
 
 We apologise for this error and thank the reviewer for pointing it out. The DSSynth download from http://dsverifier.org/ is indeed the same code 
-as our implementation for this paper, but without the experimental results and benchmarks. The correct link is now functional: http://www.cprover.org/DSSynth/.
-
-\todo[inline]{fix link } 
+as our implementation for this paper, but without the experimental results and benchmarks. The correct link is now functional: http://www.cprover.org/DSSynth/journal.tar.gz.
 
 \vspace{2em}
 {\bf Comment: } {\itshape On the control theory side, the approach uses standard results to synthesize stabilizing controllers for LTI systems,
@@ -113,11 +111,11 @@ greatly enhance the existing discussion of timeouts, etc. related to completenes
 {\bf Response: }
 
 We have added the completeness threshold for each benchmark in the table. Note that the completeness threshold is dependent on the controller, 
-and a controller with a smaller completeness threshold may exist. 
+and controllers with larger or smaller completeness thresholds may exist. Completeness thresholds of zero indicate that the the system, with the controller
+selected, has only real eigenvalues.
 
 The proof of Theorem 2 has been elaborated and has been made more detailed. 
 
-\todo[inline]{Elizabeth: add completeness thresholds to table}
 
 \vspace{2em}
 
@@ -271,6 +269,7 @@ POPL'14, Synthesis of fixed-point programs in EMSOFT'13}
 We have added a discussion about these applications and results to the related work as follows:
 
 \vspace{2em}
+
 Similarly, 
 \cite{liberzon2003hybrid} evaluates the quantization error dynamics and calculates upper and lower
 bounds for the possible trajectory of the system, up to a finite time. \rev{Considering the problem of multi-modal
