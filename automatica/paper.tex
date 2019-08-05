@@ -415,7 +415,7 @@ for the entire range of possible inputs.
    %(verif4.north) edge node[align=center] {} ([xshift=10.5cm]aux2)
    %([xshift=10.5cm]aux2) edge node[align=center] {Increase Sampling Rate} (aux1);
 \end{tikzpicture}
-\caption{CEGIS with multi-staged verification for digital controller synthesis}
+\caption{CEGIS with multi-staged verification for digital controller synthesis. We synthesise $K$}
 \label{fig:CEGIS-precision-increment}
 \end{figure*}
 Our approach
@@ -1026,7 +1026,6 @@ whereas $\mathcal{F}_{\langle E_p,M_p \rangle}(x)$ denotes a real number represe
  \caption{The general CEGIS framework\label{fig:CEGIS}}
 \end{figure}
 
-\todo{Elizabeth: please make sure this section on CEGIS is perfect.}
 
 In this section, we give a brief description of the CEGIS framework~\cite{jha-icse10,
   DBLP:conf/asplos/Solar-LezamaTBSS06}, which is illustrated in Figure~\ref{fig:CEGIS}. 
@@ -1078,7 +1077,7 @@ the controller works for all possible initial states.
 \label{sec:specification}
 %-------------------------------
 
-\todo{I feel that this section had an overtly general title and intro, but was actually limited to discussing the encoding of stability - I have focussed this.}
+
 
 %While in the previous section we have discussed the generic CEGIS framework, We are now equipped to apply the general CEGIS framework to the synthesis of digital controllers. We start by describing the property that we pass to the synthesizer as a specification $\phi$. 
 Since we are interested in capturing safety (as encoded in Equation~\eqref{eq:safetyliteral} in Section~\ref{sec:safety}),  
@@ -1225,7 +1224,6 @@ For the input signal, these requirements practically mean that the control input
 \label{sec:numeric_rep}
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-\todo{This Section seems coherent. However, Elizabeth can you carefully check it once again?}
 
 As discussed in Section~\ref{sec:errors}, 
 the considered models must account for the semantics of finite-precision arithmetic, 
@@ -1399,7 +1397,7 @@ This induces two types of errors,
 as detailed above: 
 first, the truncation error due to the representation of $x_k$ as $\mathcal{F}_{\langle I_c,F_c
 \rangle}(x_{k})$; and second, the rounding error introduced by the multiplication operation. 
-Recall that this error \rev{[CLARIFY WHICH OF THE PREVIOUS TWO]} is modelled precisely by bounded model checking.
+Recall that both these errors are modelled precisely by bounded model checking.
 
 An additional error is due to the representation of the plant dynamics, namely 
 %
